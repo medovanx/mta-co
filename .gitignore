@@ -19,3 +19,6 @@ bld/
 # NuGet Packages
 *.nupkg
 packages/
+
+# Game related 
+Database/exceptions/*

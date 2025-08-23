@@ -148,6 +148,9 @@ namespace MTA
         // Base database path - change this to relocate all database files
         public const string DatabaseBasePath = "..\\..\\Database\\";
         
+        // Base scripts path - change this to relocate all script files
+        public const string ScriptsBasePath = "scripts\\";
+        
         public const string DataHolderPath = DatabaseBasePath,
         NpcFilePath = DatabaseBasePath + "Npcs.txt",
         DMapsPath = DatabaseBasePath,

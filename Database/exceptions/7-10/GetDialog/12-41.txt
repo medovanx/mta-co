@@ -1,9 +1,0 @@
-----Exception message----
-Exception of type 'System.OutOfMemoryException' was thrown.
-----End of exception message----
-
-----Stack trace----
-   at TQ_Host_ME.Npcs.GetDialog(NpcRequest npcRequest, GameState client)
-   at TQ_Host_ME.Program.Main(String[] args) in C:\Users\Administrator\Downloads\LordCo\Program.cs:line 534
-----End of stack trace----
-

@@ -20,7 +20,7 @@ namespace ProjectX_V3_Lib.ScriptEngine
 		/// <summary>
 		/// The full path of the scripts location.
 		/// </summary>
-		public string ScriptLocation = Constants.DatabaseBasePath + "\\scripts";
+		public string ScriptLocation = Environment.CurrentDirectory + "\\" + Constants.ScriptsBasePath;
 		
 		/// <summary>
 		/// The .NET Framework to compile with.
