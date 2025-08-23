@@ -32,11 +32,11 @@ namespace MTA
             vipteleport = new Message("You can't teleport in this map.", System.Drawing.Color.Red, Message.World),
         Noteleport = new Message("You can't teleport to this map.", System.Drawing.Color.Red, Message.World);
 
-        public static List<ushort> QuestsMaps = new List<ushort> { 
+        public static List<ushort> QuestsMaps = new List<ushort> {
            6752
         };
-        public static readonly System.Collections.Generic.List<ulong> ActiveNPC = new System.Collections.Generic.List<ulong>() 
-        { 
+        public static readonly System.Collections.Generic.List<ulong> ActiveNPC = new System.Collections.Generic.List<ulong>()
+        {
             10081,
             10082,
             2031,
@@ -144,13 +144,13 @@ namespace MTA
             }
             return new Message("You haven't voted in the past 12 hours. Vote now to gain an extra point!", System.Drawing.Color.Red, Message.TopLeft);
         }
-        
+
         // Base database path - change this to relocate all database files
         public const string DatabaseBasePath = "..\\..\\Database\\";
-        
+
         // Base scripts path - change this to relocate all script files
-        public const string ScriptsBasePath = "scripts\\";
-        
+        public const string ScriptsBasePath = DatabaseBasePath + "scripts\\";
+
         public const string DataHolderPath = DatabaseBasePath,
         NpcFilePath = DatabaseBasePath + "Npcs.txt",
         DMapsPath = DatabaseBasePath,
@@ -186,36 +186,37 @@ namespace MTA
 
         public const ushort SocketOneProgress = 100,
             SocketTwoProgress = 300;
-        public static readonly System.Collections.Generic.List<ushort> revnomap = new System.Collections.Generic.List<ushort> { 
-            1, 2, 3, 0x80c, 0x1b61, 0x80c, 0x79e, 0x3ed, 0x1b5d, 0x1b5e, 0x1b60, 0x1770, 0x1774, 0x1771, 0x1772, 0x1773, 
+        public static readonly System.Collections.Generic.List<ushort> revnomap = new System.Collections.Generic.List<ushort> {
+            1, 2, 3, 0x80c, 0x1b61, 0x80c, 0x79e, 0x3ed, 0x1b5d, 0x1b5e, 0x1b60, 0x1770, 0x1774, 0x1771, 0x1772, 0x1773,
             0x734, 0x1b59, 0x709, 0x5e4, 0x5ee, 0x1e61, 0x22ad, 0xd05, 0x442, 0x4c9, 1860, 700, 3073
          };
-        public static readonly System.Collections.Generic.List<ushort> MemoryAgateNotAllowedMap = new System.Collections.Generic.List<ushort> { 
-            
-         };
+        public static readonly System.Collections.Generic.List<ushort> MemoryAgateNotAllowedMap = new System.Collections.Generic.List<ushort>
+        {
 
-        public static readonly System.Collections.Generic.List<ulong> NoVipTele = new System.Collections.Generic.List<ulong> { 
-            1645, 1, 2, 3, 0x80c, 0x1b61, 0x40e, 0x3ed, 0x80c, 0x1770, 0x1774, 0x1771, 0x1772, 0x1773, 0x1b5d, 0x1b5e, 0x1b60, 
+        };
+
+        public static readonly System.Collections.Generic.List<ulong> NoVipTele = new System.Collections.Generic.List<ulong> {
+            1645, 1, 2, 3, 0x80c, 0x1b61, 0x40e, 0x3ed, 0x80c, 0x1770, 0x1774, 0x1771, 0x1772, 0x1773, 0x1b5d, 0x1b5e, 0x1b60,
             0x734, 8892, 1645, 0x1b59, 0x817, 0x709, 0x5e4, 0x5ee, 0x1e61, 0x22ad, 0xd05, 0x442, 0x4c9, 0x5e5, 0x79e, 1860, 700, 3070, 3071, 3691, 3692, 3693, 3694, 1730, 1731, 1732, 1733, 1734, 1735, 3073, 3072
          };
 
-        public static readonly System.Collections.Generic.List<ulong> novip = new System.Collections.Generic.List<ulong>() 
-        { 
+        public static readonly System.Collections.Generic.List<ulong> novip = new System.Collections.Generic.List<ulong>()
+        {
             3090,
             8892,
             1645
         };
-        public static readonly System.Collections.Generic.List<ulong> fbss = new System.Collections.Generic.List<ulong>() 
-        { 
+        public static readonly System.Collections.Generic.List<ulong> fbss = new System.Collections.Generic.List<ulong>()
+        {
             1707,
             1238
         };
-        public static readonly System.Collections.Generic.List<ulong> horsepk = new System.Collections.Generic.List<ulong>() 
-        { 
+        public static readonly System.Collections.Generic.List<ulong> horsepk = new System.Collections.Generic.List<ulong>()
+        {
             3707
         };
         public static readonly System.Collections.Generic.List<string> NoFog = new System.Collections.Generic.List<string>()
-        { 
+        {
             "Clannad",
             "Btooom",
             "Cyclops",
@@ -286,54 +287,54 @@ namespace MTA
             3033,
             601
         };
-        public static readonly System.Collections.Generic.List<ushort> NoHp = new System.Collections.Generic.List<ushort> { 
+        public static readonly System.Collections.Generic.List<ushort> NoHp = new System.Collections.Generic.List<ushort> {
             1707,
             3070,
             1238,
             3071,
-            1543,  
-            1544,  
-            1545,  
-            1546,  
-            1547,  
-            1548 
+            1543,
+            1544,
+            1545,
+            1546,
+            1547,
+            1548
          };
-        public static readonly System.Collections.Generic.List<ulong> blackname = new System.Collections.Generic.List<ulong>() 
-        { 
+        public static readonly System.Collections.Generic.List<ulong> blackname = new System.Collections.Generic.List<ulong>()
+        {
             3071
         };
-        public static readonly System.Collections.Generic.List<ulong> FBandSSEvent = new System.Collections.Generic.List<ulong>()  
-        {  
-            1543,  
-            1544,  
-            1545,  
-            1546,  
-            1547,  
-            1548  
+        public static readonly System.Collections.Generic.List<ulong> FBandSSEvent = new System.Collections.Generic.List<ulong>()
+        {
+            1543,
+            1544,
+            1545,
+            1546,
+            1547,
+            1548
         };
-        public static readonly System.Collections.Generic.List<ulong> EtaleMaps = new System.Collections.Generic.List<ulong>()  
-        {  
-        1543, 
-        1544, 
-        1545, 
-        1546, 
-        1547, 
-        1548, 
+        public static readonly System.Collections.Generic.List<ulong> EtaleMaps = new System.Collections.Generic.List<ulong>()
+        {
+        1543,
+        1544,
+        1545,
+        1546,
+        1547,
+        1548,
         };
-        public static readonly System.Collections.Generic.List<ulong> SSFB = new System.Collections.Generic.List<ulong>()  
-        {  
-     
-        1543, 
-        1544, 
-        1545, 
-        1546, 
-        1547, 
-        1548 
-        }; 
+        public static readonly System.Collections.Generic.List<ulong> SSFB = new System.Collections.Generic.List<ulong>()
+        {
+
+        1543,
+        1544,
+        1545,
+        1546,
+        1547,
+        1548
+        };
         public static readonly System.Collections.Generic.List<ushort> PKFreeMaps = new System.Collections.Generic.List<ushort>()
         {
             3073,
-            3691, 
+            3691,
             3692,
             2078,
             2057,
@@ -359,11 +360,11 @@ namespace MTA
             2065,
             1038,
             10380,
-            1005, 
+            1005,
             6000,
             6004,
             6001,
-            6002, 
+            6002,
             6003,
             1844,
             7001,
@@ -399,18 +400,18 @@ namespace MTA
             3995,
             1509
         };
-       
+
         public static readonly System.Collections.Generic.List<int> SoulList = new System.Collections.Generic.List<int>()
-        {     
+        {
             80032000
         };
         public static readonly System.Collections.Generic.List<int> MaxItems = new System.Collections.Generic.List<int>()
         {
             410439,
-            420439, 
+            420439,
             480439,
             610439,
-            601439, 
+            601439,
             421439,
             823052,
             824001,
@@ -470,7 +471,7 @@ namespace MTA
            12050,
            8001,
            1046
-        
+
         };
         public static readonly System.Collections.Generic.List<ushort> Damage1Map = new System.Collections.Generic.List<ushort>()
         {
