@@ -1,0 +1,13 @@
+----Exception message----
+The given key was not present in the dictionary.
+----End of exception message----
+
+----Stack trace----
+   at System.Collections.Concurrent.ConcurrentDictionary`2.get_Item(TKey key)
+   at TQ_Host_ME.Game.Screen.Add(IMapObject _object) in C:\Users\Administrator\Downloads\Source Lord With Poker\Game\Screen.cs:line 1184
+   at TQ_Host_ME.Game.Entity.SendSpawn(GameState client, Boolean checkScreen) in C:\Users\Administrator\Downloads\Source Lord With Poker\Game\Entity.cs:line 4378
+   at TQ_Host_ME.Game.Entity.SendSpawn(GameState client) in C:\Users\Administrator\Downloads\Source Lord With Poker\Game\Entity.cs:line 4350
+   at TQ_Host_ME.MaTrix.AI.CheckScreen(GameState Owner, IPacket spawnWith) in C:\Users\Administrator\Downloads\Source Lord With Poker\TQ-Host\Systems\Lobby.cs:line 846
+   at TQ_Host_ME.Game.Screen.Reload(IPacket spawnWith) in C:\Users\Administrator\Downloads\Source Lord With Poker\Game\Screen.cs:line 1518
+----End of stack trace----
+

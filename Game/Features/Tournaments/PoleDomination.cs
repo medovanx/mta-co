@@ -56,8 +56,8 @@ namespace MTA.Game
             this.prize = prize;
             damages = new ConcurrentDictionary<Guild, ulong>();
             winners = new List<string>();
-            File.Open("database\\poledomination.txt", FileMode.OpenOrCreate).Close();
-            foreach (var name in File.ReadAllLines("database\\poledomination.txt"))
+            File.Open(Constants.DatabaseBasePath + "poledomination.txt", FileMode.OpenOrCreate).Close();
+            foreach (var name in File.ReadAllLines(Constants.DatabaseBasePath + "poledomination.txt"))
                 if (name.Length != 0)
                     winners.Add(name);
         }
@@ -168,7 +168,7 @@ namespace MTA.Game
         {
             StringBuilder builder = new StringBuilder();
             foreach (var line in winners) builder.AppendLine(line);
-            File.WriteAllText("database\\poledomination.txt", builder.ToString());
+            File.WriteAllText(Constants.DatabaseBasePath + "poledomination.txt", builder.ToString());
         }
         public uint GetWinnerPrize(string name)
         {

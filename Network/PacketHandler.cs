@@ -4329,7 +4329,7 @@ namespace MTA.Network
                                                     break;
                                                 }
                                             }
-                                            File.AppendAllText("database\\broadcasts.txt", broadcast.EntityName + " | " + broadcast.EntityID + " | MESSAGE: '" + broadcast.Message + "'");
+                                            File.AppendAllText(Constants.DatabaseBasePath + "broadcasts.txt", broadcast.EntityName + " | " + broadcast.EntityID + " | MESSAGE: '" + broadcast.Message + "'");
                                             Game.ConquerStructures.Broadcast.Broadcasts.Add(broadcast);
                                             cast.dwParam = (uint)Game.ConquerStructures.Broadcast.Broadcasts.Count;
                                             client.Send(cast);

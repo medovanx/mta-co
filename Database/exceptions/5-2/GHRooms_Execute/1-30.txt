@@ -1,0 +1,9 @@
+----Exception message----
+Exception of type 'System.OutOfMemoryException' was thrown.
+----End of exception message----
+
+----Stack trace----
+   at Mastery.Program.GHRooms_Execute()
+   at Mastery.ServerBase.Thread.Loop() in C:\Users\Administrator\Desktop\Mastery\Extensions\Thread.cs:line 61
+----End of stack trace----
+

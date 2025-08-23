@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using MTA;
 
 namespace ProjectX_V3_Lib.ScriptEngine
 {
@@ -19,7 +20,7 @@ namespace ProjectX_V3_Lib.ScriptEngine
 		/// <summary>
 		/// The full path of the scripts location.
 		/// </summary>
-		public string ScriptLocation = Environment.CurrentDirectory + "\\scripts";
+		public string ScriptLocation = Constants.DatabaseBasePath + "\\scripts";
 		
 		/// <summary>
 		/// The .NET Framework to compile with.

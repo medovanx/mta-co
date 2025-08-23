@@ -25,8 +25,8 @@ namespace MTA.Database
         private static IniFile RaceRecords;
         public static void Load()
         {
-            RaceRecords = new IniFile("database\\racerecords.ini", "record");
-            using(var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("maps"))
+            RaceRecords = new IniFile(Constants.DatabaseBasePath + "racerecords.ini", "record");
+            using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("maps"))
             using (var reader = cmd.CreateReader())
             {
                 while (reader.Read())

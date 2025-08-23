@@ -186,8 +186,6 @@ End Namespace";
 				Assembly assembly = assemblies[i];
 				compilerParameters.ReferencedAssemblies.Add(assembly.Location);
 			}
-			foreach (string refs in System.IO.Directory.GetFiles(Settings.ScriptLocation + "\\references"))
-				compilerParameters.ReferencedAssemblies.Add(refs);
 			foreach (Type type in Settings.types.Values)
 				compilerParameters.ReferencedAssemblies.Add(Assembly.GetAssembly(type).Location);
 			CSharpCodeProvider cSharpCodeProvider = new CSharpCodeProvider();
@@ -236,8 +234,6 @@ End Namespace";
 				Assembly assembly = assemblies[i];
 				compilerParameters.ReferencedAssemblies.Add(assembly.Location);
 			}
-			foreach (string refs in System.IO.Directory.GetFiles(Settings.ScriptLocation + "\\references"))
-				compilerParameters.ReferencedAssemblies.Add(refs);
 			foreach (Type type in Settings.types.Values)
 				compilerParameters.ReferencedAssemblies.Add(Assembly.GetAssembly(type).Location);
 			VBCodeProvider vbCodeProvider = new VBCodeProvider();

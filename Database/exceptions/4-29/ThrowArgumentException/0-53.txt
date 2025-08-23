@@ -1,0 +1,11 @@
+----Exception message----
+An item with the same key has already been added.
+----End of exception message----
+
+----Stack trace----
+   at System.ThrowHelper.ThrowArgumentException(ExceptionResource resource)
+   at System.Collections.Generic.Dictionary`2.Insert(TKey key, TValue value, Boolean add)
+   at System.Collections.Generic.Dictionary`2.Add(TKey key, TValue value)
+   at Mastery.Game.ConquerStructures.Inventory.Add(ConquerItem item, ItemUse use) in C:\Users\Administrator\Desktop\Mastery\Game\ConquerStructures\Inventory.cs:line 536
+----End of stack trace----
+

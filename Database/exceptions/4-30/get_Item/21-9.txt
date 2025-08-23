@@ -1,0 +1,13 @@
+----Exception message----
+The given key was not present in the dictionary.
+----End of exception message----
+
+----Stack trace----
+   at System.Collections.Concurrent.ConcurrentDictionary`2.get_Item(TKey key)
+   at Mastery.Game.Screen.Add(IMapObject _object) in C:\Users\Administrator\Desktop\Mastery\Game\Screen.cs:line 1198
+   at Mastery.Game.Entity.SendSpawn(GameState client, Boolean checkScreen) in C:\Users\Administrator\Desktop\Mastery\Game\Entity.cs:line 4368
+   at Mastery.Game.Entity.SendSpawn(GameState client) in C:\Users\Administrator\Desktop\Mastery\Game\Entity.cs:line 4340
+   at Mastery.MaTrix.AI.CheckScreen(GameState Owner, IPacket spawnWith) in C:\Users\Administrator\Desktop\Mastery\Franko\Systems\Lobby.cs:line 846
+   at Mastery.Game.Screen.Reload(IPacket spawnWith) in C:\Users\Administrator\Desktop\Mastery\Game\Screen.cs:line 1530
+----End of stack trace----
+

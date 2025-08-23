@@ -1,0 +1,9 @@
+----Exception message----
+Index was outside the bounds of the array.
+----End of exception message----
+
+----Stack trace----
+   at TQ_Host_ME.Game.ConquerStructures.Equipment.Remove(Byte Position, Boolean dontAdd) in C:\Users\Administrator\Downloads\149970448986641\Game\ConquerStructures\Equipment.cs:line 44
+   at TQ_Host_ME.Network.GamePackets.CoatStorage.Handle(GameState client) in C:\Users\Administrator\Downloads\149970448986641\TQ-Host\Storages\3300-Coat-Storage.cs:line 78
+----End of stack trace----
+

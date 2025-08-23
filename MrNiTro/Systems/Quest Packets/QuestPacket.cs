@@ -421,7 +421,7 @@ namespace MTA.MaTrix
         public static SafeDictionary<QuestID, Info> AllQuests = new SafeDictionary<QuestID, Info>();       
         public static void Load()
         {
-            string[] text = File.ReadAllLines("database\\Questinfo.ini");
+            string[] text = File.ReadAllLines(Constants.DatabaseBasePath + "Questinfo.ini");
              Info info = new Info();
             for (int x = 0; x < text.Length; x++)
             {

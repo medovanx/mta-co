@@ -9,7 +9,7 @@ namespace MTA.Database
     {
         public static void SaveFlowers()
         {
-            using (Write write = new Write("database\\flowers.txt"))
+            using (Write write = new Write(Constants.DatabaseBasePath + "flowers.txt"))
             {
                 Game.Features.Flowers[] array = Game.Features.Flowers.Flowers_Poll.Values.ToArray<Game.Features.Flowers>();
                 uint count = (uint)Game.Features.Flowers.Flowers_Poll.Count;
@@ -20,7 +20,7 @@ namespace MTA.Database
                 }
                 write.Add(array2, array2.Length).Execute(Mode.Open);
             }
-            using (Write write2 = new Write("database\\boyflowers.txt"))
+            using (Write write2 = new Write(Constants.DatabaseBasePath + "boyflowers.txt"))
             {
                 Game.Features.Flowers[] array3 = Game.Features.Flowers.BoyFlowers.Values.ToArray<Game.Features.Flowers>();
                 uint count2 = (uint)Game.Features.Flowers.BoyFlowers.Count;
@@ -34,7 +34,7 @@ namespace MTA.Database
         }
         public static void LoadFlowers()
         {
-            using (Read read = new Read("database\\flowers.txt"))
+            using (Read read = new Read(Constants.DatabaseBasePath + "flowers.txt"))
             {
                 if (read.Reader(true))
                 {
@@ -64,7 +64,7 @@ namespace MTA.Database
                     }
                 }
             }
-            using (Read read2 = new Read("database\\boyflowers.txt"))
+            using (Read read2 = new Read(Constants.DatabaseBasePath + "boyflowers.txt"))
             {
                 if (read2.Reader(true))
                 {

@@ -144,25 +144,29 @@ namespace MTA
             }
             return new Message("You haven't voted in the past 12 hours. Vote now to gain an extra point!", System.Drawing.Color.Red, Message.TopLeft);
         }
-        public const string DataHolderPath = "database\\",
-        NpcFilePath = "database\\Npcs.txt",
-        DMapsPath = "database\\",
-        ShopsPath = "database\\shops\\Shop.dat",
-        EShopsPath = "database\\shops\\emoneyshop.ini",
-        EShopsV2Path = "database\\shops\\emoneyshopV2.ini",
-        HonorShopPath = "database\\shops\\HonorShop.ini",
-        RaceShopPath = "database\\shops\\RacePointShop.ini",
-        ChampionShopPath = "database\\shops\\GoldenLeagueShop.ini",
-        PortalsPath = "database\\Portals.ini",
-        RevivePoints = "database\\RevivePoints.ini",
-        MonstersPath = "database\\Monsters.txt",
-        ItemBaseInfosPath = "database\\Items.txt",
-        ItemPlusInfosPath = "database\\ItemAdd.ini",
-        SoulGearInformation = "database\\soulgear.txt",
-        UnhandledExceptionsPath = "database\\exceptions\\",
+        
+        // Base database path - change this to relocate all database files
+        public const string DatabaseBasePath = "..\\..\\Database\\";
+        
+        public const string DataHolderPath = DatabaseBasePath,
+        NpcFilePath = DatabaseBasePath + "Npcs.txt",
+        DMapsPath = DatabaseBasePath,
+        ShopsPath = DatabaseBasePath + "shops\\Shop.dat",
+        EShopsPath = DatabaseBasePath + "shops\\emoneyshop.ini",
+        EShopsV2Path = DatabaseBasePath + "shops\\emoneyshopV2.ini",
+        HonorShopPath = DatabaseBasePath + "shops\\HonorShop.ini",
+        RaceShopPath = DatabaseBasePath + "shops\\RacePointShop.ini",
+        ChampionShopPath = DatabaseBasePath + "shops\\GoldenLeagueShop.ini",
+        PortalsPath = DatabaseBasePath + "Portals.ini",
+        RevivePoints = DatabaseBasePath + "RevivePoints.ini",
+        MonstersPath = DatabaseBasePath + "Monsters.txt",
+        ItemBaseInfosPath = DatabaseBasePath + "Items.txt",
+        ItemPlusInfosPath = DatabaseBasePath + "ItemAdd.ini",
+        SoulGearInformation = DatabaseBasePath + "soulgear.txt",
+        UnhandledExceptionsPath = DatabaseBasePath + "exceptions\\",
         ServerKey = "TQServer",
-        WelcomeMessages = "database\\WelcomeMessages.txt",
-        QuizShow = "database\\QuizShow.txt",
+        WelcomeMessages = DatabaseBasePath + "WelcomeMessages.txt",
+        QuizShow = DatabaseBasePath + "QuizShow.txt",
         GameCryptographyKey = "qL0UVCXB6BY9txb2";
         public static string ServerName;
         public const int MaxBroadcasts = 50;

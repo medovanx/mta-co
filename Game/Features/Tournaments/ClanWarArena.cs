@@ -206,7 +206,7 @@ namespace Conquer_Online_Server.Game
         }
         public static void Save()
         {
-            using (Database.Write _wr = new Database.Write("database\\ClanWar.txt"))
+            using (Database.Write _wr = new Database.Write(Constants.DatabaseBasePath + "ClanWar.txt"))
             {
                 string[] items = new string[(byte)ClanArena.Count];
                 for (byte x = 0; x < Tournaments.Length; x++)
@@ -216,7 +216,7 @@ namespace Conquer_Online_Server.Game
         }
         public static void Load()
         {
-            using (Database.Read r = new Database.Read("database\\ClanWar.txt"))
+            using (Database.Read r = new Database.Read(Constants.DatabaseBasePath + "ClanWar.txt"))
             {
                 if (r.Reader())
                 {

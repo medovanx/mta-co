@@ -217,7 +217,7 @@ namespace MTA
         public static void GetDialog(NpcRequest npcRequest, GameState client)
         {
             if (AvatarLinker == null)
-                AvatarLinker = new IniFile("\\database\\npc.ini");
+                AvatarLinker = new IniFile(Constants.DatabaseBasePath + "npc.ini");
             //Console.WriteLine("[" + client.Entity.Name + "][NPC] " + npcRequest.NpcID + " : " + npcRequest.OptionID);
 
             Npcs dialog = new Npcs(client); ;

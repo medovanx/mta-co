@@ -1,0 +1,9 @@
+----Exception message----
+Exception of type 'System.OutOfMemoryException' was thrown.
+----End of exception message----
+
+----Stack trace----
+   at Mastery.Npcs.GetDialog(NpcRequest npcRequest, GameState client)
+   at Mastery.Program.Main(String[] args) in C:\Users\Administrator\Desktop\Mastery\Program.cs:line 632
+----End of stack trace----
+

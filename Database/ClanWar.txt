@@ -1,0 +1,11 @@
+Count=10
+0^0#722454#722454#0#None#TwinCityClan#TwinCityClan#
+1^722#722474#722474#1#bAdMaN#PhoenixCastleClan#PhoenixCastleClan#
+2^0#722469#722469#0#None#ApeCityClan#ApeCityClan#
+3^757#722459#722459#2#Nvmmm#DesertCityClan#DesertCityClan#
+4^694#722464#722464#1#BestBoy|xD#BirdCityClan#BirdCityClan#
+5^802#722455#722455#1#fredom#WindPlainClan#WindPlainClan#
+6^0#722475#722475#0#None#MapleForestClan#MapleForestClan#
+7^0#722470#722470#0#None#LoveCanyonClan#LoveCanyonClan#
+8^681#722460#722460#1#Ghosts|Of|Death#DesertClan#DesertClan#
+9^0#722465#722465#0#None#BirdIslandClan#BirdIslandClan#
