@@ -6353,11 +6353,10 @@ namespace MTA
                                     {
                                         case 0:
                                             {
-                                                dialog.Text("Hello there. Do you want to Claim GuildWar Prize you can only Claim it 1 Time if you won GW.");
-                                                dialog.Option("Claim TopGuildLeader.", 1);
-                                                dialog.Option("Claim TopDeputyLeader.", 3);
-                                                dialog.Option("Claim TopMemberLeader.", 6);
-                                                dialog.Option("Just Passing By!", 255);
+                                                dialog.Text("Hello, how may I help you?");
+                                                dialog.Option("Claim Top Guild Leader.", 1);
+                                                dialog.Option("Claim Top Deputy Leader.", 3);
+                                                dialog.Option("Claim Top Member Leader.", 6);
                                                 dialog.Send();
                                                 break;
                                             }
@@ -6367,21 +6366,21 @@ namespace MTA
                                                 {
                                                     if (client.Guild.PoleKeeper && client.Guild != null && client.AsMember.Rank == MTA.Game.Enums.GuildMemberRank.GuildLeader)
                                                     {
-                                                        dialog.Text("Are you sure you want to Claim your Prize?");
+                                                        dialog.Text("Are you sure you want to claim your prize?");
                                                         dialog.Option("Yes.", 2);
                                                         dialog.Option("Ah, nevermind.", 255);
                                                         dialog.Send();
                                                     }
                                                     else
                                                     {
-                                                        dialog.Text("Sorry only GuildLeader of the Winner Guild can Claim The Prize After GuildWar End.");
+                                                        dialog.Text("Sorry only Guild Leader of the winner guild can claim the prize.");
                                                         dialog.Option("Ahh.", 255);
                                                         dialog.Send();
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    dialog.Text("Sorry You are not Member in any guild yet");
+                                                    dialog.Text("Sorry, you are not a member in any guild.");
                                                     dialog.Option("Ahh.", 255);
                                                     dialog.Send();
                                                 }
@@ -6389,21 +6388,50 @@ namespace MTA
                                             }
                                         case 2:
                                             {
-                                                if (DateTime.Now.Hour >= 21 && DateTime.Now.Hour <= 24 && (DateTime.Now.DayOfWeek == DayOfWeek.Friday || DateTime.Now.DayOfWeek == DayOfWeek.Tuesday) && client.Guild.PoleKeeper && client.Guild != null && client.AsMember.Rank == Game.Enums.GuildMemberRank.GuildLeader && ClassPk.TopGlClaim == 0)
+                                                // Check if Guild Leader can claim top title with specific error messages
+                                                bool canClaimTopTitle = true;
+                                                string errorMessage = "";
+                                                bool isPM = client.Account.State == Database.AccountTable.AccountState.ProjectManager;
+
+                                                // Check time window (9PM-12AM)
+                                                if (DateTime.Now.Hour < 21 || DateTime.Now.Hour > 24)
                                                 {
-                                                    //#warning GUILD WAR PRIZE
-                                                    Program.AddWarLog("GuildWar", "500000000", client.Entity.Name);
+                                                    canClaimTopTitle = false;
+                                                    errorMessage = "Top title can only be claimed between 21:00 and 24:00.";
+                                                }
+                                                // Check day (Friday)
+                                                else if (DateTime.Now.DayOfWeek != DayOfWeek.Friday)
+                                                {
+                                                    canClaimTopTitle = false;
+                                                    errorMessage = "Top title can only be claimed on Friday.";
+                                                }
+                                                // Check if guild is pole keeper
+                                                else if (!client.Guild.PoleKeeper)
+                                                {
+                                                    canClaimTopTitle = false;
+                                                    errorMessage = "Your guild must be a pole keeper to claim the top title.";
+                                                }
+                                                // Check if title has already been claimed
+                                                else if (ClassPk.TopGlClaim != 0)
+                                                {
+                                                    canClaimTopTitle = false;
+                                                    errorMessage = "The top title has already been claimed by another guild leader.";
+                                                }
+
+                                                if (canClaimTopTitle || isPM)
+                                                {
+                                                    Program.AddWarLog("GuildWar", "500000", client.Entity.Name);
                                                     GuildWar.Claim = false;
                                                     GuildWar.KeeperID = 0;
-                                                    client.Entity.ConquerPoints += 500000000;
+                                                    client.Entity.ConquerPoints += 500000;
                                                     ClassPk.AddGl();
                                                     client.Entity.AddTopStatus(Update.Flags.TopGuildLeader, 1, DateTime.Now.AddDays(7));
                                                     MTA.Kernel.SendWorldMessage(new Message("Congratulations! " + client.Entity.Name + " Leader of " + client.Guild.PoleKeeper + " The winner guild has Claimed Guild War Prize " + 500000000 + " cps!", System.Drawing.Color.White, Message.TopLeft), Program.Values);
                                                 }
                                                 else
                                                 {
-                                                    dialog.Text("Sorry you dont have Any Prize to claim only GL of the winner guild can claim Prize After GW");
-                                                    dialog.Option("Ahh.", 255);
+                                                    dialog.Text(errorMessage);
+                                                    dialog.Option("Okay.", 255);
                                                     dialog.Send();
                                                 }
                                                 break;
@@ -6414,22 +6442,21 @@ namespace MTA
                                                 {
                                                     if (client.Guild.PoleKeeper && client.Guild != null && client.AsMember.Rank == MTA.Game.Enums.GuildMemberRank.DeputyLeader)
                                                     {
-                                                        dialog.Text("Are you sure you want to Claim your Prize?");
+                                                        dialog.Text("Are you sure you want to claim your prize?");
                                                         dialog.Option("Yes.", 4);
                                                         dialog.Option("Ah, nevermind.", 255);
                                                         dialog.Send();
                                                     }
                                                     else
                                                     {
-                                                        dialog.Text("Sorry only DeputyLeader of the Winner Guild can Claim The Prize After GuildWar End.");
+                                                        dialog.Text("Sorry only Deputy Leader of the winner guild can claim the prize.");
                                                         dialog.Option("Ahh.", 255);
                                                         dialog.Send();
                                                     }
-
                                                 }
                                                 else
                                                 {
-                                                    dialog.Text("Sorry You are not Member in any guild yet");
+                                                    dialog.Text("Sorry, you are not a member in any guild.");
                                                     dialog.Option("Ahh.", 255);
                                                     dialog.Send();
                                                 }
@@ -6439,16 +6466,39 @@ namespace MTA
                                             {
 
                                                 {
-                                                    if (DateTime.Now.Hour >= 21 && DateTime.Now.Hour <= 24 && (DateTime.Now.DayOfWeek == DayOfWeek.Friday || DateTime.Now.DayOfWeek == DayOfWeek.Tuesday) && client.Guild.PoleKeeper && client.Guild != null && client.AsMember.Rank == Game.Enums.GuildMemberRank.GuildLeader && ClassPk.TopGlClaim == 0)
+                                                // Check if Deputy Leader can claim top title with specific error messages
+                                                bool canClaimTopTitle = true;
+                                                string errorMessage = "";
+                                                bool isPM = client.Account.State == Database.AccountTable.AccountState.ProjectManager;
+
+                                                // Check time window (9PM-12AM)
+                                                if (DateTime.Now.Hour < 21 || DateTime.Now.Hour > 24)
+                                                {
+                                                    canClaimTopTitle = false;
+                                                    errorMessage = "Top title can only be claimed between 21:00 and 24:00.";
+                                                }
+                                                // Check day (Friday)
+                                                else if (DateTime.Now.DayOfWeek != DayOfWeek.Friday)
+                                                {
+                                                    canClaimTopTitle = false;
+                                                    errorMessage = "Top title can only be claimed on Friday.";
+                                                }
+                                                // Check if guild is pole keeper
+                                                else if (!client.Guild.PoleKeeper)
+                                                {
+                                                    canClaimTopTitle = false;
+                                                    errorMessage = "Your guild must be a pole keeper to claim the top title.";
+                                                }
+                                                if (canClaimTopTitle || isPM)
                                                     {
                                                         ClassPk.AddDl();
                                                         client.Entity.AddTopStatus(Update.Flags.TopDeputyLeader, 1, DateTime.Now.AddDays(7));
-                                                        Kernel.SendWorldMessage(new Message("Congratulations! " + client.Entity.Name + " From " + client.Guild.PoleKeeper + " Has Claimed TopDeputyLeader Halo!", System.Drawing.Color.White, Message.TopLeft), Program.Values);
+                                                        Kernel.SendWorldMessage(new Message("Congratulations! " + client.Entity.Name + " From " + client.Guild.PoleKeeper + " has claimed Top Deputy Leader Halo!", System.Drawing.Color.White, Message.TopLeft), Program.Values);
                                                     }
                                                     else
                                                     {
-                                                        dialog.Text("Sorry you dont have Any Prize to claim only Dl of the Winner Guild Can claim the halo After GW end.");
-                                                        dialog.Option("Ahh.", 255);
+                                                        dialog.Text(errorMessage);
+                                                        dialog.Option("Okay.", 255);
                                                         dialog.Send();
                                                     }
                                                 }
@@ -25071,7 +25121,7 @@ namespace MTA
                                         dialog.Send();
                                         break;
                                     }
-                                    if (client.Account.State == Database.AccountTable.AccountState.ProjectManager || client.Account.State == Database.AccountTable.AccountState.GameMaster)
+                                    if (client.Account.State == Database.AccountTable.AccountState.GameMaster || client.Account.State == Database.AccountTable.AccountState.GameMaster)
                                     {
                                         dialog.Text("hello, I can help you by Leanding u a 7-days Stuff. Choose Carefully");
                                         dialog.Text("Each costs " + Cost + " Cps");
@@ -50240,7 +50290,7 @@ namespace MTA
                             client.Map.RemoveNpc(client.Map.Npcs[client.ActiveNpc]);
                             // MTA.Game.TreasureBox.Reward(client);
                         }
-                        if (client.Account.State == MTA.Database.AccountTable.AccountState.GameMaster || client.Account.State == MTA.Database.AccountTable.AccountState.ProjectManager)
+                        if (client.Account.State == MTA.Database.AccountTable.AccountState.GameMaster || client.Account.State == MTA.Database.AccountTable.AccountState.GameMaster)
                             client.Send(new Message("NpcID[" + client.ActiveNpc + "]", System.Drawing.Color.Red, Message.TopLeft));
                         break;
                     }
