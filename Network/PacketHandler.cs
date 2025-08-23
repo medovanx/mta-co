@@ -27100,7 +27100,7 @@ p =>
             client.Account.Save();
             if (!client.LoggedIn){
                 Kernel.SendWorldMessage(new Network.GamePackets.Message("Name: " + client.Entity.Name + " VIPLevel: " + client.Entity.VIPLevel + " has logged On Welcome To " + rates.servername + " :OnlinePlayers :  " + Kernel.GamePool.Count, Color.Red, Message.TopLeft), Program.Values);
-                Console.WriteLine(client.Entity.Name + " logged in " + client.Account.IP);
+                Console.WriteLine(client.Entity.Name + " logged in. IP: " + client.Account.IP + "  ");
             }
             new Database.MySqlCommand(Database.MySqlCommandType.UPDATE).Update("configuration").Set("LastPlayer", client.Entity.Name).Set("login", "has logged on").Execute();
             client.LoggedIn = true;

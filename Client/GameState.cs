@@ -1084,9 +1084,8 @@ namespace MTA.Client
                 finally
                 {
                     Kernel.DisconnectPool.Remove(this.Entity.UID);
-                    Console.WriteLine(this.Entity.Name + " 2fl Dlwa2ty  " + this.Account.IP + "  ");
+                    Console.WriteLine(this.Entity.Name + " logged out. IP: " + this.Account.IP + "  ");
                     new Database.MySqlCommand(Database.MySqlCommandType.UPDATE).Update("configuration").Set("LastPlayer", Entity.Name).Set("login", "has logged off").Execute();
-
                 }
             }
         }
