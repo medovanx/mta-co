@@ -15,3 +15,6 @@ bld/
 [Ll]ogs/
 
 .vs/
+
+# NuGet Packages
+*.nupkg
