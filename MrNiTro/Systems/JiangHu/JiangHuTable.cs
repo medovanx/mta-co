@@ -141,7 +141,7 @@ namespace MTA.Database
         }
         public static void SaveJiangHu()
         {
-            using (Write _wr = new Write("JiangHu\\JiangHu.txt"))
+            using (Write _wr = new Write(Constants.DatabaseBasePath + "JiangHu\\JiangHu.txt"))
             {
                 var dictionary = Game.JiangHu.JiangHuClients.Values.ToArray();
                 string[] items = new string[Game.JiangHu.JiangHuClients.Count];
