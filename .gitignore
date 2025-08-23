@@ -29,3 +29,4 @@ packages/
 
 # Game related 
 Database/exceptions/*
+Database/scripts/cmpl/*
