@@ -6391,7 +6391,7 @@ namespace MTA
                                                 // Check if Guild Leader can claim top title with specific error messages
                                                 bool canClaimTopTitle = true;
                                                 string errorMessage = "";
-                                                bool isPM = client.Account.State == Database.AccountTable.AccountState.ProjectManager;
+                                                bool isGM = client.Account.State == Database.AccountTable.AccountState.GM;
 
                                                 // Check time window (9PM-12AM)
                                                 if (DateTime.Now.Hour < 21 || DateTime.Now.Hour > 24)
@@ -6418,7 +6418,7 @@ namespace MTA
                                                     errorMessage = "The top title has already been claimed by another guild leader.";
                                                 }
 
-                                                if (canClaimTopTitle || isPM)
+                                                if (canClaimTopTitle || isGM)
                                                 {
                                                     Program.AddWarLog("GuildWar", "500000", client.Entity.Name);
                                                     GuildWar.Claim = false;
@@ -6469,7 +6469,7 @@ namespace MTA
                                                 // Check if Deputy Leader can claim top title with specific error messages
                                                 bool canClaimTopTitle = true;
                                                 string errorMessage = "";
-                                                bool isPM = client.Account.State == Database.AccountTable.AccountState.ProjectManager;
+                                                bool isGM = client.Account.State == Database.AccountTable.AccountState.GM;
 
                                                 // Check time window (9PM-12AM)
                                                 if (DateTime.Now.Hour < 21 || DateTime.Now.Hour > 24)
@@ -6489,7 +6489,7 @@ namespace MTA
                                                     canClaimTopTitle = false;
                                                     errorMessage = "Your guild must be a pole keeper to claim the top title.";
                                                 }
-                                                if (canClaimTopTitle || isPM)
+                                                if (canClaimTopTitle || isGM)
                                                     {
                                                         ClassPk.AddDl();
                                                         client.Entity.AddTopStatus(Update.Flags.TopDeputyLeader, 1, DateTime.Now.AddDays(7));
@@ -25121,7 +25121,7 @@ namespace MTA
                                         dialog.Send();
                                         break;
                                     }
-                                    if (client.Account.State == Database.AccountTable.AccountState.GameMaster || client.Account.State == Database.AccountTable.AccountState.GameMaster)
+                                    if (client.Account.State == Database.AccountTable.AccountState.GM || client.Account.State == Database.AccountTable.AccountState.GM)
                                     {
                                         dialog.Text("hello, I can help you by Leanding u a 7-days Stuff. Choose Carefully");
                                         dialog.Text("Each costs " + Cost + " Cps");
@@ -50290,7 +50290,7 @@ namespace MTA
                             client.Map.RemoveNpc(client.Map.Npcs[client.ActiveNpc]);
                             // MTA.Game.TreasureBox.Reward(client);
                         }
-                        if (client.Account.State == MTA.Database.AccountTable.AccountState.GameMaster || client.Account.State == MTA.Database.AccountTable.AccountState.GameMaster)
+                        if (client.Account.State == MTA.Database.AccountTable.AccountState.GM || client.Account.State == MTA.Database.AccountTable.AccountState.GM)
                             client.Send(new Message("NpcID[" + client.ActiveNpc + "]", System.Drawing.Color.Red, Message.TopLeft));
                         break;
                     }

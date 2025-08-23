@@ -85,7 +85,7 @@ namespace MTA.Network.GamePackets
             UniquePk = 20,
             membmerguild = 26,
             Vip = 24,
-            ProjectManager = 25,
+            GM = 25,
         }
     }
 }

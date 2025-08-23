@@ -2103,7 +2103,7 @@ namespace MTA.Game
             set
             {
                 if (value > 200) value = 0;
-                //if ((Owner.Account.State == AccountTable.AccountState.ProjectManager || Owner.Account.State == AccountTable.AccountState.GameMaster))
+                //if ((Owner.Account.State == AccountTable.AccountState.GM || Owner.Account.State == AccountTable.AccountState.GM))
                 //{
                 //    value -= vipextra;
                 //    value += (ConquerStructures.NobilityRank.King - NobilityRank);

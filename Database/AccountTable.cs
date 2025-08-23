@@ -9,14 +9,11 @@ namespace MTA.Database
     {
         public enum AccountState : byte
         {
-            NotActivated = 100,
-            ProjectManager = 4,
-            GameHelper = 5,
-            GameMaster = 3,
-            Player = 2,
-            Banned = 1,
-            Transfered = 150,
-            HelpDesk = 6,
+            Player = 10,
+            Transfered = 9,
+            NotActivated = 8,
+            Banned = 7,
+            GM = 6,
             DoesntExist = 0
         }
         public string Username;

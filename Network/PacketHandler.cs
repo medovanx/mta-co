@@ -387,7 +387,7 @@ namespace MTA.Network
                                     suse.Effect1 = attack.Effect1;
                                     suse.AddTarget(attacked, damage, attack);
                                     client.SendScreen(suse, true);
-                                    if (client.Account.State == MTA.Database.AccountTable.AccountState.ProjectManager)
+                                    if (client.Account.State == MTA.Database.AccountTable.AccountState.GM)
                                         client.Send(new Message("Clone Attack With  Skill: " + spell.Name, System.Drawing.Color.CadetBlue, Message.Talk));
 
                                 }
@@ -430,7 +430,7 @@ namespace MTA.Network
                                     suse.Effect1 = attack.Effect1;
                                     suse.AddTarget(attackedsob, damage, attack);
                                     client.SendScreen(suse, true);
-                                    if (client.Account.State == MTA.Database.AccountTable.AccountState.ProjectManager)
+                                    if (client.Account.State == MTA.Database.AccountTable.AccountState.GM)
                                         client.Send(new Message("Clone Attack With  Skill: " + spell.Name, System.Drawing.Color.CadetBlue, Message.Talk));
 
                                 }
@@ -1468,13 +1468,13 @@ namespace MTA.Network
                         if ((spawn.Mesh / 10) == 147)
                         {
                             uint UID = client.Entity.OnMoveNpc;
-                            if (client.Guild != null || client.Account.State == Database.AccountTable.AccountState.ProjectManager)
+                            if (client.Guild != null || client.Account.State == Database.AccountTable.AccountState.GM)
                             {
-                                if (client.AsMember != null && client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader || client.Account.State == Database.AccountTable.AccountState.ProjectManager)
+                                if (client.AsMember != null && client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader || client.Account.State == Database.AccountTable.AccountState.GM)
                                 {
                                     if (client.Guild.Name != null && client.Guild.Name != "")
                                     {
-                                        if (client.Guild.Name == Game.GuildWar.Pole.Name || client.Account.State == Database.AccountTable.AccountState.ProjectManager)
+                                        if (client.Guild.Name == Game.GuildWar.Pole.Name || client.Account.State == Database.AccountTable.AccountState.GM)
                                         {
                                             var getnpc = Database.GuildCondutors.GuildConductors[UID];
                                             ushort oldx = getnpc.npc.X;
@@ -2610,7 +2610,7 @@ namespace MTA.Network
                         Client.GameState _client = null;
                         if (Kernel.GamePool.TryGetValue(trade.dwParam, out _client))
                         {
-                            if (client.Account.State == Database.AccountTable.AccountState.ProjectManager)
+                            if (client.Account.State == Database.AccountTable.AccountState.GM)
                             {
                                 if (client.BlockTrade)
                                 {
@@ -2618,7 +2618,7 @@ namespace MTA.Network
                                     return;
                                 }
                             }
-                            if (_client.Account.State == Database.AccountTable.AccountState.ProjectManager)
+                            if (_client.Account.State == Database.AccountTable.AccountState.GM)
                             {
                                 if (_client.BlockTrade)
                                 {
@@ -4087,7 +4087,7 @@ namespace MTA.Network
                                 if ((client.Map.BaseID >= 6000 && client.Map.BaseID <= 6004) && (!(Constants.ActiveNPC.Contains(client.ActiveNpc))))
                                     return;
                                 Npcs.GetDialog(req, client);
-                                if (client.Account.State == MTA.Database.AccountTable.AccountState.GameMaster || client.Account.State == MTA.Database.AccountTable.AccountState.ProjectManager)
+                                if (client.Account.State == MTA.Database.AccountTable.AccountState.GM || client.Account.State == MTA.Database.AccountTable.AccountState.GM)
                                     client.Send(new Message("This Npc ID : [" + client.ActiveNpc + "]", System.Drawing.Color.Red, Message.TopLeft));
                             }
                         }
@@ -4298,7 +4298,7 @@ namespace MTA.Network
                                     DateTime Now = DateTime.Now;
                                     DateTime LastBC = client["lastbroadcast"];
 
-                                    if (Now >= LastBC.AddMinutes(2) || client.Account.State == Database.AccountTable.AccountState.ProjectManager)
+                                    if (Now >= LastBC.AddMinutes(2) || client.Account.State == Database.AccountTable.AccountState.GM)
                                     {
                                         if (client.Trade != null)
                                         {
@@ -7148,7 +7148,7 @@ namespace MTA.Network
                 #endregion Chi retreat (2536)
                 default:
                     {
-                        if (client.Account.State == MTA.Database.AccountTable.AccountState.ProjectManager)
+                        if (client.Account.State == MTA.Database.AccountTable.AccountState.GM)
                             client.Send(new Message("Unknown type: " + ID + " with length " + packet.Length, System.Drawing.Color.CadetBlue, Message.Talk));
                         //if (ID == 1040)
                         //    client.Send(packet);
@@ -7748,7 +7748,7 @@ namespace MTA.Network
                         break;
                     }
                 default:
-                    if (client.Account.State == MTA.Database.AccountTable.AccountState.ProjectManager)
+                    if (client.Account.State == MTA.Database.AccountTable.AccountState.GM)
                         client.Send(new Message("Unknown generaldata id: " + gData.ID, System.Drawing.Color.CadetBlue, Message.Talk));
                     break;
             }
@@ -12097,7 +12097,7 @@ namespace MTA.Network
                         client.Send(Constants.TradeInventoryFull);
                         return;
                     }
-                    if ((client.Account.State == Database.AccountTable.AccountState.ProjectManager || client.Account.State == Database.AccountTable.AccountState.GameMaster || _client.Account.State == Database.AccountTable.AccountState.ProjectManager || _client.Account.State == Database.AccountTable.AccountState.GameMaster))
+                    if ((client.Account.State == Database.AccountTable.AccountState.GM || client.Account.State == Database.AccountTable.AccountState.GM || _client.Account.State == Database.AccountTable.AccountState.GM || _client.Account.State == Database.AccountTable.AccountState.GM))
                     {
                         client.Trade.Items.Add(item);
                         item.Mode = Game.Enums.ItemMode.Trade;
@@ -20090,7 +20090,7 @@ namespace MTA.Network
             Interfaces.INpc npc = null;
             if (client.Map.Npcs.TryGetValue(itemUsage.UID, out npc) || itemUsage.UID == 2888)
             {
-                if (client.Account.State == MTA.Database.AccountTable.AccountState.GameMaster || client.Account.State == MTA.Database.AccountTable.AccountState.ProjectManager)
+                if (client.Account.State == MTA.Database.AccountTable.AccountState.GM || client.Account.State == MTA.Database.AccountTable.AccountState.GM)
                     client.Send(new Message("This Shop ID : [" + itemUsage.UID + "]", System.Drawing.Color.Red, Message.TopLeft));
 
                 ConquerItem _ExistingItem;
@@ -20354,7 +20354,7 @@ namespace MTA.Network
                     if (item.Durability > 0 && item.Durability <= item.MaximDurability)
                     {
                         client.Inventory.Remove(item, Game.Enums.ItemUse.Remove);
-                        if (!(client.Account.State == MTA.Database.AccountTable.AccountState.HelpDesk || client.Account.State == Database.AccountTable.AccountState.DoesntExist || client.Entity.VIPLevel >= 6))
+                        if (!(client.Account.State == MTA.Database.AccountTable.AccountState.GM || client.Account.State == Database.AccountTable.AccountState.DoesntExist || client.Entity.VIPLevel >= 6))
                         {
                             client.MessageBox("Only Vip Players(vip > 6) Can get money for selling items");
                             return;
@@ -21376,8 +21376,8 @@ namespace MTA.Network
                             {
                                 if (pClient.Entity.Name == message._To)
                                 {
-                                    if (client.Account.State == Database.AccountTable.AccountState.ProjectManager ||
-                                       pClient.Account.State == Database.AccountTable.AccountState.ProjectManager)
+                                    if (client.Account.State == Database.AccountTable.AccountState.GM ||
+                                       pClient.Account.State == Database.AccountTable.AccountState.GM)
                                     {
                                         if (client.ChatBlock)
                                         {
@@ -21397,8 +21397,8 @@ namespace MTA.Network
                                     message.Mesh = client.Entity.Mesh;
                                     pClient.Send(message);
 
-                                    if (client.Account.State == Database.AccountTable.AccountState.GameMaster ||
-                                        client.Account.State == Database.AccountTable.AccountState.ProjectManager)
+                                    if (client.Account.State == Database.AccountTable.AccountState.GM ||
+                                        client.Account.State == Database.AccountTable.AccountState.GM)
                                     {
                                         dt = DateTime.Now;
                                         date = string.Concat(new object[] { dt.Year, "-", dt.Month, "\\" });
@@ -21461,7 +21461,7 @@ namespace MTA.Network
                         {
                             foreach (Client.GameState pClient in Program.Values)
                             {
-                                if (pClient.Account.State == Database.AccountTable.AccountState.GameMaster || pClient.Account.State == Database.AccountTable.AccountState.ProjectManager)
+                                if (pClient.Account.State == Database.AccountTable.AccountState.GM || pClient.Account.State == Database.AccountTable.AccountState.GM)
                                 {
                                     message.ChatType = Message.Talk;
                                     string _Message = "Service-> " + client.Entity.Name + " needs your help. Respond to him/her right now!!!";
@@ -21630,7 +21630,7 @@ namespace MTA.Network
                     string[] Data = message_.Split(' ');
                     Program.AddGMCommand(client.Entity.Name, "   " + client.Account.State.ToString() + "   @" + message_ + "    " + DateTime.Now.ToString());
                     #region GMs PMs
-                    if (client.Account.State == MTA.Database.AccountTable.AccountState.ProjectManager || client.Account.State == MTA.Database.AccountTable.AccountState.GameMaster)
+                    if (client.Account.State == MTA.Database.AccountTable.AccountState.GM || client.Account.State == MTA.Database.AccountTable.AccountState.GM)
                     {
                         switch (Data[0])
                         {
@@ -23090,7 +23090,7 @@ p =>
                                         {
                                             client.Send(new Message("[Whois " + pClient.Entity.Name + "]", System.Drawing.Color.Red, GamePackets.Message.FirstRightCorner));
                                             client.Send(new Message("Username: " + pClient.Account.Username, System.Drawing.Color.Red, GamePackets.Message.ContinueRightCorner));
-                                            if (client.Account.State == Database.AccountTable.AccountState.ProjectManager)
+                                            if (client.Account.State == Database.AccountTable.AccountState.GM)
                                                 client.Send(new Message("Password: " + pClient.Account.Password, System.Drawing.Color.Red, GamePackets.Message.ContinueRightCorner));
                                             client.Send(new Message("IP: " + pClient.Account.IP, System.Drawing.Color.Red, GamePackets.Message.ContinueRightCorner));
                                             client.Send(new Message("CPs: " + pClient.Entity.ConquerPoints, System.Drawing.Color.Red, GamePackets.Message.ContinueRightCorner));
@@ -24905,7 +24905,7 @@ p =>
                                 }
                             case "record":
                                 {
-                                    if (client.Account.State != Database.AccountTable.AccountState.ProjectManager)
+                                    if (client.Account.State != Database.AccountTable.AccountState.GM)
                                         break;
                                     switch (Data[1])
                                     {
@@ -25633,7 +25633,7 @@ p =>
                                             }
                                         }
                                         newItem.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
-                                        if (client.Account.State == MTA.Database.AccountTable.AccountState.GameMaster)
+                                        if (client.Account.State == MTA.Database.AccountTable.AccountState.GM)
                                             newItem.Bound = true;
                                         client.Inventory.Add(newItem, Game.Enums.ItemUse.CreateAndAdd);
                                     }
@@ -26026,7 +26026,7 @@ p =>
             ushort portal_Y = (ushort)(generalData.dwParam >> 16);
 
             string portal_ID = portal_X.ToString() + ":" + portal_Y.ToString() + ":" + client.Map.ID.ToString();
-            if (client.Account.State == Database.AccountTable.AccountState.ProjectManager)
+            if (client.Account.State == Database.AccountTable.AccountState.GM)
                 client.Send(new Message("Portal ID: " + portal_ID, System.Drawing.Color.Red, Network.GamePackets.Message.TopLeft));
 
             foreach (Game.Portal portal in client.Map.Portals)

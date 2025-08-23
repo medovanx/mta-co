@@ -37,7 +37,7 @@ namespace Conquer_Online_Server.Game
         {
             if (Running == false)
             {
-                if (client.Entity.MapID == cMap && client.Account.State != Database.AccountTable.AccountState.ProjectManager)
+                if (client.Entity.MapID == cMap && client.Account.State != Database.AccountTable.AccountState.GM)
                 {
                     client.Entity.Teleport(1002, 429, 378);
                     client.Send("ZiraxCoins has Ended and You have teleported to tc");

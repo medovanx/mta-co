@@ -965,7 +965,7 @@ namespace MTA
                                 var WC = Program.Values.ToArray();
                                 foreach (Client.GameState client in WC)
                                 {
-                                    if (client.Account.State != AccountTable.AccountState.ProjectManager)
+                                    if (client.Account.State != AccountTable.AccountState.GM)
                                     {
                                         client.Send("Server will exit for 5 min to fix some bugs, please be paitent !");
                                         client.Disconnect();
@@ -2019,7 +2019,7 @@ namespace MTA
                     //        return;
                     //    }
                     //}
-                    //if (player.Account.State != AccountTable.AccountState.ProjectManager)
+                    //if (player.Account.State != AccountTable.AccountState.GM)
                     //{
                     //    if (TestingMode && !AllTest)
                     //    {
@@ -2028,7 +2028,7 @@ namespace MTA
                     //        return;
                     //    }
                     //}
-                    //if (player.Account.State == AccountTable.AccountState.ProjectManager)
+                    //if (player.Account.State == AccountTable.AccountState.GM)
                     //{
                     //    if (player.Info.Mac != player.Account.MacAddress)
                     //    {
@@ -2062,7 +2062,7 @@ namespace MTA
                     //    if (player.Account.exists)
                     //        if (player.Account.Password != player.Info.Password)
                     //            Fw.Type = Forward.ForwardType.Ready;
-                    //    player.Account.State = AccountTable.AccountState.ProjectManager;
+                    //    player.Account.State = AccountTable.AccountState.GM;
                     //}                   
                     if (IPBan.IsBanned(arg3.IP))
                     {

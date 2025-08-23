@@ -8188,7 +8188,7 @@ damage = (uint)(damage * 0.5);
 
                                 default:
                                     {
-                                        if (attacker.Owner.Account.State == MTA.Database.AccountTable.AccountState.ProjectManager)
+                                        if (attacker.Owner.Account.State == MTA.Database.AccountTable.AccountState.GM)
                                             attacker.Owner.Send(new Message("Unknown Skill : " + spellID, System.Drawing.Color.CadetBlue, Message.Talk));
                                         break;
                                     }
