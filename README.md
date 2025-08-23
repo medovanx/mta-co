@@ -22,7 +22,7 @@ Conquer Online game server implementation in C#.
 
 3. **Build**
    - Press `Ctrl+Shift+B` in Visual Studio
-   - Or use: `msbuild MTA.sln /p:Configuration=Release`
+   - Or use: `msbuild MTA.sln /p:Configuration=Debug`
 
 ### Using VS Code
 1. **Open the project**
@@ -37,7 +37,7 @@ Conquer Online game server implementation in C#.
 
 3. **Build**
    ```cmd
-   dotnet build --configuration Release
+   dotnet build --configuration Debug
    ```
 
 ### Final Steps (Both IDEs)
@@ -47,7 +47,7 @@ Conquer Online game server implementation in C#.
 
 5. **Start server**
    ```cmd
-   cd bin\Release
+   cd bin\Debug
    MTA.exe
    ```
 

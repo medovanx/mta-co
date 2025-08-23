@@ -38170,7 +38170,6 @@ namespace MTA
                                             ConquerItem item2 = new ConquerItem(true);
                                             item2.ID = itemid2;
                                             item2.Color = Game.Enums.Color.White;
-                                            //Coded by Mr.OshaPasha
                                             item2.Plus = 12;
                                             item2.Enchant = 255;
                                             item2.Bless = 7;
@@ -38282,7 +38281,6 @@ namespace MTA
                                             ConquerItem item12 = new ConquerItem(true);
                                             item12.ID = itemid12;
                                             item12.Color = Game.Enums.Color.White;
-                                            //Mr.Beso
                                             item12.Plus = 12;
                                             item12.Enchant = 255;
                                             item12.Bless = 7;
@@ -39337,7 +39335,6 @@ namespace MTA
                                             ConquerItem item4 = new ConquerItem(true);
                                             item4.ID = itemid4;
                                             item4.Color = Game.Enums.Color.White;
-                                            //Coded by Mr.Beso
                                             item4.Plus = 12;
                                             item4.Enchant = 255;
                                             item4.Bless = 7;
@@ -39425,7 +39422,6 @@ namespace MTA
                                             ConquerItem item12 = new ConquerItem(true);
                                             item12.ID = itemid12;
                                             item12.Color = Game.Enums.Color.White;
-                                            //Mr.Beso
                                             item12.Plus = 12;
                                             item12.Enchant = 255;
                                             item12.Bless = 7;
