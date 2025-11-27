@@ -27,3 +27,9 @@ Conquer Online game server implementation in C#.
    cd bin\Debug
    MTA.exe
    ```
+
+## Taking a database dump
+
+```cmd
+mysqldump -h 127.0.0.1 -u root -pROOT --lock-all-tables --set-gtid-purged=OFF mta > mta.sql
+```
