@@ -127,7 +127,7 @@ namespace MTA.Game
         private void LoadTop8()
         {
             Top8 = new FighterStats[8];
-            byte[] bytes = Program.Vars["epk" + GroupID];;
+            byte[] bytes = Program.Vars["epk" + GroupID]; ;
             if (bytes == null)
             {
                 for (int i = 0; i < 8; i++)
@@ -752,7 +752,7 @@ namespace MTA.Game
                         Kernel.SendWorldMessage(brackets);
 
                         //foreach (var clients in Kernel.GamePool.Values)
-                          //  ElitePKTournament.GiveClientReward(clients);
+                        //  ElitePKTournament.GiveClientReward(clients);
 
                         Kernel.SendWorldMessage(new ElitePKBrackets(true) { Group = (ushort)GroupID, Type = 6, OnGoing = false });
 

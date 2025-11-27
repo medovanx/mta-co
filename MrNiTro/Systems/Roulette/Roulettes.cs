@@ -354,7 +354,7 @@ namespace MTA.MaTrix.Roulette.Database
                             if (Entity.Owner.Entity.ConquerPoints >= Cost)
                             {
                                 Entity.Owner.Entity.ConquerPoints -= Cost;
-                                
+
                             }
                             else
                             {
@@ -370,7 +370,7 @@ namespace MTA.MaTrix.Roulette.Database
                             if (Entity.Owner.Entity.Money >= Cost)
                             {
                                 Entity.Owner.Entity.Money -= Cost;
-                               
+
                             }
                             else
                             {
@@ -549,13 +549,13 @@ namespace MTA.MaTrix.Roulette.Database
                         case MsgRouletteTable.TableType.Money:
                             {
                                 Member.Owner.Entity.Money += Member.Winning;
-                              
+
                                 break;
                             }
                         case MsgRouletteTable.TableType.ConquerPoints:
                             {
                                 Member.Owner.Entity.ConquerPoints += Member.Winning;
-                               
+
                                 break;
                             }
 

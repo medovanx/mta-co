@@ -7,10 +7,10 @@
     {
         public SafeDictionary()
         {
-          
+
         }
         public SafeDictionary(int nulledNumber)
-        {          
+        {
         }
 
         public void Add(T key, T2 value)

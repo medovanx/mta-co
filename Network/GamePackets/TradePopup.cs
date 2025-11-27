@@ -77,15 +77,15 @@ namespace MTA.Network.GamePackets
             get { return Buffer[27] == 1; }
             set { Buffer[27] = value == true ? (byte)1 : (byte)0; }
         }
-       
+
         public uint Test2
         {
             get { return BitConverter.ToUInt32(Buffer, 28); }
             set { WriteUInt32(value, 28, Buffer); }
         }
-            
-            
-       
+
+
+
         public void Deserialize(byte[] buffer)
         {
             Buffer = buffer;

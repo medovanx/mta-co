@@ -47,7 +47,7 @@ namespace MTA.Network.GamePackets
             get { return BitConverter.ToInt32(buffer, 12); }
             set { WriteInt32(value, 12, buffer); }
         }
-        
+
         //For type EndTime
         public int dwParam2
         {

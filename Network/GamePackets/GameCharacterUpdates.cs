@@ -7,7 +7,7 @@ namespace MTA.Network.GamePackets
 {
     public class GameCharacterUpdates : Writer, Interfaces.IPacket
     {
-        public const uint 
+        public const uint
             Activated = 1 << 8,
             Deactivated = 1;
         public const uint

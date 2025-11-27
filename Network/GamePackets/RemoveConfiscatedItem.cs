@@ -19,7 +19,7 @@ namespace MTA.Network.GamePackets
                 WriteUInt16(1035, 2, Buffer);
             }
         }
-        
+
         public uint Page
         {
             get { return BitConverter.ToUInt32(Buffer, 4); }
@@ -41,7 +41,7 @@ namespace MTA.Network.GamePackets
         public uint DaysLeft
         {
             get { return (BitConverter.ToUInt32(Buffer, 16) + 7); }
-            set { WriteUInt32( 7 - value, 16, Buffer); }
+            set { WriteUInt32(7 - value, 16, Buffer); }
         }
 
         public void Send(Client.GameState client)

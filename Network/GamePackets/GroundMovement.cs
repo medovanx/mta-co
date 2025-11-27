@@ -67,7 +67,7 @@ namespace MTA.Network.GamePackets
         {
             List<uint> ptr2 = new List<uint>();
 
-            for (int i = 0; i < buffer.Length; )
+            for (int i = 0; i < buffer.Length;)
             {
                 if (i + 2 <= buffer.Length)
                 {

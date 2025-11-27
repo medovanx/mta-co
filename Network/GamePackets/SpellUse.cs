@@ -5,7 +5,7 @@ using System.IO;
 
 namespace MTA.Network.GamePackets
 {
-    public class Attacked { public ushort X, Y; public MTA.Game.Enums.ConquerAngle Facing;}
+    public class Attacked { public ushort X, Y; public MTA.Game.Enums.ConquerAngle Facing; }
     public class TryTrip : Interfaces.IPacket
     {
         public class DamageClass
@@ -209,10 +209,10 @@ namespace MTA.Network.GamePackets
                 byte[] buffer = new byte[64 + Targets.Count * 32];
                 Writer.WriteUInt16((ushort)(buffer.Length - 8), 0, buffer);
                 Writer.WriteUInt16(1105, 2, buffer);
-                Writer.WriteUInt32(Attacker, 4, buffer);                
+                Writer.WriteUInt32(Attacker, 4, buffer);
                 Writer.WriteUInt16(X, 8, buffer);
                 Writer.WriteUInt16(Y, 10, buffer);
-               
+
                 Writer.WriteUInt16(SpellID, 12, buffer);
                 Writer.WriteUInt16(SpellLevel, 14, buffer);
 

@@ -8,7 +8,7 @@ namespace MTA.Network.GamePackets
     public class GameUpdates : Writer, Interfaces.IPacket
     {
         private byte[] Buffer;
-        
+
         public const byte
             Header = 0,
             Body = 1,

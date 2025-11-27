@@ -10,7 +10,7 @@ namespace MTA.Game.ConquerStructures
 {
     public class SlotMachine
     {
-        public static readonly int[] Rates = new int[8] 
+        public static readonly int[] Rates = new int[8]
         {
             80, //Stancher
             340, //Meteor
@@ -45,7 +45,7 @@ namespace MTA.Game.ConquerStructures
 
         private int GetSLCount()
         {
-             return GetAmount(SlotMachineItems.Sword) + GetAmount(SlotMachineItems.SwordAndShield) + GetAmount(SlotMachineItems.TwoSwords) + GetAmount(SlotMachineItems.DragonBall);
+            return GetAmount(SlotMachineItems.Sword) + GetAmount(SlotMachineItems.SwordAndShield) + GetAmount(SlotMachineItems.TwoSwords) + GetAmount(SlotMachineItems.DragonBall);
         }
         private bool IsSL(SlotMachineItems item)
         {

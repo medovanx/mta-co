@@ -15,7 +15,7 @@ namespace MTA.MaTrix.Roulette
             WriteUshort((ushort)(Packet.Length - 8), 0, Packet);
             WriteUshort(GamePackets.MsgRouletteRecord, 2, Packet);
             WriteByte(WinnerNumber, 4, Packet);
-            WriteByte((byte)members.Length,5, Packet);           
+            WriteByte((byte)members.Length, 5, Packet);
             for (int x = 0; x < members.Length; x++)
             {
                 var element = members[x];
@@ -33,7 +33,7 @@ namespace MTA.MaTrix.Roulette
         {
             if (Packet != null)
             {
-                client.Send(Packet);                
+                client.Send(Packet);
             }
         }
     }

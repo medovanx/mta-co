@@ -25,7 +25,7 @@ namespace MTA.WebServer
         }
         public static SafeDictionary<string, TranServer> TranServers = new SafeDictionary<string, TranServer>();
         public static Network.Sockets.ServerSocket WebSocket;
-        public static object SynRoot = new object();        
+        public static object SynRoot = new object();
         public static void Create()
         {
             WebSocket = new ServerSocket();
@@ -39,7 +39,7 @@ namespace MTA.WebServer
         {
             WebSocket.Disable();
         }
-              
+
         public class Obj
         {
             public Network.BigConcurrentPacketQueue Packets;
@@ -58,14 +58,14 @@ namespace MTA.WebServer
 
         }
         static void GameServer_OnClientConnect(ClientWrapper obj)
-        {            
-             Obj client = new Obj(obj);
+        {
+            Obj client = new Obj(obj);
         }
         static void GameServer_OnClientDisconnect(ClientWrapper obj)
         {
             var client = obj.Connector as Obj;
             client.Disconnect();
-        }       
+        }
         static void GameServer_OnClientReceive(byte[] buffer, int length, ClientWrapper obj)
         {
             var client = obj.Connector as Obj;
@@ -277,6 +277,6 @@ namespace MTA.WebServer
                     count++;
             }
             return count;
-        }        
+        }
     }
 }

@@ -402,7 +402,7 @@ namespace MTA.TransferServer
                                 if (Client.Entity.MyJiang != null)
                                 {
                                     Client.Entity.MyJiang.UID = Client.Entity.UID;
-                               //     Database.JiangHu.New();
+                                    //     Database.JiangHu.New();
                                     Database.JiangHu.SaveJiangHu();
                                     if (!Game.JiangHu.JiangHuClients.ContainsKey(Client.Entity.UID))
                                         Game.JiangHu.JiangHuClients.TryAdd(Client.Entity.UID, Client.Entity.MyJiang);
@@ -417,7 +417,7 @@ namespace MTA.TransferServer
                                 Client.Account.Save();
 
                                 byte[] DoneTransfer = new MTA.TransferServer.DoneUser(player.UID, player.username).GetArray();
-                                Send(DoneTransfer, server);     
+                                Send(DoneTransfer, server);
                                 Console.WriteLine("Saving UID : " + account.EntityID + " Done.");
                             }
                             else

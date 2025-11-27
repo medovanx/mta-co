@@ -85,14 +85,14 @@ namespace MTA.Game
             if (client.Entity.MapID == 1081) return false;
             return (!Constants.PKFreeMaps.Contains(client.Map.ID) || client.Map.ID == 1005);
         }
-         private void KickAll()
+        private void KickAll()
         {
             var allinmap = Program.Values.ToArray().Where(p => p.Entity.MapID == dynamicMap.ID).ToArray();
-             if (allinmap != null)
-             {
-                 foreach (var p in allinmap)
-                   p.Entity.Teleport(1002, 303, 278);
-             }
+            if (allinmap != null)
+            {
+                foreach (var p in allinmap)
+                    p.Entity.Teleport(1002, 303, 278);
+            }
         }
 
         private void End(Guild winner, Guild Loser)
@@ -120,7 +120,7 @@ namespace MTA.Game
                 if (Client != null)
                 {
                     Client.Entity.BringToLife();
-                    Client.Entity.Teleport(1002, 303, 278);                    
+                    Client.Entity.Teleport(1002, 303, 278);
                 }
             }
         }
@@ -132,7 +132,7 @@ namespace MTA.Game
             {
                 if (Guildleader1 == gameClient)
                     End(Guild2, Guild1);
-               else if (Guildleader2 == gameClient)                
+                else if (Guildleader2 == gameClient)
                     End(Guild1, Guild2);
             }
             GuildSurive1 = Guild1.Members.Values.Where(mem => mem.Client != null).Any(mem => !mem.Client.Entity.Dead && mem.Client.Entity.MapID == dynamicMap.ID);

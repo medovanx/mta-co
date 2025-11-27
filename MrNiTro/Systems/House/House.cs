@@ -22,7 +22,7 @@ namespace MTA.MaTrix
             public Dictionary<uint, SobNpcSpawn> Furnitures;
             public Game.ConquerStructures.Warehouse Warehouse;
         }
-        public static SafeDictionary<uint, HouseInfo> Houses = new SafeDictionary<uint, HouseInfo>();        
+        public static SafeDictionary<uint, HouseInfo> Houses = new SafeDictionary<uint, HouseInfo>();
         public static void LoadHouses()
         {
             try
@@ -32,7 +32,7 @@ namespace MTA.MaTrix
                 MySqlReader reader = new MySqlReader(command);
                 while (reader.Read())
                 {
-                    HouseInfo info = new HouseInfo();  
+                    HouseInfo info = new HouseInfo();
                     info.UID = reader.ReadUInt32("UID");
                     info.Name = reader.ReadString("Name");
                     info.ID = reader.ReadUInt16("ID");
@@ -65,8 +65,8 @@ namespace MTA.MaTrix
                                     Base.Type = (Enums.NpcType)26;
                                 Base.MapID = info.ID;
                                 if (!info.Furnitures.ContainsKey(Base.UID))
-                                    info.Furnitures.Add(Base.UID, Base); 
-                              
+                                    info.Furnitures.Add(Base.UID, Base);
+
                             }
                         }
                     }
@@ -126,8 +126,8 @@ namespace MTA.MaTrix
         }
         ///////////////////////////////////////////////////
         public static void createhouse(GameState client)
-        {            
-            HouseInfo info = new HouseInfo();  
+        {
+            HouseInfo info = new HouseInfo();
             info.UID = client.Entity.UID;
             info.Name = client.Entity.Name;
             info.ID = (ushort)client.Entity.UID;
@@ -156,7 +156,7 @@ namespace MTA.MaTrix
                 _base = 1765;
             if (level == 4)
                 _base = 3024;
-           
+
             level++;
             if (level > 5)
                 return;
@@ -173,11 +173,11 @@ namespace MTA.MaTrix
             {
                 Houses[client.Entity.UID].maptype = _base;
                 Houses[client.Entity.UID].level = level;
-           //     Houses[client.Entity.UID].Furnitures = new Dictionary<uint, SobNpcSpawn>();
+                //     Houses[client.Entity.UID].Furnitures = new Dictionary<uint, SobNpcSpawn>();
                 SaveFurnitures(client);
             }
         }
-               
+
         public static void TelePort(GameState client, HouseInfo info)
         {
             if (client.Entity.EntityFlag == EntityFlag.Player)
@@ -200,16 +200,16 @@ namespace MTA.MaTrix
                     if (client.InQualifier())
                         if (client.InQualifier())
                             if (client.Entity.MapID != 700 && client.Entity.MapID < 11000)
-                            client.EndQualifier();
+                                client.EndQualifier();
                 }
-               
+
                 client.Entity.X = X;
                 client.Entity.Y = Y;
                 client.Entity.PX = 0;
                 client.Entity.PY = 0;
                 client.Entity.PreviousMapID = client.Entity.MapID;
                 client.Entity.MapID = info.ID;
-                
+
                 Network.GamePackets.Data Data = new Network.GamePackets.Data(true);
                 Data.UID = client.Entity.UID;
                 Data.ID = Network.GamePackets.Data.Teleport;
@@ -234,7 +234,7 @@ namespace MTA.MaTrix
                         if (!client.Warehouses.ContainsKey((Game.ConquerStructures.Warehouse.WarehouseID)itembox.UID))
                         {
                             if (info.Warehouse == null)
-                                info.Warehouse = new Game.ConquerStructures.Warehouse(null, (Game.ConquerStructures.Warehouse.WarehouseID)itembox.UID);                                 
+                                info.Warehouse = new Game.ConquerStructures.Warehouse(null, (Game.ConquerStructures.Warehouse.WarehouseID)itembox.UID);
                             client.Warehouses.Add((Game.ConquerStructures.Warehouse.WarehouseID)itembox.UID, info.Warehouse);
                         }
                     }
@@ -322,7 +322,7 @@ namespace MTA.MaTrix
 
         public static bool SpouseWarehouse(GameState client, Warehouse warehousepacket)
         {
-            HouseWarehouse(client, warehousepacket);            
+            HouseWarehouse(client, warehousepacket);
             var info = MaTrix.House.SpouseHouse(client.Entity.Spouse);
             if (info == null || client.Entity.MapID == client.Entity.UID)
                 info = Houses[client.Entity.UID];
@@ -412,8 +412,8 @@ namespace MTA.MaTrix
                             }
 
                     }
-                
-                
+
+
                 }
             }
             return false;

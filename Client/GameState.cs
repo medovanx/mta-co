@@ -63,10 +63,10 @@ namespace MTA.Client
             return "en";
 
         }
-        public Languages Language = Languages.English;  
+        public Languages Language = Languages.English;
         public Time32 bodeSHStamp;
         public bool FTbode = false;
-      //  public Game.InnerPower InnerPower;
+        //  public Game.InnerPower InnerPower;
         public bool InWareHouse()
         {
             foreach (var wh in Warehouses.Values)
@@ -78,7 +78,7 @@ namespace MTA.Client
         }
         public void BlessTouch(GameState client)
         {
-           
+
             if (!client.Spells.ContainsKey(12390))
                 return;
 
@@ -129,7 +129,7 @@ namespace MTA.Client
         }
 
         public void BreakTouch(GameState client)
-        {           
+        {
             if (!client.Spells.ContainsKey(12400))
                 return;
 
@@ -150,7 +150,7 @@ namespace MTA.Client
 
                     var array = Game.Attacking.Handle.PlayerinRange(Entity, Entity).ToArray();
                     foreach (var target in array)
-                    {                       
+                    {
                         var attacked = target.Entity;
                         if (attacked.UID == client.Entity.UID)
                             continue;
@@ -159,7 +159,7 @@ namespace MTA.Client
                             var attack = new Attack(true);
                             attack.Attacker = client.Entity.UID;
                             attack.Attacked = attacked.UID;
-                          
+
                             uint damage = Game.Attacking.Calculate.Magic(client.Entity, attacked, ref attack);
 
                             attack.Damage = damage;
@@ -202,8 +202,8 @@ namespace MTA.Client
                 }
                 Entity.lianhuaranStamp = Time32.Now;
                 Entity.lianhuaranLeft = 20;
-                
-                client.IncreaseSpellExperience(100, 12400);               
+
+                client.IncreaseSpellExperience(100, 12400);
             }
         }
         public uint SashSlots
@@ -219,7 +219,7 @@ namespace MTA.Client
                 }
             }
         }
-        
+
         public SafeDictionary<MTA.Network.GamePackets.Update.AuraType, MaTrix.Auras> Auras = new SafeDictionary<Update.AuraType, MaTrix.Auras>(8);
         public GameState[] MonksInTeam()
         {
@@ -260,8 +260,9 @@ namespace MTA.Client
                                     Auras.Add(Aura.aura, Aura);
                                     this.Entity.AddFlag2(Aura.TeamAuraStatusFlag);
                                     new Update(true).Aura(this.Entity, Update.AuraDataTypes.Add, aura, Aura.TeamAuraLevel, Aura.TeamAuraPower);
-                                    this.doAuraBonuses(Aura.TeamAuraStatusFlag, Aura.TeamAuraPower, 1);                                }
-                               
+                                    this.doAuraBonuses(Aura.TeamAuraStatusFlag, Aura.TeamAuraPower, 1);
+                                }
+
                             }
                         }
                     }
@@ -301,7 +302,7 @@ namespace MTA.Client
                 }
             }
 
-        
+
         }
         public Franko.ProgressBar ProgressBar;
         public bool TransferedPlayer;
@@ -413,7 +414,7 @@ namespace MTA.Client
         public string Country { get; set; }
 
         public DateTime timerattack = new DateTime();
-        public GameState LobbyPlayWith;        
+        public GameState LobbyPlayWith;
         public bool LobbySignup
         {
             get { return this["LobbySignup"]; }
@@ -443,7 +444,7 @@ namespace MTA.Client
         public MaTrix.Quests Quests;
         public MaTrix.AI AI;
         public SafeDictionary<uint, MaTrix.Inbox.PrizeInfo> Prizes = new SafeDictionary<uint, MaTrix.Inbox.PrizeInfo>(1000);
-        public string NewName = "";        
+        public string NewName = "";
         public int PingCount { get; set; }
         public byte Claimeds
         {
@@ -453,8 +454,8 @@ namespace MTA.Client
                 this["Claimeds"] = value;
             }
         }
-       
-        public bool JiangActive = false;   
+
+        public bool JiangActive = false;
         public bool StudyToday
         {
             get { return this["StudyToday"]; }
@@ -479,7 +480,7 @@ namespace MTA.Client
                 this["ResetUsedCourses"] = value;
             }
         }
-        
+
         public bool JoinedDBMap
         {
             get { return this["JoinedDBMap"]; }
@@ -507,16 +508,16 @@ namespace MTA.Client
         public bool _voted;
         public bool Voted
         {
-            get 
-            { 
-                return _voted; 
+            get
+            {
+                return _voted;
             }
             set
             {
-                _voted = value;              
+                _voted = value;
                 new Database.MySqlCommand(MTA.Database.MySqlCommandType.UPDATE)
                     .Update("entities").Set("VotePoint", value).Where("UID", Entity.UID).Execute();
-        
+
             }
         }
         public DateTime VoteStamp
@@ -543,7 +544,7 @@ namespace MTA.Client
                 this["matrixtime"] = value;
             }
         }
-    
+
         public ulong Donationx
         {
             get { return this["Donationx"]; }
@@ -552,7 +553,7 @@ namespace MTA.Client
                 this["Donationx"] = value;
             }
         }
-       
+
         public string Command = "";
         public bool OnDonation
         {
@@ -628,7 +629,7 @@ namespace MTA.Client
                 Weapons = new Tuple<ConquerItem, ConquerItem>(null, null);
                 ItemSyncRoot = new object();
                 Screen = new Game.Screen(this);
-              //  if (!Program.ServerTransfer)
+                //  if (!Program.ServerTransfer)
                 {
                     Pet = new MaTrix.Pet(this);
                     AI = new MaTrix.AI(this);
@@ -651,7 +652,7 @@ namespace MTA.Client
                     Warehouses.Add(MTA.Game.ConquerStructures.Warehouse.WarehouseID.StoneCity, new Game.ConquerStructures.Warehouse(this, MTA.Game.ConquerStructures.Warehouse.WarehouseID.StoneCity));
                     Warehouses.Add(MTA.Game.ConquerStructures.Warehouse.WarehouseID.Market, new Game.ConquerStructures.Warehouse(this, MTA.Game.ConquerStructures.Warehouse.WarehouseID.Market));
                     Warehouses.Add(MTA.Game.ConquerStructures.Warehouse.WarehouseID.Poker, new Game.ConquerStructures.Warehouse(this, MTA.Game.ConquerStructures.Warehouse.WarehouseID.Poker));
-                    
+
                     if (Account != null)
                     {
                         if (!Warehouses.ContainsKey((MTA.Game.ConquerStructures.Warehouse.WarehouseID)Account.EntityID))
@@ -826,7 +827,7 @@ namespace MTA.Client
             if (OnDisconnect != null) OnDisconnect(this);
             if (_socket.Connector != null)
             {
-               
+
                 _socket.Disconnect();
                 ShutDown();
             }
@@ -860,13 +861,13 @@ namespace MTA.Client
                     Kernel.DisconnectPool.Add(this.Entity.UID, this);
                     RemoveScreenSpawn(this.Entity, false);
                     if (Entity != null && Entity.WTitles != null)
-                        Entity.WTitles.Update(); 
+                        Entity.WTitles.Update();
                     using (var conn = Database.DataHolder.MySqlConnection)
                     {
                         conn.Open();
                         Database.EntityTable.UpdateOnlineStatus(this, false, conn);
                         InnerPowerTable.Save();
-                        Database.EntityTable.SaveEntity(this, conn);   
+                        Database.EntityTable.SaveEntity(this, conn);
                         if (!TransferedPlayer)
                             Database.EntityVariableTable.Save(this, conn);
                         Database.SkillTable.SaveProficiencies(this, conn);
@@ -884,7 +885,7 @@ namespace MTA.Client
                     }
                     Kernel.GamePool.Remove(this.Entity.UID);
 
-   
+
 
                     if (Booth != null)
                         Booth.Remove();
@@ -892,7 +893,7 @@ namespace MTA.Client
                     if (Entity.MyClones.Count > 0)
                     {
                         foreach (var item in Entity.MyClones.Values)
-                        {                            
+                        {
                             Data data = new Data(true);
                             data.UID = item.UID;
                             data.ID = Network.GamePackets.Data.RemoveEntity;
@@ -918,14 +919,14 @@ namespace MTA.Client
                     if (Challenge != null)
                         Challenge.End(this);
 
-                   
+
 
                     Game.Arena.Clear(this);
                     Game.TeamArena.Clear(this);
                     Game.Champion.Clear(this);
 
                     RemoveScreenSpawn(this.Entity, false);
-                    
+
                     #region Friend/TradePartner/Apprentice
                     Message msg = new Message("Your friend, " + Entity.Name + ", has logged off.", System.Drawing.Color.Red, Message.TopLeft);
                     if (Friends == null)
@@ -1026,43 +1027,43 @@ namespace MTA.Client
 
                     #endregion
                     #region Team
-                   /* if (Team != null)
-                    {
-                        if (Team.TeamLeader)
-                        {
-                            Network.GamePackets.Team team = new Network.GamePackets.Team();
-                            team.UID = Account.EntityID;
-                            team.Type = Network.GamePackets.Team.Dismiss;
-                            foreach (Client.GameState Teammate in Team.Teammates)
-                            {
-                                if (Teammate != null)
-                                {
-                                    if (Teammate.Entity.UID != Account.EntityID)
-                                    {
-                                        Teammate.Send(team);
-                                        Teammate.Team = null;
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            Network.GamePackets.Team team = new Network.GamePackets.Team();
-                            team.UID = Account.EntityID;
-                            team.Type = Network.GamePackets.Team.ExitTeam;
-                            foreach (Client.GameState Teammate in Team.Teammates)
-                            {
-                                if (Teammate != null)
-                                {
-                                    if (Teammate.Entity.UID != Account.EntityID)
-                                    {
-                                        Teammate.Send(team);
-                                        Teammate.Team.Remove(this);
-                                    }
-                                }
-                            }
-                        }
-                    }*/
+                    /* if (Team != null)
+                     {
+                         if (Team.TeamLeader)
+                         {
+                             Network.GamePackets.Team team = new Network.GamePackets.Team();
+                             team.UID = Account.EntityID;
+                             team.Type = Network.GamePackets.Team.Dismiss;
+                             foreach (Client.GameState Teammate in Team.Teammates)
+                             {
+                                 if (Teammate != null)
+                                 {
+                                     if (Teammate.Entity.UID != Account.EntityID)
+                                     {
+                                         Teammate.Send(team);
+                                         Teammate.Team = null;
+                                     }
+                                 }
+                             }
+                         }
+                         else
+                         {
+                             Network.GamePackets.Team team = new Network.GamePackets.Team();
+                             team.UID = Account.EntityID;
+                             team.Type = Network.GamePackets.Team.ExitTeam;
+                             foreach (Client.GameState Teammate in Team.Teammates)
+                             {
+                                 if (Teammate != null)
+                                 {
+                                     if (Teammate.Entity.UID != Account.EntityID)
+                                     {
+                                         Teammate.Send(team);
+                                         Teammate.Team.Remove(this);
+                                     }
+                                 }
+                             }
+                         }
+                     }*/
                     #endregion
                     if (Team != null)
                     {
@@ -1331,7 +1332,7 @@ namespace MTA.Client
         public int speedHackSuspiction = 0;
         public Time32 LastPingT;
         public uint LastPingStamp = 0;
-       // public Game.Entity Companion;
+        // public Game.Entity Companion;
 
         public List<GameState> Prayers;
         public GameState PrayLead;
@@ -1369,7 +1370,7 @@ namespace MTA.Client
         public bool ValidArmorLook(uint id)
         {
             if (id == 0) return false;
-            
+
             var soulInfo = Database.AddingInformationTable.SoulGearItems[id];
             if (id >= 800000 && id < 900000)
             {
@@ -1379,17 +1380,17 @@ namespace MTA.Client
                     else { }
                 else
                     if (Network.PacketHandler.ItemPosition((uint)(soulInfo.ItemIdentifier * 1000)) != ConquerItem.Armor)
-                        return false;
+                    return false;
             }
             else
                 if (Network.PacketHandler.ItemPosition(id) != ConquerItem.Armor)
-                    return false;
+                return false;
             return true;
         }
         public bool ValidHeadgearLook(uint id)
         {
             if (id == 0) return false;
-           
+
             var soulInfo = Database.AddingInformationTable.SoulGearItems[id];
             if (id >= 800000 && id < 900000)
             {
@@ -1399,18 +1400,18 @@ namespace MTA.Client
                     else { }
                 else
                     if (Network.PacketHandler.ItemPosition((uint)(soulInfo.ItemIdentifier * 1000)) != ConquerItem.Head)
-                        return false;
+                    return false;
             }
             else
                 if (Network.PacketHandler.ItemPosition(id) != ConquerItem.Head)
-                    return false;
+                return false;
             return true;
         }
         public bool ValidWeaponLook(uint id)
         {
             if (id == 0) return false;
-                if (Network.PacketHandler.ItemPosition(id) != ConquerItem.RightWeapon)
-                    return false;
+            if (Network.PacketHandler.ItemPosition(id) != ConquerItem.RightWeapon)
+                return false;
             return true;
         }
         public bool ValidWeaponLook2(uint id)
@@ -1425,7 +1426,7 @@ namespace MTA.Client
             {
                 if (Network.PacketHandler.IsTwoHand(id))
                     return false;
-            }            
+            }
             return true;
         }
 
@@ -1436,8 +1437,8 @@ namespace MTA.Client
             Game.Enums.ItemQuality Quality = Game.Enums.ItemQuality.Fixed;
             var itemx = Equipment.TryGetItem((byte)pos);
             if (itemx != null)
-                Quality = (Enums.ItemQuality)(itemx.ID % 10);          
-            
+                Quality = (Enums.ItemQuality)(itemx.ID % 10);
+
             foreach (var item in Database.ConquerItemInformation.BaseInformations.Values)
             {
                 if (pos == ConquerItem.Armor)
@@ -1603,7 +1604,7 @@ namespace MTA.Client
                 WeaponLook = id;
             if (!ValidWeaponLook(id)) return;
             int min = 0;
-           
+
             var item = Equipment.TryGetItem(ConquerItem.RightWeapon);
             var iu = new Network.GamePackets.ItemUsage(true);
             iu.UID = uint.MaxValue - 3;
@@ -1616,7 +1617,7 @@ namespace MTA.Client
             Send(iu);
 
             id = CheckLook(Database.ConquerItemInformation.BaseInformations[id].LowerName, ConquerItem.RightWeapon, out min).ID;
-          
+
             ConquerItem fakeItem = new Network.GamePackets.ConquerItem(true);
             fakeItem.ID = id;
             if (item != null)
@@ -1632,17 +1633,17 @@ namespace MTA.Client
                 fakeItem.Lock = 1;
             }
             fakeItem.Durability = 1;
-            fakeItem.MaximDurability = 1;         
+            fakeItem.MaximDurability = 1;
             fakeItem.UID = uint.MaxValue - 3;
             fakeItem.Position = ConquerItem.RightWeaponAccessory;
             Send(fakeItem);
             fakeItem.Mode = Enums.ItemMode.Update;
             Send(fakeItem);
-            ClientEquip eqs = new ClientEquip();            
+            ClientEquip eqs = new ClientEquip();
             eqs.DoEquips(this);
             Send(eqs);
             Equipment.UpdateEntityPacket();
-            
+
         }
         public void SetNewWeaponLook2(uint id, bool change = true)
         {
@@ -1686,7 +1687,7 @@ namespace MTA.Client
             Send(fakeItem);
             fakeItem.Mode = Enums.ItemMode.Update;
             Send(fakeItem);
-            ClientEquip eqs = new ClientEquip();            
+            ClientEquip eqs = new ClientEquip();
             eqs.DoEquips(this);
             Send(eqs);
             Equipment.UpdateEntityPacket();
@@ -1728,8 +1729,8 @@ namespace MTA.Client
                 _Maxvigor = value;
             }
 
-        }      
-           
+        }
+
 
         public bool HeadgearClaim, NecklaceClaim, ArmorClaim, WeaponClaim, RingClaim, BootsClaim, TowerClaim, FanClaim;
         public string PromoteItemNameNeed
@@ -2382,7 +2383,7 @@ namespace MTA.Client
                 }
                 return map;
             }
-        }  
+        }
 
         public uint ExpBall
         {
@@ -2451,7 +2452,7 @@ namespace MTA.Client
 
                 return true;
             }
-        }       
+        }
         public bool RemoveSpell(Interfaces.ISkill spell)
         {
             if (Spells.ContainsKey(spell.ID))
@@ -3163,12 +3164,12 @@ namespace MTA.Client
 
             #endregion
 
-     
 
 
-                #region Adding earned skills
 
-                if (Entity.Reborn == 2)
+            #region Adding earned skills
+
+            if (Entity.Reborn == 2)
                 AddSpell(new Spell(true) { ID = 9876 });
             if (toClass == 51 && PreviousClass == 55 && Entity.Reborn == 1)
                 AddSpell(new Spell(true) { ID = 6002 });
@@ -3254,7 +3255,7 @@ namespace MTA.Client
                 if (Entity.SecondRebornClass == 55 && Entity.Class == 41)
                 {
                     RemoveSpell(new Spell(false) { ID = 6002 });
-                  //   RemoveSpell(new Spell(false) { ID = 8001 });
+                    //   RemoveSpell(new Spell(false) { ID = 8001 });
                 }
                 if (Entity.SecondRebornClass == 55 && Entity.Class == 81)
                 {
@@ -3807,7 +3808,7 @@ namespace MTA.Client
         //    {
         //        Entity.MyJiang.CreateStatusAtributes(Entity);
         //    }
-            
+
         //    if (Entity.Aura_isActive)
         //        doAuraBonuses(Entity.Aura_actType, Entity.Aura_actPower, 1);
         //    else
@@ -4336,7 +4337,7 @@ namespace MTA.Client
                 default: Entity.MaxHitpoints = (uint)StatHP; break;
             }
             Entity.MaxHitpoints += Entity.ItemHP;
-            Entity.MaxHitpoints += Entity.Intensification;          
+            Entity.MaxHitpoints += Entity.Intensification;
             Entity.Hitpoints = Math.Min(Entity.Hitpoints, Entity.MaxHitpoints);
         }
         public void CalculateStatBonus()
@@ -4536,7 +4537,7 @@ namespace MTA.Client
             Entity.MagicDamageDecrease =
             Entity.MagicDamageIncrease = 0;
             Entity.ItemHP = 0;
-            Entity.PerfectionLevel = 0;  
+            Entity.PerfectionLevel = 0;
             Entity.ItemHP =
             Entity.ItemMP =
             Entity.AttackRange = (byte)0;
@@ -4585,7 +4586,7 @@ namespace MTA.Client
             Entity.Weight = 0;
             Entity.Accuracy = 0;
             #endregion
-foreach (ConquerItem i in Equipment.Objects)
+            foreach (ConquerItem i in Equipment.Objects)
             {
                 if (i == null) continue;
                 if (i.Durability == 0) continue;
@@ -4604,7 +4605,7 @@ foreach (ConquerItem i in Equipment.Objects)
                         loadItemStats(Weapons.Item2);
                     else
                         if (PacketHandler.IsFranko(Weapons.Item2.ID) || (Entity.Class >= 20 && Entity.Class <= 25))
-                            loadItemStats(Weapons.Item2);
+                        loadItemStats(Weapons.Item2);
                 }
             }
 
@@ -4754,11 +4755,11 @@ foreach (ConquerItem i in Equipment.Objects)
             }
             if (Entity.Class >= 60 && Entity.Class <= 65)
                 Entity.AttackRange += 2;
-          
-            
+
+
             /*if (Entity.CriticalStrike > 9000)
                 Entity.CriticalStrike = 9000;*/
-                      
+
             CalculateStatBonus();
             CalculateHPBonus();
             ReviewMentor();
@@ -4856,7 +4857,7 @@ foreach (ConquerItem i in Equipment.Objects)
                     Vigor = MaxVigor;
                 }
             }
-        }  
+        }
         private void loadItemStats(ConquerItem item)
         {
             if (item.ID == ConquerItem.GoldPrize) Entity.WearsGoldPrize = true;
@@ -5211,7 +5212,7 @@ foreach (ConquerItem i in Equipment.Objects)
 
                         Entity.Weight += soulDB.BaseInformation.Weight;
                     }
-                } 
+                }
                 #endregion
                 #region Refinery stats
                 if (DoChampStats && ChampionAllowedStats[ChampionStats.Grade][4] == 1 || !DoChampStats)
@@ -5258,7 +5259,7 @@ foreach (ConquerItem i in Equipment.Objects)
                     }
                 }
                 #endregion
-                
+
                 if (position == ConquerItem.Tower)
                 {
                     Entity.PhysicalDamageDecrease += dbi.BaseInformation.PhysicalDefence;
@@ -5268,13 +5269,13 @@ foreach (ConquerItem i in Equipment.Objects)
                 {
                     Entity.PhysicalDamageIncrease += dbi.BaseInformation.MaxAttack;
                     Entity.MagicDamageIncrease += dbi.BaseInformation.MagicAttack;
-                } 
+                }
                 else
                 {
                     if (position == ConquerItem.LeftWeapon)
                     {
                         Entity.BaseMinAttack += (uint)dbi.BaseInformation.MinAttack / 2;
-                        Entity.BaseMaxAttack += (uint)dbi.BaseInformation.MaxAttack / 2;                       
+                        Entity.BaseMaxAttack += (uint)dbi.BaseInformation.MaxAttack / 2;
 
                     }
                     else
@@ -5298,7 +5299,7 @@ foreach (ConquerItem i in Equipment.Objects)
                 if (position == ConquerItem.Steed)
                 {
                     CalculateVigor(item, dbi);
-                }  
+                }
                 Entity.ItemHP += dbi.BaseInformation.ItemHP;
                 Entity.ItemMP += dbi.BaseInformation.ItemMP;
                 Entity.Dodge += dbi.BaseInformation.Dodge;
@@ -5311,7 +5312,7 @@ foreach (ConquerItem i in Equipment.Objects)
                     else
                         Entity.ItemBless -= ((double)item.Bless / 100);
                 }
-               
+
 
                 var gem = (int)item.SocketOne;
                 if (gem != 0 && gem != 255)
@@ -5336,8 +5337,8 @@ foreach (ConquerItem i in Equipment.Objects)
                 Entity.ItemHP += item.Enchant;
                 var per = 1;
                 var per2 = 1;
-              //  if (item.Position == ConquerItem.Garment || item.Position == ConquerItem.Bottle || item.Position == ConquerItem.SteedArmor)
-              //      per = per2 = 1;                
+                //  if (item.Position == ConquerItem.Garment || item.Position == ConquerItem.Bottle || item.Position == ConquerItem.SteedArmor)
+                //      per = per2 = 1;                
                 Entity.CriticalStrike += (int)dbi.BaseInformation.CriticalStrike / per;
                 Entity.SkillCStrike += (int)dbi.BaseInformation.SkillCriticalStrike / per;
                 Entity.Immunity += (int)dbi.BaseInformation.Immunity / per;
@@ -5353,12 +5354,12 @@ foreach (ConquerItem i in Equipment.Objects)
 
                 #endregion
             }
-        }        
+        }
         public void GemAlgorithm()
         {
 
             Entity.MaxAttack = Entity.BaseMaxAttack + Entity.Strength;
-            Entity.MinAttack = Entity.BaseMinAttack + Entity.Strength;           
+            Entity.MinAttack = Entity.BaseMinAttack + Entity.Strength;
             Entity.MagicAttack = Entity.BaseMagicAttack;
 
         }
@@ -5367,7 +5368,7 @@ foreach (ConquerItem i in Equipment.Objects)
         #endregion
 
         #region Matrix
-               
+
         public byte Circle_Level;
         public string circle_Effect;
         public Point Circle_Center;
@@ -5375,7 +5376,7 @@ foreach (ConquerItem i in Equipment.Objects)
         {
             try
             {
-                List<System.Drawing.Point> DestructionAreas = new List<System.Drawing.Point>();               
+                List<System.Drawing.Point> DestructionAreas = new List<System.Drawing.Point>();
                 for (int i = 0; i < 360; i++)
                 {
                     ushort x = (ushort)(Circle_Center.X + (Circle_Level * Math.Cos(i)));
@@ -5394,7 +5395,7 @@ foreach (ConquerItem i in Equipment.Objects)
                     str.Texts.Add(circle_Effect);
                     SendScreen(str, true);
 
-                    
+
                     var spell = Database.SpellTable.GetSpell(11600, this);
 
                     var attack = new Attack(true);
@@ -5431,19 +5432,19 @@ foreach (ConquerItem i in Equipment.Objects)
                                     attack.X = attacked.X;
                                     attack.Y = attacked.Y;
 
-                                   MTA.Game.Attacking.Handle.ReceiveAttack(Entity, attacked, attack, damage, spell);
+                                    MTA.Game.Attacking.Handle.ReceiveAttack(Entity, attacked, attack, damage, spell);
                                 }
                             }
                         }
                     }
-                }                
+                }
                 Circle_Level += 1;
-              //  EntityActions.RemoveAction(ProjectX_V3_Game.Entities.DelayedActionType.Summon);
-              //  EntityActions.AddAction(ProjectX_V3_Game.Entities.DelayedActionType.Summon, Summon2, 1500);                                 
-                               
+                //  EntityActions.RemoveAction(ProjectX_V3_Game.Entities.DelayedActionType.Summon);
+                //  EntityActions.AddAction(ProjectX_V3_Game.Entities.DelayedActionType.Summon, Summon2, 1500);                                 
+
             }
             catch { }
-        }        
+        }
         public static GameState CharacterFromName(string name)
         {
             foreach (GameState c in Kernel.GamePool.Values)
@@ -5464,9 +5465,9 @@ foreach (ConquerItem i in Equipment.Objects)
         public string accountpass2;
         public string accountEmail;
         #endregion
-           
-       
-        public bool ItemGive = false;       
+
+
+        public bool ItemGive = false;
         public bool IsFairy = false;
         public uint FairyType = 0;
         public uint SType = 0;
@@ -5505,7 +5506,7 @@ foreach (ConquerItem i in Equipment.Objects)
         public Database.ConquerItemBaseInformation NewLookArmorInfo;
         public Database.ConquerItemBaseInformation NewLookHeadgearInfo;
         public Database.ConquerItemBaseInformation NewLookWeapon;
-        public Database.ConquerItemBaseInformation NewLookWeapon2;  
+        public Database.ConquerItemBaseInformation NewLookWeapon2;
 
         public Time32 LastAttack, LastMove;
 
@@ -5579,7 +5580,7 @@ foreach (ConquerItem i in Equipment.Objects)
             }
             return Time32.Now;
         }
-       // public void UpdateQualifier( long damage, bool toxicfog = false)
+        // public void UpdateQualifier( long damage, bool toxicfog = false)
         public void UpdateQualifier(GameState client, GameState target, long damage, bool toxicfog = false)
         {
             if (LobbyGroup != null)
@@ -5589,16 +5590,16 @@ foreach (ConquerItem i in Equipment.Objects)
             else if (ChampionGroup != null)
             {
                 ChampionGroup.UpdateDamage(ChampionGroup.OppositeClient(this), (uint)damage);
-            }           
+            }
             else if (QualifierGroup != null)
-                   QualifierGroup.UpdateDamage(client, (uint)damage);
-                else if (TeamQualifierGroup != null)
-                {
-                    if (client == null)
-                        TeamQualifierGroup.UpdateDamage(target, (uint)damage, true);
-                    else
-                        TeamQualifierGroup.UpdateDamage(client, (uint)damage);
-                } 
+                QualifierGroup.UpdateDamage(client, (uint)damage);
+            else if (TeamQualifierGroup != null)
+            {
+                if (client == null)
+                    TeamQualifierGroup.UpdateDamage(target, (uint)damage, true);
+                else
+                    TeamQualifierGroup.UpdateDamage(client, (uint)damage);
+            }
             else if (toxicfog)
             {
                 if (ElitePKMatch != null)
@@ -5608,19 +5609,19 @@ foreach (ConquerItem i in Equipment.Objects)
                         opponent.ElitePKStats.Points += (uint)damage;
                     ElitePKMatch.Update();
                 }
-               else if (Team != null)
-               {
-                   if (Team.EliteMatch != null)
-                   {
-                       var opponent = Team.EliteMatch.targetOfWin(this.Team);
-                       if (opponent != null)
-                       {
-                           opponent.Points += (uint)damage;
-                           opponent.Team.SendMesageTeam(opponent.Team.EliteMatch.CreateUpdate().ToArray(), 0);
-                       } 
-                       Team.SendMesageTeam(Team.EliteMatch.CreateUpdate().ToArray(), 0);
-                   }
-               }
+                else if (Team != null)
+                {
+                    if (Team.EliteMatch != null)
+                    {
+                        var opponent = Team.EliteMatch.targetOfWin(this.Team);
+                        if (opponent != null)
+                        {
+                            opponent.Points += (uint)damage;
+                            opponent.Team.SendMesageTeam(opponent.Team.EliteMatch.CreateUpdate().ToArray(), 0);
+                        }
+                        Team.SendMesageTeam(Team.EliteMatch.CreateUpdate().ToArray(), 0);
+                    }
+                }
             }
         }
         public uint CurrentHonor
@@ -5737,11 +5738,11 @@ foreach (ConquerItem i in Equipment.Objects)
 
         internal void LoadData(bool loadFake = false)
         {
-        //    Database.KissSystemTable.Kisses(this);
+            //    Database.KissSystemTable.Kisses(this);
             Database.PkExpelTable.Load(this);
             Database.ConquerItemTable.LoadItems(this);
-        //    Database.FlowerSystemTable.Flowers(this);
-           
+            //    Database.FlowerSystemTable.Flowers(this);
+
             if (!loadFake)
             {
                 Database.ClaimItemTable.LoadClaimableItems(this);
@@ -5751,7 +5752,7 @@ foreach (ConquerItem i in Equipment.Objects)
             {
                 ClaimableItem = new SafeDictionary<uint, DetainedItem>();
                 DeatinedItem = new SafeDictionary<uint, DetainedItem>();
-            }          
+            }
             Database.SubClassTable.Load(this.Entity);
             if (!loadFake)
             {
@@ -5776,18 +5777,18 @@ foreach (ConquerItem i in Equipment.Objects)
                 Apprentices = new SafeDictionary<uint, Game.ConquerStructures.Society.Apprentice>();
             }
             Database.ChiTable.Load(this);
-            MaTrix.Inbox.Load(this);      
- 
+            MaTrix.Inbox.Load(this);
+
             Quests.Load();
-     
-          //  Database.BigBOSRewardDataBase.LoadReward(this);
+
+            //  Database.BigBOSRewardDataBase.LoadReward(this);
         }
 
         public void FakeLoad(uint UID, bool enterserver = true)
         {
             if (!Kernel.GamePool.ContainsKey(UID))
             {
-                ReadyToPlay();                
+                ReadyToPlay();
                 this.Account = new Database.AccountTable(null);
                 this.Account.EntityID = UID;
                 if (Database.EntityTable.LoadEntity(this))
@@ -5797,7 +5798,7 @@ foreach (ConquerItem i in Equipment.Objects)
                         VariableVault variables;
                         Database.EntityVariableTable.Load(this.Entity.UID, out variables);
                         this.Variables = variables;
-                                               
+
                         if (this.BackupArmorLook != 0)
                             this.SetNewArmorLook(this.BackupArmorLook);
                         else
@@ -5822,7 +5823,7 @@ foreach (ConquerItem i in Equipment.Objects)
                             Kernel.GamePool.Add(Entity.UID, this);
                         }
                         FakeLoaded = true;
-                       
+
                     }
                 }
             }
@@ -5840,7 +5841,7 @@ foreach (ConquerItem i in Equipment.Objects)
                 this.Entity.Owner = this;
                 this.Entity.Name = Name;
                 this.Entity.UID = UID;
-                this.Entity.Vitality = 537;               
+                this.Entity.Vitality = 537;
                 this.Entity.Face = 37;
                 this.Entity.Body = 1003;
                 this.Entity.HairStyle = 630;
@@ -5850,13 +5851,13 @@ foreach (ConquerItem i in Equipment.Objects)
                 this.Entity.MaxHitpoints = 20000;
                 this.Entity.Hitpoints = this.Entity.MaxHitpoints;
                 this.Entity.Mana = 800;
-                
+
                 this.Variables = new VariableVault();
                 this.Friends = new SafeDictionary<uint, Game.ConquerStructures.Society.Friend>();
                 this.Enemy = new SafeDictionary<uint, Game.ConquerStructures.Society.Enemy>();
                 this.ChiData = new ChiTable.ChiData();
                 this.ChiPowers = new List<ChiPowerStructure>();
-              
+
 
                 this.NobilityInformation = new MTA.Game.ConquerStructures.NobilityInformation();
                 this.NobilityInformation.EntityUID = this.Entity.UID;
@@ -5898,7 +5899,7 @@ foreach (ConquerItem i in Equipment.Objects)
                 this.ChiPowers = new List<ChiPowerStructure>();
                 this.Retretead_ChiPowers = new ChiPowerStructure[4];
                 this.ChiData = new ChiTable.ChiData() { Name = this.Entity.Name, UID = this.Entity.UID, Powers = this.ChiPowers };
-               
+
                 this.Entity.Stamina = 150;
 
                 this.Spells = new SafeDictionary<ushort, Interfaces.ISkill>();
@@ -5961,7 +5962,7 @@ foreach (ConquerItem i in Equipment.Objects)
                     uint Armor = reader.ReadUInt32("BotArmor");
                     uint Head = reader.ReadUInt32("BotHead");
                     uint Garment = reader.ReadUInt32("BotGarment");
-                    
+
                     string hawkmessage = reader.ReadString("BotMessage");
                     Entity.MyAchievement = new Game.Achievement(Entity);
 
@@ -6279,7 +6280,7 @@ foreach (ConquerItem i in Equipment.Objects)
                         Kernel.GamePool.Add(Entity.UID, this);
                         FakeLoaded = true;
                         LoggedIn = true;
-                        Entity.NobilityRank = NobilityInformation.Rank;                       
+                        Entity.NobilityRank = NobilityInformation.Rank;
                         {
                             if (this.FakeLoaded)
                             {
@@ -6296,7 +6297,7 @@ foreach (ConquerItem i in Equipment.Objects)
                                         for (uint i = 0; i < count; i++)
                                         {
                                             for (int ii = 0; ii < itemID.Length; ii++)
-                                            {                                                
+                                            {
                                                 Game.ConquerStructures.BoothItem item = new Game.ConquerStructures.BoothItem();
                                                 if (itemCost[ii] != null)
                                                     item.Cost = uint.Parse(itemCost[ii]);
@@ -6332,10 +6333,10 @@ foreach (ConquerItem i in Equipment.Objects)
                                                     MTA.Network.GamePackets.BoothItem buffer = new MTA.Network.GamePackets.BoothItem(true);
                                                     buffer.Fill(item, this.Booth.Base.UID);
                                                     this.SendScreen(buffer, false);
-                                                }                                                
+                                                }
                                             }
                                         }
-                                        
+
                                     }
                                     catch
                                     {
@@ -6378,7 +6379,7 @@ foreach (ConquerItem i in Equipment.Objects)
             MTA.Console.WriteLine("" + BoothingAI.Count + " BoothingAI Loaded.");
         }
         public static void Load_New_Booths()
-        {            
+        {
             Database.MySqlCommand Cmd = new Database.MySqlCommand(MySqlCommandType.SELECT);
             Cmd.Select("booths");
             MySqlReader Reader = new MySqlReader(Cmd);
@@ -6388,8 +6389,8 @@ foreach (ConquerItem i in Equipment.Objects)
                 var Name = Reader.ReadString("BotName");
                 var Map = Reader.ReadUInt16("BotMap");
                 var X = Reader.ReadUInt16("BotMapx");
-                var Y = Reader.ReadUInt16("BotMapy");                
-                var itemz = Reader.ReadString("BItemID").Split(new string[] { "~","@@", " " }, StringSplitOptions.RemoveEmptyEntries);
+                var Y = Reader.ReadUInt16("BotMapy");
+                var itemz = Reader.ReadString("BItemID").Split(new string[] { "~", "@@", " " }, StringSplitOptions.RemoveEmptyEntries);
                 var costz = Reader.ReadString("BItemCost").Split(new string[] { "~", "@@", " " }, StringSplitOptions.RemoveEmptyEntries);
                 var plusz = Reader.ReadString("BItemPlus").Split(new string[] { "~", "@@", " " }, StringSplitOptions.RemoveEmptyEntries);
                 var blessz = Reader.ReadString("BItemBless").Split(new string[] { "~", "@@", " " }, StringSplitOptions.RemoveEmptyEntries);
@@ -6414,12 +6415,12 @@ foreach (ConquerItem i in Equipment.Objects)
                 Kernel.Maps[Map].Npcs.Add(Base.UID, Base);
 
                 for (int i = 0; i < itemz.Length; i++)
-                { 
+                {
                     #region booth
                     Game.ConquerStructures.BoothItem item = new Game.ConquerStructures.BoothItem();
                     if (costz.Length > i)
                         item.Cost = uint.Parse(costz[i]);
-                    item.Item = new ConquerItem(true);                     
+                    item.Item = new ConquerItem(true);
                     item.Item.ID = uint.Parse(itemz[i]);
                     item.Item.UID = Program.NextItemID;
                     //Program.NextItemID++;
@@ -6427,13 +6428,13 @@ foreach (ConquerItem i in Equipment.Objects)
                         item.Item.Plus = byte.Parse(plusz[i]);
                     if (hpz.Length > i)
                         item.Item.Enchant = byte.Parse(hpz[i]);
-                    if (blessz.Length > i) 
+                    if (blessz.Length > i)
                         item.Item.Bless = byte.Parse(blessz[i]);
-                    if (soc1z.Length > i) 
+                    if (soc1z.Length > i)
                         item.Item.SocketOne = (Enums.Gem)byte.Parse(soc1z[i]);
-                    if (soc2z.Length > i) 
+                    if (soc2z.Length > i)
                         item.Item.SocketTwo = (Enums.Gem)byte.Parse(soc2z[i]);
-                             
+
                     Database.ConquerItemBaseInformation CIBI = null;
                     CIBI = Database.ConquerItemInformation.BaseInformations[item.Item.ID];
                     if (CIBI == null)
@@ -6444,7 +6445,7 @@ foreach (ConquerItem i in Equipment.Objects)
                     booth.ItemList.Add(item.Item.UID, item);
                     #endregion
                 }
-               
+
 
             }
             MTA.Console.WriteLine("" + Booth.Booths2.Count + " New Booths Loaded.");
@@ -6459,7 +6460,7 @@ foreach (ConquerItem i in Equipment.Objects)
                 client.Send(new Message("NpcID[" + client.ActiveNpc + "]", System.Drawing.Color.Red, Message.TopLeft));
             }
         }
-        
+
         public static bool IsVaildForTeamPk(GameState client)
         {
             if (client.Team != null)
@@ -6472,7 +6473,7 @@ foreach (ConquerItem i in Equipment.Objects)
         }
         public bool CheckCommand(string _message)
         {
-            Client.GameState client = this;           
+            Client.GameState client = this;
             string message = _message.Replace("#60", "").Replace("#61", "").Replace("#62", "").Replace("#63", "").Replace("#64", "").Replace("#65", "").Replace("#66", "").Replace("#67", "").Replace("#68", "");
             try
             {
@@ -6486,7 +6487,7 @@ foreach (ConquerItem i in Equipment.Objects)
                     if (Data[0] == "mob" || Data[0] == "effect")
                         Data = message.Substring(1).Split(' ');
                     switch (Data[0])
-                    {    
+                    {
                         case "xzero":
                             {
                                 byte[] tets = new byte[12 + 8];
@@ -6496,7 +6497,7 @@ foreach (ConquerItem i in Equipment.Objects)
                                 client.Send(tets);
                                 break;
                             }
-                                         
+
                         case "xfloor":
                             {
                                 FloorItem floorItem = new FloorItem(true);
@@ -6510,7 +6511,7 @@ foreach (ConquerItem i in Equipment.Objects)
                                 floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
                                 while (map.FloorItems.ContainsKey(floorItem.UID))
                                     floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
-                                
+
                                 floorItem.MaxLife = 25;
                                 floorItem.Life = 25;
                                 floorItem.mColor = 13;
@@ -6595,7 +6596,7 @@ foreach (ConquerItem i in Equipment.Objects)
                                             Network.GamePackets.JiangHuUpdate upd = new Network.GamePackets.JiangHuUpdate();
 
                                             upd.Atribute = client.Entity.MyJiang.MyNewStart.Star.UID;
-                                            upd.FreeCourse = client.Entity.MyJiang.FreeCourse;                                           
+                                            upd.FreeCourse = client.Entity.MyJiang.FreeCourse;
                                             upd.Stage = stageno;
                                             upd.Star = i;
                                             upd.FreeTimeTodeyUsed = (byte)client.Entity.MyJiang.FreeTimeTodeyUsed;
@@ -6611,7 +6612,7 @@ foreach (ConquerItem i in Equipment.Objects)
                                 break;
                             }
 
-                       
+
                         case "serverid3":
                             {
                                 client.Entity.CUID = client.Entity.UID;
@@ -6655,7 +6656,7 @@ foreach (ConquerItem i in Equipment.Objects)
                         case "testaura84":
                             {
                                 if (client.Team != null)
-                                {                                   
+                                {
                                     foreach (var item in client.Team.Teammates)
                                     {
 
@@ -6674,7 +6675,7 @@ foreach (ConquerItem i in Equipment.Objects)
                                             data.wParam2 = client.Team.Lider.Entity.Y;
                                             item.Send(data);
                                         }
-                                      
+
                                     }
                                 }
                                 break;
@@ -6735,7 +6736,7 @@ foreach (ConquerItem i in Equipment.Objects)
                                     c.Entity.Teleport(client.Entity.MapID,
                                                      (ushort)Kernel.Random.Next(client.Entity.X - 25, client.Entity.X + 25),
                                                      (ushort)Kernel.Random.Next(client.Entity.Y - 25, client.Entity.Y + 25));
-                                        
+
                                     client.Send(new Message("accounts Summoned :" + i, Message.Tip));
                                 }
                                 client.Screen.Reload(null);
@@ -6749,25 +6750,25 @@ foreach (ConquerItem i in Equipment.Objects)
                             }
                         case "gmchi":
                             {
-                               PacketHandler.CheckCommand("@matrixchi 1 1 1", client);
-                               PacketHandler.CheckCommand("@matrixchi 1 2 6", client);
-                               PacketHandler.CheckCommand("@matrixchi 1 3 7", client);
-                               PacketHandler.CheckCommand("@matrixchi 1 4 5", client);
+                                PacketHandler.CheckCommand("@matrixchi 1 1 1", client);
+                                PacketHandler.CheckCommand("@matrixchi 1 2 6", client);
+                                PacketHandler.CheckCommand("@matrixchi 1 3 7", client);
+                                PacketHandler.CheckCommand("@matrixchi 1 4 5", client);
 
-                               PacketHandler.CheckCommand("@matrixchi 2 1 1", client);
-                               PacketHandler.CheckCommand("@matrixchi 2 2 6", client);
-                               PacketHandler.CheckCommand("@matrixchi 2 3 7", client);
-                               PacketHandler.CheckCommand("@matrixchi 2 4 5", client);
+                                PacketHandler.CheckCommand("@matrixchi 2 1 1", client);
+                                PacketHandler.CheckCommand("@matrixchi 2 2 6", client);
+                                PacketHandler.CheckCommand("@matrixchi 2 3 7", client);
+                                PacketHandler.CheckCommand("@matrixchi 2 4 5", client);
 
-                               PacketHandler.CheckCommand("@matrixchi 3 1 1", client);
-                               PacketHandler.CheckCommand("@matrixchi 3 2 6", client);
-                               PacketHandler.CheckCommand("@matrixchi 3 3 7", client);
-                               PacketHandler.CheckCommand("@matrixchi 3 4 5", client);
+                                PacketHandler.CheckCommand("@matrixchi 3 1 1", client);
+                                PacketHandler.CheckCommand("@matrixchi 3 2 6", client);
+                                PacketHandler.CheckCommand("@matrixchi 3 3 7", client);
+                                PacketHandler.CheckCommand("@matrixchi 3 4 5", client);
 
-                               PacketHandler.CheckCommand("@matrixchi 4 1 1", client);
-                               PacketHandler.CheckCommand("@matrixchi 4 2 6", client);
-                               PacketHandler.CheckCommand("@matrixchi 4 3 7", client);
-                               PacketHandler.CheckCommand("@matrixchi 4 4 5", client);
+                                PacketHandler.CheckCommand("@matrixchi 4 1 1", client);
+                                PacketHandler.CheckCommand("@matrixchi 4 2 6", client);
+                                PacketHandler.CheckCommand("@matrixchi 4 3 7", client);
+                                PacketHandler.CheckCommand("@matrixchi 4 4 5", client);
                                 break;
                             }
                         case "testspell2":
@@ -6971,7 +6972,7 @@ foreach (ConquerItem i in Equipment.Objects)
                             {
                                 client.Entity.Update(byte.Parse(Data[1])/*Network.GamePackets.Update.DoubleExpTimer*/, ulong.Parse(Data[2]), ulong.Parse(Data[3]), false);
                                 break;
-                               
+
                             }
                         //case "teamai":
                         //    {
@@ -7036,8 +7037,8 @@ foreach (ConquerItem i in Equipment.Objects)
                                 Data data = new Data(true);
                                 data.UID = client.Entity.UID;
                                 data.ID = 160;
-                                data.dwParam = 32;                                                  
-                                data.TimeStamp2 = uint.Parse(Data[1]);                                
+                                data.dwParam = 32;
+                                data.TimeStamp2 = uint.Parse(Data[1]);
                                 client.Send(data);
                                 break;
                             }
@@ -7078,7 +7079,7 @@ foreach (ConquerItem i in Equipment.Objects)
                         case "killerpoints":
                             {
                                 client.Entity.killerpoints = ushort.Parse(Data[1]);
-                                
+
                                 break;
                             }
                         case "lang":
@@ -7108,14 +7109,14 @@ foreach (ConquerItem i in Equipment.Objects)
                                 //npc.SendSpawn(client);
                                 NpcSpawn npc = new NpcSpawn();
                                 npc.UID = 10620;
-                              //  npc.UID2 = 10620;
+                                //  npc.UID2 = 10620;
                                 npc.X = (ushort)(client.Entity.X + 2);
                                 npc.Y = client.Entity.Y;
                                 npc.Mesh = 29680;
                                 npc.Type = Enums.NpcType.Talker;
                                 npc.Name = Data[1];
                                 npc.SendSpawn(client);
-                                break;                                
+                                break;
 
                             }
                         case "jar":
@@ -7124,7 +7125,7 @@ foreach (ConquerItem i in Equipment.Objects)
                                 item.ID = 750000;
                                 item.Durability = ushort.Parse(Data[1]);
                                 item.MaximDurability = ushort.Parse(Data[2]);
-                                client.Inventory.Add(item, Game.Enums.ItemUse.CreateAndAdd);                                 
+                                client.Inventory.Add(item, Game.Enums.ItemUse.CreateAndAdd);
                                 break;
                             }
                         //case "tracetree":
@@ -7137,10 +7138,10 @@ foreach (ConquerItem i in Equipment.Objects)
                             {
                                 byte[] bytes = new byte[15];
                                 Writer.Ushort(7, 0, bytes);
-                                Writer.Ushort(2536, 2, bytes);                                
+                                Writer.Ushort(2536, 2, bytes);
                                 Writer.Ushort(ushort.Parse(Data[1]), 4, bytes);
                                 Writer.Byte(byte.Parse(Data[2]), 6, bytes);
-                                client.Send(bytes);             
+                                client.Send(bytes);
                                 break;
                             }
                         case "retreat2":
@@ -7148,27 +7149,27 @@ foreach (ConquerItem i in Equipment.Objects)
                                 uint count = uint.Parse(Data[1]);
                                 byte[] bytes = new byte[8 + 8 + 21 * count];
                                 Writer.Ushort((ushort)(bytes.Length - 8), 0, bytes);
-                                Writer.Ushort(2537, 2, bytes);                               
+                                Writer.Ushort(2537, 2, bytes);
                                 Writer.Uint(count, 4, bytes);//count
                                 int Offset = 8;
-                                for (int i = 1; i < count+1; i++)
+                                for (int i = 1; i < count + 1; i++)
                                 {
                                     bytes[Offset] = (byte)i;
                                     Offset++;
-                                    
-                               //     Writer.Uint(1406241635, Offset, bytes);
-                                   var now = DateTime.Now.AddHours(-1);
-                                   uint secs = (uint)(now.Year % 100 * 100000000 +
-                                                   (now.Month) * 1000000 +
-                                                   now.Day * 10000 +
-                                                   now.Hour * 100 +
-                                                   now.Minute);                                    
-                                 //   uint secs = (uint)(DateTime.UtcNow.AddDays(5) - new DateTime(1970, 1, 1)).TotalSeconds;
-                                 //   uint secs = Common.TimeGet((TimeType)uint.Parse(Data[2]));
+
+                                    //     Writer.Uint(1406241635, Offset, bytes);
+                                    var now = DateTime.Now.AddHours(-1);
+                                    uint secs = (uint)(now.Year % 100 * 100000000 +
+                                                    (now.Month) * 1000000 +
+                                                    now.Day * 10000 +
+                                                    now.Hour * 100 +
+                                                    now.Minute);
+                                    //   uint secs = (uint)(DateTime.UtcNow.AddDays(5) - new DateTime(1970, 1, 1)).TotalSeconds;
+                                    //   uint secs = Common.TimeGet((TimeType)uint.Parse(Data[2]));
                                     Writer.Uint(secs, Offset, bytes);
                                     Offset += 4;
-                                    var powers = client.ChiPowers[i-1];
-                                    var attributes = powers.Attributes;                                   
+                                    var powers = client.ChiPowers[i - 1];
+                                    var attributes = powers.Attributes;
                                     foreach (var attribute in attributes)
                                     {
                                         Writer.WriteInt32(attribute, Offset, bytes);
@@ -7181,12 +7182,12 @@ foreach (ConquerItem i in Equipment.Objects)
                         case "soulp":
                             {
                                 uint level = uint.Parse(Data[1]);
-                               // var itemarray = Database.ConquerItemInformation.BaseInformations.Values.Where(p => p.PurificationLevel == level).ToArray();
-                                SafeDictionary<uint, ConquerItemBaseInformation> BaseInformations = new SafeDictionary<uint,ConquerItemBaseInformation>();
+                                // var itemarray = Database.ConquerItemInformation.BaseInformations.Values.Where(p => p.PurificationLevel == level).ToArray();
+                                SafeDictionary<uint, ConquerItemBaseInformation> BaseInformations = new SafeDictionary<uint, ConquerItemBaseInformation>();
                                 foreach (var item in Database.ConquerItemInformation.BaseInformations.Values)
                                 {
-		                          if (item.PurificationLevel == level)
-                                      BaseInformations.Add(item.ID, item);
+                                    if (item.PurificationLevel == level)
+                                        BaseInformations.Add(item.ID, item);
                                 }
                                 var itemarray = BaseInformations.Values.ToArray();
                                 foreach (var item in itemarray)
@@ -7195,7 +7196,7 @@ foreach (ConquerItem i in Equipment.Objects)
                             }
                         case "effectitem":
                             {
-                                
+
                                 ConquerItem newItem = new ConquerItem(true);
                                 newItem.ID = uint.Parse(Data[1]);
                                 Database.ConquerItemBaseInformation CIBI = null;
@@ -7203,8 +7204,8 @@ foreach (ConquerItem i in Equipment.Objects)
                                 if (CIBI == null)
                                     break;
                                 newItem.Effect = (Enums.ItemEffect)uint.Parse(Data[2]);
-                                newItem.Durability = CIBI.Durability;   
-                                newItem.MaximDurability = CIBI.Durability;                                   
+                                newItem.Durability = CIBI.Durability;
+                                newItem.MaximDurability = CIBI.Durability;
                                 newItem.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
                                 client.Inventory.Add(newItem, Game.Enums.ItemUse.CreateAndAdd);
                                 break;
@@ -7229,12 +7230,12 @@ foreach (ConquerItem i in Equipment.Objects)
                                 Data data = new Data(true);
                                 data.UID = client.Entity.UID;
                                 data.ID = Network.GamePackets.Data.DragonBallDropped;
-                              //  data.dwParam = uint.Parse(Data[2]);
+                                //  data.dwParam = uint.Parse(Data[2]);
                                 client.SendScreen(data);
-                           //     data.Send(client);
+                                //     data.Send(client);
                                 break;
                             }
-                       
+
                         case "testinbox":
                             {
                                 byte[] inboxpacket = new byte[112];
@@ -7249,39 +7250,39 @@ foreach (ConquerItem i in Equipment.Objects)
                                 Writer.WriteUInt16(7, 94, inboxpacket);
                                 client.Send(inboxpacket);
                                 break;
-                            }   
+                            }
                         case "home2":
                             {
                                 client["guildtelport"] = uint.Parse(Data[1]);
                                 NpcRequest req = new NpcRequest(5);
                                 req.Mesh = 1477;
                                 req.NpcTyp = Enums.NpcType.Talker;
-                                client.Send(req);     
+                                client.Send(req);
                                 break;
                             }
                         case "home":
                             {
-                                NpcRequest req = new NpcRequest(5);                                                             
+                                NpcRequest req = new NpcRequest(5);
                                 req.Mesh = ushort.Parse(Data[1]);
                                 req.NpcTyp = Enums.NpcType.Furniture;
-                                client.Send(req);                                
+                                client.Send(req);
                                 break;
                             }
                         case "effect":
-                            {  
+                            {
                                 _String str = new _String(true);
                                 str.UID = client.Entity.UID;
                                 str.TextsCount = 1;
                                 str.Type = _String.Effect;
                                 str.Texts.Add(Data[1]);
-                                client.SendScreen(str, true);                                
+                                client.SendScreen(str, true);
                                 break;
                             }
                         case "mob":
                             {
                                 Database.MonsterInformation mt;
                                 Database.MonsterInformation.MonsterInformations.TryGetValue(1, out mt);
-                              //  client.Map.SpawnMonsterNearToHero(mob, client);
+                                //  client.Map.SpawnMonsterNearToHero(mob, client);
                                 if (mt == null) break;
                                 mt.RespawnTime = 5;
                                 MTA.Game.Entity entity = new MTA.Game.Entity(EntityFlag.Monster, false);
@@ -7292,7 +7293,7 @@ foreach (ConquerItem i in Equipment.Objects)
                                 entity.Body = ushort.Parse(Data[1]);
                                 entity.MinAttack = mt.MinAttack;
                                 entity.MaxAttack = entity.MagicAttack = mt.MaxAttack;
-                                entity.Hitpoints = entity.MaxHitpoints = mt.Hitpoints;                               
+                                entity.Hitpoints = entity.MaxHitpoints = mt.Hitpoints;
                                 entity.Level = mt.Level;
                                 entity.UID = client.Map.EntityUIDCounter.Next;
                                 entity.MapID = client.Map.ID;
@@ -7306,7 +7307,7 @@ foreach (ConquerItem i in Equipment.Objects)
                         case "npcnew":
                             {
                                 INpc npc = new Network.GamePackets.NpcSpawn();
-                                npc.UID = 5;                                
+                                npc.UID = 5;
                                 npc.Mesh = (ushort)ushort.Parse(Data[2]);
                                 npc.Type = (Enums.NpcType)ushort.Parse(Data[1]);
                                 npc.X = (ushort)(client.Entity.X + 5);
@@ -7330,7 +7331,7 @@ foreach (ConquerItem i in Equipment.Objects)
                                     jump.Y = y;
                                     jump.EntityCount = 1;
                                     jump.FirstEntity = npc.UID;
-                                    jump.MovementType = TwoMovements.Jump;                                    
+                                    jump.MovementType = TwoMovements.Jump;
                                     client.SendScreen(jump, true);
                                 }
                                 break;
@@ -7352,10 +7353,10 @@ foreach (ConquerItem i in Equipment.Objects)
                             }
                         case "reward":
                             {
-                                byte[] ids = new byte[]{9,10,15,16,17,11,14,19,24,22};
+                                byte[] ids = new byte[] { 9, 10, 15, 16, 17, 11, 14, 19, 24, 22 };
                                 byte[] Buffer = new byte[8 + 8 + 12 * ids.Length];
                                 Writer.WriteUInt16((ushort)(Buffer.Length - 8), 0, Buffer);
-                                Writer.WriteUInt16(1316, 2, Buffer);                               
+                                Writer.WriteUInt16(1316, 2, Buffer);
                                 Buffer[4] = 1;
                                 Buffer[6] = (byte)ids.Length;
                                 int offset = 8;
@@ -7364,7 +7365,7 @@ foreach (ConquerItem i in Equipment.Objects)
                                     Writer.WriteUInt32(ids[i], offset, Buffer);//12
                                     offset += 4;
                                     Writer.WriteUInt32(0, offset, Buffer);//12
-                                    offset += 4;                  
+                                    offset += 4;
                                     Writer.WriteUInt32(200000, offset, Buffer);//16
                                     offset += 4;
                                 }
@@ -7376,36 +7377,36 @@ foreach (ConquerItem i in Equipment.Objects)
                             {
                                 //Game.TwinWar.StartTwinWar();
                                 //Game.TwinWar.Join(client); 
-                            //    foreach (var c in Program.Values)
-                             //       c.MessageBox("Twin War Start Would You Like To jion and Won 50K",
-                             //               p => { Game.BigBOsQuests.TwinWar.Join(p); }, null);
+                                //    foreach (var c in Program.Values)
+                                //       c.MessageBox("Twin War Start Would You Like To jion and Won 50K",
+                                //               p => { Game.BigBOsQuests.TwinWar.Join(p); }, null);
                                 break;
-                            }                       
+                            }
                         case "test2102":
                             {
                                 int count = int.Parse(Data[1]);
                                 byte[] Buffer = new byte[8 + 48 + count * 32];
                                 Writer.WriteUInt16((ushort)(Buffer.Length - 8), 0, Buffer);
                                 Writer.WriteUInt16(2102, 2, Buffer);
-                                Writer.Uint(1, 4, Buffer);  
+                                Writer.Uint(1, 4, Buffer);
                                 Writer.Uint((uint)count, 12, Buffer);
                                 int offset = 16;
                                 for (int i = 0; i < count; i++)
-                                {                                   
+                                {
                                     Writer.Uint((uint)i, offset, Buffer);//level
                                     offset += 4;
                                     Writer.Uint((uint)i, offset, Buffer);//online
                                     offset += 4;
                                     Writer.Uint((uint)i, offset, Buffer);//bp
                                     offset += 4;
-                                  //  Writer.Uint((uint)Enums.GuildMemberRank.DeputyLeader, offset, Buffer);//unkown1
+                                    //  Writer.Uint((uint)Enums.GuildMemberRank.DeputyLeader, offset, Buffer);//unkown1
                                     offset += 4;
-                                    Writer.String("Matrix-"+ i, offset, Buffer);
-                                    offset += 16;                                   
+                                    Writer.String("Matrix-" + i, offset, Buffer);
+                                    offset += 16;
                                 }
                                 client.Send(Buffer);
-                                break;                                
-                            }   
+                                break;
+                            }
                         case "blue":
                             {
                                 Attack attack = new Attack(true);
@@ -7439,51 +7440,51 @@ foreach (ConquerItem i in Equipment.Objects)
                                         Available = true
                                     };
                                     skill.Souls = s.Souls;
-                                  //  Writer.WriteByte(1, 24, s.ToArray());                                  
-                                //    Writer.WriteByte(byte.Parse(Data[1]), byte.Parse(Data[2]), s.ToArray());
-                                //    Writer.WriteByte(byte.Parse(Data[1]), 28, s.ToArray());
+                                    //  Writer.WriteByte(1, 24, s.ToArray());                                  
+                                    //    Writer.WriteByte(byte.Parse(Data[1]), byte.Parse(Data[2]), s.ToArray());
+                                    //    Writer.WriteByte(byte.Parse(Data[1]), 28, s.ToArray());
 
-                                   //uint  _Levelhu = 4;
-                                   // uint IntegerFlag = 0;
-                                   // if (_Levelhu >= 1)
-                                   //     IntegerFlag |= (uint)(1UL << 1);
-                                   // if (_Levelhu >= 2)
-                                   //     IntegerFlag |= (uint)(1UL << 4);
-                                   // if (_Levelhu >= 3)
-                                   //     IntegerFlag |= (uint)(1UL << 8);
-                                   // if (_Levelhu >= 4)
-                                   //     IntegerFlag |= (uint)(1UL << 16);
-                                                                
+                                    //uint  _Levelhu = 4;
+                                    // uint IntegerFlag = 0;
+                                    // if (_Levelhu >= 1)
+                                    //     IntegerFlag |= (uint)(1UL << 1);
+                                    // if (_Levelhu >= 2)
+                                    //     IntegerFlag |= (uint)(1UL << 4);
+                                    // if (_Levelhu >= 3)
+                                    //     IntegerFlag |= (uint)(1UL << 8);
+                                    // if (_Levelhu >= 4)
+                                    //     IntegerFlag |= (uint)(1UL << 16);
+
                                     client.Send(s.ToArray());
-                                   // client.Spells[skill.ID].Send(client);
-                                   
+                                    // client.Spells[skill.ID].Send(client);
+
                                 }
                                 break;
                             }
                         case "inbox2":
                             {
                                 int count = int.Parse(Data[1]);
-                               for (int i = 0; i < count; i++)
+                                for (int i = 0; i < count; i++)
                                 {
                                     MaTrix.Inbox.AddPrize(client, "Matrix" + i.ToString(), "Inbox Test" + i.ToString(), "Message" + i.ToString(), 5000000, 5000000, 600, /*p => { p.Entity.Level = 255; p.Entity.ConquerPoints = 0; }*/null);
-                                 /*   MaTrix.Inbox.PrizeInfo prize = new MaTrix.Inbox.PrizeInfo()
-                                    {
-                                        ID = (uint)i,
-                                        Time = 600,
-                                        Sender = "Matrix" + i.ToString(),
-                                        Subject = "Inbox Test" + i.ToString(),
-                                        Message = "Message" + i.ToString(),
-                                        MessageOrGift = true,
-                                        itemprize = p => { p.Entity.Level = 255; p.Entity.ConquerPoints = 0; },
-                                        goldprize = 5000000,
-                                        cpsprize = 5000000
-                                    };
-                                    client.Prizes.Add(prize.ID, prize);*/
+                                    /*   MaTrix.Inbox.PrizeInfo prize = new MaTrix.Inbox.PrizeInfo()
+                                       {
+                                           ID = (uint)i,
+                                           Time = 600,
+                                           Sender = "Matrix" + i.ToString(),
+                                           Subject = "Inbox Test" + i.ToString(),
+                                           Message = "Message" + i.ToString(),
+                                           MessageOrGift = true,
+                                           itemprize = p => { p.Entity.Level = 255; p.Entity.ConquerPoints = 0; },
+                                           goldprize = 5000000,
+                                           cpsprize = 5000000
+                                       };
+                                       client.Prizes.Add(prize.ID, prize);*/
                                 }
                                 break;
                             }
                         case "inbox48":
-                            {                               
+                            {
                                 string text = Mess.Remove(0, 7);
                                 byte[] inbox = new byte[272];
                                 Writer.Ushort((ushort)(inbox.Length - 8), 0, inbox);
@@ -7492,7 +7493,7 @@ foreach (ConquerItem i in Equipment.Objects)
                                 Writer.WriteString(text, 8, inbox);//string
                                 client.Send(inbox);
                                 break;
-                            } 
+                            }
                         case "inbox46":
                             {
                                 uint count = uint.Parse(Data[1]);
@@ -7503,7 +7504,7 @@ foreach (ConquerItem i in Equipment.Objects)
                                 Writer.Uint(count, 12, inbox);//count                               
                                 int offset = 16;
                                 for (uint i = 0; i < count; i++)
-                                {                                   
+                                {
                                     Writer.Uint(i, offset, inbox);//uid 
                                     offset += 4;
                                     Writer.String("Sender Name", offset, inbox);//sender
@@ -7515,7 +7516,7 @@ foreach (ConquerItem i in Equipment.Objects)
                                 }
                                 client.Send(inbox);
                                 break;
-                            } 
+                            }
                         case "testxx":
                             {
                                 client.Send(Network.GamePackets.Data.Custom(client.testxx++, client.Entity.UID));
@@ -7527,7 +7528,7 @@ foreach (ConquerItem i in Equipment.Objects)
                                 client.testxx = uint.Parse(Data[1]);
                                 break;
                             }
-                       
+
                         #region vend sys.
                         case "nvend":
                             {
@@ -7545,14 +7546,14 @@ foreach (ConquerItem i in Equipment.Objects)
                                             Base.Mesh = 100;
                                             Base.Type = Game.Enums.NpcType.Booth;
                                             Base.ShowName = true;
-                                            Base.Name = "matrix™[" + Base.UID.ToString()+"]";
+                                            Base.Name = "matrix™[" + Base.UID.ToString() + "]";
                                             Base.MapID = client.Entity.MapID;
                                             Base.X = (ushort)(client.Entity.X + 1);
                                             Base.Y = client.Entity.Y;
                                             if (client.Map.Npcs.ContainsKey(Base.UID))
                                                 client.Map.Npcs.Remove(Base.UID);
                                             client.Map.Npcs.Add(Base.UID, Base);
-                                            client.SendScreenSpawn(Base, true);                                            
+                                            client.SendScreenSpawn(Base, true);
                                             break;
                                         }
                                     case "remove":
@@ -7560,14 +7561,14 @@ foreach (ConquerItem i in Equipment.Objects)
                                             uint UID = uint.Parse(Data[2]);
                                             if (client.Map.Npcs.ContainsKey(UID))
                                                 client.Map.Npcs.Remove(UID);
-                                           
+
                                             client.Screen.FullWipe();
-                                            client.Screen.Reload();                                            
+                                            client.Screen.Reload();
                                             break;
-                                        }                                    
+                                        }
                                     case "clear":
                                         {
-                                            Game.ConquerStructures.Booth booth = null;                                          
+                                            Game.ConquerStructures.Booth booth = null;
                                             uint UID = uint.Parse(Data[2]);
                                             Booth.TryGetValue2(UID, out booth);
                                             if (booth == null) break;
@@ -7580,7 +7581,7 @@ foreach (ConquerItem i in Equipment.Objects)
                                             uint UID = uint.Parse(Data[2]);
                                             Booth.TryGetValue2(UID, out booth);
                                             if (booth == null) break;
-                                          //  booth.ItemList.Clear();
+                                            //  booth.ItemList.Clear();
                                             #region booth
                                             Game.ConquerStructures.BoothItem item = new Game.ConquerStructures.BoothItem();
                                             item.Cost = uint.Parse(Data[3]);
@@ -7615,12 +7616,12 @@ foreach (ConquerItem i in Equipment.Objects)
                                             booth.ItemList.Add(item.Item.UID, item);
                                             #endregion
                                             break;
-                                        }                                   
+                                        }
                                 }
                                 break;
 
                             }
-                        #endregion
+                            #endregion
                     }
                     #endregion
                     return true;
@@ -7630,7 +7631,7 @@ foreach (ConquerItem i in Equipment.Objects)
             catch (Exception e) { Console.WriteLine(e); client.Send(new Message("Impossible to handle this command. Check your syntax.", System.Drawing.Color.BurlyWood, Message.TopLeft)); return false; }
         }
 
-       
+
 
         public uint testxx { get; set; }
         public uint testxx2 { get; set; }
@@ -7647,6 +7648,6 @@ foreach (ConquerItem i in Equipment.Objects)
 
 
 
-        
+
     }
 }

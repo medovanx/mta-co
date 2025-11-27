@@ -6,7 +6,7 @@ using System.Collections.Concurrent;
 
 namespace MTA.Game
 {
-   public class Quarantine
+    public class Quarantine
     {
         public static ConcurrentDictionary<uint, Client.GameState> White =
             new ConcurrentDictionary<uint, Client.GameState>();

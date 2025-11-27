@@ -181,9 +181,9 @@ namespace MTA
                         if (ClanWarArena.GetMyWar(this.ID, out clientWar))
                         {
                             text = string.Concat(new object[]{"1 ",
-						clientWar.OccupationDays," ",
-						clientWar.Reward," ",
-						clientWar.NextReward," 0 0 0"});
+                        clientWar.OccupationDays," ",
+                        clientWar.Reward," ",
+                        clientWar.NextReward," 0 0 0"});
                         }
                         this.Offset16 = 1;
                         this.Offset17 = (byte)text.Length;
@@ -284,7 +284,7 @@ namespace MTA
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.DELETE))
                 cmd.Delete("clanrelation", "clanid", ID).And("associatedid", Relative)
-                    .And("type", (byte)type).Execute();           
+                    .And("type", (byte)type).Execute();
         }
         public void Join(GameState c)
         {
@@ -308,10 +308,10 @@ namespace MTA
             c.Send(this);
 
             c.Entity.Teleport(c.Entity.MapID, c.Entity.X, c.Entity.Y);
-/*
-            if (c.Team != null)
-                c.Team.GetClanShareBp(c);
-            */
+            /*
+                        if (c.Team != null)
+                            c.Team.GetClanShareBp(c);
+                        */
             SendMessage(new Message(System.String.Format("{0} Has Joined the Clan!", c.Entity.Name), Color.Red, Message.Clan));
         }
         public static void CreateClan(GameState c, String cname)

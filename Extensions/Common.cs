@@ -42,7 +42,7 @@ namespace Albetros.Core
         //need to do it multiple times.
 
         //switch based on machine name? Or load from external cfg file. Will save time in long run
-        
+
         public static readonly sbyte[] DeltaX, DeltaY;
         public static readonly sbyte[] DeltaMountX, DeltaMountY;
         public static readonly uint[] RebornItemLevels;

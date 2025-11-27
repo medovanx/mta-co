@@ -483,7 +483,7 @@ namespace MTA.Network.GamePackets
                     #region CPBoost
                     case 3:
                         {
-                           
+
                             break;
                         }
                     #endregion
@@ -840,26 +840,26 @@ namespace MTA.Network.GamePackets
             #endregion
             #endregion
             #region Level
-          /*  if (!Network.PacketHandler.IsTwoHand(item.ID))
-            {
-                var lvl = (uint)Database.ConquerItemInformation.BaseInformations[item.ID].Level;
-                if (lvl <= 120)
-                    Points += lvl * 3;
-                else if (lvl <= 130)
-                    Points += lvl * 5;
-                else if (lvl <= 140)
-                    Points += lvl * 6;
-            }
-            else
-            {
-                var lvl = (uint)Database.ConquerItemInformation.BaseInformations[item.ID].Level;
-                if (lvl <= 120)
-                    Points += lvl * 6;
-                else if (lvl <= 130)
-                    Points += lvl * 10;
-                else if (lvl <= 140)
-                    Points += lvl * 12;
-            }*/
+            /*  if (!Network.PacketHandler.IsTwoHand(item.ID))
+              {
+                  var lvl = (uint)Database.ConquerItemInformation.BaseInformations[item.ID].Level;
+                  if (lvl <= 120)
+                      Points += lvl * 3;
+                  else if (lvl <= 130)
+                      Points += lvl * 5;
+                  else if (lvl <= 140)
+                      Points += lvl * 6;
+              }
+              else
+              {
+                  var lvl = (uint)Database.ConquerItemInformation.BaseInformations[item.ID].Level;
+                  if (lvl <= 120)
+                      Points += lvl * 6;
+                  else if (lvl <= 130)
+                      Points += lvl * 10;
+                  else if (lvl <= 140)
+                      Points += lvl * 12;
+              }*/
             #endregion
             #region Gem
             if (!Network.PacketHandler.IsTwoHand(item.ID))
@@ -1620,7 +1620,7 @@ namespace MTA.Network.GamePackets
         {
             List<uint> ptr2 = new List<uint>();
 
-            for (int i = 0; i < Buffer.Length; )
+            for (int i = 0; i < Buffer.Length;)
             {
                 if (i + 2 <= Buffer.Length)
                 {

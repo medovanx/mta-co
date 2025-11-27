@@ -95,7 +95,7 @@ namespace MTA.Network
                 return Out;
             }
             catch (Exception Exc) { MTA.Console.WriteLine(Exc); return null; }
-        }*/       
+        }*/
         public static void Create(GameState client, UInt16 Index, ushort Channel, String[] Params, Action Action)
         {
             try
@@ -121,18 +121,18 @@ namespace MTA.Network
                 if (Params != null)
                 {
                     int Pos = 14;
-                    Writer.WriteByte((byte)Params.Length, 13, Out);                    
+                    Writer.WriteByte((byte)Params.Length, 13, Out);
                     for (int x = 0; x < Params.Length; x++)
                     {
                         Writer.WriteByte((byte)Params[x].Length, Pos, Out);
                         for (byte i = 0; i < (byte)Params[x].Length; i++)
                             Writer.WriteByte((byte)Params[x][i], (Pos + 1 + i), Out);
-                            Pos += Params[x].Length + 1;
+                        Pos += Params[x].Length + 1;
                     }
                 }
                 client.Send(Out);
                 return;
-               
+
             }
             catch (Exception Exc) { MTA.Console.WriteLine(Exc); return; }
         }
@@ -140,7 +140,7 @@ namespace MTA.Network
         public static void Process(MTA.Client.GameState Client, Byte[] Buffer)
         {
             try
-            {                
+            {
                 ushort MsgLength = MTA.BitConverter.ToUInt16(Buffer, 0);
                 ushort MsgId = MTA.BitConverter.ToUInt16(Buffer, 2);
                 ushort Index = MTA.BitConverter.ToUInt16(Buffer, 8);
@@ -149,25 +149,25 @@ namespace MTA.Network
                 string Param = null;
                 Param = Program.Encoding.GetString(Buffer, 15, Buffer[14]);
                 //if (Buffer[13] == 3)
-               // {
-                   // Param = Encoding.GetString(Buffer, 15, Buffer[14]);
-              //  }
+                // {
+                // Param = Encoding.GetString(Buffer, 15, Buffer[14]);
+                //  }
 
-              //  Int16 MsgLength = (Int16)((Buffer[0x01] << 8) + Buffer[0x00]);
-              //  Int16 MsgId = (Int16)((Buffer[0x03] << 8) + Buffer[0x02]);
-              //  UInt16 Index = (UInt16)((Buffer[0x05 + 4] << 8) + Buffer[0x04 + 4]);
-              //  Channel Channel = (Channel)((Buffer[0x07 + 4] << 8) + Buffer[0x06 + 4]);
-              //  Action Action = (Action)(Buffer[0x08 + 4]);
-              //  String Param = null;
-              //  if (Buffer[0x09 + 4] == 3)
-              //      Param = Encoding.GetString(Buffer, 0x0B + 4, Buffer[0x0A + 4]);
-              
-              //  MTA.Game.Entity Player = Client.User;
+                //  Int16 MsgLength = (Int16)((Buffer[0x01] << 8) + Buffer[0x00]);
+                //  Int16 MsgId = (Int16)((Buffer[0x03] << 8) + Buffer[0x02]);
+                //  UInt16 Index = (UInt16)((Buffer[0x05 + 4] << 8) + Buffer[0x04 + 4]);
+                //  Channel Channel = (Channel)((Buffer[0x07 + 4] << 8) + Buffer[0x06 + 4]);
+                //  Action Action = (Action)(Buffer[0x08 + 4]);
+                //  String Param = null;
+                //  if (Buffer[0x09 + 4] == 3)
+                //      Param = Encoding.GetString(Buffer, 0x0B + 4, Buffer[0x0A + 4]);
+
+                //  MTA.Game.Entity Player = Client.User;
 
                 switch (Action)
                 {
                     case Action.Del:
-                        {                                                
+                        {
                             if (Param != Client.Entity.Name) // || GM/PM
                                 return;
 
@@ -186,7 +186,7 @@ namespace MTA.Network
                     case Action.GetWords:
                         {
                             String Words = Message.MessageBoard.GetWords(Param, (UInt16)Channel);
-                       //   Player.Send(MsgTalk.Create(Param, Player.Name, Words, Channel, 0xFFFFFF));
+                            //   Player.Send(MsgTalk.Create(Param, Player.Name, Words, Channel, 0xFFFFFF));
                             Client.Send(new MTA.Network.GamePackets.Message(Words, Client.Entity.Name, Param, System.Drawing.Color.White, Channel));
                             return;
                         }

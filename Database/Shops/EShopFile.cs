@@ -18,7 +18,7 @@ namespace MTA.Database
             {
                 string line = text[x].Replace("_", " ");
                 string[] split = line.Split('=');
-                if (split[0] =="ID")
+                if (split[0] == "ID")
                 {
                     if (shop.UID == 0)
                         shop.UID = uint.Parse(split[1]);
@@ -33,7 +33,7 @@ namespace MTA.Database
                         }
                     }
                 }
-                else if (split[0] =="MoneyType")
+                else if (split[0] == "MoneyType")
                 {
                     shop.MoneyType = (ShopFile.MoneyType)byte.Parse(split[1]);
                 }
@@ -44,7 +44,7 @@ namespace MTA.Database
                         shop.Items.Add(ID);
                 }
             }
-            if (!Shops.ContainsKey(shop.UID)) 
+            if (!Shops.ContainsKey(shop.UID))
                 Shops.Add(shop.UID, shop);
             Console.WriteLine("EShops information loaded.");
         }

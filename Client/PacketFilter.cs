@@ -17,7 +17,7 @@ namespace MTA
 
         public const int Timelimit = 500; //clear every 500 ms
         public const int PacketLimit = 8;  //must be more than 1
-        
+
         private ConcurrentDictionary<int, int> Limits;
         private ConcurrentDictionary<int, PacketEntry> Entries;
         private object SyncRoot;

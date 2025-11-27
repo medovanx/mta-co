@@ -7,7 +7,7 @@ namespace MTA
 {
     public class Counter
     {
-        uint Start = 0; 
+        uint Start = 0;
         uint finish = uint.MaxValue;
 
         public uint Finish
@@ -16,9 +16,9 @@ namespace MTA
             {
                 return finish;
             }
-            set 
-            { 
-                finish = value; 
+            set
+            {
+                finish = value;
             }
         }
 
@@ -43,9 +43,9 @@ namespace MTA
             Now = Start;
         }
         public Counter(uint startFrom)
-        { 
+        {
             Start = startFrom;
-            Now = startFrom; 
+            Now = startFrom;
         }
     }
 }

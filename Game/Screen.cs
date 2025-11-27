@@ -58,7 +58,7 @@ namespace MTA.Game
                     Vigor vigor = new Vigor(true);
                     vigor.Amount = client.Vigor;
                     vigor.Send(client);
-                }  
+                }
                 if (!client.Entity.ContainsFlag(Update.Flags.Ride) && !client.Entity.ContainsFlag(Update.Flags.Fly) || client.Equipment.TryGetItem(18) != null)
                 {
                     int limit = 0;
@@ -126,7 +126,7 @@ namespace MTA.Game
                 }
             }
             #endregion
-            
+
             foreach (IMapObject obj in client.Screen.Objects)
             {
                 if (obj != null)
@@ -490,7 +490,7 @@ namespace MTA.Game
 
                         }
                         if (monster.MonsterInfo.Guard || monster.Companion || monster.Dead) continue;
-                        
+
                         if (monster.MonsterInfo.Reviver)
                         {
                             if (client.Entity.Dead && Now > client.Entity.DeathStamp.AddSeconds(5))
@@ -746,7 +746,7 @@ namespace MTA.Game
                                                             }
                                                         }
                                                     }
-                                                }  
+                                                }
                                                 if (Now >= monster.MonsterInfo.LastMove.AddMilliseconds(monster.MonsterInfo.AttackSpeed))
                                                 {
                                                     monster.MonsterInfo.LastMove = Time32.Now;
@@ -896,7 +896,7 @@ namespace MTA.Game
                 }
             }
         }
-      
+
         private static void itemsCallback(GameState client, int time)
         {
             if (!client.Socket.Alive)
@@ -959,7 +959,7 @@ namespace MTA.Game
                                                     uint damage = Game.Attacking.Calculate.Melee(item.Owner.Entity, attacked, ref attack);
                                                     damage = (uint)(damage * 0.7);
                                                     suse.Effect1 = attack.Effect1;
-                                                    Game.Attacking.Handle.ReceiveAttack(item.Owner.Entity, attacked, attack, ref damage, spell);                                                  
+                                                    Game.Attacking.Handle.ReceiveAttack(item.Owner.Entity, attacked, attack, ref damage, spell);
                                                     suse.AddTarget(attacked, damage, attack);
 
                                                 }
@@ -990,7 +990,7 @@ namespace MTA.Game
                             {
                                 if (item.OnFloor.AddSeconds(7).Next(time: time))
                                 {
-                                    item.Type = Network.GamePackets.FloorItem.RemoveEffect;                                   
+                                    item.Type = Network.GamePackets.FloorItem.RemoveEffect;
                                     client.Map.RemoveFloorItem(item);
                                     client.RemoveScreenSpawn(item, true);
                                     Attacking.Handle.AuroraLotus(item);
@@ -1000,7 +1000,7 @@ namespace MTA.Game
                             {
                                 if (item.OnFloor.AddSeconds(7).Next(time: time))
                                 {
-                                    item.Type = Network.GamePackets.FloorItem.RemoveEffect;                                  
+                                    item.Type = Network.GamePackets.FloorItem.RemoveEffect;
                                     client.Map.RemoveFloorItem(item);
                                     client.RemoveScreenSpawn(item, true);
                                     Attacking.Handle.FlameLotus(item);
@@ -1135,7 +1135,7 @@ namespace MTA.Game
             _objects = new Interfaces.IMapObject[0];
             _objectDictionary = new ConcurrentDictionary<uint, IMapObject>();
             PokerTables = new ConcurrentDictionary<uint, Game.ConquerStructures.PokerTable>();
-            TimerSubscriptions = new IDisposable[] 
+            TimerSubscriptions = new IDisposable[]
                 {
                     MonsterBuffers.Add(client),
                     Guards.Add(client),
@@ -1283,7 +1283,7 @@ namespace MTA.Game
                 {
                     sob = imo as SobNpcSpawn;
                     return true;
-                }               
+                }
             }
             return false;
         }

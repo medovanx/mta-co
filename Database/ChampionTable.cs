@@ -66,7 +66,7 @@ namespace MTA.Database
               .Insert("EntityName", client.ChampionStats.Name).Insert("Points", client.ChampionStats.Points)
               .Insert("Level", client.ChampionStats.Level).Insert("Class", client.ChampionStats.Class).Insert("Model", client.ChampionStats.Model)
               .Insert("EntityID", client.ChampionStats.UID))
-              cmd.Execute();
+                cmd.Execute();
         }
 
         public static void Reset(ChampionStatistic stat)

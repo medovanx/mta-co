@@ -7,8 +7,8 @@ namespace MTA.Network.GamePackets
 {
     public class MsgShowHandActivePlayer : Writer, Interfaces.IPacket
     {
-       private byte[] Buffer;
-       public MsgShowHandActivePlayer(bool create)
+        private byte[] Buffer;
+        public MsgShowHandActivePlayer(bool create)
         {
             if (create)
             {

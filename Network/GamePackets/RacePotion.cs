@@ -37,13 +37,13 @@ namespace MTA.Network.GamePackets
             get { return BitConverter.ToInt32(buffer, 8); }
             set { WriteInt32(value, 8, buffer); }
         }
-        
+
         public uint dwParam
         {
             get { return BitConverter.ToUInt32(buffer, 12); }
             set { WriteUInt32(value, 12, buffer); }
         }
-        
+
         public void Deserialize(byte[] buffer)
         {
             this.buffer = buffer;

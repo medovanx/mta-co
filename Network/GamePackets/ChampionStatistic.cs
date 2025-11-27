@@ -33,7 +33,7 @@ namespace MTA.Network.GamePackets
         public uint YesterdayPoints;
         public DateTime LastReset;
         public Time32 SignUpTime;
-     
+
         public ChampionStatistic(bool Create)
         {
             Buffer = new byte[24];
@@ -77,10 +77,10 @@ namespace MTA.Network.GamePackets
             get { return BitConverter.ToUInt32(Buffer, 8); }
             set { WriteUInt32(value, 8, Buffer); }
         }
-        
+
         public uint IsGrade
         {
-            get 
+            get
             {
                 if (Points > 24400) return 7;
                 if (Points > 9400) return 6;

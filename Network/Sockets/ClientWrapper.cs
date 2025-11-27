@@ -46,7 +46,7 @@ namespace MTA.Network.Sockets
             OverrideTiming = false;
             SendQueue = new Queue<byte[]>();
             SendSyncRoot = new object();
-            TimerSubscriptions = new[] 
+            TimerSubscriptions = new[]
             {
                 World.Subscribe<ClientWrapper>(Program.World.ConnectionReview, this, World.GenericThreadPool),
                 World.Subscribe<ClientWrapper>(Program.World.ConnectionReceive, this, World.ReceivePool),
@@ -117,7 +117,7 @@ namespace MTA.Network.Sockets
             {
                 if (TimerSubscriptions == null)
                 {
-                    TimerSubscriptions = new[] 
+                    TimerSubscriptions = new[]
                     {
                 World.Subscribe<ClientWrapper>(Program.World.ConnectionReview, this, World.GenericThreadPool),
                 World.Subscribe<ClientWrapper>(Program.World.ConnectionReceive, this, World.ReceivePool),

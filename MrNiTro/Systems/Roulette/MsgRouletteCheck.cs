@@ -1,18 +1,18 @@
 ﻿using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Runtime.InteropServices;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Runtime.InteropServices;
 
 namespace MTA.MaTrix.Roulette
-{   
+{
     public struct MsgRouletteCheck
     {
         public struct Item
         {
             public byte Number;
             public uint BetPrice;
-        }        
+        }
         public static void Poroces(Client.GameState user, byte[] stream)
         {
             byte Count = stream[4];

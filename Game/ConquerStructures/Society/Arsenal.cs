@@ -20,18 +20,18 @@ namespace MTA.Game.ConquerStructures.Society
 
             public ArsenalItem(Arsenal super)
             {
-                Super = super;  
+                Super = super;
             }
             public ArsenalItem(Arsenal super, ConquerItem item, Client.GameState client)
             {
-                Super = super;  
+                Super = super;
                 UID = item.UID;
                 Update(item, client);
                 OwnerUID = client.Entity.UID;
             }
 
             public void Update(ConquerItem item, Client.GameState client)
-            {    
+            {
                 bool updated = (ID != item.ID || Plus != item.Plus || SocketOne != (byte)item.SocketOne || SocketTwo != (byte)item.SocketTwo);
                 ID = item.ID;
                 Plus = item.Plus;

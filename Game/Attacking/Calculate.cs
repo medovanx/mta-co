@@ -76,7 +76,7 @@ namespace MTA.Game.Attacking
         {
             return (uint)MyMath.GetDamageEntity2Environment(attacker, attackedSobNpc, (byte)Attack.Melee, ref attack);
         }
-       
+
         internal static uint Melee(Entity attacker, Entity attacked, Database.SpellInformation spell, ref Attack attack, byte p = 0)
         {
             int Damage = 0;
@@ -92,7 +92,7 @@ namespace MTA.Game.Attacking
 
             CheckDamage(attacker, attacked, ref Damage, ref attack, false);
             return (uint)Damage;
-        } 
+        }
         internal static uint MonsterDamage(Entity attacker, Entity attacked, ref Attack attack, bool p)
         {
             int Damage = 0;
@@ -424,7 +424,7 @@ namespace MTA.Game.Attacking
             {
                 //if (GetRefinery())
                 {
-                    { 
+                    {
                         if (RateStatus(50))
                         {
 

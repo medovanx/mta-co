@@ -781,18 +781,18 @@ namespace MTA.Game
                 strm.Close();
                 return buf;
             }
-        
+
         }
 
         public class GroupMatch
         {
             public ushort Type = 2210;
             public QualifierList.QualifierGroup Group;
-          public byte[] BuildPacket(byte valu = 1)
+            public byte[] BuildPacket(byte valu = 1)
             {
                 MemoryStream strm = new MemoryStream();
                 BinaryWriter wtr = new BinaryWriter(strm);
- 
+
                 wtr.Write((ushort)60);
                 wtr.Write((ushort)Type);
                 wtr.Write((uint)Group.Player1.ArenaStatistic.EntityID);
@@ -829,7 +829,7 @@ namespace MTA.Game
                 strm.Close();
                 return buf;
             }
-        
+
         }
 
         public static void Win(Client.GameState winner, Client.GameState loser)

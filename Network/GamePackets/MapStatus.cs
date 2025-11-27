@@ -24,7 +24,7 @@ namespace MTA.Network.GamePackets
         public uint Status
         {
             get { return BitConverter.ToUInt32(Buffer, 12); }
-            set { WriteUInt32(value, 12, Buffer);  }
+            set { WriteUInt32(value, 12, Buffer); }
         }
         public uint Weather
         {

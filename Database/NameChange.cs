@@ -10,7 +10,7 @@ namespace MTA.Database
         public static void UpdateNames()
         {
             Dictionary<String, NameChangeC> UPDATE = new Dictionary<string, NameChangeC>();
-            using(var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("entities"))
+            using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("entities"))
             using (var r = new MySqlReader(cmd))
             {
                 String newname = "", name = "";
@@ -81,7 +81,7 @@ namespace MTA.Database
             }
             foreach (NameChangeC names in UPDATE.Values)
             {
-                using(var cmdupdate2 = new MySqlCommand(MySqlCommandType.UPDATE))
+                using (var cmdupdate2 = new MySqlCommand(MySqlCommandType.UPDATE))
                     cmdupdate2.Update("entities").Set("name", names.NewName).Set("namechange", "").Where("name", names.OldName).Execute();
                 Console.WriteLine(" -[" + names.OldName + "] : -[" + names.NewName + "]");
                 System.Console.ForegroundColor = ConsoleColor.White;//debug

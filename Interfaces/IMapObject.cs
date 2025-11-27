@@ -12,6 +12,6 @@ namespace MTA.Interfaces
         Game.MapObjectType MapObjType { get; }
         void SendSpawn(Client.GameState client);
         void SendSpawn(Client.GameState client, bool checkScreen);
-       
+
     }
 }

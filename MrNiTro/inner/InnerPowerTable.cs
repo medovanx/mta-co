@@ -188,10 +188,10 @@ namespace MTA.Database
         }
         public static void Load()
         {
-                using (var cmd = new MySqlCommand(MySqlCommandType.SELECT))
-                {
-                    cmd.Select("innerpower");
-                    using (MySqlReader rdr = new MySqlReader(cmd))
+            using (var cmd = new MySqlCommand(MySqlCommandType.SELECT))
+            {
+                cmd.Select("innerpower");
+                using (MySqlReader rdr = new MySqlReader(cmd))
                 {
                     while (rdr.Read())
                     {

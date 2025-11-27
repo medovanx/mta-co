@@ -12,7 +12,7 @@ namespace MTA.Interfaces
         ushort Y { get; set; }
         ushort Mesh { get; set; }
         ushort MapID { get; set; }
-       _String Effect { get; set; }
+        _String Effect { get; set; }
         string effect { get; set; }
         void SendSpawn(Client.GameState Client);
         void SendSpawn(Client.GameState Client, bool checkScreen);

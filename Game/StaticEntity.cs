@@ -26,7 +26,7 @@ namespace MTA.Game
         public Time32 NotViableStamp;
         public uint SetBy = 0;
 
-        public StaticEntity(uint uid, ushort x, ushort y,ushort map)
+        public StaticEntity(uint uid, ushort x, ushort y, ushort map)
         {
             this.uid = uid;
             this.x = x;
@@ -112,7 +112,7 @@ namespace MTA.Game
         {
             Viable = true;
 
-            var itemData = raceItems[Kernel.Random.Next(raceItems.Length)];    
+            var itemData = raceItems[Kernel.Random.Next(raceItems.Length)];
             this.mesh = itemData.Item1;
             this.name = itemData.Item2;
             this.level = itemData.Item3;

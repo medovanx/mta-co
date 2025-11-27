@@ -84,7 +84,7 @@ namespace MTA.Game
             return BaseID != ID;
         }
         public SafeDictionary<uint, Entity> Entities;
-      //  public SafeDictionary<uint, Entity> Companions;
+        //  public SafeDictionary<uint, Entity> Companions;
         public Dictionary<uint, INpc> Npcs;
         public Dictionary<uint, INpc> Statues = new Dictionary<uint, INpc>();
         public Dictionary<uint, INpc> TempNpcs = new Dictionary<uint, INpc>();
@@ -324,7 +324,7 @@ namespace MTA.Game
             Entities = new SafeDictionary<uint, Entity>();
             FloorItems = new ConcurrentDictionary<uint, FloorItem>();
             Floor = new Floor(0, 0, id);
-           // Companions = new SafeDictionary<uint, Entity>();
+            // Companions = new SafeDictionary<uint, Entity>();
             ID = id;
             BaseID = id;
             if (path == "") path = Database.DMaps.MapPaths[id];
@@ -332,7 +332,7 @@ namespace MTA.Game
             #region Loading floor.
             if (File.Exists(Constants.DMapsPath + "\\maps\\" + id.ToString() + ".map"))
             {
-             //   Console.WriteLine("Loading " + ID + " DMap : maps\\" + id.ToString() + ".map");
+                //   Console.WriteLine("Loading " + ID + " DMap : maps\\" + id.ToString() + ".map");
                 byte[] buff = File.ReadAllBytes(Constants.DMapsPath + "\\maps\\" + id.ToString() + ".map");
                 MemoryStream FS = new MemoryStream(buff);
                 BinaryReader BR = new BinaryReader(FS);
@@ -359,7 +359,7 @@ namespace MTA.Game
             {
                 if (File.Exists(Constants.DMapsPath + Path))
                 {
-              //      Console.WriteLine("Loading " + ID + " DMap : " + Path);
+                    //      Console.WriteLine("Loading " + ID + " DMap : " + Path);
                     byte[] buff = File.ReadAllBytes(Constants.DMapsPath + Path);
                     MemoryStream FS = new MemoryStream(buff);
                     BinaryReader BR = new BinaryReader(FS);
@@ -404,7 +404,7 @@ namespace MTA.Game
             }
             #endregion
             LoadNpcs();
-           
+
             LoadMonsters();
             LoadPortals();
 
@@ -417,7 +417,7 @@ namespace MTA.Game
                 Kernel.Maps[id] = this;
             Npcs = new Dictionary<uint, INpc>();
             Entities = new SafeDictionary<uint, Entity>();
-        //    Companions = new SafeDictionary<uint, Entity>();
+            //    Companions = new SafeDictionary<uint, Entity>();
             FloorItems = new ConcurrentDictionary<uint, FloorItem>();
             ID = id;
             BaseID = baseid;
@@ -442,7 +442,7 @@ namespace MTA.Game
             {
                 if (File.Exists(Constants.DMapsPath + "\\maps\\" + baseid.ToString() + ".map"))
                 {
-                   // Console.WriteLine("Loading " + ID + " DMap : maps\\" + id.ToString() + ".map");
+                    // Console.WriteLine("Loading " + ID + " DMap : maps\\" + id.ToString() + ".map");
                     byte[] buff = File.ReadAllBytes(Constants.DMapsPath + "\\maps\\" + baseid.ToString() + ".map");
                     MemoryStream FS = new MemoryStream(buff);
                     BinaryReader BR = new BinaryReader(FS);
@@ -465,7 +465,7 @@ namespace MTA.Game
                 {
                     if (File.Exists(Constants.DMapsPath + Path))
                     {
-                   //     Console.WriteLine("Loading "+ID+" DMap : " + Path);
+                        //     Console.WriteLine("Loading "+ID+" DMap : " + Path);
                         FileStream FS = new FileStream(Constants.DMapsPath + Path, FileMode.Open);
                         BinaryReader BR = new BinaryReader(FS);
                         BR.ReadBytes(268);
@@ -549,7 +549,7 @@ namespace MTA.Game
             }
             #endregion
             LoadNpcs();
-       
+
             LoadMonsters();
             LoadPortals();
 
@@ -635,18 +635,18 @@ namespace MTA.Game
         public List<Game.Portal> Portals = new List<Game.Portal>();
         private IDisposable Timer;
 
-        public static sbyte[] XDir = new sbyte[] 
-        { 
+        public static sbyte[] XDir = new sbyte[]
+        {
             -1, -2, -2, -1, 1, 2, 2, 1,
-             0, -2, -2, -2, 0, 2, 2, 2, 
+             0, -2, -2, -2, 0, 2, 2, 2,
             -1, -2, -2, -1, 1, 2, 2, 1,
              0, -1, -1, -1, 0, 1, 1, 1,
         };
-        public static sbyte[] YDir = new sbyte[] 
+        public static sbyte[] YDir = new sbyte[]
         {
             2,  1, -1, -2, -2, -1, 1, 2,
-            2,  2,  0, -2, -2, -2, 0, 2, 
-            2,  1, -1, -2, -2, -1, 1, 2, 
+            2,  2,  0, -2, -2, -2, 0, 2,
+            2,  1, -1, -2, -2, -1, 1, 2,
             1,  1,  0, -1, -1, -1, 0, 1
         };
         public SafeConcurrentDictionary<uint, StaticEntity> StaticEntities = new SafeConcurrentDictionary<uint, StaticEntity>();
@@ -695,7 +695,7 @@ namespace MTA.Game
             }
 
         }
-       
+
         private void LoadNpcs()
         {
             using (var command = new Database.MySqlCommand(Database.MySqlCommandType.SELECT))
@@ -714,7 +714,7 @@ namespace MTA.Game
                         npc.Y = reader.ReadUInt16("celly");
                         npc.effect = reader.ReadString("effect");
                         npc.MapID = ID;
-                       
+
                         AddNpc(npc);
                     }
                 }
@@ -876,7 +876,7 @@ namespace MTA.Game
                                 }
                             }
                         }
-                        
+
                     }
                     catch (Exception e) { Program.SaveException(e); }
                     if (mycount != 0)
@@ -979,7 +979,7 @@ namespace MTA.Game
                                     client.MessageBox(monster.Name + " has apeared , Who will Defeat it and get 500 MonsterPoints !", (p) => { p.Entity.Teleport(monster.MapID, (ushort)(monster.X + 3), (ushort)(monster.Y + 3), false); }, null);
                                 }
                                 MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Warrning " + monster.Name + " has Apeared in [" + monster.MapID.ToString() + "] at " + monster.X + ", " + monster.Y + " Who will Defeat it and get 50 MonsterPoints !", System.Drawing.Color.White, MTA.Network.GamePackets.Message.Center), Program.Values);
-                            }*/                            
+                            }*/
                             foreach (Client.GameState client in Program.Values)
                             {
                                 if (client.Map.ID == map.ID)

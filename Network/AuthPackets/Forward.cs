@@ -4,7 +4,7 @@ namespace MTA.Network.AuthPackets
 {
     public class Forward : Interfaces.IPacket
     {
-        public enum ForwardType : uint { Ready = 2,Ready2 = 3, InvalidInfo = 1, Banned = 25 }
+        public enum ForwardType : uint { Ready = 2, Ready2 = 3, InvalidInfo = 1, Banned = 25 }
         byte[] Buffer;
         public Forward()
         {
@@ -15,7 +15,7 @@ namespace MTA.Network.AuthPackets
         public uint Identifier
         {
             get
-            {             
+            {
                 return BitConverter.ToUInt32(Buffer, 4);
             }
             set

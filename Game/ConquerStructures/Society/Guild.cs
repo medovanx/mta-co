@@ -504,14 +504,14 @@ namespace MTA.Game.ConquerStructures.Society
             public uint CTFSilverReward = 0;
             public uint CTFCpsReward = 0;
             public uint WarScore;
-           
+
         }
 
         private byte[] Buffer;
         public uint GuildScoreWar;
         public uint WarScore;
         public uint sWarScore;
-       
+
         public bool SuperPoleKeeper
         {
             get
@@ -1249,7 +1249,7 @@ namespace MTA.Game.ConquerStructures.Society
         public uint PhScore;
         public uint PaScore;
         public uint BiScore;
-       
+
         public uint EWarScore;
         public uint PTScore;
         public uint DCScore;
@@ -1447,7 +1447,7 @@ namespace MTA.Game.ConquerStructures.Society
             wtr.Close();
             strm.Close();
             client.Send(buf);
-        }  
+        }
 
         public void SendGuildMessage(Interfaces.IPacket message)
         {

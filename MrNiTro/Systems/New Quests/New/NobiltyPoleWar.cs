@@ -16,8 +16,8 @@ namespace MTA.Game
     public class NobiltyPoleWar
     {
         public const int Serf = 0,
-            // Knight = 1,
-            // Baron = 3,
+        // Knight = 1,
+        // Baron = 3,
         Earl = 5,
         Duke = 7,
         Prince = 9,
@@ -82,7 +82,7 @@ namespace MTA.Game
 
                 client.OnDisconnect = p =>
                 {
-                //    p.Entity.Teleport(1002, 301, 266);
+                    //    p.Entity.Teleport(1002, 301, 266);
                     client.Entity.PKMode = Game.Enums.PkMode.PK;
                     client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                 };
@@ -190,7 +190,7 @@ namespace MTA.Game
         }
 
         #region Score
-      
+
         public static bool FirstRound = false;
         public static Time32 ScoreSendStamp, LastWin;
 
@@ -240,8 +240,8 @@ namespace MTA.Game
                     Pole.Hitpoints = 0;
                 var Scores = AllScores[(ushort)((int)entity.NobilityRank)];
                 if (Scores == null)
-                    Scores = AllScores[(ushort)((int)entity.NobilityRank)] = new SafeDictionary<uint, Entity>();                  
-                
+                    Scores = AllScores[(ushort)((int)entity.NobilityRank)] = new SafeDictionary<uint, Entity>();
+
                 if (!Scores.ContainsKey(entity.UID))
                     Scores.Add(entity.UID, entity);
 
@@ -256,12 +256,12 @@ namespace MTA.Game
         }
 
         public static void SendScores()
-        {  
+        {
             if (AllPole)
             {
                 Entity CurrentTopLeader;
-                
-               var scoreMessages= SortScores(out CurrentTopLeader, 0);
+
+                var scoreMessages = SortScores(out CurrentTopLeader, 0);
                 for (int c = 0; c < scoreMessages.Length; c++)
                 {
                     Message msg = new Message(scoreMessages[c], System.Drawing.Color.Red, c == 0 ? Message.FirstRightCorner : Message.ContinueRightCorner);
@@ -292,7 +292,7 @@ namespace MTA.Game
                         {
                             if (client.Map.ID == Map.ID)
                             {
-                                if (client.Entity.NobilityRank ==  (NobilityRank)i)
+                                if (client.Entity.NobilityRank == (NobilityRank)i)
                                     client.Send(msg);
                             }
                         }

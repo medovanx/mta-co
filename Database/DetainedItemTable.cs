@@ -29,7 +29,7 @@ namespace MTA.Database
                         client.DeatinedItem.Add(item.UID, item);
                     else
                         if (item.Bound)
-                            Claim(item, client);
+                        Claim(item, client);
                 }
             }
         }
@@ -56,7 +56,7 @@ namespace MTA.Database
                 add.Append(Item.Item.ExtraEffect);
             if (Item.Item.Purification.Available || Item.Item.ExtraEffect.Available)
                 owner.Send(add);
-          
+
 
             DetainedItem Item2 = new DetainedItem(true);
             Item2.ItemUID = item.UID;

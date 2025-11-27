@@ -102,7 +102,7 @@ namespace MTA
                         break;
                     }
                 default: Class.Text = "Taoist"; break;
-                #endregion
+                    #endregion
             }
             switch (client.Entity.Reborn)
             {
@@ -293,7 +293,7 @@ namespace MTA
                         break;
                     }
                 default: Class.Text = "Taoist"; break;
-                #endregion
+                    #endregion
             }
             switch (client.Entity.Reborn)
             {
@@ -346,7 +346,7 @@ namespace MTA
             {
                 MessageBox.Show(exc.ToString());
             }
-            
+
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -388,7 +388,7 @@ namespace MTA
             client = Client.GameState.CharacterFromName(comboBox1.Text);
             if (client == null)
                 return;
-            uint UID = Convert.ToUInt32(data[1]);            
+            uint UID = Convert.ToUInt32(data[1]);
             MTA.Network.GamePackets.ConquerItem item = null;
             if (data[2] == "[Equipment]")
             {
@@ -403,8 +403,8 @@ namespace MTA
                 Game.ConquerStructures.Warehouse wh = client.Warehouses[(MTA.Game.ConquerStructures.Warehouse.WarehouseID)Convert.ToUInt32(data[3])];
                 if (wh == null) return;
                 if (wh.ContainsUID(UID))
-                  item = wh.GetItem(UID);                
-            }            
+                    item = wh.GetItem(UID);
+            }
             if (item == null) return;
             xplus.Text = item.Plus.ToString();
             xbless.Text = item.Bless.ToString();
@@ -432,7 +432,7 @@ namespace MTA
             }
             else if (data[2] == "[Inventory]")
             {
-                client.Inventory.TryGetItem(UID, out item);                
+                client.Inventory.TryGetItem(UID, out item);
             }
             else if (data[2] == "[Warehouse]")
             {
@@ -445,12 +445,12 @@ namespace MTA
 
                 }
             }
-            if (item == null) 
-                return;       
-     
-            client.Inventory.Remove(item, MTA.Game.Enums.ItemUse.Remove);     
+            if (item == null)
+                return;
 
-            comboBox2.Items.Clear();           
+            client.Inventory.Remove(item, MTA.Game.Enums.ItemUse.Remove);
+
+            comboBox2.Items.Clear();
             foreach (var itemx in client.Equipment.Objects)
             {
                 if (item == null || !Database.ConquerItemInformation.BaseInformations.ContainsKey(item.ID))

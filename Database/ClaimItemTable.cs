@@ -44,7 +44,7 @@ namespace MTA.Database
 
         public static void Redeem(DetainedItem item, Client.GameState owner)
         {
-            using(var cmd = new MySqlCommand(MySqlCommandType.UPDATE))
+            using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE))
                 cmd.Update("claimitems").Set("OwnerUID", 500).Where("ItemUID", item.ItemUID).Execute();
         }
 

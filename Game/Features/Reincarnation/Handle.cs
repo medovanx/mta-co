@@ -85,13 +85,13 @@ namespace MTA.Game.Features.Reincarnation
                 //client.Screen.send(client.Entity.SpawnPacket, false);
             #endregion
 
-                #region Remove Extra Skill
+            #region Remove Extra Skill
 
                 if (client.Entity.FirstRebornClass == 15 && client.Entity.SecondRebornClass == 15 &&
                     client.Entity.Class == 15)
-                {
-                    WontAdd(MTA.Game.Enums.SkillIDs.DragonWhirl);
-                }
+            {
+                WontAdd(MTA.Game.Enums.SkillIDs.DragonWhirl);
+            }
             if (client.Entity.FirstRebornClass == 85 && client.Entity.SecondRebornClass == 85 &&
                 client.Entity.Class == 85)
             {
@@ -128,7 +128,7 @@ namespace MTA.Game.Features.Reincarnation
                 WontAdd(MTA.Game.Enums.SkillIDs.HeavenBlade);
             }
 
-                #endregion
+            #endregion
 
             Database.ReincarnationTable.NewReincarnated(client.Entity);
             Game.Features.Reincarnation.ReincarnateInfo info = new Game.Features.Reincarnation.ReincarnateInfo();
@@ -1166,7 +1166,7 @@ namespace MTA.Game.Features.Reincarnation
                         break;
                     }
 
-                #endregion
+                    #endregion
             }
 
 

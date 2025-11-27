@@ -7,7 +7,7 @@ namespace MTA.Network.GamePackets
 {
     public class ArsenalCommand : Writer, Interfaces.IPacket
     {
-        public const uint 
+        public const uint
             Unlock = 0,
             Inscribe = 1,
             Uninscribe = 2,
@@ -31,7 +31,7 @@ namespace MTA.Network.GamePackets
             get { return BitConverter.ToUInt32(Buffer, 8); }
             set { WriteUInt32(value, 8, Buffer); }
         }
-        
+
         public uint dwParam2
         {
             get { return BitConverter.ToUInt32(Buffer, 12); }

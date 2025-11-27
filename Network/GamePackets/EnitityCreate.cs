@@ -10,7 +10,7 @@ namespace MTA.Network.GamePackets
         public byte Class;
         public void Deserialize(byte[] buffer)
         {
-            Name = Program.Encoding.GetString(buffer, 24, 16).Replace("\0","");
+            Name = Program.Encoding.GetString(buffer, 24, 16).Replace("\0", "");
             Body = BitConverter.ToUInt16(buffer, 72);
             Class = (byte)BitConverter.ToUInt16(buffer, 74);
         }

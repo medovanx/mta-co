@@ -82,6 +82,6 @@ namespace MTA
             {
                 return *((ushort*)(Buffer + offset));
             }
-        }        
+        }
     }
 }

@@ -328,7 +328,7 @@ namespace MTA.Network.GamePackets
                 var stream = reader.BaseStream;
                 if (stream.Position + 8 > stream.Length)
                     return;
-                
+
                 Potency = reader.ReadInt32();
                 int xStages = reader.ReadInt32();
                 int maxStages = Math.Min(xStages, Stages.Length);
@@ -336,21 +336,21 @@ namespace MTA.Network.GamePackets
                 {
                     if (stream.Position + 7 > stream.Length)
                         break;
-                    
+
                     var Stage = Stages[i];
                     Stage.ID = reader.ReadUInt16();
                     Stage.UnLocked = reader.ReadByte() == 1;
-                    
+
                     if (stream.Position + 4 > stream.Length)
                         break;
-                    
+
                     int count_neigongs = reader.ReadInt32();
                     int maxNeiGongs = Math.Min(count_neigongs, Stage.NeiGongs.Length);
                     for (int y = 0; y < maxNeiGongs; y++)
                     {
                         if (stream.Position + 5 > stream.Length)
                             break;
-                        
+
                         var neigon = Stage.NeiGongs[y];
                         neigon.ID = reader.ReadByte();
                         neigon.Score = reader.ReadByte();
@@ -363,7 +363,7 @@ namespace MTA.Network.GamePackets
                     {
                         if (stream.Position + 5 > stream.Length)
                             break;
-                        
+
                         reader.ReadByte(); // ID
                         reader.ReadByte(); // Score
                         reader.ReadByte(); // Unlocked
@@ -376,19 +376,19 @@ namespace MTA.Network.GamePackets
                 {
                     if (stream.Position + 7 > stream.Length)
                         break;
-                    
+
                     reader.ReadUInt16(); // ID
                     reader.ReadByte(); // UnLocked
-                    
+
                     if (stream.Position + 4 > stream.Length)
                         break;
-                    
+
                     int count_neigongs = reader.ReadInt32();
                     for (int y = 0; y < count_neigongs; y++)
                     {
                         if (stream.Position + 5 > stream.Length)
                             break;
-                        
+
                         reader.ReadByte(); // ID
                         reader.ReadByte(); // Score
                         reader.ReadByte(); // Unlocked

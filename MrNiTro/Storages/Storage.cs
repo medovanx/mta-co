@@ -26,7 +26,8 @@ namespace Throne.World.Database.Information.Files
                     storageInfo.Storages[i].UnitCount = reader.ReadInt32(mySection, "UnitCount", 0);
                     storageInfo.Storages[i].ViewType = reader.ReadInt32(mySection, "ViewType", 0);
                     storageInfo.Storages[i].Units = new StorageInfo.Storage.Unit[storageInfo.Storages[i].UnitCount];
-                    for (int u = 0; u < storageInfo.Storages[i].UnitCount; u++) {
+                    for (int u = 0; u < storageInfo.Storages[i].UnitCount; u++)
+                    {
                         var unitSection = mySection + "-" + (u + 1).ToString();
                         storageInfo.Storages[i].Units[u] = new StorageInfo.Storage.Unit();
                         storageInfo.Storages[i].Units[u].ID = reader.ReadInt32(unitSection, "ID", 0);
@@ -39,7 +40,7 @@ namespace Throne.World.Database.Information.Files
 
                 }
             }
-           // Console.WriteLine("storageManager By jiMMy loaded.");
+            // Console.WriteLine("storageManager By jiMMy loaded.");
         }
     }
     [StructLayout(LayoutKind.Sequential)]
@@ -72,12 +73,14 @@ namespace Throne.World.Database.Information.Files
         }
         public Storage.Unit GetUnitByID(int ID, Storage _storage = null)
         {
-            if (_storage != null) { 
+            if (_storage != null)
+            {
                 foreach (var unit in _storage.Units)
                     if (unit.ID == ID)
                         return unit;
             }
-            else {
+            else
+            {
                 foreach (var storage in Storages)
                     if (storage != null)
                         foreach (var unit in storage.Units)

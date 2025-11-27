@@ -372,7 +372,7 @@ namespace MTA.Game
             if (collection.Count > 0 && collection.Count < 9)
                 Inner_Strength += (ushort)(points + ((points * ((collection.Count) * 10) / 100)));
             else if (collection.Count == 9)
-                 Inner_Strength += (ushort)(points *2);
+                Inner_Strength += (ushort)(points * 2);
         }
         public void IncreaseStatus(Entity client, JiangStages.AtributesType status, ushort Power)
         {

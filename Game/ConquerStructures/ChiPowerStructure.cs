@@ -48,7 +48,7 @@ namespace MTA.Game.ConquerStructures
             {
                 int max = Game.Enums.ChiMaxValues(attribute.Type);
                 int min = Game.Enums.ChiMinValues(attribute.Type);
-                score += (int)(100 * (attribute.Value - min) / (max-min));
+                score += (int)(100 * (attribute.Value - min) / (max - min));
             }
             Points = score;
         }
@@ -56,17 +56,17 @@ namespace MTA.Game.ConquerStructures
         public ChiPowerStructure(Enums.ChiPowerType power = Enums.ChiPowerType.None)
         {
             Power = power;
-            Attributes = new ChiAttribute[4];           
+            Attributes = new ChiAttribute[4];
         }
 
         public ChiPowerStructure Deserialize(BinaryReader reader, bool retreat = false)
         {
             Power = (Enums.ChiPowerType)reader.ReadByte();
             if (retreat)
-             Retreat_TimeLeft = DateTime.FromBinary(reader.ReadInt64());
+                Retreat_TimeLeft = DateTime.FromBinary(reader.ReadInt64());
             for (int i = 0; i < Attributes.Length; i++)
-                Attributes[i].Deserialize(reader);           
-          
+                Attributes[i].Deserialize(reader);
+
             CalculatePoints();
             return this;
         }

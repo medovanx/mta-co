@@ -7,7 +7,8 @@ namespace Pathfinding.AStar
 {
     public static class Calculate
     {
-        public struct Coordonates {
+        public struct Coordonates
+        {
             public ushort X, Y;
         }
         public static List<Coordonates> FindWay(ushort myX, ushort myY, ushort toX, ushort toY, MTA.Game.Map map)

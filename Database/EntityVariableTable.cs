@@ -39,7 +39,7 @@ namespace MTA.Database
                 }
             }
         }
-      
+
         public static void Save(Client.GameState client)
         {
             Save(client.Entity.UID, client.Variables);
@@ -48,7 +48,7 @@ namespace MTA.Database
         {
             if (vars == null) return;
             if (!vars.Changed) return;
-            vars.Changed = false; 
+            vars.Changed = false;
             string SQL = "UPDATE `variablevault` set data=@Data where entityid=@EntityID;";
             byte[] rawData = vars.Serialize();
             using (var conn = Database.DataHolder.MySqlConnection)
@@ -65,7 +65,7 @@ namespace MTA.Database
 
         internal static void Save(Client.GameState GameState, MySqlConnection conn)
         {
-           
+
             var vars = GameState.Variables;
             if (vars == null) return;
             if (!vars.Changed) return;

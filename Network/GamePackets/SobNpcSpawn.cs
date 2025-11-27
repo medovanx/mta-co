@@ -7,7 +7,7 @@ namespace MTA.Network.GamePackets
     public class SobNpcSpawn : Writer, Interfaces.IPacket, Interfaces.INpc, Interfaces.ISobNpc, Interfaces.IMapObject
     {
         private byte[] Buffer;
-     //   public byte[] SpawnPacket;
+        //   public byte[] SpawnPacket;
         public _String Effect { get; set; }
 
         public SobNpcSpawn()
@@ -120,7 +120,7 @@ namespace MTA.Network.GamePackets
 
         public void Die(Game.Entity killer)
         {
-if (MapID == 2078)
+            if (MapID == 2078)
             {
                 if (UID != 819)
                 {
@@ -330,7 +330,7 @@ if (MapID == 2078)
                 upd.Append(Update.Hitpoints, MaxHitpoints);
                 killer.Owner.SendScreen(upd, true);
             }
-           if (MapID == 1038 || MapID == 2071)
+            if (MapID == 1038 || MapID == 2071)
             {
                 if (UID != 810 || UID != 811)
                 {
@@ -357,14 +357,14 @@ if (MapID == 2078)
                     killer.KOCount++;
                 }
             }
-           if (MapID == CaptureTheFlag.MapID)
-           {
-               if (Program.World.CTF.Bases.ContainsKey(UID))
-               {
-                   var _base = Program.World.CTF.Bases[UID];
-                   _base.Capture();
-               }
-           }
+            if (MapID == CaptureTheFlag.MapID)
+            {
+                if (Program.World.CTF.Bases.ContainsKey(UID))
+                {
+                    var _base = Program.World.CTF.Bases[UID];
+                    _base.Capture();
+                }
+            }
             else if (MapID == 8175)
             {
                 if (UID != 810)
@@ -422,7 +422,7 @@ if (MapID == 2078)
                     _base.Capture();
                 }
             }
-                //////////
+            //////////
             else if (MapID == 5002)
             {
                 if (UID != 8185)
@@ -558,7 +558,7 @@ if (MapID == 2078)
                     killer.KOCount++;
                 }
             }
-                ////////////////
+            ////////////////
             else if (MapID == 1038)
             {
                 if (UID != 810)

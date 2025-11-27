@@ -29,7 +29,7 @@ namespace MTA.Database
                 Body4 = reader.ReadString("Body4");
                 Body5 = reader.ReadString("Body5");
                 Body6 = reader.ReadString("Body6");
-              //  Body6 = reader.ReadString("Date");
+                //  Body6 = reader.ReadString("Date");
 
 
             }

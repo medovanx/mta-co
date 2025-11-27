@@ -12,7 +12,7 @@ using System.IO;
 using MTA.Game.ConquerStructures;
 
 namespace MTA.TransferServer
-{  
+{
     public partial class TransferPlayer
     {
         public TransferPlayer()
@@ -42,7 +42,7 @@ namespace MTA.TransferServer
         {
             get
             {
-               // return "Tra_" + Key;
+                // return "Tra_" + Key;
                 return PacketHandler.ReadString(packet, 181, packet[180]);
             }
         }
@@ -57,7 +57,7 @@ namespace MTA.TransferServer
         public uint Class { get { return BitConverter.ToUInt16(packet, 14); } }
         public uint SecoundClass { get { return BitConverter.ToUInt16(packet, 16); } }
         public uint FirstClass { get { return BitConverter.ToUInt16(packet, 18); } }
-        public uint Reborn { get { return BitConverter.ToUInt32(packet, 22); } }        
+        public uint Reborn { get { return BitConverter.ToUInt32(packet, 22); } }
         public uint Haire { get { return BitConverter.ToUInt32(packet, 30); } }
         public uint Body { get { return BitConverter.ToUInt32(packet, 34); } }
         public uint Level { get { return BitConverter.ToUInt32(packet, 38); } }
@@ -77,7 +77,7 @@ namespace MTA.TransferServer
         public ushort GuildRank { get { return BitConverter.ToUInt16(packet, 102); } }
         public string GuildName { get { return PacketHandler.ReadString(packet, 104, 16); } }
         public string GuildLeaderName { get { return PacketHandler.ReadString(packet, 120, 16); } }
-        
+
         public Database.AccountTable.AccountState State
         {
             get
@@ -89,7 +89,7 @@ namespace MTA.TransferServer
         {
             get
             {
-                return PacketHandler.ReadString(packet, 24001 , packet[24000]);
+                return PacketHandler.ReadString(packet, 24001, packet[24000]);
             }
         }
         public string password
@@ -120,14 +120,14 @@ namespace MTA.TransferServer
         public void Clone(ref MTA.Client.GameState client)
         {
             var Player = this;
-            client.ReadyToPlay();            
+            client.ReadyToPlay();
             client.Account = new Database.AccountTable(null);
             client.Account.State = State;
             client.Account.Username = username;
             client.Account.Password = password;
-            client.Account.IP = ip;           
+            client.Account.IP = ip;
             client.Account.EntityID = Player.UID;
-             
+
             client.Entity = new Game.Entity(Game.EntityFlag.Player, false);
             client.Entity.Name = Player.Name;
             client.Entity.Spouse = "None";
@@ -203,7 +203,7 @@ namespace MTA.TransferServer
             client.ChampionStats.Model = client.Entity.Mesh;
             client.ChampionStats.Points = 0;
             client.ChampionStats.LastReset = DateTime.Now;
-                       
+
             if (Jiang != "")
             {
                 client.Entity.MyJiang = new Game.JiangHu(0);
@@ -240,7 +240,7 @@ namespace MTA.TransferServer
                         var ps = item.ExtraEffect;
                         ps.ItemUID = item.UID;
                         item.ExtraEffect = ps;
-                    }                    
+                    }
                     switch (item.Position)
                     {
                         case 0: client.Inventory.Add(item, Game.Enums.ItemUse.None); break;

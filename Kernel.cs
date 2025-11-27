@@ -14,7 +14,7 @@ namespace MTA
         public static List<string> WarLegendsJoin = new List<string>();
         public static ConcurrentDictionary<uint, WebServer.TransferPlayer> TransferPool2 = new ConcurrentDictionary<uint, WebServer.TransferPlayer>();
         public static List<uint> TransferdPlayers = new List<uint>();// new ConcurrentDictionary<uint, WebServer.TransferPlayer>();    
-        public static ConcurrentDictionary<uint, WebServer.TransferPlayer> TransferPool = new ConcurrentDictionary<uint, WebServer.TransferPlayer>();   
+        public static ConcurrentDictionary<uint, WebServer.TransferPlayer> TransferPool = new ConcurrentDictionary<uint, WebServer.TransferPlayer>();
         public static Dictionary<UInt32, Refinery.RefineryBoxes> DatabaseRefineryBoxes =
                                                     new Dictionary<UInt32, Refinery.RefineryBoxes>();
         public static Dictionary<UInt32, Refinery.RefineryItem> DatabaseRefinery =
@@ -26,7 +26,7 @@ namespace MTA
         public static uint MaxTulips = 50;
         private static Int64 RandSeed = 3721;
         [DllImport("winmm", EntryPoint = "timeGetTime", ExactSpelling = true, CharSet = System.Runtime.InteropServices.CharSet.Ansi, SetLastError = true)]
-       
+
         private static extern long timeGetTime();
         public static int RandGet(int nMax, bool bReset = false)
         {
@@ -46,10 +46,10 @@ namespace MTA
             return (int)final;
         }
         public static ConcurrentDictionary<uint, Game.Entity> BlackSpoted = new ConcurrentDictionary<uint, Game.Entity>();
-      //  public static SafeDictionary<uint, Game.Features.Flowers.Flowers> AllFlower = new SafeDictionary<uint, Game.Features.Flowers.Flowers>(1000);
+        //  public static SafeDictionary<uint, Game.Features.Flowers.Flowers> AllFlower = new SafeDictionary<uint, Game.Features.Flowers.Flowers>(1000);
         public static Dictionary<uint, Clan> Clans = new Dictionary<uint, Clan>(100000);
         public static Dictionary<uint, Game.Features.Reincarnation.ReincarnateInfo> ReincarnatedCharacters = new Dictionary<uint, Game.Features.Reincarnation.ReincarnateInfo>();
-       
+
         public static ConcurrentDictionary<uint, Database.AccountTable> AwaitingPool = new ConcurrentDictionary<uint, Database.AccountTable>();
 
         public static ConcurrentDictionary<uint, Client.GameState> GamePool = new ConcurrentDictionary<uint, Client.GameState>();
@@ -105,7 +105,7 @@ namespace MTA
         {
             List<uint> ptr2 = new List<uint>();
 
-            for (int i = 0; i < buffer.Length; )
+            for (int i = 0; i < buffer.Length;)
             {
                 if (i + 2 <= buffer.Length)
                 {
@@ -205,15 +205,15 @@ namespace MTA
                 (Int32)((val % 10000) / 100),
                 (Int32)(val % 100));
         }
-        public static ulong TqTimer(DateTime timer) 
-        { 
-            var year = (ulong)(10000000000000 * (ulong)(timer.Year - 1900)); 
-            var month = (ulong)(100000000000 * (ulong)(timer.Month - 1)); 
+        public static ulong TqTimer(DateTime timer)
+        {
+            var year = (ulong)(10000000000000 * (ulong)(timer.Year - 1900));
+            var month = (ulong)(100000000000 * (ulong)(timer.Month - 1));
             var dayofyear = (ulong)(100000000 * (ulong)(timer.DayOfYear - 1));
-            var day = (ulong)(timer.Day * 1000000); 
-            var Hour = (ulong)(timer.Hour * 10000); 
+            var day = (ulong)(timer.Day * 1000000);
+            var Hour = (ulong)(timer.Hour * 10000);
             var Minute = (ulong)(timer.Minute * 100);
-            var Second = (ulong)(timer.Second); 
+            var Second = (ulong)(timer.Second);
             return (ulong)(year + month + dayofyear + day + Hour + Minute + Second);
         }
         public static Game.Enums.ConquerAngle GetAngle(ushort X, ushort Y, ushort X2, ushort Y2)
@@ -377,7 +377,7 @@ namespace MTA
                             item.SendSpawn(client);
         }
 
-       
+
         public static bool ChanceSuccess(int percent)
         {
             if (percent == 0)
@@ -403,8 +403,8 @@ namespace MTA
         internal static void SendWorldMessage(byte[] p)
         {
             foreach (Client.GameState client in Program.Values)
-            {                
-                  client.Send(p);                
+            {
+                client.Send(p);
             }
         }
     }

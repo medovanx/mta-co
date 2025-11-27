@@ -9,7 +9,7 @@ namespace MTA.Network.GamePackets
             SellToNPC = 2,
             RemoveInventory = 3,
             EquipItem = 4,
-            Unknown5 = 5, 
+            Unknown5 = 5,
             UnequipItem = 6,
             FrankoReload = 8,
             ViewWarehouse = 9,

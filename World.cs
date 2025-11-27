@@ -314,10 +314,10 @@ namespace MTA
             {
                 client.TimerSyncRoot = new object();
                 client.TimerSubscriptions = new IDisposable[]
-                {                    
+                {
                     Buffers.Add(client),
                     Characters.Add(client),
-                    AutoAttack.Add(client),                    
+                    AutoAttack.Add(client),
                     Prayer.Add(client),
                 };
                 return true;
@@ -1615,7 +1615,7 @@ namespace MTA
                 }
                 #endregion
                 #endregion
-            #endregion
+                #endregion
                 #region Anti [CHEAT] By Franko
                 #region Anti [CPS] By Eagle
                 if (client.Entity.ConquerPoints >= 0 && client.Entity.ConquerPoints <= 2000000000)

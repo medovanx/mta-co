@@ -15,7 +15,7 @@ namespace MTA.Game
 
         public static SafeDictionary<uint, Guild> Scores = new SafeDictionary<uint, Guild>(100);
 
-        public static bool IsWar = false,  FirstRound = false;
+        public static bool IsWar = false, FirstRound = false;
 
         public static Time32 ScoreSendStamp, LastWin;
 
@@ -44,7 +44,7 @@ namespace MTA.Game
             LeftGate = (SobNpcSpawn)Map.Npcs[526174];
             RightGate = (SobNpcSpawn)Map.Npcs[526175];
         }
-                
+
         public static void Start()
         {
             if (LeftGate == null) return;
@@ -104,7 +104,7 @@ namespace MTA.Game
 
         public static void FinishRound()
         {
-            
+
             LastWin = Time32.Now;
 
             FirstRound = false;
@@ -114,7 +114,7 @@ namespace MTA.Game
                 KeeperID = PoleKeeper.ID;
                 Kernel.SendWorldMessage(new Message("The guild, " + PoleKeeper.Name + ", owned by " + PoleKeeper.LeaderName + " has won this Super guild war round!", System.Drawing.Color.Red, Message.Center), Program.Values);
                 Kernel.SendWorldMessage(new Message("It is generald pardon time. You have 5 minutes to leave, run for your life!", System.Drawing.Color.White, Message.TopLeft), Program.Values, (ushort)6001);
-               
+
                 Pole.Name = PoleKeeper.Name;
             }
             Pole.Hitpoints = Pole.MaxHitpoints;
@@ -136,7 +136,7 @@ namespace MTA.Game
             }
             IsWar = false;
             Claim = true;
-            UpdatePole(Pole);            
+            UpdatePole(Pole);
         }
 
         public static void AddScore(uint addScore, Guild guild)

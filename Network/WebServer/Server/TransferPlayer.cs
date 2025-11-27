@@ -12,7 +12,7 @@ using System.IO;
 using MTA.Game.ConquerStructures;
 
 namespace MTA.WebServer
-{  
+{
     public partial class TransferPlayer
     {
         public TransferPlayer()
@@ -42,7 +42,7 @@ namespace MTA.WebServer
         {
             get
             {
-               // return "Tra_" + Key;
+                // return "Tra_" + Key;
                 return PacketHandler.ReadString(packet, 181, packet[180]);
             }
         }
@@ -57,7 +57,7 @@ namespace MTA.WebServer
         public uint Class { get { return BitConverter.ToUInt16(packet, 14); } }
         public uint SecoundClass { get { return BitConverter.ToUInt16(packet, 16); } }
         public uint FirstClass { get { return BitConverter.ToUInt16(packet, 18); } }
-        public uint Reborn { get { return BitConverter.ToUInt32(packet, 22); } }        
+        public uint Reborn { get { return BitConverter.ToUInt32(packet, 22); } }
         public uint Haire { get { return BitConverter.ToUInt32(packet, 30); } }
         public uint Body { get { return BitConverter.ToUInt32(packet, 34); } }
         public uint Level { get { return BitConverter.ToUInt32(packet, 38); } }
@@ -77,7 +77,7 @@ namespace MTA.WebServer
         public ushort GuildRank { get { return BitConverter.ToUInt16(packet, 102); } }
         public string GuildName { get { return PacketHandler.ReadString(packet, 104, 16); } }
         public string GuildLeaderName { get { return PacketHandler.ReadString(packet, 120, 16); } }
-        
+
         public Database.AccountTable.AccountState State
         {
             get
@@ -89,7 +89,7 @@ namespace MTA.WebServer
         {
             get
             {
-                return PacketHandler.ReadString(packet, 24001 , packet[24000]);
+                return PacketHandler.ReadString(packet, 24001, packet[24000]);
             }
         }
         public string password
@@ -131,7 +131,7 @@ namespace MTA.WebServer
             var mainid = Player.UID - Server.Key;
             client.Account.EntityID = Player.UID;
 
-            
+
             if (mainid == 0)
             {
                 client.Socket.OverrideTiming = true;
@@ -176,11 +176,11 @@ namespace MTA.WebServer
 
             client.Variables = new VariableVault();
             client.Friends = new SafeDictionary<uint, Game.ConquerStructures.Society.Friend>();
-            client.Enemy = new SafeDictionary<uint, Game.ConquerStructures.Society.Enemy>();            
+            client.Enemy = new SafeDictionary<uint, Game.ConquerStructures.Society.Enemy>();
             client.ChiPowers = new List<ChiPowerStructure>();
             if (ChiPowers != null)
                 client.ChiPowers = ChiPowers;
-            client.ChiData =  new MTA.Database.ChiTable.ChiData() { UID = client.Entity.UID, Name = client.Entity.Name, Powers = client.ChiPowers };
+            client.ChiData = new MTA.Database.ChiTable.ChiData() { UID = client.Entity.UID, Name = client.Entity.Name, Powers = client.ChiPowers };
 
             client.NobilityInformation = new MTA.Game.ConquerStructures.NobilityInformation();
             client.NobilityInformation.EntityUID = client.Entity.UID;
@@ -220,7 +220,7 @@ namespace MTA.WebServer
             client.ChampionStats.Points = 0;
             client.ChampionStats.LastReset = DateTime.Now;
 
-            if (GuildID != 0 && GuildName != "")                
+            if (GuildID != 0 && GuildName != "")
             {
                 client.Guild = new Game.ConquerStructures.Society.Guild(GuildLeaderName);
                 client.Guild.ID = (GuildID + Server.Key);
@@ -230,7 +230,7 @@ namespace MTA.WebServer
                 client.AsMember.ID = client.Entity.UID;
                 client.AsMember.Level = client.Entity.Level;
                 client.AsMember.Spouse = client.Entity.Spouse;
-                client.AsMember.Rank = (Game.Enums.GuildMemberRank)GuildRank;               
+                client.AsMember.Rank = (Game.Enums.GuildMemberRank)GuildRank;
 
                 client.Entity.GuildID = (ushort)(GuildID + Server.Key);
                 client.Entity.GuildRank = GuildRank;
@@ -317,7 +317,7 @@ namespace MTA.WebServer
             MTA.Client.GameState aClient = null;
             if (Kernel.GamePool.TryGetValue(client.Account.EntityID, out aClient))
                 aClient.Disconnect();
-            Kernel.GamePool.Remove(client.Account.EntityID);           
+            Kernel.GamePool.Remove(client.Account.EntityID);
             Kernel.GamePool.Add(client.Account.EntityID, client);
 
 

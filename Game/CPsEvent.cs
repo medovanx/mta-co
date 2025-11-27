@@ -119,7 +119,7 @@ namespace MTA.Game
                             C.Entity.Update(MTA.Network.GamePackets._String.Effect, "other", true);
                         }
                     }
-                #endregion
+                    #endregion
 
                 }
             }
@@ -167,7 +167,7 @@ namespace MTA.Game
                         }
                     }
 
-                #endregion
+                    #endregion
                 }
             }
         }
@@ -213,7 +213,7 @@ namespace MTA.Game
                             C.Entity.Update(MTA.Network.GamePackets._String.Effect, "other", true);
                         }
                     }
-                #endregion
+                    #endregion
                     Load5();
                 }
             }
@@ -260,7 +260,7 @@ namespace MTA.Game
                             C.Entity.Update(MTA.Network.GamePackets._String.Effect, "other", true);
                         }
                     }
-                #endregion
+                    #endregion
                 }
             }
         }
@@ -306,7 +306,7 @@ namespace MTA.Game
                             C.Entity.Update(MTA.Network.GamePackets._String.Effect, "other", true);
                         }
                     }
-                #endregion
+                    #endregion
                 }
             }
         }
@@ -400,7 +400,7 @@ namespace MTA.Game
                         }
                     }
 
-                #endregion
+                    #endregion
                 }
             }
         }
@@ -447,7 +447,7 @@ namespace MTA.Game
                         }
                     }
 
-                #endregion
+                    #endregion
                 }
             }
         }
@@ -494,7 +494,7 @@ namespace MTA.Game
                         }
                     }
 
-                #endregion
+                    #endregion
                 }
             }
         }
@@ -541,7 +541,7 @@ namespace MTA.Game
                         }
                     }
 
-                #endregion
+                    #endregion
                 }
             }
         }
@@ -588,7 +588,7 @@ namespace MTA.Game
                         }
                     }
 
-                #endregion
+                    #endregion
                 }
             }
         }
@@ -635,7 +635,7 @@ namespace MTA.Game
                         }
                     }
 
-                #endregion
+                    #endregion
                 }
             }
         }
@@ -682,7 +682,7 @@ namespace MTA.Game
                         }
                     }
 
-                #endregion
+                    #endregion
                 }
             }
         }
@@ -729,7 +729,7 @@ namespace MTA.Game
                         }
                     }
 
-                #endregion
+                    #endregion
                 }
             }
         }
@@ -776,7 +776,7 @@ namespace MTA.Game
                         }
                     }
 
-                #endregion
+                    #endregion
                 }
             }
         }
@@ -823,7 +823,7 @@ namespace MTA.Game
                         }
                     }
 
-                #endregion
+                    #endregion
                 }
             }
         }

@@ -16,7 +16,7 @@ namespace MTA.MaTrix.Roulette
             Watch = 4,
             InfoTable = 5,//?????
             Quit = 7
-        }      
+        }
         public ushort Length
         {
             set
@@ -25,33 +25,33 @@ namespace MTA.MaTrix.Roulette
                 Writer.WriteUshort((ushort)(packet.Length - 8), 0, packet);
 
             }
-        }       
+        }
         public ushort PacketID
         {
             set
             {
                 Writer.WriteUshort(value, 2, packet);
             }
-        }              
-        public ActionJoin Typ 
+        }
+        public ActionJoin Typ
         {
             get
             {
                 return (ActionJoin)packet[4];
-            } 
+            }
             set
             {
                 packet[4] = (byte)value;
-            } 
+            }
         }
         public uint UID { get { return MTA.BitConverter.ReadUint(packet, 5); } set { Writer.WriteUint(value, 5, packet); } }
-                
+
 
         public static MsgRouletteSignUp Create()
         {
             MsgRouletteSignUp ptr = new MsgRouletteSignUp();
             ptr.Length = 9;
-            ptr.PacketID = GamePackets.MsgRouletteSignUp;          
+            ptr.PacketID = GamePackets.MsgRouletteSignUp;
             return ptr;
         }
         public MsgRouletteSignUp(byte[] stream)
@@ -60,7 +60,7 @@ namespace MTA.MaTrix.Roulette
         }
         public static void Poroces(Client.GameState user, byte[] stream)
         {
-            MsgRouletteSignUp Info = new MsgRouletteSignUp(stream);           
+            MsgRouletteSignUp Info = new MsgRouletteSignUp(stream);
             switch (Info.Typ)
             {
                 case ActionJoin.InfoTable:

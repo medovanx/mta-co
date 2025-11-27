@@ -37,7 +37,7 @@ namespace MTA.Network.GamePackets
                 {
                     Signature = i.Signature;
                 }
-            }  
+            }
         }
         public BoothItem2()
         {
@@ -69,7 +69,7 @@ namespace MTA.Network.GamePackets
         {
             get { return System.BitConverter.ToString(mData, 110); }
             set { Writer.WriteString(value, 110, mData); }
-        } 
+        }
         public UInt32 ItemIdentifier
         {
             get { return BitConverter.ToUInt32(mData, 4); }

@@ -44,7 +44,7 @@ namespace MTA.Network.GamePackets
 
         public byte[] ToArray()
         {
-          
+
             return Buffer;
         }
         public void Deserialize(byte[] buffer)

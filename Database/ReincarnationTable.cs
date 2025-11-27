@@ -10,7 +10,7 @@ namespace MTA.Database
     {
         public static void Load()
         {
-            using(var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("reincarnation"))
+            using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("reincarnation"))
             using (var reader = cmd.CreateReader())
             {
                 while (reader.Read())

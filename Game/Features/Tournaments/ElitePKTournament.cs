@@ -236,7 +236,7 @@ namespace MTA.Game
             int extraTime = 3 - tournament;
             extraTime *= 2;
             //if((Now.Hour == 19 && Now.Minute >= 55) || (Now.Hour == 20 && Now.Minute < extraTime))
-            if (((Now.Hour == ElitePK.EventTime ) && Now.Minute >= 1) || ((Now.Hour == ElitePK.EventTime + 1) && Now.Minute < extraTime))
+            if (((Now.Hour == ElitePK.EventTime) && Now.Minute >= 1) || ((Now.Hour == ElitePK.EventTime + 1) && Now.Minute < extraTime))
             {
                 Tournaments[tournament].SignUp(client);
                 return true;

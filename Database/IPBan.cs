@@ -11,7 +11,7 @@ namespace MTA.Database
         public static void Load()
         {
             BannedIPs = new Dictionary<int, string>();
-            using(var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("bannedips"))
+            using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("bannedips"))
             using (var reader = cmd.CreateReader())
             {
                 while (reader.Read())
@@ -42,5 +42,5 @@ namespace MTA.Database
                     .Insert("ip", ip).Execute();
         }
     }
-   
+
 }

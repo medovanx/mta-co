@@ -14,7 +14,7 @@ namespace MTA.Database
         }
         public static void CleanUp()
         {
-          
+
         }
         public static void LogItem(uint uid, uint param1, ItemLogAction action)
         {

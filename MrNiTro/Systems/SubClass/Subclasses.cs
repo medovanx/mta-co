@@ -17,7 +17,7 @@ namespace MTA.Game
     }
     public class Subclasses
     {
-       
+
         public void Activate(Client.GameState client, byte clas)
         {
             Active = clas;
@@ -122,7 +122,7 @@ namespace MTA.Game
         public void RemoveStatus(Client.GameState client)
         {
             client.Entity.ItemHP -= HitPoints;
-           // client.Entity.MaxHitpoints -= HitPoints;
+            // client.Entity.MaxHitpoints -= HitPoints;
             client.Entity.CriticalStrike -= Critical;
             client.Entity.SkillCStrike -= SCritical;
             client.Entity.Immunity -= Imunity;

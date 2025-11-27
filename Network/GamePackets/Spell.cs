@@ -106,7 +106,7 @@ namespace MTA.Network.GamePackets
             set
             {
                 _Levelhu2 = value;
-                Buffer[20] = value;               
+                Buffer[20] = value;
             }
         }
         public uint Experience

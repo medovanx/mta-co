@@ -15,12 +15,12 @@
 
         public Time32(uint Value)
         {
-            this.int_0 = (int) Value;
+            this.int_0 = (int)Value;
         }
 
         public Time32(long Value)
         {
-            this.int_0 = (int) Value;
+            this.int_0 = (int)Value;
         }
 
         static Time32()
@@ -32,7 +32,7 @@
         {
             get
             {
-              //  Class1.Class0.smethod_0();
+                //  Class1.Class0.smethod_0();
                 return timeGetTime();
             }
         }
@@ -127,7 +127,7 @@
         {
             if (obj is Time32)
             {
-                return (((Time32) obj) == this);
+                return (((Time32)obj) == this);
             }
             return base.Equals(obj);
         }

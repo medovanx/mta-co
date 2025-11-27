@@ -5,10 +5,10 @@ using System.Text;
 
 namespace MTA.Network.GamePackets
 {
-   public class MsgShowHandDealtCard : Writer, Interfaces.IPacket
+    public class MsgShowHandDealtCard : Writer, Interfaces.IPacket
     {
-       private byte[] Buffer;
-       public MsgShowHandDealtCard(int count)
+        private byte[] Buffer;
+        public MsgShowHandDealtCard(int count)
         {
             Buffer = new byte[44 + 8 + (count * 8)];
             Write((ushort)(Buffer.Length - 8), 0, Buffer);

@@ -171,10 +171,10 @@ namespace MTA.Network.GamePackets
                 FlashStep = 156,
                 CountDown = 159,
                 Away = 161,
-                 Bulletin = 166, 
-                AutoPatcher = 162, 
+                 Bulletin = 166,
+                AutoPatcher = 162,
                 AppearanceType = 178,
-            //AllowAnimation = 251,
+                //AllowAnimation = 251,
                 LevelUpSpell = 252,
                 LevelUpProficiency = 253,
                 ObserveEquipment2 = 310,
@@ -211,13 +211,13 @@ namespace MTA.Network.GamePackets
             WriteUInt16((ushort)(Buffer.Length - 8), 0, Buffer);
             WriteUInt16((ushort)10010, 2, Buffer);
             WriteUInt32((uint)Time32.timeGetTime().GetHashCode(), 4, Buffer);
-            WriteInt32((int)Identifier,8,Buffer);
-            WriteInt32((int)Value1,12,Buffer);
+            WriteInt32((int)Identifier, 8, Buffer);
+            WriteInt32((int)Value1, 12, Buffer);
             //WriteInt32((int)Value5, 8, Buffer);
             WriteInt32(Type, 14, Buffer);
             WriteUInt16(Value2, 16, Buffer);
             WriteUInt16(Value3, 18, Buffer);
-  
+
         }
         byte[] Buffer;
         public uint UID
@@ -312,7 +312,7 @@ namespace MTA.Network.GamePackets
             {
                 WriteUInt32(value, 20, Buffer);
             }
-        }   
+        }
 
         public uint ID
         {
@@ -358,7 +358,7 @@ namespace MTA.Network.GamePackets
             }
         }
 
-       
+
 
         public uint wParam3
         {

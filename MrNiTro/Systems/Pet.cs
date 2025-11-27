@@ -112,7 +112,7 @@ namespace MTA.MaTrix
                         }
                         client.SendScreenSpawn(pet.Entity, true);
                     }
-                    
+
                     #endregion
                     switch (pet.Type)
                     {
@@ -372,7 +372,7 @@ namespace MTA.MaTrix
         {
             Owner = client;
             Pets = new SafeConcurrentDictionary<PetType, PetInfo>();
-            TimerSubscriptions = new IDisposable[] 
+            TimerSubscriptions = new IDisposable[]
             {
                PetsAction.Add(client)
             };
@@ -406,7 +406,7 @@ namespace MTA.MaTrix
             }
 
             if (Pets.ContainsKey(Type))
-            {               
+            {
                 Data data = new Data(true);
                 data.UID = Pets[Type].Entity.UID;
                 data.ID = Data.RemoveEntity;
@@ -438,14 +438,14 @@ namespace MTA.MaTrix
             pet.Entity.SendUpdates = true;
             pet.Entity.X = Owner.Entity.X;
             pet.Entity.Y = Owner.Entity.Y;
-            pet.Entity.pettype = Type;            
+            pet.Entity.pettype = Type;
             Pets.Add(pet.Type, pet);
 
             Owner.SendScreenSpawn(pet.Entity, true);
-          //  pet.Entity.SendSpawn(Owner);
+            //  pet.Entity.SendSpawn(Owner);
 
         }
-        
+
 
         public void RemovePet(PetType Type)
         {
@@ -463,7 +463,7 @@ namespace MTA.MaTrix
             if (Pets.Count > 0)
             {
                 foreach (var pet in Pets.Values)
-                {                   
+                {
                     Data data = new Data(true);
                     data.UID = pet.Entity.UID;
                     data.ID = Data.RemoveEntity;

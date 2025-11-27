@@ -20,7 +20,7 @@
             T[] localArray = new T[strs.Length];
             for (int i = 0; i < strs.Length; i++)
             {
-                localArray[i] = (T) Convert.ChangeType(strs[i], typeof(T));
+                localArray[i] = (T)Convert.ChangeType(strs[i], typeof(T));
             }
             return localArray;
         }

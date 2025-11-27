@@ -44,7 +44,7 @@
                 return false;
             }
             EmptyClipboard();
-            IntPtr hMem = GlobalAlloc(0x2002, (UIntPtr) (2 * (text.Length + 1)));
+            IntPtr hMem = GlobalAlloc(0x2002, (UIntPtr)(2 * (text.Length + 1)));
             IntPtr destination = GlobalLock(hMem);
             if (text.Length > 0)
             {

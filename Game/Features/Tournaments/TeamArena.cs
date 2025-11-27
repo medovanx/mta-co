@@ -1095,10 +1095,10 @@ namespace MTA.Game
                             teammate.TeamArenaStatistic.TodayWin++;
                             teammate.TeamArenaStatistic.TotalWin++;
                             if (teammate.TeamArenaStatistic.TodayWin == 9)
-                             //   teammate.Inventory.Add(723912, 0, 1);
-                            if (teammate.TeamArenaStatistic.TodayBattles == 20)
-                             //   teammate.Inventory.Add(723912, 0, 1);
-                            teammate.Send(teammate.TeamArenaStatistic);
+                                //   teammate.Inventory.Add(723912, 0, 1);
+                                if (teammate.TeamArenaStatistic.TodayBattles == 20)
+                                    //   teammate.Inventory.Add(723912, 0, 1);
+                                    teammate.Send(teammate.TeamArenaStatistic);
                             teammate.TeamQualifierGroup = null;
                         }
                     }
@@ -1118,8 +1118,8 @@ namespace MTA.Game
                             if (teammate.ArenaPoints > 80000)
                                 teammate.ArenaPoints = 0;
                             if (teammate.TeamArenaStatistic.TodayBattles == 20)
-                          //      teammate.Inventory.Add(723912, 0, 1);
-                            teammate.Send(teammate.TeamArenaStatistic);
+                                //      teammate.Inventory.Add(723912, 0, 1);
+                                teammate.Send(teammate.TeamArenaStatistic);
                             teammate.TeamQualifierGroup = null;
                         }
                     }

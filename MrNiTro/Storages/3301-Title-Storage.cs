@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MTA.Network.GamePackets
 {
-    public sealed class TitleStorage 
+    public sealed class TitleStorage
     {
         public TitleStorage() { }
         public bool Read(byte[] packet)
@@ -99,7 +99,7 @@ namespace MTA.Network.GamePackets
             client.Entity.WTitles.Points += StorageManager.GetTitlePoints(_type, _id);
             client.Entity.TitlePoints = client.Entity.WTitles.Points;
 
-            client.Entity.WTitles.AddTitle(_type, _id , equipped);
+            client.Entity.WTitles.AddTitle(_type, _id, equipped);
 
             if (!StorageManager.Data.ContainsKey(client.Entity.WTitles.Id))
                 StorageManager.Data.Add(client.Entity.WTitles.Id, client.Entity.WTitles);
@@ -189,8 +189,8 @@ namespace MTA.Network.GamePackets
                 return pkt;
             }
         }
-        
-        
+
+
         public TitleStorageProto Info;
         [Flags]
         public enum Action : int

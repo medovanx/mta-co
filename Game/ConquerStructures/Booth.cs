@@ -8,7 +8,7 @@ namespace MTA.Game.ConquerStructures
     {
         public void Regenerate(BoothItem item, Booth booth)
         {
-            booth.ItemList.Remove(item.Item.UID);           
+            booth.ItemList.Remove(item.Item.UID);
             this.Cost = item.Cost;
             this.Item = new ConquerItem(true);
             this.Item.ID = item.Item.ID;
@@ -29,13 +29,13 @@ namespace MTA.Game.ConquerStructures
             this.Cost_Type = item.Cost_Type;
             booth.ItemList.Add(this.Item.UID, this);
 
-          
+
         }
-        public enum CostType:byte      
+        public enum CostType : byte
         {
             Silvers = 1,
             ConquerPoints = 3,
-            BoundCps= 2
+            BoundCps = 2
 
         }
         public ConquerItem Item;
@@ -94,11 +94,11 @@ namespace MTA.Game.ConquerStructures
             data.ID = Data.OwnBooth;
             Owner.Send(data);
         }
-    
+
         public Booth()
         {
-            ItemList = new SafeDictionary<uint, BoothItem>(20);           
-         
+            ItemList = new SafeDictionary<uint, BoothItem>(20);
+
         }
         public string Name
         {

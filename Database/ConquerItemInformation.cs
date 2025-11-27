@@ -439,7 +439,7 @@ namespace MTA.Database
                 if (grades[gr].Level == Level)
                     return (uint)((grades[gr + 1].ID / 10) * 10 + BaseInformation.ID % 10);
             return (uint)((grades[0].ID / 10) * 10 + BaseInformation.ID % 10);
-        } 
+        }
     }
     public class ConquerItemPlusInformation
     {
@@ -480,7 +480,7 @@ namespace MTA.Database
     }
     public class ConquerItemBaseInformation
     {
-        public string LoweredName; 
+        public string LoweredName;
         public string LowerName;
         public uint ID;
         public string Name;
@@ -497,7 +497,7 @@ namespace MTA.Database
         public ushort MagicDefence;
         public ushort MagicAttack;
         public byte Dodge;
-        public int Accuracy;        
+        public int Accuracy;
         public ushort Frequency;
         public uint ConquerPointsWorth;
         public ushort Durability;
@@ -522,7 +522,7 @@ namespace MTA.Database
         public uint Weight;
         private ushort auction_class;
         private ushort auction_deposit;
-           public uint Time; 
+        public uint Time;
         public void Parse(string Line)
         {
             string[] data = Line.Split(new string[] { "@@" }, StringSplitOptions.RemoveEmptyEntries);

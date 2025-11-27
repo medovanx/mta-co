@@ -45,7 +45,7 @@ namespace MTA.Network.GamePackets
             get { return BitConverter.ToUInt16(Buffer, 22); }
             set { WriteUInt16(value, 22, Buffer); }
         }
-        
+
         public void Send(Client.GameState client)
         {
             client.Send(Buffer);

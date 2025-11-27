@@ -20,7 +20,7 @@ internal sealed class Class4 : Class2
             {
                 if (!this.timerRule_0.bool_0)
                 {
-                    ((IDisposable) this).Dispose();
+                    ((IDisposable)this).Dispose();
                 }
                 else
                 {

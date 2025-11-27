@@ -114,7 +114,7 @@ namespace MTA.Network.GamePackets
                         case ConquerItem.AlternateRightWeapon:
                             RHand = Item.UID;
                             break;
-                        #endregion
+                            #endregion
                     }
                 }
             }

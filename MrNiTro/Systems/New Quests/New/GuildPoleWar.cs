@@ -17,8 +17,8 @@ namespace MTA.MaTrix
     public class GuildPoleWar
     {
         public const int Member = 0,
-            // Knight = 1,
-            // Baron = 3,
+        // Knight = 1,
+        // Baron = 3,
         //Earl = 5,
         //Member = 7,
         DeputyLeader = 1,
@@ -30,7 +30,7 @@ namespace MTA.MaTrix
 
         public static DateTime WarStart;
         public static Map Map;
-        public static bool IsWar = false;      
+        public static bool IsWar = false;
         private IDisposable Subscriber;
 
         public GuildPoleWar()
@@ -43,7 +43,7 @@ namespace MTA.MaTrix
         {
             if (IsWar)
                 if (DateTime.Now > WarStart.AddMinutes(60))
-                    EndWar();;
+                    EndWar(); ;
             if (IsWar)
             {
                 if (Time32.Now > ScoreSendStamp.AddSeconds(3))
@@ -102,7 +102,7 @@ namespace MTA.MaTrix
                 //Summon("Duke", 320, 288, Member);
                 //Summon("Earl", 320, 268, Earl);
                 Summon("Member", 310, 277, Member);
-  
+
 
 
             }
@@ -126,7 +126,7 @@ namespace MTA.MaTrix
             if (pole != null)
             {
                 if (pole != Pole)
-                     return false;
+                    return false;
 
                 if (PolesWinners[_rank] == entity.UID)
                     return false;
@@ -179,8 +179,8 @@ namespace MTA.MaTrix
             if (_Class == DeputyLeader)
                 rank = GuildRank.DeputyLeader;
             if (_Class == GuildLeader)
-                rank = GuildRank.GuildLeader;            
-                foreach (var c in Program.Values.Where(p => p.Entity.GuildRank == (ushort)rank))
+                rank = GuildRank.GuildLeader;
+            foreach (var c in Program.Values.Where(p => p.Entity.GuildRank == (ushort)rank))
                 c.Entity.WarScore = 0;
             IsWar = true;
         }
@@ -226,7 +226,7 @@ namespace MTA.MaTrix
                     Scores.Add(entity.UID, entity);
 
                 entity.WarScore += addScore;
-               
+
                 if ((int)Pole.Hitpoints <= 0)
                 {
                     FinishRound(Pole, (int)_rank);
@@ -259,7 +259,7 @@ namespace MTA.MaTrix
                         if (client != null)
                         {
                             if (client.Map.ID == Map.ID)
-                            {                              
+                            {
                                 if (i == DeputyLeader)
                                 {
                                     if (client.Entity.GuildRank == (ushort)GuildRank.DeputyLeader)
@@ -272,8 +272,8 @@ namespace MTA.MaTrix
                                 }
                                 else
                                 {
-                                     if (client.Entity.GuildRank != (ushort)GuildRank.GuildLeader && client.Entity.GuildRank != (ushort)GuildRank.DeputyLeader)
-                                         client.Send(msg);
+                                    if (client.Entity.GuildRank != (ushort)GuildRank.GuildLeader && client.Entity.GuildRank != (ushort)GuildRank.DeputyLeader)
+                                        client.Send(msg);
                                 }
                             }
                         }

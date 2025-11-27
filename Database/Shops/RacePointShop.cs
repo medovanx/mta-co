@@ -26,7 +26,7 @@ namespace MTA.Database
             for (int x = 0; x < text.Length; x++)
             {
                 string line = text[x].ToLower();
-             
+
                 if (line.StartsWith("[normal]"))
                 {
                     continue;
@@ -44,7 +44,7 @@ namespace MTA.Database
 
                         item.ID = uint.Parse(Parts[0]);
                         item.Price = uint.Parse(Parts[1]);
-                        
+
                         Shop.Items.Add(item.ID, item);
                     }
                 }

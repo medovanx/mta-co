@@ -116,15 +116,18 @@ namespace MTA.Network.GamePackets
         public string Mentor_Name
         {
             get { return m_MentorName; }
-            set { 
-            m_MentorName = value;
-            WriteStringWithLength(value, 77, Buffer); }
+            set
+            {
+                m_MentorName = value;
+                WriteStringWithLength(value, 77, Buffer);
+            }
         }
 
         public string Apprentice_Name
         {
             get { return m_ApprenticeName; }
-            set {
+            set
+            {
                 m_ApprenticeName = value;
                 WriteStringWithLength(value, 81 + Mentor_Name.Length + Mentor_Spouse_Name.Length, Buffer);
             }
@@ -133,7 +136,8 @@ namespace MTA.Network.GamePackets
         public string Mentor_Spouse_Name
         {
             get { return m_MentorSpouse; }
-            set { 
+            set
+            {
                 m_MentorSpouse = value;
                 WriteStringWithLength(value, 79 + Mentor_Name.Length, Buffer);
             }
@@ -156,7 +160,7 @@ namespace MTA.Network.GamePackets
 
         public void Send(Client.GameState client)
         {
-           // client.Send(Buffer);
+            // client.Send(Buffer);
         }
     }
 }

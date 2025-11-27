@@ -29,7 +29,7 @@ namespace MTA.Franko
                 {
                     return Franko.Key;
                 }
-                
+
 
             }
             return 0;
@@ -38,9 +38,9 @@ namespace MTA.Franko
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             uint npcid = getid(comboBox1.Text);
-            textBox2.Text =Convert.ToString(npcid);
-            textBox3.Text =Convert.ToString(Frankomap.Npcs[npcid].Name);
-            textBox4.Text = Convert.ToString(Frankomap.Npcs[npcid].Mesh );
+            textBox2.Text = Convert.ToString(npcid);
+            textBox3.Text = Convert.ToString(Frankomap.Npcs[npcid].Name);
+            textBox4.Text = Convert.ToString(Frankomap.Npcs[npcid].Mesh);
             textBox5.Text = Convert.ToString(Frankomap.Npcs[npcid].MapID);
             textBox6.Text = Convert.ToString(Frankomap.Npcs[npcid].X);
             textBox7.Text = Convert.ToString(Frankomap.Npcs[npcid].Y);
@@ -67,9 +67,9 @@ namespace MTA.Franko
                 }
             }
             catch (Exception exp)
-                {
-                    Console.WriteLine(exp);
-                }
+            {
+                Console.WriteLine(exp);
+            }
         }
 
         private void label5_Click(object sender, EventArgs e)
@@ -87,34 +87,34 @@ namespace MTA.Franko
             try
             {
                 foreach (INpc npc in Frankomap.Npcs.Values)
-                if (Frankomap != null)
-                {
-                    if (textBox2.Text != "" && textBox3.Text != "" && textBox4.Text != "" && textBox5.Text != "" && textBox6.Text != "" && textBox7.Text != "")
+                    if (Frankomap != null)
                     {
-                        Frankomap.Npcs[Convert.ToUInt32(textBox2.Text)].Name = textBox3.Text;
-                        Frankomap.Npcs[Convert.ToUInt32(textBox2.Text)].Mesh = Convert.ToUInt16(textBox4.Text);
-                        Frankomap.Npcs[Convert.ToUInt32(textBox2.Text)].MapID = Convert.ToUInt16(textBox5.Text);
-                        Frankomap.Npcs[Convert.ToUInt32(textBox2.Text)].X = Convert.ToUInt16(textBox6.Text);
-                        Frankomap.Npcs[Convert.ToUInt32(textBox2.Text)].Y = Convert.ToUInt16(textBox7.Text);
-                        Program.CommandsAI("@save");
-                        Console.WriteLine("A Npc Which Have ID " + textBox2.Text+" Changed By Franko");
-                        using (var cmd = new Database.MySqlCommand(Database.MySqlCommandType.UPDATE))
-                            cmd.Update("npcs").Set("name", npc.Name).Set("type", (ushort)npc.Type).Set("lookface", (int)npc.Mesh).Set("cellx", npc.X).Set("celly", npc.Y).Set("mapid", npc.MapID).Where("id", npc.UID).Execute();
-
-                        foreach (Client.GameState Frankoc in Kernel.GamePool.Values)
+                        if (textBox2.Text != "" && textBox3.Text != "" && textBox4.Text != "" && textBox5.Text != "" && textBox6.Text != "" && textBox7.Text != "")
                         {
-                            Frankoc.Screen.Reload(null);
+                            Frankomap.Npcs[Convert.ToUInt32(textBox2.Text)].Name = textBox3.Text;
+                            Frankomap.Npcs[Convert.ToUInt32(textBox2.Text)].Mesh = Convert.ToUInt16(textBox4.Text);
+                            Frankomap.Npcs[Convert.ToUInt32(textBox2.Text)].MapID = Convert.ToUInt16(textBox5.Text);
+                            Frankomap.Npcs[Convert.ToUInt32(textBox2.Text)].X = Convert.ToUInt16(textBox6.Text);
+                            Frankomap.Npcs[Convert.ToUInt32(textBox2.Text)].Y = Convert.ToUInt16(textBox7.Text);
+                            Program.CommandsAI("@save");
+                            Console.WriteLine("A Npc Which Have ID " + textBox2.Text + " Changed By Franko");
+                            using (var cmd = new Database.MySqlCommand(Database.MySqlCommandType.UPDATE))
+                                cmd.Update("npcs").Set("name", npc.Name).Set("type", (ushort)npc.Type).Set("lookface", (int)npc.Mesh).Set("cellx", npc.X).Set("celly", npc.Y).Set("mapid", npc.MapID).Where("id", npc.UID).Execute();
+
+                            foreach (Client.GameState Frankoc in Kernel.GamePool.Values)
+                            {
+                                Frankoc.Screen.Reload(null);
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("You Should Write All informations");
                         }
                     }
                     else
                     {
-                        MessageBox.Show("You Should Write All informations");
+                        MessageBox.Show("You Should CHOOSE A Map And Npc");
                     }
-                }
-                else
-                {
-                    MessageBox.Show("You Should CHOOSE A Map And Npc");
-                }
             }
             catch (Exception exe)
             {

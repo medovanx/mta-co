@@ -132,7 +132,7 @@ namespace MTA.Game
             {
                 if (Clanleader1 == gameClient)
                     End(Clan2, Clan1);
-               else if (Clanleader2 == gameClient)                
+                else if (Clanleader2 == gameClient)
                     End(Clan1, Clan2);
             }
             ClanSurive1 = Clan1.Members.Values.Where(mem => mem.Client != null).Any(mem => !mem.Client.Entity.Dead && mem.Client.Entity.MapID == dynamicMap.ID);
@@ -145,4 +145,3 @@ namespace MTA.Game
         }
     }
 }
-        

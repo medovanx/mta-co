@@ -23,7 +23,7 @@ namespace MTA.Network.GamePackets
                     Clan = 2006,
                     System = 2007,
                     Friend = 2009,
-                    Ally = 2025,  
+                    Ally = 2025,
                     Center = 2011,
                     TopLeft = 2012,
                     Service = 2014,
@@ -112,7 +112,7 @@ namespace MTA.Network.GamePackets
             _From = Encoding.Default.GetString(buffer, 36, buffer[35]);
             _To = Encoding.Default.GetString(buffer, 37 + _From.Length, buffer[36 + _From.Length]);
             __Message = Encoding.Default.GetString(buffer, (39 + _From.Length) + _To.Length, buffer[(38 + _From.Length) + _To.Length]);
-        }  
+        }
         public byte[] ToArray()
         {
             byte[] Packet = new byte[(((32 + _From.Length) + _To.Length) + __Message.Length) + 18];
@@ -127,11 +127,11 @@ namespace MTA.Network.GamePackets
             Writer.WriteStringList(new List<string>() { _From, _To, "", __Message }, 34, Packet);
             return Packet;
         }
-      
+
         public void Send(Client.GameState client)
         {
-             if (client.Language == Language)
-                 client.Send(ToArray());
+            if (client.Language == Language)
+                client.Send(ToArray());
         }
         public class MessageBoard
         {

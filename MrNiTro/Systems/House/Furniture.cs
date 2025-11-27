@@ -22,7 +22,7 @@ namespace MTA.Database
             public uint itemid;
 
         }
-        public static SafeDictionary<uint, ushort> FurnituresItems = new SafeDictionary<uint, ushort>();       
+        public static SafeDictionary<uint, ushort> FurnituresItems = new SafeDictionary<uint, ushort>();
         public static SafeDictionary<uint, FurInfo> Furnitures = new SafeDictionary<uint, FurInfo>();
         public static void Load()
         {
@@ -48,15 +48,15 @@ namespace MTA.Database
                     {
                         if (Kernel.Maps[info.map].Npcs.ContainsKey(info.npcid))
                             Kernel.Maps[info.map].Npcs.Remove(info.npcid);
-                        Kernel.Maps[info.map].AddNpc(new Network.GamePackets.NpcSpawn() { Type= info.type, UID = info.npcid, MapID = info.map, Mesh = info.mesh, X = info.x, Y = info.y });
+                        Kernel.Maps[info.map].AddNpc(new Network.GamePackets.NpcSpawn() { Type = info.type, UID = info.npcid, MapID = info.map, Mesh = info.mesh, X = info.x, Y = info.y });
                     }
-                                        
+
                 }
 
                 Console.WriteLine(Furnitures.Count + " Furnitures loaded successfully.");
             }
-           
+
         }
-        
+
     }
 }

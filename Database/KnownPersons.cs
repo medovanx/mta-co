@@ -9,7 +9,7 @@ namespace MTA.Database
         public static void LoadEnemy(Client.GameState client)
         {
             client.Enemy = new SafeDictionary<uint, Enemy>(50);
-            using(var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("enemy").Where("entityid", client.Entity.UID))
+            using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("enemy").Where("entityid", client.Entity.UID))
             using (var reader = cmd.CreateReader())
             {
                 while (reader.Read())
@@ -107,7 +107,7 @@ namespace MTA.Database
         {
             if (app != null)
             {
-                using(var mysqlcmd = new MySqlCommand(MySqlCommandType.UPDATE))
+                using (var mysqlcmd = new MySqlCommand(MySqlCommandType.UPDATE))
                     mysqlcmd.Update("apprentice")
                     .Set("Actual_Experience", app.Actual_Experience.ToString())
                     .Set("Total_Experience", app.Total_Experience.ToString())
@@ -179,7 +179,7 @@ namespace MTA.Database
         }
         public static void UpdateMessageOnFriend(uint entityID, uint friendID, string message)
         {
-            using(var cmd = new MySqlCommand(MySqlCommandType.UPDATE))
+            using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE))
                 cmd.Update("friends").Set("Message", message).Where("EntityID", friendID)
                     .And("FriendID", entityID).Execute();
         }

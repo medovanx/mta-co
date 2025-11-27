@@ -24,7 +24,7 @@ namespace MTA.Network.GamePackets
             get { return BitConverter.ToUInt32(Buffer, 8); }
             set { WriteUInt32(value, 8, Buffer); }
         }
-        
+
         public ushort X
         {
             get { return BitConverter.ToUInt16(Buffer, 16); }
@@ -58,7 +58,7 @@ namespace MTA.Network.GamePackets
             set
             {
                 _Name = value;
-                
+
                 byte[] buffer = new byte[90];
                 Buffer.CopyTo(buffer, 0);
                 WriteUInt16((ushort)(buffer.Length - 8), 0, buffer);
@@ -69,7 +69,7 @@ namespace MTA.Network.GamePackets
         }
 
         public _String Effect { get; set; }
-       
+
         public ushort MapID { get { return _MapID; } set { _MapID = value; } }
 
         public MTA.Game.MapObjectType MapObjType { get { return MTA.Game.MapObjectType.Npc; } }

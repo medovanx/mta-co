@@ -924,7 +924,7 @@ namespace MTA.Game.ConquerStructures
                     }
                     else
                         if (count != Network.GamePackets.ConquerItem.Bottle && count != Network.GamePackets.ConquerItem.Garment)
-                            return false;
+                        return false;
                 }
             }
             return true;

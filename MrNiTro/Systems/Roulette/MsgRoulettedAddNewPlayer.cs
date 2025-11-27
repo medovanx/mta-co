@@ -14,13 +14,13 @@ namespace MTA.MaTrix.Roulette
             {
                 packet = new byte[value + 8];
                 Writer.WriteUshort((ushort)(packet.Length - 8), 0, packet);
-                
+
             }
         }
         public ushort PacketID
         {
             set
-            {               
+            {
                 Writer.WriteUshort(value, 2, packet);
             }
         }
@@ -56,7 +56,7 @@ namespace MTA.MaTrix.Roulette
         {
             MsgRoulettedAddNewPlayer ptr = new MsgRoulettedAddNewPlayer();
             ptr.Length = 29;
-            ptr.PacketID = GamePackets.MsgRoulettedAddNewPlayer;           
+            ptr.PacketID = GamePackets.MsgRoulettedAddNewPlayer;
             return ptr;
         }
         public byte[] packet;

@@ -110,7 +110,7 @@ namespace MTA.Network.GamePackets
                 Enemy = enemy;
                 if (tradepartner)
                     WriteUInt16(2047, 2, Buffer);
-                
+
             }
         }
     }

@@ -14,7 +14,7 @@ namespace MTA.Game
         public static int howmanyinmap = 0;
         public static int TopDlClaim = 0;
         public static int TopGlClaim = 0;
-        public static int ClanClaim=0;
+        public static int ClanClaim = 0;
         public static void AddDl()
         {
             TopDlClaim++;

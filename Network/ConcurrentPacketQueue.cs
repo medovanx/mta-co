@@ -20,7 +20,7 @@ namespace MTA.Network
             syncRoot = new object();
         }
 
-        public int CurrentLength { get { reviewPacketSize();  return currentPacketSize; } }
+        public int CurrentLength { get { reviewPacketSize(); return currentPacketSize; } }
 
         public void Enqueue(byte[] buffer, int length)
         {

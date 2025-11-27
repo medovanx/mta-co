@@ -6,7 +6,7 @@ using MTA.Network;
 
 namespace MTA.MaTrix.Roulette
 {
-    public unsafe class MsgRouletteShareBetting :Writer
+    public unsafe class MsgRouletteShareBetting : Writer
     {
         private byte[] Packet;
         public MsgRouletteShareBetting(int count, MsgRouletteOpenGui.Color color)
@@ -15,7 +15,7 @@ namespace MTA.MaTrix.Roulette
             WriteUshort((ushort)(Packet.Length - 8), 0, Packet);
             WriteUshort(GamePackets.MsgRouletteShareBetting, 2, Packet);
             WriteByte((byte)color, 4, Packet);
-            WriteByte((byte)count, 5, Packet);           
+            WriteByte((byte)count, 5, Packet);
         }
         public void DisplayBettings(Database.Roulettes.RouletteTable.Member player)
         {
@@ -39,7 +39,7 @@ namespace MTA.MaTrix.Roulette
 
         }
         public byte[] GetArray()
-        {          
+        {
             return Packet;
         }
     }

@@ -5,7 +5,7 @@ using System.Text;
 
 
 namespace MTA.Network.GamePackets
-{   
+{
     public class AutoHunt : Writer, Interfaces.IPacket
     {
         public const ushort

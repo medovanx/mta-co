@@ -73,7 +73,7 @@
 //                                            OtherUIDs.Add(entity.UID, entity);
 //                                    }
 //                                }
-                                
+
 //                            }
 //                        }
 //                    }
@@ -95,7 +95,7 @@
 //            writer.Write((byte)OtherUIDs.Count);
 //            foreach (var item in OtherUIDs.Values)            
 //                writer.Write(item.UID);            
-               
+
 //            string SQL = "UPDATE `accounts_Mannequin` SET Mannequin=@Mannequin where UID = " + Main.Account.EntityID + " ;";
 //            byte[] rawData = stream.ToArray();
 //            using (var conn = DataHolder.MySqlConnection)

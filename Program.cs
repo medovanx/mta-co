@@ -2000,11 +2000,11 @@ namespace MTA
                                 accounts = "accounts";
                                 break;
                             }
-                        //default:
-                        //    {
-                        //        Console.WriteLine("Invaild Server Name : " + player.Info.Server);
-                        //        return;
-                        //    }
+                            //default:
+                            //    {
+                            //        Console.WriteLine("Invaild Server Name : " + player.Info.Server);
+                            //        return;
+                            //    }
                     }
                     player.Account = new AccountTable(player.Info.Username, accounts);
                     msvcrt.msvcrt.srand(player.PasswordSeed);
@@ -2228,7 +2228,7 @@ namespace MTA
         }
         #endregion Matrix Style
 
-         
+
 
         public static void NextItemUID()
         {
@@ -2577,7 +2577,7 @@ namespace MTA
 
     }
 
-    
+
     public class Kernel32
     {
         public delegate bool ConsoleEventHandler(CtrlType sig);

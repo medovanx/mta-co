@@ -6,7 +6,7 @@ using MTA.Network;
 
 namespace MTA.MaTrix.Roulette
 {
-    public class MsgRouletteTable : Interfaces.IPacket 
+    public class MsgRouletteTable : Interfaces.IPacket
     {
         public enum TableType : uint
         {
@@ -29,39 +29,39 @@ namespace MTA.MaTrix.Roulette
             {
                 Writer.WriteUshort(value, 2, packet);
             }
-        }      
+        }
         public uint UID
         {
             get
             {
-               return BitConverter.ReadUint(packet, 4);
+                return BitConverter.ReadUint(packet, 4);
             }
-            set 
-            { 
-                Writer.WriteUint(value, 4, packet); 
-            } 
-        }
-                
-        public uint TableNumber 
-        { 
             set
-            { 
-                Writer.WriteUint(value, 8, packet); 
-            } 
+            {
+                Writer.WriteUint(value, 4, packet);
+            }
         }
-                
+
+        public uint TableNumber
+        {
+            set
+            {
+                Writer.WriteUint(value, 8, packet);
+            }
+        }
+
         public TableType MoneyType
         {
             get
             {
                 return (TableType)BitConverter.ReadUint(packet, 12);
             }
-            set 
-            { 
+            set
+            {
                 Writer.WriteUint((uint)value, 12, packet);
-            } 
+            }
         }
-                
+
         public ushort X
         {
             get
@@ -72,8 +72,8 @@ namespace MTA.MaTrix.Roulette
             {
                 Writer.WriteUshort(value, 16, packet);
             }
-        }              
-        public ushort Y 
+        }
+        public ushort Y
         {
             get
             {
@@ -83,29 +83,29 @@ namespace MTA.MaTrix.Roulette
             {
                 Writer.WriteUshort(value, 18, packet);
             }
-        }   
+        }
         public ushort Mesh
         {
             set
             {
                 Writer.WriteUshort(value, 20, packet);
             }
-        }   
+        }
         public byte PlayersCount
         {
             set
             {
                 Writer.WriteByte(value, 22, packet);
             }
-        }  
+        }
         //??? Player count on table?
-       
-        public byte[] packet;       
+
+        public byte[] packet;
         public static MsgRouletteTable Create()
         {
             MsgRouletteTable packet = new MsgRouletteTable();
             packet.Lenght = 23;//???    
-            packet.PacketID = GamePackets.MsgRouletteTable;                  
+            packet.PacketID = GamePackets.MsgRouletteTable;
             return packet;
         }
         public byte[] ToArray()

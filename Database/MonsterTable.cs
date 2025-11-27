@@ -5,7 +5,7 @@ using System.IO;
 using MTA.Network.GamePackets;
 
 namespace MTA.Database
-{    
+{
     public class MonsterInformation
     {
         #region Special Mobs Matrix
@@ -46,7 +46,7 @@ namespace MTA.Database
         public bool SuperBoss;
         public Time32 LastMove;
         public int MoveSpeed;
-        public int RunSpeed;     
+        public int RunSpeed;
         public int HPPotionID, MPPotionID;
         public int AttackSpeed;
         public int MinimumSpeed
@@ -69,7 +69,7 @@ namespace MTA.Database
 
         public ushort BoundX, BoundY;
         public ushort BoundCX, BoundCY;
-     
+
         public void SendScreen(byte[] buffer)
         {
             foreach (Client.GameState client in Program.Values)
@@ -118,7 +118,7 @@ namespace MTA.Database
             }
         }
         public static bool ItemsInInventory = false;
-                      
+
         public void Drop(Game.Entity killer)
         {
             #region Ramadan kareem
@@ -358,10 +358,10 @@ namespace MTA.Database
                     }
                     return;
                 }
-               
+
             }
             #endregion
-            
+
             #region EveryThingHas
             #region ApeSkin
             {
@@ -659,7 +659,7 @@ namespace MTA.Database
 
                 }
             }
-           if (Name == "BullMonsterL113")
+            if (Name == "BullMonsterL113")
             {
                 {
                     killer.MonstersPoints += 1;
@@ -809,7 +809,7 @@ namespace MTA.Database
                 {
                     killer.Send(new Message("You have killed enough monsters for the quest. Go report to the " + killer.QuestFrom + "Captain.", 2005));
                 }
-            }            
+            }
             #endregion
             #region DisCity
             if (Name == "Naga")
@@ -939,7 +939,7 @@ namespace MTA.Database
                             floorItem.Item.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
                             floorItem.Item.ID = Uid;
                             floorItem.Item.MaximDurability = floorItem.Item.Durability = 65535;
-                            floorItem.Item.UID = Program.NextItemID;;
+                            floorItem.Item.UID = Program.NextItemID; ;
                             floorItem.ValueType = Network.GamePackets.FloorItem.FloorValueType.Item;
                             floorItem.ItemID = Uid;
                             floorItem.MapID = Owner.MapID;
@@ -1151,15 +1151,15 @@ namespace MTA.Database
             {
                 killer.ChestDemonkill += 1;
                 killer.Owner.Send(new Message("You have killed ChestDemon!", System.Drawing.Color.Azure, Message.Center));
-            }                        
+            }
 
-                else
-                {
+            else
+            {
 
 
 
-                }
-        }        
+            }
+        }
         public const int ReviverID = 9879;
 
         public static uint GetIDFromName(string Name)
@@ -1185,7 +1185,7 @@ namespace MTA.Database
                         MonsterInformation mf = new MonsterInformation();
                         mf.ID = reader.ReadUInt32("id");
                         mf.Name = reader.ReadString("name");
-                      //  mf.Name2 = reader.ReadString("name2");
+                        //  mf.Name2 = reader.ReadString("name2");
                         mf.Mesh = reader.ReadUInt16("lookface");
                         mf.Level = reader.ReadByte("level");
                         mf.Hitpoints = reader.ReadUInt32("life");
@@ -1224,10 +1224,10 @@ namespace MTA.Database
                         //   mf.Switch = reader.ReadByte("magic_soul");
                         mf.MoveSpeed = reader.ReadInt32("move_speed");
                         mf.RunSpeed = reader.ReadInt32("run_speed");
-                   //     mf.OwnItemID = reader.ReadInt32("ownitem");
+                        //     mf.OwnItemID = reader.ReadInt32("ownitem");
                         mf.HPPotionID = reader.ReadInt32("drop_hp");
                         mf.MPPotionID = reader.ReadInt32("drop_mp");
-                     //   mf.OwnItemRate = reader.ReadInt32("ownitemrate");
+                        //   mf.OwnItemRate = reader.ReadInt32("ownitemrate");
                         mf.AttackSpeed = reader.ReadInt32("attack_speed");
                         mf.ExtraExperience = reader.ReadUInt32("extra_exp");
                         ulong MoneyDropAmount = reader.ReadUInt16("level");
@@ -1245,7 +1245,7 @@ namespace MTA.Database
                         {
                             var x = mf;
                         }
-                           
+
                         MonsterInformations.Add(mf.ID, mf);
                         byte lvl = mf.Level;
                         if (mf.Name == "Slinger" ||
@@ -1258,7 +1258,7 @@ namespace MTA.Database
                         {
                             mf.LabirinthDrop = true;
                             lvl = 20;
-                        } 
+                        }
                     }
                 }
             }
@@ -1293,7 +1293,7 @@ namespace MTA.Database
             mf.ExtraExperience = this.ExtraExperience;
             mf.MaxMoneyDropAmount = this.MaxMoneyDropAmount;
             mf.MinMoneyDropAmount = this.MinMoneyDropAmount;
-           // mf.OwnItemID = this.OwnItemID;
+            // mf.OwnItemID = this.OwnItemID;
             mf.HPPotionID = this.HPPotionID;
             mf.MPPotionID = this.MPPotionID;
             //mf.OwnItemRate = this.OwnItemRate;

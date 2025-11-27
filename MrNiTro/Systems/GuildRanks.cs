@@ -22,7 +22,7 @@ namespace MTA.Network.GamePackets
             packet = buffer;
         }
         public ushort Rank { get { return BitConverter.ToUInt16(packet, 4); } set { WriteUInt16(value, 4, packet); } }
-       
+
         public ushort Page { get { return BitConverter.ToUInt16(packet, 10); } set { WriteUInt16(value, 10, packet); } }
         ushort Position = 12;
         public void Aprend(Game.ConquerStructures.Society.Guild.Member member, ulong Donation)

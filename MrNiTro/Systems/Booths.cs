@@ -65,7 +65,7 @@ namespace MTA.MaTrix
                 {
                     booth.Name = split[1];
                 }
-                
+
 
                 else if (split[0] == "BotMessage")
                 {
@@ -165,7 +165,7 @@ namespace MTA.MaTrix
                 Base.Type = Game.Enums.NpcType.Booth;
                 Base.ShowName = true;
                 Base.Name = bo.Name;
-                
+
                 Base.MapID = bo.Map;
                 Base.X = bo.X;
                 Base.Y = bo.Y;
@@ -351,7 +351,7 @@ namespace MTA.MaTrix
                     booth booth1 = new booth();
                     item.Item = new ConquerItem(true);
                     item.Item.UID = Program.NextItemID;
-                 
+
                     //Program.NextItemID++;
                     item.Item.ID = uint.Parse(line[0]);
                     if (line.Length >= 2)
@@ -369,10 +369,10 @@ namespace MTA.MaTrix
                     if (line.Length >= 8)
                         item.Item.StackSize = ushort.Parse(line[7]);
 
-              
-                        if (line.Length >= 19)
-                            item.Item.Bound = true;
-               
+
+                    if (line.Length >= 19)
+                        item.Item.Bound = true;
+
 
                     Database.ConquerItemBaseInformation CIBI = null;
                     CIBI = Database.ConquerItemInformation.BaseInformations[item.Item.ID];
@@ -389,8 +389,8 @@ namespace MTA.MaTrix
             MTA.Console.WriteLine("" + Booth.Booths2.Count + " New Booths Loaded.");
         }
 
-        
 
-        
+
+
     }
 }

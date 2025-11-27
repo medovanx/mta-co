@@ -28,13 +28,13 @@ namespace MTA.Database
                         continue;
                     }
                     if (Path.Contains(".7z"))
-                    {                        
+                    {
                         Path = System.IO.Path.ChangeExtension(Path, ".dmap");
-                    }                   
+                    }
                     MapsTable.MapInformation info = new MapsTable.MapInformation();
                     if (MapsTable.MapInformations.ContainsKey(MapID))
                         info = MapsTable.MapInformations[MapID];
-                    if (info.ID == info.BaseID) 
+                    if (info.ID == info.BaseID)
                         new Game.Map(MapID, Path);
                     MapPaths.Add(MapID, Path);
                     BR.ReadInt32();

@@ -81,7 +81,7 @@ namespace MTA.Game.ConquerStructures
             }
             return false;
         }
-        
+
         public bool Remove(ConquerItem item)
         {
             if (items.ContainsKey(item.UID))
@@ -152,10 +152,10 @@ namespace MTA.Game.ConquerStructures
         #endregion House
 
         public ConquerItem[] Objects
-        { 
-            get 
+        {
+            get
             {
-                return objects; 
+                return objects;
             }
         }
 
@@ -175,7 +175,7 @@ namespace MTA.Game.ConquerStructures
 
         public enum WarehouseID : uint
         {
-         //   ItemBox = 8200,
+            //   ItemBox = 8200,
             TwinCity = 8,
             PhoenixCity = 10012,
             ApeCity = 10028,

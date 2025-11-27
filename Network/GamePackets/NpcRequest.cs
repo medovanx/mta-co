@@ -25,7 +25,7 @@ namespace MTA.Network.GamePackets
         public ushort Mesh { get { return BitConverter.ToUInt16(Buffer, 12); } set { WriteUInt16(value, 12, Buffer); } }
         public ushort Mode { get { return BitConverter.ToUInt16(Buffer, 16); } set { WriteUInt16(value, 16, Buffer); } }
         public Game.Enums.NpcType NpcTyp { get { return (Game.Enums.NpcType)BitConverter.ToUInt16(Buffer, 18); } set { WriteUInt16((ushort)value, 18, Buffer); } }
-      
+
         public byte[] ToArray()
         {
             return Buffer;
@@ -37,7 +37,7 @@ namespace MTA.Network.GamePackets
             set { WriteUInt32(value, 8, Buffer); }
         }
 
-        
+
         public byte OptionID
         {
             get { return Buffer[14]; }

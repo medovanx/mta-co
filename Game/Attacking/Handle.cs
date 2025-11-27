@@ -570,15 +570,15 @@ namespace MTA.Game.Attacking
                     {
                         attacker.MonstersSpells = new List<ushort>()
                         {
-                            7, 
-                            20, 
-                            21, 
+                            7,
+                            20,
+                            21,
                             10372,
                             10373,
                             30012,
                             30014,
                             30013,
-                            30011 
+                            30011
                         };
                     }
                     if (attacker.MonstersSpells != null)
@@ -1103,7 +1103,7 @@ namespace MTA.Game.Attacking
                             attacker.RemoveFlag(Update.Flags.Ride);
                         else
                             if (!(SpellID == 7003 || SpellID == 7002))
-                                attacker.RemoveFlag(Update.Flags.Ride);
+                            attacker.RemoveFlag(Update.Flags.Ride);
                     }
                     if (attacker.ContainsFlag(Update.Flags.CastPray))
                         attacker.RemoveFlag(Update.Flags.CastPray);
@@ -5575,23 +5575,23 @@ namespace MTA.Game.Attacking
                                         }
                                         break;
                                     }
-                                #endregion
+                                    #endregion
                                     if (attacker.NobilityRank == Game.ConquerStructures.NobilityRank.King)
-{
-damage = (uint)(damage * 1.4);
-}
-if (attacker.NobilityRank == Game.ConquerStructures.NobilityRank.Prince)
-{
-damage = (uint)(damage * 1.0);
-}
-if (attacker.NobilityRank == Game.ConquerStructures.NobilityRank.Duke)
-{
-damage = (uint)(damage * 0.8);
-}
-if (attacker.NobilityRank == Game.ConquerStructures.NobilityRank.Earl)
-{
-damage = (uint)(damage * 0.5);
-}
+                                    {
+                                        damage = (uint)(damage * 1.4);
+                                    }
+                                    if (attacker.NobilityRank == Game.ConquerStructures.NobilityRank.Prince)
+                                    {
+                                        damage = (uint)(damage * 1.0);
+                                    }
+                                    if (attacker.NobilityRank == Game.ConquerStructures.NobilityRank.Duke)
+                                    {
+                                        damage = (uint)(damage * 0.8);
+                                    }
+                                    if (attacker.NobilityRank == Game.ConquerStructures.NobilityRank.Earl)
+                                    {
+                                        damage = (uint)(damage * 0.5);
+                                    }
                                 #region Blistering Wave
                                 case 11650:
                                     {
@@ -7972,7 +7972,7 @@ damage = (uint)(damage * 0.5);
                                                         }
                                                         break;
                                                     }
-                                                #endregion
+                                                    #endregion
                                             }
                                         }
                                         break;

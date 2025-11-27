@@ -132,7 +132,7 @@ namespace MTA.Database
                     var subtype3 = (ushort)((WeaponSubtype / 1000000) % 1000);
                     if (WeaponSubtype == 60000)
                         subtype1 = 614;
-                        //subtype2 = 622;
+                    //subtype2 = 622;
                     if (subtype1 != 0)
                     {
                         spell.WeaponSubtype.Add(subtype1);
@@ -209,7 +209,7 @@ namespace MTA.Database
                                 //      spell.Range = 3;
                                 for (int i = 0; i < spell.WeaponSubtype.Count; i++)
                                 {
-                                    var subtype = spell.WeaponSubtype[i];                  
+                                    var subtype = spell.WeaponSubtype[i];
                                     if (!WeaponSpells.ContainsKey(subtype))
                                         WeaponSpells.Add(subtype, new List<ushort>());
                                     if (!WeaponSpells[subtype].Contains(spell.ID))

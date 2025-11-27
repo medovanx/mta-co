@@ -105,7 +105,7 @@ namespace MTA.MaTrix.Roulette
                         break;
                     }
             }
-        }      
+        }
     }
 }
 

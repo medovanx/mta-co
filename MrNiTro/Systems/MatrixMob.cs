@@ -68,9 +68,9 @@ namespace MTA.MaTrix
             this.X = X;
             this.Y = Y;
             this.Minute = Minute;
-            TimerSubscriptions = new IDisposable[] 
+            TimerSubscriptions = new IDisposable[]
             {
-                Buffers.Add(this),               
+                Buffers.Add(this),
             };
             DisposalSyncRoot = new object();
         }
@@ -208,4 +208,3 @@ namespace MTA.MaTrix
         }
     }
 }
- 

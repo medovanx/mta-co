@@ -14,7 +14,7 @@ namespace MTA.Interfaces
         Network.GamePackets.Spell.Soul_Level Souls { get; set; }
         byte LevelHu2 { get; set; }
         byte LevelHu { get; set; }
-       // byte TempLevel { get; set; }
+        // byte TempLevel { get; set; }
         bool Available { get; set; }
         void Send(Client.GameState client);
     }

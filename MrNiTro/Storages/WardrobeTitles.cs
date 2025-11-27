@@ -20,8 +20,9 @@ namespace MTA.Network.GamePackets
                 conn.Open();
                 using (var cmd = new MySql.Data.MySqlClient.MySqlCommand(SQL, conn))
                 {
-                    var reader = new Database.MySqlCommand(Database.MySqlCommandType.SELECT).Select("Titles").Where("Id" , Id).CreateReader();
-                    if (reader.Read()) {
+                    var reader = new Database.MySqlCommand(Database.MySqlCommandType.SELECT).Select("Titles").Where("Id", Id).CreateReader();
+                    if (reader.Read())
+                    {
                         Update();
                         return;
                     }

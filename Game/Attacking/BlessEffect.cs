@@ -108,7 +108,7 @@ namespace MTA.Game.Attacking
                 }
                 goto jump;
             }
-            #endregion
+        #endregion
         jump:
             return;
         }

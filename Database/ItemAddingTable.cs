@@ -85,7 +85,7 @@ namespace MTA.Database
         #endregion
         public static void GetAddingsForItem(ConquerItem item)
         {
-            using(var cmd = new MySqlCommand( MySqlCommandType.SELECT).Select("itemadding").Where("UID", item.UID))
+            using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("itemadding").Where("UID", item.UID))
             using (var reader = cmd.CreateReader())
             {
                 while (reader.Read())
@@ -96,7 +96,7 @@ namespace MTA.Database
                         purification.ItemUID = item.UID;
                         purification.Available = true;
                         purification.PurificationItemID = reader.ReadUInt32("Addingid");
-                        purification.PurificationDuration =reader.ReadUInt32("Duration");
+                        purification.PurificationDuration = reader.ReadUInt32("Duration");
                         purification.PurificationLevel = reader.ReadUInt32("Addinglevel");
                         purification.AddedOn = DateTime.FromBinary(reader.ReadInt64("Addedon"));
                         if (purification.PurificationDuration != 0)
@@ -166,7 +166,7 @@ namespace MTA.Database
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("itemadding"))
                 cmd.Set("duration", 0).Where("UID", UID).And("addingid", addingid)
                     .Execute();
-        }               
+        }
         public static void AddExtraEffect(ItemAdding.Refinery_ effect)
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.INSERT))

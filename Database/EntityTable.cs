@@ -967,22 +967,22 @@ namespace MTA.Database
                 case 15: eC.Class = 80; break;
                 case 16:
                 case 17:
-                {
-                    eC.Class = 160;
-                    client.Entity.Windwalker = 0;
-                    break;
-                }
+                    {
+                        eC.Class = 160;
+                        client.Entity.Windwalker = 0;
+                        break;
+                    }
                 case 18:
                 case 19:
-                {
-                    eC.Class = 160;
-                    client.Entity.Windwalker = 8;
-                    break;
-                }
+                    {
+                        eC.Class = 160;
+                        client.Entity.Windwalker = 8;
+                        break;
+                    }
                 default:
-                {
-                    Console.WriteLine("Error Class = " + eC.Class);
-                }
+                    {
+                        Console.WriteLine("Error Class = " + eC.Class);
+                    }
                     break;
             }
 

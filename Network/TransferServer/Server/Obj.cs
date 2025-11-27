@@ -20,6 +20,6 @@ namespace MTA.TransferServer
         public void Disconnect()
         {
             sock.Disconnect();
-        } 
+        }
     }
 }

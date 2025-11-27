@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 
 namespace MTA.Network.GamePackets
-{   
+{
     public class FloorItem : Writer, Interfaces.IPacket, Interfaces.IMapObject
     {
         public const byte Drop = 1,

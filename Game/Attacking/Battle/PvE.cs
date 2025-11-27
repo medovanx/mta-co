@@ -44,7 +44,7 @@ namespace MTA
                     }
             }
             MTA.Game.Attacking.Calculate.Refinary(Attacker, sobnpc, ref Damage, ref Packet, AtkType == Attack.Melee);
-            Damage = Attacker.AdjustAttack((int)Damage) * 14.8; 
+            Damage = Attacker.AdjustAttack((int)Damage) * 14.8;
 
             Damage += Attacker.getFan(AtkType == Attack.Magic);
             if (Damage < 1)

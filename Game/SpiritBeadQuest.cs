@@ -49,8 +49,8 @@ namespace MTA.Game.Features
         }
         public void UpdateDB(String column, UInt32 value)
         {
-            if(Client != null)
-            new Database.MySqlCommand(MTA.Database.MySqlCommandType.UPDATE).Update("entities").Set(column, value).Where("UID", Client.Entity.UID).Execute();
+            if (Client != null)
+                new Database.MySqlCommand(MTA.Database.MySqlCommandType.UPDATE).Update("entities").Set(column, value).Where("UID", Client.Entity.UID).Execute();
         }
         public void GainSpirits(Byte MobLevel)
         {

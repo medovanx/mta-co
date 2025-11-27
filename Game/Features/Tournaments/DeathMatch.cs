@@ -67,7 +67,7 @@ namespace MTA.Game
                 {
                     LastUpdate = now;
 
-                    var array = new[] 
+                    var array = new[]
                     {
                         string.Format("Spain team: {0}", Points[SpainTeam]),
                         string.Format("Argentina team: {0}", Points[ArgentinaTeam]),
@@ -264,7 +264,7 @@ namespace MTA.Game
                 {
                     LastUpdate = now;
 
-                    var array = new[] 
+                    var array = new[]
                     {
                         string.Format("Black team: {0}", Points[BlackTeam]),
                         string.Format("Blue team: {0}", Points[BlueTeam]),

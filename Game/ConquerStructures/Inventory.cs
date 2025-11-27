@@ -119,7 +119,7 @@ namespace MTA.Game.ConquerStructures
                 Program.SaveException(e);
             }
             return true;
-        }  
+        }
         //public bool PowerExpBall(byte times = 1, bool bound = false)
         //{
         //    try
@@ -330,8 +330,9 @@ namespace MTA.Game.ConquerStructures
                             TimeSpan Remain = item.DayStamp.AddDays(item.Days) - DateTime.Now;
                             item.TimeLeftInMinutes = (uint)Remain.TotalSeconds;
                             item.Durability = item.MaximDurability = infos.BaseInformation.Durability;
-                            
-                        };
+
+                        }
+                        ;
                         this.Add(item, Enums.ItemUse.CreateAndAdd);
                         Database.ConquerItemTable.Update_Free(item, Owner);
                         if (!Permnant)
@@ -402,46 +403,48 @@ namespace MTA.Game.ConquerStructures
         }
         public bool Add(uint id, byte plus, byte times, bool bound = false)
         {
-            try {
-            Database.ConquerItemInformation infos = new Database.ConquerItemInformation(id, plus);
-            while (times > 0)
+            try
             {
-                if (Count <= 39)
+                Database.ConquerItemInformation infos = new Database.ConquerItemInformation(id, plus);
+                while (times > 0)
                 {
-                    ConquerItem item;
-                    item = new ConquerItem(true);
+                    if (Count <= 39)
                     {
-                        #region Stacksize
-                        if (infos.BaseInformation.StackSize > 1)
+                        ConquerItem item;
+                        item = new ConquerItem(true);
                         {
-                            //item.StackSize = (byte)times;                                
-                            ushort _StackCount = infos.BaseInformation.StackSize;
-                            if (times <= infos.BaseInformation.StackSize)
-                                _StackCount = (ushort)times;
-                            item.StackSize = (ushort)_StackCount;
-                            Database.ConquerItemTable.UpdateStack(item);
-                            times -= (byte)_StackCount;
-                        }
-                        else
-                        {
-                            item = new ConquerItem(true);
-                            item.StackSize = 1;
-                            times--;
-                        }
-                        #endregion Stacksize
-                        item.ID = id;
-                        item.Plus = plus;
-                        item.Durability = item.MaximDurability = infos.BaseInformation.Durability;
+                            #region Stacksize
+                            if (infos.BaseInformation.StackSize > 1)
+                            {
+                                //item.StackSize = (byte)times;                                
+                                ushort _StackCount = infos.BaseInformation.StackSize;
+                                if (times <= infos.BaseInformation.StackSize)
+                                    _StackCount = (ushort)times;
+                                item.StackSize = (ushort)_StackCount;
+                                Database.ConquerItemTable.UpdateStack(item);
+                                times -= (byte)_StackCount;
+                            }
+                            else
+                            {
+                                item = new ConquerItem(true);
+                                item.StackSize = 1;
+                                times--;
+                            }
+                            #endregion Stacksize
+                            item.ID = id;
+                            item.Plus = plus;
+                            item.Durability = item.MaximDurability = infos.BaseInformation.Durability;
 
-                    };
-                    this.Add(item, Enums.ItemUse.CreateAndAdd);                    
+                        }
+                        ;
+                        this.Add(item, Enums.ItemUse.CreateAndAdd);
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                    // times--;
                 }
-                else
-                {
-                    return false;
-                }
-               // times--;
-            }
             }
             catch (Exception e)
             {
@@ -479,20 +482,21 @@ namespace MTA.Game.ConquerStructures
         }
         public bool Add(uint id, Game.Enums.ItemEffect effect)
         {
-            try {
-            ConquerItem item = new Network.GamePackets.ConquerItem(true);
-            item.ID = id;
-            item.Effect = effect;
-            Database.ConquerItemInformation infos = new Database.ConquerItemInformation(id, 0);
-            item.Durability = item.MaximDurability = infos.BaseInformation.Durability;
-            if (Count <= 39)
+            try
             {
-                Add(item, Enums.ItemUse.CreateAndAdd);
-            }
-            else
-            {
-                return false;
-            }
+                ConquerItem item = new Network.GamePackets.ConquerItem(true);
+                item.ID = id;
+                item.Effect = effect;
+                Database.ConquerItemInformation infos = new Database.ConquerItemInformation(id, 0);
+                item.Durability = item.MaximDurability = infos.BaseInformation.Durability;
+                if (Count <= 39)
+                {
+                    Add(item, Enums.ItemUse.CreateAndAdd);
+                }
+                else
+                {
+                    return false;
+                }
             }
             catch (Exception e)
             {
@@ -530,7 +534,7 @@ namespace MTA.Game.ConquerStructures
                             item.StatsLoaded = false;
                             Database.ConquerItemTable.UpdateLocation(item, Owner);
                             break;
-                    }                   
+                    }
                     if (use != Enums.ItemUse.None)
                         Database.ItemLog.LogItem(item.UID, Owner.Entity.UID, MTA.Database.ItemLog.ItemLogAction.Add);
                     inventory.Add(item.UID, item);
@@ -565,7 +569,7 @@ namespace MTA.Game.ConquerStructures
             try
             {
                 if (inventory.ContainsKey(item.UID))
-                {                   
+                {
                     switch (use)
                     {
                         case Enums.ItemUse.RemoveFromStack:
@@ -629,26 +633,27 @@ namespace MTA.Game.ConquerStructures
         }
         public bool Remove(uint UID, Enums.ItemUse use, bool sendRemove)
         {
-            try {
-            if (inventory.ContainsKey(UID))
+            try
             {
-                switch (use)
+                if (inventory.ContainsKey(UID))
                 {
-                    case Enums.ItemUse.Remove: Database.ConquerItemTable.RemoveItem(UID); break;
-                    case Enums.ItemUse.Move: Database.ConquerItemTable.UpdateLocation(inventory[UID], Owner); break;
+                    switch (use)
+                    {
+                        case Enums.ItemUse.Remove: Database.ConquerItemTable.RemoveItem(UID); break;
+                        case Enums.ItemUse.Move: Database.ConquerItemTable.UpdateLocation(inventory[UID], Owner); break;
+                    }
+                    Database.ItemLog.LogItem(UID, Owner.Entity.UID, MTA.Database.ItemLog.ItemLogAction.Remove);
+                    inventory.Remove(UID);
+                    objects = inventory.Values.ToArray();
+                    if (sendRemove)
+                    {
+                        Network.GamePackets.ItemUsage iu = new Network.GamePackets.ItemUsage(true);
+                        iu.UID = UID;
+                        iu.ID = Network.GamePackets.ItemUsage.RemoveInventory;
+                        Owner.Send(iu);
+                    }
+                    return true;
                 }
-                Database.ItemLog.LogItem(UID, Owner.Entity.UID, MTA.Database.ItemLog.ItemLogAction.Remove);
-                inventory.Remove(UID);
-                objects = inventory.Values.ToArray();
-                if (sendRemove)
-                {
-                    Network.GamePackets.ItemUsage iu = new Network.GamePackets.ItemUsage(true);
-                    iu.UID = UID;
-                    iu.ID = Network.GamePackets.ItemUsage.RemoveInventory;
-                    Owner.Send(iu);
-                }
-                return true;
-            }
             }
             catch (Exception e)
             {
@@ -746,10 +751,10 @@ namespace MTA.Game.ConquerStructures
                 if (item.ID == ID)
                 {
                     if (item.StackSize == 0)
-                        has++;                    
-                    else                    
-                        has = (byte)(has + ((byte)item.StackSize));                    
-                    items.Add(item); 
+                        has++;
+                    else
+                        has = (byte)(has + ((byte)item.StackSize));
+                    items.Add(item);
                     if (has >= times) break;
                 }
             if (has >= times)

@@ -134,7 +134,7 @@ namespace MTA.Game.Attacking
                 }
                 else
                     if (algorithm == Algorithm.DDA)
-                        return Contains(lcoords, new coords(X, Y));
+                    return Contains(lcoords, new coords(X, Y));
             }
             return false;
         }

@@ -7,7 +7,7 @@ namespace MTA.Database
     public static class HonorShop
     {
         public const uint UID = 6000;
-        
+
         public static HonorShopBase Shop;
         public class HonorShopBase
         {

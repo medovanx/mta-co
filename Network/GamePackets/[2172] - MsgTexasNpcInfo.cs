@@ -7,8 +7,8 @@ namespace MTA.Network.GamePackets
 {
     public class MsgTexasNpcInfo : Writer, Interfaces.IPacket
     {
-         private byte[] Buffer;
-         public MsgTexasNpcInfo(int count)
+        private byte[] Buffer;
+        public MsgTexasNpcInfo(int count)
         {
             Buffer = new byte[52 + 8 + (count * 6)];
             Write((ushort)(Buffer.Length - 8), 0, Buffer);

@@ -31,7 +31,7 @@ namespace MTA.Game.Events
                 if (state.Entity.MapID == Map && state.Entity.Hitpoints >= 1 && !state.Entity.Dead)
                 {
                     Alive++;
-              //      Kernel.SendWorldMessage(new Message("Players Alive in DizzyLand Now: " + Alive + " ", Color.Black, 0x83c), Program.Values);
+                    //      Kernel.SendWorldMessage(new Message("Players Alive in DizzyLand Now: " + Alive + " ", Color.Black, 0x83c), Program.Values);
                 }
                 if (state.Entity.MapID == Map && state.Entity.Hitpoints >= 1 && !state.Entity.Dead)
                 {

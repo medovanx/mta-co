@@ -31,13 +31,13 @@ namespace MTA.MaTrix.Roulette
                 Writer.Byte(value, 4, packet);
             }
         }
-      
+
 
         public static MsgRouletteNoWinner Create()
         {
             MsgRouletteNoWinner packet = new MsgRouletteNoWinner();
             packet.Length = 5;
-            packet.PacketID = GamePackets.MsgRouletteNoWinner;          
+            packet.PacketID = GamePackets.MsgRouletteNoWinner;
             return packet;
         }
 

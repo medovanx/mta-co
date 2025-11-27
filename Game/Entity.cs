@@ -33,7 +33,7 @@ namespace MTA.Game
                     AddFlag4(Network.GamePackets.Update.Flags4.JusticeChant);
             }
         }
-        public bool 
+        public bool
         ClaimedElitePk = false,
         ClaimedTeamPK = false,
         ClaimedSTeamPK = false;
@@ -80,7 +80,7 @@ namespace MTA.Game
                             return true;
             }
             return false;
-        } 
+        }
         public List<string> BlackList;
         public WardrobeTitles WTitles;
         public Dictionary<uint, ConquerItem> StorageItems;
@@ -233,7 +233,7 @@ namespace MTA.Game
             }
         }
         public uint lacb;
-     //   public InnerPower InnerPower;
+        //   public InnerPower InnerPower;
         public int PerfectionLevel;
         public uint FlameLotusEnergy;
         public uint AuroraLotusEnergy;
@@ -811,7 +811,7 @@ namespace MTA.Game
                 this.Flower = value;
                 Writer.WriteUInt32(value + 10000, 154, this.SpawnPacket);//146
             }
-        }  
+        }
 
         #region skill team
         public Features.Tournaments.TeamElitePk.Match SkillTeamWatchingElitePKMatch;
@@ -867,7 +867,7 @@ namespace MTA.Game
         _CUID = 266 + 4 + 4,
         _NameClan = 296 + 4,
         _WingColor = 278 + 4,
-        _EquipmentColor = 258,       
+        _EquipmentColor = 258,
         _EpicColor = 254 + 4,
         _Names = 317;
         #endregion
@@ -3442,7 +3442,7 @@ namespace MTA.Game
 
                 //DropRandomStuff(Killer);
 
-            Over:
+                Over:
                 AddFlag(Network.GamePackets.Update.Flags.Dead);
                 RemoveFlag(Network.GamePackets.Update.Flags.Fly);
                 RemoveFlag(Network.GamePackets.Update.Flags.Ride);
@@ -3523,7 +3523,7 @@ namespace MTA.Game
             if (killer.EntityFlag == Game.EntityFlag.Player)
             {
                 if (ContainsFlag3((ulong)1UL << 53))
-                    RemoveFlag3((ulong)1UL << 53); 
+                    RemoveFlag3((ulong)1UL << 53);
                 if (killer.MapID == 1234)
                 {
                     if (ConquerPoints >= 12000000)
@@ -3884,7 +3884,7 @@ namespace MTA.Game
                     // killer.killerpoints++;
                     if (killer.PKMode != MTA.Game.Enums.PkMode.JiangHu)
                     {
-                      
+
                         // killer.killerpoints++;
 
 
@@ -4753,9 +4753,9 @@ namespace MTA.Game
                     if (Owner.InQualifier())
                         if (MapID != 700 && MapID < 11000)
                             Owner.EndQualifier();
-                   
-                   
-                    
+
+
+
                 }
                 if (MapID == this.MapID)
                 {

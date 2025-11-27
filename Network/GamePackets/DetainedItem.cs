@@ -20,7 +20,7 @@ namespace MTA.Network.GamePackets
                 WriteUInt16(176, 0, Buffer);
                 WriteUInt16(1034, 2, Buffer);
             }
-        }  
+        }
 
 
         public uint UID
@@ -160,8 +160,8 @@ namespace MTA.Network.GamePackets
         {
             get { return BitConverter.ToUInt32(Buffer, 168); }
             set { WriteUInt32(value, 168, Buffer); }
-        } 
-  
+        }
+
         /// <summary> 
         /// YYYYMMDD 
         /// </summary> 

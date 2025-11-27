@@ -13,7 +13,7 @@ namespace MTA.Network.GamePackets
         public Forward.ForwardType Type
         {
             get
-            {                
+            {
                 return (Forward.ForwardType)(byte)BitConverter.ToUInt32(Buffer, 8);
             }
             set
@@ -26,15 +26,15 @@ namespace MTA.Network.GamePackets
             get
             {
                 return Program.Encoding.GetString(Buffer, 14, 2);
-            }           
+            }
         }
         public void Deserialize(byte[] buffer)
-        { 
+        {
             this.Buffer = buffer;
         }
         public byte[] ToArray()
-        { 
-            return Buffer; 
+        {
+            return Buffer;
         }
         public void Send(Client.GameState client)
         {

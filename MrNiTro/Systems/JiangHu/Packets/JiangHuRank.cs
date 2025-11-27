@@ -18,7 +18,7 @@ namespace MTA.Network.GamePackets
         }
         public byte Page { get { return packet[4]; } set { packet[4] = value; } }
         public byte MyRank { get { return packet[5]; } set { packet[5] = value; } }
-      
+
         public byte RegisteredCount { get { return packet[7]; } set { WriteByte(value, 7, packet); } }
 
         private ushort Position = 8;

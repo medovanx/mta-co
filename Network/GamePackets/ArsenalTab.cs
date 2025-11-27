@@ -36,7 +36,7 @@ namespace MTA.Network.GamePackets
             get { return BitConverter.ToUInt32(Buffer, 8); }
             set { WriteUInt32(value, 8, Buffer); }
         }
-        
+
         public uint HeroDonation
         {
             get { return BitConverter.ToUInt32(Buffer, 12); }

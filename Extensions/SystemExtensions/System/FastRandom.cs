@@ -10,7 +10,7 @@
 
         public FastRandom() : this(Time32.Now.TotalMilliseconds)
         {
-           // Class1.Class0.smethod_0();
+            // Class1.Class0.smethod_0();
         }
 
         public FastRandom(int seed)
@@ -49,7 +49,7 @@
                 this.uint_0 = this.uint_1;
                 this.uint_1 = this.uint_2;
                 this.uint_2 = this.uint_3;
-                return (int) ((4.6566128730773926E-10 * (0x7fffffff & (this.uint_3 = (this.uint_3 ^ (this.uint_3 >> 0x13)) ^ (num ^ (num >> 8))))) * upperBound);
+                return (int)((4.6566128730773926E-10 * (0x7fffffff & (this.uint_3 = (this.uint_3 ^ (this.uint_3 >> 0x13)) ^ (num ^ (num >> 8))))) * upperBound);
             }
         }
 
@@ -70,9 +70,9 @@
                 int num3 = upperBound - lowerBound;
                 if (num3 < 0)
                 {
-                    return (lowerBound + ((int) ((2.3283064365386963E-10 * (this.uint_3 = (this.uint_3 ^ (this.uint_3 >> 0x13)) ^ (num2 ^ (num2 >> 8)))) * (upperBound - lowerBound))));
+                    return (lowerBound + ((int)((2.3283064365386963E-10 * (this.uint_3 = (this.uint_3 ^ (this.uint_3 >> 0x13)) ^ (num2 ^ (num2 >> 8)))) * (upperBound - lowerBound))));
                 }
-                return (lowerBound + ((int) ((4.6566128730773926E-10 * (0x7fffffff & (this.uint_3 = (this.uint_3 ^ (this.uint_3 >> 0x13)) ^ (num2 ^ (num2 >> 8))))) * num3)));
+                return (lowerBound + ((int)((4.6566128730773926E-10 * (0x7fffffff & (this.uint_3 = (this.uint_3 ^ (this.uint_3 >> 0x13)) ^ (num2 ^ (num2 >> 8))))) * num3)));
             }
         }
 
@@ -92,7 +92,7 @@
                     uint num4 = this.uint_3;
                     fixed (byte* numRef = buffer)
                     {
-                        uint* numPtr = (uint*) numRef;
+                        uint* numPtr = (uint*)numRef;
                         int index = 0;
                         int num6 = buffer.Length >> 2;
                         while (index < num6)
@@ -134,7 +134,7 @@
                 this.uint_0 = this.uint_1;
                 this.uint_1 = this.uint_2;
                 this.uint_2 = this.uint_3;
-                return (0x7fffffff & ((int) (this.uint_3 = (this.uint_3 ^ (this.uint_3 >> 0x13)) ^ (num ^ (num >> 8)))));
+                return (0x7fffffff & ((int)(this.uint_3 = (this.uint_3 ^ (this.uint_3 >> 0x13)) ^ (num ^ (num >> 8)))));
             }
         }
 
@@ -154,7 +154,7 @@
         {
             lock (this.object_0)
             {
-                this.uint_0 = (uint) seed;
+                this.uint_0 = (uint)seed;
                 this.uint_1 = 0x32378fc7;
                 this.uint_2 = 0xd55f8767;
                 this.uint_3 = 0x104aa1ad;

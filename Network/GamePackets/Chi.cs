@@ -7,7 +7,7 @@ namespace MTA.Network.GamePackets
 {
     public class Chi : Writer, Interfaces.IPacket
     {
-        public const byte 
+        public const byte
             Unlock = 0,
             QueryInfo = 1,
             Study = 2,

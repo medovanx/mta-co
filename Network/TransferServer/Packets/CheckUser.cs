@@ -19,7 +19,7 @@ namespace MTA.TransferServer
             WriteString(Constants.ServerName, 24, Buffer);
         }
 
-        public byte[] GetArray() { return Buffer; }        
+        public byte[] GetArray() { return Buffer; }
     }
     public enum Reply
     {
@@ -37,9 +37,9 @@ namespace MTA.TransferServer
             WriteUInt32(uid, 4, Buffer);
             WriteUInt32((uint)Reply, 8, Buffer);
             WriteString(user, 12, Buffer);
-            WriteString(Constants.ServerName, 28, Buffer);           
+            WriteString(Constants.ServerName, 28, Buffer);
         }
-        public byte[] GetArray() { return Buffer; }     
+        public byte[] GetArray() { return Buffer; }
     }
     public class DoneUser : Writer
     {

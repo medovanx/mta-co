@@ -38,7 +38,7 @@ namespace MTA.Database
         public bool Reader(bool useinvalid = true)
         {
             string[] data = null;
-                      
+
             if (File.Exists(location))
             {
                 try
@@ -52,20 +52,20 @@ namespace MTA.Database
                             data[x] = SR.ReadLine();
                         }
                         if (Count == 0)
-                            return false;                       
+                            return false;
                     }
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.ToString());
-                    return false;   
+                    return false;
                 }
             }
             else if (useinvalid)
-            {                
+            {
                 data = null;
                 Console.WriteLine("Invalid Reader " + location + " location");
-                return false;   
+                return false;
             }
 
             items = new string[Count];

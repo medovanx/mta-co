@@ -256,7 +256,7 @@ namespace MTA.MaTrix
                                         #endregion Stamina Check
                                         #region Jump
                                         if (Now >= ai.LastBotJump.AddMilliseconds(ai.JumpSpeed))
-                                        {                                            
+                                        {
                                             ushort X = Bot.Entity.X;
                                             ushort Y = Bot.Entity.Y;
                                             var dist = Kernel.GetDistance(Bot.Entity.X, Bot.Entity.Y, Target.X, Target.Y);
@@ -293,57 +293,57 @@ namespace MTA.MaTrix
                                         }
                                         #endregion
                                         #region Attack
-                                       
-                                            
-                                            if (Now > client.Entity.AttackStamp.AddSeconds(1))
-                                            {
-                                                if (MTA.MyMath.Success(ai.ShootChance))
-                                                {
-                                                    var dist = Kernel.GetDistance(Bot.Entity.X, Bot.Entity.Y, Target.X, Target.Y);
-                                                    var spelldist = SpellTable.SpellInformations[spell.ID][spell.Level].Range;
-                                                    if (dist < spelldist)
-                                                    {
-                                                        var interact = new Attack(true);
-                                                        interact.AttackType = Attack.Magic;
-                                                        interact.MagicType = spell.ID;
-                                                        interact.Attacker = Bot.Entity.UID;
-                                                        interact.Attacked = Target.UID;
-                                                        interact.MagicLevel = spell.Level;
-                                                        interact.Decoded = true;
-                                                        if (MTA.MyMath.Success(ai.Accuracy))
-                                                        {
-                                                            interact.X = Target.X;
-                                                            interact.Y = Target.Y;
-                                                        }
-                                                        else
-                                                        {
-                                                            interact.X = (ushort)(Target.X + 1);
-                                                            interact.Y = (ushort)(Target.Y + 1);
-                                                        }
-                                                        Bot.Entity.AttackPacket = interact;
-                                                        new MTA.Game.Attacking.Handle(interact, Bot.Entity, Target);
 
+
+                                        if (Now > client.Entity.AttackStamp.AddSeconds(1))
+                                        {
+                                            if (MTA.MyMath.Success(ai.ShootChance))
+                                            {
+                                                var dist = Kernel.GetDistance(Bot.Entity.X, Bot.Entity.Y, Target.X, Target.Y);
+                                                var spelldist = SpellTable.SpellInformations[spell.ID][spell.Level].Range;
+                                                if (dist < spelldist)
+                                                {
+                                                    var interact = new Attack(true);
+                                                    interact.AttackType = Attack.Magic;
+                                                    interact.MagicType = spell.ID;
+                                                    interact.Attacker = Bot.Entity.UID;
+                                                    interact.Attacked = Target.UID;
+                                                    interact.MagicLevel = spell.Level;
+                                                    interact.Decoded = true;
+                                                    if (MTA.MyMath.Success(ai.Accuracy))
+                                                    {
+                                                        interact.X = Target.X;
+                                                        interact.Y = Target.Y;
                                                     }
-                                                    //if (dist < 2)
-                                                    //{
-                                                    //    var interact = new Attack(true);
-                                                    //    interact.AttackType = Attack.Melee;
-                                                    //    interact.Attacker = Bot.Entity.UID;
-                                                    //    interact.Attacked = Target.UID;
-                                                    //    if (Kernel.ChanceSuccess(ai.Accuracy))
-                                                    //    {
-                                                    //        interact.X = Target.X;
-                                                    //        interact.Y = Target.Y;
-                                                    //    }
-                                                    //    else
-                                                    //    {
-                                                    //        interact.X = (ushort)(Target.X + 1);
-                                                    //        interact.Y = (ushort)(Target.Y + 1);
-                                                    //    }
-                                                    //    Bot.Entity.AttackPacket = interact;
-                                                    //    new MTA.Game.Attacking.Handle(interact, Bot.Entity, Target);
-                                                    //}
+                                                    else
+                                                    {
+                                                        interact.X = (ushort)(Target.X + 1);
+                                                        interact.Y = (ushort)(Target.Y + 1);
+                                                    }
+                                                    Bot.Entity.AttackPacket = interact;
+                                                    new MTA.Game.Attacking.Handle(interact, Bot.Entity, Target);
+
                                                 }
+                                                //if (dist < 2)
+                                                //{
+                                                //    var interact = new Attack(true);
+                                                //    interact.AttackType = Attack.Melee;
+                                                //    interact.Attacker = Bot.Entity.UID;
+                                                //    interact.Attacked = Target.UID;
+                                                //    if (Kernel.ChanceSuccess(ai.Accuracy))
+                                                //    {
+                                                //        interact.X = Target.X;
+                                                //        interact.Y = Target.Y;
+                                                //    }
+                                                //    else
+                                                //    {
+                                                //        interact.X = (ushort)(Target.X + 1);
+                                                //        interact.Y = (ushort)(Target.Y + 1);
+                                                //    }
+                                                //    Bot.Entity.AttackPacket = interact;
+                                                //    new MTA.Game.Attacking.Handle(interact, Bot.Entity, Target);
+                                                //}
+                                            }
                                         }
                                         #endregion
 
@@ -417,7 +417,7 @@ namespace MTA.MaTrix
             if (ai.Bot.Entity == null)
                 return null;
 
-            var array= Ais.Values.Where(i => i.UID != ai.UID && i.Bot.Entity.MapID == ai.Bot.Entity.MapID).ToArray();
+            var array = Ais.Values.Where(i => i.UID != ai.UID && i.Bot.Entity.MapID == ai.Bot.Entity.MapID).ToArray();
             for (int i = 0; i < array.Length; i++)
             {
                 if (ai.selectFunc != null)
@@ -555,7 +555,7 @@ namespace MTA.MaTrix
         }
         public void Join(GameState client)
         {
-            TimerSubscriptions = new IDisposable[] 
+            TimerSubscriptions = new IDisposable[]
             {
                 AIAction.Add(client)
             };

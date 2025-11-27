@@ -30,7 +30,7 @@ namespace MTA.Network.GamePackets
             public DateTime AddedOn;
         }
 
-        public const uint ExtraEffect = 2, PurificationAdding =6;
+        public const uint ExtraEffect = 2, PurificationAdding = 6;
         public const uint PermanentRefinery = 3, StabilizationEffectRefined = 4, PurificationEffect = 5, ExpireTime = 7, StabilizationEffect = 9, Warehause = 10;
 
 
@@ -73,7 +73,7 @@ namespace MTA.Network.GamePackets
             UpdateCount = UpdateCount + 1;
             ushort offset = (ushort)(8 + (UpdateCount - 1) * 32);
             WriteUInt32(purify.ItemUID, offset, Buffer);
-            WriteUInt32(PurificationAdding, offset + 4, Buffer);           
+            WriteUInt32(PurificationAdding, offset + 4, Buffer);
             WriteUInt32(purify.PurificationItemID, offset + 8, Buffer);
             WriteUInt32(purify.PurificationLevel, offset + 12, Buffer);
             if (purify.PurificationDuration != 0)

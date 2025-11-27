@@ -22,7 +22,7 @@ internal abstract class Class2 : IDisposable
 
     ~Class2()
     {
-        ((IDisposable) this).Dispose();
+        ((IDisposable)this).Dispose();
     }
 
     public override int GetHashCode()

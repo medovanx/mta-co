@@ -38,10 +38,10 @@ namespace MTA.MaTrix
                             var power = client.ChiPowers[(int)RetreatChi.Mode - 1];
                             if (client.Retretead_ChiPowers[(int)RetreatChi.Mode - 1] == null)
                             {
-                                client.ChiPoints -= 4000;            
+                                client.ChiPoints -= 4000;
                                 var newpower = new ChiPowerStructure();
                                 newpower.Attributes = power.Attributes;
-                                newpower.Power = power.Power;                                
+                                newpower.Power = power.Power;
                                 newpower.CalculatePoints();
                                 newpower.Retreat_TimeLeft = DateTime.Now.AddDays(5);
                                 client.Retretead_ChiPowers[(int)RetreatChi.Mode - 1] = newpower;
@@ -50,7 +50,7 @@ namespace MTA.MaTrix
                                 ChiTable.Save(client);
                             }
                         }
-                       
+
                         break;
                     }
                 case MaTrix.RetreatChi.RetreatType.RequestRestore://Restore
@@ -64,7 +64,7 @@ namespace MTA.MaTrix
                             newpower.Power = power.Power;
                             newpower.CalculatePoints();
                             client.ChiPowers[(int)RetreatChi.Mode - 1] = newpower;
-                            Database.ChiTable.Sort(RetreatChi.Mode);                           
+                            Database.ChiTable.Sort(RetreatChi.Mode);
                             client.Send(new ChiPowers(true).Query(client));
                             #region update ranking
                             Database.ChiTable.ChiData[] array = null;
@@ -115,7 +115,7 @@ namespace MTA.MaTrix
                             if (client.Retretead_ChiPowers.Contains(power))
                             {
                                 client.ChiPoints -= 4000;
-                                client.Retretead_ChiPowers[(int)RetreatChi.Mode - 1].Retreat_TimeLeft = client.Retretead_ChiPowers[(int)RetreatChi.Mode - 1].Retreat_TimeLeft.AddDays(5);                               
+                                client.Retretead_ChiPowers[(int)RetreatChi.Mode - 1].Retreat_TimeLeft = client.Retretead_ChiPowers[(int)RetreatChi.Mode - 1].Retreat_TimeLeft.AddDays(5);
                                 RetreatChi.Type = MaTrix.RetreatChi.RetreatType.Extend;//Extend
                                 RetreatChi.Send(client);
                                 ChiTable.Save(client);
@@ -185,7 +185,7 @@ namespace MTA.MaTrix
                         if (client.Retretead_ChiPowers.Contains(power))
                         {
                             client.Retretead_ChiPowers[(int)RetreatChi.Mode - 1] = null;
-                            
+
                             RetreatChi.Type = MaTrix.RetreatChi.RetreatType.Abondan;//Abondan 
                             RetreatChi.Send(client);
                             Database.ChiTable.Save(client);
@@ -201,7 +201,7 @@ namespace MTA.MaTrix
                             power = new ChiPowerStructure();
                             power.Attributes = newpower.Attributes;
                             power.Power = newpower.Power;
-                            power.Retreat_TimeLeft = client.Retretead_ChiPowers[(int)RetreatChi.Mode - 1].Retreat_TimeLeft; 
+                            power.Retreat_TimeLeft = client.Retretead_ChiPowers[(int)RetreatChi.Mode - 1].Retreat_TimeLeft;
                             power.CalculatePoints();
                             client.Retretead_ChiPowers[(int)RetreatChi.Mode - 1] = power;
                             RetreatChi.Type = MaTrix.RetreatChi.RetreatType.Update;//Update
@@ -219,7 +219,7 @@ namespace MTA.MaTrix
                             {
                                 client.ChiPoints -= 4000;
                                 client.Retretead_ChiPowers[(int)RetreatChi.Mode - 1].Retreat_TimeLeft = client.Retretead_ChiPowers[(int)RetreatChi.Mode - 1].Retreat_TimeLeft.AddDays(5);
-                               
+
                                 RetreatChi.Type = MaTrix.RetreatChi.RetreatType.Extend2;//Extend
                                 RetreatChi.Send(client);
                                 ChiTable.Save(client);
@@ -229,7 +229,7 @@ namespace MTA.MaTrix
                             return;
                         break;
                     }
-               
+
             }
         }
 
@@ -248,16 +248,16 @@ namespace MTA.MaTrix
             RequestExtend2 = 13,
             #endregion
             #region Server
-            Retreat = 2,           
-            Restore = 4,            
-            Extend = 6,           
-            Payoff = 8,           
-            Abondan = 10,           
-            Update = 12,          
+            Retreat = 2,
+            Restore = 4,
+            Extend = 6,
+            Payoff = 8,
+            Abondan = 10,
+            Update = 12,
             Extend2 = 14,
             #endregion Server
-        }       
-            
+        }
+
         public RetreatChi(bool Create)
         {
             if (Create)
@@ -302,7 +302,7 @@ namespace MTA.MaTrix
 
         public RetreatChi2(int count)
         {
-          
+
             {
                 Buffer = new byte[8 + 8 + 21 * count];
                 Writer.WriteUInt16((ushort)(Buffer.Length - 8), 0, Buffer);
@@ -347,7 +347,7 @@ namespace MTA.MaTrix
                 Offset += 4;
             }
         }
-        
+
         public void Send(Client.GameState client)
         {
             client.Send(Buffer);

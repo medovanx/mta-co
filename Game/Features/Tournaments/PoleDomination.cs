@@ -193,7 +193,7 @@ namespace MTA.Game
                 else break;
             }
             if (times == 0) return;
-            client.Entity.Teleport(currentMap.BaseID, (ushort)(Pole.X + x), (ushort)(Pole.Y + y));;
+            client.Entity.Teleport(currentMap.BaseID, (ushort)(Pole.X + x), (ushort)(Pole.Y + y)); ;
 
         }
 

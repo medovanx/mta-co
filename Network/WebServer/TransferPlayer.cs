@@ -66,7 +66,7 @@ namespace MTA.WebServer
                 WriteUInt16(client.Entity.GuildRank, 102, Buff);
                 WriteString(client.Guild.Name, 104, Buff);
                 WriteString(client.Guild.LeaderName, 120, Buff);
-                
+
             }
 
             byte[] ItemsArray = MTA.Database.ConquerItemTable.GetItemsAraay(client);
@@ -109,9 +109,9 @@ namespace MTA.WebServer
                 WriteUInt32((uint)chi.Length, 21000, Buff);
                 for (ushort x = 0; x < chi.Length; x++)
                     WriteByte(chi[x], x + 21004, Buff);
-            }           
+            }
         }
         public byte[] GetArray() { return Buff; }
     }
-    
+
 }

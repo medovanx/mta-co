@@ -38,7 +38,7 @@ namespace MTA.MaTrix
             List = 3,
             Complete = 4
         }
-       
+
         public struct QuestData
         {
             public enum QuestStatus : uint
@@ -60,7 +60,7 @@ namespace MTA.MaTrix
                 qItem.Time = _time;
                 return qItem;
             }
-        }        
+        }
 
         byte[] Buffer;
         public QuestPacket(bool Create, int count = 0)
@@ -120,7 +120,7 @@ namespace MTA.MaTrix
         public void Deserialize(byte[] buffer)
         {
             Buffer = buffer;
-           // check();
+            // check();
         }
         public void Send(Client.GameState client)
         {
@@ -135,7 +135,7 @@ namespace MTA.MaTrix
             public uint Kills;
             public string Mob;
 
-            public static QuestItem Create(QuestPacket.QuestData Q_Item, uint Kills, string Mob= "")
+            public static QuestItem Create(QuestPacket.QuestData Q_Item, uint Kills, string Mob = "")
             {
                 QuestItem retn = new QuestItem();
                 retn.QItem = Q_Item;
@@ -150,12 +150,12 @@ namespace MTA.MaTrix
                 writer.Write((uint)QItem.Status);
                 writer.Write(QItem.Time);
                 writer.Write(Kills);
-                writer.Write(Mob);               
+                writer.Write(Mob);
             }
             public QuestItem ReadItem(BinaryReader reader)
             {
                 QItem = new QuestPacket.QuestData();
-                QItem.UID = (QuestID) reader.ReadUInt32();//4
+                QItem.UID = (QuestID)reader.ReadUInt32();//4
                 QItem.Status = (QuestPacket.QuestData.QuestStatus)reader.ReadUInt32();//8
                 QItem.Time = reader.ReadUInt32();//10
                 Kills = reader.ReadUInt32();//12
@@ -170,7 +170,7 @@ namespace MTA.MaTrix
         public Quests(GameState _owner)
         {
             Player = _owner;
-            src = new SafeDictionary<QuestID, QuestItem>();          
+            src = new SafeDictionary<QuestID, QuestItem>();
         }
         ///////////////////////////////////////////////////
         ///////////////////////////////////////////////////
@@ -183,7 +183,7 @@ namespace MTA.MaTrix
                 {
                     if (rdr.Read())
                     {
-                       
+
                         byte[] data = rdr.ReadBlob("quests");
                         if (data.Length > 0)
                         {
@@ -295,7 +295,7 @@ namespace MTA.MaTrix
                 {
                     item.QItem.Status = QuestPacket.QuestData.QuestStatus.Finished;
                     src[UID] = item;
-                    SendSinglePacket(item.QItem, QuestPacket.QuestAction.Complete);                    
+                    SendSinglePacket(item.QItem, QuestPacket.QuestAction.Complete);
                     return true;
                 }
             }
@@ -312,7 +312,7 @@ namespace MTA.MaTrix
             }
             return new QuestItem();
         }
-          
+
         private void SendSinglePacket(QuestPacket.QuestData data, QuestPacket.QuestAction mode)
         {
             QuestPacket Packet = new QuestPacket(true, 1);
@@ -337,7 +337,7 @@ namespace MTA.MaTrix
                 datapacket.ID = Data.AutoPatcher;
                 datapacket.TimeStamp2 = NpcUid;
                 datapacket.wParam1 = x;
-                datapacket.wParam2 = y;               
+                datapacket.wParam2 = y;
                 p.Send(datapacket);
 
             }, null, 0);
@@ -357,7 +357,7 @@ namespace MTA.MaTrix
 
             int count = 0;
             var Array = QuestInfo.AllQuests.Values.ToArray();
-            
+
             for (uint x = 0; x < Array.Length; x++)
             {
                 if (x % 80 == 0)
@@ -414,15 +414,15 @@ namespace MTA.MaTrix
         {
             public QuestID MissionId;
             public QuestType TypeId;
-           // public uint NextMissionId;
-           
+            // public uint NextMissionId;
+
         }
         public static uint ActionBase;
-        public static SafeDictionary<QuestID, Info> AllQuests = new SafeDictionary<QuestID, Info>();       
+        public static SafeDictionary<QuestID, Info> AllQuests = new SafeDictionary<QuestID, Info>();
         public static void Load()
         {
             string[] text = File.ReadAllLines(Constants.DatabaseBasePath + "Questinfo.ini");
-             Info info = new Info();
+            Info info = new Info();
             for (int x = 0; x < text.Length; x++)
             {
                 string line = text[x];
@@ -441,15 +441,15 @@ namespace MTA.MaTrix
                         info = AllQuests[id];
 
                     info.MissionId = id;
-                    
+
                 }
                 else if (split[0] == "TypeId")
                     info.TypeId = (QuestType)byte.Parse(split[1]);
-            }           
+            }
         }
         public static QuestType CheckType(QuestID UID)
         {
-            return AllQuests[UID].TypeId;           
+            return AllQuests[UID].TypeId;
         }
     }
     public class QuestData : Writer, Interfaces.IPacket
@@ -483,7 +483,7 @@ namespace MTA.MaTrix
         }
         public void Deserialize(byte[] buffer)
         {
-            Buffer = buffer;            
+            Buffer = buffer;
         }
         public void Send(Client.GameState client)
         {

@@ -39,7 +39,7 @@ namespace MTA.MaTrix
                         Console.WriteLine(e.ToString());
                         throw;
                     }
-                   
+
                 }
 
                 Console.WriteLine(Soul_Protections.Count + " Soul_Protections loaded successfully.");

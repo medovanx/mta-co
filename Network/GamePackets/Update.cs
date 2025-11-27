@@ -635,7 +635,8 @@ namespace MTA.Network.GamePackets
             {
                 WriteUInt32(value[x], (ushort)(position), Buffer);
                 position += 4;
-            };
+            }
+            ;
         }
         public byte[] PStrike(Entity attacker)
         {

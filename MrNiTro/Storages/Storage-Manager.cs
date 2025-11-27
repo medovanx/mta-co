@@ -4,10 +4,10 @@ using Throne.World.Database.Information.Files;
 
 namespace MTA
 {
-    public sealed class StorageManager 
+    public sealed class StorageManager
     {
         private static StorageInfo Info;
-        public static Dictionary<uint , MTA.Network.GamePackets.WardrobeTitles> Data;
+        public static Dictionary<uint, MTA.Network.GamePackets.WardrobeTitles> Data;
 
         public static void Load()
         {
@@ -41,7 +41,7 @@ namespace MTA
             {
                 var myType = _type.ToString();
                 var myID = _id.ToString();
-            
+
 
                 while (myID.Length < 4)
                     myID = "0" + myID;
@@ -63,7 +63,7 @@ namespace MTA
             {
                 var myType = _type.ToString();
                 var myID = _id.ToString();
-            
+
                 while (myID.Length < 4)
                     myID = "0" + myID;
                 value = int.Parse(myType + myID);

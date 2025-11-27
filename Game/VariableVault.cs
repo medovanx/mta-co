@@ -18,7 +18,7 @@ namespace MTA.Game
 
         public DynamicVariable this[string variable]
         {
-            get 
+            get
             {
                 DynamicVariable var;
                 if (!values.TryGetValue(variable.Get64HashCode(), out var))
@@ -29,16 +29,16 @@ namespace MTA.Game
                 }
                 return var;
             }
-            set 
-            { 
+            set
+            {
                 values[variable.Get64HashCode()] = value;
-                Changed = true; 
+                Changed = true;
             }
         }
 
         public byte[] Serialize()
         {
-            using(var stream = new MemoryStream())
+            using (var stream = new MemoryStream())
             using (var writer = new BinaryWriter(stream))
             {
                 writer.Write(values.Count);
@@ -86,7 +86,7 @@ namespace MTA.Game
         private double doubleValue = 0.0;
         private string stringValue = "";
         private DateTime dateValue = DateTime.Now.AddDays(-1);
-        private byte[] byteData; 
+        private byte[] byteData;
 
         #region Conversion in
         public static implicit operator bool(DynamicVariable obj)

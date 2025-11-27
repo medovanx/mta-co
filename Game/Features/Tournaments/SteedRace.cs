@@ -16,19 +16,19 @@ namespace MTA.Game
     {
         public uint[][] RaceSettings = new[]
         {
-            new uint[]{ (uint)Enums.Maps.MarketRace, 88, 149, 
-                420, 431, 4,  
+            new uint[]{ (uint)Enums.Maps.MarketRace, 88, 149,
+                420, 431, 4,
                 65, 174, 621,
-                123, 243, 60, 
-                214, 334, 70, 
+                123, 243, 60,
+                214, 334, 70,
                 346, 459, 100},
-            new uint[]{ (uint)Enums.Maps.IceRace, 175, 250, 
+            new uint[]{ (uint)Enums.Maps.IceRace, 175, 250,
                 200, 153, 6, //255, 535*
                 154, 267, 621,
                 146, 392, 70,
                 283, 351, 100,
                 295, 079, 100},
-            new uint[]{ (uint)Enums.Maps.IslandRace, 60, 400, 
+            new uint[]{ (uint)Enums.Maps.IslandRace, 60, 400,
                 899, 816, 10,
                 96, 392, 621,
                 220, 234, 200,

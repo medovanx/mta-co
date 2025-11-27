@@ -6,7 +6,7 @@ namespace MTA.Network
 {
     public class Writer
     {
-        public static void WriteStringWithLength(string arg, int len,  int offset, byte[] buffer)
+        public static void WriteStringWithLength(string arg, int len, int offset, byte[] buffer)
         {
             if (buffer == null)
                 return;
@@ -42,7 +42,7 @@ namespace MTA.Network
             if (buffer.Length >= offset + arg.Length)
                 Array.Copy(argEncoded, 0, buffer, offset, arg.Length);
         }
-                
+
         /* public static void WriteStringWithLength(string arg, int offset, byte[] buffer)
         {
             if (buffer == null)
@@ -118,7 +118,7 @@ namespace MTA.Network
 #endif
                 }
             }
-        } 
+        }
         public static void WriteByte(byte arg, int offset, byte[] buffer)
         {
             if (buffer == null)
@@ -147,7 +147,7 @@ namespace MTA.Network
                 {
 #if UNSAFE
                     fixed (byte* Buffer = buffer)
-                        *((ushort*)(Buffer + offset)) = arg;               
+                        *((ushort*)(Buffer + offset)) = arg;
 #else
                     buffer[offset] = (byte)arg;
                     buffer[offset + 1] = (byte)(arg >> 8);
@@ -282,7 +282,7 @@ namespace MTA.Network
             if (buffer.Length >= offset + arg.Length)
                 Array.Copy(argEncoded, 0, buffer, offset, arg.Length);
         }
-       
+
         /*  public static void String(string arg, int offset, byte[] buffer)
         {
             if (buffer == null)

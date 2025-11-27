@@ -20,7 +20,7 @@ namespace MTA.Game
         public static Map Map;
         public static bool IsWar = false;
         private IDisposable Subscriber;
-        public static uint Winner; 
+        public static uint Winner;
 
         public GuildScoreWar()
         {
@@ -34,7 +34,7 @@ namespace MTA.Game
                 if (DateTime.Now > WarStart.AddMinutes(60))
                     EndWar();
 
-            
+
             if (IsWar)
             {
                 if (Time32.Now > ScoreSendStamp.AddSeconds(3))
@@ -54,8 +54,8 @@ namespace MTA.Game
                     return;
                 var cooord = Map.RandomCoordinates();
                 client.Entity.Teleport(Map.ID, cooord.Item1, cooord.Item2);
-                              
-                client.Send(Pole);                
+
+                client.Send(Pole);
             }
         }
 
@@ -67,8 +67,8 @@ namespace MTA.Game
                     EndWar();
 
                 IsWar = true;
-                WarStart = DateTime.Now;   
-            
+                WarStart = DateTime.Now;
+
                 if (!Constants.PKFreeMaps.Contains(Map.ID))
                     Constants.PKFreeMaps.Add(Map.ID);
                 Map.Npcs.Clear();
@@ -107,15 +107,15 @@ namespace MTA.Game
                 Kernel.SendWorldMessage(new Message("No Winner at GuildScoreWar and ended!", System.Drawing.Color.Red, Message.Center), Program.Values);
             IsWar = false;
         }
-               
+
         #region Score
         public static SafeDictionary<uint, Guild> Scores = new SafeDictionary<uint, Guild>(100);
-       
-        public static Time32 ScoreSendStamp;       
+
+        public static Time32 ScoreSendStamp;
         public static void Start()
         {
             Scores = new SafeDictionary<uint, Guild>();
-            WarStart = DateTime.Now; 
+            WarStart = DateTime.Now;
             IsWar = true;
         }
 
@@ -123,9 +123,9 @@ namespace MTA.Game
         {
             if (Guild != null)
             {
-                Guild.GuildScoreWar += addScore;              
+                Guild.GuildScoreWar += addScore;
                 if (!Scores.ContainsKey(Guild.ID))
-                    Scores.Add(Guild.ID, Guild);               
+                    Scores.Add(Guild.ID, Guild);
             }
         }
 
@@ -183,8 +183,8 @@ namespace MTA.Game
 
             return ret.ToArray();
         }
-        #endregion      
-    
+        #endregion
+
         public static void GetReward(GameState client, uint cps)
         {
             if (client.Entity.GuildRank == (ushort)GuildRank.GuildLeader)

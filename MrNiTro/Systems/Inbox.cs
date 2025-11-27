@@ -12,9 +12,9 @@ namespace MTA.MaTrix
 {
     public class Inbox : Network.Writer, Interfaces.IPacket
     {
-        public static void SendInbox(GameState client , bool On)
+        public static void SendInbox(GameState client, bool On)
         {
-            
+
             byte[] test = new byte[12 + 8];
             Writer.WriteUshort((ushort)(test.Length - 8), 0, test);
             Writer.WriteUshort(1047, 2, test);
@@ -26,7 +26,7 @@ namespace MTA.MaTrix
         }
 
         public class PrizeInfo
-        {             
+        {
             public void WriteItem(BinaryWriter writer)
             {
                 writer.Write(ID); //= reader.ReadUInt32();
@@ -35,10 +35,10 @@ namespace MTA.MaTrix
                 writer.Write(Subject);
                 writer.Write(Message);
                 writer.Write(goldprize);
-                writer.Write(cpsprize);                
+                writer.Write(cpsprize);
             }
             public PrizeInfo ReadItem(BinaryReader reader)
-            {                
+            {
                 ID = reader.ReadUInt32();//4
                 Time = reader.ReadUInt32();//8
                 Sender = reader.ReadString();//10
@@ -66,21 +66,21 @@ namespace MTA.MaTrix
             {
                 id = Kernel.Random.Next();
             }
-            while (client.Prizes.ContainsKey((uint)id));                      
-                    
+            while (client.Prizes.ContainsKey((uint)id));
+
             MaTrix.Inbox.PrizeInfo prize = new MaTrix.Inbox.PrizeInfo();
             prize.ID = (uint)id;
             prize.Sender = Sender;
             prize.Subject = Subject;
-            prize.Message = Message;          
+            prize.Message = Message;
             prize.goldprize = money;
             prize.cpsprize = cps;
-            prize.Time = Time;           
-            prize.itemprize = action;            
+            prize.Time = Time;
+            prize.itemprize = action;
             client.Prizes.Add(prize.ID, prize);
             if (client.Prizes.Count > 0)
                 SendInbox(client, true);
-        }        
+        }
         ///////////////////////////////////////////////////
         ///////////////////////////////////////////////////
         public static void Load(Client.GameState client)
@@ -103,7 +103,7 @@ namespace MTA.MaTrix
                                 {
                                     PrizeInfo item = new PrizeInfo();
                                     item = item.ReadItem(reader);
-                                    client.Prizes.Add(item.ID,  item);
+                                    client.Prizes.Add(item.ID, item);
                                 }
                             }
                         }
@@ -118,7 +118,7 @@ namespace MTA.MaTrix
                     }
                 }
             }
-        }       
+        }
         ///////////////////////////////////////////////////
         ///////////////////////////////////////////////////
         public static void Save(Client.GameState client)
@@ -137,23 +137,23 @@ namespace MTA.MaTrix
                 {
                     cmd.Connection = conn;
                     cmd.CommandText = SQL;
-                    cmd.Parameters.AddWithValue("@Prizes", rawData);                  
+                    cmd.Parameters.AddWithValue("@Prizes", rawData);
                     cmd.ExecuteNonQuery();
                 }
             }
-        }        
+        }
         ///////////////////////////////////////////////////
         ///////////////////////////////////////////////////       
-       
-       
+
+
         byte[] Buffer;
         public Inbox()
-        { 
+        {
             Buffer = new byte[20];
             Ushort((ushort)(Buffer.Length - 8), 0, Buffer);
-            Ushort(1046, 2, Buffer);              
-        }     
-        
+            Ushort(1046, 2, Buffer);
+        }
+
         public uint Count { get { return MTA.BitConverter.ReadUint(Buffer, 4); } set { WriteUint(value, 4, Buffer); } }
 
         public uint Page { get { return MTA.BitConverter.ReadUint(Buffer, 8); } set { WriteUint(value, 8, Buffer); } }
@@ -162,15 +162,15 @@ namespace MTA.MaTrix
 
         List<MaTrix.Inbox.PrizeInfo> list = new List<MaTrix.Inbox.PrizeInfo>();
         public void check(SafeDictionary<uint, MaTrix.Inbox.PrizeInfo> Prizes, uint page)
-        {           
-            List<MaTrix.Inbox.PrizeInfo> prizes = Prizes.Values.ToList();           
+        {
+            List<MaTrix.Inbox.PrizeInfo> prizes = Prizes.Values.ToList();
             list.Clear();
             for (int i = (int)page; i < page + 7; i++)
             {
                 if (i < prizes.Count)
                 {
-                    
-                    
+
+
                     list.Add(prizes[i]);
                 }
             }
@@ -178,22 +178,22 @@ namespace MTA.MaTrix
             {
                 Buffer = new byte[20 + 92 * list.Count];
                 Ushort((ushort)(Buffer.Length - 8), 0, Buffer);
-                Ushort(1046, 2, Buffer); 
+                Ushort(1046, 2, Buffer);
                 Count = (uint)list.Count;
                 Page = page;
-                unknown = (uint)prizes.Count;                      
+                unknown = (uint)prizes.Count;
                 for (int i = 0; i < list.Count; i++)
                     Apend(list[i]);
             }
 
         }
-        ushort offset = 16;       
+        ushort offset = 16;
         public void Apend(PrizeInfo prize)
         {
             Uint(prize.ID, offset, Buffer);//uid 
             offset += 4;
             String(prize.Sender, offset, Buffer);//sender
-            offset += 32;           
+            offset += 32;
             String(prize.Subject, offset, Buffer);//Subject
             offset += 32;
 
@@ -201,8 +201,8 @@ namespace MTA.MaTrix
             offset += 4;
 
             Uint(prize.cpsprize, offset, Buffer);//attachment
-            offset += 4;  
-           
+            offset += 4;
+
             Uint(prize.Time, offset, Buffer);//Time
             offset += 4;
 
@@ -210,7 +210,7 @@ namespace MTA.MaTrix
             offset += 4;
 
             Uint(1/*prize.itemprize != null ? (byte)1 : (byte)0*/, offset, Buffer);//attachment
-            offset += 4;            
+            offset += 4;
 
         }
         public void Send(GameState client)
@@ -228,6 +228,6 @@ namespace MTA.MaTrix
             return Buffer;
         }
 
-       
+
     }
 }

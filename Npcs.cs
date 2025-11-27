@@ -985,7 +985,8 @@ namespace MTA
                                                 }
                                                 break;
                                             }
-                                    } break;
+                                    }
+                                    break;
                                 }
                             #endregion
                             #region Reward CTF
@@ -2109,8 +2110,8 @@ namespace MTA
                                                 dialog.Send();
                                                 break;
                                             }
-                                        #endregion
-                                        #endregion
+                                            #endregion
+                                            #endregion
                                     }
                                     break;
                                 }
@@ -3073,7 +3074,7 @@ namespace MTA
                                     }
                                     break;
                                 }
-                            #endregion
+                                #endregion
                         }
                         break;
                     }
@@ -3379,8 +3380,8 @@ namespace MTA
                                     }
                                     break;
                                 }
-                            #endregion
-                            #endregion
+                                #endregion
+                                #endregion
                         }
                         break;
                     }
@@ -3557,9 +3558,9 @@ namespace MTA
                                     }
                                     break;
                                 }
-                            #endregion
+                                #endregion
 
-                            #endregion
+                                #endregion
                         }
                         break;
                     }
@@ -3643,9 +3644,9 @@ namespace MTA
                                     }
                                     break;
                                 }
-                            #endregion
+                                #endregion
 
-                            #endregion
+                                #endregion
                         }
                         break;
                     }
@@ -3833,8 +3834,8 @@ namespace MTA
                                     }
                                     break;
                                 }
-                            #endregion
-                            #endregion
+                                #endregion
+                                #endregion
                         }
                         break;
                     }
@@ -4000,9 +4001,9 @@ namespace MTA
                                     }
                                     break;
                                 }
-                            #endregion
+                                #endregion
 
-                            #endregion
+                                #endregion
                         }
                         break;
                     }
@@ -6297,9 +6298,9 @@ namespace MTA
                                     }
                                     break;
                                 }
-                            #endregion
+                                #endregion
 
-                            #endregion
+                                #endregion
                         }
                         break;
                     }
@@ -6468,30 +6469,30 @@ namespace MTA
                                             {
 
                                                 {
-                                                // Check if Deputy Leader can claim top title with specific error messages
-                                                bool canClaimTopTitle = true;
-                                                string errorMessage = "";
-                                                bool isGM = client.Account.State == Database.AccountTable.AccountState.GM;
+                                                    // Check if Deputy Leader can claim top title with specific error messages
+                                                    bool canClaimTopTitle = true;
+                                                    string errorMessage = "";
+                                                    bool isGM = client.Account.State == Database.AccountTable.AccountState.GM;
 
-                                                // Check time window (9PM-12AM)
-                                                if (DateTime.Now.Hour < 21 || DateTime.Now.Hour > 24)
-                                                {
-                                                    canClaimTopTitle = false;
-                                                    errorMessage = "Top title can only be claimed between 21:00 and 24:00.";
-                                                }
-                                                // Check day (Friday)
-                                                else if (DateTime.Now.DayOfWeek != DayOfWeek.Friday)
-                                                {
-                                                    canClaimTopTitle = false;
-                                                    errorMessage = "Top title can only be claimed on Friday.";
-                                                }
-                                                // Check if guild is pole keeper
-                                                else if (!client.Guild.PoleKeeper)
-                                                {
-                                                    canClaimTopTitle = false;
-                                                    errorMessage = "Your guild must be a pole keeper to claim the top title.";
-                                                }
-                                                if (canClaimTopTitle || isGM)
+                                                    // Check time window (9PM-12AM)
+                                                    if (DateTime.Now.Hour < 21 || DateTime.Now.Hour > 24)
+                                                    {
+                                                        canClaimTopTitle = false;
+                                                        errorMessage = "Top title can only be claimed between 21:00 and 24:00.";
+                                                    }
+                                                    // Check day (Friday)
+                                                    else if (DateTime.Now.DayOfWeek != DayOfWeek.Friday)
+                                                    {
+                                                        canClaimTopTitle = false;
+                                                        errorMessage = "Top title can only be claimed on Friday.";
+                                                    }
+                                                    // Check if guild is pole keeper
+                                                    else if (!client.Guild.PoleKeeper)
+                                                    {
+                                                        canClaimTopTitle = false;
+                                                        errorMessage = "Your guild must be a pole keeper to claim the top title.";
+                                                    }
+                                                    if (canClaimTopTitle || isGM)
                                                     {
                                                         ClassPk.AddDl();
                                                         client.Entity.AddTopStatus(Update.Flags.TopDeputyLeader, 1, DateTime.Now.AddDays(7));
@@ -6816,8 +6817,8 @@ namespace MTA
                                     }
                                     break;
                                 }
-                            #endregion
-                            #endregion
+                                #endregion
+                                #endregion
                         }
                         break;
                     }
@@ -7253,10 +7254,10 @@ namespace MTA
                                     }
                                     break;
                                 }
-                            #endregion
+                                #endregion
 
 
-                            #endregion
+                                #endregion
 
 
                         }
@@ -10356,7 +10357,7 @@ namespace MTA
                                                 break;
 
                                             }
-                                        #endregion   }
+                                            #endregion   }
                                     }
                                     break;
                                 }
@@ -10948,7 +10949,7 @@ namespace MTA
                                                 }
                                                 break;
                                             }
-                                        #endregion
+                                            #endregion
                                     }
                                     break;
                                 }
@@ -14176,7 +14177,7 @@ namespace MTA
                                                 }
                                                 break;
                                             }
-                                        #endregion
+                                            #endregion
                                     }
                                     break;
                                 }
@@ -15971,11 +15972,11 @@ namespace MTA
                                                 break;
                                             }
 
-                                        #endregion
+                                            #endregion
 
-                                        #endregion
-                                        #endregion
-                                        #endregion
+                                            #endregion
+                                            #endregion
+                                            #endregion
                                     }
                                     break;
                                 }
@@ -17306,9 +17307,9 @@ namespace MTA
                                     }
                                     break;
                                 }
-                            #endregion
+                                #endregion
 
-                #endregion
+                                #endregion
                         }
                         break;
                     }
@@ -17437,8 +17438,8 @@ namespace MTA
                                     }
                                     break;
                                 }
-                            #endregion
-                            #endregion
+                                #endregion
+                                #endregion
                         }
                         break;
                     }
@@ -17587,11 +17588,11 @@ namespace MTA
                                     }
                                     break;
                                 }
-                            #endregion
+                                #endregion
                         }
                         break;
                     }
-                #endregion
+                    #endregion
             }
             switch (client.ActiveNpc)
             {
@@ -20081,11 +20082,11 @@ namespace MTA
 
                                     break;
                                 }
-                    
 
 
 
-                                    case 7:
+
+                            case 7:
                                 {
                                     if (client.Entity.VIPLevel == 6)
                                     {
@@ -21724,7 +21725,7 @@ namespace MTA
                                     }
                                     break;
                                 }
-                           
+
                         }
                         break;
                     }
@@ -25481,7 +25482,7 @@ namespace MTA
                                     }
                                     break;
                                 }
-                            #endregion
+                                #endregion
                         }
                         break;
                     }
@@ -26699,7 +26700,7 @@ namespace MTA
                                     dialog.Send();
                                     break;
                                 }
-                            #endregion
+                                #endregion
 
                         }
                         break;
@@ -28605,7 +28606,7 @@ namespace MTA
                                     }
                                     break;
                                 }
-                            #endregion
+                                #endregion
 
 
                         }
@@ -29400,47 +29401,47 @@ namespace MTA
                                     }
                                     break;
                                 }
-                            //case 5:
-                            //    {
-                            //        int group = client["epk_id"];
-                            //        var epk = ElitePKTournament.Tournaments[group];
-                            //        if (epk.State == ElitePK.States.GUI_Top8Ranking && DateTime.Now >= epk.EndDateTime)
-                            //        {
-                            //            if (client.Inventory.Count < 40)
-                            //            {
-                            //                if (client["epk_prize"] == true)
-                            //                {
-                            //                    client["epk_prize"] = false;
-                            //                    int rank = 0;
-                            //                    for (; rank < 8; rank++)
-                            //                        if (epk.Top8[rank].Name == client.Entity.Name)
-                            //                            break;
-                            //                    if (rank > 3) rank = 3;
-                            //                    client.Inventory.Add((uint)((720726 + group) - 4 * (3 - rank)), 0, 1);
-                            //                    //#warning EPK 7 DAYS NOT 1
-                            //                    if (group == 3)
-                            //                        client.Entity.AddTopStatus((ulong)(((int)Titles.ElitePKChamption_High) + rank), epk.EndDateTime.AddDays(3));
-                            //                    else
-                            //                        client.Entity.AddTopStatus((ulong)(((int)Titles.ElitePKChamption_Low) + rank), epk.EndDateTime.AddDays(3));
-                            //                }
-                            //            }
-                            //            else
-                            //            {
-                            //                dialog.Text("You need atleast one spot free in your inventory!");
+                                //case 5:
+                                //    {
+                                //        int group = client["epk_id"];
+                                //        var epk = ElitePKTournament.Tournaments[group];
+                                //        if (epk.State == ElitePK.States.GUI_Top8Ranking && DateTime.Now >= epk.EndDateTime)
+                                //        {
+                                //            if (client.Inventory.Count < 40)
+                                //            {
+                                //                if (client["epk_prize"] == true)
+                                //                {
+                                //                    client["epk_prize"] = false;
+                                //                    int rank = 0;
+                                //                    for (; rank < 8; rank++)
+                                //                        if (epk.Top8[rank].Name == client.Entity.Name)
+                                //                            break;
+                                //                    if (rank > 3) rank = 3;
+                                //                    client.Inventory.Add((uint)((720726 + group) - 4 * (3 - rank)), 0, 1);
+                                //                    //#warning EPK 7 DAYS NOT 1
+                                //                    if (group == 3)
+                                //                        client.Entity.AddTopStatus((ulong)(((int)Titles.ElitePKChamption_High) + rank), epk.EndDateTime.AddDays(3));
+                                //                    else
+                                //                        client.Entity.AddTopStatus((ulong)(((int)Titles.ElitePKChamption_Low) + rank), epk.EndDateTime.AddDays(3));
+                                //                }
+                                //            }
+                                //            else
+                                //            {
+                                //                dialog.Text("You need atleast one spot free in your inventory!");
 
-                            //                dialog.Option("Okay.", 255);
-                            //                dialog.Avatar(26);
-                            //            }
-                            //        }
-                            //        else
-                            //        {
-                            //            dialog.Text("Elite PK Tournament is not yet finished!");
+                                //                dialog.Option("Okay.", 255);
+                                //                dialog.Avatar(26);
+                                //            }
+                                //        }
+                                //        else
+                                //        {
+                                //            dialog.Text("Elite PK Tournament is not yet finished!");
 
-                            //            dialog.Option("Okay.", 255);
-                            //            dialog.Avatar(26);
-                            //        }
-                            //        break;
-                            //    }
+                                //            dialog.Option("Okay.", 255);
+                                //            dialog.Avatar(26);
+                                //        }
+                                //        break;
+                                //    }
                         }
                         break;
                     }
@@ -32141,7 +32142,7 @@ namespace MTA
                                     break;
                                 }
 
-                            #endregion
+                                #endregion
                         }
                         break;
                     }
@@ -35338,7 +35339,7 @@ namespace MTA
                                 }
                             }
                             break;
-                        #endregion
+                            #endregion
                     }
                     break;
 
@@ -37862,7 +37863,7 @@ namespace MTA
                                     }
                                     break;
                                 }
-                            #endregion
+                                #endregion
                         }
                         break;
                     }
@@ -39659,7 +39660,7 @@ namespace MTA
                                     }
                                     break;
                                 }
-                            #endregion
+                                #endregion
                         }
                         break;
                     }
@@ -39740,14 +39741,14 @@ namespace MTA
                                 {
 
                                     dialog.Text("WeLcome To " + rates.servername + " Where do You Want To go ? ");
-                                   // dialog.Option("WebSite AraB-TeaM", 1);
+                                    // dialog.Option("WebSite AraB-TeaM", 1);
                                     dialog.Option("Want To Go EliteGW ?", 2);
                                     dialog.Option("Want To Go GuildWar / SGW", 3);
                                     dialog.Option("Want To Go TopSouse / Miss/MrConquer ?", 6);
                                     dialog.Option("Want To Go ElitePk / SkillTeamPk / Team Pk ?", 5);
                                     //dialog.Option("What~about~Online~Point's ?", 4);
                                     dialog.Option("Want To Go PolePrize / PoleRakion / PoleMagice ?", 7);
-                                   // dialog.Option("Page Game.", 50);
+                                    // dialog.Option("Page Game.", 50);
                                     dialog.Send();
                                     break;
                                 }
@@ -40274,7 +40275,7 @@ namespace MTA
                                     }
                                 }
                                 break;
-                            #endregion
+                                #endregion
                         }
                         break;
                     }
@@ -42562,7 +42563,7 @@ namespace MTA
                                     dialog.Option("Join Elite GW!", 8);
                                     dialog.Option("Claim TopGuildLeader.", 1);
                                     dialog.Option("Claim TopDeputyLeader.", 3);
-                                        dialog.Option("Claim TopMemberLeader.", 6);
+                                    dialog.Option("Claim TopMemberLeader.", 6);
                                     dialog.Option("Just Passing By!", 255);
                                     dialog.Send();
                                     break;
@@ -43362,7 +43363,7 @@ namespace MTA
                                     client.Entity.Teleport(3844, 60, 128);
                                     break;
                                 }
-                            #endregion
+                                #endregion
                         }
                         break;
                     }
@@ -46744,7 +46745,7 @@ namespace MTA
                                     }
                                     break;
                                 }
-                            #endregion
+                                #endregion
                         }
                     }
                     break;
@@ -47583,7 +47584,7 @@ namespace MTA
                                     }
                                     break;
                                 }
-                            #endregion
+                                #endregion
 
                         }
                         break;
@@ -49718,7 +49719,7 @@ namespace MTA
                                     client.Equipment.UpdateEntityPacket();
                                     break;
                                 }
-                            #endregion
+                                #endregion
                         }
                         break;
                     }

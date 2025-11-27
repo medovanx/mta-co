@@ -23,7 +23,7 @@ namespace MTA.Database
             {
                 get
                 {
-                    if(Powers.Count > 0)
+                    if (Powers.Count > 0)
                         return Powers[0].Points;
                     return 0;
                 }
@@ -154,9 +154,9 @@ namespace MTA.Database
                                 int count = reader.ReadByte();
                                 for (int i = 0; i < count; i++)
                                 {
-                                    var power = new ChiPowerStructure().Deserialize(reader,true);
-                                  //  if (power.Power == (Enums.ChiPowerType)(i + 1))
-                                        client.Retretead_ChiPowers[i] = power;
+                                    var power = new ChiPowerStructure().Deserialize(reader, true);
+                                    //  if (power.Power == (Enums.ChiPowerType)(i + 1))
+                                    client.Retretead_ChiPowers[i] = power;
                                 }
                             }
                         }
@@ -218,7 +218,7 @@ namespace MTA.Database
             {
                 if (type == Enums.ChiPowerType.Dragon || type == Enums.ChiPowerType.None)
                 {
-                    Dragon = AllData.Values.OrderByDescending((c) => c.DragonPoints).ThenByDescending((c) => c.UID).ToArray();                    
+                    Dragon = AllData.Values.OrderByDescending((c) => c.DragonPoints).ThenByDescending((c) => c.UID).ToArray();
                     SetRank(Dragon, (a, b) => { a.DragonRank = b; });
                 }
                 if (type == Enums.ChiPowerType.Phoenix || type == Enums.ChiPowerType.None)

@@ -15,7 +15,7 @@ namespace MTA.Network.GamePackets
             RemoveItem = 11,
             ShowConquerPoints = 12,
             SetConquerPoints = 13;
-        
+
 
         byte[] Buffer;
 

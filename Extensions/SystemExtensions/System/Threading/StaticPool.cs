@@ -26,7 +26,7 @@
 
         public StaticPool(int maximumPoolSize = 0x20)
         {
-         //   Class1.Class0.smethod_0();
+            //   Class1.Class0.smethod_0();
             this.bool_1 = false;
             this.object_1 = new object();
             this.object_0 = new object();

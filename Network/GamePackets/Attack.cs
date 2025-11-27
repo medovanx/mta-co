@@ -200,6 +200,6 @@ namespace MTA.Network.GamePackets
             {
                 Writer.WriteUInt16(value, 24 + 4, this.Buffer);
             }
-        }       
+        }
     }
 }
