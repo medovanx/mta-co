@@ -192,7 +192,7 @@ namespace MTA.Game
             player.Entity.BringToLife();
             player.Entity.ConquerPoints -= Wager / 2;
             player.Entity.PrevPKMode = player.Entity.PKMode;
-            player.Entity.PKMode = Game.Enums.PKMode.PK;
+            player.Entity.PKMode = Game.Enums.PkMode.PK;
             player.Send(new Data(true) { UID = player.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)player.Entity.PKMode });
             player.Entity.OnDeath = p =>
             {

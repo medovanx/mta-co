@@ -709,7 +709,7 @@ namespace MTA.Game
                 if (DateTime.Now > TimerStamp.AddMinutes(1))
                 {
 
-                    if (client.Entity.PKMode != Enums.PKMode.Jiang)
+                    if (client.Entity.PKMode != Enums.PkMode.Jiang)
                     {
                         if (OnJiangMode)
                         {
@@ -720,7 +720,7 @@ namespace MTA.Game
                             }
                         }
                     }
-                    if (client.Entity.PKMode == Enums.PKMode.Jiang)
+                    if (client.Entity.PKMode == Enums.PkMode.Jiang)
                     {
                         OnJiangMode = true;
                         RemoveJiangMod = DateTime.Now;

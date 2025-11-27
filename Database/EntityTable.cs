@@ -1,12 +1,9 @@
 ﻿using System;
-using System.IO;
-using System.Text;
-
 using System.Collections.Generic;
 using MTA.Network.GamePackets;
 using System.Collections.Concurrent;
 using MTA.Game;
-using MTA.Client;
+
 namespace MTA.Database
 {
     public static class EntityTable
@@ -21,7 +18,9 @@ namespace MTA.Database
                     Game.Features.Flowers.Flowers_Poll.TryAdd(client.Entity.UID, client.Entity.MyFlowers);
                     return;
                 }
-                client.Entity.MyFlowers = Game.Features.Flowers.Flowers_Poll[client.Entity.UID];                return;
+
+                client.Entity.MyFlowers = Game.Features.Flowers.Flowers_Poll[client.Entity.UID];
+                return;
             }
             else
             {
@@ -31,6 +30,7 @@ namespace MTA.Database
                     Game.Features.Flowers.BoyFlowers.TryAdd(client.Entity.UID, client.Entity.MyFlowers);
                     return;
                 }
+
                 client.Entity.MyFlowers = Game.Features.Flowers.BoyFlowers[client.Entity.UID];
                 return;
             }
@@ -48,8 +48,8 @@ namespace MTA.Database
                     client.WarehousePW = reader.ReadUInt32("WarehousePW");
                     client.Entity = new Game.Entity(Game.EntityFlag.Player, false);
                     client.Entity.Name = reader.ReadString("Name");
-                    client.Entity.lacb = reader.ReadUInt32("lacb"); 
-                //    client.Entity.NobalityDonation = reader.ReadUInt64("Donation");
+                    client.Entity.lacb = reader.ReadUInt32("lacb");
+                    //    client.Entity.NobalityDonation = reader.ReadUInt64("Donation");
                     if (client.Entity.Name.Length > 15)
                         client.Entity.Name = client.Entity.Name.Substring(0, 15);
                     client.HeadgearClaim = reader.ReadBoolean("HeadgearClaim");
@@ -69,7 +69,7 @@ namespace MTA.Database
                     client.Entity.ClaimedSTeamPK = reader.ReadBoolean("ClaimedSTeamPK");
                     client.Entity.ClaimedTeamPK = reader.ReadBoolean("ClaimedTeamPK");
                     client.Entity.ClaimedElitePk = reader.ReadBoolean("ClaimedElitePk");
-                    client.Entity.TreasuerPoints = reader.ReadUInt32("TreasuerPoints");                   
+                    client.Entity.TreasuerPoints = reader.ReadUInt32("TreasuerPoints");
                     client.Entity.UID = reader.ReadUInt32("UID");
                     client.Entity.MyAchievement = new Game.Achievement(client.Entity);
                     client.Entity.MyAchievement.Load(reader.ReadString("Achievement"));
@@ -89,7 +89,8 @@ namespace MTA.Database
                     client.Entity.Vitality = reader.ReadUInt16("Vitality");
                     client.Entity.Atributes = reader.ReadUInt16("Atributes");
                     SetFlowers(client);
-                    client.ElitePKStats = new ElitePK.FighterStats(client.Entity.UID, client.Entity.Name, client.Entity.Mesh);
+                    client.ElitePKStats =
+                        new ElitePK.FighterStats(client.Entity.UID, client.Entity.Name, client.Entity.Mesh);
                     client.Entity.SubClass = reader.ReadByte("SubClass");
                     client.Entity.SubClassLevel = reader.ReadByte("SubClassLevel");
                     client.Entity.SubClasses.Active = client.Entity.SubClass;
@@ -118,34 +119,37 @@ namespace MTA.Database
                         client.Entity.MapID = 1002;
                         client.Entity.X = 300;
                         client.Entity.Y = 278;
-                    }  
+                    }
+
                     if (client.Map.BaseID == 1844 || client.Entity.MapID == 1950
-                     || client.Entity.MapID == 3333 || client.Entity.MapID == 1090
-                      || client.Entity.MapID == 5560 || client.Entity.MapID == 5560
-                     || client.Entity.MapID == 5540 || client.Entity.MapID == 5540
-                      || client.Entity.MapID == 5452 || client.Entity.MapID == 5452
-                     || client.Entity.MapID == 5450 || client.Entity.MapID == 5450
-                     || client.Entity.MapID == 4021 || client.Entity.MapID == 3355
-                     || client.Entity.MapID == 5561 || client.Entity.MapID == 5561
-                     || client.Entity.MapID == 5453 || client.Entity.MapID == 5453
-                     || client.Entity.MapID == 4022 || client.Entity.MapID == 4023
-                     || client.Entity.MapID == 4024 || client.Entity.MapID == 4025
-                     || client.Entity.MapID == 1508 || client.Entity.MapID == 1518
-                     || client.Entity.MapID == 7001 || client.Entity.MapID == 1801
-                     || client.Entity.MapID == 8877 || client.Entity.MapID == 3333
-                     || client.Entity.MapID == 3355 || client.Entity.MapID == 3377
-                     || client.Entity.MapID == 4562 || client.Entity.MapID == 4662
-                     || client.Entity.MapID == 8883 || client.Entity.MapID == 11017
-                     || client.Entity.MapID == 1731 || client.Entity.MapID == 1732
-                     || client.Entity.MapID == 3842 || client.Entity.MapID == 3820
-                     || client.Entity.MapID == 8839 || client.Entity.MapID == 1826
-                     || client.Entity.MapID == 3844 || client.Entity.MapID == 3845 || client.Entity.MapID == 1765 || client.Entity.MapID == 1507
-                     || client.Entity.MapID == 3055 || client.Entity.MapID == 38200)
+                                                  || client.Entity.MapID == 3333 || client.Entity.MapID == 1090
+                                                  || client.Entity.MapID == 5560 || client.Entity.MapID == 5560
+                                                  || client.Entity.MapID == 5540 || client.Entity.MapID == 5540
+                                                  || client.Entity.MapID == 5452 || client.Entity.MapID == 5452
+                                                  || client.Entity.MapID == 5450 || client.Entity.MapID == 5450
+                                                  || client.Entity.MapID == 4021 || client.Entity.MapID == 3355
+                                                  || client.Entity.MapID == 5561 || client.Entity.MapID == 5561
+                                                  || client.Entity.MapID == 5453 || client.Entity.MapID == 5453
+                                                  || client.Entity.MapID == 4022 || client.Entity.MapID == 4023
+                                                  || client.Entity.MapID == 4024 || client.Entity.MapID == 4025
+                                                  || client.Entity.MapID == 1508 || client.Entity.MapID == 1518
+                                                  || client.Entity.MapID == 7001 || client.Entity.MapID == 1801
+                                                  || client.Entity.MapID == 8877 || client.Entity.MapID == 3333
+                                                  || client.Entity.MapID == 3355 || client.Entity.MapID == 3377
+                                                  || client.Entity.MapID == 4562 || client.Entity.MapID == 4662
+                                                  || client.Entity.MapID == 8883 || client.Entity.MapID == 11017
+                                                  || client.Entity.MapID == 1731 || client.Entity.MapID == 1732
+                                                  || client.Entity.MapID == 3842 || client.Entity.MapID == 3820
+                                                  || client.Entity.MapID == 8839 || client.Entity.MapID == 1826
+                                                  || client.Entity.MapID == 3844 || client.Entity.MapID == 3845 ||
+                                                  client.Entity.MapID == 1765 || client.Entity.MapID == 1507
+                                                  || client.Entity.MapID == 3055 || client.Entity.MapID == 38200)
                     {
                         client.Entity.MapID = 1002;
                         client.Entity.X = 300;
                         client.Entity.Y = 278;
-                    }  
+                    }
+
                     client.NecklaceClaim = reader.ReadBoolean("NecklaceClaim");
                     client.ArmorClaim = reader.ReadBoolean("ArmorClaim");
                     client.WeaponClaim = reader.ReadBoolean("WeaponClaim");
@@ -155,8 +159,8 @@ namespace MTA.Database
                     client.TowerClaim = reader.ReadBoolean("TowerClaim");
                     client.HeadgearClaim = reader.ReadBoolean("HeadgearClaim");
                     client.InLottery = reader.ReadBoolean("InLottery");
-                    client.LotteryEntries = reader.ReadByte("LotteryEntries");                    
-                    client.LastLotteryEntry = DateTime.FromBinary(reader.ReadInt64("LastLotteryEntry"));                    
+                    client.LotteryEntries = reader.ReadByte("LotteryEntries");
+                    client.LastLotteryEntry = DateTime.FromBinary(reader.ReadInt64("LastLotteryEntry"));
                     client.Entity.PreviousMapID = reader.ReadUInt16("PreviousMapID");
                     client.Entity.PKPoints = reader.ReadUInt16("PKPoints");
                     client.Entity.Class = reader.ReadByte("Class");
@@ -166,12 +170,14 @@ namespace MTA.Database
                     client.Entity.Level = reader.ReadByte("Level");
                     client.Entity.BlackList = new List<string>();
 
-                    var BlackList = reader.ReadString("BlackList").Split(new string[] { "@@" }, StringSplitOptions.RemoveEmptyEntries);
+                    var BlackList = reader.ReadString("BlackList")
+                        .Split(new string[] { "@@" }, StringSplitOptions.RemoveEmptyEntries);
                     foreach (var person in BlackList)
                     {
                         if (person != null && person != "" && person != "@@")
                             client.Entity.BlackList.Add(person);
                     }
+
                     client.Entity.FirstRebornClass = reader.ReadByte("FirstRebornClass");
                     client.Entity.SecondRebornClass = reader.ReadByte("SecondRebornClass");
                     client.Entity.FirstRebornLevel = reader.ReadByte("FirstRebornLevel");
@@ -188,6 +194,7 @@ namespace MTA.Database
                             client.Entity.EnlightmentTime += 20;
                         }
                     }
+
                     client.Entity.ReceivedEnlightenPoints = reader.ReadByte("EnlightsReceived");
                     client.Entity.DoubleExperienceTime = reader.ReadUInt16("DoubleExpTime");
                     client.DoubleExpToday = reader.ReadBoolean("DoubleExpToday");
@@ -208,7 +215,6 @@ namespace MTA.Database
                     else
                         client.Entity.LastLogin = DateTime.Now;
 
-                   
 
                     if (client.Entity.MapID == 601)
                         client.OfflineTGEnterTime = DateTime.FromBinary(reader.ReadInt64("OfflineTGEnterTime"));
@@ -236,7 +242,9 @@ namespace MTA.Database
                         else
                             client.Guild = null;
                     }
-                    if (!Game.ConquerStructures.Nobility.Board.TryGetValue(client.Entity.UID, out client.NobilityInformation))
+
+                    if (!Game.ConquerStructures.Nobility.Board.TryGetValue(client.Entity.UID,
+                            out client.NobilityInformation))
                     {
                         client.NobilityInformation = new MTA.Game.ConquerStructures.NobilityInformation();
                         client.NobilityInformation.EntityUID = client.Entity.UID;
@@ -249,6 +257,7 @@ namespace MTA.Database
                         if (client.Entity.Body % 10 >= 3)
                             client.NobilityInformation.Gender = 0;
                     }
+
                     client.Entity.NobilityRank = client.NobilityInformation.Rank;
 
                     if (DateTime.Now.DayOfYear != client.LastResetTime.DayOfYear)
@@ -262,7 +271,7 @@ namespace MTA.Database
                                 client.Entity.NobilityRank == MTA.Game.ConquerStructures.NobilityRank.Baron)
                                 client.Entity.EnlightenPoints += 100;
                             else if (client.Entity.NobilityRank == MTA.Game.ConquerStructures.NobilityRank.Earl ||
-                                client.Entity.NobilityRank == MTA.Game.ConquerStructures.NobilityRank.Duke)
+                                     client.Entity.NobilityRank == MTA.Game.ConquerStructures.NobilityRank.Duke)
                                 client.Entity.EnlightenPoints += 200;
                             else if (client.Entity.NobilityRank == MTA.Game.ConquerStructures.NobilityRank.Prince)
                                 client.Entity.EnlightenPoints += 300;
@@ -278,6 +287,7 @@ namespace MTA.Database
                                     client.Entity.EnlightenPoints += 300;
                             }
                         }
+
                         client.Entity.ReceivedEnlightenPoints = 0;
                         client.DoubleExpToday = false;
                         client.ExpBalls = 0;
@@ -287,7 +297,9 @@ namespace MTA.Database
                         ResetExpball(client);
                         ResetLottery(client);
                     }
+
                     #region Team Arena
+
                     Game.TeamArena.ArenaStatistics.TryGetValue(client.Entity.UID, out client.TeamArenaStatistic);
                     if (client.TeamArenaStatistic == null)
                     {
@@ -324,9 +336,13 @@ namespace MTA.Database
                         client.TeamArenaStatistic.Model = client.Entity.Mesh;
                         client.TeamArenaStatistic.Name = client.Entity.Name;
                     }
+
                     Game.TeamArena.Clear(client);
+
                     #endregion
+
                     #region Arena
+
                     Game.Arena.ArenaStatistics.TryGetValue(client.Entity.UID, out client.ArenaStatistic);
                     if (client.ArenaStatistic == null)
                     {
@@ -367,12 +383,16 @@ namespace MTA.Database
                         client.ArenaStatistic.Model = client.Entity.Mesh;
                         client.ArenaStatistic.Name = client.Entity.Name;
                     }
+
                     client.ArenaPoints = client.ArenaStatistic.ArenaPoints;
                     client.CurrentHonor = client.ArenaStatistic.CurrentHonor;
                     client.HistoryHonor = client.ArenaStatistic.HistoryHonor;
                     Game.Arena.Clear(client);
+
                     #endregion
+
                     #region Champion
+
                     Game.Champion.ChampionStats.TryGetValue(client.Entity.UID, out client.ChampionStats);
                     if (client.ChampionStats == null)
                     {
@@ -414,8 +434,11 @@ namespace MTA.Database
                         if (client.ChampionStats.LastReset.DayOfYear != DateTime.Now.DayOfYear)
                             ChampionTable.Reset(client.ChampionStats);
                     }
+
                     Game.Champion.Clear(client);
+
                     #endregion
+
                     Game.IJiangHu Jiang;
                     if (Game.JiangHu.JiangHuClients.TryGetValue(client.Entity.UID, out Jiang))
                     {
@@ -423,6 +446,7 @@ namespace MTA.Database
                         client.Entity.MyJiang.TimerStamp = DateTime.Now;
                         client.Entity.MyJiang.Level = client.Entity.Level;
                     }
+
                     client.Entity.LoadTopStatus();
                     client.Entity.FullyLoaded = true;
                     return true;
@@ -437,6 +461,7 @@ namespace MTA.Database
             if (client.TransferedPlayer) return;
             UpdateData(client.Entity.UID, column, value);
         }
+
         public static void UpdateData(uint UID, string column, object value)
         {
             if (value is Boolean)
@@ -452,17 +477,21 @@ namespace MTA.Database
                         .Execute();
             }
         }
+
         public static void UpdateGuildRank(uint UID, MTA.Game.Enums.GuildMemberRank rank)
         {
             UpdateData(UID, "GuildRank", (int)rank);
         }
-        public static void UpdateOnlineStatus(Client.GameState client, bool online, MySql.Data.MySqlClient.MySqlConnection conn)
+
+        public static void UpdateOnlineStatus(Client.GameState client, bool online,
+            MySql.Data.MySqlClient.MySqlConnection conn)
         {
             if (online || (!online && client.DoSetOffline))
             {
                 UpdateData(client, "Online", online);
             }
         }
+
         public static void UpdateOnlineStatus(Client.GameState client, bool online)
         {
             if (online || (!online && client.DoSetOffline))
@@ -470,46 +499,58 @@ namespace MTA.Database
                 UpdateData(client, "Online", online);
             }
         }
+
         public static void LoginNow(Client.GameState client)
         {
             MySqlCommand cmd = new MySqlCommand(MySqlCommandType.UPDATE);
-            cmd.Update("entities").Set("GuildLastLogin", Network.PacketHandler.UnixTimestamp).Where("UID", client.Entity.UID).Execute();
+            cmd.Update("entities").Set("GuildLastLogin", Network.PacketHandler.UnixTimestamp)
+                .Where("UID", client.Entity.UID).Execute();
         }
+
         public static void UpdateCps(Client.GameState client)
         {
             UpdateData(client, "ConquerPoints", client.Entity.ConquerPoints);
         }
+
         public static void UpdatebCps(Client.GameState client)
         {
             UpdateData(client, "boundcps", client.Entity.BoundCps);
-        } 
+        }
+
         public static void UpdateMoney(Client.GameState client)
         {
             UpdateData(client, "Money", client.Entity.Money);
         }
+
         public static void UpdateLevel(Client.GameState client)
         {
             UpdateData(client, "Level", client.Entity.Level);
         }
+
         public static void UpdateGuildID(Client.GameState client)
         {
             UpdateData(client, "guildid", client.Entity.GuildID);
         }
+
         public static void UpdateClanID(Client.GameState client)
         {
             UpdateData(client, "ClanId", client.Entity.ClanId);
         }
+
         public static void RemoveClan(Client.GameState client)
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE))
                 cmd.Update("entities").Set("ClanId", 0).Set("ClanDonation", 0).Set("ClanRank", 0)
                     .Where("ClanId", client.Entity.ClanId).Execute();
         }
+
         public static void RemoveClanMember(string name)
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE))
-                cmd.Update("entities").Set("ClanId", 0).Set("ClanDonation", 0).Set("ClanRank", 0).Where("Name", name).Execute();
+                cmd.Update("entities").Set("ClanId", 0).Set("ClanDonation", 0).Set("ClanRank", 0).Where("Name", name)
+                    .Execute();
         }
+
         public static ushort GetClass(string Name)
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("entities").Where("Name", Name))
@@ -520,12 +561,15 @@ namespace MTA.Database
                     return reader.ReadUInt16("Class");
                 }
             }
+
             return 0;
         }
+
         public static void UpdateClanRank(Client.GameState client)
         {
             UpdateData(client, "ClanRank", (uint)client.Entity.ClanRank);
         }
+
         public static void UpdateClanRank(uint UID, uint rank)
         {
             UpdateData(UID, "ClanRank", rank);
@@ -535,30 +579,38 @@ namespace MTA.Database
         {
             UpdateData(client, "clandonation", (uint)client.Entity.ClanRank);
         }
+
         public static void UpdateGuildRank(Client.GameState client)
         {
             UpdateData(client, "GuildRank", client.Entity.GuildRank);
         }
+
         public static void UpdateSkillExp(Client.GameState client, uint spellid, uint exp)
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE))
-                cmd.Update("skills").Set("Experience", exp).Where("EntityID", client.Entity.UID).And("ID", spellid).Execute();
+                cmd.Update("skills").Set("Experience", exp).Where("EntityID", client.Entity.UID).And("ID", spellid)
+                    .Execute();
         }
+
         public static void ResetLottery(Client.GameState client)
         {
             UpdateData(client, "LotteryEntries", 0);
         }
+
         public static void ResetExpball(Client.GameState client)
         {
             UpdateData(client, "ExpBalls", 0);
         }
+
         public static bool SaveEntity(Client.GameState c, MySql.Data.MySqlClient.MySqlConnection conn)
         {
             if (c.Fake) return true;
             if (c.TransferedPlayer) return true;
             Game.Entity e = c.Entity;
             if (e.JustCreated) return true;
+
             #region BlackList
+
             string Persons = "";
             if (e.BlackList.Count > 0)
             {
@@ -567,7 +619,9 @@ namespace MTA.Database
                     Persons += person + "@@";
                 }
             }
+
             #endregion
+
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("entities"))
             {
                 cmd.Set("WarehousePW", c.WarehousePW)
@@ -575,19 +629,19 @@ namespace MTA.Database
                     .Set("killerpoints", e.killerpoints)
                     .Set("Spouse", e.Spouse)
                     .Set("lacb", e.lacb)
-                      .Set("ClaimedTeamPK", e.ClaimedTeamPK)
+                    .Set("ClaimedTeamPK", e.ClaimedTeamPK)
                     .Set("ClaimedSTeamPK", e.ClaimedSTeamPK)
                     .Set("ClaimedElitePk", e.ClaimedElitePk)
                     .Set("Money", e.Money)
                     .Set("BlackList", Persons)
                     .Set("Experience", e.Experience)
                     .Set("BankCps", e.BankCps)
-                //    .Set("TitlePoints", e.TitlePoints) 
+                    //    .Set("TitlePoints", e.TitlePoints) 
                     .Set("ConquerPoints", e.ConquerPoints)
-                   .Set("boundcps", e.BoundCps)   
+                    .Set("boundcps", e.BoundCps)
                     .Set("MonstersPoints", e.MonstersPoints)
                     .Set("DarkPoints", e.DarkPoints)
-                 //    .Set("Donation", e.NobalityDonation)
+                    //    .Set("Donation", e.NobalityDonation)
                     .Set("Body", e.Body)
                     //.Set("vote", e.Body)
                     .Set("DeputyLeader", e.DeputyLeader)
@@ -610,7 +664,7 @@ namespace MTA.Database
                     .Set("OnlinePoints", e.OnlinePoints)
                     .Set("ExpBalls", c.ExpBalls)
                     .Set("MoneySave", c.MoneySave)
-                    .Set("Hitpoints", e.Hitpoints)                    
+                    .Set("Hitpoints", e.Hitpoints)
                     .Set("LastDragonBallUse", c.LastDragonBallUse.Ticks)
                     .Set("Strength", e.Strength)
                     .Set("Agility", e.Agility)
@@ -667,32 +721,35 @@ namespace MTA.Database
                 if (c.AsMember != null)
                 {
                     cmd.Set("GuildID", c.AsMember.GuildID)
-                    .Set("GuildRank", (ushort)c.AsMember.Rank)
-                    .Set("GuildSilverDonation", c.AsMember.SilverDonation)
-                    .Set("GuildConquerPointDonation", c.AsMember.ConquerPointDonation)
-                    .Set("GuildLilies", c.AsMember.Lilies)
-                    .Set("GuildRouses", c.AsMember.Rouses)
-                    .Set("GuildOrchids", c.AsMember.Orchids)
-                    .Set("GuildTulips", c.AsMember.Tulips)
-                    .Set("Exploits", c.AsMember.Exploits)
-                    .Set("GuildPkDonation", c.AsMember.PkDonation)
-                          .Set("CTFCpsReward", c.AsMember.CTFCpsReward)
-                                .Set("CTFSilverReward", c.AsMember.CTFSilverReward)
-                    .Set("GuildLastlod", (ulong)DateTime.Now.Ticks);
+                        .Set("GuildRank", (ushort)c.AsMember.Rank)
+                        .Set("GuildSilverDonation", c.AsMember.SilverDonation)
+                        .Set("GuildConquerPointDonation", c.AsMember.ConquerPointDonation)
+                        .Set("GuildLilies", c.AsMember.Lilies)
+                        .Set("GuildRouses", c.AsMember.Rouses)
+                        .Set("GuildOrchids", c.AsMember.Orchids)
+                        .Set("GuildTulips", c.AsMember.Tulips)
+                        .Set("Exploits", c.AsMember.Exploits)
+                        .Set("GuildPkDonation", c.AsMember.PkDonation)
+                        .Set("CTFCpsReward", c.AsMember.CTFCpsReward)
+                        .Set("CTFSilverReward", c.AsMember.CTFSilverReward)
+                        .Set("GuildLastlod", (ulong)DateTime.Now.Ticks);
                     c.AsMember.LastLogin = (ulong)DateTime.Now.Ticks;
                 }
                 else
                 {
                     cmd.Set("GuildID", 0)
-                    .Set("GuildRank", (ushort)0)
-                    .Set("GuildSilverDonation", 0)
-                    .Set("GuildConquerPointDonation", 0);
+                        .Set("GuildRank", (ushort)0)
+                        .Set("GuildSilverDonation", 0)
+                        .Set("GuildConquerPointDonation", 0);
                 }
+
                 cmd.Where("UID", e.UID);
                 cmd.Execute();
             }
+
             return true;
         }
+
         public static bool SaveEntity(Client.GameState c)
         {
             using (var conn = DataHolder.MySqlConnection)
@@ -701,6 +758,7 @@ namespace MTA.Database
                 return SaveEntity(c, conn);
             }
         }
+
         static bool InvalidCharacters(string Name)
         {
             foreach (char c in Name)
@@ -710,20 +768,25 @@ namespace MTA.Database
                     return true;
                 }
             }
+
             return false;
         }
+
         public static bool CreateEntity(ref Client.GameState client)
         {
-            using (var rdr = new MySqlReader(new MySqlCommand(MySqlCommandType.SELECT).Select("entities").Where("name", client.Entity.Name)))
+            using (var rdr = new MySqlReader(new MySqlCommand(MySqlCommandType.SELECT).Select("entities")
+                       .Where("name", client.Entity.Name)))
             {
                 if (rdr.Read())
                 {
                     client.Entity.Name = client.Entity.Name + "+ Z";
                 }
             }
+
             while (true)
             {
-                using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("entities").Where("uid", client.Entity.UID))
+                using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("entities")
+                           .Where("uid", client.Entity.UID))
                 using (var reader = cmd.CreateReader())
                 {
                     if (reader.Read())
@@ -732,15 +795,21 @@ namespace MTA.Database
                         break;
                 }
             }
+
             while (true)
             {
                 try
                 {
                     using (var cmd = new MySqlCommand(MySqlCommandType.INSERT))
-                        cmd.Insert("entities").Insert("Name", client.Entity.Name).Insert("Owner", client.Account.Username).Insert("Class", client.Entity.Class).Insert("UID", client.Entity.UID)
-                            .Insert("Hitpoints", client.Entity.Hitpoints).Insert("Mana", client.Entity.Mana).Insert("Body", client.Entity.Body)
-                            .Insert("Face", client.Entity.Face).Insert("HairStyle", client.Entity.HairStyle).Insert("Strength", client.Entity.Strength)
-                            .Insert("WarehousePW", "").Insert("Agility", client.Entity.Agility).Insert("Vitality", client.Entity.Vitality).Insert("Spirit", client.Entity.Spirit)
+                        cmd.Insert("entities").Insert("Name", client.Entity.Name)
+                            .Insert("Owner", client.Account.Username).Insert("Class", client.Entity.Class)
+                            .Insert("UID", client.Entity.UID)
+                            .Insert("Hitpoints", client.Entity.Hitpoints).Insert("Mana", client.Entity.Mana)
+                            .Insert("Body", client.Entity.Body)
+                            .Insert("Face", client.Entity.Face).Insert("HairStyle", client.Entity.HairStyle)
+                            .Insert("Strength", client.Entity.Strength)
+                            .Insert("WarehousePW", "").Insert("Agility", client.Entity.Agility)
+                            .Insert("Vitality", client.Entity.Vitality).Insert("Spirit", client.Entity.Spirit)
                             .Execute();
                     break;
                 }
@@ -750,12 +819,15 @@ namespace MTA.Database
                 }
             }
 
-            using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("configuration").Set("EntityID", client.Entity.UID).Where("Server", Constants.ServerName))
+            using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("configuration")
+                       .Set("EntityID", client.Entity.UID).Where("Server", Constants.ServerName))
                 cmd.Execute();
             client.Account.EntityID = client.Entity.UID;
             return true;
         }
-        public static bool CreateEntity(Network.GamePackets.EnitityCreate eC, Client.GameState client, ref string message)
+
+        public static bool CreateEntity(Network.GamePackets.EnitityCreate eC, Client.GameState client,
+            ref string message)
         {
             if (eC.Name.Length > 16)
                 eC.Name = eC.Name.Substring(0, 16);
@@ -766,87 +838,105 @@ namespace MTA.Database
                 message = "Invalid characters inside the name.";
                 return false;
             }
+
             if (eC.Name == "ChestDemon") // Golden Secret
             {
                 message = "Invalid characters inside the name.";
                 return false;
             }
+
             if (eC.Name == "[gm]") // Golden Secret
             {
                 message = "Eh ally bt3melo dah ya kosmak.";
                 return false;
             }
+
             if (eC.Name == "{gm}") // Golden Secret
             {
                 message = "Eh ally bt3melo dah ya kosmak.";
                 return false;
             }
+
             if (eC.Name == "|gm|") // Golden Secret
             {
                 message = "Eh ally bt3melo dah ya kosmak.";
                 return false;
             }
+
             if (eC.Name == "(gm)") // Golden Secret
             {
                 message = "Eh ally bt3melo dah ya kosmak.";
                 return false;
             }
+
             if (eC.Name == "<gm>") // Golden Secret
             {
                 message = "Eh ally bt3melo dah ya kosmak.";
                 return false;
             }
+
             if (eC.Name == "IgmI") // Golden Secret
             {
                 message = "Eh ally bt3melo dah ya kosmak.";
                 return false;
             }
+
             if (eC.Name == "lgml") // Golden Secret
             {
                 message = "Eh ally bt3melo dah ya kosmak.";
                 return false;
             }
+
             if (eC.Name == "[GM]") // Golden Secret
             {
                 message = "Eh ally bt3melo dah ya kosmak.";
                 return false;
             }
+
             if (eC.Name == "{GM}") // Golden Secret
             {
                 message = "Eh ally bt3melo dah ya kosmak.";
                 return false;
             }
+
             if (eC.Name == "|GM|") // Golden Secret
             {
                 message = "Eh ally bt3melo dah ya kosmak.";
                 return false;
             }
+
             if (eC.Name == "(GM)") // Golden Secret
             {
                 message = "Eh ally bt3melo dah ya kosmak.";
                 return false;
             }
+
             if (eC.Name == "<GM>") // Golden Secret
             {
                 message = "Eh ally bt3melo dah ya kosmak.";
                 return false;
             }
+
             if (eC.Name == "IGMI") // Golden Secret
             {
                 message = "Eh ally bt3melo dah ya kosmak.";
                 return false;
             }
+
             if (eC.Name == "lGMl") // Golden Secret
             {
                 message = "Eh ally bt3melo dah ya kosmak.";
                 return false;
             }
+
             if (InvalidCharacters(eC.Name))
             {
                 message = "Invalid characters inside the name.";
                 return false;
             }
-            using (var rdr = new MySqlReader(new MySqlCommand(MySqlCommandType.SELECT).Select("entities").Where("name", eC.Name)))
+
+            using (var rdr = new MySqlReader(new MySqlCommand(MySqlCommandType.SELECT).Select("entities")
+                       .Where("name", eC.Name)))
             {
                 if (rdr.Read())
                 {
@@ -854,6 +944,7 @@ namespace MTA.Database
                     return false;
                 }
             }
+
             client.Entity = new Game.Entity(Game.EntityFlag.Player, false);
             client.Entity.Name = eC.Name;
             switch (eC.Class)
@@ -876,20 +967,25 @@ namespace MTA.Database
                 case 15: eC.Class = 80; break;
                 case 16:
                 case 17:
-                    {
-                        eC.Class = 160;
-                        client.Entity.Windwalker = 0;
-                        break;
-                    }
+                {
+                    eC.Class = 160;
+                    client.Entity.Windwalker = 0;
+                    break;
+                }
                 case 18:
                 case 19:
-                    {
-                        eC.Class = 160;
-                        client.Entity.Windwalker = 8;
-                        break;
-                    }
-                default: { Console.WriteLine("Error Class = " + eC.Class); } break;
+                {
+                    eC.Class = 160;
+                    client.Entity.Windwalker = 8;
+                    break;
+                }
+                default:
+                {
+                    Console.WriteLine("Error Class = " + eC.Class);
+                }
+                    break;
             }
+
             DataHolder.GetStats(eC.Class, 1, client);
             client.Entity.Class = eC.Class;
             client.CalculateStatBonus();
@@ -908,7 +1004,8 @@ namespace MTA.Database
 
             while (true)
             {
-                using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("entities").Where("uid", client.Entity.UID))
+                using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("entities")
+                           .Where("uid", client.Entity.UID))
                 using (var reader = cmd.CreateReader())
                 {
                     if (reader.Read())
@@ -917,15 +1014,20 @@ namespace MTA.Database
                         break;
                 }
             }
+
             while (true)
             {
                 try
                 {
                     using (var cmd = new MySqlCommand(MySqlCommandType.INSERT))
-                        cmd.Insert("entities").Insert("Name", eC.Name).Insert("Owner", client.Account.Username).Insert("Class", eC.Class).Insert("UID", client.Entity.UID)
-                            .Insert("Hitpoints", client.Entity.Hitpoints).Insert("Mana", client.Entity.Mana).Insert("Body", client.Entity.Body)
-                            .Insert("Face", client.Entity.Face).Insert("HairStyle", client.Entity.HairStyle).Insert("Strength", client.Entity.Strength)
-                            .Insert("WarehousePW", "").Insert("Agility", client.Entity.Agility).Insert("Vitality", client.Entity.Vitality).Insert("Spirit", client.Entity.Spirit)
+                        cmd.Insert("entities").Insert("Name", eC.Name).Insert("Owner", client.Account.Username)
+                            .Insert("Class", eC.Class).Insert("UID", client.Entity.UID)
+                            .Insert("Hitpoints", client.Entity.Hitpoints).Insert("Mana", client.Entity.Mana)
+                            .Insert("Body", client.Entity.Body)
+                            .Insert("Face", client.Entity.Face).Insert("HairStyle", client.Entity.HairStyle)
+                            .Insert("Strength", client.Entity.Strength)
+                            .Insert("WarehousePW", "").Insert("Agility", client.Entity.Agility)
+                            .Insert("Vitality", client.Entity.Vitality).Insert("Spirit", client.Entity.Spirit)
                             .Insert("Windwalker", client.Entity.Windwalker)
                             .Execute();
 
@@ -938,20 +1040,22 @@ namespace MTA.Database
                 }
             }
 
-            using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("configuration").Set("EntityID", client.Entity.UID).Where("Server", Constants.ServerName))
+            using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("configuration")
+                       .Set("EntityID", client.Entity.UID).Where("Server", Constants.ServerName))
                 cmd.Execute();
             client.Account.EntityID = client.Entity.UID;
             client.Account.Save();
             return true;
         }
+
         public static void UpdateBankCps(Client.GameState client)
         {
             UpdateData(client, "BankCps", client.Entity.BankCps);
         }
+
         public static void UpdateTreasuerPoints(Client.GameState gameState)
         {
             UpdateData(gameState, "TreasuerPoints", gameState.Entity.TreasuerPoints);
         }
-
     }
 }

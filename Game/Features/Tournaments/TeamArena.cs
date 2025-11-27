@@ -351,7 +351,7 @@ namespace MTA.Game
                             {
                                 if (team1Player.Entity.MyJiang.OnJiangMode)
                                 {
-                                    team1Player.Entity.PKMode = Enums.PKMode.Capture;
+                                    team1Player.Entity.PKMode = Enums.PkMode.Capture;
                                     team1Player.Entity.MyJiang.OnJiangMode = false;
                                     team1Player.Entity.MyJiang.SendStatusMode(team1Player);
 
@@ -376,7 +376,7 @@ namespace MTA.Game
                             {
                                 if (team2Player.Entity.MyJiang.OnJiangMode)
                                 {
-                                    team2Player.Entity.PKMode = Enums.PKMode.Capture;
+                                    team2Player.Entity.PKMode = Enums.PkMode.Capture;
                                     team2Player.Entity.MyJiang.OnJiangMode = false;
                                     team2Player.Entity.MyJiang.SendStatusMode(team2Player);
 
@@ -410,7 +410,7 @@ namespace MTA.Game
                             team1Player.Entity.BringToLife();
                             team1Player.Entity.RemoveFlag(Network.GamePackets.Update.Flags.Ride);
                             team1Player.PrevPK = team1Player.Entity.PKMode;
-                            team1Player.Entity.PKMode = Game.Enums.PKMode.Team;
+                            team1Player.Entity.PKMode = Game.Enums.PkMode.Team;
                             team1Player.Send(new Data(true) { UID = team1Player.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)team1Player.Entity.PKMode });
                         }
                     }
@@ -432,7 +432,7 @@ namespace MTA.Game
                             team2Player.Entity.BringToLife();
                             team2Player.Entity.RemoveFlag(Network.GamePackets.Update.Flags.Ride);
                             team2Player.PrevPK = team2Player.Entity.PKMode;
-                            team2Player.Entity.PKMode = Game.Enums.PKMode.Team;
+                            team2Player.Entity.PKMode = Game.Enums.PkMode.Team;
                             team2Player.Send(new Data(true) { UID = team2Player.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)team2Player.Entity.PKMode });
                         }
                     }

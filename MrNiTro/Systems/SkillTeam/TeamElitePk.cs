@@ -853,7 +853,7 @@ namespace MTA.Game.Features.Tournaments
                     player.Send(CreateUpdate().ToArray());
                     player.CantAttack = Time32.Now.AddSeconds(11);
                     player.Entity.PrevPKMode = player.Entity.PKMode;
-                    player.Entity.PKMode = Enums.PKMode.Team;
+                    player.Entity.PKMode = Enums.PkMode.Team;
 
                     Network.GamePackets.Data dat = new Network.GamePackets.Data(true);
                     {

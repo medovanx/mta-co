@@ -63,7 +63,7 @@ namespace MTA.MaTrix
                 client.OnDisconnect = p =>
                 {
                     p.Entity.Teleport(1002, 301, 266);
-                    client.Entity.PKMode = Game.Enums.PKMode.PK;
+                    client.Entity.PKMode = Game.Enums.PkMode.PK;
                     client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                 };
                 client.Entity.OnDeath = p =>

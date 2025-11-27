@@ -26712,40 +26712,40 @@ p =>
         {
             if (client.InTeamQualifier()) return;
             client.Entity.AttackPacket = null;
-            client.Entity.PKMode = (Game.Enums.PKMode)(byte)generalData.dwParam;
+            client.Entity.PKMode = (Game.Enums.PkMode)(byte)generalData.dwParam;
             client.Send(generalData);
-            if (client.Entity.PKMode == Enums.PKMode.PK)
+            if (client.Entity.PKMode == Enums.PkMode.PK)
             {
                 client.Send(new MTA.Network.GamePackets.Message("Free PK mode. You can attack monster and all players.", System.Drawing.Color.Red, 0x7d0));
             }
-            else if (client.Entity.PKMode == Enums.PKMode.Capture)
+            else if (client.Entity.PKMode == Enums.PkMode.Capture)
             {
                 client.Send(new MTA.Network.GamePackets.Message("Capture PK mode. You can only attack monsters, black-name and blue-name players.", System.Drawing.Color.Red, 0x7d0));
             }
-            else if (client.Entity.PKMode == Enums.PKMode.Peace)
+            else if (client.Entity.PKMode == Enums.PkMode.Peace)
             {
                 client.Send(new MTA.Network.GamePackets.Message("Peace mode. You can only attack monsters.", System.Drawing.Color.Red, 0x7d0));
             }
-            else if (client.Entity.PKMode == Enums.PKMode.Team)
+            else if (client.Entity.PKMode == Enums.PkMode.Team)
             {
                 client.Send(new MTA.Network.GamePackets.Message("Team PK mode. You can attack monster and all players except your teammates.", System.Drawing.Color.Red, 0x7d0));
             }
-            else if (client.Entity.PKMode == Enums.PKMode.Revenge)
+            else if (client.Entity.PKMode == Enums.PkMode.Revenge)
             {
                 client.Send(new MTA.Network.GamePackets.Message("Revenge PK mode. You can attack monster and all Your Enemy List Players.", System.Drawing.Color.Red, 0x7d0));
             }
-            else if (client.Entity.PKMode == Enums.PKMode.Guild)
+            else if (client.Entity.PKMode == Enums.PkMode.Guild)
             {
                 client.Send(new MTA.Network.GamePackets.Message("Guild PK mode. You can attack monster and all Your Guild's Enemies", System.Drawing.Color.Red, 0x7d0));
             }
-            else if (client.Entity.PKMode == Game.Enums.PKMode.JiangHu)
+            else if (client.Entity.PKMode == Game.Enums.PkMode.JiangHu)
             {
                 if (client.Entity.MyJiang != null)
                 {
                     client.Entity.MyJiang.OnJiangMode = true;
                     client.Entity.MyJiang.SendStatusMode(client);
                 }
-                if (generalData.dwParam != (byte)MTA.Game.Enums.PKMode.JiangHu)
+                if (generalData.dwParam != (byte)MTA.Game.Enums.PkMode.JiangHu)
                     client.Send("Your JiangHu will disable after 5 mins please be patient");
             }
 

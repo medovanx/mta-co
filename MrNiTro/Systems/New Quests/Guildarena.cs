@@ -47,7 +47,7 @@ namespace MTA.Game
                         {
                             p.Entity.GuildArenaBattle = this;
                             p.PrevPK = p.Entity.PKMode;
-                            p.Entity.PKMode = Game.Enums.PKMode.Team;
+                            p.Entity.PKMode = Game.Enums.PkMode.Team;
                             p.Send(new Data(true) { UID = p.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)p.Entity.PKMode });
                             p.Entity.Teleport(p.Entity.GuildArenaBattle.dynamicMap.ID, (ushort)Kernel.Random.Next(35, 70), (ushort)Kernel.Random.Next(35, 70));
                             p.Entity.GuildArenaBattleFight = this;
@@ -66,7 +66,7 @@ namespace MTA.Game
                         {
                             p.Entity.GuildArenaBattle = this;
                             p.PrevPK = p.Entity.PKMode;
-                            p.Entity.PKMode = Game.Enums.PKMode.Team;
+                            p.Entity.PKMode = Game.Enums.PkMode.Team;
                             p.Send(new Data(true) { UID = p.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)p.Entity.PKMode });
                             p.Entity.Teleport(p.Entity.GuildArenaBattle.dynamicMap.ID, (ushort)Kernel.Random.Next(35, 70), (ushort)Kernel.Random.Next(35, 70));
                             p.Entity.GuildArenaBattleFight = this;

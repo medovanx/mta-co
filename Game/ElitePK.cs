@@ -376,7 +376,7 @@ namespace MTA.Game
                     player.Send(CreateUpdate());
                     player.CantAttack = Time32.Now.AddSeconds(11);
                     player.Entity.PrevPKMode = player.Entity.PKMode;
-                    player.Entity.PKMode = Enums.PKMode.PK;
+                    player.Entity.PKMode = Enums.PkMode.PK;
 
                     Data dat = new Data(true);
                     dat.UID = player.Entity.UID;

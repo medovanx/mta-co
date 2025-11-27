@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace MTA.Game
+﻿namespace MTA.Game
 {
     public enum Languages
     {
         English,
         Arabic
     }
-    
+
     public enum AppearanceType
     {
         Default = 0,
@@ -20,6 +15,7 @@ namespace MTA.Game
         First = Default,
         Last = Equipment + 1
     }
+
     public enum SlotMachineSubType : byte
     {
         StartSpin = 0,
@@ -37,6 +33,7 @@ namespace MTA.Game
         ExpBall = 5,
         DragonBall = 6
     }
+
     public static class Enums
     {
         public enum PokerJoinTableType : byte
@@ -45,6 +42,7 @@ namespace MTA.Game
             Leave = 1,
             Watching = 2
         }
+
         public enum PokerCardsType : byte
         {
             Hearts = 0,
@@ -52,6 +50,7 @@ namespace MTA.Game
             Clubs = 2,
             Diamonds = 3
         }
+
         public enum PokerCardsValue : byte
         {
             Two = 0,
@@ -68,19 +67,23 @@ namespace MTA.Game
             King = 11,
             Ace = 12,
         }
+
         public enum PokerHandPower : byte
         {
-            RoyalFlush = 10,//AKQJ10 of one suit
-            StraightFlush = 9,//five cards in sequence, all the same suit
-            FourOfAKind = 8,//four cards of the same rank (plus any fifth card)
-            FullHouse = 7,//three cards of one rank, plus a pair of another rank
-            Flush = 6,//five cards of the same suit
-            Straight = 5,//1-5
-            ThreeOfAKind = 4,// three cards of the same rank, plus two other unmatched cards
-            TwoPairs = 3,//two cards of the same rank, plus two other cards of a different rank, plus one unmatched card
-            Pair = 2,//two cards of the same rank, plus three other unmatched cards
+            RoyalFlush = 10, //AKQJ10 of one suit
+            StraightFlush = 9, //five cards in sequence, all the same suit
+            FourOfAKind = 8, //four cards of the same rank (plus any fifth card)
+            FullHouse = 7, //three cards of one rank, plus a pair of another rank
+            Flush = 6, //five cards of the same suit
+            Straight = 5, //1-5
+            ThreeOfAKind = 4, // three cards of the same rank, plus two other unmatched cards
+
+            TwoPairs =
+                3, //two cards of the same rank, plus two other cards of a different rank, plus one unmatched card
+            Pair = 2, //two cards of the same rank, plus three other unmatched cards
             Nothing = 1 // any hand not meeting the requirements of a pair or higher hand
         }
+
         [System.Flags]
         public enum PokerCallTypes : byte
         {
@@ -100,11 +103,13 @@ namespace MTA.Game
             AllInFold = 36,
             AllInCallFold = 38,
         }
+
         public enum PokerBetType : byte
         {
             Money,
             ConquerPoints
         }
+
         public enum RoundTypeEnum : byte
         {
             Preflop = 0,
@@ -113,12 +118,14 @@ namespace MTA.Game
             River = 3,
             ShowDown = 4
         }
+
         public enum RoundStateEnum
         {
             Cards,
             Betting,
             Cumul
         }
+
         public enum GameClientEnum
         {
             Init,
@@ -130,6 +137,7 @@ namespace MTA.Game
             DistributeMoney,
             End
         }
+
         public enum SeatAttributeEnum
         {
             Dealer = 0,
@@ -141,17 +149,18 @@ namespace MTA.Game
         public class GuildRanksTop20Type
         {
             public const byte SilverRank = 0,
-              CpRank = 1,
-              GuideDonation = 2,
-              PkRank = 3,
-              ArsenalRank = 4,
-              RosesRank = 5,
-              OrchidRank = 6,
-              LilyRank = 7,
-              TulipRank = 8,
-              TotalDonaion = 9,
-              MaxCounts = 10;
+                CpRank = 1,
+                GuideDonation = 2,
+                PkRank = 3,
+                ArsenalRank = 4,
+                RosesRank = 5,
+                OrchidRank = 6,
+                LilyRank = 7,
+                TulipRank = 8,
+                TotalDonaion = 9,
+                MaxCounts = 10;
         }
+
         public enum ItemPositionName : ushort
         {
             Inventory = 0,
@@ -182,6 +191,7 @@ namespace MTA.Game
             Alternate_Garment = 29,
             Remove = 255
         }
+
         public enum ChiAttribute
         {
             None = 0,
@@ -199,6 +209,7 @@ namespace MTA.Game
             PhysicalDamageDecrease = 12,
             MagicDamageDecrease = 13
         }
+
         public static int ChiMinValues(ChiAttribute attribute)
         {
             switch (attribute)
@@ -219,6 +230,7 @@ namespace MTA.Game
                 default: return 10;
             }
         }
+
         public static int ChiMaxValues(ChiAttribute attribute)
         {
             switch (attribute)
@@ -231,7 +243,7 @@ namespace MTA.Game
                 case ChiAttribute.HPAdd: return 3500;
                 case ChiAttribute.AddMagicDefense: return 250;
                 case ChiAttribute.AddAttack: return 2000;
-                case ChiAttribute.AddMagicAttack: return 2500;                
+                case ChiAttribute.AddMagicAttack: return 2500;
                 case ChiAttribute.PhysicalDamageIncrease: return 500;
                 case ChiAttribute.PhysicalDamageDecrease: return 500;
                 case ChiAttribute.MagicDamageIncrease: return 300;
@@ -276,6 +288,7 @@ namespace MTA.Game
             USA = 21,
             Vietnam = 22
         }
+
         public enum GuildMemberRank : ushort
         {
             GuildLeader = 1000,
@@ -348,18 +361,18 @@ namespace MTA.Game
         public class ConquerAction
         {
             public const ushort
-            None = 0x00,
-            Cool = 0xE6,
-            Kneel = 0xD2,
-            Sad = 0xAA,
-            Happy = 0x96,
-            Angry = 0xA0,
-            Lie = 0x0E,
-            Dance = 0x01,
-            Wave = 0xBE,
-            Bow = 0xC8,
-            Sit = 0xFA,
-            Jump = 0x64;
+                None = 0x00,
+                Cool = 0xE6,
+                Kneel = 0xD2,
+                Sad = 0xAA,
+                Happy = 0x96,
+                Angry = 0xA0,
+                Lie = 0x0E,
+                Dance = 0x01,
+                Wave = 0xBE,
+                Bow = 0xC8,
+                Sit = 0xFA,
+                Jump = 0x64;
         }
 
         public enum ConquerAngle : byte
@@ -373,6 +386,7 @@ namespace MTA.Game
             SouthEast = 6,
             South = 7
         }
+
         public static ConquerAngle OppositeAngle(ConquerAngle angle)
         {
             byte myAngle = (byte)angle;
@@ -381,8 +395,9 @@ namespace MTA.Game
             else
                 return (ConquerAngle)(myAngle + 4);
         }
+
         public enum NpcType : byte
-        {            
+        {
             Stun = 0,
             Shop = 1,
             Talker = 2,
@@ -393,7 +408,7 @@ namespace MTA.Game
             Gambling = 19,
             Stake = 21,
             Scarecrow = 22,
-            Furniture = 25,           
+            Furniture = 25,
             Poker = 33,
             Poker2 = 34,
             Poker3 = 35,
@@ -402,11 +417,12 @@ namespace MTA.Game
             Poker6 = 38,
             ClanInfo = 31,
             WareHouse = 3
-
         }
+
         public enum Mode : byte
         {
-            None, Recording
+            None,
+            Recording
         }
 
         public enum ItemMode : byte
@@ -418,6 +434,7 @@ namespace MTA.Game
             ChatItem = 9,
             PerfectionView = 13
         }
+
         public enum ItemEffect : byte
         {
             None = 0,
@@ -427,6 +444,7 @@ namespace MTA.Game
             MP = 202,
             Shield = 203
         }
+
         public enum Color : byte
         {
             None = 0,
@@ -439,7 +457,8 @@ namespace MTA.Game
             Yellow = 7,
             Purple = 8,
             White = 9
-        }  
+        }
+
         public enum StatusFlag : int
         {
             None = 0,
@@ -497,9 +516,14 @@ namespace MTA.Game
             Oblivion = 111,
             TopMonk = 113
         }
+
         public enum ItemUse
         {
-            None, Add, CreateAndAdd, Move, Remove,
+            None,
+            Add,
+            CreateAndAdd,
+            Move,
+            Remove,
             RemoveFromStack,
             Delete
         }
@@ -712,9 +736,10 @@ namespace MTA.Game
             KrakensRevenge = 11100,
             BlackSpot = 11120,
             AdrenalineRush = 11130,
-            InfernalEcho = 12550,  
+            InfernalEcho = 12550,
             PiEagleEye = 11030
         }
+
         public enum RaceItemType : ushort
         {
             Null = 8329,
@@ -730,6 +755,7 @@ namespace MTA.Game
             RestorePotion = 8339,
             SuperExcitementPotion = 8340,
         }
+
         public enum Maps : uint
         {
             MarketRace = 1950, // Start: 88, 149 End: 420, 431
@@ -885,6 +911,7 @@ namespace MTA.Game
             WaitingForOpponent = 1,
             WaitingInactive = 2,
         }
+
         public enum Update : uint
         {
             HP = 0,
@@ -922,6 +949,7 @@ namespace MTA.Game
             BonusBP = 44,
             BoundCp = 45
         }
+
         public enum ArenaSignUpIDs : uint
         {
             ShowQuitButton = 0,

@@ -1172,7 +1172,7 @@ namespace MTA.MaTrix
 
             public bool Done;
 
-            private Game.Enums.PKMode P1Mode, P2Mode;
+            private Game.Enums.PkMode P1Mode, P2Mode;
 
             public uint ID;
 
@@ -1235,10 +1235,10 @@ namespace MTA.MaTrix
                     Player1.Entity.RemoveFlag(Network.GamePackets.Update.Flags.Ride);
                     Player2.Entity.RemoveFlag(Network.GamePackets.Update.Flags.Ride);
                     P1Mode = Player1.Entity.PKMode;
-                    Player1.Entity.PKMode = MTA.Game.Enums.PKMode.PK;
+                    Player1.Entity.PKMode = MTA.Game.Enums.PkMode.PK;
                     Player1.Send(new Data(true) { UID = Player1.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)Player1.Entity.PKMode });
                     P2Mode = Player2.Entity.PKMode;
-                    Player2.Entity.PKMode = MTA.Game.Enums.PKMode.PK;
+                    Player2.Entity.PKMode = MTA.Game.Enums.PkMode.PK;
                     Player2.Send(new Data(true) { UID = Player2.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)Player2.Entity.PKMode });
                     Player1.Screen.FullWipe();
                     Player1.Screen.Reload();

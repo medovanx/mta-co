@@ -348,7 +348,7 @@ namespace MTA.WebServer
             str.Texts.Add(Constants.ServerName);
             client.Send(str);
 
-            client.Send(new Data(true) { UID = client.Entity.UID, ID = Network.GamePackets.Data.ChangePKMode, dwParam = (uint)Enums.PKMode.Team });
+            client.Send(new Data(true) { UID = client.Entity.UID, ID = Network.GamePackets.Data.ChangePKMode, dwParam = (uint)Enums.PkMode.Team });
 
         }
     }

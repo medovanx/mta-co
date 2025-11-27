@@ -8517,7 +8517,7 @@ damage = (uint)(damage * 0.5);
                     attacked.Die(attacker);
                     attacked.IsDropped = false;
 
-                    if (attacker.PKMode == Enums.PKMode.JiangHu)
+                    if (attacker.PKMode == Enums.PkMode.JiangHu)
                     {
                         if (attacked.JiangActive)
                         {
@@ -8590,7 +8590,7 @@ damage = (uint)(damage * 0.5);
                         attacked.MonsterInfo.SendScreen(attack);
                     }
                     attacked.Die(attacker);
-                    if (attacker.PKMode == Enums.PKMode.Jiang)
+                    if (attacker.PKMode == Enums.PkMode.Jiang)
                     {
                         if (attacked.JiangActive)
                         {
@@ -9015,7 +9015,7 @@ damage = (uint)(damage * 0.5);
                     {
                         if (Game.PoleIslanD.PoleKeeper == attacker.Owner.Guild)
                         {
-                            if (attacker.PKMode == Enums.PKMode.Team)
+                            if (attacker.PKMode == Enums.PkMode.Team)
                                 return false;
                         }
                     }
@@ -9043,7 +9043,7 @@ damage = (uint)(damage * 0.5);
                     {
                         if (Game.PoleRakion.PoleKeeper == attacker.Owner.Guild)
                         {
-                            if (attacker.PKMode == Enums.PKMode.Team)
+                            if (attacker.PKMode == Enums.PkMode.Team)
                                 return false;
                         }
                     }
@@ -9071,7 +9071,7 @@ damage = (uint)(damage * 0.5);
                     {
                         if (Game.PoleMagice.PoleKeeper == attacker.Owner.Guild)
                         {
-                            if (attacker.PKMode == Enums.PKMode.Team)
+                            if (attacker.PKMode == Enums.PkMode.Team)
                                 return false;
                         }
                     }
@@ -9197,7 +9197,7 @@ damage = (uint)(damage * 0.5);
                     {
                         if (Game.GuildWar.PoleKeeper == attacker.Owner.Guild)
                         {
-                            if (attacker.PKMode == Enums.PKMode.Team)
+                            if (attacker.PKMode == Enums.PkMode.Team)
                                 return false;
                         }
                     }
@@ -9226,7 +9226,7 @@ damage = (uint)(damage * 0.5);
                     {
                         if (Game.SuperGuildWar.PoleKeeper == attacker.Owner.Guild)
                         {
-                            if (attacker.PKMode == Enums.PKMode.Team)
+                            if (attacker.PKMode == Enums.PkMode.Team)
                                 return false;
                         }
                     }
@@ -9256,7 +9256,7 @@ damage = (uint)(damage * 0.5);
                 {
                     if (Game.EliteGuildWar.PoleKeeper == attacker.Owner.Guild)
                     {
-                        if (attacker.PKMode == Enums.PKMode.Team)
+                        if (attacker.PKMode == Enums.PkMode.Team)
                             return false;
                     }
                 }
@@ -9450,7 +9450,7 @@ damage = (uint)(damage * 0.5);
                 if (attacked.ContainsFlag(Update.Flags.Fly))
                     return false;
             }
-            if (attacker.PKMode == Enums.PKMode.Jiang)
+            if (attacker.PKMode == Enums.PkMode.Jiang)
             {
                 if (attacked.JiangActive)
                 {
@@ -9560,8 +9560,8 @@ damage = (uint)(damage * 0.5);
                     {
                         if (attacked.Owner == attacker.Owner)
                             return false;
-                        if (attacker.PKMode != MTA.Game.Enums.PKMode.PK &&
-                         attacker.PKMode != MTA.Game.Enums.PKMode.Team)
+                        if (attacker.PKMode != MTA.Game.Enums.PkMode.PK &&
+                         attacker.PKMode != MTA.Game.Enums.PkMode.Team)
                             return false;
                         else
                         {
@@ -9575,8 +9575,8 @@ damage = (uint)(damage * 0.5);
                 }
                 if (attacked.Name.Contains("Guard"))
                 {
-                    if (attacker.PKMode != MTA.Game.Enums.PKMode.PK &&
-                    attacker.PKMode != MTA.Game.Enums.PKMode.Team)
+                    if (attacker.PKMode != MTA.Game.Enums.PkMode.PK &&
+                    attacker.PKMode != MTA.Game.Enums.PkMode.Team)
                         return false;
                     else
                     {
@@ -9604,22 +9604,22 @@ damage = (uint)(damage * 0.5);
 
                 if (Constants.PKForbiddenMaps.Contains(attacker.Owner.Map.ID))
                 {
-                    if (attacker.PKMode == MTA.Game.Enums.PKMode.PK ||
-                        attacker.PKMode == MTA.Game.Enums.PKMode.Team || (spell != null && spell.CanKill))
+                    if (attacker.PKMode == MTA.Game.Enums.PkMode.PK ||
+                        attacker.PKMode == MTA.Game.Enums.PkMode.Team || (spell != null && spell.CanKill))
                     {
                         attacker.Owner.Send(Constants.PKForbidden);
                         attacker.AttackPacket = null;
                     }
                     return false;
                 }
-                if (attacker.PKMode == MTA.Game.Enums.PKMode.Capture)
+                if (attacker.PKMode == MTA.Game.Enums.PkMode.Capture)
                 {
                     if (attacked.ContainsFlag(Update.Flags.FlashingName) || attacked.PKPoints > 99)
                     {
                         return true;
                     }
                 }
-                if (attacker.PKMode == MTA.Game.Enums.PKMode.Peace)
+                if (attacker.PKMode == MTA.Game.Enums.PkMode.Peace)
                 {
                     return false;
                 }
@@ -9628,7 +9628,7 @@ damage = (uint)(damage * 0.5);
                 if (attacker.UID == attacked.UID)
                     return false;
 
-                if (attacker.PKMode == MTA.Game.Enums.PKMode.Team)
+                if (attacker.PKMode == MTA.Game.Enums.PkMode.Team)
                 {
                     if (attacker.Owner.Team != null)
                     {
@@ -9685,8 +9685,8 @@ damage = (uint)(damage * 0.5);
                     if (!spell.CanKill)
                         return true;
 
-                if (attacker.PKMode != MTA.Game.Enums.PKMode.PK &&
-                    attacker.PKMode != MTA.Game.Enums.PKMode.Team && attacked.PKPoints < 99)
+                if (attacker.PKMode != MTA.Game.Enums.PkMode.PK &&
+                    attacker.PKMode != MTA.Game.Enums.PkMode.Team && attacked.PKPoints < 99)
                 {
                     attacker.AttackPacket = null;
                     return false;

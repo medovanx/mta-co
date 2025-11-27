@@ -1374,7 +1374,7 @@ namespace MTA.Game
         public int TransformationTime = 0;
         public uint TransformationMaxHP = 0;
         private byte _Dodge;
-        private Enums.PKMode _PKMode;
+        private Enums.PkMode _PKMode;
         private EntityFlag _EntityFlag;
         private MapObjectType _MapObjectType;
         public Enums.Mode Mode;
@@ -2833,7 +2833,7 @@ namespace MTA.Game
             get { return this.mClanJoinTarget; }
             set { this.mClanJoinTarget = value; }
         }
-        public Enums.PKMode PKMode
+        public Enums.PkMode PKMode
         {
             get { return _PKMode; }
             set { _PKMode = value; }
@@ -3800,7 +3800,7 @@ namespace MTA.Game
 
 
 
-                    if (!ContainsFlag(Network.GamePackets.Update.Flags.FlashingName) && (killer.PKMode != MTA.Game.Enums.PKMode.JiangHu) && !ContainsFlag(Network.GamePackets.Update.Flags.BlackName))
+                    if (!ContainsFlag(Network.GamePackets.Update.Flags.FlashingName) && (killer.PKMode != MTA.Game.Enums.PkMode.JiangHu) && !ContainsFlag(Network.GamePackets.Update.Flags.BlackName))
                     {
                         killer.AddFlag(Network.GamePackets.Update.Flags.FlashingName);
                         killer.FlashingNameStamp = Time32.Now;
@@ -3882,7 +3882,7 @@ namespace MTA.Game
                         }
                     }
                     // killer.killerpoints++;
-                    if (killer.PKMode != MTA.Game.Enums.PKMode.JiangHu)
+                    if (killer.PKMode != MTA.Game.Enums.PkMode.JiangHu)
                     {
                       
                         // killer.killerpoints++;
@@ -6255,7 +6255,7 @@ namespace MTA.Game
         public object FlusterTime;
         public bool FrozenD;
         public AppearanceType AppearanceBkp;
-        public Enums.PKMode PrevPKMode;
+        public Enums.PkMode PrevPKMode;
         public Time32 FlagStamp;
         private uint assassinBP;
         public static int Memberrinmap;

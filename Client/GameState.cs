@@ -5476,7 +5476,7 @@ foreach (ConquerItem i in Equipment.Objects)
 
         public bool Fake;
         public Tuple<ConquerItem, ConquerItem> Weapons;
-        public Game.Enums.PKMode PrevPK;
+        public Game.Enums.PkMode PrevPK;
         public InnerPower InnerPower;
         public int TeamCheerFor;
         public int ArenaState = 0;
@@ -6628,13 +6628,13 @@ foreach (ConquerItem i in Equipment.Objects)
                                 str.Texts.Add("Matrix");
                                 client.Send(str);
 
-                                client.Send(new Data(true) { UID = client.Entity.UID, ID = Network.GamePackets.Data.ChangePKMode, dwParam = (uint)Enums.PKMode.CS });
+                                client.Send(new Data(true) { UID = client.Entity.UID, ID = Network.GamePackets.Data.ChangePKMode, dwParam = (uint)Enums.PkMode.CS });
                                 break;
                             }
                         case "pk":
                             {
 
-                                client.Send(new Data(true) { UID = client.Entity.UID, ID = Network.GamePackets.Data.ChangePKMode, dwParam = (uint)(Enums.PKMode)byte.Parse(Data[1]) });
+                                client.Send(new Data(true) { UID = client.Entity.UID, ID = Network.GamePackets.Data.ChangePKMode, dwParam = (uint)(Enums.PkMode)byte.Parse(Data[1]) });
                                 break;
                             }
                         case "serverid2":
