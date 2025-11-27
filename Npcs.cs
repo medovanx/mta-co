@@ -1325,7 +1325,7 @@ namespace MTA
                                             {
                                                 if (client.Guild != null && client.AsMember.Rank == MTA.Game.Enums.GuildMemberRank.GuildLeader && client.Entity.ConquerPoints >= 215)
                                                 {
-                                                    if (npcRequest.Input != "" && npcRequest.Input.Length > 3 && npcRequest.Input.Length < 16)
+                                                    if (npcRequest.Input != "" && npcRequest.Input.Length < 16)
                                                     {
                                                         if (!Guild.CheckNameExist(npcRequest.Input))
                                                         {
