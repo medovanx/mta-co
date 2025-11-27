@@ -330,7 +330,8 @@ namespace MTA.Game
             SeniorMember = 210,
             Member = 200
         }
-        public enum PKMode : byte
+
+        public enum PkMode : byte
         {
             PK = 0,
             Peace = 1,
@@ -343,6 +344,7 @@ namespace MTA.Game
             CS = 8,
             JiangHu = 6,
         }
+
         public class ConquerAction
         {
             public const ushort

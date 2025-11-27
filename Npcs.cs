@@ -1632,6 +1632,8 @@ namespace MTA
                                                             guild.Leader = client.AsMember;
                                                             client.Guild = guild;
                                                             guild.Create(npcRequest.Input);
+                                                            Database.EntityTable.UpdateGuildID(client);
+                                                            Database.EntityTable.UpdateGuildRank(client);
                                                             guild.Name = npcRequest.Input;
                                                             guild.MemberCount++;
                                                             guild.SendGuild(client);
@@ -2611,7 +2613,7 @@ namespace MTA
                                                         client.Entity.RemoveFlag(Update.Flags.Ride);
                                                     }
                                                     client.Entity.Teleport(1238, 50, 50);
-                                                    client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                                    client.Entity.PKMode = Game.Enums.PkMode.PK;
                                                 }
                                                 else
                                                 {
@@ -40704,7 +40706,7 @@ namespace MTA
                                         if (Nr == 8) client.Entity.Teleport(3333, 33, 34);
                                         if (Nr == 9) client.Entity.Teleport(3333, 67, 34);
                                         if (Nr == 10) client.Entity.Teleport(3333, 68, 57);
-                                        client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                        client.Entity.PKMode = Game.Enums.PkMode.PK;
                                         client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                     }
                                     else
@@ -40922,19 +40924,19 @@ namespace MTA
                                         if (client.Entity.GuildRank == (ushort)Game.Enums.GuildMemberRank.GuildLeader)
                                         {//MeToOo
                                             client.Entity.Teleport(1458, 96, 113);
-                                            client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                            client.Entity.PKMode = Game.Enums.PkMode.PK;
                                             client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                         }//MeToOo
                                         else if (client.Entity.GuildRank == (ushort)Game.Enums.GuildMemberRank.DeputyLeader)
                                         {
                                             client.Entity.Teleport(1459, 96, 113);
-                                            client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                            client.Entity.PKMode = Game.Enums.PkMode.PK;
                                             client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                         }
                                         else
                                         {//MeToOo
                                             client.Entity.Teleport(1460, 96, 113);
-                                            client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                            client.Entity.PKMode = Game.Enums.PkMode.PK;
                                             client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                         }//MeToOo
                                     }
@@ -41154,14 +41156,14 @@ namespace MTA
                                             foreach (GameState clients in client.Team.Teammates)
                                             {
                                                 clients.Entity.Teleport(16414, 50, 50);
-                                                client.Entity.PKMode = Game.Enums.PKMode.Team;
+                                                client.Entity.PKMode = Game.Enums.PkMode.Team;
                                                 client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                             }
                                         }
                                         else
                                             client.Entity.Teleport(16414, 50, 50);
 
-                                        client.Entity.PKMode = Game.Enums.PKMode.Team;
+                                        client.Entity.PKMode = Game.Enums.PkMode.Team;
                                         client.Send(new Network.GamePackets.Data(true) { UID = client.Entity.UID, ID = Network.GamePackets.Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                     }
                                     else
@@ -41244,7 +41246,7 @@ namespace MTA
                                     if (Network.PacketHandler.IsBoy(client.Entity.Body))
                                     {
                                         client.Entity.Teleport(11224, 96, 113);
-                                        client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                        client.Entity.PKMode = Game.Enums.PkMode.PK;
                                         client.Send(new Network.GamePackets.Data(true) { UID = client.Entity.UID, ID = Network.GamePackets.Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                     }
                                     else
@@ -41350,7 +41352,7 @@ namespace MTA
                                     if (Network.PacketHandler.IsGirl(client.Entity.Body))
                                     {
                                         client.Entity.Teleport(11225, 96, 113);
-                                        client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                        client.Entity.PKMode = Game.Enums.PkMode.PK;
                                         client.Send(new Network.GamePackets.Data(true) { UID = client.Entity.UID, ID = Network.GamePackets.Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                     }
                                     else
@@ -41470,7 +41472,7 @@ namespace MTA
                                         client.Entity.RemoveFlag(Update.Flags.Ride);
                                         //client.Entity.Hitpoints = 1;
                                         client.Entity.Teleport(1707, 55, 63);
-                                        client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                        client.Entity.PKMode = Game.Enums.PkMode.PK;
                                         client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                         break;
                                     }
@@ -41576,7 +41578,7 @@ namespace MTA
                                         if (Matrix_Times.Start.Nobilty)
                                         {
                                             client.Entity.Teleport(3691, 51, 51);
-                                            client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                            client.Entity.PKMode = Game.Enums.PkMode.PK;
                                             client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                             #region Effects
                                             _String str = new _String(true);
@@ -41605,7 +41607,7 @@ namespace MTA
                                         {
 
                                             client.Entity.Teleport(3692, 51, 51);
-                                            client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                            client.Entity.PKMode = Game.Enums.PkMode.PK;
                                             client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                             #region Effects
                                             _String str = new _String(true);
@@ -41634,7 +41636,7 @@ namespace MTA
                                         if (Matrix_Times.Start.Nobilty)
                                         {
                                             client.Entity.Teleport(3693, 51, 51);
-                                            client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                            client.Entity.PKMode = Game.Enums.PkMode.PK;
                                             client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                             #region Effects
                                             _String str = new _String(true);
@@ -41663,7 +41665,7 @@ namespace MTA
                                         if (Matrix_Times.Start.Nobilty)
                                         {
                                             client.Entity.Teleport(3694, 51, 51);
-                                            client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                            client.Entity.PKMode = Game.Enums.PkMode.PK;
                                             client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                             #region Effects
                                             _String str = new _String(true);
@@ -41963,7 +41965,7 @@ namespace MTA
                                     if (ClanWar.IsWar)
                                     {
                                         client.Entity.Teleport(1509, 82, 118);
-                                        client.Entity.PKMode = Game.Enums.PKMode.Team;
+                                        client.Entity.PKMode = Game.Enums.PkMode.Team;
                                         client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                     }
                                     else
@@ -42048,7 +42050,7 @@ namespace MTA
                                         if (Nr == 3) client.Entity.Teleport(2014, 188, 203);
                                         if (Nr == 4) client.Entity.Teleport(2014, 226, 203);
                                         if (Nr == 5) client.Entity.Teleport(2014, 188, 162);
-                                        client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                        client.Entity.PKMode = Game.Enums.PkMode.PK;
                                         client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                     }
                                     else
@@ -42144,7 +42146,7 @@ namespace MTA
                                         if (client.Entity.ConquerPoints >= 2000)
                                         {
                                             client.Entity.Teleport(1234, 51, 51);
-                                            client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                            client.Entity.PKMode = Game.Enums.PkMode.PK;
                                             client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                             #region Effects
                                             _String str = new _String(true);
@@ -42179,7 +42181,7 @@ namespace MTA
                                         {
 
                                             client.Entity.Teleport(1235, 51, 51);
-                                            client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                            client.Entity.PKMode = Game.Enums.PkMode.PK;
                                             client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                             #region Effects
                                             _String str = new _String(true);
@@ -42215,7 +42217,7 @@ namespace MTA
                                         if (client.Entity.ConquerPoints >= 6000)
                                         {
                                             client.Entity.Teleport(1236, 51, 51);
-                                            client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                            client.Entity.PKMode = Game.Enums.PkMode.PK;
                                             client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                             #region Effects
                                             _String str = new _String(true);
@@ -42251,7 +42253,7 @@ namespace MTA
                                         if (client.Entity.ConquerPoints >= 4000)
                                         {
                                             client.Entity.Teleport(1237, 51, 51);
-                                            client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                            client.Entity.PKMode = Game.Enums.PkMode.PK;
                                             client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                             #region Effects
                                             _String str = new _String(true);
@@ -42311,7 +42313,7 @@ namespace MTA
                                         client.Entity.RemoveFlag(Update.Flags.Ride);
                                         //client.Entity.Hitpoints = 1;
                                         client.Entity.Teleport(1238, 50, 50);
-                                        client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                        client.Entity.PKMode = Game.Enums.PkMode.PK;
                                         client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                         break;
                                     }
@@ -42360,7 +42362,7 @@ namespace MTA
                                         if (Nr == 8) client.Entity.Teleport(2222, 33, 34);
                                         if (Nr == 9) client.Entity.Teleport(2222, 67, 34);
                                         if (Nr == 10) client.Entity.Teleport(2222, 68, 57);
-                                        client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                        client.Entity.PKMode = Game.Enums.PkMode.PK;
                                         client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                     }
                                     else
@@ -42471,7 +42473,7 @@ namespace MTA
                                         if (Nr == 8) client.Entity.Teleport(4444, 33, 34);
                                         if (Nr == 9) client.Entity.Teleport(4444, 67, 34);
                                         if (Nr == 10) client.Entity.Teleport(4444, 68, 57);
-                                        client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                        client.Entity.PKMode = Game.Enums.PkMode.PK;
                                         client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                     }
                                     else
@@ -43156,14 +43158,14 @@ namespace MTA
                                                 foreach (GameState clients in client.Team.Teammates)
                                                 {
                                                     clients.Entity.Teleport(16414, 50, 50);
-                                                    client.Entity.PKMode = Game.Enums.PKMode.Team;
+                                                    client.Entity.PKMode = Game.Enums.PkMode.Team;
                                                     client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                                 }
                                             }
                                             else
                                                 client.Entity.Teleport(16414, 50, 50);
 
-                                            client.Entity.PKMode = Game.Enums.PKMode.Team;
+                                            client.Entity.PKMode = Game.Enums.PkMode.Team;
                                             client.Send(new Network.GamePackets.Data(true) { UID = client.Entity.UID, ID = Network.GamePackets.Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                         }
                                         else
@@ -43191,19 +43193,19 @@ namespace MTA
                                         if (client.Entity.GuildRank == (ushort)Game.Enums.GuildMemberRank.GuildLeader)
                                         {//MeToOo
                                             client.Entity.Teleport(1458, 96, 113);
-                                            client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                            client.Entity.PKMode = Game.Enums.PkMode.PK;
                                             client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                         }//MeToOo
                                         else if (client.Entity.GuildRank == (ushort)Game.Enums.GuildMemberRank.DeputyLeader)
                                         {
                                             client.Entity.Teleport(1459, 96, 113);
-                                            client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                            client.Entity.PKMode = Game.Enums.PkMode.PK;
                                             client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                         }
                                         else
                                         {//MeToOo
                                             client.Entity.Teleport(1460, 96, 113);
-                                            client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                            client.Entity.PKMode = Game.Enums.PkMode.PK;
                                             client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                         }//MeToOo
                                     }
@@ -43234,7 +43236,7 @@ namespace MTA
                                         if (Nr == 3) client.Entity.Teleport(2014, 188, 203);
                                         if (Nr == 4) client.Entity.Teleport(2014, 226, 203);
                                         if (Nr == 5) client.Entity.Teleport(2014, 188, 162);
-                                        client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                        client.Entity.PKMode = Game.Enums.PkMode.PK;
                                         client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                     }
                                     else
@@ -43263,7 +43265,7 @@ namespace MTA
                                         if (Nr == 8) client.Entity.Teleport(4444, 33, 34);
                                         if (Nr == 9) client.Entity.Teleport(4444, 67, 34);
                                         if (Nr == 10) client.Entity.Teleport(4444, 68, 57);
-                                        client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                        client.Entity.PKMode = Game.Enums.PkMode.PK;
                                         client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                     }
                                     else
@@ -43292,7 +43294,7 @@ namespace MTA
                                         if (Nr == 8) client.Entity.Teleport(2222, 33, 34);
                                         if (Nr == 9) client.Entity.Teleport(2222, 67, 34);
                                         if (Nr == 10) client.Entity.Teleport(2222, 68, 57);
-                                        client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                        client.Entity.PKMode = Game.Enums.PkMode.PK;
                                         client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                     }
                                     else
@@ -43386,7 +43388,7 @@ namespace MTA
                                     if (DateTime.Now.Minute >= 47 && DateTime.Now.Minute <= 52)
                                     {
                                         client.Entity.Teleport(6752, 50, 50);
-                                        client.Entity.PKMode = Game.Enums.PKMode.PK;
+                                        client.Entity.PKMode = Game.Enums.PkMode.PK;
                                         client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)client.Entity.PKMode });
                                     }
                                     else
