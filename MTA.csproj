@@ -288,7 +288,7 @@
     <Compile Include="Game\Features\Tournaments\SuperGuildWar.cs" />
     <Compile Include="Game\guildtop.cs" />
     <Compile Include="Game\jiMMyQuest.cs" />
-    <Compile Include="Game\prizenpc.cs" />
+    <Compile Include="Game\PrizeNpc.cs" />
     <Compile Include="MrNiTro\Systems\Advertise.cs" />
     <Compile Include="Game\Attacking\Battle\MvP.cs" />
     <Compile Include="Game\Attacking\Battle\MyMath.cs" />

@@ -32294,29 +32294,29 @@ namespace MTA
                                 }
                             case 1:
                                 {
-                                    Game.PrizeNPC.Load();
+                                    Game.PrizeNpc.Load();
                                     if (client.Inventory.Count <= 38)
-                                        if (Game.PrizeNPC.PrizeNpcInformations.ContainsKey(client.Entity.UID))
+                                        if (Game.PrizeNpc.PrizeNpcInformations.ContainsKey(client.Entity.UID))
                                         {
-                                            if (Game.PrizeNPC.PrizeNpcInformations[client.Entity.UID].type == 1)
+                                            if (Game.PrizeNpc.PrizeNpcInformations[client.Entity.UID].type == 1)
                                             {
 
-                                                dialog.Text("Greatz you got ur prize " + Game.PrizeNPC.PrizeNpcInformations[client.Entity.UID].amount + " CPs");
+                                                dialog.Text("Greatz you got ur prize " + Game.PrizeNpc.PrizeNpcInformations[client.Entity.UID].amount + " CPs");
                                                 dialog.Option("thkx!", 255);
                                                 dialog.Send();
 
-                                                client.Entity.ConquerPoints += Game.PrizeNPC.PrizeNpcInformations[client.Entity.UID].amount;
-                                                Game.PrizeNPC.RemoveCps(client);
+                                                client.Entity.ConquerPoints += Game.PrizeNpc.PrizeNpcInformations[client.Entity.UID].amount;
+                                                Game.PrizeNpc.RemoveCps(client);
 
                                             }
-                                            else if (Game.PrizeNPC.PrizeNpcInformations[client.Entity.UID].type == 2)
+                                            else if (Game.PrizeNpc.PrizeNpcInformations[client.Entity.UID].type == 2)
                                             {
                                                 dialog.Text("You Got ur ptize");
                                                 dialog.Option("okay!", 255);
                                                 dialog.Send();
 
-                                                client.Inventory.Add(Game.PrizeNPC.PrizeNpcInformations[client.Entity.UID].itemid, 0, 1);
-                                                Game.PrizeNPC.RemoveItem(client);
+                                                client.Inventory.Add(Game.PrizeNpc.PrizeNpcInformations[client.Entity.UID].itemid, 0, 1);
+                                                Game.PrizeNpc.RemoveItem(client);
                                             }
                                             else
                                             {

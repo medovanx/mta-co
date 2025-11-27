@@ -1,15 +1,14 @@
 ﻿namespace MTA.Game
 {
-    using MTA;
-    using MTA.Client;
-    using MTA.Database;
-    using System;
+    using Client;
+    using Database;
     using System.Collections.Generic;
     using System.Runtime.InteropServices;
 
-    internal class PrizeNPC
+    internal class PrizeNpc
     {
-        public static SafeDictionary<long, PrizeNpcInfo> PrizeNpcInformations = new SafeDictionary<long, PrizeNpcInfo>(0xc350);
+        public static SafeDictionary<long, PrizeNpcInfo> PrizeNpcInformations =
+            new SafeDictionary<long, PrizeNpcInfo>(0xc350);
 
         public static void AddCps(GameState client, uint Amount)
         {
@@ -59,7 +58,8 @@
             MySqlCommand command = new MySqlCommand(MySqlCommandType.DELETE);
             command.Delete("prizenpc", "Owner", (long)client.Entity.UID).And("type", "1").Execute();
             PrizeNpcInformations.Remove((long)client.Entity.UID);
-            MySqlReader reader = new MySqlReader(new MySqlCommand(MySqlCommandType.SELECT).Select("prizenpc").Where("Owner", (long)client.Entity.UID));
+            MySqlReader reader = new MySqlReader(new MySqlCommand(MySqlCommandType.SELECT).Select("prizenpc")
+                .Where("Owner", (long)client.Entity.UID));
             if (reader.Read())
             {
                 PrizeNpcInfo info = new PrizeNpcInfo
@@ -80,7 +80,8 @@
             MySqlCommand command = new MySqlCommand(MySqlCommandType.DELETE);
             command.Delete("prizenpc", "Owner", (long)client.Entity.UID).And("type", "2").Execute();
             PrizeNpcInformations.Remove((long)client.Entity.UID);
-            MySqlReader reader = new MySqlReader(new MySqlCommand(MySqlCommandType.SELECT).Select("prizenpc").Where("Owner", (long)client.Entity.UID));
+            MySqlReader reader = new MySqlReader(new MySqlCommand(MySqlCommandType.SELECT).Select("prizenpc")
+                .Where("Owner", (long)client.Entity.UID));
             if (reader.Read())
             {
                 PrizeNpcInfo info = new PrizeNpcInfo
