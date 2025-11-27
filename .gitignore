@@ -3,25 +3,7 @@
 
 # Build results
 obj/
-bin/Debug/BouncyCastle.Cryptography.dll
-bin/Debug/BouncyCastle.Cryptography.xml
-bin/Debug/Google.Protobuf.dll
-bin/Debug/Google.Protobuf.pdb
-bin/Debug/Google.Protobuf.xml
-bin/Debug/K4os.Compression.LZ4.dll
-bin/Debug/K4os.Compression.LZ4.xml
-bin/Debug/K4os.Hash.xxHash.dll
-bin/Debug/K4os.Hash.xxHash.xml
-bin/Debug/MTA.exe
-bin/Debug/MTA.exe.config
-bin/Debug/MTA.pdb
-bin/Debug/MySql.Data.dll
-bin/Debug/MySql.Data.xml
-bin/Debug/System.IO.Pipelines.dll
-bin/Debug/System.IO.Pipelines.xml
-bin/Debug/System.Resources.Extensions.dll
-bin/Debug/System.Resources.Extensions.xml
-bin/Debug/ZstdSharp.dll
+bin/Debug
 
 # NuGet Packages
 *.nupkg

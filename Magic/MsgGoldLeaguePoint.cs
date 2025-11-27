@@ -1,15 +1,10 @@
-﻿using MTA.Network;
-using ProtoBuf;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using MTA.Client;
-using System.IO;
+using MTA.Network;
 
-namespace MTA
+namespace MTA.Magic
 {
-
     public class MsgGoldLeaguePoint : Writer, Interfaces.IPacket
     {
         public const uint Defult = 8;

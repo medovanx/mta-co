@@ -380,7 +380,7 @@ namespace MTA
             Console.ForegroundColor = ConsoleColor.Yellow;
             IntPtr hWnd = FindWindow(null, Console.Title);
             Console.WriteLine("Loaded server configuration.");
-            string ConfigFileName = "configuration.ini";
+            string ConfigFileName = "Config\\configuration.ini";
             IniFile IniFile = new IniFile(ConfigFileName);
             GameIP = IniFile.ReadString("configuration", "IP");
             GamePort = IniFile.ReadUInt16("configuration", "GamePort");
@@ -986,7 +986,7 @@ namespace MTA
                         }
                     case "@king":
                         Console.WriteLine("Load Server Configuration By Legends !");
-                        string ConfigFileName = "configuration.ini";
+                        string ConfigFileName = "Config\\configuration.ini";
                         IniFile IniFile = new IniFile(ConfigFileName);
                         GameIP = IniFile.ReadString("configuration", "IP");
                         GamePort = IniFile.ReadUInt16("configuration", "GamePort");

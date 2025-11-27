@@ -21,38 +21,38 @@ namespace ProjectX_V3_Lib.ScriptEngine
 		/// The settings associated with the script engine.
 		/// </summary>
 		private ScriptSettings Settings;
-		
+
 		/// <summary>
 		/// The thread checking for script updates.
 		/// </summary>
-	//	private Threading.BaseThread scriptCheckerThread;
-		
+		//	private Threading.BaseThread scriptCheckerThread;
+
 		/// <summary>
 		/// The interval between each script update.
 		/// </summary>
 		private int checkInterval;
-		
+
 		/// <summary>
 		/// Creates a new instance of ScriptEngine.
 		/// </summary>
 		/// <param name="Settings">The settings associated to the script engine.</param>
 		/// <param name="scriptcheckinterval">The interval between each script update.</param>
-        public ScriptEngine(ScriptSettings Settings, int scriptcheckinterval = 10000)
+		public ScriptEngine(ScriptSettings Settings, int scriptcheckinterval = 10000)
 		{
 			this.checkInterval = scriptcheckinterval;
 			this.Settings = Settings;
 			scriptCollection = new ScriptCollection(Settings);
 			//scriptCheckerThread = new ProjectX_V3_Lib.Threading.BaseThread(new Threading.ThreadAction(Check_Updates),
-			                                                      //         scriptcheckinterval, "Script Engine");
+			//         scriptcheckinterval, "Script Engine");
 			//scriptCheckerThread.Start();
 		}
-		
+
 		public static void SetNamespaces(ScriptSettings settings)
 		{
 			Content = Content.Replace("__namespace__", getns(settings));
 			Content2 = Content2.Replace("__namespace__", getns2(settings));
 		}
-		
+
 		/// <summary>
 		/// The c# code content.
 		/// </summary>
@@ -65,7 +65,7 @@ namespace scriptnamespace
 		__method__
 	}
 }";
-		
+
 		/// <summary>
 		/// The vb code content.
 		/// </summary>
@@ -78,7 +78,7 @@ Namespace scriptnamespace
 		
 	End Class
 End Namespace";
-		
+
 		/// <summary>
 		/// Gets the namespace code for c#.
 		/// </summary>
@@ -90,9 +90,10 @@ End Namespace";
 			{
 				namespaceBuilder.Append("using ").Append(_namespace).Append(";").Append(Environment.NewLine);
 			}
+
 			return namespaceBuilder.ToString();
 		}
-		
+
 		/// <summary>
 		/// Gets the namespace code for vb.
 		/// </summary>
@@ -104,11 +105,12 @@ End Namespace";
 			{
 				namespaceBuilder.Append("Imports ").Append(_namespace).Append(Environment.NewLine);
 			}
+
 			return namespaceBuilder.ToString();
 		}
-		
+
 		private string currentcompilefile;
-		
+
 		/// <summary>
 		/// Checks for updates.
 		/// </summary>
@@ -116,58 +118,72 @@ End Namespace";
 		{
 			try
 			{
-				foreach (string file in System.IO.Directory.GetFiles(Settings.ScriptLocation + "\\cmpl"))
+				// Ensure the base scripts directory exists
+				if (!System.IO.Directory.Exists(Settings.ScriptLocation))
 				{
-					try
-					{
-						System.IO.File.Delete(file);
-					}
-					catch { } // no permission
+					System.IO.Directory.CreateDirectory(Settings.ScriptLocation);
 				}
-				
+
+				// Ensure the cmpl subdirectory exists
+				string cmplPath = Settings.ScriptLocation + "\\cmpl";
+				if (!System.IO.Directory.Exists(cmplPath))
+				{
+					System.IO.Directory.CreateDirectory(cmplPath);
+				}
+
+				foreach (string file in System.IO.Directory.GetFiles(cmplPath))
+				{
+					System.IO.File.Delete(file);
+				}
+
 				DateTime now = DateTime.Now;
-				currentcompilefile = "\\cmpl\\cmpl_" + now.Month + "-" + now.Day + "-" + now.Hour + "-" + now.Minute + "-" + now.Second;
-				
+				currentcompilefile = "\\cmpl\\cmpl_" + now.Month + "-" + now.Day + "-" + now.Hour + "-" + now.Minute + "-" +
+				                     now.Second;
+
 				switch (Settings.Language)
 				{
 					case ScriptLanguage.CSharp:
+					{
+						StringBuilder scriptBuilder = new StringBuilder();
+						foreach (string file in System.IO.Directory.GetFiles(Settings.ScriptLocation))
 						{
-							StringBuilder scriptBuilder = new StringBuilder();
-							foreach (string file in System.IO.Directory.GetFiles(Settings.ScriptLocation))
+							if (file.EndsWith(".cs"))
 							{
-								if (file.EndsWith(".cs"))
-								{
-									scriptBuilder.Append(System.IO.File.ReadAllText(file));
-									scriptBuilder.Append(Environment.NewLine);
-								}
+								scriptBuilder.Append(System.IO.File.ReadAllText(file));
+								scriptBuilder.Append(Environment.NewLine);
 							}
-							System.IO.File.WriteAllText(Settings.ScriptLocation + currentcompilefile + ".cs", Content.Replace("__method__", scriptBuilder.ToString()));
-							CompileCSScripts();
-							break;
 						}
+
+						System.IO.File.WriteAllText(Settings.ScriptLocation + currentcompilefile + ".cs",
+							Content.Replace("__method__", scriptBuilder.ToString()));
+						CompileCSScripts();
+						break;
+					}
 					case ScriptLanguage.VisualBasic:
+					{
+						StringBuilder scriptBuilder = new StringBuilder();
+						foreach (string file in System.IO.Directory.GetFiles(Settings.ScriptLocation))
 						{
-							StringBuilder scriptBuilder = new StringBuilder();
-							foreach (string file in System.IO.Directory.GetFiles(Settings.ScriptLocation))
+							if (file.EndsWith(".vb"))
 							{
-								if (file.EndsWith(".vb"))
-								{
-									scriptBuilder.Append(System.IO.File.ReadAllText(file));
-									scriptBuilder.Append(Environment.NewLine);
-								}
+								scriptBuilder.Append(System.IO.File.ReadAllText(file));
+								scriptBuilder.Append(Environment.NewLine);
 							}
-							System.IO.File.WriteAllText(Settings.ScriptLocation + currentcompilefile + ".vb", Content2.Replace("__method__", scriptBuilder.ToString()));
-							CompileCSScripts();
-							break;
 						}
-				}                
+
+						System.IO.File.WriteAllText(Settings.ScriptLocation + currentcompilefile + ".vb",
+							Content2.Replace("__method__", scriptBuilder.ToString()));
+						CompileCSScripts();
+						break;
+					}
+				}
 			}
 			catch (Exception e)
 			{
 				Console.WriteLine("Script loading failed... Exception: {0}{1}", Environment.NewLine, e.ToString());
 			}
 		}
-		
+
 		/// <summary>
 		/// Compiles all the c# scripts.
 		/// </summary>
@@ -179,23 +195,25 @@ End Namespace";
 			{
 				GenerateInMemory = true
 			};
-			
+
 			Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
 			for (int i = 0; i < assemblies.Length; i++)
 			{
 				Assembly assembly = assemblies[i];
 				compilerParameters.ReferencedAssemblies.Add(assembly.Location);
 			}
+
 			foreach (Type type in Settings.types.Values)
 				compilerParameters.ReferencedAssemblies.Add(Assembly.GetAssembly(type).Location);
 			CSharpCodeProvider cSharpCodeProvider = new CSharpCodeProvider();
-			CompilerResults compilerResults = cSharpCodeProvider.CompileAssemblyFromFile(compilerParameters, Settings.ScriptLocation + currentcompilefile + ".cs");
+			CompilerResults compilerResults = cSharpCodeProvider.CompileAssemblyFromFile(compilerParameters,
+				Settings.ScriptLocation + currentcompilefile + ".cs");
 			if (compilerResults.Errors.Count != 0)
 			{
 				foreach (CompilerError err in compilerResults.Errors)
 					Console.WriteLine(err.ToString());
-                Console.ReadLine();
-                return;
+				Console.ReadLine();
+				return;
 			}
 			else
 			{
@@ -215,7 +233,7 @@ End Namespace";
 				}
 			}
 		}
-		
+
 		/// <summary>
 		/// Compiles all the vb scripts.
 		/// </summary>
@@ -227,17 +245,19 @@ End Namespace";
 			{
 				GenerateInMemory = true
 			};
-			
+
 			Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
 			for (int i = 0; i < assemblies.Length; i++)
 			{
 				Assembly assembly = assemblies[i];
 				compilerParameters.ReferencedAssemblies.Add(assembly.Location);
 			}
+
 			foreach (Type type in Settings.types.Values)
 				compilerParameters.ReferencedAssemblies.Add(Assembly.GetAssembly(type).Location);
 			VBCodeProvider vbCodeProvider = new VBCodeProvider();
-			CompilerResults compilerResults = vbCodeProvider.CompileAssemblyFromFile(compilerParameters, Settings.ScriptLocation + currentcompilefile + ".vb");
+			CompilerResults compilerResults = vbCodeProvider.CompileAssemblyFromFile(compilerParameters,
+				Settings.ScriptLocation + currentcompilefile + ".vb");
 			if (compilerResults.Errors.Count != 0)
 			{
 				foreach (CompilerError err in compilerResults.Errors)
@@ -261,12 +281,12 @@ End Namespace";
 				}
 			}
 		}
-		
+
 		/// <summary>
 		/// The collection of the scripts.
 		/// </summary>
-        public ScriptCollection scriptCollection;
-		
+		public ScriptCollection scriptCollection;
+
 		/// <summary>
 		/// Invokes a script.
 		/// </summary>

@@ -102,7 +102,8 @@ namespace MTA
         public static void WriteLine(string text)
         {
             System.Console.ForegroundColor = GetRandomConsoleColor();
-            System.Console.Write(new string(' ', (Console.WindowWidth - text.Length) / 2));
+            int padding = Math.Max(0, (Console.WindowWidth - text.Length) / 2);
+            System.Console.Write(new string(' ', padding));
             System.Console.WriteLine(text);
         }
 

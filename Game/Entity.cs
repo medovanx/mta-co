@@ -11,10 +11,11 @@ using MTA.Interfaces;
 using MTA.Database;
 using System.Collections.Concurrent;
 using MTA.Client;
+using MTA.Magic;
 
 namespace MTA.Game
 {
-    public class Entity : Writer, Interfaces.IBaseEntity, Interfaces.IMapObject
+    public class Entity : Writer, IBaseEntity, IMapObject
     {
         public byte _Windwalker;
         public byte Windwalker

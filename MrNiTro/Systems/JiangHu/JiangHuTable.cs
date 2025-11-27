@@ -28,24 +28,28 @@ namespace MTA.Database
                 Talent = 1;
             return MinutesOnTalent[Math.Min(4, (int)(Talent - 1))];
         }
+
         public static ushort GetFreeCourseInCastle(byte Talent)
         {
             if (Talent == 0)
                 Talent = 1;
             return FreeCourseInCastle[Math.Min(4, (int)(Talent - 1))];
         }
+
         public static ushort GetFreeCourse(byte Talent)
         {
             if (Talent == 0)
                 Talent = 1;
             return FreeCourse[Math.Min(4, (int)(Talent - 1))];
         }
+
         public static double GetMinutesInCastle(byte Talent)
         {
             if (Talent == 0)
                 Talent = 1;
             return MinutesInCastle[Math.Min(4, (int)(Talent - 1))];
         }
+
         public static ushort GetStatusPoints(byte Level)
         {
             if (Level == 0)
@@ -59,15 +63,19 @@ namespace MTA.Database
             public byte Type;
             public ushort Power;
         }
+
         public static Dictionary<ushort, Atribut> Atributes = new Dictionary<ushort, Atribut>();
+
         public static ushort ValueToRoll(byte typ, byte level)
         {
             return (ushort)((ushort)typ + level * 256);
         }
+
         public static ushort GetPower(ushort UID)
         {
             return Atributes[UID].Power;
         }
+
         public static void LoadStatus()
         {
             try
@@ -96,6 +104,7 @@ namespace MTA.Database
                         }
                     }
                 }
+
                 using (Read r = new Read("JiangHu\\JingHuCultivateStatus.txt"))
                 {
                     if (r.Reader())
@@ -116,29 +125,12 @@ namespace MTA.Database
                     }
                 }
             }
-            catch (Exception e) { Console.WriteLine(e.ToString()); }
-        }
-        public static void LoadJiangHuOLD()
-        {
-            using (Read r = new Read("JiangHu\\JiangHu.txt"))
+            catch (Exception e)
             {
-                if (r.Reader())
-                {
-                    int count = r.Count;
-                    for (uint x = 0; x < count; x++)
-                    {
-                        string data = r.ReadString("");
-                        if (data != null)
-                        {
-                            Game.JiangHu jiang = new Game.JiangHu(0);
-                            jiang.Load(data);
-                            Game.JiangHu.JiangHuClients.TryAdd(jiang.UID, jiang);
-                            Game.JiangHu.JiangHuRanking.UpdateRank(jiang);
-                        }
-                    }
-                }
+                Console.WriteLine(e.ToString());
             }
         }
+
         public static void SaveJiangHu()
         {
             using (Write _wr = new Write(Constants.DatabaseBasePath + "JiangHu\\JiangHu.txt"))
@@ -153,7 +145,7 @@ namespace MTA.Database
             }
         }
 
-        public static void LoadTableJiangHu()
+        public static void LoadJiangHu()
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.SELECT))
             {
@@ -175,22 +167,12 @@ namespace MTA.Database
                                 jiang.Deserialize(reader);
                             }
                         }
+
                         Game.JiangHu.JiangHuClients.TryAdd(jiang.UID, jiang);
                         jiang.CreateStatusAtributes(null);
                     }
                 }
             }
-
-        }
-        public static void LoadJiangHu()
-        {
-            if (!File.Exists("JiangHu\\JiangHu.txt"))
-            {
-                LoadTableJiangHu();
-                SaveJiangHu();
-            }
-            else
-                LoadJiangHuOLD();
         }
     }
 }

@@ -325,16 +325,32 @@ namespace MTA.Network.GamePackets
         {
             try
             {
+                var stream = reader.BaseStream;
+                if (stream.Position + 8 > stream.Length)
+                    return;
+                
                 Potency = reader.ReadInt32();
                 int xStages = reader.ReadInt32();
-                for (int i = 0; i < xStages; i++)
+                int maxStages = Math.Min(xStages, Stages.Length);
+                for (int i = 0; i < maxStages; i++)
                 {
+                    if (stream.Position + 7 > stream.Length)
+                        break;
+                    
                     var Stage = Stages[i];
                     Stage.ID = reader.ReadUInt16();
                     Stage.UnLocked = reader.ReadByte() == 1;
+                    
+                    if (stream.Position + 4 > stream.Length)
+                        break;
+                    
                     int count_neigongs = reader.ReadInt32();
-                    for (int y = 0; y < count_neigongs; y++)
+                    int maxNeiGongs = Math.Min(count_neigongs, Stage.NeiGongs.Length);
+                    for (int y = 0; y < maxNeiGongs; y++)
                     {
+                        if (stream.Position + 5 > stream.Length)
+                            break;
+                        
                         var neigon = Stage.NeiGongs[y];
                         neigon.ID = reader.ReadByte();
                         neigon.Score = reader.ReadByte();
@@ -342,7 +358,48 @@ namespace MTA.Network.GamePackets
                         neigon.level = reader.ReadByte();
                         neigon.Complete = reader.ReadByte() == 1;
                     }
+                    // Skip remaining neigongs if count is larger than array size
+                    for (int y = maxNeiGongs; y < count_neigongs; y++)
+                    {
+                        if (stream.Position + 5 > stream.Length)
+                            break;
+                        
+                        reader.ReadByte(); // ID
+                        reader.ReadByte(); // Score
+                        reader.ReadByte(); // Unlocked
+                        reader.ReadByte(); // level
+                        reader.ReadByte(); // Complete
+                    }
                 }
+                // Skip remaining stages if count is larger than array size
+                for (int i = maxStages; i < xStages; i++)
+                {
+                    if (stream.Position + 7 > stream.Length)
+                        break;
+                    
+                    reader.ReadUInt16(); // ID
+                    reader.ReadByte(); // UnLocked
+                    
+                    if (stream.Position + 4 > stream.Length)
+                        break;
+                    
+                    int count_neigongs = reader.ReadInt32();
+                    for (int y = 0; y < count_neigongs; y++)
+                    {
+                        if (stream.Position + 5 > stream.Length)
+                            break;
+                        
+                        reader.ReadByte(); // ID
+                        reader.ReadByte(); // Score
+                        reader.ReadByte(); // Unlocked
+                        reader.ReadByte(); // level
+                        reader.ReadByte(); // Complete
+                    }
+                }
+            }
+            catch (EndOfStreamException)
+            {
+                // Data is incomplete, silently skip
             }
             catch (Exception e) { Console.WriteLine(e.ToString()); }
         }

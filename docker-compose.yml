@@ -1,0 +1,15 @@
+services:
+  mysql:
+    image: mysql:9.5
+    environment:
+      MYSQL_ROOT_PASSWORD: ROOT
+      MYSQL_DATABASE: mta
+    command: --lower-case-table-names=1
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
+    driver: local
