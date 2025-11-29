@@ -63,7 +63,6 @@ namespace MTA.Game
         public uint BankCps;
         public bool InAutoHunt;
         public uint DeputyLeader = 0;
-        public InnerPower InnerPower;
         public Time32 XpBlueStamp;
         public Time32 BackfireStamp;
         public Time32 ManiacDance;
@@ -187,7 +186,6 @@ namespace MTA.Game
                 points += (uint)PerfectionScore.CalculatePerfectionChiPoints(Owner);
                 points += (uint)((Vitality + Spirit + Strength + Agility + Atributes) * 5);
                 points += (uint)(Level < 140 ? Level * 20 : Level * 25);
-                if (InnerPower != null) points += InnerPower.TotalScore * 2;
                 points += (uint)((uint)NobilityRank * 1000);
                 points += (uint)(Reborn * 1000);
                 points += (PerfectionTable.PerfectionPoints(Owner, true));
@@ -234,7 +232,6 @@ namespace MTA.Game
 
         public uint lacb;
 
-        //   public InnerPower InnerPower;
         public int PerfectionLevel;
         public uint FlameLotusEnergy;
         public uint AuroraLotusEnergy;

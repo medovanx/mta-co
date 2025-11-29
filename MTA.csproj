@@ -234,9 +234,6 @@
     <Compile Include="Client\AuthCryptography.cs" />
     <Compile Include="Database\Loading.cs" />
     <Compile Include="Database\PokerTables.cs" />
-    <Compile Include="MrNiTro\inner\Inner.cs" />
-    <Compile Include="MrNiTro\inner\InnerPower.cs" />
-    <Compile Include="MrNiTro\inner\InnerPowerTable.cs" />
     <Compile Include="MrNiTro\PacketBuilder.cs" />
     <Compile Include="MrNiTro\PoleIslanD.cs" />
     <Compile Include="Extensions\SystemExtensions\Class2.cs" />

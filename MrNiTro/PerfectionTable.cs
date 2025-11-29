@@ -41,7 +41,6 @@ namespace MTA.Network.GamePackets
             public enum AbilitiesSort : byte
             {
                 Chi = 2,
-                InnerPower = 3,
                 Enchant = 4,
                 Level = 5,
                 PerfectionLevel = 6,
@@ -646,7 +645,6 @@ namespace MTA.Network.GamePackets
         {
             uint Score = 0;
             if (Type == 2) Score = (uint)PerfectionScore.CalculatePerfectionChiPoints(client);
-            if (Type == 3) Score = (uint)(client.Entity.InnerPower != null ? client.Entity.InnerPower.TotalScore * 2 : 0);
             if (Type == 4) Score = client.Equipment.GetFullEquipmentEnchantPoints;
             if (Type == 5) Score = (uint)(client.Entity.Level < 140 ? client.Entity.Level * 20 : client.Entity.Level * 25);
             if (Type == 6) Score = client.Equipment.GetFullEquipmentPerfecetionLevelPoints;

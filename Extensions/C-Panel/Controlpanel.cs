@@ -194,7 +194,6 @@ namespace MTA
             client.Account.Password = password.Text;
             client.Account.Save();
             Database.EntityTable.SaveEntity(client);
-            InnerPowerTable.Save();
         }
 
         private void Control_Load(object sender, EventArgs e)

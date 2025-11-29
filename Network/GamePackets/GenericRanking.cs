@@ -21,7 +21,6 @@ namespace MTA.Network.GamePackets
         public const uint PhoenixChi = 60000002u;
         public const uint TigerChi = 60000003u;
         public const uint TurtleChi = 60000004u;
-        public const uint InnerPower = 70000000u;
         public const uint Prestige = 80000000u;
         private byte[] Buffer;
         private int current;

@@ -359,7 +359,6 @@ namespace MTA.Network.GamePackets
             IncreaseFinalMAttack = 70,
             Blessed = 66,
             gMagicAtk = 67,
-            InnerPowerPotency = 77,
             ExtraInventory = 79,
             AvailableSlots = 80,
             UnionMember = 81,

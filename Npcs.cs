@@ -33672,43 +33672,6 @@ namespace MTA
                 #endregion
                 #endregion
 
-
-
-                #region InnerPower
-                case 785410:
-                    {
-                        switch (npcRequest.OptionID)
-                        {
-                            case 0:
-                                {
-                                    dialog.Text("Sell points innerpower system 10000 point for 1 .");
-                                    dialog.Option("Ok.", 1);
-                                    dialog.Option("Not intrested", 255);
-                                    dialog.Send();
-                                    break;
-                                }
-                            case 1:
-                                {
-                                    if (client.Entity.ConquerPoints >= 1)
-                                    {
-                                        client.Entity.ConquerPoints -= 1;
-                                        client.Entity.InnerPower.AddPotency(null, client, 10000);
-                                    }
-                                    else
-                                    {
-                                        Network.GamePackets.NpcReply npc = new Network.GamePackets.NpcReply(6, "Sorry But You Don't Have 1 cps");
-                                        npc.OptionID = 255;
-                                        client.Send(npc.ToArray());
-                                        break;
-                                    }
-                                    break;
-                                }
-                        }
-                        break;
-                    }
-                #endregion
-
-
                 #region PerfectionLevel 54 Item NPC !
                 case 808134:
                     {
@@ -34653,7 +34616,6 @@ namespace MTA
                             case 1:
                                 if (World.cycolne3 == true && Game.Entity.Speed == 0)
                                 {
-                                    //client.Entity.InnerPower.Potency += 2500;
                                     //client.Entity.killerpoints += 50;
                                     client.Entity.race = 0;
                                     Game.Entity.Speed++;

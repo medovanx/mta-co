@@ -137,13 +137,6 @@ namespace MTA.Network
             var _stream = new BinaryReader(new MemoryStream(packet));
             switch (ID)
             {
-                #region MsgInnerPower
-                case 2610:
-                    {
-                        MsgInnerPower.InnerPowerHandler(client, packet);
-                        break;
-                    }
-                #endregion
                 #region [3251-3255] Perfection
                 case 3251:
                     {
@@ -4463,43 +4456,6 @@ namespace MTA.Network
                                     ranking.RankingType = uid;
                                     switch (uid)
                                     {
-                                        case GamePackets.GenericRanking.InnerPower:
-                                            {
-                                                ushort page = ranking.Page;
-                                                var array = InnerPower.InnerPowerRank.GetRankingList();
-                                                if (array.Length < page * 10) return;
-                                                uint count = (uint)Math.Min(array.Length - page * 10, 10);
-                                                var nRanking = new GenericRanking(true, count);
-                                                nRanking.Mode = GenericRanking.Ranking;
-                                                nRanking.RankingType = ranking.RankingType;
-                                                nRanking.Page = page;
-                                                nRanking.RegisteredCount = (ushort)array.Length;
-                                                int rank = (int)page * 10;
-                                                for (int i = rank; i < rank + count; i++)
-                                                {
-                                                    var current = array[i];
-                                                    nRanking.Append((uint)(i + 1), (uint)current.TotalScore, current.UID, current.Name);
-                                                }
-                                                client.Send(nRanking);
-
-
-                                                for (int i = 0; i < array.Length; i++)
-                                                {
-                                                    var element = array[i];
-                                                    if (element.UID == client.Entity.UID)
-                                                    {
-                                                        Network.GamePackets.GenericRanking PacketRank = new Network.GamePackets.GenericRanking(true, 1);
-                                                        PacketRank.Mode = Network.GamePackets.GenericRanking.QueryCount;
-                                                        PacketRank.RankingType = GamePackets.GenericRanking.InnerPower;
-                                                        PacketRank.Append((uint)(i + 1), element.TotalScore, element.UID, element.Name);
-                                                        client.Send(PacketRank.ToArray());
-
-                                                        break;
-                                                    }
-
-                                                }
-                                                break;
-                                            }
                                         #region Perfection
                                         case 80000001:
                                         case 80000002:
@@ -15820,9 +15776,8 @@ namespace MTA.Network
                 #region OutstandingExploitPack
                 case 3007108:
                     {
-                        client.Entity.InnerPower.AddPotency(null, client, 400);
                         client.Entity.lacb += 50;
-                        client.Send(new Message("Congratulations You receive 50 War Exploits , 400 Potency Points , 50 pts to Union Fund", System.Drawing.Color.Red, Message.World));
+                        client.Send(new Message("Congratulations You receive 50 War Exploits , 50 pts to Union Fund", System.Drawing.Color.Red, Message.World));
                         client.Inventory.Remove(item, Game.Enums.ItemUse.Remove);
                         break;
                     }
@@ -15830,9 +15785,8 @@ namespace MTA.Network
                 #region ExcellentExploitPack
                 case 3007109:
                     {
-                        client.Entity.InnerPower.AddPotency(null, client, 600);
                         client.Entity.lacb += 100;
-                        client.Send(new Message("Congratulations You receive 50 Champion Points , 100 War Exploits , 600 Potency Points , 160 pts to Union Fund", System.Drawing.Color.Red, Message.World));
+                        client.Send(new Message("Congratulations You receive 50 Champion Points , 100 War Exploits , 160 pts to Union Fund", System.Drawing.Color.Red, Message.World));
                         client.Inventory.Remove(item, Game.Enums.ItemUse.Remove);
                         break;
                     }
@@ -15840,9 +15794,8 @@ namespace MTA.Network
                 #region SupremeExploitPack
                 case 3007110:
                     {
-                        client.Entity.InnerPower.AddPotency(null, client, 1000);
                         client.Entity.lacb += 150;
-                        client.Send(new Message("Congratulations You receive 100 Champion Points , 150 War Exploits , 1000 Potency Points , 360 pts to Union Fund", System.Drawing.Color.Red, Message.World));
+                        client.Send(new Message("Congratulations You receive 100 Champion Points , 150 War Exploits , 360 pts to Union Fund", System.Drawing.Color.Red, Message.World));
                         client.Inventory.Remove(item, Game.Enums.ItemUse.Remove);
                         break;
                     }
@@ -23348,12 +23301,6 @@ p =>
                                     client.XPListStamp = Time32.Now;
                                     break;
                                 }
-                            case "inner":
-                                {
-                                    client.Entity.InnerPower.Potency = int.MaxValue % 10000000;
-                                    client.Entity.Update((byte)Update.InnerPowerPotency, (uint)client.Entity.InnerPower.Potency, false);
-                                    break;
-                                }
                             case "who":
                                 {
                                     var varr = Kernel.GamePool.Values.GetEnumerator();
@@ -26662,17 +26609,6 @@ p =>
             datas.ID = 116;
             datas.dwParam = 1197;
             client.Send(datas);
-            #endregion
-            #region InnerPower
-            if (!InnerPower.InnerPowerPolle.TryGetValue(client.Entity.UID, out client.Entity.InnerPower))
-            {
-                client.Entity.InnerPower = new InnerPower(client.Entity.Name, client.Entity.UID);
-                Database.InnerPowerTable.New(client);
-            }
-
-            client.Entity.InnerPower.UpdateStatus();
-            client.Entity.InnerPower.AddPotency(null, client, 0);
-            client.LoadItemStats();
             #endregion
             client.LoadItemStats();
             #region AtQuests

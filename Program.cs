@@ -575,8 +575,6 @@ namespace MTA
                 Clan.LoadClans();
                 Game.Screen.CreateTimerFactories();
                 PerfectionTable.Load();
-                Database.InnerPowerTable.LoadDBInformation();
-                Database.InnerPowerTable.Load();
                 Network.Cryptography.AuthCryptography.PrepareAuthCryptography();
                 if (!ServerTransfer)
                     World.CreateTournaments();
@@ -668,9 +666,7 @@ namespace MTA
                     Parallel.ForEach(Program.Values, client =>//)
                     //   foreach (Client.GameState client in Program.Values)
                     {
-                        //   InnerPowerTable.Save();
                         // client.Account.Save();
-                        InnerPowerTable.Save();
                         Database.EntityTable.SaveEntity(client, conn);
                         Database.SkillTable.SaveProficiencies(client, conn);
                         Database.SkillTable.SaveSpells(client, conn);
@@ -1165,7 +1161,6 @@ namespace MTA
 
                             new Database.MySqlCommand(Database.MySqlCommandType.UPDATE).Update("configuration").Set("ItemUID", ConquerItem.ItemUID.Now).Where("Server", Constants.ServerName).Execute();
                             Database.EntityVariableTable.Save(0, Vars);
-                            InnerPowerTable.Save();
                             var WC = Program.Values.ToArray();
                             // foreach (Client.GameState client in WC)
                             Parallel.ForEach(Program.Values, client =>
@@ -1227,7 +1222,6 @@ namespace MTA
                                 {
                                     AuthServer[i].Disable();
                                 }
-                                InnerPowerTable.Save();
                                 if (GuildWar.IsWar)
                                     GuildWar.End();
                                 new Database.MySqlCommand(Database.MySqlCommandType.UPDATE).Update("configuration").Set("ItemUID", ConquerItem.ItemUID.Now).Where("Server", Constants.ServerName).Execute();

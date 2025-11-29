@@ -64,7 +64,6 @@ namespace MTA.Client
         public Languages Language = Languages.English;
         public Time32 bodeSHStamp;
         public bool FTbode = false;
-        //  public Game.InnerPower InnerPower;
         public bool InWareHouse()
         {
             foreach (var wh in Warehouses.Values)
@@ -856,7 +855,6 @@ namespace MTA.Client
                     {
                         conn.Open();
                         Database.EntityTable.UpdateOnlineStatus(this, false, conn);
-                        InnerPowerTable.Save();
                         Database.EntityTable.SaveEntity(this, conn);
                         if (!TransferedPlayer)
                             Database.EntityVariableTable.Save(this, conn);
@@ -4682,27 +4680,6 @@ namespace MTA.Client
             }
             #endregion
             #endregion
-            #region Inner
-            if (Entity.InnerPower != null)
-            {
-                Entity.InnerPower.UpdateStatus();
-                Entity.Defence += (ushort)Entity.InnerPower.Defence;
-                Entity.CriticalStrike += (int)Entity.InnerPower.CriticalStrike;
-                Entity.SkillCStrike += (int)Entity.InnerPower.SkillCriticalStrike;
-                Entity.Immunity += (int)Entity.InnerPower.Immunity;
-                Entity.Breaktrough += (ushort)Entity.InnerPower.Breakthrough;
-                Entity.Counteraction += (ushort)Entity.InnerPower.Counteraction;
-                Entity.ItemHP += Entity.InnerPower.MaxLife;
-                Entity.BaseMaxAttack += Entity.InnerPower.AddAttack;
-                Entity.BaseMinAttack += Entity.InnerPower.AddAttack;
-                Entity.BaseMagicAttack += Entity.InnerPower.AddMagicAttack;
-                Entity.BaseMagicDefence += Entity.InnerPower.AddMagicDefense;
-                Entity.PhysicalDamageIncrease += (ushort)Entity.InnerPower.FinalAttack;
-                Entity.PhysicalDamageDecrease += (ushort)Entity.InnerPower.FinalDefense;
-                Entity.MagicDamageIncrease += (ushort)Entity.InnerPower.FinalMagicAttack;
-                Entity.MagicDamageDecrease += (ushort)Entity.InnerPower.FinalMagicDefense;
-            }
-            #endregion
             #region Vip 6
 
             if (this.Entity.VIPLevel == 6)
@@ -5456,7 +5433,6 @@ namespace MTA.Client
         public bool Fake;
         public Tuple<ConquerItem, ConquerItem> Weapons;
         public Game.Enums.PkMode PrevPK;
-        public InnerPower InnerPower;
         public int TeamCheerFor;
         public int ArenaState = 0;
         public QuizShow.QuizClient Quiz;
