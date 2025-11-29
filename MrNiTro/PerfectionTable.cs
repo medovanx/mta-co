@@ -40,7 +40,6 @@ namespace MTA.Network.GamePackets
             public A.AbilitiesSort Sort;
             public enum AbilitiesSort : byte
             {
-                Jiang = 1,
                 Chi = 2,
                 InnerPower = 3,
                 Enchant = 4,
@@ -646,7 +645,6 @@ namespace MTA.Network.GamePackets
         public uint GetScoreValue(Client.GameState client, uint Type)
         {
             uint Score = 0;
-            if (Type == 1) Score = (uint)PerfectionScore.CalculatePerfectionJiangPoints(client);
             if (Type == 2) Score = (uint)PerfectionScore.CalculatePerfectionChiPoints(client);
             if (Type == 3) Score = (uint)(client.Entity.InnerPower != null ? client.Entity.InnerPower.TotalScore * 2 : 0);
             if (Type == 4) Score = client.Equipment.GetFullEquipmentEnchantPoints;
@@ -691,6 +689,7 @@ namespace MTA.Network.GamePackets
                     }
             }
         }
+
         public static int CalculatePerfectionChiPoints(Client.GameState client)
         {
             int Point = 0;
@@ -704,22 +703,7 @@ namespace MTA.Network.GamePackets
             }
             return Point;
         }
-        public static int CalculatePerfectionJiangPoints(Client.GameState client)
-        {
-            int Points = 0;
-            if (client.Entity.MyJiang != null)
-            {
-                if (client.Entity.MyJiang.Inner_Strength == 0) return Points;
-                if (client.Entity.MyJiang.Inner_Strength <= 16200) Points = (int)(client.Entity.MyJiang.Inner_Strength * 0.3);
-                else if (client.Entity.MyJiang.Inner_Strength <= 40500) Points = (int)(client.Entity.MyJiang.Inner_Strength * 0.33);
-                else if (client.Entity.MyJiang.Inner_Strength <= 60750) Points = (int)(client.Entity.MyJiang.Inner_Strength * 0.36);
-                else if (client.Entity.MyJiang.Inner_Strength <= 72000) Points = (int)(client.Entity.MyJiang.Inner_Strength * 0.40);
-                else if (client.Entity.MyJiang.Inner_Strength <= 79200) Points = (int)(client.Entity.MyJiang.Inner_Strength * 0.45);
-                else if (client.Entity.MyJiang.Inner_Strength <= 80800) Points = (int)(client.Entity.MyJiang.Inner_Strength * 0.50);
-                else if (client.Entity.MyJiang.Inner_Strength <= 81000) Points = (int)(client.Entity.MyJiang.Inner_Strength * 0.60);
-            }
-            return Points;
-        }
+        
         public static uint CalculateSubClassPoints(Client.GameState client)
         {
             uint Points = 0;
@@ -733,6 +717,7 @@ namespace MTA.Network.GamePackets
             }
             return Points;
         }
+
         public static uint CalculatePerfectionItemPoints(ConquerItem item)
         {
             uint Points = 50;

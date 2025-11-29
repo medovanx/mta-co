@@ -16,8 +16,6 @@ using Albetros.Core;
 using System.Diagnostics;
 using Microsoft.Win32;
 using MTA.MaTrix;
-//using MTA.iPiraTe.JiangHu;
-
 
 namespace MTA.Client
 {
@@ -353,11 +351,6 @@ namespace MTA.Client
                         cmdupdate = new Database.MySqlCommand(Database.MySqlCommandType.UPDATE);
                         cmdupdate.Update("clans").Set("LeaderName", newname).Where("LeaderName", name200).Execute();
 
-                        if (p.Entity.MyJiang != null)
-                        {
-                            p.Entity.MyJiang.OwnName = newname;
-                            Game.JiangHu.JiangHuClients[p.Entity.UID] = p.Entity.MyJiang;
-                        }
                         if (p.Entity.MyFlowers != null)
                             p.Entity.MyFlowers.Name = newname;
 
@@ -455,7 +448,6 @@ namespace MTA.Client
             }
         }
 
-        public bool JiangActive = false;
         public bool StudyToday
         {
             get { return this["StudyToday"]; }
@@ -609,7 +601,6 @@ namespace MTA.Client
             SpiritBeadQ = new Game.Features.SpiritBeadQuest(this);
             ChiPowers = new List<ChiPowerStructure>();
             Retretead_ChiPowers = new ChiPowerStructure[4];
-            //JiangPowers = new List<JiangPowerStructure>();
         }
         public bool Ninja()
         {
@@ -665,7 +656,6 @@ namespace MTA.Client
                 map = null;
                 SpiritBeadQ = new Game.Features.SpiritBeadQuest(this);
                 Quests = new MaTrix.Quests(this);
-                //JiangHuStatus = new JiangHuStatus();
             }
             catch (Exception e)
             {
@@ -1107,10 +1097,6 @@ namespace MTA.Client
         public List<ChiPowerStructure> ChiPowers;
         public ChiPowerStructure[] Retretead_ChiPowers;
         public uint ChiPoints = 0;
-
-        //public List<JiangPowerStructure> JiangPowers;
-        //public JiangHuStatus JiangHuStatus;
-        //public JiangHu JiangHu;
         public SafeDictionary<uint, DetainedItem> ClaimableItem = new SafeDictionary<uint, DetainedItem>(1000),
                                                   DeatinedItem = new SafeDictionary<uint, DetainedItem>(1000);
 
@@ -3804,11 +3790,6 @@ namespace MTA.Client
         //    #endregion
         //    #endregion
 
-        //    if (Entity.MyJiang != null)
-        //    {
-        //        Entity.MyJiang.CreateStatusAtributes(Entity);
-        //    }
-
         //    if (Entity.Aura_isActive)
         //        doAuraBonuses(Entity.Aura_actType, Entity.Aura_actPower, 1);
         //    else
@@ -4737,10 +4718,7 @@ namespace MTA.Client
                 expr_1950.Defence += 2000;
             }
             #endregion
-            if (Entity.MyJiang != null)
-            {
-                Entity.MyJiang.CreateStatusAtributes(Entity);
-            }
+
             if (Entity.Aura_isActive)
                 doAuraBonuses(Entity.Aura_actType, Entity.Aura_actPower, 1);
             else
@@ -6570,49 +6548,6 @@ namespace MTA.Client
                                 client.SendScreenSpawn(floorItem, true);
                                 break;
                             }
-                        case "matrixjiang":
-                            {
-                                if (client.Entity.MyJiang != null)
-                                {
-                                    byte stageno = (byte)Math.Min(9, int.Parse(Data[1]));
-                                    byte level = (byte)Math.Min(6, int.Parse(Data[2]));
-                                    var type = (Game.JiangHu.JiangStages.AtributesType)Math.Min(15, int.Parse(Data[3]));
-                                    if (client.Entity.MyJiang.Stagers.Length >= stageno)
-                                    {
-                                        var stage = client.Entity.MyJiang.Stagers[(stageno - 1)];
-                                        for (byte i = 1; i < stage.Stars.Length + 1; i++)
-                                        {
-                                            client.Entity.MyJiang.MyNewStart = new Game.JiangHu.GetNewStar();
-                                            client.Entity.MyJiang.MyNewStart.PositionStar = i;
-                                            client.Entity.MyJiang.MyNewStart.Stage = stageno;
-
-                                            client.Entity.MyJiang.MyNewStart.Star = new Game.JiangHu.JiangStages.Star();
-                                            client.Entity.MyJiang.MyNewStart.Star.Activate = true;
-                                            client.Entity.MyJiang.MyNewStart.Star.Level = level;
-                                            client.Entity.MyJiang.MyNewStart.Star.Typ = type;
-
-                                            client.Entity.MyJiang.MyNewStart.Star.UID = client.Entity.MyJiang.ValueToRoll(client.Entity.MyJiang.MyNewStart.Star.Typ, client.Entity.MyJiang.MyNewStart.Star.Level);
-
-                                            Network.GamePackets.JiangHuUpdate upd = new Network.GamePackets.JiangHuUpdate();
-
-                                            upd.Atribute = client.Entity.MyJiang.MyNewStart.Star.UID;
-                                            upd.FreeCourse = client.Entity.MyJiang.FreeCourse;
-                                            upd.Stage = stageno;
-                                            upd.Star = i;
-                                            upd.FreeTimeTodeyUsed = (byte)client.Entity.MyJiang.FreeTimeTodeyUsed;
-                                            upd.RoundBuyPoints = client.Entity.MyJiang.RoundBuyPoints;
-                                            client.Send(upd.ToArray());
-
-                                            client.Entity.MyJiang.ApplayNewStar(client);
-                                        }
-                                        if (client.Entity.MyJiang != null)
-                                            client.Entity.MyJiang.SendStatus(client, client);
-                                    }
-                                }
-                                break;
-                            }
-
-
                         case "serverid3":
                             {
                                 client.Entity.CUID = client.Entity.UID;
@@ -7350,6 +7285,37 @@ namespace MTA.Client
                                 }
                                 break;
 
+                            }
+                        case "gotonpc":
+                            {
+                                if (Data.Length < 2)
+                                {
+                                    client.Send(new Message("Usage: @gotonpc <npc_id>", System.Drawing.Color.Red, Message.Tip));
+                                    break;
+                                }
+                                uint npcId = uint.Parse(Data[1]);
+                                Interfaces.INpc foundNpc = null;
+                                
+                                // Search through all maps for the NPC
+                                foreach (var map in Kernel.Maps.Values)
+                                {
+                                    if (map.Npcs.ContainsKey(npcId))
+                                    {
+                                        foundNpc = map.Npcs[npcId];
+                                        break;
+                                    }
+                                }
+                                
+                                if (foundNpc != null)
+                                {
+                                    client.Entity.Teleport(foundNpc.MapID, foundNpc.X, foundNpc.Y);
+                                    client.Send(new Message("Teleported to NPC [" + foundNpc.Name + "] (ID: " + npcId + ")", System.Drawing.Color.Green, Message.Tip));
+                                }
+                                else
+                                {
+                                    client.Send(new Message("NPC with ID " + npcId + " not found!", System.Drawing.Color.Red, Message.Tip));
+                                }
+                                break;
                             }
                         case "reward":
                             {

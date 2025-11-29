@@ -1,7 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Text;
-
 
 namespace MTA.Database
 {
@@ -16,6 +13,7 @@ namespace MTA.Database
             GM = 6,
             DoesntExist = 0
         }
+
         public string Username;
         public string Password;
         public string Email;
@@ -26,10 +24,8 @@ namespace MTA.Database
         public uint EntityID;
         public int RandomKey;
         public string table = "accounts";
-        //  public bool ServerTransfer;
-        // public string EarthAdress;
-        //  public string MacAddress;
         public bool exists = false;
+
         public AccountTable(string username, string table = "accounts")
         {
             if (username == null) return;
@@ -53,7 +49,6 @@ namespace MTA.Database
                     this.LastCheck = DateTime.FromBinary(reader.ReadInt64("LastCheck"));
                     this.State = (AccountState)reader.ReadInt32("State");
                     this.Email = reader.ReadString("Email");
-                    //this.ServerTransfer = reader.ReadBoolean("ServerTransfer");
                 }
             }
         }
@@ -63,9 +58,9 @@ namespace MTA.Database
             if (randomKey == 0)
                 RandomKey = Kernel.Random.Next(11, 253) % 100 + 1;
             return (uint)
-                        (Username.GetHashCode() *
-                        Password.GetHashCode() *
-                        RandomKey);
+                (Username.GetHashCode() *
+                 Password.GetHashCode() *
+                 RandomKey);
         }
 
         public bool MatchKey(uint key)
@@ -73,19 +68,9 @@ namespace MTA.Database
             return key == GenerateKey(RandomKey);
         }
 
-        public void SetCurrentIP(string ip)
+        public void SetCurrentIp(string ip)
         {
-            // var loc = IPtoLocation.GetLocation(ip);
             IP = ip;
-
-            //if (loc == null)
-            //{
-            //    EarthAdress = "N/A no. N/A, N/A, N/A, N/A";
-            //}
-            //else
-            //{
-            //    EarthAdress = loc.city + ", " + loc.regionName + ", " + loc.countryName;
-            //}
         }
 
         public void Save()
@@ -94,6 +79,7 @@ namespace MTA.Database
                 cmd.Update(table).Set("Password", Password).Set("Ip", IP).Set("EntityID", EntityID)
                     .Where("Username", Username).Execute();
         }
+
         public void Insert()
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.INSERT))
@@ -102,6 +88,7 @@ namespace MTA.Database
                     .Execute();
             exists = true;
         }
+
         public void SaveState()
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE))

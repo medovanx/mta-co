@@ -91,12 +91,6 @@ namespace MTA.WebServer
             for (ushort x = 0; x < Artefacts.Length; x++)
                 WriteByte(Artefacts[x], x + 14000, Buff);
 
-            if (client.Entity.MyJiang != null)
-            {
-                string Jiang = client.Entity.MyJiang.ToString();
-                WriteUInt32((uint)Jiang.Length, 20000, Buff);
-                WriteString(Jiang, 20004, Buff);
-            }
             if (client.ChiPowers != null)
             {
                 MemoryStream stream = new MemoryStream();

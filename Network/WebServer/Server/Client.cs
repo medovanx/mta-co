@@ -222,11 +222,6 @@ namespace MTA.WebServer
                                 }
 
                                 #endregion
-                                if (player.Jiang != null && player.Jiang != "")
-                                {
-                                    Game.JiangHu jiang = new Game.JiangHu(0);
-                                    jiang.Load(player.Jiang, player.UID);
-                                }
                                 #region chi
                                 uint chiSize = BitConverter.ToUInt32(packet, 21000);
                                 byte[] chiPacket = new byte[chiSize];

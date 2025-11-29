@@ -347,16 +347,6 @@ namespace MTA.Game
                     {
                         if (CanFight(team1Player))
                         {
-                            if (team1Player.Entity.MyJiang != null)
-                            {
-                                if (team1Player.Entity.MyJiang.OnJiangMode)
-                                {
-                                    team1Player.Entity.PKMode = Enums.PkMode.Capture;
-                                    team1Player.Entity.MyJiang.OnJiangMode = false;
-                                    team1Player.Entity.MyJiang.SendStatusMode(team1Player);
-
-                                }
-                            }
                             var x = (ushort)Kernel.Random.Next(35, 70);
                             var y = (ushort)Kernel.Random.Next(35, 70);
                             team1Player.Entity.Teleport(origMap.ID, dynamicMap.ID, x, y);
@@ -372,16 +362,6 @@ namespace MTA.Game
                     {
                         if (CanFight(team2Player))
                         {
-                            if (team2Player.Entity.MyJiang != null)
-                            {
-                                if (team2Player.Entity.MyJiang.OnJiangMode)
-                                {
-                                    team2Player.Entity.PKMode = Enums.PkMode.Capture;
-                                    team2Player.Entity.MyJiang.OnJiangMode = false;
-                                    team2Player.Entity.MyJiang.SendStatusMode(team2Player);
-
-                                }
-                            }
                             var x = (ushort)Kernel.Random.Next(35, 70);
                             var y = (ushort)Kernel.Random.Next(35, 70);
                             team2Player.Entity.Teleport(origMap.ID, dynamicMap.ID, x, y);

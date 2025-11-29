@@ -20,7 +20,11 @@ namespace MTA.Network.GamePackets
         {
             client = _c;
             MaxCount = (uint)client.Entity.PkExplorerValues.Count;
-            if (MaxCount >= 10) { MaxCount = 10; }
+            if (MaxCount >= 10)
+            {
+                MaxCount = 10;
+            }
+
             Values = (uint)client.Entity.PkExplorerValues.Count;
             PkValues = new Game.PkExpeliate[client.Entity.PkExplorerValues.Count];
             client.Entity.PkExplorerValues.Values.CopyTo(PkValues, 0);
@@ -52,6 +56,7 @@ namespace MTA.Network.GamePackets
                     else
                         Writer.Write((byte)0);
                 }
+
                 Writer.Write((uint)e.Times);
                 Writer.Write((ushort)e.LostExp);
                 Writer.Write((byte)e.Level);
@@ -65,11 +70,13 @@ namespace MTA.Network.GamePackets
                     else
                         Writer.Write((byte)0);
                 }
+
                 Writer.Write((ulong)0);
                 Writer.Write((ulong)0);
                 Writer.Write((uint)0);
                 Writer.Write((uint)e.Potency);
             }
+
             int packetlength = (int)Stream.Length;
             Stream.Position = 0;
             Writer.Write((ushort)packetlength);
@@ -83,12 +90,15 @@ namespace MTA.Network.GamePackets
             return buf;
         }
     }
+
     public class PKExplorer : Writer, Interfaces.IPacket
     {
         byte[] Buffer;
+
         public PKExplorer()
         {
         }
+
         public byte[] ToArray()
         {
             Buffer = new byte[20 + 4];
@@ -99,16 +109,19 @@ namespace MTA.Network.GamePackets
             WriteUInt32(2, 16, Buffer);
             return Buffer;
         }
+
         public void Deserialize(byte[] buffer)
         {
             Buffer = buffer;
         }
+
         public void Send(Client.GameState client)
         {
             client.Send(ToArray());
         }
     }
 }
+
 namespace MTA.Game
 {
     public class PkExpeliate
@@ -124,6 +137,7 @@ namespace MTA.Game
         public DateTime Time;
     }
 }
+
 namespace MTA.Database
 {
     public class PkExpelTable
@@ -154,6 +168,7 @@ namespace MTA.Database
                 Program.SaveException(exception);
             }
         }
+
         public static void PkExploitAdd(Client.GameState client, Game.PkExpeliate pk)
         {
             try
@@ -164,12 +179,12 @@ namespace MTA.Database
                 {
                     MySqlCommand cmd = new MySqlCommand(MySqlCommandType.INSERT);
                     cmd.Insert("pk_explorer").Insert("uid", client.Entity.UID)
-                         .Insert("killed_uid", pk.killedUID)
-                         .Insert("killed_name", pk.Name)
-                         .Insert("killed_map", pk.KilledAt)
-                         .Insert("lost_exp", pk.LostExp)
-                         .Insert("times", pk.Times)
-                         .Insert("battle_power", pk.Potency).Insert("level", pk.Level);
+                        .Insert("killed_uid", pk.killedUID)
+                        .Insert("killed_name", pk.Name)
+                        .Insert("killed_map", pk.KilledAt)
+                        .Insert("lost_exp", pk.LostExp)
+                        .Insert("times", pk.Times)
+                        .Insert("battle_power", pk.Potency).Insert("level", pk.Level);
                     cmd.Execute();
 
                     if (!client.Entity.PkExplorerValues.ContainsKey(pk.UID))
@@ -181,19 +196,20 @@ namespace MTA.Database
                 Program.SaveException(exception);
             }
         }
+
         public static void Update(Client.GameState client, Game.PkExpeliate pk)
         {
             try
             {
                 MySqlCommand cmd = new MySqlCommand(MySqlCommandType.UPDATE);
                 cmd.Update("pk_explorer")
-                     .Set("killed_name", pk.Name)
-                     .Set("killed_map", pk.KilledAt)
-                     .Set("lost_exp", pk.LostExp)
-                     .Set("times", pk.Times)
-                     .Set("battle_power", pk.Potency)
-                     .Set("level", pk.Level)
-                     .Where("uid", client.Entity.UID).And("killed_uid", pk.killedUID);
+                    .Set("killed_name", pk.Name)
+                    .Set("killed_map", pk.KilledAt)
+                    .Set("lost_exp", pk.LostExp)
+                    .Set("times", pk.Times)
+                    .Set("battle_power", pk.Potency)
+                    .Set("level", pk.Level)
+                    .Where("uid", client.Entity.UID).And("killed_uid", pk.killedUID);
                 cmd.Execute();
 
                 if (!client.Entity.PkExplorerValues.ContainsKey(pk.UID))

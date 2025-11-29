@@ -106,13 +106,6 @@ namespace MTA.WebServer
                 return PacketHandler.ReadString(packet, 24033, packet[24032]);
             }
         }
-        public string Jiang
-        {
-            get
-            {
-                return Program.Encoding.GetString(packet, 20004, BitConverter.ToUInt16(packet, 20000)).Replace("\0", "");
-            }
-        }
         public SafeDictionary<ushort, Interfaces.IProf> Proficiencies = new SafeDictionary<ushort, Interfaces.IProf>();
         public SafeDictionary<ushort, Interfaces.ISkill> Spells = new SafeDictionary<ushort, Interfaces.ISkill>();
         public Dictionary<uint, Network.GamePackets.ConquerItem> Items = new Dictionary<uint, Network.GamePackets.ConquerItem>();
@@ -235,12 +228,6 @@ namespace MTA.WebServer
                 client.Entity.GuildID = (ushort)(GuildID + Server.Key);
                 client.Entity.GuildRank = GuildRank;
             }
-            if (Jiang != "")
-            {
-                client.Entity.MyJiang = new Game.JiangHu(0);
-                client.Entity.MyJiang.Load(Jiang);
-            }
-
 
             client.Entity.FullyLoaded = true;
             client.ClaimableItem = new SafeDictionary<uint, DetainedItem>();

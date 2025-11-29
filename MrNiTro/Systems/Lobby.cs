@@ -785,7 +785,6 @@ namespace MTA.MaTrix
             if (client.ChiData != null)
                 Bot.ChiData = client.ChiData;
             Bot.ChiPowers = client.ChiPowers;
-            Bot.Entity.MyJiang = client.Entity.MyJiang;
             Bot.Entity.SubClasses = client.Entity.SubClasses;
 
             Bot.LoadItemStats();

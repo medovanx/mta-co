@@ -1,34 +1,34 @@
 [StageGoal]
-// ×Ü½×¶ÎÊý
+// ï¿½Ü½×¶ï¿½ï¿½ï¿½
 StageAmount=10
 
 [1]
-// ½×¶Î¿ªÆôµÈ¼¶£¬¶ÔÓ¦Êý¾Ý¿âcq_process_goal±íÖÐµÄ'open_lv'×Ö¶Î
+// ï¿½×¶Î¿ï¿½ï¿½ï¿½ï¿½È¼ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ý¿ï¿½cq_process_goalï¿½ï¿½ï¿½Ðµï¿½'open_lv'ï¿½Ö¶ï¿½
 OpenLev=0001
-// ½×¶ÎµÄ°´Å¥Í¼Æ¬Title
+// ï¿½×¶ÎµÄ°ï¿½Å¥Í¼Æ¬Title
 StageAni=Stage_01goalBtn
-// ¸Ã½×¶ÎµÄÄ¿±êÈÎÎñ¸öÊý£¬¶ÔÓ¦Êý¾Ý¿âcq_process_goal±íÖÐµÄ'task_num'×Ö¶Î
+// ï¿½Ã½×¶Îµï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ý¿ï¿½cq_process_goalï¿½ï¿½ï¿½Ðµï¿½'task_num'ï¿½Ö¶ï¿½
 GoalNum=5
-// ½×¶ÎµÄ½±Àø£¬¶ÔÓ¦Êý¾Ý¿âcq_process_goal±íÖÐµÄ½±ÀøÊý¾Ý
-// ¹æ·¶£ºÎïÆ·idType@@ÎïÆ·ÊýÁ¿@@ÊÇ·ñÔùÆ·(0Îª·ÇÔù£¬1ÎªÔù)(Ò»¶¨ÒªÓÃ'@@'¸ô¿ª)
+// ï¿½×¶ÎµÄ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ý¿ï¿½cq_process_goalï¿½ï¿½ï¿½ÐµÄ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+// ï¿½æ·¶ï¿½ï¿½ï¿½ï¿½Æ·idType@@ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ï¿½@@ï¿½Ç·ï¿½ï¿½ï¿½Æ·(0Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1Îªï¿½ï¿½)(Ò»ï¿½ï¿½Òªï¿½ï¿½'@@'ï¿½ï¿½ï¿½ï¿½)
 Prize1=3005107@@1@@0
 
 
-// µÚ1½×¶ÎµÚ1¸öÄ¿±êÈÎÎñ
+// ï¿½ï¿½1ï¿½×¶Îµï¿½1ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 [1-1]
-// ±êÌâÎÄ×Ö
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Title=[Novice] Level-up
-// ÈÎÎñ½éÉÜ,ÈôÒªÓÐ×Ô¶¯Ñ°Â·¹¦ÄÜÐè±êÊ¶<npc npcId mapId mapX mapY>NPCÃû×Ö</npc>
-// µØÍ¼µ¼º½Îª<map 0 mapId mapX mapY>µØÍ¼Ãû×Ö</map>
-// ¹ÖÎïµ¼º½Îª<mob 0 mapId mapX mapY>¹ÖÎïÃû×Ö</mob>
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½Òªï¿½ï¿½ï¿½Ô¶ï¿½Ñ°Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¶<npc npcId mapId mapX mapY>NPCï¿½ï¿½ï¿½ï¿½</npc>
+// ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½Îª<map 0 mapId mapX mapY>ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½</map>
+// ï¿½ï¿½ï¿½ïµ¼ï¿½ï¿½Îª<mob 0 mapId mapX mapY>ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½</mob>
 Intro=Upgrade to Level 20+.
-// Ä¿±êÈÎÎñ×Ü½ø¶È£¬¶ÔÓ¦Êý¾Ý¿âcq_process_task±íÖÐµÄ'schedule'×Ö¶Î
+// Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü½ï¿½ï¿½È£ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ý¿ï¿½cq_process_taskï¿½ï¿½ï¿½Ðµï¿½'schedule'ï¿½Ö¶ï¿½
 Progress=20
-// Ä¿±êÈÎÎñ½±Àø£¬¶ÔÓ¦Êý¾Ý¿âcq_process_task±íÖÐµÄ½±ÀøÊý¾Ý(¹æ·¶Í¬ÉÏ)
+// Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ý¿ï¿½cq_process_taskï¿½ï¿½ï¿½ÐµÄ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½æ·¶Í¬ï¿½ï¿½)
 Prize1=3005117@@1@@1
-// ÈÎÎñÀàÐÍ£¬¶ÔÓ¦Êý¾Ý¿âcq_process_task±íÖÐµÄ'type'×Ö¶Î
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í£ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Ý¿ï¿½cq_process_taskï¿½ï¿½ï¿½Ðµï¿½'type'ï¿½Ö¶ï¿½
 TaskType=1
-// ÈÎÎñÒªÇó£¬Ö÷ÒªÊÇ¶ÔÓ¦Êý¾Ý¿âcq_process_task±íÖÐµÄ'condition'×Ö¶Î£¬¿ÉÈ±Ê¡
+// ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Òªï¿½Ç¶ï¿½Ó¦ï¿½ï¿½ï¿½Ý¿ï¿½cq_process_taskï¿½ï¿½ï¿½Ðµï¿½'condition'ï¿½Ö¶Î£ï¿½ï¿½ï¿½È±Ê¡
 //Require=0
 
 [1-2]

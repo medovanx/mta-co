@@ -8517,14 +8517,6 @@ namespace MTA.Game.Attacking
                     attacked.Die(attacker);
                     attacked.IsDropped = false;
 
-                    if (attacker.PKMode == Enums.PkMode.JiangHu)
-                    {
-                        if (attacked.JiangActive)
-                        {
-                            if (attacker.MyJiang != null && attacker.MyJiang != null)
-                                attacker.MyJiang.GetKill(attacker.Owner, attacked.MyJiang);
-                        }
-                    }
                     if (attacked.Owner != null && attacker.Owner != null)
                     {
                         if (attacked.Owner.Team != null && attacker.Owner.Team != null)
@@ -8590,14 +8582,6 @@ namespace MTA.Game.Attacking
                         attacked.MonsterInfo.SendScreen(attack);
                     }
                     attacked.Die(attacker);
-                    if (attacker.PKMode == Enums.PkMode.Jiang)
-                    {
-                        if (attacked.JiangActive)
-                        {
-                            if (attacker.MyJiang != null && attacker.MyJiang != null)
-                                attacker.MyJiang.GetKill(attacker.Owner, attacked.MyJiang);
-                        }
-                    }
                     if (attacked.Owner != null && attacker.Owner != null)
                     {
                         if (attacked.Owner.Team != null && attacker.Owner.Team != null)
@@ -9449,67 +9433,6 @@ namespace MTA.Game.Attacking
             {
                 if (attacked.ContainsFlag(Update.Flags.Fly))
                     return false;
-            }
-            if (attacker.PKMode == Enums.PkMode.Jiang)
-            {
-                if (attacked.JiangActive)
-                {
-                    if (!attacked.Owner.Attackable)
-                        return false;
-                    if (attacked.Dead)
-                        return false;
-                    if (attacker.MapID == 1002 || attacker.MapID == 1000
-                        || attacker.MapID == 1015 || attacker.MapID == 1020
-                        || attacker.MapID == 1011)
-                        if (attacked.EntityFlag == EntityFlag.Player)
-                            if (!attacked.Owner.Attackable)
-                                return false;
-                    {
-                        try
-                        {
-                            if (attacker.AttackJiang != JiangHu.AttackFlag.None)
-                            {
-                                if ((attacker.AttackJiang & JiangHu.AttackFlag.NotHitFriends) == JiangHu.AttackFlag.NotHitFriends)
-                                {
-                                    if (attacker.Owner.Friends.ContainsKey(attacked.UID))
-                                        return false;
-                                }
-                                if ((attacker.AttackJiang & JiangHu.AttackFlag.NoHitAlliesClan) == JiangHu.AttackFlag.NoHitAlliesClan)
-                                {
-                                    var attacker_clan = attacker.GetClan;
-                                    if (attacker_clan != null)
-                                    {
-                                        if (attacker_clan.Allies.ContainsKey(attacked.ClanId))
-                                            return false;
-                                    }
-                                }
-                                if ((attacker.AttackJiang & JiangHu.AttackFlag.NotHitAlliedGuild) == JiangHu.AttackFlag.NotHitAlliedGuild)
-                                {
-                                    if (attacker.Owner.Guild != null)
-                                    {
-                                        if (attacker.Owner.Guild.Ally.ContainsKey(attacked.GuildID))
-                                            return false;
-                                    }
-                                }
-                                if ((attacker.AttackJiang & JiangHu.AttackFlag.NotHitClanMembers) == JiangHu.AttackFlag.NotHitClanMembers)
-                                {
-                                    if (attacker.ClanId == attacked.ClanId)
-                                        return false;
-
-                                }
-                                if ((attacker.AttackJiang & JiangHu.AttackFlag.NotHitGuildMembers) == JiangHu.AttackFlag.NotHitGuildMembers)
-                                {
-                                    if (attacker.GuildID == attacked.GuildID)
-                                        return false;
-
-                                }
-                            }
-                        }
-                        catch (Exception e) { Console.WriteLine(e.ToString()); }
-                        return true;
-                    }
-                    //  return false;
-                }
             }
             if (attacked.EntityFlag == EntityFlag.Monster)
                 if (attacked.MonsterInfo.ID == MonsterInformation.ReviverID)

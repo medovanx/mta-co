@@ -439,14 +439,6 @@ namespace MTA.Database
 
                     #endregion
 
-                    Game.IJiangHu Jiang;
-                    if (Game.JiangHu.JiangHuClients.TryGetValue(client.Entity.UID, out Jiang))
-                    {
-                        client.Entity.MyJiang = Jiang as Game.JiangHu;
-                        client.Entity.MyJiang.TimerStamp = DateTime.Now;
-                        client.Entity.MyJiang.Level = client.Entity.Level;
-                    }
-
                     client.Entity.LoadTopStatus();
                     client.Entity.FullyLoaded = true;
                     return true;

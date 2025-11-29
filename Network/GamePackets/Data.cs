@@ -120,7 +120,6 @@ namespace MTA.Network.GamePackets
                 TortoiseGemComposing = 438,
                 RefineryStabilization = 448,
                 HorseRacingStore = 464,
-                JiangHuSetName = 617,
                 Reincarnation = 485;
 
         }
@@ -156,7 +155,6 @@ namespace MTA.Network.GamePackets
                 EndFly = 120,
                 ViewEnemyInfo = 123,
                 OpenWindow = 126,
-                JiangHu = 126,
                 CompleteLogin = 251,
                 RemoveEntity = 135,
                 PokerTournament = 167,

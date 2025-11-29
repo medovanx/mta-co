@@ -563,10 +563,8 @@ namespace MTA
                 Flowers.LoadFlowers();
                 Database.DataHolder.ReadStats();
                 Database.IPBan.Load();
-                Database.JiangHu.LoadStatus();
                 GHRooms.Execute += new Action(GHRooms_Execute);
                 GHRooms.Start();
-                Database.JiangHu.LoadJiangHu();
                 Database.NobilityTable.Load();
                 Database.ArenaTable.Load();
                 Database.TeamArenaTable.Load();
@@ -664,7 +662,6 @@ namespace MTA
             try
             {
 
-                Database.JiangHu.SaveJiangHu();
                 using (var conn = Database.DataHolder.MySqlConnection)
                 {
                     conn.Open();
@@ -1388,12 +1385,6 @@ namespace MTA
         {
             Client.Cryptography.Decrypt(buffer, length);
             Client.Queue.Enqueue(buffer, length);
-            if (Client.Queue.CurrentLength > 1224)
-            {
-                Console.WriteLine("[Disconnect]Reason:The packet size is too big. " + Client.Queue.CurrentLength);
-                Client.Disconnect();
-                return;
-            }
             while (Client.Queue.CanDequeue())
             {
                 byte[] data = Client.Queue.Dequeue();

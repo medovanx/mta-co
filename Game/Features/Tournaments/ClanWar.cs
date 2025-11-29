@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Collections.Generic;
 using MTA.Network.GamePackets;
+using MTA.Database;
 
 namespace MTA.Game
 {
@@ -17,16 +18,17 @@ namespace MTA.Game
             public string Name = "None";
             public string CurentMap = "";
             public string DominationMap = "";
+
             public ClientWar(Clan clan)
             {
                 UID = clan.ID;
                 Name = clan.Name;
-
             }
+
             public ClientWar()
             {
-
             }
+
             public override string ToString()
             {
                 if (Name.Contains('#'))
@@ -35,9 +37,10 @@ namespace MTA.Game
                     Name = Name.Replace("^", "");
                 StringBuilder build = new StringBuilder();
                 build.Append(UID + "#" + Reward + "#" + NextReward
-                    + "#" + OccupationDays + "#" + Name + "#" + CurentMap + "#" + DominationMap + "#");
+                             + "#" + OccupationDays + "#" + Name + "#" + CurentMap + "#" + DominationMap + "#");
                 return build.ToString();
             }
+
             public void Load(string data)
             {
                 if (data == null) return;
@@ -51,8 +54,8 @@ namespace MTA.Game
                 CurentMap = line[5];
                 DominationMap = line[6];
             }
-
         }
+
         public enum ClanArena : ushort
         {
             TwinCityClan = 0,
@@ -67,6 +70,7 @@ namespace MTA.Game
             BirdIslandClan = 9,
             Count = 10
         }
+
         public static uint GetItemReward(ClanArena typ)
         {
             switch (typ)
@@ -92,8 +96,10 @@ namespace MTA.Game
                 case ClanArena.MapleForestClan:
                     return 722475;
             }
+
             return 0;
         }
+
         public static ushort GetMap(ClanArena typ)
         {
             switch (typ)
@@ -119,8 +125,10 @@ namespace MTA.Game
                 case ClanArena.LoveCanyonClan:
                     return 1560;
             }
+
             return 0;
         }
+
         private static ClanArena GetTournament(uint NpcUID)
         {
             if (NpcUID == 101895)
@@ -145,6 +153,7 @@ namespace MTA.Game
                 return ClanArena.BirdIslandClan;
             return ClanArena.Count;
         }
+
         public static ClanTournament GetNpcTournament(uint NpcUID)
         {
             try
@@ -157,7 +166,9 @@ namespace MTA.Game
                 return null;
             }
         }
+
         public static ClanTournament[] Tournaments;
+
         public static void Create()
         {
             Tournaments = new ClanTournament[(byte)ClanArena.Count];
@@ -166,26 +177,36 @@ namespace MTA.Game
             Load();
             Subscriber = World.Subscribe(work, 1000);
         }
+
         private static IDisposable Subscriber;
+
         private static void work(int time)
         {
             DateTime Now64 = DateTime.Now;
+
             #region Clan War
+
             if (Matrix_Times.Start.ClanWarArena2 && Now64.Second == 0)
             {
-                var name = new object[] { "ClanLeader Go to every map to ClanWar npc to Apply 5 Minute And closed Apply !?" };
-                Kernel.SendWorldMessage(new Message(string.Concat(name), "ALLUSERS", "[ClanWar]", System.Drawing.Color.Red, Message.BroadcastMessage), Program.Values);
-
+                var name = new object[]
+                    { "ClanLeader Go to every map to ClanWar npc to Apply 5 Minute And closed Apply !?" };
+                Kernel.SendWorldMessage(
+                    new Message(string.Concat(name), "ALLUSERS", "[ClanWar]", System.Drawing.Color.Red,
+                        Message.BroadcastMessage), Program.Values);
             }
+
             if (Matrix_Times.Start.ClanWarArena && Now64.Second == 0)
             {
-
                 ClanWarArena.Start();
                 var name = new object[] { "ClanWar has begun! Go to every map to ClanWar npc to join !?" };
-                Kernel.SendWorldMessage(new Message(string.Concat(name), "ALLUSERS", "[ClanWar]", System.Drawing.Color.Red, Message.BroadcastMessage), Program.Values);
+                Kernel.SendWorldMessage(
+                    new Message(string.Concat(name), "ALLUSERS", "[ClanWar]", System.Drawing.Color.Red,
+                        Message.BroadcastMessage), Program.Values);
             }
+
             #endregion
         }
+
         public static bool GetMyWar(uint CLAN_ID, out ClientWar war)
         {
             foreach (var client_War in Tournaments)
@@ -194,29 +215,32 @@ namespace MTA.Game
                     war = client_War.Client;
                     return true;
                 }
+
             war = null;
             return false;
         }
+
         public static void Start()
         {
-
             for (byte x = 0; x < (byte)ClanArena.Count; x++)
                 Tournaments[x].Start();
             Program.World.SendServerMessaj("ClanWar has begun! Go to every map to ClanWar npc to join !");
         }
+
         public static void Save()
         {
-            using (Database.Write _wr = new Database.Write(Constants.DatabaseBasePath + "ClanWar.txt"))
+            using (MTA.Database.Write _wr = new MTA.Database.Write(Constants.DatabaseBasePath + "ClanWar.txt"))
             {
                 string[] items = new string[(byte)ClanArena.Count];
                 for (byte x = 0; x < Tournaments.Length; x++)
                     items[x] = "" + (byte)Tournaments[x].Map + "^" + Tournaments[x].Client.ToString();
-                _wr.Add(items, items.Length).Execute(Database.Mode.Open);
+                _wr.Add(items, items.Length).Execute(MTA.Database.Mode.Open);
             }
         }
+
         public static void Load()
         {
-            using (Database.Read r = new Database.Read(Constants.DatabaseBasePath + "ClanWar.txt"))
+            using (MTA.Database.Read r = new MTA.Database.Read(Constants.DatabaseBasePath + "ClanWar.txt"))
             {
                 if (r.Reader())
                 {
@@ -233,6 +257,7 @@ namespace MTA.Game
                 }
             }
         }
+
         public class ClanTournament
         {
             public const int MinuteTimes = 20;
@@ -240,6 +265,7 @@ namespace MTA.Game
             private DateTime StartTimer;
             private IDisposable Subscribe;
             public ClanArena Map;
+
             public ClanTournament(ClanArena map)
             {
                 if (!Constants.PKFreeMaps.Contains(GetMap(map)))
@@ -249,6 +275,7 @@ namespace MTA.Game
                 Client.DominationMap = Client.CurentMap = Map.ToString();
                 Client.Reward = Client.NextReward = GetItemReward(Map);
             }
+
             public void Teleport(Client.GameState client)
             {
                 if (Open)
@@ -258,7 +285,9 @@ namespace MTA.Game
                     client.Entity.Teleport(GetMap(Map), mapcoord.Item1, mapcoord.Item2);
                 }
             }
+
             public bool Open = false;
+
             public void Start()
             {
                 if (!Open)
@@ -266,9 +295,9 @@ namespace MTA.Game
                     StartTimer = DateTime.Now;
                     Open = true;
                     Subscribe = World.Subscribe(Work, 5000);
-
                 }
             }
+
             private void Finish()
             {
                 if (Open)
@@ -280,6 +309,7 @@ namespace MTA.Game
                     }
                 }
             }
+
             private int ClansOnMap(Client.GameState[] clients)
             {
                 List<uint> ClansIDs = new List<uint>();
@@ -294,11 +324,15 @@ namespace MTA.Game
 
                 return ClansIDs.Count;
             }
+
             private void Work(int time)
             {
-                var clients_on_MAP = Kernel.GamePool.Values.Where(p => p.Entity.MapID == GetMap(Map) && !p.Entity.Dead).ToArray();
+                var clients_on_MAP = Kernel.GamePool.Values.Where(p => p.Entity.MapID == GetMap(Map) && !p.Entity.Dead)
+                    .ToArray();
                 int count_clans = ClansOnMap(clients_on_MAP);
-                byte[] Messaje = new Network.GamePackets.Message("Alive Clans In " + Map.ToString() + " : " + count_clans + "", System.Drawing.Color.Yellow, Network.GamePackets.Message.FirstRightCorner).ToArray();
+                byte[] Messaje =
+                    new Network.GamePackets.Message("Alive Clans In " + Map.ToString() + " : " + count_clans + "",
+                        System.Drawing.Color.Yellow, Network.GamePackets.Message.FirstRightCorner).ToArray();
                 foreach (var obj in clients_on_MAP)
                     obj.Send(Messaje);
                 if (DateTime.Now > StartTimer.AddMinutes(MinuteTimes))
@@ -312,11 +346,12 @@ namespace MTA.Game
                                 GetClientReward(member);
                             UpdateWarInfo(clan);
                         }
+
                         Finish();
                     }
-
                 }
             }
+
             private void UpdateWarInfo(Clan clan)
             {
                 if (Client.UID == clan.ID)
@@ -331,23 +366,28 @@ namespace MTA.Game
                     Client.Reward = Client.NextReward = GetItemReward(Map);
                 }
             }
+
             private void GetClientReward(Client.GameState obj)
             {
-
                 uint Reward = 3000;
                 if (Map != ClanArena.TwinCityClan)
                     Reward /= 2;
                 if (obj.Entity.ClanRank == Clan.Ranks.ClanLeader)
                 {
                     obj.Entity.ConquerPoints += Reward;
-                    obj.Send(new Network.GamePackets.Message("You win " + Reward + " ConquerPoints for domination " + Map.ToString() + "", System.Drawing.Color.Red, Network.GamePackets.Message.System).ToArray());
+                    obj.Send(new Network.GamePackets.Message(
+                        "You win " + Reward + " ConquerPoints for domination " + Map.ToString() + "",
+                        System.Drawing.Color.Red, Network.GamePackets.Message.System).ToArray());
                 }
                 else
                 {
                     Reward /= 3;
                     obj.Entity.ConquerPoints += Reward;
-                    obj.Send(new Network.GamePackets.Message("You win " + Reward + " ConquerPoints for domination " + Map.ToString() + "", System.Drawing.Color.Red, Network.GamePackets.Message.System).ToArray());
+                    obj.Send(new Network.GamePackets.Message(
+                        "You win " + Reward + " ConquerPoints for domination " + Map.ToString() + "",
+                        System.Drawing.Color.Red, Network.GamePackets.Message.System).ToArray());
                 }
+
                 obj.Entity.GetClan.CalnWar = false;
                 obj.Entity.Teleport(1002, 303, 278);
             }

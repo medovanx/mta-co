@@ -371,22 +371,6 @@ namespace MTA
                     C.Disconnect();
                 }
             }
-            #region JiangHu
-            if (client.Entity.MyJiang != null)
-                client.Entity.MyJiang.TheadTime(client);
-            #endregion
-            /* #region Check Knife
-            if (!client.Equipment.Free(4) && MTA.Network.PacketHandler.Knife(client.Equipment.TryGetItem(4).ID))
-            {
-                if ((client.Entity.Class >= 70 && client.Entity.Class <= 75) || (client.Entity.Class >= 60 && client.Entity.Class <= 65 || (client.Entity.Class >= 10 && client.Entity.Class <= 15 || (client.Entity.Class >= 50 && client.Entity.Class <= 55 || (client.Entity.Class >= 20 && client.Entity.Class <= 25 || (client.Entity.Class >= 142 && client.Entity.Class <= 145 || (client.Entity.Class >= 132 && client.Entity.Class <= 135)))))))
-                {
-                    client.Equipment.Remove(4);
-                    Kernel.SendWorldMessage(new Network.GamePackets.Message("[Warning!] " + client.Entity.Name + " His Knife Have Problem", System.Drawing.Color.Red, Network.GamePackets.Message.Center));
-                    client.Disconnect();
-                }
-            }
-            #endregion */
-
 
             #region Exit PolePrize
             if (DateTime.Now.Minute >= 10 && DateTime.Now.Second == 07)

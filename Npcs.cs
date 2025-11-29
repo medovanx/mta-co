@@ -31549,105 +31549,8 @@ namespace MTA
                         break;
                     }
                 #endregion Challange
-                #region JiangHu
-                case 3570753:
-                    {
-                        switch (npcRequest.OptionID)
-                        {
-                            case 0:
-                                {
-                                    dialog.Text("Well, the Jiang Hu is quite chaotic. I`ll test your understanding with several questions. If you pass, you`re able to name a skill of your own and start your adventure as a Jiang Hu warrior!");
-                                    dialog.Option("Okay.~I`m~ready!", 1);
-                                    dialog.Option("Learn~about~the~Jiang~Hu.", 2);
-                                    dialog.Option("I`ll~talk~to~you~later.", 255);
-                                    dialog.Send();
-                                    break;
-                                }
-                            case 1:
-                                {
-
-                                    if (client.Entity.Reborn == 2)
-                                    {
-                                        if (client.Entity.MyJiang == null)
-                                        {
-                                            client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.JiangHu, dwParam = 617, wParam1 = client.Entity.X, wParam2 = client.Entity.Y });
-                                            //  client.Entity.MyJiang.SendInfo(client, GamePackets.JiangHu.SetName, client.Entity.UID.ToString());
-                                        }
-                                        else
-                                        {
-                                            if (client.Entity.MyJiang != null)
-                                            {
-                                                if (String.IsNullOrEmpty(client.Entity.MyJiang.CustomizedName) || String.IsNullOrEmpty(client.Entity.MyJiang.CustomizedName))
-                                                {
-                                                    client.Entity.MyJiang = null;
-                                                    using (var cmd = new Database.MySqlCommand(Database.MySqlCommandType.DELETE))
-                                                        cmd.Delete("jiang", "UID", client.Entity.UID).Execute();
-                                                    Console.WriteLine("caspr jiang idea " + client.Entity.Name);
-                                                    if (Game.JiangHu.JiangHuClients.ContainsKey(client.Entity.UID))
-                                                        Game.JiangHu.JiangHuClients.Remove(client.Entity.UID);
-                                                    client.Disconnect();
-                                                    return;
-                                                }
-
-                                            }
-                                            dialog.Text("You are already in JiangHu");
-                                        }
-                                        dialog.Option("oh, sorry", 255);
-                                        dialog.Send();
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        dialog.Text("You Need To Be Second Reborn To Unlock JiangHu");
-                                        dialog.Option("Sorry I'll Come Later", 255);
-                                        dialog.Send();
-                                    }
-                                    break;
-                                }
-                            case 2:
-                                {
-                                    dialog.Text("Being a fighter of the Jiang Hu, you can train your Inner-strength after activating `Jiang` button at the character window. Each time you study will cost you 10 Study Points");
-                                    dialog.Text("~and 1 Free Course, and will also decrease your Talent Status by 1. Remember, you can only perform up to 10 free studies in a day. If you`re at Basic Status, you can only perform extra study with CPs.");
-                                    dialog.Option("How~to~raise~my~Talent~Status?", 3);
-                                    dialog.Option("How~to~collect~Free~Courses?", 4);
-                                    dialog.Option("What~if~I~want~to~quit?", 5);
-                                    dialog.Option("I`ll~talk~to~you~later.", 255);
-                                    dialog.Send();
-                                    break;
-                                }
-                            case 3:
-                                {
-                                    dialog.Text("You need to activate the `Jiang` mode, and defeat a player whose Talent Status is not lower than yours to raise your Status Level by 1,");
-                                    dialog.Text("~up to Level 4. PK in the `Jiang` mode, win or lose, will only affect your Talent Status. Different levels of your Status makes your name glow different colors.");
-                                    dialog.Option("Learn~about~other~things.", 2);
-                                    dialog.Option("I`ll~talk~to~you~later.", 255);
-                                    dialog.Send();
-                                    break;
-                                }
-                            case 4:
-                                {
-                                    dialog.Text("Jiang Hu fighters will gain up to 100 Free Courses by accumulating the Talent Points over time, whether online or not. The higher the Talent Status,");
-                                    dialog.Text("~the more the Talent Points. While stay online in Twin City, you`ll receive Talent Points, up to x30 more than received in other areas.");
-                                    dialog.Option("Learn~about~other~things.", 2);
-                                    dialog.Option("I`ll~talk~to~you~later.", 255);
-                                    dialog.Send();
-                                    break;
-                                }
-                            case 5:
-                                {
-                                    dialog.Text("If you want to leave the Jiang Hu for a while, deactivate the `Jiang` mode and wait for 10 minutes to quit.");
-                                    dialog.Text("~After that, you won`t receive threats from the Jiang Hu fighters, however, you can`t accumulate Talent Points. Remember, you`re welcome to return at anytime you want!");
-                                    dialog.Option("Learn~about~other~things.", 2);
-                                    dialog.Option("I`ll~talk~to~you~later.", 255);
-                                    dialog.Send();
-                                    break;
-                                }
-                        }
-                        break;
-                    }
-                #endregion
+               
                 #region RebirthMaster
-
                 case 59558:
                     {
                         switch (npcRequest.OptionID)
@@ -45070,179 +44973,6 @@ namespace MTA
 
                 #endregion
 
-                #endregion
-                #region Jiang Npc ultar
-                case 882854:
-                    {
-                        switch (npcRequest.OptionID)
-                        {
-                            case 0:
-                                {
-                                    if (client.Entity.MyJiang == null)
-                                    {
-                                        dialog.Text("Sorry But You Don't Have Jiang Yet.");
-                                        dialog.Option("I'll think about it!", 255);
-                                        dialog.Send();
-                                        return;
-                                    }
-                                    dialog.Text("Hello I'M Jiang Seller In Server [MTA] 1 Cps For 1 Stage.");
-                                    for (int i = 0; i < client.Entity.MyJiang.Stagers.Length; i++)
-                                    {
-                                        var stage = client.Entity.MyJiang.Stagers[i];
-                                        if (stage.Activate)
-                                            dialog.Option("Stage [" + (byte)(i + 1) + "]", (byte)(i + 1));
-
-                                    }
-                                    dialog.Option("I'll think about it!", 255);
-                                    dialog.Send();
-                                    break;
-                                }
-                            default:
-                                {
-                                    int mStage = npcRequest.OptionID;
-                                    if (mStage >= 1 && mStage <= 9)
-                                    {
-                                        foreach (var item in Database.JiangHu.CultivateStatus[(byte)mStage])
-                                        {
-                                            dialog.Option(((Game.JiangHu.JiangStages.AtributesType)item).ToString(), (byte)((item * 10) + mStage));
-                                        }
-
-                                    }
-                                    else
-                                    {
-                                        if (client.Entity.ConquerPoints < rates.soulp6)
-                                        {
-                                            dialog.Text("Sorry But You Don't Have 1 cps ");
-                                            dialog.Option("I'll think about it!", 255);
-                                            dialog.Send();
-                                            return;
-                                        }
-                                        client.Entity.ConquerPoints -= rates.soulp6;
-                                        var typex = mStage / 10;
-                                        mStage = mStage % 10;
-                                        byte stageno = (byte)Math.Min(9, mStage);
-                                        byte level = 5;
-                                        var type = (Game.JiangHu.JiangStages.AtributesType)Math.Min(15, typex);
-                                        if (client.Entity.MyJiang.Stagers.Length >= stageno)
-                                        {
-                                            var stage = client.Entity.MyJiang.Stagers[(stageno - 1)];
-                                            for (byte i = 1; i < stage.Stars.Length + 1; i++)
-                                            {
-                                                client.Entity.MyJiang.MyNewStart = new Game.JiangHu.GetNewStar();
-                                                client.Entity.MyJiang.MyNewStart.PositionStar = i;
-                                                client.Entity.MyJiang.MyNewStart.Stage = stageno;
-                                                client.Entity.MyJiang.MyNewStart.Star = new Game.JiangHu.JiangStages.Star();
-                                                client.Entity.MyJiang.MyNewStart.Star.Activate = true;
-                                                client.Entity.MyJiang.MyNewStart.Star.Level = level;
-                                                client.Entity.MyJiang.MyNewStart.Star.Typ = type;
-                                                client.Entity.MyJiang.MyNewStart.Star.UID = client.Entity.MyJiang.ValueToRoll(client.Entity.MyJiang.MyNewStart.Star.Typ, client.Entity.MyJiang.MyNewStart.Star.Level);
-                                                Network.GamePackets.JiangHuUpdate upd = new Network.GamePackets.JiangHuUpdate();
-                                                upd.Atribute = client.Entity.MyJiang.MyNewStart.Star.UID;
-                                                upd.FreeCourse = client.Entity.MyJiang.FreeCourse;
-                                                upd.Stage = stageno;
-                                                upd.Star = i;
-                                                upd.FreeTimeTodeyUsed = (byte)client.Entity.MyJiang.FreeTimeTodeyUsed;
-                                                upd.RoundBuyPoints = client.Entity.MyJiang.RoundBuyPoints;
-                                                client.Send(upd.ToArray());
-                                                client.Entity.MyJiang.ApplayNewStar(client);
-                                            }
-                                            if (client.Entity.MyJiang != null)
-                                                client.Entity.MyJiang.SendStatus(client, client);
-                                        }
-
-                                    }
-                                    break;
-                                }
-                        }
-                        break;
-                    }
-                #endregion
-                #region Jiang Npc
-                case 88854:
-                    {
-                        switch (npcRequest.OptionID)
-                        {
-                            case 0:
-                                {
-                                    if (client.Entity.MyJiang == null)
-                                    {
-                                        dialog.Text("Sorry But You Don't Have Jiang Yet.");
-                                        dialog.Option("I'll think about it!", 255);
-                                        dialog.Send();
-                                        return;
-                                    }
-                                    dialog.Text("Hello I'M Jiang Seller In Server [MTA].");
-                                    for (int i = 0; i < client.Entity.MyJiang.Stagers.Length; i++)
-                                    {
-                                        var stage = client.Entity.MyJiang.Stagers[i];
-                                        if (stage.Activate)
-                                            dialog.Option("Stage [" + (byte)(i + 1) + "]", (byte)(i + 1));
-
-                                    }
-                                    dialog.Option("I'll think about it!", 255);
-                                    dialog.Send();
-                                    break;
-                                }
-                            default:
-                                {
-                                    int mStage = npcRequest.OptionID;
-                                    if (mStage >= 1 && mStage <= 9)
-                                    {
-                                        foreach (var item in Database.JiangHu.CultivateStatus[(byte)mStage])
-                                        {
-                                            dialog.Option(((Game.JiangHu.JiangStages.AtributesType)item).ToString(), (byte)((item * 10) + mStage));
-                                        }
-
-                                    }
-                                    else
-                                    {
-                                        if (client.Entity.ConquerPoints < rates.soulp6)
-                                        {
-                                            dialog.Text("Sorry But You Don't Have 1 cps ");
-                                            dialog.Option("I'll think about it!", 255);
-                                            dialog.Send();
-                                            return;
-                                        }
-                                        client.Entity.ConquerPoints -= rates.soulp6;
-                                        var typex = mStage / 10;
-                                        mStage = mStage % 10;
-                                        byte stageno = (byte)Math.Min(9, mStage);
-                                        byte level = 6;
-                                        var type = (Game.JiangHu.JiangStages.AtributesType)Math.Min(15, typex);
-                                        if (client.Entity.MyJiang.Stagers.Length >= stageno)
-                                        {
-                                            var stage = client.Entity.MyJiang.Stagers[(stageno - 1)];
-                                            for (byte i = 1; i < stage.Stars.Length + 1; i++)
-                                            {
-                                                client.Entity.MyJiang.MyNewStart = new Game.JiangHu.GetNewStar();
-                                                client.Entity.MyJiang.MyNewStart.PositionStar = i;
-                                                client.Entity.MyJiang.MyNewStart.Stage = stageno;
-                                                client.Entity.MyJiang.MyNewStart.Star = new Game.JiangHu.JiangStages.Star();
-                                                client.Entity.MyJiang.MyNewStart.Star.Activate = true;
-                                                client.Entity.MyJiang.MyNewStart.Star.Level = level;
-                                                client.Entity.MyJiang.MyNewStart.Star.Typ = type;
-                                                client.Entity.MyJiang.MyNewStart.Star.UID = client.Entity.MyJiang.ValueToRoll(client.Entity.MyJiang.MyNewStart.Star.Typ, client.Entity.MyJiang.MyNewStart.Star.Level);
-                                                Network.GamePackets.JiangHuUpdate upd = new Network.GamePackets.JiangHuUpdate();
-                                                upd.Atribute = client.Entity.MyJiang.MyNewStart.Star.UID;
-                                                upd.FreeCourse = client.Entity.MyJiang.FreeCourse;
-                                                upd.Stage = stageno;
-                                                upd.Star = i;
-                                                upd.FreeTimeTodeyUsed = (byte)client.Entity.MyJiang.FreeTimeTodeyUsed;
-                                                upd.RoundBuyPoints = client.Entity.MyJiang.RoundBuyPoints;
-                                                client.Send(upd.ToArray());
-                                                client.Entity.MyJiang.ApplayNewStar(client);
-                                            }
-                                            if (client.Entity.MyJiang != null)
-                                                client.Entity.MyJiang.SendStatus(client, client);
-                                        }
-
-                                    }
-                                    break;
-                                }
-                        }
-                        break;
-                    }
-                #endregion
                 #region Chi Npc
                 case 888540:
                     {
@@ -45818,9 +45548,9 @@ namespace MTA
                         {
                             case 0:
                                 {
-                                    dialog.Text("Hello Sir YOu Need Join To GeT Free Chi &Jiang Or Shops Quests This Game From Here ");
-                                    dialog.Option("Shops Here.", 1);
-                                    dialog.Option("Chi & Jiang Free Here.", 2);
+                                    dialog.Text("Welcome! Choose an option below to visit Shops, or to claim your free Chi in-game rewards.");
+                                    dialog.Option("Visit Shops", 1);
+                                    dialog.Option("Claim Free Chi", 2);
                                     client.Entity.Update(_String.Effect, "break_start", true);
                                     dialog.Send();
                                     break;
@@ -50301,4 +50031,4 @@ namespace MTA
 
     }
 }
-
+#endregion

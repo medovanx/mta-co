@@ -352,10 +352,8 @@
             Capture = 3,
             Guild = 5,
             Revenge = 4,
-            Jiang = 6,
             Invade = 9,
             CS = 8,
-            JiangHu = 6,
         }
 
         public class ConquerAction

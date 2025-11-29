@@ -223,43 +223,6 @@ namespace MTA
             "Hades",
             "Centar",
         };
-        public static readonly System.Collections.Generic.List<ushort> JiangPKMaps = new System.Collections.Generic.List<ushort>()
-        {
-            1002,
-            1000,
-            1015,
-            1020,
-            1011
-        };
-        public static readonly System.Collections.Generic.List<ushort> JiangForbiddenMaps = new System.Collections.Generic.List<ushort>()
-        {
-            1036,
-            700,
-            3090,
-            7010,
-            11030,
-            11034,
-            11042,
-            1039,
-            8880,
-            8881,
-            8892,
-            1950,
-            8800,
-            8801,
-            8802,
-            8803,
-            1511,
-            1004,
-            1006,
-            1008,
-            1632,
-            1633,
-            1024,
-            2351,
-            3033,
-            601
-        };
         public static readonly System.Collections.Generic.List<ushort> PKForbiddenMaps = new System.Collections.Generic.List<ushort>()
         {
             1036,

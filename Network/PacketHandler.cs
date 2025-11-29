@@ -716,313 +716,6 @@ namespace MTA.Network
                         break;
                     }
                 #endregion
-                #region Jiang
-                case 2704:
-                    {
-                        Game.JiangHu.AttackFlag Flag = (Game.JiangHu.AttackFlag)packet[4];
-                        client.Entity.AttackJiang = Flag;
-                        break;
-                    }
-                #region JiangHu
-                case 2703:
-                    {
-                        if (Game.JiangHu.JiangHuRanking.TopRank100 == null) return;
-                        ushort page = BitConverter.ToUInt16(packet, 4);
-                        if (page > 10 || page == 0) return;
-                        page -= 1;
-
-                        int offset = page * 10;
-                        int count = Math.Min(10, Game.JiangHu.JiangHuRanking.TopRank100.Length);
-
-                        GamePackets.JiangHuRank jiang_rank = new GamePackets.JiangHuRank((byte)count);
-                        jiang_rank.Page = (byte)(page + 1);
-                        jiang_rank.RegisteredCount = (byte)Math.Min(100, Game.JiangHu.JiangHuRanking.TopRank100.Length);
-                        if (client.Entity.MyJiang != null)
-                            jiang_rank.MyRank = client.Entity.MyJiang.Rank;
-                        for (byte x = 0; x < count; x++)
-                        {
-                            if (x + offset >= Game.JiangHu.JiangHuRanking.TopRank100.Length) break;
-
-                            var obj = Game.JiangHu.JiangHuRanking.TopRank100[offset + x];
-                            jiang_rank.Appren(obj.Rank, obj.Inner_Strength, obj.Level, obj.OwnName, obj.CustomizedName);
-                        }
-                        client.Send(jiang_rank.ToArray());
-
-
-                        break;
-                    }
-                case 2702:
-                    {
-                        if (client.Entity.MyJiang != null)
-                        {
-                            if (String.IsNullOrEmpty(client.Entity.MyJiang.CustomizedName) || String.IsNullOrEmpty(client.Entity.MyJiang.CustomizedName))
-                            {
-                                client.Entity.MyJiang = null;
-                                using (var cmd = new Database.MySqlCommand(Database.MySqlCommandType.DELETE))
-                                    cmd.Delete("jiang", "UID", client.Entity.UID).Execute();
-                                Console.WriteLine("caspr jiang idea " + client.Entity.Name);
-                                if (Game.JiangHu.JiangHuClients.ContainsKey(client.Entity.UID))
-                                    Game.JiangHu.JiangHuClients.Remove(client.Entity.UID);
-                                client.Disconnect();
-                                return;
-                            }
-
-                        }
-                        byte Mode = packet[9];
-                        switch (Mode)
-                        {
-                            case 0:
-                                {
-                                    byte Star = packet[10];
-                                    byte Stage = packet[11];
-                                    if (Star > 9 || Stage > 9)
-                                        break;
-
-                                    if (client.Entity.MyJiang != null)
-                                    {
-
-                                        if (client.Entity.SubClasses.StudyPoints >= 20 && client.Entity.MyJiang.Talent >= 1 && client.Entity.MyJiang.FreeCourse >= 10000)
-                                        {
-                                            client.Entity.MyJiang.Level = client.Entity.Level;
-
-
-                                            client.Entity.MyJiang.OnJiangMode = true;
-                                            client.Entity.MyJiang.RemoveJiangMod = DateTime.Now;
-                                            client.Entity.MyJiang.SendStatusMode(client);
-
-                                            client.Entity.MyJiang.Talent -= 1;
-                                            client.Entity.MyJiang.FreeCourse -= 10000;
-                                            client.Entity.SubClasses.StudyPoints -= 20;
-
-                                            client.Entity.MyJiang.CreateRollValue(client, Star, Stage);
-                                            client.Entity.MyJiang.SendInfo(client, GamePackets.JiangHu.UpdateTime, client.Entity.MyJiang.FreeCourse.ToString(), client.Entity.MyJiang.Time.ToString());
-                                            client.Entity.MyJiang.SendInfo(client, GamePackets.JiangHu.UpdateStar, Stage.ToString(), Star.ToString());
-                                            client.Entity.MyJiang.SendInfo(client, GamePackets.JiangHu.UpdateTalent, client.Entity.UID.ToString(), client.Entity.MyJiang.Talent.ToString());
-                                        }
-                                    }
-
-                                    break;
-                                }
-                            case 1:
-                                {
-                                    if (client.Trade.InTrade)
-                                        return;
-                                    if (client.Entity.MyJiang == null) break;
-                                    byte Star = packet[10];
-                                    byte Stage = packet[11];
-                                    byte Higher = packet[8];
-                                    if (Star > 9 || Stage > 9)
-                                        break;
-
-
-                                    //ushort GetCpsStage = (ushort)(100000 + (100000 * Higher));//(ushort)((client.Entity.MyJiang.RoundBuyPoints * 10) + 10);
-
-                                    if (client.Entity.ConquerPoints >= 1)   ///////////////////
-                                    {
-                                        client.Entity.ConquerPoints -= 1;
-                                        client.Entity.MyJiang.RoundBuyPoints = (byte)Math.Min(49, client.Entity.MyJiang.RoundBuyPoints + 1);
-
-                                        client.Entity.MyJiang.OnJiangMode = true;
-                                        client.Entity.MyJiang.RemoveJiangMod = DateTime.Now;
-                                        client.Entity.MyJiang.SendStatusMode(client);
-
-                                        client.Entity.MyJiang.FreeCourse += 20;
-                                        client.Entity.SubClasses.StudyPoints += 20;
-                                        client.Entity.MyJiang.Talent = (byte)Math.Min(5, client.Entity.MyJiang.Talent + 1);
-
-                                        client.Entity.MyJiang.CreateRollValue(client, Star, Stage, false, Higher);
-                                        client.Entity.MyJiang.SendInfo(client, GamePackets.JiangHu.UpdateTime, client.Entity.MyJiang.FreeCourse.ToString(), client.Entity.MyJiang.Time.ToString());
-                                        client.Entity.MyJiang.SendInfo(client, GamePackets.JiangHu.UpdateStar, Stage.ToString(), Star.ToString());
-                                        client.Entity.MyJiang.SendInfo(client, GamePackets.JiangHu.UpdateTalent, client.Entity.UID.ToString(), client.Entity.MyJiang.Talent.ToString());
-
-
-
-                                        /*     client.Entity.MyJiang.SendInfo(client, GamePackets.JiangHu.UpdateTalent, client.Entity.UID.ToString(), client.Entity.MyJiang.Talent.ToString());
-                                           */
-                                        client.Entity.MyJiang.UpdateStundyPoints(client, 20);
-                                        // client.Entity.MyJiang.SendStatus(client, client);
-                                        //  client.Send(packet);
-                                    }
-                                    else
-                                        client.Entity.SendSysMesage("Sorry, but you need 250 Cps");
-                                    break;
-                                }
-                        }
-
-                        break;
-                    }
-                case 2700:
-                    {
-                        ushort Mode = packet[4];
-                        switch (Mode)
-                        {
-                            case 18:
-                                {
-                                    byte len = packet[6];
-                                    string newname = ReadString(packet, 7, len);
-                                    if (len > 16)
-                                    {
-                                        client.Entity.SendSysMesage("Name length must be 16 char or less");
-                                    }
-                                    else if (len < 4)
-                                    {
-                                        client.Entity.SendSysMesage("Name length must be 4 char or more");
-                                    }
-                                    else
-                                    {
-                                        if (client.Entity.ConquerPoints >= 810)
-                                        {
-
-                                            if (MTA.Game.JiangHu.AllowNameCaracters(newname))
-                                            {
-                                                client.Entity.MyJiang.CustomizedName = newname;
-                                                Game.JiangHu.JiangHuClients[client.Entity.UID].CustomizedName = newname;
-                                                client.Entity.MyJiang.SendStatus(client, client);
-                                                client.Entity.ConquerPoints -= 810;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            client.Entity.SendSysMesage("you don't have enough cps!");
-                                        }
-                                    }
-                                    break;
-                                }
-                            case 17:
-                                {
-                                    if (client.Entity.ConquerPoints >= 3)
-                                    {
-                                        if (client.Entity.MyJiang.Talent < 5)
-                                        {
-                                            client.Entity.ConquerPoints -= 3;
-                                            client.Entity.MyJiang.Talent = (byte)Math.Min(5, client.Entity.MyJiang.Talent + 1);
-                                            client.Entity.MyJiang.SendStatusMode(client);
-                                            Data datas = new Data(true);
-                                            datas.UID = client.Entity.UID;
-                                            datas.ID = 116;
-                                            datas.dwParam = 3530;
-                                            datas.wParam1 = client.Entity.X;
-                                            datas.wParam2 = client.Entity.Y;
-                                            client.Send(datas);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        client.Entity.SendSysMesage("Sorry, You Don`t Have Enough CPs !");
-                                    }
-                                    break;
-                                }
-                            case 10:
-                                {
-                                    if (client.Entity.MyJiang != null && client.Entity.ConquerPoints > 20)
-                                    {
-                                        client.Entity.ConquerPoints -= 20;
-
-                                    }
-                                    break;
-                                }
-                            case 11:
-                                {
-                                    if (client.Entity.MyJiang != null)
-                                    {
-                                        client.Entity.MyJiang.ApplayNewStar(client);
-                                    }
-                                    break;
-                                }
-                            case 9:
-                                {
-                                    string Name = ReadString(packet, 7, packet[6]);
-                                    uint UID = 0;
-                                    if (uint.TryParse(Name, out UID))
-                                    {
-                                        Client.GameState pClient;
-                                        if (Kernel.GamePool.TryGetValue(UID, out pClient))
-                                        {
-                                            if (pClient.Entity.MyJiang != null)
-                                                pClient.Entity.MyJiang.SendStatus(client, pClient);
-                                            else
-                                            {
-                                                GamePackets.JiangHuStatus stat = new GamePackets.JiangHuStatus(0);
-                                                stat.Name = Name;
-                                                client.Send(stat.ToArray());
-                                            }
-                                        }
-                                    }
-                                    break;
-                                }
-                            case 13:
-                                {
-                                    if (client.Entity.MyJiang != null)
-                                    {
-                                        client.Entity.MyJiang.SendInfo(client, GamePackets.JiangHu.UpdateTime, client.Entity.MyJiang.FreeCourse.ToString(), client.Entity.MyJiang.Time.ToString());
-                                    }
-                                    break;
-                                }
-                            case 1:
-                                {
-                                    if (client.Entity.MyJiang == null)
-                                    {
-
-                                        byte NameLeng = packet[6];
-                                        if (NameLeng > 16)
-                                        {
-                                            client.Entity.SendSysMesage("You used a name high!");
-                                            return;
-                                        }
-                                        string ownname = client.Entity.Name;
-                                        if (ownname.Contains('#'))
-                                        {
-                                            ownname = ownname.Replace('#', ' ');
-                                        }
-                                        string Name = ReadString(packet, 7, NameLeng);
-                                        if (Game.JiangHu.AllowNameCaracters(Name))
-                                        {
-                                            client.Entity.MyJiang = new Game.JiangHu(client.Entity.UID);
-
-                                            client.Entity.MyJiang.OwnName = ownname;//client.Entity.Name;
-                                            client.Entity.MyJiang.CustomizedName = Name;
-                                            client.Entity.MyJiang.OnJiangMode = true;
-                                            client.Entity.MyJiang.SendInfo(client, GamePackets.JiangHu.SetName, client.Entity.UID.ToString()
-                                                , client.Entity.MyJiang.Stage.ToString()
-                                                , client.Entity.MyJiang.Star.ToString());
-
-                                            GamePackets.JiangHuStatus jiang = new GamePackets.JiangHuStatus();
-
-                                            jiang.Name = Name;
-                                            jiang.Talent = client.Entity.MyJiang.Talent;//star
-                                            jiang.Stage = client.Entity.MyJiang.Stage;
-                                            jiang.StudyPoints = client.Entity.SubClasses.StudyPoints;
-                                            jiang.FreeTimeTodey = client.Entity.MyJiang.FreeTimeTodey;
-                                            client.Send(jiang.ToArray());
-
-
-
-                                            client.Entity.MyJiang.CreateTime();
-                                            client.Entity.MyJiang.UpdateStundyPoints(client, 100);
-                                            client.Entity.MyJiang.Stagers[0].Activate = true;
-                                            client.Entity.MyJiang.Level = client.Entity.Level;
-
-                                            client.Entity.MyJiang.SendInfo(client, GamePackets.JiangHu.UpdateTime
-                                  , client.Entity.MyJiang.FreeCourse.ToString()
-                                  , client.Entity.MyJiang.Time.ToString());
-
-                                            client.Entity.MyJiang.SendInfo(client, GamePackets.JiangHu.UpdateTalent
-                , client.Entity.UID.ToString()
-                , client.Entity.MyJiang.Talent.ToString());
-
-                                            //    Database.JiangHu.New(client);
-                                        }
-                                        else
-                                            client.Entity.SendSysMesage("Invalid Name characters");
-                                    }
-                                    break;
-                                }
-                        }
-
-                        break;
-                    }
-                #endregion
-                #endregion
                 #region ClanCityWar (1313)
                 case 1313:
                     {
@@ -13722,44 +13415,6 @@ namespace MTA.Network
                         client.Inventory.Remove(item, Game.Enums.ItemUse.Remove);
                         break;
                     }
-                case 3003650://jianghu
-                    {
-                        if (client.Entity.MyJiang != null)
-                        {
-                            for (int i = 0; i < client.Entity.MyJiang.Stagers.Length; i++)
-                            {
-                                var stage = client.Entity.MyJiang.Stagers[i];
-                                if (!stage.Activate) continue;
-                                for (int ii = 0; ii < stage.Stars.Length; ii++)
-                                {
-                                    var star = stage.Stars[ii];
-                                    if (!star.Activate) continue;
-                                    star.Level = 6;//epic
-                                    star.UID = client.Entity.MyJiang.ValueToRoll(star.Typ, star.Level);
-
-                                    Network.GamePackets.JiangHuUpdate upd = new Network.GamePackets.JiangHuUpdate();
-
-                                    upd.Atribute = star.UID;
-                                    upd.FreeCourse = client.Entity.MyJiang.FreeCourse;
-                                    ///  upd.Talent = Talent;
-                                    upd.Stage = (byte)i;
-                                    upd.Star = (byte)ii;
-                                    upd.FreeTimeTodeyUsed = (byte)client.Entity.MyJiang.FreeTimeTodeyUsed;
-                                    upd.RoundBuyPoints = client.Entity.MyJiang.RoundBuyPoints;
-                                    client.Send(upd.ToArray());
-
-                                }
-                            }
-                            client.LoadItemStats();
-                        }
-                        else
-                        {
-                            client.MessageBox("You Don't Open Jiang Hu yet");
-                            return;
-                        }
-                        client.Inventory.Remove(item, Game.Enums.ItemUse.Remove);
-                        break;
-                    }
                 #region Way2Heroes
 
                 case 3005117: //Class1FortunePack 
@@ -23262,68 +22917,6 @@ p =>
                                         {
                                             switch (Data[2])
                                             {
-                                                case "xmenjiang":
-                                                    {
-                                                        if (Client.Entity.MyJiang != null)
-                                                        {
-                                                            byte stageno = (byte)Math.Min(9, int.Parse(Data[3]));
-                                                            byte level = (byte)Math.Min(6, int.Parse(Data[4]));
-                                                            var type = (Game.JiangHu.JiangStages.AtributesType)Math.Min(15, int.Parse(Data[5]));
-                                                            if (Client.Entity.MyJiang.Stagers.Length >= stageno)
-                                                            {
-                                                                var stage = Client.Entity.MyJiang.Stagers[(stageno - 1)];
-                                                                for (byte i = 1; i < stage.Stars.Length + 1; i++)
-                                                                {
-                                                                    Client.Entity.MyJiang.MyNewStart = new Game.JiangHu.GetNewStar();
-                                                                    Client.Entity.MyJiang.MyNewStart.PositionStar = i;
-                                                                    Client.Entity.MyJiang.MyNewStart.Stage = stageno;
-
-                                                                    Client.Entity.MyJiang.MyNewStart.Star = new Game.JiangHu.JiangStages.Star();
-                                                                    Client.Entity.MyJiang.MyNewStart.Star.Activate = true;
-                                                                    Client.Entity.MyJiang.MyNewStart.Star.Level = level;
-                                                                    Client.Entity.MyJiang.MyNewStart.Star.Typ = type;
-
-                                                                    Client.Entity.MyJiang.MyNewStart.Star.UID = Client.Entity.MyJiang.ValueToRoll(Client.Entity.MyJiang.MyNewStart.Star.Typ, Client.Entity.MyJiang.MyNewStart.Star.Level);
-
-                                                                    Network.GamePackets.JiangHuUpdate upd = new Network.GamePackets.JiangHuUpdate();
-
-                                                                    upd.Atribute = Client.Entity.MyJiang.MyNewStart.Star.UID;
-                                                                    upd.FreeCourse = Client.Entity.MyJiang.FreeCourse;
-                                                                    upd.Stage = stageno;
-                                                                    upd.Star = i;
-                                                                    upd.FreeTimeTodeyUsed = (byte)Client.Entity.MyJiang.FreeTimeTodeyUsed;
-                                                                    upd.RoundBuyPoints = Client.Entity.MyJiang.RoundBuyPoints;
-                                                                    Client.Send(upd.ToArray());
-
-                                                                    Client.Entity.MyJiang.ApplayNewStar(Client);
-                                                                }
-                                                                if (Client.Entity.MyJiang != null)
-                                                                    Client.Entity.MyJiang.SendStatus(Client, Client);
-                                                            }
-                                                        }
-                                                        break;
-                                                    }
-                                                case "jiang":
-                                                    {
-                                                        byte stage = 0;
-                                                        if (byte.TryParse(Data[3], out stage))
-                                                        {
-                                                            if (stage <= 9 && stage >= 0)
-                                                            {
-
-                                                                for (byte x = 1; x < 10; x++)
-                                                                {
-                                                                    if (Client.Entity.MyJiang != null)
-                                                                    {
-                                                                        Client.Entity.MyJiang.CreateRollValue(Client, x, stage, true);
-                                                                        Client.Entity.MyJiang.ApplayNewStar(Client);
-                                                                    }
-                                                                }
-
-                                                            }
-                                                        }
-                                                        break;
-                                                    }
                                                 case "unsuper":
                                                     {
                                                         Client.CalculateStatBonus();
@@ -23726,38 +23319,6 @@ p =>
                                     }
                                     break;
                                 }
-                            /*case "jiang":
-                                {
-                                    byte Stage = byte.Parse(Data[1]);
-                                    if (!client.JiangPowers.Any(x => x.Stage == Stage))
-                                        client.JiangPowers.Add(new JiangPowerStructure(Stage));
-
-                                    Console.WriteLine("LOL");
-
-
-                                    if (Stage == client.JiangPowers.Count && Stage == client.JiangHuStatus.Stage)
-                                        client.JiangHuStatus.Stage++;
-
-                                    for (int x = 0; x < 9; x++)
-                                    {
-                                        client.JiangPowers[Stage - 1].Stars[x].Value = byte.Parse(Data[2]);
-                                        client.JiangPowers[Stage - 1].Stars[x].Type = byte.Parse(Data[3]);
-                                    }
-                                    JiangTable.AllData[client.Entity.UID] = new JiangTable.JiangData()
-                                    {
-                                        EntityName = client.Entity.Name,
-                                        JiangHuStatus = client.JiangHuStatus,
-                                        Level = client.Entity.Level,
-                                        UID = client.Entity.UID,
-                                        JiangPower = client.JiangPowers
-                                    };
-
-                                    JiangTable.Save(client);
-                                    new JiangHu(client).QueryInfo(client);
-                                    new JiangHu(client).SendInfo(13, client.JiangHuStatus.FreeCourses.ToString(), client.JiangHuStatus.Time.ToString());
-                                }
-                                break;
-                                    */
                             case "cps":
                                 {
                                     client.Entity.ConquerPoints = uint.Parse(Data[1]);
@@ -25395,56 +24956,6 @@ p =>
                                     Database.ChiTable.Save(client);
                                 }
                                 break;
-                            case "jimmyjiang":
-                                {
-                                    if (client.Entity.MyJiang != null)
-                                    {
-                                        byte stageno = (byte)Math.Min(9, int.Parse(Data[1]));
-                                        byte level = (byte)Math.Min(6, int.Parse(Data[2]));
-                                        var type = (Game.JiangHu.JiangStages.AtributesType)Math.Min(15, int.Parse(Data[3]));
-                                        if (client.Entity.MyJiang.Stagers.Length >= stageno)
-                                        {
-                                            var stage = client.Entity.MyJiang.Stagers[(stageno - 1)];
-                                            for (byte i = 1; i < stage.Stars.Length + 1; i++)
-                                            {
-                                                MTA.Game.JiangHu.JiangStages stages = client.Entity.MyJiang.Stagers[stageno - 1];
-                                                if (stages.Activate)
-                                                {
-                                                    MTA.Game.JiangHu.JiangStages.Star star = stages.Stars[i - 1];
-                                                    if (star.UID != 0)
-                                                    {
-                                                        client.Entity.MyJiang.DecreaseStatus(client.Entity, star.Typ, MTA.Database.JiangHu.GetPower(star.UID));
-                                                        client.Entity.MyJiang.Inner_Strength = (ushort)(client.Entity.MyJiang.Inner_Strength - MTA.Database.JiangHu.GetStatusPoints(star.Level));
-                                                    }
-                                                    star.Typ = (Game.JiangHu.JiangStages.AtributesType)type;
-                                                    star.Level = level;
-
-
-                                                    star.UID = client.Entity.MyJiang.ValueToRoll(star.Typ, star.Level);
-                                                    if (!star.Activate)
-                                                    {
-                                                        client.Entity.MyJiang.Star = (byte)(client.Entity.MyJiang.Star + 1);
-                                                        star.Activate = true;
-                                                    }
-                                                    client.Send(new MTA.Network.GamePackets.JiangHuUpdate { Atribute = star.UID, FreeCourse = client.Entity.MyJiang.FreeCourse, FreeTimeTodeyUsed = (byte)client.Entity.MyJiang.FreeTimeTodeyUsed, RoundBuyPoints = client.Entity.MyJiang.RoundBuyPoints }.ToArray());
-                                                    client.Entity.MyJiang.IncreaseStatus(client.Entity, star.Typ, MTA.Database.JiangHu.GetPower(star.UID));
-                                                    client.Entity.MyJiang.Inner_Strength = (ushort)(client.Entity.MyJiang.Inner_Strength + MTA.Database.JiangHu.GetStatusPoints(star.Level));
-
-                                                    if ((stageno < 9) && !((i != 9) || client.Entity.MyJiang.Stagers[stageno].Activate))
-                                                    {
-                                                        client.Entity.MyJiang.Stage = (byte)(client.Entity.MyJiang.Stage + 1);
-                                                        client.Entity.MyJiang.Stagers[stageno].Activate = true;
-                                                        client.Entity.MyJiang.SendInfo(client, 12, new string[] { client.Entity.MyJiang.Stage.ToString() });
-                                                    }
-                                                    MTA.Game.JiangHu.JiangHuRanking.UpdateRank(client.Entity.MyJiang);
-                                                }
-                                            }
-                                            if (client.Entity.MyJiang != null)
-                                                client.Entity.MyJiang.SendStatus(client, client);
-                                        }
-                                    }
-                                    break;
-                                }
                             case "xmenchi2":
                                 {
                                     foreach (var Client in Program.Values)
@@ -26738,33 +26249,9 @@ p =>
             {
                 client.Send(new MTA.Network.GamePackets.Message("Guild PK mode. You can attack monster and all Your Guild's Enemies", System.Drawing.Color.Red, 0x7d0));
             }
-            else if (client.Entity.PKMode == Game.Enums.PkMode.JiangHu)
-            {
-                if (client.Entity.MyJiang != null)
-                {
-                    client.Entity.MyJiang.OnJiangMode = true;
-                    client.Entity.MyJiang.SendStatusMode(client);
-                }
-                if (generalData.dwParam != (byte)MTA.Game.Enums.PkMode.JiangHu)
-                    client.Send("Your JiangHu will disable after 5 mins please be patient");
-            }
-
         }
         static void SetLocation(Data generalData, Client.GameState client)
         {
-            if (client.Entity.MyJiang != null)
-            {
-                client.Entity.MyJiang.OnloginClient(client);
-            }
-            else if (client.Entity.Reborn == 2)
-            {
-                MTA.Network.GamePackets.JiangHu hu = new MTA.Network.GamePackets.JiangHu
-                {
-                    Texts = { "0" }
-                };
-                hu.CreateArray();
-                hu.Send(client);
-            }
             SendFlower sendFlower = new SendFlower();
             sendFlower.Typing = (PacketHandler.IsBoy((uint)client.Entity.Body) ? 3u : 2u);
             sendFlower.Apprend(client.Entity.MyFlowers);
@@ -27096,7 +26583,7 @@ p =>
             client.Send(new GamePackets.CharacterInfo(client));
             string IP = client.IP;
             // var loc = IPtoLocation.GetLocation(IP);
-            client.Account.SetCurrentIP(IP);
+            client.Account.SetCurrentIp(IP);
             client.Account.Save();
             if (!client.LoggedIn)
             {
@@ -27376,16 +26863,6 @@ p =>
 
             client.WentToComplete = true;
             client.Entity.SendUpdates = true;
-
-            if (client.Entity.MyJiang != null)
-                client.Entity.MyJiang.OnloginClient(client);
-            else if (client.Entity.Reborn == 2)
-            {
-                GamePackets.JiangHu jiang = new GamePackets.JiangHu();
-                jiang.Texts.Add("0");
-                jiang.CreateArray();
-                jiang.Send(client);
-            }
 
             foreach (var Guild in Kernel.Guilds.Values)
             {

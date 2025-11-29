@@ -282,11 +282,6 @@ namespace MTA.TransferServer
                                 }
 
                                 #endregion
-                                if (player.Jiang != null && player.Jiang != "")
-                                {
-                                    Game.JiangHu jiang = new Game.JiangHu(0);
-                                    jiang.Load(player.Jiang, player.UID);
-                                }
                                 #region chi
                                 uint chiSize = BitConverter.ToUInt32(packet, 21000);
                                 byte[] chiPacket = new byte[chiSize];
@@ -398,15 +393,6 @@ namespace MTA.TransferServer
 
                                 ChiTable.Save(Client);
 
-                                Console.WriteLine("Saving JiangHu");
-                                if (Client.Entity.MyJiang != null)
-                                {
-                                    Client.Entity.MyJiang.UID = Client.Entity.UID;
-                                    //     Database.JiangHu.New();
-                                    Database.JiangHu.SaveJiangHu();
-                                    if (!Game.JiangHu.JiangHuClients.ContainsKey(Client.Entity.UID))
-                                        Game.JiangHu.JiangHuClients.TryAdd(Client.Entity.UID, Client.Entity.MyJiang);
-                                }
 
                                 Console.WriteLine("Saving Account with new UID " + Client.Entity.UID);
                                 Client.Account.EntityID = Client.Entity.UID;
