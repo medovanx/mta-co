@@ -27060,16 +27060,7 @@ p =>
             client["lastlogin"] = DateTime.Now;
             client["lastlocation"] = prevLoc;
 
-            string[] wm = File.ReadAllLines(Constants.WelcomeMessages);
-            foreach (string line in wm)
-            {
-                if (line.Length == 0)
-                    continue;
-                if (line[0] == ';')
-                    continue;
-                client.Send(new Message(line, System.Drawing.Color.Red, Message.Talk));
-            }
-            #region WelcomeMessages
+            #region Loading Bar at Login
             Send_Effect(client, 220, 164, 1, 5, "MTA!");
             client.SendScreen(client.Entity.SpawnPacket, false);
             #endregion

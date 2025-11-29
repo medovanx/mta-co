@@ -168,7 +168,6 @@ namespace MTA
         SoulGearInformation = DatabaseBasePath + "soulgear.txt",
         UnhandledExceptionsPath = DatabaseBasePath + "exceptions\\",
         ServerKey = "TQServer",
-        WelcomeMessages = DatabaseBasePath + "WelcomeMessages.txt",
         QuizShow = DatabaseBasePath + "QuizShow.txt",
         GameCryptographyKey = "qL0UVCXB6BY9txb2";
         public static string ServerName;
