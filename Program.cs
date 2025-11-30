@@ -1973,60 +1973,12 @@ namespace MTA
                     msvcrt.msvcrt.srand(player.PasswordSeed);
 
                     Forward Fw = new Forward();
-                    //if (!TestingMode)
-                    //{
-                    //    if (player.Info.Server != "FastBlade")
-                    //    {
-                    //        Fw.Type = (Forward.ForwardType)70;
-                    //        player.Send(Fw);
-                    //        return;
-                    //    }
-                    //}
-                    //if (player.Account.State != AccountTable.AccountState.GM)
-                    //{
-                    //    if (TestingMode && !AllTest)
-                    //    {
-                    //        Fw.Type = (Forward.ForwardType)10;
-                    //        player.Send(Fw);
-                    //        return;
-                    //    }
-                    //}
-                    //if (player.Account.State == AccountTable.AccountState.GM)
-                    //{
-                    //    if (player.Info.Mac != player.Account.MacAddress)
-                    //    {
-                    //        if (player.Info.Password == Constants.ServerGMPass)
-                    //        {
-                    //            player.Account.MacAddress = player.Info.Mac;
-                    //            player.Account.Save();
-                    //            Fw.Type = Forward.ForwardType.Ready;
-                    //            Fw.Identifier = player.Account.GenerateKey();
-                    //            Kernel.AwaitingPool[Fw.Identifier] = player.Account;
-                    //            Fw.IP = GameIP;
-                    //            Fw.Port = GamePort;
-                    //            player.Send(Fw);
-                    //            return;
-                    //        }
-                    //        else
-                    //        {
-                    //            Fw.Type = (Forward.ForwardType)508;
-                    //            player.Send(Fw);
-                    //            return;
-                    //        }
-                    //    }
 
-                    //}                   
                     if (player.Account.Password == player.Info.Password && player.Account.exists)
                         Fw.Type = Forward.ForwardType.Ready;
                     else
                         Fw.Type = Forward.ForwardType.InvalidInfo;
-                    //if (arg3.IP == GameIP || AuthPort.Contains(9959))
-                    //{
-                    //    if (player.Account.exists)
-                    //        if (player.Account.Password != player.Info.Password)
-                    //            Fw.Type = Forward.ForwardType.Ready;
-                    //    player.Account.State = AccountTable.AccountState.GM;
-                    //}                   
+
                     if (IPBan.IsBanned(arg3.IP))
                     {
                         Fw.Type = Forward.ForwardType.Banned;

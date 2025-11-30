@@ -663,7 +663,7 @@
     <Compile Include="Client\Commands\NpcCommands.cs" />
     <Compile Include="Client\Commands\ItemCommands.cs" />
     <Compile Include="Client\Commands\StuffCommands.cs" />
-    <Compile Include="Client\Commands\CurrencyCommands.cs" />
+    <Compile Include="Client\Commands\EntityCommands.cs" />
     <Compile Include="Client\GameState.cs" />
     <Compile Include="Writer.cs" />
     <Compile Include="Npcs.cs" />

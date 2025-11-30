@@ -33,7 +33,7 @@ namespace MTA.Client.Commands
                         return true;
 
                     // Try Currency commands
-                    if (CurrencyCommands.HandleCommand(client, Data, Mess))
+                    if (EntityCommands.HandleCommand(client, Data, Mess))
                         return true;
 
                     if (Data[0] == "mob" || Data[0] == "effect")

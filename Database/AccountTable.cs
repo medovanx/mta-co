@@ -18,7 +18,6 @@ namespace MTA.Database
         public string Password;
         public string Email;
         public string IP;
-        public string LastIP;
         public DateTime LastCheck;
         public AccountState State;
         public uint EntityID;
