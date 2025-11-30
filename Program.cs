@@ -449,7 +449,7 @@ namespace MTA
                 WebServerPort = IniFile.ReadUInt16("Transfer", "Webport");
                 ServerKey = IniFile.ReadUInt32("Transfer", "Key");
                 ServerTransfer = IniFile.ReadUInt16("Transfer", "Transfer") == 1;
-                Console.WriteLine(string.Format("ServerIP : {0}, ServerGamePort {1} ,WebServerPort : {2} , ServerKey : {3}, ServerTransfer {4}", ServerIP, ServerGamePort, WebServerPort, ServerKey, ServerTransfer));
+                Console.WriteLine($"Server IP : {ServerIP}, Game Port {ServerGamePort}, Transfer Port {WebServerPort}, Auth Port : {string.Join(",", AuthPort)}");
             }
             Database.DataHolder.CreateConnection(
                 IniFile.ReadString("MySql", "Host"),
