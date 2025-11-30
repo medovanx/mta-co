@@ -714,28 +714,6 @@ namespace MTA
                 file.WriteLine("------------------------------------------------------------------------------------");
             }
         }
-        public static void AddGMCommand(string gm, string commandStr)
-        {
-            String folderN = DateTime.Now.Year + "-" + DateTime.Now.Month,
-                Path = "gmlogs\\GMCommandsLog\\",
-                NewPath = System.IO.Path.Combine(Path, folderN);
-            if (!File.Exists(NewPath + folderN))
-            {
-                System.IO.Directory.CreateDirectory(System.IO.Path.Combine(Path, folderN));
-            }
-            if (!File.Exists(NewPath + "\\" + DateTime.Now.Day + ".txt"))
-            {
-                using (System.IO.FileStream fs = System.IO.File.Create(NewPath + "\\" + DateTime.Now.Day + ".txt"))
-                {
-                    fs.Close();
-                }
-            }
-
-            using (System.IO.StreamWriter file = new System.IO.StreamWriter(NewPath + "\\" + DateTime.Now.Day + ".txt", true))
-            {
-                file.WriteLine(gm + commandStr);
-            }
-        }
         public static void SaveException(Exception e, bool dont = false)
         {
             if (e.TargetSite.Name == "ThrowInvalidOperationException") return;

@@ -31543,7 +31543,7 @@ namespace MTA
                         break;
                     }
                 #endregion Challange
-               
+
                 #region RebirthMaster
                 case 59558:
                     {
@@ -49964,19 +49964,12 @@ namespace MTA
                             }
                         }
                         #endregion
-                        if (World.ScriptEngine.scriptCollection.scripts.ContainsKey(client.ActiveNpc))
-                        {
-                            client.CallDialog(client, npcRequest);
-                            break;
-                        }
                         if (client.ActiveNpc >= 101002 && client.Entity.MapID == 10002)
                         {
                             client.SendScreen(new Network.GamePackets.Data(true) { UID = client.ActiveNpc, ID = Network.GamePackets.Data.RemoveEntity }, true);
                             client.Map.RemoveNpc(client.Map.Npcs[client.ActiveNpc]);
                             // MTA.Game.TreasureBox.Reward(client);
                         }
-                        if (client.Account.State == MTA.Database.AccountTable.AccountState.GM || client.Account.State == MTA.Database.AccountTable.AccountState.GM)
-                            client.Send(new Message("NpcID[" + client.ActiveNpc + "]", System.Drawing.Color.Red, Message.TopLeft));
                         break;
                     }
             }

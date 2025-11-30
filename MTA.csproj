@@ -659,6 +659,10 @@
     <Compile Include="Interfaces\IPacket.cs" />
     <Compile Include="Interfaces\ISkill.cs" />
     <Compile Include="Client\AuthClient.cs" />
+    <Compile Include="Client\Commands\GMCommand.cs" />
+    <Compile Include="Client\Commands\NpcCommands.cs" />
+    <Compile Include="Client\Commands\ItemCommands.cs" />
+    <Compile Include="Client\Commands\StuffCommands.cs" />
     <Compile Include="Client\GameState.cs" />
     <Compile Include="Writer.cs" />
     <Compile Include="Npcs.cs" />

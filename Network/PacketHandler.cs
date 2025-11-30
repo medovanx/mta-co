@@ -3773,8 +3773,8 @@ namespace MTA.Network
                                 if ((client.Map.BaseID >= 6000 && client.Map.BaseID <= 6004) && (!(Constants.ActiveNPC.Contains(client.ActiveNpc))))
                                     return;
                                 Npcs.GetDialog(req, client);
-                                if (client.Account.State == MTA.Database.AccountTable.AccountState.GM || client.Account.State == MTA.Database.AccountTable.AccountState.GM)
-                                    client.Send(new Message("This Npc ID : [" + client.ActiveNpc + "]", System.Drawing.Color.Red, Message.TopLeft));
+                                if (client.Account.State == MTA.Database.AccountTable.AccountState.GM)
+                                    client.Send(new Message($"#53 NPC ID : [{client.ActiveNpc}], Skin: [{npc.Mesh}]", System.Drawing.Color.White, Message.TopLeft));
                             }
                         }
                         break;
@@ -21216,7 +21216,7 @@ namespace MTA.Network
             client.Send(update.ToArray());
         }
 
-        public static bool CheckCommand(string _message, Client.GameState client, bool Ask = false)
+        public static bool CheckCommand(string message, Client.GameState client, bool Ask = false)
         {
             if (Ask == true)
             {
@@ -21225,10 +21225,9 @@ namespace MTA.Network
                 dialog.Text("Input the password.");
                 dialog.Input("Password:", 1, 16);
                 dialog.Send();
-                client.Command = _message;
+                client.Command = message;
                 return true;
             }
-            string message = _message.Replace("#60", "").Replace("#61", "").Replace("#62", "").Replace("#63", "").Replace("#64", "").Replace("#65", "").Replace("#66", "").Replace("#67", "").Replace("#68", "");
             try
             {
                 if (message.StartsWith("@"))
@@ -21236,17 +21235,14 @@ namespace MTA.Network
                     string message_ = message.Substring(1).ToLower();
                     string Mess = message.Substring(1);
                     string[] Data = message_.Split(' ');
-                    Program.AddGMCommand(client.Entity.Name, "   " + client.Account.State.ToString() + "   @" + message_ + "    " + DateTime.Now.ToString());
                     #region GMs PMs
-                    if (client.Account.State == MTA.Database.AccountTable.AccountState.GM || client.Account.State == MTA.Database.AccountTable.AccountState.GM)
+                    if (client.Account.State == MTA.Database.AccountTable.AccountState.GM)
                     {
                         switch (Data[0])
                         {
                             default:
                                 {
-                                    //  return (client.CheckCommand(_message));  
-                                    client.CheckCommand(_message);
-                                    break;
+                                    return MTA.Client.Commands.GMCommands.CheckCommand(client, message);
                                 }
 
                             case "chatblock":
@@ -22635,7 +22631,7 @@ p =>
                                 }
                             case "process":
                                 {
-                                    Program.HandleClipboardPacket(_message);
+                                    Program.HandleClipboardPacket(message);
                                     break;
                                 }
 
@@ -22726,16 +22722,6 @@ p =>
                                         }
                                     }
                                     return true;
-                                }
-                            //do n: @do n @item bla bla 
-                            // will do the @item cmd for n times
-                            case "do":
-                                {
-                                    int n = int.Parse(Data[1]);
-                                    string rest = Mess.Substring(3 + Data[1].Length + 1);
-                                    for (int i = 0; i < n; i++)
-                                        CheckCommand(rest, client);
-                                    break;
                                 }
                             case "honorpoints":
                                 {
@@ -23390,532 +23376,6 @@ p =>
                                     break;
 
                                 }
-                            #region stuff
-
-                            #region stuff Command
-                            case "stuff8-7":
-                                {
-                                    switch (Data[1])
-                                    {
-                                        case "ninja":
-                                            {
-                                                PacketHandler.CheckCommand("@item HeavenFan Super 8 1 000 103 103", client);
-                                                PacketHandler.CheckCommand("@item StarTower Super 8 1 000 123 123", client);
-                                                PacketHandler.CheckCommand("@item Steed Fixed 8 000 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item RidingCrop Super 8 1 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item HanzoKatana Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item HanzoKatana Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item MTAVest Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item MTAHood Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item CrimsonRing Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item Blizzard Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FloridNecklace Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item RambleVeil Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item TempestWing Super 8 1 0 103 123", client);
-                                                client.Send(new MTA.Network.GamePackets.Message("Gratz.You Got A Ninja Stuff", System.Drawing.Color.Red, 0x7d0));
-                                                break;
-                                            }
-                                        case "leelong":
-                                            {
-                                                PacketHandler.CheckCommand2("@tegotegatege HeavenFan Super 8 1 000 103 103", client);
-                                                PacketHandler.CheckCommand2("@tegotegatege StarTower Super 8 1 000 123 123", client);
-                                                PacketHandler.CheckCommand2("@tegotegatege Steed Fixed 8 000 000 00 00", client);
-                                                PacketHandler.CheckCommand2("@tegotegatege RidingCrop Super 8 1 000 00 00", client);
-                                                PacketHandler.CheckCommand2("@tegotegatege SkyNunchaku Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand2("@tegotegatege SkyNunchaku Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand2("@tegotegatege CombatSuit(Lv.140) Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand2("@tegotegatege LegendHood Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand2("@tegotegatege CrimsonRing Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand2("@tegotegatege Blizzard Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand2("@tegotegatege FloridNecklace Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item TempestWing Super 8 1 0 103 123", client);
-                                                client.Send(new MTA.Network.GamePackets.Message("Gratz.You Got A Leelong Stuff", System.Drawing.Color.Red, 0x7d0));
-                                                break;
-                                            }
-                                        case "monk":
-                                            {
-                                                PacketHandler.CheckCommand("@item HeavenFan Super 8 1 000 103 103", client);
-                                                PacketHandler.CheckCommand("@item StarTower Super 8 1 000 123 123", client);
-                                                PacketHandler.CheckCommand("@item Steed Fixed 8 000 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item RidingCrop Super 8 1 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item LazuritePrayerBeads Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item LazuritePrayerBeads Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item WhiteLotusFrock Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item XumiCap Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item CrimsonRing Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item Blizzard Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FloridNecklace Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item Volcano Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item TempestWing Super 8 1 0 103 123", client);
-                                                client.Send(new MTA.Network.GamePackets.Message("Gratz.You Got A Monk Stuff", System.Drawing.Color.Red, 0x7d0));
-                                                break;
-                                            }
-                                        case "fire":
-                                            {
-                                                PacketHandler.CheckCommand("@item HeavenFan Super 8 1 000 103 103", client);
-                                                PacketHandler.CheckCommand("@item StarTower Super 8 1 000 123 123", client);
-                                                PacketHandler.CheckCommand("@item Steed Fixed 8 000 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item RidingCrop Super 8 1 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item SupremeSword Super 8 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item EternalRobe Super 8 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item DistinctCap Super 8 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item WyvernBracelet Super 8 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item CrimsonRing Super 8 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item Blizzard Super 8 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item FloridNecklace Super 8 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item SpearOfWrath Super 8 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item NiftyBag Super 8 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item TempestWing Super 8 1 0 103 123", client);
-                                                client.Send(new MTA.Network.GamePackets.Message("Gratz.You Got A fire Stuff", System.Drawing.Color.Red, 0x7d0));
-                                                break;
-                                            }
-                                        case "water":
-                                        case "toist":
-                                            {
-                                                PacketHandler.CheckCommand("@item HeavenFan Super 8 1 000 103 103", client);
-                                                PacketHandler.CheckCommand("@item StarTower Super 8 1 000 123 123", client);
-                                                PacketHandler.CheckCommand("@item Steed Fixed 8 000 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item RidingCrop Super 8 1 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item SupremeSword Super 8 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item EternalRobe Super 8 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item DistinctCap Super 8 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item WyvernBracelet Super 8 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item CrimsonRing Super 8 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item Blizzard Super 8 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item FloridNecklace Super 8 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item SpearOfWrath Super 8 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item NiftyBag Super 8 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item TempestWing Super 8 1 0 103 123", client);
-                                                client.Send(new MTA.Network.GamePackets.Message("Gratz.You Got A water Stuff", System.Drawing.Color.Red, 0x7d0));
-                                                break;
-                                            }
-                                        case "warrior":
-                                        case "worrior":
-                                            {
-                                                PacketHandler.CheckCommand("@item HeavenFan Super 8 1 000 103 103", client);
-                                                PacketHandler.CheckCommand("@item StarTower Super 8 1 000 123 123", client);
-                                                PacketHandler.CheckCommand("@item Steed Fixed 8 000 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item RidingCrop Super 8 1 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item SpearOfWrath Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item SkyBlade Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item ImperiousArmor Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item SteelHelmet Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item CrimsonRing Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item Blizzard Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FloridNecklace Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item CelestialShield Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item OccultWand Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item TempestWing Super 8 1 0 103 123", client);
-                                                client.Send(new MTA.Network.GamePackets.Message("Gratz.You Got A Warrior Stuff", System.Drawing.Color.Red, 0x7d0));
-                                                break;
-                                            }
-                                        case "trojan":
-                                            {
-                                                PacketHandler.CheckCommand("@item HeavenFan Super 8 1 000 103 103", client);
-                                                PacketHandler.CheckCommand("@item StarTower Super 8 1 000 123 123", client);
-                                                PacketHandler.CheckCommand("@item Steed Fixed 8 000 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item RidingCrop Super 8 1 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item SkyBlade Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FangCrossSaber Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FangCrossSaber Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item ObsidianArmor Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item SquallSword Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item NirvanaClub Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item CrimsonRing Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item Blizzard Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FloridNecklace Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item SkyBlade Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item SquallSword Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item NirvanaClub Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item PeerlessCoronet Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item TempestWing Super 8 1 0 103 123", client);
-                                                client.Send(new MTA.Network.GamePackets.Message("Gratz.You Got A Trojan Stuff", System.Drawing.Color.Red, 0x7d0));
-                                                break;
-                                            }
-                                        case "archer":
-                                            {
-                                                PacketHandler.CheckCommand("@item HeavenFan Super 8 1 000 103 103", client);
-                                                PacketHandler.CheckCommand("@item StarTower Super 8 1 000 123 123", client);
-                                                PacketHandler.CheckCommand("@item Steed Fixed 8 000 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item RidingCrop Super 8 1 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item HeavenlyBow Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item WelkinCoat Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item WhiteTigerHat Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item Volcano Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item CrimsonRing Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item Blizzard Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FloridNecklace Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item HeavenPlume Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item TempestWing Super 8 1 0 103 123", client);
-                                                client.Send(new MTA.Network.GamePackets.Message("Gratz.You Got A Archer Stuff", System.Drawing.Color.Red, 0x7d0));
-                                                break;
-                                            }
-                                        case "pirate":
-                                            {
-                                                PacketHandler.CheckCommand("@item HeavenFan Super 8 1 000 103 103", client);
-                                                PacketHandler.CheckCommand("@item StarTower Super 8 1 000 123 123", client);
-                                                PacketHandler.CheckCommand("@item Steed Fixed 8 000 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item RidingCrop Super 8 1 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item CaptainRapier Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item LordPistol Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item DarkDragonCoat Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item DominatorHat Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item CrimsonRing Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item Blizzard Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FloridNecklace Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item TempestWing Super 8 1 0 103 123", client);
-                                                client.Send(new MTA.Network.GamePackets.Message("Gratz.You Got A Pirate Stuff", System.Drawing.Color.Red, 0x7d0));
-                                                break;
-                                            }
-                                    }
-                                    break;
-                                }
-                            #endregion
-                            #region stuff Command
-                            case "stuff12-7":
-                                {
-                                    switch (Data[1])
-                                    {
-                                        case "ninja":
-                                            {
-                                                PacketHandler.CheckCommand("@item HeavenFan Super 12 1 000 103 103", client);
-                                                PacketHandler.CheckCommand("@item StarTower Super 12 1 000 123 123", client);
-                                                PacketHandler.CheckCommand("@item Steed Fixed 12 000 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item RidingCrop Super 12 1 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item HanzoKatana Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item HanzoKatana Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item MTAVest Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item MTAHood Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item CrimsonRing Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item Blizzard Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FloridNecklace Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item RambleVeil Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item TempestWing Super 12 1 0 103 123", client);
-                                                client.Send(new MTA.Network.GamePackets.Message("Gratz.You Got A Ninja Stuff", System.Drawing.Color.Red, 0x7d0));
-                                                break;
-                                            }
-                                        case "leelong":
-                                            {
-                                                PacketHandler.CheckCommand2("@tegotegatege HeavenFan Super 12 1 000 103 103", client);
-                                                PacketHandler.CheckCommand2("@tegotegatege StarTower Super 12 1 000 123 123", client);
-                                                PacketHandler.CheckCommand2("@tegotegatege Steed Fixed 12 000 000 00 00", client);
-                                                PacketHandler.CheckCommand2("@tegotegatege RidingCrop Super 12 1 000 00 00", client);
-                                                PacketHandler.CheckCommand2("@tegotegatege SkyNunchaku Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand2("@tegotegatege SkyNunchaku Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand2("@tegotegatege CombatSuit(Lv.140) Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand2("@tegotegatege LegendHood Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand2("@tegotegatege CrimsonRing Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand2("@tegotegatege Blizzard Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand2("@tegotegatege FloridNecklace Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item TempestWing Super 12 1 0 103 123", client);
-                                                client.Send(new MTA.Network.GamePackets.Message("Gratz.You Got A Leelong Stuff", System.Drawing.Color.Red, 0x7d0));
-                                                break;
-                                            }
-                                        case "monk":
-                                            {
-                                                PacketHandler.CheckCommand("@item HeavenFan Super 12 1 000 103 103", client);
-                                                PacketHandler.CheckCommand("@item StarTower Super 12 1 000 123 123", client);
-                                                PacketHandler.CheckCommand("@item Steed Fixed 12 000 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item RidingCrop Super 12 1 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item LazuritePrayerBeads Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item LazuritePrayerBeads Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item WhiteLotusFrock Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item XumiCap Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item CrimsonRing Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item Blizzard Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FloridNecklace Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item Volcano Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item TempestWing Super 12 1 0 103 123", client);
-                                                client.Send(new MTA.Network.GamePackets.Message("Gratz.You Got A Monk Stuff", System.Drawing.Color.Red, 0x7d0));
-                                                break;
-                                            }
-                                        case "fire":
-                                            {
-                                                PacketHandler.CheckCommand("@item HeavenFan Super 12 1 000 103 103", client);
-                                                PacketHandler.CheckCommand("@item StarTower Super 12 1 000 123 123", client);
-                                                PacketHandler.CheckCommand("@item Steed Fixed 12 000 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item RidingCrop Super 12 1 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item SupremeSword Super 12 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item EternalRobe Super 12 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item DistinctCap Super 12 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item WyvernBracelet Super 12 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item CrimsonRing Super 12 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item Blizzard Super 12 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item FloridNecklace Super 12 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item SpearOfWrath Super 12 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item NiftyBag Super 12 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item TempestWing Super 12 1 0 103 123", client);
-                                                client.Send(new MTA.Network.GamePackets.Message("Gratz.You Got A fire Stuff", System.Drawing.Color.Red, 0x7d0));
-                                                break;
-                                            }
-                                        case "water":
-                                        case "toist":
-                                            {
-                                                PacketHandler.CheckCommand("@item HeavenFan Super 12 1 000 103 103", client);
-                                                PacketHandler.CheckCommand("@item StarTower Super 12 1 000 123 123", client);
-                                                PacketHandler.CheckCommand("@item Steed Fixed 12 000 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item RidingCrop Super 12 1 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item SupremeSword Super 12 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item EternalRobe Super 12 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item DistinctCap Super 12 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item WyvernBracelet Super 12 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item CrimsonRing Super 12 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item Blizzard Super 12 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item FloridNecklace Super 12 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item SpearOfWrath Super 12 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item NiftyBag Super 12 7 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item TempestWing Super 12 1 0 103 123", client);
-                                                client.Send(new MTA.Network.GamePackets.Message("Gratz.You Got A water Stuff", System.Drawing.Color.Red, 0x7d0));
-                                                break;
-                                            }
-                                        case "warrior":
-                                        case "worrior":
-                                            {
-                                                PacketHandler.CheckCommand("@item HeavenFan Super 12 1 000 103 103", client);
-                                                PacketHandler.CheckCommand("@item StarTower Super 12 1 000 123 123", client);
-                                                PacketHandler.CheckCommand("@item Steed Fixed 12 000 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item RidingCrop Super 12 1 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item SpearOfWrath Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item SkyBlade Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item ImperiousArmor Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item SteelHelmet Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item CrimsonRing Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item Blizzard Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FloridNecklace Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item CelestialShield Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item OccultWand Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item TempestWing Super 12 1 0 103 123", client);
-                                                client.Send(new MTA.Network.GamePackets.Message("Gratz.You Got A Warrior Stuff", System.Drawing.Color.Red, 0x7d0));
-                                                break;
-                                            }
-                                        case "trojan":
-                                            {
-                                                PacketHandler.CheckCommand("@item HeavenFan Super 12 1 000 103 103", client);
-                                                PacketHandler.CheckCommand("@item StarTower Super 12 1 000 123 123", client);
-                                                PacketHandler.CheckCommand("@item Steed Fixed 12 000 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item RidingCrop Super 12 1 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item SkyBlade Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FangCrossSaber Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FangCrossSaber Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item ObsidianArmor Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item SquallSword Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item NirvanaClub Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item CrimsonRing Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item Blizzard Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FloridNecklace Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item SkyBlade Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item SquallSword Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item NirvanaClub Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item PeerlessCoronet Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item TempestWing Super 12 1 0 103 123", client);
-                                                client.Send(new MTA.Network.GamePackets.Message("Gratz.You Got A Trojan Stuff", System.Drawing.Color.Red, 0x7d0));
-                                                break;
-                                            }
-                                        case "archer":
-                                            {
-                                                PacketHandler.CheckCommand("@item HeavenFan Super 12 1 000 103 103", client);
-                                                PacketHandler.CheckCommand("@item StarTower Super 12 1 000 123 123", client);
-                                                PacketHandler.CheckCommand("@item Steed Fixed 12 000 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item RidingCrop Super 12 1 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item HeavenlyBow Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item WelkinCoat Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item WhiteTigerHat Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item Volcano Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item CrimsonRing Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item Blizzard Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FloridNecklace Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item HeavenPlume Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item TempestWing Super 12 1 0 103 123", client);
-                                                client.Send(new MTA.Network.GamePackets.Message("Gratz.You Got A Archer Stuff", System.Drawing.Color.Red, 0x7d0));
-                                                break;
-                                            }
-                                        case "pirate":
-                                            {
-                                                PacketHandler.CheckCommand("@item HeavenFan Super 12 1 000 103 103", client);
-                                                PacketHandler.CheckCommand("@item StarTower Super 12 1 000 123 123", client);
-                                                PacketHandler.CheckCommand("@item Steed Fixed 12 000 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item RidingCrop Super 12 1 000 00 00", client);
-                                                PacketHandler.CheckCommand("@item CaptainRapier Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item LordPistol Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item DarkDragonCoat Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item DominatorHat Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item CrimsonRing Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item Blizzard Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FloridNecklace Super 12 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item TempestWing Super 12 1 0 103 123", client);
-                                                client.Send(new MTA.Network.GamePackets.Message("Gratz.You Got A Pirate Stuff", System.Drawing.Color.Red, 0x7d0));
-                                                break;
-                                            }
-                                    }
-                                    break;
-                                }
-                            #endregion
-                            #endregion stuff
-
-                            #region stuff Command
-                            case "stuff8":
-                                {
-                                    switch (Data[1])
-                                    {
-                                        case "ninja":
-                                            {
-                                                PacketHandler.CheckCommand("@item HeavenFan Super 8 1", client);
-                                                PacketHandler.CheckCommand("@item StarTower Super 8 1", client);
-                                                PacketHandler.CheckCommand("@item Steed Fixed 8", client);
-                                                PacketHandler.CheckCommand("@item RidingCrop Super 8", client);
-                                                PacketHandler.CheckCommand("@item HanzoKatana Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item HanzoKatana Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item MTAVest Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item MTAHood Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item CrimsonRing Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item Blizzard Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FloridNecklace Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item RambleVeil Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item TempestWing Super 8 0 0 103 123", client);
-                                                client.Send(new MTA.Network.GamePackets.Message("Gratz.You Got A Ninja Stuff", System.Drawing.Color.Red, 0x7d0));
-                                                break;
-                                            }
-                                        case "monk":
-                                            {
-                                                PacketHandler.CheckCommand("@item HeavenFan Super 8 1", client);
-                                                PacketHandler.CheckCommand("@item StarTower Super 8 1", client);
-                                                PacketHandler.CheckCommand("@item Steed Fixed 8", client);
-                                                PacketHandler.CheckCommand("@item RidingCrop Super 8", client);
-                                                PacketHandler.CheckCommand("@item LazuritePrayerBeads Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item LazuritePrayerBeads Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item WhiteLotusFrock Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item XumiCap Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item CrimsonRing Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item Blizzard Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FloridNecklace Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item Volcano Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item TempestWing Super 8 0 0 103 123", client);
-                                                client.Send(new MTA.Network.GamePackets.Message("Gratz.You Got A Monk Stuff", System.Drawing.Color.Red, 0x7d0));
-                                                break;
-                                            }
-                                        case "fire":
-                                            {
-                                                PacketHandler.CheckCommand("@item HeavenFan Super 8 1", client);
-                                                PacketHandler.CheckCommand("@item StarTower Super 8 1", client);
-                                                PacketHandler.CheckCommand("@item Steed Fixed 8", client);
-                                                PacketHandler.CheckCommand("@item RidingCrop Super 8", client);
-                                                PacketHandler.CheckCommand("@item SupremeSword Super 8 0 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item EternalRobe Super 8 0 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item DistinctCap Super 8 0 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item WyvernBracelet Super 8 0 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item CrimsonRing Super 8 0 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item Blizzard Super 8 0 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item FloridNecklace Super 8 0 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item SpearOfWrath Super 8 0 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item NiftyBag Super 8 0 255 3 3", client);
-                                                PacketHandler.CheckCommand("@item TempestWing Super 8 0 0 103 123", client);
-                                                client.Send(new MTA.Network.GamePackets.Message("Gratz.You Got A Taoist Stuff", System.Drawing.Color.Red, 0x7d0));
-                                                break;
-                                            }
-                                        case "water":
-                                        case "toist":
-                                            {
-                                                PacketHandler.CheckCommand("@item HeavenFan Super 8 1", client);
-                                                PacketHandler.CheckCommand("@item StarTower Super 8 1", client);
-                                                PacketHandler.CheckCommand("@item Steed Fixed 8", client);
-                                                PacketHandler.CheckCommand("@item RidingCrop Super 8", client);
-                                                PacketHandler.CheckCommand("@item SupremeSword Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item EternalRobe Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item DistinctCap Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item WyvernBracelet Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item CrimsonRing Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item Blizzard Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FloridNecklace Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item SpearOfWrath Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item NiftyBag Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item TempestWing Super 8 0 0 103 123", client);
-                                                client.Send(new MTA.Network.GamePackets.Message("Gratz.You Got A Taoist Stuff", System.Drawing.Color.Red, 0x7d0));
-                                                break;
-                                            }
-                                        case "warrior":
-                                        case "worrior":
-                                            {
-                                                PacketHandler.CheckCommand("@item HeavenFan Super 8 1", client);
-                                                PacketHandler.CheckCommand("@item StarTower Super 8 1", client);
-                                                PacketHandler.CheckCommand("@item Steed Fixed 8", client);
-                                                PacketHandler.CheckCommand("@item RidingCrop Super 8", client);
-                                                PacketHandler.CheckCommand("@item SpearOfWrath Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item SkyBlade Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item ImperiousArmor Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item SteelHelmet Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item CrimsonRing Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item Blizzard Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FloridNecklace Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item CelestialShield Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item OccultWand Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item TempestWing Super 8 0 0 103 123", client);
-                                                client.Send(new MTA.Network.GamePackets.Message("Gratz.You Got A Warrior Stuff", System.Drawing.Color.Red, 0x7d0));
-                                                break;
-                                            }
-                                        case "trojan":
-                                            {
-                                                PacketHandler.CheckCommand("@item HeavenFan Super 8 1", client);
-                                                PacketHandler.CheckCommand("@item StarTower Super 8 1", client);
-                                                PacketHandler.CheckCommand("@item Steed Fixed 8", client);
-                                                PacketHandler.CheckCommand("@item RidingCrop Super 8", client);
-                                                PacketHandler.CheckCommand("@item SkyBlade Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FangCrossSaber Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FangCrossSaber Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item ObsidianArmor Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item SquallSword Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item NirvanaClub Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item CrimsonRing Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item Blizzard Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FloridNecklace Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item SkyBlade Super 8 7 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item SquallSword Super 8 0 250255 13 13", client);
-                                                PacketHandler.CheckCommand("@item NirvanaClub Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item PeerlessCoronet Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item TempestWing Super 8 0 0 103 123", client);
-                                                client.Send(new MTA.Network.GamePackets.Message("Gratz.You Got A Trojan Stuff", System.Drawing.Color.Red, 0x7d0));
-                                                break;
-                                            }
-                                        case "archer":
-                                            {
-                                                PacketHandler.CheckCommand("@item HeavenFan Super 8 1", client);
-                                                PacketHandler.CheckCommand("@item StarTower Super 8 1", client);
-                                                PacketHandler.CheckCommand("@item Steed Fixed 8", client);
-                                                PacketHandler.CheckCommand("@item RidingCrop Super 8", client);
-                                                PacketHandler.CheckCommand("@item HeavenlyBow Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FantasyKnife Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FantasyKnife Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item WelkinCoat Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item WhiteTigerHat Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item Volcano Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item CrimsonRing Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item Blizzard Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FloridNecklace Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item HeavenPlume Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item TempestWing Super 8 0 0 103 123", client);
-                                                client.Send(new MTA.Network.GamePackets.Message("Gratz.You Got A Archer Stuff", System.Drawing.Color.Red, 0x7d0));
-                                                break;
-                                            }
-                                        case "pirate":
-                                            {
-                                                PacketHandler.CheckCommand("@item HeavenFan Super 8 1", client);
-                                                PacketHandler.CheckCommand("@item StarTower Super 8 1", client);
-                                                PacketHandler.CheckCommand("@item Steed Fixed 8", client);
-                                                PacketHandler.CheckCommand("@item RidingCrop Super 8", client);
-                                                PacketHandler.CheckCommand("@item CaptainRapier Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item LordPistol Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item DarkDragonCoat Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item DominatorHat Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item CrimsonRing Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item Blizzard Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item FloridNecklace Super 8 0 255 13 13", client);
-                                                PacketHandler.CheckCommand("@item TempestWing Super 8 0 0 103 123", client);
-                                                client.Send(new MTA.Network.GamePackets.Message("Gratz.You Got A Pirate Stuff", System.Drawing.Color.Red, 0x7d0));
-                                                break;
-                                            }
-                                    }
-                                    break;
-                                }
-                            #endregion
 
                             case "testsinf":
                                 {
@@ -25226,7 +24686,6 @@ p =>
                     string message_ = message.Substring(1).ToLower();
                     string Mess = message.Substring(1);
                     string[] Data = message_.Split(' ');
-                    Program.AddGMCommand(client.Entity.Name, "   " + client.Account.State.ToString() + "   @" + message_ + "    " + DateTime.Now.ToString());
                     switch (Data[0])
                     {
                         case "tegotegatege":
