@@ -666,6 +666,7 @@
     <Compile Include="Client\Commands\EntityCommands.cs" />
     <Compile Include="Client\Commands\RebornCommands.cs" />
     <Compile Include="Client\Commands\TeleportCommands.cs" />
+    <Compile Include="Client\Commands\GameCommands.cs" />
     <Compile Include="Client\GameState.cs" />
     <Compile Include="Writer.cs" />
     <Compile Include="Npcs.cs" />

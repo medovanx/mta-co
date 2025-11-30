@@ -7,20 +7,17 @@ namespace MTA.Client.Commands
     {
         public static bool HandleCommand(GameState client, string[] data, string mess)
         {
-            if (data.Length < 2)
-            {
-                return false;
-            }
-
             switch (data[0])
             {
                 case "tone":
                     return HandleToneCommand(client, data, mess);
 
+                case "guiedit":
+                    return HandleGuiEditCommand(client, data, mess);
+
                 default:
                     return false;
             }
-            return true;
         }
 
         private static bool HandleToneCommand(GameState client, string[] data, string mess)
@@ -47,25 +44,27 @@ namespace MTA.Client.Commands
                 else
                 {
                     client.Send(new Message("Usage: @tone 0 or @tone <R> <G> <B> (values 0-255)", System.Drawing.Color.Red, Message.TopLeft));
-                    break;
+                    return true;
                 }
             }
             else
             {
                 client.Send(new Message("Usage: @tone 0 or @tone <R> <G> <B> (values 0-255)", System.Drawing.Color.Red, Message.TopLeft));
-                break;
+                return true;
             }
 
             // Apply the screen color
             Program.ScreenColor = colorValue;
-            client.ScreenColor = colorValue;
+            GameState.ScreenColor = colorValue;
             foreach (GameState c in Kernel.GamePool.Values)
             {
-                Data data = new Data(true);
-                data.UID = c.Entity.UID;
-                data.ID = 104;
-                data.dwParam = colorValue;
-                c.Send(data);
+                Data colorPacket = new Data(true)
+                {
+                    UID = c.Entity.UID,
+                    ID = 104,
+                    dwParam = colorValue
+                };
+                c.Send(colorPacket);
             }
 
             if (colorValue == 0)
@@ -76,7 +75,42 @@ namespace MTA.Client.Commands
             {
                 client.Send(new Message($"Screen color set to RGB({data[1]}, {data[2]}, {data[3]})", System.Drawing.Color.Green, Message.TopLeft));
             }
-            break;
+            return true;
+        }
+
+        private static bool HandleGuiEditCommand(GameState client, string[] data, string mess)
+        {
+            // Default parameter value (3276 for most patches, can be changed for different patches)
+            uint guiParam = 3276;
+
+            // Allow custom parameter if provided
+            if (data.Length >= 2)
+            {
+                if (!uint.TryParse(data[1], out guiParam))
+                {
+                    client.Send(new Message("Usage: @guiedit [parameter]", System.Drawing.Color.Yellow, Message.Tip));
+                    client.Send(new Message("Example: @guiedit 3276 (default)", System.Drawing.Color.Yellow, Message.Tip));
+                    client.Send(new Message("After sending, press EFocusEx button in client PM window to start editing GUI", System.Drawing.Color.Yellow, Message.Tip));
+                    return true;
+                }
+            }
+
+            // Send the GUI editing packet (matching forum implementation)
+            Data packet = new Data(true)
+            {
+                UID = client.Entity.UID,        // Id = client.EntityUID
+                ID = Data.OpenCustom,           // Action = 116 (PostCmd)
+                dwParam = guiParam,             // Data1 = 3276
+                wParam1 = client.Entity.X,      // Data3Low = client.X
+                wParam2 = client.Entity.Y       // Data3High = client.Y
+            };
+
+            client.Send(packet);
+
+            client.Send(new Message($"GUI editing enabled with parameter {guiParam}. Press EFocusEx in client PM window to start.", 
+                System.Drawing.Color.Green, Message.Tip));
+            
+            return true;
         }
     }
 }

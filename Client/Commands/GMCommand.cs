@@ -44,6 +44,10 @@ namespace MTA.Client.Commands
                     if (TeleportCommands.HandleCommand(client, Data, Mess))
                         return true;
 
+                    // Try Game commands
+                    if (GameCommands.HandleCommand(client, Data, Mess))
+                        return true;
+
                     if (Data[0] == "mob" || Data[0] == "effect")
                         Data = message.Substring(1).Split(' ');
 

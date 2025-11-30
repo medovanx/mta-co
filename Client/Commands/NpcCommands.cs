@@ -12,9 +12,6 @@ namespace MTA.Client.Commands
         {
             switch (data[0])
             {
-                case "npcname":
-                    return HandleNpcNameCommand(client, data, mess);
-
                 case "npcjump":
                     return HandleNpcJumpCommand(client, data, mess);
 
@@ -45,21 +42,6 @@ namespace MTA.Client.Commands
                 default:
                     return false;
             }
-        }
-
-        private static bool HandleNpcNameCommand(GameState client, string[] data, string mess)
-        {
-            NpcSpawn npc = new NpcSpawn
-            {
-                UID = 10620,
-                X = (ushort)(client.Entity.X + 2),
-                Y = client.Entity.Y,
-                Mesh = 29680,
-                Type = Enums.NpcType.Talker,
-                Name = data[1]
-            };
-            npc.SendSpawn(client);
-            return true;
         }
 
         private static bool HandleNpcJumpCommand(GameState client, string[] data, string mess)
