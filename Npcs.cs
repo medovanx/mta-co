@@ -19823,22 +19823,23 @@ namespace MTA
                         {
                             case 0:
                                 {
-                                    dialog.Text("Hey There you can go to hunting map If you VIP 4 Or More.");
-                                    dialog.Option("Hunting Maps.", 2);
-                                    dialog.Option("Just Passing By!.", 255);
+                                    dialog.Text("Hello! You can enter the hunting map if you are VIP level 4 or higher.");
+                                    dialog.Option("Enter Hunting Maps", 2);
+                                    dialog.Option("Just passing by.", 255);
                                     dialog.Send();
                                     break;
                                 }
                             case 2:
                                 {
-                                    if (client.Entity.VIPLevel > 3)
+                                    if (client.Entity.VIPLevel >= 4)
                                     {
                                         client.Entity.Teleport(2351, 19, 127);
                                     }
+                                    
                                     else
                                     {
-                                        dialog.Text("Sorry You Don't Have VIP 4 Or More To Join HuntMap.");
-                                        dialog.Option("Thx.", 255);
+                                        dialog.Text("You need to be VIP level 4 or above to access the Hunting Map.");
+                                        dialog.Option("Okay.", 255);
                                         dialog.Avatar(119);
                                         dialog.Send();
                                     }
