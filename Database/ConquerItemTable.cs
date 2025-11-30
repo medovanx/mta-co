@@ -448,7 +448,7 @@ namespace MTA.Database
                         .Insert("SocketTwo", (byte)Item.SocketTwo).Insert("Durability", Item.Durability)
                         .Insert("MaximDurability", Item.MaximDurability).Insert("SocketProgress", Item.SocketProgress)
                         .Insert("PlusProgress", Item.PlusProgress).Insert("Effect", (ushort)Item.Effect)
-                        .Insert("Bound", Item.Bound).Insert("DayStamp", Item.DayStamp.ToString()).Insert("Days", Item.Days).Insert("Locked", Item.Lock).Insert("UnlockEnd", Item.UnlockEnd.Ticks)
+                        .Insert("Bound", Item.Bound).Insert("DayStamp", Item.DayStamp.Ticks).Insert("Days", Item.Days).Insert("Locked", Item.Lock).Insert("UnlockEnd", Item.UnlockEnd.Ticks)
                         .Insert("Suspicious", Item.Suspicious).Insert("SuspiciousStart", Item.SuspiciousStart.Ticks)
                         .Insert("Color", (ushort)Item.Color).Insert("Position", Item.Position).Insert("StackSize", Item.StackSize)
                         .Insert("RefineryItem", Item.RefineItem).Insert("RefineryTime", Item.RefineryTime.Ticks).Insert("EntityID", client.Entity.UID)
