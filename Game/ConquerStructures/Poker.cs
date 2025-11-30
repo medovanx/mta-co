@@ -1474,7 +1474,7 @@ namespace MTA.Game.ConquerStructures
         /// </summary>
         /// <param name="playerCards">Player cards</param>
         /// <returns>A unsigned int that we can use to compare with another hand</returns>
-        private uint EvaluateCards(ICollection<Game.ConquerStructures.PokerCard> playerCards)
+        private uint EvaluateCards(ICollection<PokerCard> playerCards)
         {
             if (TableCards == null || TableCards.Count != 5 || playerCards == null || playerCards.Count != 2)
                 return 0;
