@@ -7644,6 +7644,307 @@ namespace MTA.Client
 
                             break;
                         }
+                        case "reloadnpc":
+                        {
+                            try
+                            {
+                                World.ScriptEngine.Check_Updates();
+                                client.Send(new Message("NPC scripts reloaded successfully!",
+                                    System.Drawing.Color.Green, Message.Tip));
+                                MTA.Console.WriteLine("NPC scripts reloaded by [" + client.Entity.Name + "]");
+                            }
+                            catch (Exception ex)
+                            {
+                                client.Send(new Message("Error reloading NPC scripts: " + ex.Message,System.Drawing.Color.Red, Message.Tip));
+                                MTA.Console.WriteLine("Error reloading NPC scripts: " + ex.ToString());
+                            }
+
+                            break;
+                        }
+                        case "movenpc":
+                        {
+                            if (Data.Length < 2)
+                            {
+                                client.Send(new Message("Usage: @movenpc <npc_id>", System.Drawing.Color.Red,
+                                    Message.Tip));
+                                break;
+                            }
+
+                            uint npcId = uint.Parse(Data[1]);
+                            Interfaces.INpc foundNpc = null;
+                            Game.Map foundMap = null;
+
+                            // Search through all maps for the NPC
+                            foreach (var map in Kernel.Maps.Values)
+                            {
+                                if (map.Npcs.ContainsKey(npcId))
+                                {
+                                    foundNpc = map.Npcs[npcId];
+                                    foundMap = map;
+                                    break;
+                                }
+                            }
+
+                            if (foundNpc == null)
+                            {
+                                client.Send(new Message("NPC with ID " + npcId + " not found!",
+                                    System.Drawing.Color.Red, Message.Tip));
+                                break;
+                            }
+
+                            // Remove NPC from old map
+                            if (foundMap != null && foundMap.Npcs.ContainsKey(npcId))
+                            {
+                                foundMap.Npcs.Remove(npcId);
+                            }
+
+                            // Update NPC position to player's position
+                            foundNpc.X = client.Entity.X;
+                            foundNpc.Y = client.Entity.Y;
+                            foundNpc.MapID = client.Entity.MapID;
+
+                            // Add NPC to current map
+                            var targetMap = Kernel.Maps[client.Entity.MapID];
+                            if (targetMap.Npcs.ContainsKey(npcId))
+                                targetMap.Npcs.Remove(npcId);
+                            targetMap.Npcs.Add(npcId, foundNpc);
+
+                            // Update database
+                            try
+                            {
+                                using (var cmd = new Database.MySqlCommand(Database.MySqlCommandType.UPDATE))
+                                {
+                                    cmd.Update("npcs")
+                                        .Set("cellx", foundNpc.X)
+                                        .Set("celly", foundNpc.Y)
+                                        .Set("mapid", foundNpc.MapID)
+                                        .Where("id", npcId)
+                                        .Execute();
+                                }
+
+                                // Reload screens for all players on the map
+                                foreach (var player in Kernel.GamePool.Values)
+                                {
+                                    if (player.Entity != null && player.Entity.MapID == client.Entity.MapID)
+                                    {
+                                        player.Screen.FullWipe();
+                                        player.Screen.Reload(null);
+                                    }
+                                }
+
+                                client.Send(new Message(
+                                    "NPC [" + (foundNpc.Name ?? "ID: " + npcId) + "] moved to your position",
+                                    System.Drawing.Color.Green, Message.Tip));
+                            }
+                            catch (Exception ex)
+                            {
+                                client.Send(new Message("Error updating NPC in database: " + ex.Message,
+                                    System.Drawing.Color.Red, Message.Tip));
+                            }
+
+                                break;
+                            }
+                        case "deletenpc":
+                            {
+                                if (Data.Length < 2)
+                                {
+                                    client.Send(new Message("Usage: @deletenpc <npc_id>", System.Drawing.Color.Red, Message.Tip));
+                                    break;
+                                }
+                                
+                                uint npcId = uint.Parse(Data[1]);
+                                Interfaces.INpc foundNpc = null;
+                                Game.Map foundMap = null;
+                                
+                                // Search through all maps for the NPC
+                                foreach (var map in Kernel.Maps.Values)
+                                {
+                                    if (map.Npcs.ContainsKey(npcId))
+                                    {
+                                        foundNpc = map.Npcs[npcId];
+                                        foundMap = map;
+                                        break;
+                                    }
+                                }
+                                
+                                if (foundNpc == null)
+                                {
+                                    client.Send(new Message("NPC with ID " + npcId + " not found!", System.Drawing.Color.Red, Message.Tip));
+                                    break;
+                                }
+                                
+                                // Remove NPC from map
+                                foundMap.RemoveNpc(foundNpc);
+                                
+                                // Delete from database
+                                try
+                                {
+                                    using (var cmd = new Database.MySqlCommand(Database.MySqlCommandType.DELETE))
+                                    {
+                                        cmd.Delete("npcs", "id", npcId).Execute();
+                                    }
+                                    
+                                    // Also try to delete from sobnpcs table if it exists there
+                                    try
+                                    {
+                                        using (var cmd = new Database.MySqlCommand(Database.MySqlCommandType.DELETE))
+                                        {
+                                            cmd.Delete("sobnpcs", "id", npcId).Execute();
+                                        }
+                                    }
+                                    catch { } // Ignore if not in sobnpcs table
+                                    
+                                    // Reload screens for all players on the map
+                                    foreach (var player in Kernel.GamePool.Values)
+                                    {
+                                        if (player.Entity != null && player.Entity.MapID == foundMap.ID)
+                                        {
+                                            player.Screen.FullWipe();
+                                            player.Screen.Reload(null);
+                                        }
+                                    }
+                                    
+                                    client.Send(new Message("NPC [" + (foundNpc.Name ?? "ID: " + npcId) + "] deleted successfully", System.Drawing.Color.Green, Message.Tip));
+                                    MTA.Console.WriteLine("NPC " + npcId + " deleted by [" + client.Entity.Name + "]");
+                                }
+                                catch (Exception ex)
+                                {
+                                    client.Send(new Message("Error deleting NPC from database: " + ex.Message, System.Drawing.Color.Red, Message.Tip));
+                                    MTA.Console.WriteLine("Error deleting NPC: " + ex.ToString());
+                                }
+                                
+                                break;
+                            }
+                        case "addnpc":
+                            {
+                                if (Data.Length < 3)
+                                {
+                                    client.Send(new Message("Usage: @addnpc <mesh> <type> [name]", System.Drawing.Color.Red, Message.Tip));
+                                    client.Send(new Message("Example: @addnpc 100 2 TestNPC", System.Drawing.Color.Yellow, Message.Tip));
+                                    break;
+                                }
+                                
+                                ushort mesh = ushort.Parse(Data[1]);
+                                byte type = byte.Parse(Data[2]);
+                                string name = Data.Length >= 4 ? Mess.Substring(Data[0].Length + Data[1].Length + Data[2].Length + 3) : "NPC";
+                                
+                                // Generate a unique NPC ID
+                                uint npcId = 100000; // Start from 100000
+                                try
+                                {
+                                    using (var cmd = new Database.MySqlCommand(Database.MySqlCommandType.SELECT))
+                                    {
+                                        cmd.Select("npcs");
+                                        using (var reader = new Database.MySqlReader(cmd))
+                                        {
+                                            while (reader.Read())
+                                            {
+                                                uint existingId = reader.ReadUInt32("id");
+                                                if (existingId >= npcId)
+                                                    npcId = existingId + 1;
+                                            }
+                                        }
+                                    }
+                                    
+                                    // Also check sobnpcs table
+                                    using (var cmd = new Database.MySqlCommand(Database.MySqlCommandType.SELECT))
+                                    {
+                                        cmd.Select("sobnpcs");
+                                        using (var reader = new Database.MySqlReader(cmd))
+                                        {
+                                            while (reader.Read())
+                                            {
+                                                uint existingId = reader.ReadUInt32("id");
+                                                if (existingId >= npcId)
+                                                    npcId = existingId + 1;
+                                            }
+                                        }
+                                    }
+                                    
+                                    // Check if ID exists in memory
+                                    while (true)
+                                    {
+                                        bool exists = false;
+                                        foreach (var map in Kernel.Maps.Values)
+                                        {
+                                            if (map.Npcs.ContainsKey(npcId))
+                                            {
+                                                exists = true;
+                                                break;
+                                            }
+                                        }
+                                        if (!exists)
+                                            break;
+                                        npcId++;
+                                    }
+                                }
+                                catch
+                                {
+                                    // If query fails, use a high starting number
+                                    npcId = 1000000;
+                                    foreach (var map in Kernel.Maps.Values)
+                                    {
+                                        foreach (var existingNpc in map.Npcs.Values)
+                                        {
+                                            if (existingNpc.UID >= npcId)
+                                                npcId = existingNpc.UID + 1;
+                                        }
+                                    }
+                                }
+                                
+                                // Create new NPC
+                                INpc npc = new Network.GamePackets.NpcSpawn();
+                                npc.UID = npcId;
+                                npc.Mesh = mesh;
+                                npc.Type = (Enums.NpcType)type;
+                                npc.X = client.Entity.X;
+                                npc.Y = client.Entity.Y;
+                                npc.MapID = client.Entity.MapID;
+                                npc.Name = name;
+                                
+                                // Add to map
+                                client.Map.AddNpc(npc);
+                                
+                                // Insert into database
+                                try
+                                {
+                                    using (var cmd = new Database.MySqlCommand(Database.MySqlCommandType.INSERT))
+                                    {
+                                        cmd.Insert("npcs")
+                                            .Insert("id", (ulong)npc.UID)
+                                            .Insert("name", npc.Name)
+                                            .Insert("type", (long)(int)npc.Type)
+                                            .Insert("lookface", (long)npc.Mesh)
+                                            .Insert("mapid", (long)(int)npc.MapID)
+                                            .Insert("cellx", (long)npc.X)
+                                            .Insert("celly", (long)npc.Y)
+                                            .Insert("effect", "")
+                                            .Execute();
+                                    }
+                                    
+                                    // Reload screens for all players on the map
+                                    foreach (var player in Kernel.GamePool.Values)
+                                    {
+                                        if (player.Entity != null && player.Entity.MapID == client.Entity.MapID)
+                                        {
+                                            player.Screen.FullWipe();
+                                            player.Screen.Reload(null);
+                                        }
+                                    }
+                                    
+                                    client.Send(new Message("NPC [" + name + "] (ID: " + npcId + ") created successfully at your position", System.Drawing.Color.Green, Message.Tip));
+                                    MTA.Console.WriteLine("NPC " + npcId + " [" + name + "] created by [" + client.Entity.Name + "]");
+                                }
+                                catch (Exception ex)
+                                {
+                                    // Remove from map if database insert failed
+                                    client.Map.RemoveNpc(npc);
+                                    client.Send(new Message("Error saving NPC to database: " + ex.Message, System.Drawing.Color.Red, Message.Tip));
+                                    MTA.Console.WriteLine("Error creating NPC: " + ex.ToString());
+                                }
+                                
+                                break;
+                            }
                         case "gotoplayer":
                         {
                             if (Data.Length < 2)
