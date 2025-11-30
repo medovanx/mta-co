@@ -9340,8 +9340,6 @@ namespace MTA.Game.Attacking
                         return false;
                 }
             }
-            if (attacked.Name.Contains("[GM]"))
-                return false;
             if (attacker.MapID == 1507)
             {
                 if (!Game.ClanWarArena.Tournaments[4].Open)
