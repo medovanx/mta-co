@@ -3,7 +3,6 @@
     public enum Languages
     {
         English,
-        Arabic
     }
 
     public enum AppearanceType

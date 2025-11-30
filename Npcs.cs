@@ -17719,7 +17719,6 @@ namespace MTA
                                 {
                                     dialog.Text("Please Choose Your Language  [Mafia]");
                                     dialog.Option("English", 1);
-                                    dialog.Option("Arabic", 2);
                                     dialog.Option("Not Now...", byte.MaxValue);
                                     dialog.Send();
                                     break;
@@ -17727,11 +17726,6 @@ namespace MTA
                             case 1:
                                 {
                                     client.Language = Game.Languages.English;
-                                    break;
-                                }
-                            case 2:
-                                {
-                                    client.Language = Game.Languages.Arabic;
                                     break;
                                 }
                         }
