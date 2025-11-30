@@ -32,6 +32,10 @@ namespace MTA.Client.Commands
                     if (StuffCommands.HandleCommand(client, Data, Mess))
                         return true;
 
+                    // Try Currency commands
+                    if (CurrencyCommands.HandleCommand(client, Data, Mess))
+                        return true;
+
                     if (Data[0] == "mob" || Data[0] == "effect")
                         Data = message.Substring(1).Split(' ');
 

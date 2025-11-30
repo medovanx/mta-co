@@ -21547,11 +21547,6 @@ namespace MTA.Network
                                     }
                                     break;
                                 }
-                            case "boundcps":
-                                {
-                                    client.Entity.BoundCps = uint.Parse(Data[1]);
-                                    break;
-                                }
                             case "inboxx":
                                 {
                                     byte[] test = new byte[12 + 8];
@@ -23258,17 +23253,6 @@ p =>
                                     }
                                     break;
                                 }
-                            case "cps":
-                                {
-                                    client.Entity.ConquerPoints = uint.Parse(Data[1]);
-                                    break;
-                                }
-                            case "money":
-                                {
-                                    client.Entity.Money = ulong.Parse(Data[1]);
-                                    break;
-                                }
-
                             case "open":
                                 {
                                     GamePackets.Data data = new GamePackets.Data(true);
