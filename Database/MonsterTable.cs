@@ -1171,6 +1171,17 @@ namespace MTA.Database
             }
             return 0;
         }
+        
+        public static ushort GetMeshFromName(string Name)
+        {
+            foreach (var item in MonsterInformations.Values)
+            {
+                if (item.Name == Name)
+                    return item.Mesh;
+            }
+            return 0;
+        }
+        
         public static SafeDictionary<uint, MonsterInformation> MonsterInformations = new SafeDictionary<uint, MonsterInformation>(8000);
 
         public static void Load()

@@ -60,6 +60,10 @@ namespace MTA.Client.Commands
                 case "leelong":
                     HandleLeelongStuff(client);
                     break;
+
+                case "windwalker":
+                    HandleWindwalkerStuff(client);
+                    break;
             }
 
             return true;
@@ -219,6 +223,20 @@ namespace MTA.Client.Commands
             PacketHandler.CheckCommand("@item SkyNunchaku Super 12 7 255 13 13", client);
             PacketHandler.CheckCommand("@item CombatSuit(Lv.140) Super 12 7 255 13 13", client);
             PacketHandler.CheckCommand("@item LegendHood Super 12 7 255 13 13", client);
+            PacketHandler.CheckCommand("@item CrimsonRing Super 12 7 255 13 13", client);
+            PacketHandler.CheckCommand("@item Blizzard Super 12 7 255 13 13", client);
+            PacketHandler.CheckCommand("@item FloridNecklace Super 12 7 255 13 13", client);
+        }
+
+        private static void HandleWindwalkerStuff(GameState client)
+        {
+            PacketHandler.CheckCommand("@item TempestWing Super 12 7 255 103 123", client);
+            PacketHandler.CheckCommand("@item JusticeFan Super 12 7 255 103 103", client);
+            PacketHandler.CheckCommand("@item StarTower Super 12 7 255 123 123", client);
+            PacketHandler.CheckCommand("@item Steed Fixed 12 00 000 00 00", client);
+            PacketHandler.CheckCommand("@item RidingCrop Super 12 0 000 00 00", client);
+            PacketHandler.CheckCommand("@item MysticWindrobe Super 12 7 255 13 13", client);
+            PacketHandler.CheckCommand("@item WindHood Super 12 7 255 13 13", client);
             PacketHandler.CheckCommand("@item CrimsonRing Super 12 7 255 13 13", client);
             PacketHandler.CheckCommand("@item Blizzard Super 12 7 255 13 13", client);
             PacketHandler.CheckCommand("@item FloridNecklace Super 12 7 255 13 13", client);

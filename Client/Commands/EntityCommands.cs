@@ -1,5 +1,4 @@
 using System;
-using MTA.Game;
 
 namespace MTA.Client.Commands
 {
@@ -15,16 +14,31 @@ namespace MTA.Client.Commands
             switch (data[0])
             {
                 case "gold":
-                    return HandleGoldCommand(client, data, mess);
+                    return handleGoldCommand(client, data, mess);
 
                 case "cps":
-                    return HandleCpsCommand(client, data, mess);
+                    return handleCpsCommand(client, data, mess);
 
                 case "bcps":
-                    return HandleBcpsCommand(client, data, mess);
+                    return handleBcpsCommand(client, data, mess);
 
                 case "vip":
                     return HandleVipCommand(client, data, mess);
+
+                case "exp":
+                    return HandleExpCommand(client, data, mess);
+
+                case "racepoints":
+                    return HandleRacePointsCommand(client, data, mess);
+
+                case "honorpoints":
+                    return HandleHonorPointsCommand(client, data, mess);
+
+                case "studypoints":
+                    return HandleStudyPointsCommand(client, data, mess);
+
+                case "level":
+                    return HandleLevelCommand(client, data, mess);
 
                 default:
                     return false;
@@ -73,7 +87,7 @@ namespace MTA.Client.Commands
             return matchCount == 1;
         }
 
-        private static bool HandleGoldCommand(GameState client, string[] data, string mess)
+        private static bool handleGoldCommand(GameState client, string[] data, string mess)
         {
             const ulong maxGold = 9999999999UL; // 9,999,999,999
             GameState targetClient = client;
@@ -169,7 +183,7 @@ namespace MTA.Client.Commands
             return true;
         }
 
-        private static bool HandleCpsCommand(GameState client, string[] data, string mess)
+        private static bool handleCpsCommand(GameState client, string[] data, string mess)
         {
             const uint maxCps = 999999999U; // 999,999,999
             GameState targetClient = client;
@@ -265,7 +279,7 @@ namespace MTA.Client.Commands
             return true;
         }
 
-        private static bool HandleBcpsCommand(GameState client, string[] data, string mess)
+        private static bool handleBcpsCommand(GameState client, string[] data, string mess)
         {
             const uint maxBcps = 999999999U; // 999,999,999
             GameState targetClient = client;
@@ -467,6 +481,66 @@ namespace MTA.Client.Commands
             client.Send(new Network.GamePackets.Message($"VIP level set to {selfLevel}", System.Drawing.Color.Green,
                 Network.GamePackets.Message.Tip));
             return true;
+        }
+
+        private static bool HandleExpCommand(GameState client, string[] data, string mess)
+        {
+            if (ulong.TryParse(data[1], out var exp))
+            {
+                client.Entity.Experience = exp;
+                return true;
+            }
+            return false;
+        }
+
+        private static bool HandleRacePointsCommand(GameState client, string[] data, string mess)
+        {
+            if (uint.TryParse(data[1], out var racePoints))
+            {
+                client.RacePoints += racePoints;
+                return true;
+            }
+            return false;
+        }
+
+        private static bool HandleHonorPointsCommand(GameState client, string[] data, string mess)
+        {
+            if (uint.TryParse(data[1], out var honorPoints))
+            {
+                client.CurrentHonor += honorPoints;
+                return true;
+            }
+            return false;
+        }
+
+        private static bool HandleStudyPointsCommand(GameState client, string[] data, string mess)
+        {
+            if (ushort.TryParse(data[1], out var studyPoints))
+            {
+                if (studyPoints > 9999)
+                {
+                    client.Send(new Network.GamePackets.Message("Study points cannot be greater than 9,999.", System.Drawing.Color.Red, Network.GamePackets.Message.Tip));
+                    return true;
+                }
+                client.Entity.SubClasses.StudyPoints = studyPoints;
+                client.Entity.SubClasses.Send(client);
+                return true;
+            }
+            return false;
+        }
+
+        private static bool HandleLevelCommand(GameState client, string[] data, string mess)
+        {
+            if (byte.TryParse(data[1], out var level))
+            {
+                client.Entity.Level = level;
+                Database.DataHolder.GetStats(client.Entity.Class, client.Entity.Level, client);
+                client.CalculateStatBonus();
+                client.CalculateHPBonus();
+                client.GemAlgorithm();
+                return true;
+            }
+            return false;
         }
     }
 }

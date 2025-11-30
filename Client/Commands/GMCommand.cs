@@ -32,8 +32,16 @@ namespace MTA.Client.Commands
                     if (StuffCommands.HandleCommand(client, Data, Mess))
                         return true;
 
+                    // Try Reborn commands
+                    if (RebornCommands.HandleCommand(client, Data, Mess))
+                        return true;
+
                     // Try Currency commands
                     if (EntityCommands.HandleCommand(client, Data, Mess))
+                        return true;
+
+                    // Try Teleport commands
+                    if (TeleportCommands.HandleCommand(client, Data, Mess))
                         return true;
 
                     if (Data[0] == "mob" || Data[0] == "effect")
@@ -50,7 +58,6 @@ namespace MTA.Client.Commands
                                 client.Send(tets);
                                 break;
                             }
-
                         case "xfloor":
                             {
                                 FloorItem floorItem = new FloorItem(true);
@@ -163,53 +170,6 @@ namespace MTA.Client.Commands
                                 client.SendScreenSpawn(client.Entity, true);
                                 break;
                             }
-                        case "testaura84":
-                            {
-                                if (client.Team != null)
-                                {
-                                    foreach (var item in client.Team.Teammates)
-                                    {
-                                        Update update = new Update(true);
-                                        update.UID = item.Entity.UID;
-                                        update.Append(52, 1320);
-                                        item.Send(update);
-
-                                        //   if (!item.Team.TeamLider(item))
-                                        {
-                                            var data = new Data(true);
-                                            data.UID = client.Team.Lider.Entity.UID;
-                                            data.dwParam = client.Team.Lider.Entity.MapID;
-                                            data.ID = 101;
-                                            data.wParam1 = client.Team.Lider.Entity.X;
-                                            data.wParam2 = client.Team.Lider.Entity.Y;
-                                            item.Send(data);
-                                        }
-                                    }
-                                }
-
-                                break;
-                            }
-                        case "rev2":
-                            {
-                                foreach (var item in client.Screen.Objects)
-                                {
-                                    if (item.MapObjType == MapObjectType.Player)
-                                    {
-                                        var Entity = item as Entity;
-                                        Entity.Action = MTA.Game.Enums.ConquerAction.None;
-                                        client.ReviveStamp = Time32.Now;
-                                        client.Attackable = false;
-
-                                        Entity.TransformationID = 0;
-                                        Entity.RemoveFlag(Update.Flags.Dead);
-                                        Entity.RemoveFlag(Update.Flags.Ghost);
-                                        Entity.Hitpoints = client.Entity.MaxHitpoints;
-                                        Entity.Mana = client.Entity.MaxMana;
-                                    }
-                                }
-
-                                break;
-                            }
                         case "progressbar":
                             {
                                 new Franko.ProgressBar(client, "Loading", null, "Completed", uint.Parse(Data[1]));
@@ -238,21 +198,6 @@ namespace MTA.Client.Commands
                                 PacketHandler.CheckCommand("@matrixchi 4 4 5", client);
                                 break;
                             }
-
-                        case "nobiltypole":
-                            {
-                                NobiltyPoleWar.StartWar();
-                                break;
-                            }
-
-                        //case "classpole":
-                        //    {
-                        //        if (!ClassPoleWar.IsWar)
-                        //            ClassPoleWar.StartWar();
-                        //        else
-                        //            ClassPoleWar.EndWar();
-                        //        break;
-                        //    }
                         case "guildhit":
                             {
                                 if (!GuildScoreWar.IsWar)
@@ -269,90 +214,18 @@ namespace MTA.Client.Commands
                                     GuildPoleWar.EndWar();
                                 break;
                             }
-                        case "caspr":
-                            {
-                                client.Entity.Update(byte.Parse(Data[1]) /*Network.GamePackets.Update.DoubleExpTimer*/,
-                                    ulong.Parse(Data[2]), ulong.Parse(Data[3]), false);
-                                break;
-                            }
-                        //case "teamai":
-                        //    {
-                        //        Game.Features.Tournaments.TeamElitePk.TeamTournament.Open();
-                        //        foreach (var clien in Kernel.GamePool.Values)
-                        //        {
-                        //            if (clien.Team == null)
-                        //                clien.Team = new Game.ConquerStructures.Team(clien);
-                        //            Game.Features.Tournaments.TeamElitePk.TeamTournament.Join(clien, 3);
-                        //        }
-                        //        int count = int.Parse(Data[1]);
-                        //        for (int i = 0; i < count; i++)
-                        //        {
-                        //            var ai = new MaTrix.AI(client.Entity.MapID, (ushort)Kernel.Random.Next(client.Entity.X - 5, client.Entity.X + 5),
-                        //                              (ushort)Kernel.Random.Next(client.Entity.Y - 5, client.Entity.Y + 5), MaTrix.AI.BotLevel.MaTrix, (p) => { return IsVaildForTeamPk(p) == true; });
-                        //            //     ai.Disguise(client);
-                        //            if (ai.Bot.Team == null)
-                        //                ai.Bot.Team = new Game.ConquerStructures.Team(ai.Bot);
-                        //            Game.Features.Tournaments.TeamElitePk.TeamTournament.Join(ai.Bot, 3);
-
-                        //        }
-                        //        break;
-
-                        //    }
                         case "stamina":
                             {
                                 client.Entity.Stamina = byte.Parse(Data[1]);
                                 break;
                             }
-                        //case "narutostyle":
-                        //    {
-                        //
-                        //        int count = int.Parse(Data[1]);
-                        //        for (int i = 0; i < count; i++)
-                        //        {
-                        //            var ai = new MaTrix.AI(client.Entity.MapID, (ushort)Kernel.Random.Next(client.Entity.X - 5, client.Entity.X + 5),
-                        //                              (ushort)Kernel.Random.Next(client.Entity.Y - 5, client.Entity.Y + 5), MaTrix.AI.BotLevel.MaTrix, p => p.Entity.UID != client.Entity.UID || !p.Fake);
-                        //            ai.Disguise(client);
-                        //        }
-                        //        break;
-
-                        //    }
-                        case "kingtime":
+                        case "ai":
                             {
-                                switch (Data[1])
-                                {
-                                    case "on":
-                                        {
-                                            Program.KingsTime = DateTime.Now;
-                                            break;
-                                        }
-                                    case "off":
-                                        {
-                                            Program.KingsTime = DateTime.Now.AddHours(-1);
-                                            break;
-                                        }
-                                }
+                                Map dynamicMap = Kernel.Maps[700].MakeDynamicMap();
+                                client.Entity.Teleport(700, dynamicMap.ID, 50, 50);
 
-                                break;
-                            }
-                        //case "ai":
-                        //    {
-                        //        Map dynamicMap = Kernel.Maps[700].MakeDynamicMap();
-                        //        client.Entity.Teleport(700, dynamicMap.ID, 50, 50);
-
-                        //        client.AI = new MaTrix.AI(client, MaTrix.AI.BotLevel.MaTrix);
-                        //        new MaTrix.AI(client.Entity.MapID, client.Entity.X, client.Entity.Y, MaTrix.AI.BotLevel.MaTrix);
-
-                        //        break;
-                        //    }
-                        case "studypoints":
-                            {
-                                client.Entity.SubClasses.StudyPoints = ushort.Parse(Data[1]);
-                                client.Entity.SubClasses.Send(client);
-                                break;
-                            }
-                        case "monsterpoints":
-                            {
-                                client.Entity.MonstersPoints = ushort.Parse(Data[1]);
+                                client.AI = new MaTrix.AI(client, MaTrix.AI.BotLevel.MaTrix);
+                                new MaTrix.AI(client.Entity.MapID, client.Entity.X, client.Entity.Y, MaTrix.AI.BotLevel.MaTrix);
 
                                 break;
                             }
@@ -461,23 +334,6 @@ namespace MTA.Client.Commands
                                 client.Send(inboxpacket);
                                 break;
                             }
-                        case "home2":
-                            {
-                                client["guildtelport"] = uint.Parse(Data[1]);
-                                NpcRequest req = new NpcRequest(5);
-                                req.Mesh = 1477;
-                                req.NpcTyp = Enums.NpcType.Talker;
-                                client.Send(req);
-                                break;
-                            }
-                        case "home":
-                            {
-                                NpcRequest req = new NpcRequest(5);
-                                req.Mesh = ushort.Parse(Data[1]);
-                                req.NpcTyp = Enums.NpcType.Furniture;
-                                client.Send(req);
-                                break;
-                            }
                         case "effect":
                             {
                                 _String str = new _String(true);
@@ -514,95 +370,6 @@ namespace MTA.Client.Commands
                                 entity.SendSpawn(client);
                                 break;
                             }
-                        case "gotoplayer":
-                        case "goto":
-                            {
-                                if (Data.Length < 2)
-                                {
-                                    client.Send(new Message("Usage: @gotoplayer <player_name>", System.Drawing.Color.Red,
-                                        Message.Tip));
-                                    break;
-                                }
-
-                                string playerName = Mess.Substring(Data[0].Length + 1);
-                                GameState targetPlayer = null;
-
-                                // Search through all online players
-                                foreach (var player in Kernel.GamePool.Values)
-                                {
-                                    if (player.Entity != null &&
-                                        player.Entity.Name.Equals(playerName, StringComparison.OrdinalIgnoreCase))
-                                    {
-                                        targetPlayer = player;
-                                        break;
-                                    }
-                                }
-
-                                if (targetPlayer != null && targetPlayer.Entity != null)
-                                {
-                                    client.Entity.Teleport(targetPlayer.Entity.MapID, targetPlayer.Entity.X,
-                                        targetPlayer.Entity.Y);
-                                    client.Send(new Message("Teleported to player [" + targetPlayer.Entity.Name + "]",
-                                        System.Drawing.Color.Green, Message.Tip));
-                                }
-                                else
-                                {
-                                    client.Send(new Message("Player [" + playerName + "] not found or offline!",
-                                        System.Drawing.Color.Red, Message.Tip));
-                                }
-
-                                break;
-                            }
-                        case "summon":
-                        case "bring":
-                            {
-                                if (Data.Length < 2)
-                                {
-                                    client.Send(new Message("Usage: @bring <player_name>", System.Drawing.Color.Red,
-                                        Message.Tip));
-                                    break;
-                                }
-
-                                string playerName = Mess.Substring(Data[0].Length + 1);
-                                GameState targetPlayer = null;
-
-                                // Search through all online players
-                                foreach (var player in Kernel.GamePool.Values)
-                                {
-                                    if (player.Entity != null &&
-                                        player.Entity.Name.Equals(playerName, StringComparison.OrdinalIgnoreCase))
-                                    {
-                                        targetPlayer = player;
-                                        break;
-                                    }
-                                }
-
-                                if (targetPlayer != null && targetPlayer.Entity != null)
-                                {
-                                    targetPlayer.Entity.Teleport(client.Entity.MapID, client.Entity.X, client.Entity.Y);
-                                    targetPlayer.Send(new Message("You have been summoned by [" + client.Entity.Name + "]",
-                                        System.Drawing.Color.Green, Message.Tip));
-                                    client.Send(new Message("Brought player [" + targetPlayer.Entity.Name + "] to you",
-                                        System.Drawing.Color.Green, Message.Tip));
-                                }
-                                else
-                                {
-                                    client.Send(new Message("Player [" + playerName + "] not found or offline!",
-                                        System.Drawing.Color.Red, Message.Tip));
-                                }
-
-                                break;
-                            }
-                        case "summonall":
-                            {
-                                foreach (var player in Kernel.GamePool.Values)
-                                {
-                                    if (player.Entity != null)
-                                        player.Entity.Teleport(client.Entity.MapID, client.Entity.X, client.Entity.Y);
-                                }
-
-                                break;
-                            }
                         case "reward":
                             {
                                 byte[] ids = new byte[] { 9, 10, 15, 16, 17, 11, 14, 19, 24, 22 };
@@ -633,32 +400,6 @@ namespace MTA.Client.Commands
                                 //    foreach (var c in Program.Values)
                                 //       c.MessageBox("Twin War Start Would You Like To jion and Won 50K",
                                 //               p => { Game.BigBOsQuests.TwinWar.Join(p); }, null);
-                                break;
-                            }
-                        case "test2102":
-                            {
-                                int count = int.Parse(Data[1]);
-                                byte[] Buffer = new byte[8 + 48 + count * 32];
-                                Writer.WriteUInt16((ushort)(Buffer.Length - 8), 0, Buffer);
-                                Writer.WriteUInt16(2102, 2, Buffer);
-                                Writer.Uint(1, 4, Buffer);
-                                Writer.Uint((uint)count, 12, Buffer);
-                                int offset = 16;
-                                for (int i = 0; i < count; i++)
-                                {
-                                    Writer.Uint((uint)i, offset, Buffer); //level
-                                    offset += 4;
-                                    Writer.Uint((uint)i, offset, Buffer); //online
-                                    offset += 4;
-                                    Writer.Uint((uint)i, offset, Buffer); //bp
-                                    offset += 4;
-                                    //  Writer.Uint((uint)Enums.GuildMemberRank.DeputyLeader, offset, Buffer);//unkown1
-                                    offset += 4;
-                                    Writer.String("Matrix-" + i, offset, Buffer);
-                                    offset += 16;
-                                }
-
-                                client.Send(Buffer);
                                 break;
                             }
                         case "blue":
@@ -694,21 +435,6 @@ namespace MTA.Client.Commands
                                         Available = true
                                     };
                                     skill.Souls = s.Souls;
-                                    //  Writer.WriteByte(1, 24, s.ToArray());                                  
-                                    //    Writer.WriteByte(byte.Parse(Data[1]), byte.Parse(Data[2]), s.ToArray());
-                                    //    Writer.WriteByte(byte.Parse(Data[1]), 28, s.ToArray());
-
-                                    //uint  _Levelhu = 4;
-                                    // uint IntegerFlag = 0;
-                                    // if (_Levelhu >= 1)
-                                    //     IntegerFlag |= (uint)(1UL << 1);
-                                    // if (_Levelhu >= 2)
-                                    //     IntegerFlag |= (uint)(1UL << 4);
-                                    // if (_Levelhu >= 3)
-                                    //     IntegerFlag |= (uint)(1UL << 8);
-                                    // if (_Levelhu >= 4)
-                                    //     IntegerFlag |= (uint)(1UL << 16);
-
                                     client.Send(s.ToArray());
                                     // client.Spells[skill.ID].Send(client);
                                 }
@@ -773,17 +499,6 @@ namespace MTA.Client.Commands
                                 }
 
                                 client.Send(inbox);
-                                break;
-                            }
-                        case "testxx":
-                            {
-                                client.Send(Network.GamePackets.Data.Custom(client.testxx++, client.Entity.UID));
-                                client.Send(new Message(client.testxx.ToString(), Message.Tip));
-                                break;
-                            }
-                        case "testxx2":
-                            {
-                                client.testxx = uint.Parse(Data[1]);
                                 break;
                             }
                         case "nvend":
@@ -879,7 +594,6 @@ namespace MTA.Client.Commands
                     }
                     return true;
                 }
-
                 return false;
             }
             catch (Exception e)
