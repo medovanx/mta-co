@@ -3076,7 +3076,7 @@ namespace MTA
             {
                 Program.MaxOn = Kernel.GamePool.Count;
             }
-            Console.Title = Constants.ServerName + " - Online : " + Kernel.GamePool.Count + "/" + Program.MaxOn + "";
+            Console.Title = Constants.ServerName + " - Online : " + Kernel.GamePool.Count + "/" + Program.PlayerCap + " (Peak: " + Program.MaxOn + ")";
             new Database.MySqlCommand(Database.MySqlCommandType.UPDATE).Update("configuration").Set("GuildID", Game.ConquerStructures.Society.Guild.GuildCounter.Now).Set("MaxOnline", Program.MaxOn).Set("ItemUID", Program._NextItemID).Where("Server", Constants.ServerName).Execute();
             Database.EntityVariableTable.Save(0, Program.Vars);
             if (Kernel.BlackSpoted.Values.Count > 0)

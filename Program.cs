@@ -2139,13 +2139,11 @@ namespace MTA
 
         public static void NextItemUID()
         {
-            // Console.Write("Check Last Item UID... ");
             using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("items"))
             using (var reader = new MySqlReader(cmd))
             {
                 while (reader.Read())
                 {
-                    //  Console.Write("\b{0}", Loading.NextChar());
                     uint UID = reader.ReadUInt32("UID");
                     if ((UID > 0) && (UID > _NextItemID))
                     {
@@ -2153,7 +2151,6 @@ namespace MTA
                     }
                 }
             }
-            Console.WriteLine("Ok!");
         }
     }
 
