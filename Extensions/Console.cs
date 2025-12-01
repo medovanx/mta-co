@@ -99,8 +99,6 @@ namespace MTA
 
         public static void WriteLine(string text)
         {
-            int padding = Math.Max(0, (Console.WindowWidth - text.Length) / 2);
-            System.Console.Write(new string(' ', padding));
             System.Console.WriteLine(text);
         }
 
