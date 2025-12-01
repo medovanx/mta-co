@@ -13,6 +13,7 @@
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
+    <LangVersion>8.0</LangVersion>
     <FileAlignment>512</FileAlignment>
     <StartupObject>MTA.Program</StartupObject>
     <SignManifests>false</SignManifests>

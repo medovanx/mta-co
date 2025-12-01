@@ -23178,32 +23178,6 @@ p =>
                                     }
                                     break;
                                 }
-                            case "bring":
-                            case "recall":
-                                {
-                                    foreach (var pClient in Program.Values)
-                                    {
-                                        if (pClient.Entity.LoweredName.Contains(Data[1]) || Data[1].ToLower() == "all")
-                                            if (Data[1].ToLower() == "all2")
-                                            {
-                                                pClient.Entity.Teleport(client.Entity.MapID,
-                                                    (ushort)Kernel.Random.Next(client.Entity.X - 5, client.Entity.X + 5),
-                                                    (ushort)Kernel.Random.Next(client.Entity.Y - 5, client.Entity.Y + 5));
-                                            }
-                                            else if (Data[1].ToLower() == "all")
-                                            {
-                                                if (pClient.Booth != null || pClient.Fake)
-                                                    continue;
-                                                pClient.Entity.Teleport(client.Entity.MapID,
-                                                    (ushort)Kernel.Random.Next(client.Entity.X - 5, client.Entity.X + 5),
-                                                    (ushort)Kernel.Random.Next(client.Entity.Y - 5, client.Entity.Y + 5));
-                                            }
-                                            else
-                                                pClient.Entity.Teleport(client.Entity.MapID, client.Entity.X, client.Entity.Y);
-
-                                    }
-                                    break;
-                                }
                             case "restart":
                                 {
                                     Program.CommandsAI("@restart");
@@ -23484,19 +23458,6 @@ p =>
                                     }
                                     break;
                                 }
-                            case "clear":
-                            case "clearinv":
-                            case "clearinventory":
-                                {
-                                    ConquerItem[] inventory = new ConquerItem[client.Inventory.Objects.Length];
-                                    client.Inventory.Objects.CopyTo(inventory, 0);
-
-                                    foreach (ConquerItem item in inventory)
-                                    {
-                                        client.Inventory.Remove(item, MTA.Game.Enums.ItemUse.Remove);
-                                    }
-                                    break;
-                                }
                             case "online":
                                 {
                                     client.Send(new Message("Online Players Count: " + Kernel.GamePool.Count, System.Drawing.Color.BurlyWood, GamePackets.Message.TopLeft));
@@ -23507,81 +23468,6 @@ p =>
                                     if (line.Length >= 255)
                                         return true;
                                     client.Send(new GamePackets.Message(line, System.Drawing.Color.Beige, GamePackets.Message.Talk));
-                                    break;
-                                }
-                            case "reallot":
-                                {
-                                    if (client.Entity.Reborn != 0)
-                                    {
-                                        client.Entity.Agility = 0;
-                                        client.Entity.Strength = 0;
-                                        client.Entity.Vitality = 1;
-                                        client.Entity.Spirit = 0;
-                                        if (client.Entity.Reborn == 1)
-                                        {
-                                            client.Entity.Atributes = (ushort)(client.ExtraAtributePoints(client.Entity.FirstRebornLevel, client.Entity.FirstRebornLevel)
-                                                + 52 + 3 * (client.Entity.Level - 15));
-                                        }
-                                        else
-                                        {
-                                            client.Entity.Atributes = (ushort)(client.ExtraAtributePoints(client.Entity.FirstRebornLevel, client.Entity.FirstRebornClass) +
-                                                client.ExtraAtributePoints(client.Entity.SecondRebornLevel, client.Entity.SecondRebornClass) + 52 + 3 * (client.Entity.Level - 15));
-                                        }
-                                        client.CalculateStatBonus();
-                                        client.CalculateHPBonus();
-                                    }
-                                    break;
-                                }
-                            case "str":
-                                {
-                                    ushort atr = 0;
-                                    ushort.TryParse(Data[1], out atr);
-                                    if (client.Entity.Atributes >= atr)
-                                    {
-                                        client.Entity.Strength += atr;
-                                        client.Entity.Atributes -= atr;
-                                        client.CalculateStatBonus();
-                                        client.CalculateHPBonus();
-                                    }
-                                    break;
-                                }
-                            case "agi":
-                                {
-                                    ushort atr = 0;
-                                    ushort.TryParse(Data[1], out atr);
-                                    if (client.Entity.Atributes >= atr)
-                                    {
-                                        client.Entity.Agility += atr;
-                                        client.Entity.Atributes -= atr;
-                                        client.CalculateStatBonus();
-                                        client.CalculateHPBonus();
-                                    }
-                                    break;
-                                }
-                            case "vit":
-                                {
-                                    ushort atr = 0;
-                                    ushort.TryParse(Data[1], out atr);
-                                    if (client.Entity.Atributes >= atr)
-                                    {
-                                        client.Entity.Vitality += atr;
-                                        client.Entity.Atributes -= atr;
-                                        client.CalculateStatBonus();
-                                        client.CalculateHPBonus();
-                                    }
-                                    break;
-                                }
-                            case "spi":
-                                {
-                                    ushort atr = 0;
-                                    ushort.TryParse(Data[1], out atr);
-                                    if (client.Entity.Atributes >= atr)
-                                    {
-                                        client.Entity.Spirit += atr;
-                                        client.Entity.Atributes -= atr;
-                                        client.CalculateStatBonus();
-                                        client.CalculateHPBonus();
-                                    }
                                     break;
                                 }
                             case "egw":
@@ -23597,11 +23483,6 @@ p =>
                                         Game.EliteGuildWar.IsWar = true;
                                         Kernel.SendWorldMessage(new Message("Eliteguild War is on!", Color.Red, 2011), Program.Values);
                                     }
-                                    break;
-                                }
-                            case "dc":
-                                {
-                                    client.Disconnect();
                                     break;
                                 }
                             case "prof":
@@ -23626,23 +23507,6 @@ p =>
                                     if (Data.Length > 3)
                                         spell.Experience = uint.Parse(Data[3]);
                                     client.AddSpell(spell);
-                                    break;
-                                }
-
-                            case "level":
-                                {
-                                    byte level = client.Entity.Level;
-                                    byte.TryParse(Data[1], out level);
-                                    level = Math.Min((byte)140, Math.Max((byte)1, level));
-                                    client.Entity.Level = level;
-                                    client.Entity.Experience = 0;
-                                    //if (client.Entity.Reborn == 0)
-                                    {
-                                        Database.DataHolder.GetStats(client.Entity.Class, level, client);
-                                        client.CalculateStatBonus();
-                                        client.CalculateHPBonus();
-                                        client.GemAlgorithm();
-                                    }
                                     break;
                                 }
                             case "class":
@@ -23683,32 +23547,6 @@ p =>
                                     ushort hair = client.Entity.HairStyle;
                                     ushort.TryParse(Data[1], out hair);
                                     client.Entity.HairStyle = hair;
-                                    break;
-                                }
-                            case "map":
-                                {
-                                    client.Send(new Message("Map: " + client.Map.ID, System.Drawing.Color.Blue, GamePackets.Message.TopLeft));
-                                    break;
-                                }
-                            case "tele":
-                                {
-                                    if (Data.Length > 3)
-                                    {
-                                        client.Entity.Teleport(ushort.Parse(Data[1]), ushort.Parse(Data[2]), ushort.Parse(Data[3]));
-                                    }
-                                    if (Data.Length > 4)
-                                    {
-                                        client.Entity.Teleport(ushort.Parse(Data[1]), ushort.Parse(Data[2]), ushort.Parse(Data[3]));
-                                    }
-                                    break;
-
-                                }
-                            case "tele2":
-                                {
-                                    if (Data.Length > 3)
-                                    {
-                                        client.Entity.TeleportHouse(ushort.Parse(Data[1]), ushort.Parse(Data[2]), ushort.Parse(Data[3]));
-                                    }
                                     break;
                                 }
                             case "transform":

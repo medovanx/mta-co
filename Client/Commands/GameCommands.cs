@@ -12,8 +12,8 @@ namespace MTA.Client.Commands
                 case "tone":
                     return HandleToneCommand(client, data, mess);
 
-                case "guiedit":
-                    return HandleGuiEditCommand(client, data, mess);
+                case "clearinv":
+                    return HandleClearInventoryCommand(client, data, mess);
 
                 default:
                     return false;
@@ -78,38 +78,15 @@ namespace MTA.Client.Commands
             return true;
         }
 
-        private static bool HandleGuiEditCommand(GameState client, string[] data, string mess)
+        private static bool HandleClearInventoryCommand(GameState client, string[] data, string mess)
         {
-            // Default parameter value (3276 for most patches, can be changed for different patches)
-            uint guiParam = 3276;
+            ConquerItem[] inventory = new ConquerItem[client.Inventory.Objects.Length];
+            client.Inventory.Objects.CopyTo(inventory, 0);
 
-            // Allow custom parameter if provided
-            if (data.Length >= 2)
+            foreach (ConquerItem item in inventory)
             {
-                if (!uint.TryParse(data[1], out guiParam))
-                {
-                    client.Send(new Message("Usage: @guiedit [parameter]", System.Drawing.Color.Yellow, Message.Tip));
-                    client.Send(new Message("Example: @guiedit 3276 (default)", System.Drawing.Color.Yellow, Message.Tip));
-                    client.Send(new Message("After sending, press EFocusEx button in client PM window to start editing GUI", System.Drawing.Color.Yellow, Message.Tip));
-                    return true;
-                }
+                client.Inventory.Remove(item, MTA.Game.Enums.ItemUse.Remove);
             }
-
-            // Send the GUI editing packet (matching forum implementation)
-            Data packet = new Data(true)
-            {
-                UID = client.Entity.UID,        // Id = client.EntityUID
-                ID = Data.OpenCustom,           // Action = 116 (PostCmd)
-                dwParam = guiParam,             // Data1 = 3276
-                wParam1 = client.Entity.X,      // Data3Low = client.X
-                wParam2 = client.Entity.Y       // Data3High = client.Y
-            };
-
-            client.Send(packet);
-
-            client.Send(new Message($"GUI editing enabled with parameter {guiParam}. Press EFocusEx in client PM window to start.", 
-                System.Drawing.Color.Green, Message.Tip));
-            
             return true;
         }
     }

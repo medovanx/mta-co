@@ -7,23 +7,15 @@ namespace MTA.Client.Commands
     {
         public static bool HandleCommand(GameState client, string[] data, string mess)
         {
-            switch (data[0])
+            return data[0] switch
             {
-                case "gotoplayer":
-                    return HandleGotoPlayerCommand(client, data, mess);
-
-                case "summon":
-                    return HandleSummonCommand(client, data, mess);
-
-                case "summonall":
-                    return HandleSummonAllCommand(client, data, mess);
-
-                case "teleport":
-                    return HandleTeleportCommand(client, data, mess);
-
-                default:
-                    return false;
-            }
+                "gotoplayer" => HandleGotoPlayerCommand(client, data, mess),
+                "summon" => HandleSummonCommand(client, data, mess),
+                "summonall" => HandleSummonAllCommand(client, data, mess),
+                "teleport" => HandleTeleportCommand(client, data, mess),
+                "map" => HandleMapCommand(client, data, mess),
+                _ => false
+            };
         }
 
         private static bool HandleGotoPlayerCommand(GameState client, string[] data, string mess)
@@ -119,11 +111,37 @@ namespace MTA.Client.Commands
         {
             if (data.Length < 2)
             {
-                client.Send(new Message("Usage: @teleport <mapid> [x] [y]", System.Drawing.Color.Red, Message.Tip));
-                client.Send(new Message("Example: @teleport 1002 432 378", System.Drawing.Color.Yellow, Message.Tip));
+                client.Send(new Message("Usage: @teleport <mapid/city> [x] [y]", System.Drawing.Color.Red, Message.Tip));
+                client.Send(new Message("Example: @teleport 1002 432 378 or @teleport tc", System.Drawing.Color.Yellow, Message.Tip));
+                client.Send(new Message("Cities: tc, pc, ac, dc, bc", System.Drawing.Color.Yellow, Message.Tip));
                 return true;
             }
 
+            // Check if it's a location shortcut
+            string destination = data[1].ToLower();
+            switch (destination)
+            {
+                case "twin":
+                    client.Entity.Teleport(1002, 303, 281);
+                    return true;
+                case "phoenix":
+                    client.Entity.Teleport(1011, 193, 266);
+                    return true;
+                case "ape":
+                    client.Entity.Teleport(1020, 560, 546);
+                    return true;
+                case "desert":
+                    client.Entity.Teleport(1000, 499, 648);
+                    return true;
+                case "bird":
+                    client.Entity.Teleport(1015, 723, 573);
+                    return true;
+                case "guild":
+                    client.Entity.Teleport(1038, 087, 095);
+                    return true;
+            }
+
+            // Otherwise, treat as map ID with optional coordinates
             if (!ushort.TryParse(data[1], out ushort mapId))
             {
                 client.Send(new Message("Invalid map ID. Must be a number between 0 and 65535.",
@@ -169,6 +187,16 @@ namespace MTA.Client.Commands
             }
 
             client.Entity.Teleport(mapId, x, y);
+            return true;
+        }
+
+        private static bool HandleMapCommand(GameState client, string[] data, string mess)
+        {
+            if (client.Entity != null)
+            {
+                client.Send(new Message($"Current Map ID: {client.Entity.MapID} | Position: ({client.Entity.X}, {client.Entity.Y})",
+                    System.Drawing.Color.Cyan, Message.Tip));
+            }
             return true;
         }
     }

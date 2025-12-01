@@ -40,6 +40,20 @@ namespace MTA.Client.Commands
                 case "level":
                     return HandleLevelCommand(client, data, mess);
 
+                case "reallot":
+                    return HandleReallotCommand(client, data, mess);
+
+                case "str":
+                    return HandleAttributeCommand(client, data, AttributeType.Strength);
+
+                case "agi":
+                    return HandleAttributeCommand(client, data, AttributeType.Agility);
+
+                case "vit":
+                    return HandleAttributeCommand(client, data, AttributeType.Vitality);
+
+                case "spi":
+                    return HandleAttributeCommand(client, data, AttributeType.Spirit);
                 default:
                     return false;
             }
@@ -533,6 +547,11 @@ namespace MTA.Client.Commands
         {
             if (byte.TryParse(data[1], out var level))
             {
+                if (level > 140)
+                {
+                    client.Send(new Network.GamePackets.Message($"Level cannot be greater than 140.", System.Drawing.Color.Red, Network.GamePackets.Message.Tip));
+                    return true;
+                }
                 client.Entity.Level = level;
                 Database.DataHolder.GetStats(client.Entity.Class, client.Entity.Level, client);
                 client.CalculateStatBonus();
@@ -541,6 +560,86 @@ namespace MTA.Client.Commands
                 return true;
             }
             return false;
+        }
+
+        private static bool HandleReallotCommand(GameState client, string[] data, string mess)
+        {
+            if (client.Entity.Reborn == 0)
+            {
+                client.Send(new Network.GamePackets.Message("You must be reborn to use this command.",
+                    System.Drawing.Color.Red, Network.GamePackets.Message.Tip));
+                return true;
+            }
+
+            client.Entity.Agility = 0;
+            client.Entity.Strength = 0;
+            client.Entity.Vitality = 1;
+            client.Entity.Spirit = 0;
+
+            if (client.Entity.Reborn == 1)
+            {
+                client.Entity.Atributes = (ushort)(client.ExtraAtributePoints(client.Entity.FirstRebornLevel, client.Entity.FirstRebornLevel)
+                    + 52 + 3 * (client.Entity.Level - 15));
+            }
+            else
+            {
+                client.Entity.Atributes = (ushort)(client.ExtraAtributePoints(client.Entity.FirstRebornLevel, client.Entity.FirstRebornClass) +
+                    client.ExtraAtributePoints(client.Entity.SecondRebornLevel, client.Entity.SecondRebornClass) + 52 + 3 * (client.Entity.Level - 15));
+            }
+
+            client.CalculateStatBonus();
+            client.CalculateHPBonus();
+            client.Send(new Network.GamePackets.Message("Attributes have been reset.",
+                System.Drawing.Color.Green, Network.GamePackets.Message.Tip));
+            return true;
+        }
+
+        private enum AttributeType
+        {
+            Strength,
+            Agility,
+            Vitality,
+            Spirit
+        }
+
+        private static bool HandleAttributeCommand(GameState client, string[] data, AttributeType attributeType)
+        {
+            if (!ushort.TryParse(data[1], out ushort amount))
+            {
+                client.Send(new Network.GamePackets.Message($"Invalid amount. Usage: @{attributeType.ToString().ToLower()} <amount>",
+                    System.Drawing.Color.Red, Network.GamePackets.Message.Tip));
+                return true;
+            }
+
+            if (client.Entity.Atributes < amount)
+            {
+                client.Send(new Network.GamePackets.Message($"Not enough attribute points. Available: {client.Entity.Atributes}",
+                    System.Drawing.Color.Red, Network.GamePackets.Message.Tip));
+                return true;
+            }
+
+            switch (attributeType)
+            {
+                case AttributeType.Strength:
+                    client.Entity.Strength += amount;
+                    break;
+                case AttributeType.Agility:
+                    client.Entity.Agility += amount;
+                    break;
+                case AttributeType.Vitality:
+                    client.Entity.Vitality += amount;
+                    break;
+                case AttributeType.Spirit:
+                    client.Entity.Spirit += amount;
+                    break;
+            }
+
+            client.Entity.Atributes -= amount;
+            client.CalculateStatBonus();
+            client.CalculateHPBonus();
+            client.Send(new Network.GamePackets.Message($"Added {amount} points to {attributeType}. Remaining: {client.Entity.Atributes}",
+                System.Drawing.Color.Green, Network.GamePackets.Message.Tip));
+            return true;
         }
     }
 }
