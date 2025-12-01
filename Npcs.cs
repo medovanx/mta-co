@@ -39584,67 +39584,60 @@ namespace MTA
                         break;
                     }
                 #endregion
-                #region Gm npc
+
+                #region Information NPC
                 case 9873211:
                     {
-
                         switch (npcRequest.OptionID)
                         {
                             case 0:
                                 {
 
-                                    dialog.Text("WeLcome To " + rates.servername + " Where do You Want To go ? ");
-                                    // dialog.Option("WebSite AraB-TeaM", 1);
-                                    dialog.Option("Want To Go EliteGW ?", 2);
-                                    dialog.Option("Want To Go GuildWar / SGW", 3);
-                                    dialog.Option("Want To Go TopSouse / Miss/MrConquer ?", 6);
-                                    dialog.Option("Want To Go ElitePk / SkillTeamPk / Team Pk ?", 5);
-                                    //dialog.Option("What~about~Online~Point's ?", 4);
-                                    dialog.Option("Want To Go PolePrize / PoleRakion / PoleMagice ?", 7);
-                                    // dialog.Option("Page Game.", 50);
+                                    dialog.Text("Greetings, adventurer! Welcome to " + rates.servername + ". Where would you like to go?");
+                                    dialog.Option("Elite Guild War Arena", 2);
+                                    dialog.Option("Guild Wars & Super Guild War", 3);
+                                    dialog.Option("Top Spouse / Beauty Contest Events", 6);
+                                    dialog.Option("Elite PK / Skill Team / Team Tournaments", 5);
+                                    dialog.Option("What~about~Online~Point's ?", 4);
+                                    dialog.Option("Pole Competitions & Rewards", 7);
+                                    dialog.Option("Visit our website", 50);
                                     dialog.Send();
                                     break;
                                 }
-                            case 1:
-                                {
-                                    dialog.Text("Hello " + client.Entity.Name + " Phone : 01148894475 ");
-                                    dialog.Text("WebSite : WwW.TeaM.AraB.St ");
-                                }
-                                break;
                             case 2:
                                 {
-                                    dialog.Text("Hello " + client.Entity.Name + " Are You Sure You Want To Go There ? ");
-                                    dialog.Option(" Send Me There ", 11);
+                                    dialog.Text("Hello " + client.Entity.Name + "! Do you wish to be transported to the Elite Guild War arena?");
+                                    dialog.Option("Teleport me there", 11);
                                 }
                                 break;
                             case 3:
                                 {
-                                    dialog.Text("Hello " + client.Entity.Name + " Are You Sure You Want To Go There ? ");
-                                    dialog.Option(" Send Me There ", 12);
+                                    dialog.Text("Hello " + client.Entity.Name + "! Do you wish to be transported to the Guild War battlegrounds?");
+                                    dialog.Option("Teleport me there", 12);
                                 }
                                 break;
                             case 4:
                                 {
-                                    dialog.Text("Hello " + client.Entity.Name + " You can get Auto CPs every 15 Minutes Will get 1,000,000 Conquerpoint, and Will Get 1 OnlinePoint's but Should sit in Twin city ");
-                                    dialog.Text(" and if you sit in Twin after 12 AM will Get 2,000,000 Cps every 15 Minutes ");
+                                    dialog.Text("Hello " + client.Entity.Name + "! You can earn automatic CPs every 15 minutes by staying in Twin City. You'll receive 1,000,000 ConquerPoints and 1 OnlinePoint.");
+                                    dialog.Text("After 12 AM, the reward increases to 2,000,000 CPs every 15 minutes while in Twin City.");
                                 }
                                 break;
                             case 5:
                                 {
-                                    dialog.Text("Hello " + client.Entity.Name + " Are You Sure You Want To Go There ? ");
-                                    dialog.Option(" Send Me There ", 13);
+                                    dialog.Text("Hello " + client.Entity.Name + "! Do you wish to be transported to the tournament grounds?");
+                                    dialog.Option("Teleport me there", 13);
                                 }
                                 break;
                             case 6:
                                 {
-                                    dialog.Text("Hello " + client.Entity.Name + " Are You Sure You Want To Go There ? ");
-                                    dialog.Option(" Send Me There ", 15);
+                                    dialog.Text("Hello " + client.Entity.Name + "! Do you wish to be transported to the contest area?");
+                                    dialog.Option("Teleport me there", 15);
                                 }
                                 break;
                             case 7:
                                 {
-                                    dialog.Text("Hello " + client.Entity.Name + " Are You Sure You Want To Go There ? ");
-                                    dialog.Option(" Send Me There ", 17);
+                                    dialog.Text("Hello " + client.Entity.Name + "! Do you wish to be transported to the pole competition area?");
+                                    dialog.Option("Teleport me there", 17);
                                 }
                                 break;
                             case 11:
@@ -39679,7 +39672,7 @@ namespace MTA
                                 break;
                             case 50:
                                 {
-                                    client.Send(new Message("http://team.arab.st", System.Drawing.Color.Red, Network.GamePackets.Message.Website));
+                                    client.Send(new Message("https://www.linkedin.com/in/medovanx", System.Drawing.Color.Red, Network.GamePackets.Message.Website));
                                 }
                                 break;
                         }

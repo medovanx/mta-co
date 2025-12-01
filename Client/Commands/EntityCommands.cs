@@ -552,6 +552,7 @@ namespace MTA.Client.Commands
 
             client.CalculateStatBonus();
             client.CalculateHPBonus();
+            Database.EntityTable.SaveEntity(client);
             client.Send(new Network.GamePackets.Message("Attributes have been reset.", System.Drawing.Color.Green, Network.GamePackets.Message.Tip));
             return true;
         }
@@ -599,6 +600,7 @@ namespace MTA.Client.Commands
             client.Entity.Atributes -= amount;
             client.CalculateStatBonus();
             client.CalculateHPBonus();
+            Database.EntityTable.SaveEntity(client);
             client.Send(new Network.GamePackets.Message($"Added {amount} points to {attributeType}. Remaining: {client.Entity.Atributes}",
                 System.Drawing.Color.Green, Network.GamePackets.Message.Tip));
             return true;
