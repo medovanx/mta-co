@@ -97,9 +97,12 @@ namespace MTA
             return (ConsoleColor)consoleColors.GetValue(_random.Next(consoleColors.Length));
         }
 
-        public static void WriteLine(string text)
+        public static void WriteLine(string text, ConsoleColor color = ConsoleColor.White)
         {
+            System.Console.Write(TimeStamp() + " ");
+            System.Console.ForegroundColor = color;
             System.Console.WriteLine(text);
+            System.Console.ResetColor();
         }
 
         public static ConsoleColor ForegroundColor
@@ -116,7 +119,7 @@ namespace MTA
 
         public static string TimeStamp()
         {
-            return "[" + NOW.AddMilliseconds((Time32.Now - NOW32).GetHashCode()).ToString("hh:mm:ss") + "]";
+            return "[" + NOW.AddMilliseconds((Time32.Now - NOW32).GetHashCode()).ToString("yyyy-MM-dd HH:mm:ss") + "]";
         }
     }
 }

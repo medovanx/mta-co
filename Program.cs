@@ -376,7 +376,7 @@ namespace MTA
             RandomSeed = Convert.ToInt32(DateTime.Now.Ticks.ToString().Remove(DateTime.Now.Ticks.ToString().Length / 2));
             Kernel.Random = new FastRandom(RandomSeed);
             StartDate = DateTime.Now;
-            Console.Title = "MTA CO Server";
+            Console.Title = "MTA Server";
             IntPtr hWnd = FindWindow(null, Console.Title);
             Console.WriteLine("Loaded server configuration.");
             string ConfigFileName = "Config\\configuration.ini";
@@ -622,9 +622,7 @@ namespace MTA
                     Console.WriteLine("Loading Booths");
                     MaTrix.Booths.Load();
                 }
-                Console.WriteLine();
-                Console.WriteLine(@"+-----------------------------Server:Online-----------------------------------+");
-                Console.WriteLine("Server Loaded in " + (Time32.Now - Start) + " Milliseconds.");
+                Console.WriteLine("Server is now online and ready to accept players. Loaded in " + (Time32.Now - Start) + " Milliseconds.", ConsoleColor.Green);
                 GC.Collect();
                 WorkConsole();
             }
