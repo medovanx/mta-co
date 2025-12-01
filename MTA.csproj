@@ -366,11 +366,8 @@
     <Compile Include="Network\BigConcurrentPacketQueue.cs" />
     <Compile Include="Network\ConcurrentPacketQueue.cs" />
     <Compile Include="Network\Cryptography\AuthCryptography.cs" />
-    <Compile Include="Network\Cryptography\ConquerPasswordCryptpographer.cs" />
     <Compile Include="Network\Cryptography\GameCryptography.cs" />
     <Compile Include="Network\Cryptography\LoaderEncryption.cs" />
-    <Compile Include="Network\Cryptography\RC5.cs" />
-    <Compile Include="Network\Cryptography\RC5Exception.cs" />
     <Compile Include="Network\GamePackets\AddToTeam.cs" />
     <Compile Include="Network\GamePackets\ApprenticeInformation.cs" />
     <Compile Include="Network\GamePackets\ArenaStatistic.cs" />
@@ -507,7 +504,6 @@
     <Compile Include="MrNiTro\GUI\ShaDowNpcControl.designer.cs">
       <DependentUpon>ShaDowNpcControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Network\Sockets\TranslatorContainer.cs" />
     <Compile Include="Network\WebServer\Server\Client.cs" />
     <Compile Include="Network\WebServer\Server\CrossGuildWar.cs" />
     <Compile Include="Network\WebServer\Server\TransferPlayer.cs" />

@@ -73,9 +73,6 @@ namespace MTA
         }
         public void Text(string text, Languages lang = Languages.English)
         {
-            text = Program.Translate(text, Client.LanguageToString());
-
-
             {
                 if (text.Length > 100)
                 {
@@ -99,8 +96,6 @@ namespace MTA
         }
         public void Option(string text, byte id, Languages lang = Languages.English)
         {
-            text = Program.Translate(text, Client.LanguageToString());
-
             {
 
                 Replies.Add(new NpcReply(NpcReply.Option, text) { OptionID = id });
@@ -115,8 +110,6 @@ namespace MTA
         }
         public void Input(string text, byte id, byte maxLength, Languages lang = Languages.English)
         {
-            text = Program.Translate(text, Client.LanguageToString());
-
             {
 
                 Replies.Add(new NpcReply()

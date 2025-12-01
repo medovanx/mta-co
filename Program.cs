@@ -90,27 +90,6 @@ namespace MTA
         public static bool TestingMode = false;
         public static bool AllTest = false;
         public static int RandomSeed = 0;
-        public static void BackUP()
-        {
-            //var program = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
-            //var Directories = Directory.GetDirectories(program + "/PremiumSoft/");
-            //var path =  Directories.FirstOrDefault();
-            //if (File.Exists(path + "/navicat.exe"))
-            //{
-
-            //    Console.WriteLine("Backuping.................");            
-            //    var info = new ProcessStartInfo();
-
-            //    info.WorkingDirectory = path;
-            //    info.FileName = path+ "/navicat.exe";
-            //    info.Arguments = " /schedule matrix";         
-            //    info.UseShellExecute = true;            
-            //    var p = Process.Start(info);
-            //    p.WaitForExit(); 
-            //    Console.WriteLine("Backup Done");
-            //}
-
-        }
         public static bool Transfer(GameState game)
         {
             byte[] CreateTransfer = new MTA.WebServer.Transfer(game, Constants.ServerName).GetArray();
@@ -138,103 +117,6 @@ namespace MTA
         public static bool TransferServer = false;
         public static bool ServerTransfer = false;
         public static bool ALEXPC = false;
-
-        #region Translate
-        public static void SaveTranslate()
-        {
-            var file = Environment.CurrentDirectory + "Translate.txt";
-            if (File.Exists(file))
-                File.Delete(file);
-
-            StreamWriter writer = new StreamWriter(File.Create(file), Encoding);
-            writer.AutoFlush = true;
-            foreach (var item in Kernel.Translateed)
-                writer.WriteLine(item.Key + "@@" + item.Value);
-            writer.Close();
-
-        }
-        public static void LoadTranslate()
-        {
-            var file = Environment.CurrentDirectory + "Translate.txt";
-
-            if (File.Exists(file))
-            {
-                string[] text = File.ReadAllLines(file, Encoding);
-
-                for (int x = 0; x < text.Length; x++)
-                {
-                    string line = text[x];
-                    string[] split = line.Split(new string[] { "@@" }, StringSplitOptions.RemoveEmptyEntries);
-
-                    if (split.Length < 1)
-                        continue;
-                    var key = split[0];
-                    if (split.Length < 2)
-                        continue;
-                    var value = split[1];
-                    if (!Kernel.Translateed.ContainsKey(key))
-                        Kernel.Translateed.Add(key, value);
-                }
-            }
-
-        }
-        public static string Translate(string Text, string To)
-        {
-            if (To == "en")
-                return Text;
-
-            if (Kernel.Translateed.ContainsKey(Text))
-                return Kernel.Translateed[Text];
-
-            try
-            {
-                // this is the service root uri for the Microsoft Translator service  
-                var serviceRootUri =
-                               new Uri("https://api.datamarket.azure.com/Bing/MicrosoftTranslator/");
-
-                // this is the Account Key I generated for this app 
-                var accountKey = "1TGOJYN9IrRlIpYYQq4vVW0cfVyVC6sWMO34CsQyJKw";
-
-                // the TranslatorContainer gives us access to the Microsoft Translator services 
-                Microsoft.TranslatorContainer tc = new Microsoft.TranslatorContainer(serviceRootUri);
-
-                // Give the TranslatorContainer access to your subscription 
-                tc.Credentials = new System.Net.NetworkCredential(accountKey, accountKey);
-
-                // Generate the query 
-                var languagesForTranslationQuery = tc.GetLanguagesForTranslation();
-
-                // Call the query to get the results as an Array 
-                var availableLanguages = languagesForTranslationQuery.Execute().ToArray();
-
-                // Generate the query 
-                var translationQuery = tc.Translate(Text, To, null);
-
-                // Call the query and get the results as a List 
-                var translationResults = translationQuery.Execute().ToList();
-
-                // Verify there was a result 
-                if (translationResults.Count() <= 0)
-                {
-                    return " ";
-                }
-
-                // In case there were multiple results, pick the first one 
-                var translationResult = translationResults.First();
-
-                if (!Kernel.Translateed.ContainsKey(Text))
-                    Kernel.Translateed.Add(Text, translationResult.Text);
-
-                return translationResult.Text;
-            }
-            catch
-            {
-                return Text;
-            }
-
-        }
-
-        #endregion
         public static void Members30Guilds_Save(string epk)
         {
             try
@@ -313,65 +195,9 @@ namespace MTA
 
         static void Main(string[] args)
         {
-            Program.MCompressor.Optimize();
+            MCompressor.Optimize();
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(Application_ThreadException);
             ALEXPC = true;
-            #region VersionChecker
-            //if (VersionChecker.IsValidVersion() == false)
-            //{
-            //    MessageBox.Show("Your Trial Version has expired, Please get the Full version |Contact 011 42 72 19 32");
-            //    MTA.Console.WriteLine("Enter Password:");
-            //    Program.Password = Console.ReadLine();
-            //    if (ClassExtensions.Get64HashCode(Program.Password) != 4586181316755855993)
-            //    {
-            //        MessageBox.Show("Your Trial Version has expired, Please get the Full version |Contact 011 42 72 19 32");
-            //        MTA.Console.WriteLine("Thx. For Waiting...!");
-            //        MTA.Console.WriteLine("Wrong Password!");
-            //        MTA.Console.WriteLine("If Want To make this Source Work");
-            //        MTA.Console.WriteLine("You need to put the right Password. !");
-            //        MTA.Console.ReadLine();
-            //        MessageBox.Show("You Will Get Hacked. | Contact 011 42 72 19 32");
-            //        System.Console.ForegroundColor = System.ConsoleColor.DarkGreen;
-            //        System.Console.WindowLeft = System.Console.WindowTop = 0;
-            //        System.Console.WindowHeight = System.Console.BufferHeight = System.Console.LargestWindowHeight;
-            //        System.Console.WindowWidth = System.Console.BufferWidth = System.Console.LargestWindowWidth;
-            //        System.Console.CursorVisible = false;
-            //        int width, height;
-            //        int[] y;
-            //        int[] l;
-            //        Initialize(out width, out height, out y, out l);
-            //        int ms;
-            //        while (true)
-            //        {
-            //            DateTime t1 = DateTime.Now;
-            //            MatrixStep(width, height, y, l);
-            //            ms = 10 - (int)((TimeSpan)(DateTime.Now - t1)).TotalMilliseconds;
-
-            //            if (ms > 0)
-            //                System.Threading.Thread.Sleep(ms);
-
-            //            if (System.Console.KeyAvailable)
-            //                if (System.Console.ReadKey().Key == ConsoleKey.F5)
-            //                    Initialize(out width, out height, out y, out l);
-            //        }
-
-            //        //   Environment.Exit(0);
-
-            //    }
-            //    else
-            //    {
-            //        VersionChecker.TrialEnd();
-            //        MessageBox.Show("Your Trial Version has Renewed, To get the Full version");
-            //    }
-            //    return;
-
-
-            //}
-            //else
-            //{
-            //    VersionChecker chk = new VersionChecker();
-            //}
-            #endregion VersionChecker
             Time32 Start = Time32.Now;
             RandomSeed = Convert.ToInt32(DateTime.Now.Ticks.ToString().Remove(DateTime.Now.Ticks.ToString().Length / 2));
             Kernel.Random = new FastRandom(RandomSeed);
@@ -456,7 +282,6 @@ namespace MTA
                  IniFile.ReadString("MySql", "Password"),
                  IniFile.ReadString("MySql", "Database")
                 );
-            BackUP();
             EntityUID = new Counter(0);
             using (MySqlCommand cmd = new MySqlCommand(MySqlCommandType.SELECT))
             {
