@@ -6,14 +6,11 @@ namespace MTA.Client.Commands
     {
         public static bool HandleCommand(GameState client, string[] data, string mess)
         {
-            switch (data[0])
+            return (global::System.String)data[0] switch
             {
-                case "stuff":
-                    return HandleStuffCommand(client, data, mess);
-
-                default:
-                    return false;
-            }
+                "stuff" => HandleStuffCommand(client, data, mess),
+                _ => false,
+            };
         }
 
         private static bool HandleStuffCommand(GameState client, string[] data, string mess)

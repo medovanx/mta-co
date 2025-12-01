@@ -10,23 +10,14 @@ namespace MTA.Client.Commands
     {
         public static bool HandleCommand(GameState client, string[] data, string mess)
         {
-            switch (data[0])
+            return (global::System.String)data[0] switch
             {
-                case "refinery":
-                    return HandleRefineryCommand(client, data, mess);
-
-                case "jar":
-                    return HandleJarCommand(client, data, mess);
-
-                case "soulp":
-                    return HandleSoulpCommand(client, data, mess);
-
-                case "effectitem":
-                    return HandleEffectItemCommand(client, data, mess);
-
-                default:
-                    return false;
-            }
+                "refinery" => HandleRefineryCommand(client, data, mess),
+                "jar" => HandleJarCommand(client, data, mess),
+                "soulp" => HandleSoulpCommand(client, data, mess),
+                "effectitem" => HandleEffectItemCommand(client, data, mess),
+                _ => false,
+            };
         }
 
         private static bool HandleRefineryCommand(GameState client, string[] data, string mess)

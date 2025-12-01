@@ -6,57 +6,24 @@ namespace MTA.Client.Commands
     {
         public static bool HandleCommand(GameState client, string[] data, string mess)
         {
-            if (data.Length < 2)
+            return (global::System.String)data[0] switch
             {
-                return false;
-            }
-
-            switch (data[0])
-            {
-                case "gold":
-                    return handleGoldCommand(client, data, mess);
-
-                case "cps":
-                    return handleCpsCommand(client, data, mess);
-
-                case "bcps":
-                    return handleBcpsCommand(client, data, mess);
-
-                case "vip":
-                    return HandleVipCommand(client, data, mess);
-
-                case "exp":
-                    return HandleExpCommand(client, data, mess);
-
-                case "racepoints":
-                    return HandleRacePointsCommand(client, data, mess);
-
-                case "honorpoints":
-                    return HandleHonorPointsCommand(client, data, mess);
-
-                case "studypoints":
-                    return HandleStudyPointsCommand(client, data, mess);
-
-                case "level":
-                    return HandleLevelCommand(client, data, mess);
-
-                case "reallot":
-                    return HandleReallotCommand(client, data, mess);
-
-                case "str":
-                    return HandleAttributeCommand(client, data, AttributeType.Strength);
-
-                case "agi":
-                    return HandleAttributeCommand(client, data, AttributeType.Agility);
-
-                case "vit":
-                    return HandleAttributeCommand(client, data, AttributeType.Vitality);
-
-                case "spi":
-                    return HandleAttributeCommand(client, data, AttributeType.Spirit);
-                default:
-                    return false;
-            }
+                "gold" => handleGoldCommand(client, data, mess),
+                "cps" => handleCpsCommand(client, data, mess),
+                "bcps" => handleBcpsCommand(client, data, mess),
+                "vip" => HandleVipCommand(client, data, mess),
+                "exp" => HandleExpCommand(client, data, mess),
+                "racepoints" => HandleRacePointsCommand(client, data, mess),
+                "honorpoints" => HandleHonorPointsCommand(client, data, mess),
+                "studypoints" => HandleStudyPointsCommand(client, data, mess),
+                "level" => HandleLevelCommand(client, data, mess),
+                "reallot" => HandleReallotCommand(client, data, mess),
+                "strength" => HandleAttributeCommand(client, data, AttributeType.Strength),
+                "speed" => HandleAttributeCommand(client, data, AttributeType.Agility),
+                "vitality" => HandleAttributeCommand(client, data, AttributeType.Vitality),
+                "spirit" => HandleAttributeCommand(client, data, AttributeType.Spirit),
+                _ => false,
+            };
         }
 
         /// <summary>
@@ -571,26 +538,21 @@ namespace MTA.Client.Commands
                 return true;
             }
 
+            // Get all currently distributed points
+            ushort distributedPoints = (ushort)(client.Entity.Agility + client.Entity.Strength + client.Entity.Vitality + client.Entity.Spirit);
+
+            // Reset all attributes to base values
             client.Entity.Agility = 0;
             client.Entity.Strength = 0;
             client.Entity.Vitality = 1;
             client.Entity.Spirit = 0;
 
-            if (client.Entity.Reborn == 1)
-            {
-                client.Entity.Atributes = (ushort)(client.ExtraAtributePoints(client.Entity.FirstRebornLevel, client.Entity.FirstRebornLevel)
-                    + 52 + 3 * (client.Entity.Level - 15));
-            }
-            else
-            {
-                client.Entity.Atributes = (ushort)(client.ExtraAtributePoints(client.Entity.FirstRebornLevel, client.Entity.FirstRebornClass) +
-                    client.ExtraAtributePoints(client.Entity.SecondRebornLevel, client.Entity.SecondRebornClass) + 52 + 3 * (client.Entity.Level - 15));
-            }
+            // Add all distributed points to available attributes
+            client.Entity.Atributes += (ushort)(distributedPoints - 1); // Subtract 1 for the base Vitality
 
             client.CalculateStatBonus();
             client.CalculateHPBonus();
-            client.Send(new Network.GamePackets.Message("Attributes have been reset.",
-                System.Drawing.Color.Green, Network.GamePackets.Message.Tip));
+            client.Send(new Network.GamePackets.Message("Attributes have been reset.", System.Drawing.Color.Green, Network.GamePackets.Message.Tip));
             return true;
         }
 

@@ -22178,17 +22178,6 @@ p =>
                                     break;
                                 }
                             #endregion New
-                            case "gui"://client Gui PM Command TQ
-                                {
-                                    Data data = new Data(true);
-                                    data.ID = 116;
-                                    data.UID = client.Entity.UID;
-                                    data.TimeStamp = Time32.Now;
-                                    data.dwParam = 3264;
-                                    client.Send(data);
-
-                                }
-                                break;
                             #region booth
                             case "vend":
                             case "booth":

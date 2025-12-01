@@ -10,38 +10,20 @@ namespace MTA.Client.Commands
     {
         public static bool HandleCommand(GameState client, string[] data, string mess)
         {
-            switch (data[0])
+            return (global::System.String)data[0] switch
             {
-                case "npcjump":
-                    return HandleNpcJumpCommand(client, data, mess);
+                "npcjump" => HandleNpcJumpCommand(client, data, mess),
+                "npceffect" => HandleNpcEffectCommand(client, data, mess),
+                "gotonpc" => HandleGotoNpcCommand(client, data, mess),
+                "reloadnpc" => HandleReloadNpcCommand(client, data, mess),
+                "npcskin" => HandleNpcSkinCommand(client, data, mess),
+                "renamenpc" => HandleRenameNpcCommand(client, data, mess),
+                "movenpc" => HandleMoveNpcCommand(client, data, mess),
+                "deletenpc" => HandleDeleteNpcCommand(client, data, mess),
+                "addnpc" => HandleAddNpcCommand(client, data, mess),
+                _ => false,
+            };
 
-                case "npceffect":
-                    return HandleNpcEffectCommand(client, data, mess);
-
-                case "gotonpc":
-                    return HandleGotoNpcCommand(client, data, mess);
-
-                case "reloadnpc":
-                    return HandleReloadNpcCommand(client, data, mess);
-
-                case "npcskin":
-                    return HandleNpcSkinCommand(client, data, mess);
-
-                case "renamenpc":
-                    return HandleRenameNpcCommand(client, data, mess);
-
-                case "movenpc":
-                    return HandleMoveNpcCommand(client, data, mess);
-
-                case "deletenpc":
-                    return HandleDeleteNpcCommand(client, data, mess);
-
-                case "addnpc":
-                    return HandleAddNpcCommand(client, data, mess);
-
-                default:
-                    return false;
-            }
         }
 
         private static bool HandleNpcJumpCommand(GameState client, string[] data, string mess)

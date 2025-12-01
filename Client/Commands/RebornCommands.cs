@@ -108,6 +108,9 @@ namespace MTA.Client.Commands
             targetClient.Entity.Class = currentClass;
             targetClient.Entity.Reborn = 2; // Second rebirth
 
+            // Save to database
+            Database.EntityTable.SaveEntity(targetClient);
+
             // Reload screen to show changes
             targetClient.Screen.FullWipe();
             targetClient.Screen.Reload();

@@ -7,17 +7,12 @@ namespace MTA.Client.Commands
     {
         public static bool HandleCommand(GameState client, string[] data, string mess)
         {
-            switch (data[0])
+            return (global::System.String)data[0] switch
             {
-                case "tone":
-                    return HandleToneCommand(client, data, mess);
-
-                case "clearinv":
-                    return HandleClearInventoryCommand(client, data, mess);
-
-                default:
-                    return false;
-            }
+                "tone" => HandleToneCommand(client, data, mess),
+                "clearinv" => HandleClearInventoryCommand(client, data, mess),
+                _ => false,
+            };
         }
 
         private static bool HandleToneCommand(GameState client, string[] data, string mess)
