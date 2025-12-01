@@ -1949,284 +1949,284 @@ namespace MTA.Client
             switch (type)
             {
                 case Enums.RaceItemType.FrozenTrap:
-                {
-                    if (target != uint.MaxValue)
                     {
-                        if (Map.Floor[Entity.X, Entity.Y, MapObjectType.StaticEntity])
+                        if (target != uint.MaxValue)
                         {
-                            StaticEntity item = new StaticEntity((uint)(Entity.X * 1000 + Entity.Y), Entity.X, Entity.Y,
-                                (ushort)Map.ID);
-                            item.DoFrozenTrap(Entity.UID);
-                            Map.AddStaticEntity(item);
-                            Kernel.SendSpawn(item);
-                        }
-                    }
-                    else
-                    {
-                        Entity.FrozenStamp = Time32.Now;
-                        Entity.FrozenTime = 5;
-                        GameCharacterUpdates update = new GameCharacterUpdates(true);
-                        update.UID = Entity.UID;
-                        update.Add(GameCharacterUpdates.Freeze, 0, 4);
-                        SendScreen(update, true);
-                        Entity.AddFlag(Update.Flags.Freeze);
-                    }
-
-                    break;
-                }
-                case Enums.RaceItemType.RestorePotion:
-                {
-                    Vigor += 2000;
-                    if (Vigor > MaxVigor)
-                        Vigor = MaxVigor;
-                    Send(new Vigor(true) { Amount = Vigor });
-                    break;
-                }
-                case Enums.RaceItemType.ExcitementPotion:
-                {
-                    if (RaceExcitement && RaceExcitementAmount > 50)
-                        return;
-
-                    if (RaceDecelerated)
-                    {
-                        RaceDecelerated = false;
-
-                        var upd = new GameCharacterUpdates(true);
-                        upd.UID = Entity.UID;
-                        upd.Remove(GameCharacterUpdates.Decelerated);
-                        SendScreen(upd, true);
-                    }
-
-                    RaceExcitementStamp = Time32.Now;
-                    RaceExcitement = true;
-                    {
-                        var upd = new GameCharacterUpdates(true);
-                        upd.UID = Entity.UID;
-                        upd.Add(GameCharacterUpdates.Accelerated, 50, 15, 25);
-                        SendScreen(upd, true);
-                        SpeedChange = upd;
-                    }
-                    RaceExcitementAmount = 50;
-                    Entity.AddFlag(Update.Flags.OrangeSparkles);
-                    break;
-                }
-                case Enums.RaceItemType.SuperExcitementPotion:
-                {
-                    if (RaceDecelerated)
-                    {
-                        RaceDecelerated = false;
-
-                        var upd = new GameCharacterUpdates(true);
-                        upd.UID = Entity.UID;
-                        upd.Remove(GameCharacterUpdates.Decelerated);
-                        SendScreen(upd, true);
-                    }
-
-                    RaceExcitementAmount = 200;
-                    RaceExcitementStamp = Time32.Now;
-                    RaceExcitement = true;
-                    this.Entity.AddFlag(Update.Flags.SpeedIncreased);
-                    {
-                        var upd = new GameCharacterUpdates(true);
-                        upd.UID = Entity.UID;
-                        upd.Add(GameCharacterUpdates.Accelerated, 200, 15, 100);
-                        SendScreen(upd, true);
-                        SpeedChange = upd;
-                    }
-                    Entity.AddFlag(Update.Flags.OrangeSparkles);
-                    break;
-                }
-                case Enums.RaceItemType.GuardPotion:
-                {
-                    RaceGuard = true;
-                    GuardStamp = Time32.Now;
-                    Entity.AddFlag(Update.Flags.DivineShield);
-                    DizzyStamp = DizzyStamp.AddSeconds(-100);
-                    FrightenStamp = FrightenStamp.AddSeconds(-100);
-                    var upd = new GameCharacterUpdates(true);
-                    upd.UID = Entity.UID;
-                    upd.Add(GameCharacterUpdates.DivineShield, 0, 10);
-                    SendScreen(upd, true);
-                    break;
-                }
-                case Enums.RaceItemType.DizzyHammer:
-                {
-                    Entity Target;
-                    if (Screen.TryGetValue(target, out Target))
-                    {
-                        var Owner = Target.Owner;
-                        if (Owner != null)
-                        {
-                            if (!Owner.RaceGuard && !Owner.RaceFrightened)
+                            if (Map.Floor[Entity.X, Entity.Y, MapObjectType.StaticEntity])
                             {
-                                Owner.DizzyStamp = Time32.Now;
-                                Owner.RaceDizzy = true;
-                                Owner.Entity.AddFlag(Update.Flags.Dizzy);
+                                StaticEntity item = new StaticEntity((uint)(Entity.X * 1000 + Entity.Y), Entity.X, Entity.Y,
+                                    (ushort)Map.ID);
+                                item.DoFrozenTrap(Entity.UID);
+                                Map.AddStaticEntity(item);
+                                Kernel.SendSpawn(item);
+                            }
+                        }
+                        else
+                        {
+                            Entity.FrozenStamp = Time32.Now;
+                            Entity.FrozenTime = 5;
+                            GameCharacterUpdates update = new GameCharacterUpdates(true);
+                            update.UID = Entity.UID;
+                            update.Add(GameCharacterUpdates.Freeze, 0, 4);
+                            SendScreen(update, true);
+                            Entity.AddFlag(Update.Flags.Freeze);
+                        }
+
+                        break;
+                    }
+                case Enums.RaceItemType.RestorePotion:
+                    {
+                        Vigor += 2000;
+                        if (Vigor > MaxVigor)
+                            Vigor = MaxVigor;
+                        Send(new Vigor(true) { Amount = Vigor });
+                        break;
+                    }
+                case Enums.RaceItemType.ExcitementPotion:
+                    {
+                        if (RaceExcitement && RaceExcitementAmount > 50)
+                            return;
+
+                        if (RaceDecelerated)
+                        {
+                            RaceDecelerated = false;
+
+                            var upd = new GameCharacterUpdates(true);
+                            upd.UID = Entity.UID;
+                            upd.Remove(GameCharacterUpdates.Decelerated);
+                            SendScreen(upd, true);
+                        }
+
+                        RaceExcitementStamp = Time32.Now;
+                        RaceExcitement = true;
+                        {
+                            var upd = new GameCharacterUpdates(true);
+                            upd.UID = Entity.UID;
+                            upd.Add(GameCharacterUpdates.Accelerated, 50, 15, 25);
+                            SendScreen(upd, true);
+                            SpeedChange = upd;
+                        }
+                        RaceExcitementAmount = 50;
+                        Entity.AddFlag(Update.Flags.OrangeSparkles);
+                        break;
+                    }
+                case Enums.RaceItemType.SuperExcitementPotion:
+                    {
+                        if (RaceDecelerated)
+                        {
+                            RaceDecelerated = false;
+
+                            var upd = new GameCharacterUpdates(true);
+                            upd.UID = Entity.UID;
+                            upd.Remove(GameCharacterUpdates.Decelerated);
+                            SendScreen(upd, true);
+                        }
+
+                        RaceExcitementAmount = 200;
+                        RaceExcitementStamp = Time32.Now;
+                        RaceExcitement = true;
+                        this.Entity.AddFlag(Update.Flags.SpeedIncreased);
+                        {
+                            var upd = new GameCharacterUpdates(true);
+                            upd.UID = Entity.UID;
+                            upd.Add(GameCharacterUpdates.Accelerated, 200, 15, 100);
+                            SendScreen(upd, true);
+                            SpeedChange = upd;
+                        }
+                        Entity.AddFlag(Update.Flags.OrangeSparkles);
+                        break;
+                    }
+                case Enums.RaceItemType.GuardPotion:
+                    {
+                        RaceGuard = true;
+                        GuardStamp = Time32.Now;
+                        Entity.AddFlag(Update.Flags.DivineShield);
+                        DizzyStamp = DizzyStamp.AddSeconds(-100);
+                        FrightenStamp = FrightenStamp.AddSeconds(-100);
+                        var upd = new GameCharacterUpdates(true);
+                        upd.UID = Entity.UID;
+                        upd.Add(GameCharacterUpdates.DivineShield, 0, 10);
+                        SendScreen(upd, true);
+                        break;
+                    }
+                case Enums.RaceItemType.DizzyHammer:
+                    {
+                        Entity Target;
+                        if (Screen.TryGetValue(target, out Target))
+                        {
+                            var Owner = Target.Owner;
+                            if (Owner != null)
+                            {
+                                if (!Owner.RaceGuard && !Owner.RaceFrightened)
+                                {
+                                    Owner.DizzyStamp = Time32.Now;
+                                    Owner.RaceDizzy = true;
+                                    Owner.Entity.AddFlag(Update.Flags.Dizzy);
+                                    {
+                                        var upd = new GameCharacterUpdates(true);
+                                        upd.UID = Entity.UID;
+                                        upd.Add(GameCharacterUpdates.Dizzy, 0, 5);
+                                        Owner.SendScreen(upd, true);
+                                    }
+                                }
+                            }
+                        }
+
+                        break;
+                    }
+                case Enums.RaceItemType.ScreamBomb:
+                    {
+                        SendScreen(new SpellUse(true)
+                        {
+                            Attacker = Entity.UID,
+                            SpellID = 9989,
+                            SpellLevel = 0,
+                            X = Entity.X,
+                            Y = Entity.Y
+                        }.AddTarget(Entity, 0, null), true);
+                        foreach (var obj in Screen.SelectWhere<Entity>(MapObjectType.Player,
+                                     (o) => Kernel.GetDistance(o.X, o.Y, Entity.X, Entity.Y) <= 10))
+                        {
+                            var Owner = obj.Owner;
+                            if (!Owner.RaceGuard && !Owner.RaceDizzy)
+                            {
+                                Owner.RaceFrightened = true;
+                                Owner.FrightenStamp = Time32.Now;
+                                Owner.Entity.AddFlag(Update.Flags.Frightened);
                                 {
                                     var upd = new GameCharacterUpdates(true);
-                                    upd.UID = Entity.UID;
-                                    upd.Add(GameCharacterUpdates.Dizzy, 0, 5);
+                                    upd.UID = Owner.Entity.UID;
+                                    upd.Add(GameCharacterUpdates.Flustered, 0, 20);
                                     Owner.SendScreen(upd, true);
                                 }
                             }
                         }
-                    }
 
-                    break;
-                }
-                case Enums.RaceItemType.ScreamBomb:
-                {
-                    SendScreen(new SpellUse(true)
-                    {
-                        Attacker = Entity.UID,
-                        SpellID = 9989,
-                        SpellLevel = 0,
-                        X = Entity.X,
-                        Y = Entity.Y
-                    }.AddTarget(Entity, 0, null), true);
-                    foreach (var obj in Screen.SelectWhere<Entity>(MapObjectType.Player,
-                                 (o) => Kernel.GetDistance(o.X, o.Y, Entity.X, Entity.Y) <= 10))
-                    {
-                        var Owner = obj.Owner;
-                        if (!Owner.RaceGuard && !Owner.RaceDizzy)
-                        {
-                            Owner.RaceFrightened = true;
-                            Owner.FrightenStamp = Time32.Now;
-                            Owner.Entity.AddFlag(Update.Flags.Frightened);
-                            {
-                                var upd = new GameCharacterUpdates(true);
-                                upd.UID = Owner.Entity.UID;
-                                upd.Add(GameCharacterUpdates.Flustered, 0, 20);
-                                Owner.SendScreen(upd, true);
-                            }
-                        }
+                        break;
                     }
-
-                    break;
-                }
                 case Enums.RaceItemType.SpiritPotion:
-                {
-                    ExtraVigorStamp = Time32.Now;
-                    RaceExtraVigor = 2000;
-                    break;
-                }
+                    {
+                        ExtraVigorStamp = Time32.Now;
+                        RaceExtraVigor = 2000;
+                        break;
+                    }
                 case Enums.RaceItemType.ChaosBomb:
-                {
-                    SendScreen(new SpellUse(true)
                     {
-                        Attacker = Entity.UID,
-                        SpellID = 9989,
-                        SpellLevel = 0,
-                        X = Entity.X,
-                        Y = Entity.Y
-                    }.AddTarget(Entity, 0, null), true);
-                    foreach (var obj in this.Screen.SelectWhere<Entity>(MapObjectType.Player,
-                                 (o) => Kernel.GetDistance(o.X, o.Y, Entity.X, Entity.Y) <= 10))
-                    {
-                        var Owner = obj.Owner;
-                        if (!Owner.RaceGuard)
+                        SendScreen(new SpellUse(true)
                         {
-                            Owner.FrightenStamp = Time32.Now;
-                            Owner.DizzyStamp = Owner.DizzyStamp.AddSeconds(-1000);
-
-                            Owner.Entity.AddFlag(Update.Flags.Confused);
+                            Attacker = Entity.UID,
+                            SpellID = 9989,
+                            SpellLevel = 0,
+                            X = Entity.X,
+                            Y = Entity.Y
+                        }.AddTarget(Entity, 0, null), true);
+                        foreach (var obj in this.Screen.SelectWhere<Entity>(MapObjectType.Player,
+                                     (o) => Kernel.GetDistance(o.X, o.Y, Entity.X, Entity.Y) <= 10))
+                        {
+                            var Owner = obj.Owner;
+                            if (!Owner.RaceGuard)
                             {
-                                var upd = new GameCharacterUpdates(true);
-                                upd.UID = Owner.Entity.UID;
-                                upd.Add(GameCharacterUpdates.Flustered, 0, 15);
-                                Owner.SendScreen(upd, true);
+                                Owner.FrightenStamp = Time32.Now;
+                                Owner.DizzyStamp = Owner.DizzyStamp.AddSeconds(-1000);
+
+                                Owner.Entity.AddFlag(Update.Flags.Confused);
+                                {
+                                    var upd = new GameCharacterUpdates(true);
+                                    upd.UID = Owner.Entity.UID;
+                                    upd.Add(GameCharacterUpdates.Flustered, 0, 15);
+                                    Owner.SendScreen(upd, true);
+                                }
                             }
                         }
+
+                        break;
                     }
-
-                    break;
-                }
                 case Enums.RaceItemType.SluggishPotion:
-                {
-                    SendScreen(new SpellUse(true)
                     {
-                        Attacker = Entity.UID,
-                        SpellID = 9989,
-                        SpellLevel = 0,
-                        X = Entity.X,
-                        Y = Entity.Y
-                    }.AddTarget(Entity, 0, null), true);
-                    foreach (var obj in this.Screen.SelectWhere<Entity>(MapObjectType.Player,
-                                 o => Kernel.GetDistance(o.X, o.Y, Entity.X, Entity.Y) <= 10))
-                    {
-                        var Owner = obj.Owner;
-                        if (!Owner.RaceGuard)
+                        SendScreen(new SpellUse(true)
                         {
-                            Owner.RaceDecelerated = true;
-                            Owner.DecelerateStamp = Time32.Now;
-                            if (Owner.RaceExcitement)
+                            Attacker = Entity.UID,
+                            SpellID = 9989,
+                            SpellLevel = 0,
+                            X = Entity.X,
+                            Y = Entity.Y
+                        }.AddTarget(Entity, 0, null), true);
+                        foreach (var obj in this.Screen.SelectWhere<Entity>(MapObjectType.Player,
+                                     o => Kernel.GetDistance(o.X, o.Y, Entity.X, Entity.Y) <= 10))
+                        {
+                            var Owner = obj.Owner;
+                            if (!Owner.RaceGuard)
                             {
-                                Owner.RaceExcitement = false;
-
-                                var upd = new GameCharacterUpdates(true);
-                                upd.UID = Owner.Entity.UID;
-                                upd.Remove(GameCharacterUpdates.Accelerated);
-                                Owner.SendScreen(upd, true);
-                            }
-
-                            Owner.Entity.AddFlag(Update.Flags.PurpleSparkles);
-                            {
-                                var upd = new GameCharacterUpdates(true);
-                                upd.UID = Owner.Entity.UID;
-                                unchecked
+                                Owner.RaceDecelerated = true;
+                                Owner.DecelerateStamp = Time32.Now;
+                                if (Owner.RaceExcitement)
                                 {
-                                    upd.Add(GameCharacterUpdates.Decelerated, 50, 10, (uint)(0 - 25));
+                                    Owner.RaceExcitement = false;
+
+                                    var upd = new GameCharacterUpdates(true);
+                                    upd.UID = Owner.Entity.UID;
+                                    upd.Remove(GameCharacterUpdates.Accelerated);
+                                    Owner.SendScreen(upd, true);
                                 }
 
-                                Owner.SendScreen(upd, true);
-                                Owner.SpeedChange = upd;
+                                Owner.Entity.AddFlag(Update.Flags.PurpleSparkles);
+                                {
+                                    var upd = new GameCharacterUpdates(true);
+                                    upd.UID = Owner.Entity.UID;
+                                    unchecked
+                                    {
+                                        upd.Add(GameCharacterUpdates.Decelerated, 50, 10, (uint)(0 - 25));
+                                    }
+
+                                    Owner.SendScreen(upd, true);
+                                    Owner.SpeedChange = upd;
+                                }
                             }
                         }
-                    }
 
-                    break;
-                }
+                        break;
+                    }
                 case Enums.RaceItemType.TransformItem:
-                {
-                    for (int i = 0; i < 5; i++)
                     {
-                        if (Potions[i] != null)
+                        for (int i = 0; i < 5; i++)
                         {
-                            if (Potions[i].Type != Enums.RaceItemType.TransformItem)
+                            if (Potions[i] != null)
                             {
+                                if (Potions[i].Type != Enums.RaceItemType.TransformItem)
+                                {
+                                    Send(new RacePotion(true)
+                                    {
+                                        Amount = 0,
+                                        Location = i + 1,
+                                        PotionType = Potions[i].Type
+                                    });
+                                    Potions[i] = null;
+                                }
+                            }
+                        }
+
+                        //for (int i = 0; i < 5; i++)
+                        {
+                            int i = 0;
+                            if (Potions[i] == null)
+                            {
+                                int val = (int)Enums.RaceItemType.TransformItem;
+                                while (val == (int)Enums.RaceItemType.TransformItem)
+                                    val = Kernel.Random.Next((int)Enums.RaceItemType.ChaosBomb,
+                                        (int)Enums.RaceItemType.SuperExcitementPotion);
+                                Potions[i] = new UsableRacePotion();
+                                Potions[i].Count = 1;
+                                Potions[i].Type = (Enums.RaceItemType)val;
                                 Send(new RacePotion(true)
                                 {
-                                    Amount = 0,
+                                    Amount = 1,
                                     Location = i + 1,
                                     PotionType = Potions[i].Type
                                 });
-                                Potions[i] = null;
                             }
                         }
+                        break;
                     }
-
-                    //for (int i = 0; i < 5; i++)
-                    {
-                        int i = 0;
-                        if (Potions[i] == null)
-                        {
-                            int val = (int)Enums.RaceItemType.TransformItem;
-                            while (val == (int)Enums.RaceItemType.TransformItem)
-                                val = Kernel.Random.Next((int)Enums.RaceItemType.ChaosBomb,
-                                    (int)Enums.RaceItemType.SuperExcitementPotion);
-                            Potions[i] = new UsableRacePotion();
-                            Potions[i].Count = 1;
-                            Potions[i].Type = (Enums.RaceItemType)val;
-                            Send(new RacePotion(true)
-                            {
-                                Amount = 1,
-                                Location = i + 1,
-                                PotionType = Potions[i].Type
-                            });
-                        }
-                    }
-                    break;
-                }
             }
         }
 
@@ -2539,7 +2539,7 @@ namespace MTA.Client
                 Proficiencies[proficiency.ID].Level = proficiency.Level;
                 Proficiencies[proficiency.ID].Experience = proficiency.Experience;
                 proficiency.Send(this);
-                //Database.SkillTable.SaveProficiencies(this, proficiency.ID);//Samak
+                Database.SkillTable.SaveProficiencies(this);
                 return false;
             }
             else
@@ -2547,7 +2547,7 @@ namespace MTA.Client
                 Proficiencies.Add(proficiency.ID, proficiency);
                 proficiency.NeededExperience = Database.DataHolder.ProficiencyLevelExperience(proficiency.Level);
                 proficiency.Send(this);
-                Database.SkillTable.SaveProficiencies(this); //Samak
+                Database.SkillTable.SaveProficiencies(this);
                 return true;
             }
         }
@@ -2560,37 +2560,15 @@ namespace MTA.Client
                 {
                     Spells[spell.ID].Level = spell.Level;
                     Spells[spell.ID].Experience = spell.Experience;
-                    if (spell.ID != 3060)
-                    {
-                        spell.Send(this);
-                        //Database.SkillTable.SaveSpells(this, spell.ID);
-                    }
+                    spell.Send(this);
                 }
-
                 return false;
             }
             else
             {
-                if (spell.ID == 1045 || spell.ID == 1046)
-                {
-                    //if (Proficiencies.ContainsKey(Database.SpellTable.SpellInformations[spell.ID][spell.Level].WeaponSubtype))
-                    //{
-                    //    if (Proficiencies[Database.SpellTable.SpellInformations[spell.ID][spell.Level].WeaponSubtype].Level < 5)
-                    //        return false;
-                    //}
-                    //else
-                    //    return false;
-                }
-
                 Spells.Add(spell.ID, spell);
-                if (spell.ID != 3060)
-                {
-                    spell.Send(this);
-                    //      Database.SkillTable.SaveSpells(this, spell.ID);//Samak
-                }
-
-                Database.SkillTable.SaveSpells(this); //Samak
-
+                spell.Send(this);
+                Database.SkillTable.SaveSpells(this);
                 return true;
             }
         }
@@ -2953,24 +2931,24 @@ namespace MTA.Client
                 case 51:
                 case 61:
                 case 71:
-                {
-                    Inventory.Add(410077, Game.Enums.ItemEffect.Poison);
-                    break;
-                }
+                    {
+                        Inventory.Add(410077, Game.Enums.ItemEffect.Poison);
+                        break;
+                    }
                 case 41:
-                {
-                    Inventory.Add(500057, Game.Enums.ItemEffect.Shield);
-                    break;
-                }
+                    {
+                        Inventory.Add(500057, Game.Enums.ItemEffect.Shield);
+                        break;
+                    }
                 case 132:
                 case 142:
-                {
-                    if (toClass == 132)
-                        Inventory.Add(421077, Game.Enums.ItemEffect.MP);
-                    else
-                        Inventory.Add(421077, Game.Enums.ItemEffect.HP);
-                    break;
-                }
+                    {
+                        if (toClass == 132)
+                            Inventory.Add(421077, Game.Enums.ItemEffect.MP);
+                        else
+                            Inventory.Add(421077, Game.Enums.ItemEffect.HP);
+                        break;
+                    }
             }
 
             #region Low level items
@@ -5003,15 +4981,15 @@ namespace MTA.Client
                 case (ulong)Update.Flags2.WoodAura: Entity.WoodResistance += (int)power * i; break;
                 case (ulong)Update.Flags2.WaterAura: Entity.WaterResistance += (int)power * i; break;
                 case (ulong)Update.Flags2.TyrantAura:
-                {
-                    Entity.CriticalStrike += (int)power * i * 100;
-                    Entity.SkillCStrike += (int)power * i * 100;
-                    if (Entity.CriticalStrike > 120000) Entity.CriticalStrike = 120000;
-                    if (Entity.SkillCStrike > 120000) Entity.SkillCStrike = 120000;
-                    if (Entity.CriticalStrike < 0) Entity.CriticalStrike = 0;
-                    if (Entity.SkillCStrike < 0) Entity.SkillCStrike = 0;
-                    break;
-                }
+                    {
+                        Entity.CriticalStrike += (int)power * i * 100;
+                        Entity.SkillCStrike += (int)power * i * 100;
+                        if (Entity.CriticalStrike > 120000) Entity.CriticalStrike = 120000;
+                        if (Entity.SkillCStrike > 120000) Entity.SkillCStrike = 120000;
+                        if (Entity.CriticalStrike < 0) Entity.CriticalStrike = 0;
+                        if (Entity.SkillCStrike < 0) Entity.SkillCStrike = 0;
+                        break;
+                    }
                 case (ulong)Update.Flags2.FendAura: Entity.Immunity += (int)power * i * 100; break;
             }
         }
@@ -5026,15 +5004,15 @@ namespace MTA.Client
                 case (ulong)Update.Flags2.WoodAura: Entity.WoodResistance -= (int)power * i; break;
                 case (ulong)Update.Flags2.WaterAura: Entity.WaterResistance -= (int)power * i; break;
                 case (ulong)Update.Flags2.TyrantAura:
-                {
-                    Entity.CriticalStrike -= (int)power * i * 100;
-                    Entity.SkillCStrike -= (int)power * i * 100;
-                    if (Entity.CriticalStrike > 120000) Entity.CriticalStrike = 120000;
-                    if (Entity.SkillCStrike > 120000) Entity.SkillCStrike = 120000;
-                    if (Entity.CriticalStrike < 0) Entity.CriticalStrike = 0;
-                    if (Entity.SkillCStrike < 0) Entity.SkillCStrike = 0;
-                    break;
-                }
+                    {
+                        Entity.CriticalStrike -= (int)power * i * 100;
+                        Entity.SkillCStrike -= (int)power * i * 100;
+                        if (Entity.CriticalStrike > 120000) Entity.CriticalStrike = 120000;
+                        if (Entity.SkillCStrike > 120000) Entity.SkillCStrike = 120000;
+                        if (Entity.CriticalStrike < 0) Entity.CriticalStrike = 0;
+                        if (Entity.SkillCStrike < 0) Entity.SkillCStrike = 0;
+                        break;
+                    }
                 case (ulong)Update.Flags2.FendAura: Entity.Immunity -= (int)power * i * 100; break;
             }
         }
@@ -6178,7 +6156,7 @@ namespace MTA.Client
                 this.ChiPowers = new List<ChiPowerStructure>();
                 this.Retretead_ChiPowers = new ChiPowerStructure[4];
                 this.ChiData = new ChiTable.ChiData()
-                    { Name = this.Entity.Name, UID = this.Entity.UID, Powers = this.ChiPowers };
+                { Name = this.Entity.Name, UID = this.Entity.UID, Powers = this.ChiPowers };
 
                 this.Entity.Stamina = 150;
 
@@ -6600,13 +6578,14 @@ namespace MTA.Client
                                 {
                                     this.Send(new MapStatus()
                                     {
-                                        BaseID = this.Map.BaseID, ID = this.Map.ID,
+                                        BaseID = this.Map.BaseID,
+                                        ID = this.Map.ID,
                                         Status = Database.MapsTable.MapInformations[1036].Status
                                     });
                                     this.Booth = new Game.ConquerStructures.Booth(this,
                                         new Data(true) { UID = this.Entity.UID });
                                     this.Send(new Data(true)
-                                        { ID = Data.ChangeAction, UID = this.Entity.UID, dwParam = 0 });
+                                    { ID = Data.ChangeAction, UID = this.Entity.UID, dwParam = 0 });
 
                                     #region new multi items
 
@@ -6646,7 +6625,7 @@ namespace MTA.Client
                                                 item.Item.Send(this);
                                                 {
                                                     ItemUsage usage = new ItemUsage(true)
-                                                        { ID = ItemUsage.AddItemOnBoothForConquerPoints };
+                                                    { ID = ItemUsage.AddItemOnBoothForConquerPoints };
                                                     item.Cost_Type = Game.ConquerStructures.BoothItem.CostType
                                                         .ConquerPoints;
                                                     this.Booth.ItemList.Add(item.Item.UID, item);
