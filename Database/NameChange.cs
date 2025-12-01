@@ -76,7 +76,6 @@ namespace MTA.Database
             }
             if (UPDATE.Count > 0)
             {
-                System.Console.ForegroundColor = ConsoleColor.DarkGreen;
                 Console.WriteLine(" [NAME CHANGES]");
             }
             foreach (NameChangeC names in UPDATE.Values)
@@ -84,7 +83,6 @@ namespace MTA.Database
                 using (var cmdupdate2 = new MySqlCommand(MySqlCommandType.UPDATE))
                     cmdupdate2.Update("entities").Set("name", names.NewName).Set("namechange", "").Where("name", names.OldName).Execute();
                 Console.WriteLine(" -[" + names.OldName + "] : -[" + names.NewName + "]");
-                System.Console.ForegroundColor = ConsoleColor.White;//debug
             }
             UPDATE.Clear();
         }

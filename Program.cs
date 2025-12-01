@@ -376,8 +376,7 @@ namespace MTA
             RandomSeed = Convert.ToInt32(DateTime.Now.Ticks.ToString().Remove(DateTime.Now.Ticks.ToString().Length / 2));
             Kernel.Random = new FastRandom(RandomSeed);
             StartDate = DateTime.Now;
-            Console.Title = "MTA CO Server"; Console.BackgroundColor = ConsoleColor.Black;
-            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.Title = "MTA CO Server";
             IntPtr hWnd = FindWindow(null, Console.Title);
             Console.WriteLine("Loaded server configuration.");
             string ConfigFileName = "Config\\configuration.ini";
@@ -624,9 +623,7 @@ namespace MTA
                     MaTrix.Booths.Load();
                 }
                 Console.WriteLine();
-                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(@"+-----------------------------Server:Online-----------------------------------+");
-                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine("Server Loaded in " + (Time32.Now - Start) + " Milliseconds.");
                 GC.Collect();
                 WorkConsole();
@@ -2084,14 +2081,11 @@ namespace MTA
                 {
                     if (!thistime)
                         continue;
-                    System.Console.ForegroundColor = System.ConsoleColor.White;
                 }
                 else
                 {
-                    System.Console.ForegroundColor = System.ConsoleColor.DarkGreen;
                     System.Console.SetCursorPosition(x, inBoxY(y[x] - 2 - (l[x] / 40 * 2), height));
                     System.Console.Write(R);
-                    System.Console.ForegroundColor = System.ConsoleColor.Green;
                 }
                 System.Console.SetCursorPosition(x, y[x]);
                 System.Console.Write(R);

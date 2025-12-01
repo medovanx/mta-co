@@ -54,9 +54,7 @@ namespace MTA
                 System.Console.WriteLine();
             else
             {
-                ForegroundColor = ConsoleColor.Red;
                 System.Console.Write(TimeStamp() + " ");
-                ForegroundColor = color;
                 System.Console.Write(line + "\n");
             }
         }
@@ -101,7 +99,6 @@ namespace MTA
 
         public static void WriteLine(string text)
         {
-            System.Console.ForegroundColor = GetRandomConsoleColor();
             int padding = Math.Max(0, (Console.WindowWidth - text.Length) / 2);
             System.Console.Write(new string(' ', padding));
             System.Console.WriteLine(text);

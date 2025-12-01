@@ -66,7 +66,6 @@ namespace ProjectX_V3_Game.Database
             World.ScriptEngine = new ScriptEngine(x, 10000); // scripts updates every 10 sec.
             World.ScriptEngine.Check_Updates();
 
-            System.Console.ForegroundColor = ConsoleColor.Green;
             MTA.Console.WriteLine(World.ScriptEngine.scriptCollection.scripts.Count + "  NPC Scripts Loaded...");
         }
     }
