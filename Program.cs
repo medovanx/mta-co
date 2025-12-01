@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using MTA.Network.GamePackets;
-using TrialModePlugin;
 using MTA.Client;
 using System.Diagnostics;
 using System.Threading.Tasks;

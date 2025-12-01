@@ -284,9 +284,6 @@
       <DependentUpon>Controlpanel.cs</DependentUpon>
     </Compile>
     <Compile Include="Extensions\Thread.cs" />
-    <Compile Include="Extensions\Trial\ModifyRegistry.cs" />
-    <Compile Include="Extensions\Trial\RegistryComponent.cs" />
-    <Compile Include="Extensions\Trial\VersionChecker.cs" />
     <Compile Include="Game\Lottery.cs" />
     <Compile Include="Game\Features\Achievement.cs" />
     <Compile Include="Game\Attacking\BlessEffect.cs" />
