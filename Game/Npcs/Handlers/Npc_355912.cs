@@ -1,5 +1,3 @@
-using System;
-using static MTA.Game.Enums;
 using MTA.Network.GamePackets;
 using MTA.Database;
 
