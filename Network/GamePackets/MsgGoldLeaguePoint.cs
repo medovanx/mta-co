@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using MTA.Client;
 using MTA.Network;
 
-namespace MTA.Magic
+namespace MTA.Network.GamePackets
 {
     public class MsgGoldLeaguePoint : Writer, Interfaces.IPacket
     {
@@ -58,3 +58,4 @@ namespace MTA.Magic
         }
     }
 }
+

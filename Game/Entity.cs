@@ -10,7 +10,6 @@ using MTA.Interfaces;
 using MTA.Database;
 using System.Collections.Concurrent;
 using MTA.Client;
-using MTA.Magic;
 
 namespace MTA.Game
 {

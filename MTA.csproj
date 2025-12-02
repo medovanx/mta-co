@@ -357,7 +357,7 @@
     <Compile Include="MrNiTro\Systems\SubClass\SubClassTable.cs" />
     <Compile Include="Database\Read.cs" />
     <Compile Include="Database\Write.cs" />
-    <Compile Include="Magic\MsgGoldLeaguePoint.cs" />
+    <Compile Include="Network\GamePackets\MsgGoldLeaguePoint.cs" />
     <Compile Include="Client\Authentication.cs" />
     <Compile Include="Network\AuthPackets\Forward.cs" />
     <Compile Include="Network\AuthPackets\PasswordCryptographySeed.cs" />

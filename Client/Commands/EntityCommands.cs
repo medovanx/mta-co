@@ -501,11 +501,6 @@ namespace MTA.Client.Commands
         {
             if (ushort.TryParse(data[1], out var studyPoints))
             {
-                if (studyPoints > 9999)
-                {
-                    client.Send(new Network.GamePackets.Message("Study points cannot be greater than 9,999.", System.Drawing.Color.Red, Network.GamePackets.Message.Tip));
-                    return true;
-                }
                 client.Entity.SubClasses.StudyPoints = studyPoints;
                 client.Entity.SubClasses.Send(client);
                 return true;
