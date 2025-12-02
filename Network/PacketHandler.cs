@@ -22713,9 +22713,6 @@ p =>
                                                 case "dodge":
                                                     Client.Entity.Dodge = byte.Parse(Data[3]);
                                                     break;
-                                                case "spell":
-                                                    Client.AddSpell(new Spell(true) { ID = ushort.Parse(Data[3]) });
-                                                    break;
                                                 case "prof":
                                                     Client.AddProficiency(new Proficiency(true) { ID = ushort.Parse(Data[3]) });
                                                     break;
@@ -23484,18 +23481,6 @@ p =>
                                     if (Data.Length > 3)
                                         proficiency.Experience = uint.Parse(Data[3]);
                                     client.AddProficiency(proficiency);
-                                    break;
-                                }
-                            case "spell":
-                                {
-                                    Interfaces.ISkill spell = new GamePackets.Spell(true);
-                                    if (Data.Length > 1)
-                                        spell.ID = ushort.Parse(Data[1]);
-                                    if (Data.Length > 2)
-                                        spell.Level = byte.Parse(Data[2]);
-                                    if (Data.Length > 3)
-                                        spell.Experience = uint.Parse(Data[3]);
-                                    client.AddSpell(spell);
                                     break;
                                 }
                             case "class":

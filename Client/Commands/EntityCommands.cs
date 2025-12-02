@@ -22,6 +22,8 @@ namespace MTA.Client.Commands
                 "speed" => HandleAttributeCommand(client, data, AttributeType.Agility),
                 "vitality" => HandleAttributeCommand(client, data, AttributeType.Vitality),
                 "spirit" => HandleAttributeCommand(client, data, AttributeType.Spirit),
+                "heal" => HandleHealCommand(client, data, mess),
+                "spell" => HandleSpellCommand(client, data, mess),
                 _ => false,
             };
         }
@@ -603,6 +605,72 @@ namespace MTA.Client.Commands
             Database.EntityTable.SaveEntity(client);
             client.Send(new Network.GamePackets.Message($"Added {amount} points to {attributeType}. Remaining: {client.Entity.Atributes}",
                 System.Drawing.Color.Green, Network.GamePackets.Message.Tip));
+            return true;
+        }
+
+        private static bool HandleHealCommand(GameState client, string[] data, string mess)
+        {
+            client.Entity.Hitpoints = client.Entity.MaxHitpoints;
+            client.Entity.Mana = client.Entity.MaxMana;
+
+            var update = new Network.GamePackets.Update(true)
+            {
+                UID = client.Entity.UID,
+                UpdateCount = 2
+            };
+            update.Append(Network.GamePackets.Update.Hitpoints, client.Entity.Hitpoints);
+            update.Append(Network.GamePackets.Update.Mana, client.Entity.Mana);
+            client.Send(update);
+
+            client.Send(new Network.GamePackets.Message("You have been fully healed.", System.Drawing.Color.Green, Network.GamePackets.Message.Tip));
+            return true;
+        }
+
+        private static bool HandleSpellCommand(GameState client, string[] data, string mess)
+        {
+            if (data.Length < 2)
+            {
+                client.Send(new Network.GamePackets.Message("Usage: @spell <spell_id> [level]",
+                    System.Drawing.Color.Red, Network.GamePackets.Message.Tip));
+                return true;
+            }
+
+            if (!ushort.TryParse(data[1], out ushort spellId))
+            {
+                client.Send(new Network.GamePackets.Message("Invalid spell ID. Must be a number.",
+                    System.Drawing.Color.Red, Network.GamePackets.Message.Tip));
+                return true;
+            }
+
+            byte spellLevel = 0;
+            if (data.Length >= 3)
+            {
+                if (!byte.TryParse(data[2], out spellLevel))
+                {
+                    client.Send(new Network.GamePackets.Message("Invalid level. Must be a number between 0-255.",
+                        System.Drawing.Color.Red, Network.GamePackets.Message.Tip));
+                    return true;
+                }
+            }
+
+            var spell = new Network.GamePackets.Spell(true)
+            {
+                ID = spellId,
+                Level = spellLevel,
+                Experience = 0
+            };
+
+            if (client.AddSpell(spell))
+            {
+                client.Send(new Network.GamePackets.Message($"Successfully learned spell {spellId} at level {spellLevel}.",
+                    System.Drawing.Color.Green, Network.GamePackets.Message.Tip));
+            }
+            else
+            {
+                client.Send(new Network.GamePackets.Message($"You already know spell {spellId}. Use a higher level to upgrade it.",
+                    System.Drawing.Color.Yellow, Network.GamePackets.Message.Tip));
+            }
+
             return true;
         }
     }
