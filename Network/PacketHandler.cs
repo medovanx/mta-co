@@ -23040,68 +23040,6 @@ p =>
                                     }
                                     break;
                                 }
-                            case "clanwar":
-                                {
-                                    if (Game.ClanWar.IsWar)
-                                        Game.ClanWar.End();
-                                    else
-                                        Game.ClanWar.Start();
-                                    break;
-                                }
-                            case "elitegw":
-                                {
-                                    if (Game.EliteGuildWar.IsWar)
-                                        Game.EliteGuildWar.End();
-                                    else
-                                        Game.EliteGuildWar.Start();
-                                    break;
-                                }
-                            case "guildwar":
-                                {
-                                    switch (Data[1])
-                                    {
-                                        case "on":
-                                            {
-                                                if (!Game.GuildWar.IsWar)
-                                                {
-                                                    Game.GuildWar.Start();
-                                                }
-                                                break;
-                                            }
-                                        case "off":
-                                            {
-                                                if (Game.GuildWar.IsWar)
-                                                {
-                                                    Game.GuildWar.End();
-                                                }
-                                                break;
-                                            }
-                                    }
-                                    break;
-                                }
-                            case "sguildwar":
-                                {
-                                    switch (Data[1])
-                                    {
-                                        case "on":
-                                            {
-                                                if (!Game.SuperGuildWar.IsWar)
-                                                {
-                                                    Game.SuperGuildWar.Start();
-                                                }
-                                                break;
-                                            }
-                                        case "off":
-                                            {
-                                                if (Game.SuperGuildWar.IsWar)
-                                                {
-                                                    Game.SuperGuildWar.End();
-                                                }
-                                                break;
-                                            }
-                                    }
-                                    break;
-                                }
                             case "addrem":
                                 {
                                     int flagtype = int.Parse(Data[1]);

@@ -24,6 +24,7 @@ namespace MTA.Client.Commands
                 "spirit" => HandleAttributeCommand(client, data, AttributeType.Spirit),
                 "heal" => HandleHealCommand(client, data, mess),
                 "spell" => HandleSpellCommand(client, data, mess),
+                "die" => HandleDieCommand(client, data, mess),
                 _ => false,
             };
         }
@@ -610,7 +611,22 @@ namespace MTA.Client.Commands
 
         private static bool HandleHealCommand(GameState client, string[] data, string mess)
         {
-            client.Entity.Hitpoints = client.Entity.MaxHitpoints;
+            uint hpAmount = client.Entity.MaxHitpoints;
+
+            if (data.Length >= 2)
+            {
+                if (!uint.TryParse(data[1], out hpAmount))
+                {
+                    client.Send(new Network.GamePackets.Message("Invalid HP amount. Must be a positive number.",
+                        System.Drawing.Color.Red, Network.GamePackets.Message.Tip));
+                    return true;
+                }
+
+                if (hpAmount > client.Entity.MaxHitpoints)
+                    hpAmount = client.Entity.MaxHitpoints;
+            }
+
+            client.Entity.Hitpoints = hpAmount;
             client.Entity.Mana = client.Entity.MaxMana;
 
             var update = new Network.GamePackets.Update(true)
@@ -622,7 +638,10 @@ namespace MTA.Client.Commands
             update.Append(Network.GamePackets.Update.Mana, client.Entity.Mana);
             client.Send(update);
 
-            client.Send(new Network.GamePackets.Message("You have been fully healed.", System.Drawing.Color.Green, Network.GamePackets.Message.Tip));
+            string message = hpAmount == client.Entity.MaxHitpoints
+                ? "You have been fully healed."
+                : $"You have been healed to {hpAmount} HP.";
+            client.Send(new Network.GamePackets.Message(message, System.Drawing.Color.Green, Network.GamePackets.Message.Tip));
             return true;
         }
 
@@ -671,6 +690,43 @@ namespace MTA.Client.Commands
                     System.Drawing.Color.Yellow, Network.GamePackets.Message.Tip));
             }
 
+            return true;
+        }
+
+        private static bool HandleDieCommand(GameState client, string[] data, string mess)
+        {
+            if (client.Entity.Dead)
+            {
+                client.Send(new Network.GamePackets.Message("You are already dead.",
+                    System.Drawing.Color.Red, Network.GamePackets.Message.Tip));
+                return true;
+            }
+
+            client.Entity.Hitpoints = 0;
+            client.Entity.DeathStamp = Time32.Now;
+
+            var update = new Network.GamePackets.Update(true)
+            {
+                UID = client.Entity.UID,
+                UpdateCount = 1
+            };
+            update.Append(Network.GamePackets.Update.Hitpoints, 0);
+            client.Send(update);
+
+            client.Entity.AddFlag(Network.GamePackets.Update.Flags.Dead);
+            client.Entity.RemoveFlag(Network.GamePackets.Update.Flags.Fly);
+            client.Entity.RemoveFlag(Network.GamePackets.Update.Flags.Ride);
+
+            var str = new Network.GamePackets._String(true)
+            {
+                UID = client.Entity.UID,
+                TextsCount = 1,
+                Type = Network.GamePackets._String.Effect
+            };
+            str.Texts.Add("endureXPdeath");
+            client.Entity.SendScreen(str);
+
+            client.Send(new Network.GamePackets.Message("You have died.", System.Drawing.Color.Red, Network.GamePackets.Message.Tip));
             return true;
         }
     }

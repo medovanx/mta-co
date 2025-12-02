@@ -2117,56 +2117,56 @@ namespace MTA
             #endregion*/
             #region CP Castle Event
             #region CP Castle Event
-            if ((DateTime.Now.Hour == 13 && DateTime.Now.Minute == 50 && DateTime.Now.Second == 0 ||
-                DateTime.Now.Hour == 19 && DateTime.Now.Minute == 50 && DateTime.Now.Second == 0))
+            if (DateTime.Now.Hour == 13 && DateTime.Now.Minute == 50 && DateTime.Now.Second == 0 ||
+                DateTime.Now.Hour == 19 && DateTime.Now.Minute == 50 && DateTime.Now.Second == 0)
             {
                 foreach (var client in Program.Values)
                 {
                     client.Send(new Message("Hurry! CP Castle Event It Will Begin 10 Minutes After Getting Ready", Message.System));
                 }
             }
-            if ((DateTime.Now.Hour == 13 && DateTime.Now.Minute == 55 && DateTime.Now.Second == 0 ||
-                DateTime.Now.Hour == 19 && DateTime.Now.Minute == 55 && DateTime.Now.Second == 0))
+            if (DateTime.Now.Hour == 13 && DateTime.Now.Minute == 55 && DateTime.Now.Second == 0 ||
+                DateTime.Now.Hour == 19 && DateTime.Now.Minute == 55 && DateTime.Now.Second == 0)
             {
                 foreach (var client in Program.Values)
                 {
                     client.Send(new Message("CP Castle Event It Will Begin 5 Minutes After Getting Ready", Message.System));
                 }
             }
-            if ((DateTime.Now.Hour == 13 && DateTime.Now.Minute == 59 && DateTime.Now.Second == 50 ||
-                DateTime.Now.Hour == 19 && DateTime.Now.Minute == 59 && DateTime.Now.Second == 50))
+            if (DateTime.Now.Hour == 13 && DateTime.Now.Minute == 59 && DateTime.Now.Second == 50 ||
+                DateTime.Now.Hour == 19 && DateTime.Now.Minute == 59 && DateTime.Now.Second == 50)
             {
                 foreach (var client in Program.Values)
                 {
                     client.Send(new Message("CP Castle Event It Will Begin 10 Second After Getting Ready", Message.System));
                 }
             }
-            if ((DateTime.Now.Hour == 14 && DateTime.Now.Minute == 00 && DateTime.Now.Second == 0 ||
-                DateTime.Now.Hour == 20 && DateTime.Now.Minute == 00 && DateTime.Now.Second == 0))
+            if (DateTime.Now.Hour == 14 && DateTime.Now.Minute == 00 && DateTime.Now.Second == 0 ||
+                DateTime.Now.Hour == 20 && DateTime.Now.Minute == 00 && DateTime.Now.Second == 0)
             {
                 foreach (var client in Program.Values)
                 {
                     Kernel.SendWorldMessage(new Message("Hurry! CP Castle Event Then He Began To Log on Now Quickly", Color.White, Message.Service));
                 }
             }
-            if ((DateTime.Now.Hour == 14 && DateTime.Now.Minute == 20 && DateTime.Now.Second == 0 ||
-                DateTime.Now.Hour == 20 && DateTime.Now.Minute == 20 && DateTime.Now.Second == 0))
+            if (DateTime.Now.Hour == 14 && DateTime.Now.Minute == 20 && DateTime.Now.Second == 0 ||
+                DateTime.Now.Hour == 20 && DateTime.Now.Minute == 20 && DateTime.Now.Second == 0)
             {
                 foreach (var client in Program.Values)
                 {
                     Kernel.SendWorldMessage(new Message("CP Castle Event Will End After 10 Minutes. Hurry To Get Reward", Color.White, Message.System));
                 }
             }
-            if ((DateTime.Now.Hour == 14 && DateTime.Now.Minute == 25 && DateTime.Now.Second == 0 ||
-                DateTime.Now.Hour == 20 && DateTime.Now.Minute == 25 && DateTime.Now.Second == 0))
+            if (DateTime.Now.Hour == 14 && DateTime.Now.Minute == 25 && DateTime.Now.Second == 0 ||
+                DateTime.Now.Hour == 20 && DateTime.Now.Minute == 25 && DateTime.Now.Second == 0)
             {
                 foreach (var client in Program.Values)
                 {
                     Kernel.SendWorldMessage(new Message("CP Castle Event Will End After 5 Minutes. Hurry To Get Reward", Color.White, Message.System));
                 }
             }
-            if ((DateTime.Now.Hour == 14 && DateTime.Now.Minute == 30 && DateTime.Now.Second == 0 ||
-                DateTime.Now.Hour == 20 && DateTime.Now.Minute == 30 && DateTime.Now.Second == 0))
+            if (DateTime.Now.Hour == 14 && DateTime.Now.Minute == 30 && DateTime.Now.Second == 0 ||
+                DateTime.Now.Hour == 20 && DateTime.Now.Minute == 30 && DateTime.Now.Second == 0)
             {
                 foreach (var client in Program.Values)
                 {
@@ -2182,8 +2182,8 @@ namespace MTA
             }
             #endregion
             #region CP Castle Event(AutoInvite)
-            if ((DateTime.Now.Hour == 14 && DateTime.Now.Minute == 00 && DateTime.Now.Second == 0 ||
-                DateTime.Now.Hour == 20 && DateTime.Now.Minute == 00 && DateTime.Now.Second == 0))
+            if (DateTime.Now.Hour == 14 && DateTime.Now.Minute == 00 && DateTime.Now.Second == 0 ||
+                DateTime.Now.Hour == 20 && DateTime.Now.Minute == 00 && DateTime.Now.Second == 0)
             {
                 Kernel.SendWorldMessage(new Message("CP Castle War began !", Color.White, Message.Center), Program.Values);
                 foreach (var client in Program.Values)
@@ -2405,7 +2405,7 @@ namespace MTA
             }
             #endregion
             #region SuperGuildWar
-            if ((Now64.Hour == 20 && Now64.Minute == 5 && Now64.Second == 0) && (Now64.Day == 1 || Now64.Day == 7 || Now64.Day == 14 || Now64.Day == 21))
+            if (Now64.Hour == 20 && Now64.Minute == 5 && Now64.Second == 0 && (Now64.Day == 1 || Now64.Day == 7 || Now64.Day == 14 || Now64.Day == 21))
             {
                 Kernel.SendWorldMessage(new Message("Super Guild War now work will end at [23:00] Server time? !", Color.White, Message.BroadcastMessage), Program.Values);
                 foreach (var client in Program.Values)
@@ -2685,7 +2685,7 @@ namespace MTA
                 }
 
             }
-            if ((Now64.Hour >= 06 && Now64.Hour <= 21) && Now64.DayOfWeek == DayOfWeek.Friday || Now64.DayOfWeek == DayOfWeek.Tuesday)
+            if (Now64.Hour >= 20 && Now64.Hour <= 21 && Now64.DayOfWeek == DayOfWeek.Friday)
             {
                 if (!GuildWar.IsWar)
                 {
@@ -2726,15 +2726,14 @@ namespace MTA
                     SuperGuildWar.SendScores();
                 }
             }
-            if ((Now64.Hour >= 01 && Now64.Hour <= 20) && (Now64.Day == 1 || Now64.Day == 7 || Now64.Day == 14 || Now64.Day == 21))
+            if (Now64.Hour >= 01 && Now64.Hour <= 20 && (Now64.Day == 1 || Now64.Day == 7 || Now64.Day == 14 || Now64.Day == 21))
             {
                 if (!SuperGuildWar.IsWar)
                 {
                     SuperGuildWar.Start();
                     foreach (var client in Program.Values)
                         if (client.Entity.GuildID != 0)
-                            client.MessageBox("Super GuildWar has begun! Would you like to join?",
-                                p => { p.Entity.Teleport(1002, 352, 337); }, null);
+                            client.MessageBox("Super GuildWar has begun! Would you like to join?", p => { p.Entity.Teleport(1002, 352, 337); }, null);
                 }
             }
             if (SuperGuildWar.IsWar)
@@ -2747,7 +2746,7 @@ namespace MTA
             #endregion
 
             #region Elite PK Tournament
-            if (((Now64.Hour == ElitePK.EventTime) && Now64.Minute >= 55) && !ElitePKTournament.TimersRegistered)
+            if ((Now64.Hour == ElitePK.EventTime) && Now64.Minute >= 55 && !ElitePKTournament.TimersRegistered)
             {
                 ElitePK.EventTime = DateTime.Now.Hour;
                 ElitePKTournament.RegisterTimers();
@@ -2797,7 +2796,7 @@ namespace MTA
                     #endregion
                 }
             }
-            if ((((Now64.Hour == ElitePK.EventTime + 1)) && Now64.Minute >= 10) && ElitePKTournament.TimersRegistered)
+            if (Now64.Hour == ElitePK.EventTime + 1 && Now64.Minute >= 10 && ElitePKTournament.TimersRegistered)
             {
                 bool done = true;
                 foreach (var epk in ElitePKTournament.Tournaments)
