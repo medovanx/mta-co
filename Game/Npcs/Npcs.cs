@@ -7103,6 +7103,8 @@ namespace MTA
                                             {
                                                 client.Entity.SubClasses.Classes.Add((byte)ClassID.Performer, new MTA.Game.SubClass() { ID = (byte)ClassID.Performer, Level = 1, Phase = 1 });
                                                 SubClassTable.Insert(client.Entity, (byte)ClassID.Performer);
+                                                client.Entity.SubClasses.SendLearn(ClassID.Performer, 1, client);
+                                                client.Entity.SubClasses.SendPromoted(ClassID.Performer, 1, client);
                                                 dialog.Text(
                                                     "Congratulations! You`ve learned the Performer way. Hope you use this power "
                                                     + "for the good of us all.");
@@ -7371,6 +7373,8 @@ namespace MTA
                                             {
                                                 client.Entity.SubClasses.Classes.Add((byte)ClassID.Apothecary, new Game.SubClass() { ID = (byte)ClassID.Apothecary, Level = 1, Phase = 1 });
                                                 Database.SubClassTable.Insert(client.Entity, (byte)ClassID.Apothecary);
+                                                client.Entity.SubClasses.SendLearn(ClassID.Apothecary, 1, client);
+                                                client.Entity.SubClasses.SendPromoted(ClassID.Apothecary, 1, client);
                                                 dialog.Text(
                                                     "Congratulations! You`ve learned the Apothecary way. Hope you use this power "
                                                     + "for the good of us all.");
@@ -7506,6 +7510,8 @@ namespace MTA
                                             {
                                                 client.Entity.SubClasses.Classes.Add((byte)ClassID.MartialArtist, new Game.SubClass() { ID = (byte)ClassID.MartialArtist, Level = 1, Phase = 1 });
                                                 Database.SubClassTable.Insert(client.Entity, (byte)ClassID.MartialArtist);
+                                                client.Entity.SubClasses.SendLearn(ClassID.MartialArtist, 1, client);
+                                                client.Entity.SubClasses.SendPromoted(ClassID.MartialArtist, 1, client);
                                                 dialog.Text(
                                                     "Congratulations! You`ve learned the Martial Artist way. Hope you use this power "
                                                     + "for the good of us all.");
@@ -7649,6 +7655,8 @@ namespace MTA
                                             {
                                                 client.Entity.SubClasses.Classes.Add((byte)ClassID.ChiMaster, new Game.SubClass() { ID = (byte)ClassID.ChiMaster, Level = 1, Phase = 1 });
                                                 Database.SubClassTable.Insert(client.Entity, (byte)ClassID.ChiMaster);
+                                                client.Entity.SubClasses.SendLearn(ClassID.ChiMaster, 1, client);
+                                                client.Entity.SubClasses.SendPromoted(ClassID.ChiMaster, 1, client);
                                                 dialog.Text(
                                                     "Congratulations! You`ve learned the Chi Masters way. Hope you use this power "
                                                     + "for the good of us all.");
@@ -7782,6 +7790,8 @@ namespace MTA
                                             {
                                                 client.Entity.SubClasses.Classes.Add((byte)ClassID.Wrangler, new Game.SubClass() { ID = (byte)ClassID.Wrangler, Level = 1, Phase = 1 });
                                                 Database.SubClassTable.Insert(client.Entity, (byte)ClassID.Wrangler);
+                                                client.Entity.SubClasses.SendLearn(ClassID.Wrangler, 1, client);
+                                                client.Entity.SubClasses.SendPromoted(ClassID.Wrangler, 1, client);
                                                 dialog.Text(
                                                     "Congratulations! You`ve learned the Wrangler way. Hope you use this power "
                                                     + "for the good of us all.");
@@ -7916,6 +7926,8 @@ namespace MTA
                                             {
                                                 client.Entity.SubClasses.Classes.Add((byte)ClassID.Sage, new Game.SubClass() { ID = (byte)ClassID.Sage, Level = 1, Phase = 1 });
                                                 Database.SubClassTable.Insert(client.Entity, (byte)ClassID.Sage);
+                                                client.Entity.SubClasses.SendLearn(ClassID.Sage, 1, client);
+                                                client.Entity.SubClasses.SendPromoted(ClassID.Sage, 1, client);
                                                 dialog.Text(
                                                     "Congratulations! You`ve learned the Sage way. Hope you use this power "
                                                     + "for the good of us all.");
@@ -8049,6 +8061,8 @@ namespace MTA
                                             {
                                                 client.Entity.SubClasses.Classes.Add((byte)ClassID.Warlock, new Game.SubClass() { ID = (byte)ClassID.Warlock, Level = 1, Phase = 1 });
                                                 Database.SubClassTable.Insert(client.Entity, (byte)ClassID.Warlock);
+                                                client.Entity.SubClasses.SendLearn(ClassID.Warlock, 1, client);
+                                                client.Entity.SubClasses.SendPromoted(ClassID.Warlock, 1, client);
                                                 dialog.Text(
                                                     "Congratulations! You`ve learned the Warlock way. Hope you use this power "
                                                     + "for the good of us all.");
