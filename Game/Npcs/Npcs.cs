@@ -17582,7 +17582,7 @@ namespace MTA
                                     {
                                         client.Entity.Teleport(2351, 19, 127);
                                     }
-                                    
+
                                     else
                                     {
                                         dialog.Text("You need to be VIP level 4 or above to access the Hunting Map.");
@@ -37433,33 +37433,8 @@ namespace MTA
                         break;
                     }
                 #endregion
-                #region PetMasterPetty monster
-                case 30170:
-                case 30200:
-                case 30190:
-                case 30430:
-                    {
 
-                        switch (npcRequest.OptionID)
-                        {
-                            case 0:
-                                {
-                                    dialog.Text("Hello " + client.Entity.Name + " if you want buy me take to PetMasterPetty ");
-                                    dialog.Option(" Send Me There ", 11);
-                                }
-                                break;
-
-                            case 11:
-                                {
-                                    client.Entity.Teleport(1002, 448, 351);
-                                }
-                                break;
-                        }
-                        break;
-                    }
-                #endregion
                 #region Matrix House System
-
                 case 30156:
                     switch (npcRequest.OptionID)
                     {
