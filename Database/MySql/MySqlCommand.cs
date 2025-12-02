@@ -319,12 +319,11 @@ namespace MTA.Database
 
         public int Execute()
         {
-            using (var conn = DataHolder.MySqlConnection)
-            {
-                conn.Open();
-                return Execute(conn);
-            }
+            using var conn = DataHolder.MySqlConnection;
+            conn.Open();
+            return Execute(conn);
         }
+        
         public int Execute(MYSQLCONNECTION conn)
         {
             if (Type == MySqlCommandType.INSERT)

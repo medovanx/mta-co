@@ -487,8 +487,8 @@ namespace MTA
                     {
                         // client.Account.Save();
                         Database.EntityTable.SaveEntity(client, conn);
-                        Database.SkillTable.SaveProficiencies(client, conn);
-                        Database.SkillTable.SaveSpells(client, conn);
+                        Database.SkillTable.SaveProficiencies(client);
+                        Database.SkillTable.SaveSpells(client);
                         Database.ArenaTable.SaveArenaStatistics(client.ArenaStatistic, conn);
                         Database.TeamArenaTable.SaveArenaStatistics(client.TeamArenaStatistic, conn);
                         //    Database.ChampionTable.SaveStatistics(client.ChampionStats, conn);

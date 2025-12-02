@@ -139,6 +139,9 @@ namespace MTA.Client.Commands
                 case "guild":
                     client.Entity.Teleport(1038, 087, 095);
                     return true;
+                case "jobcenter":
+                    client.Entity.Teleport(1004, 43, 49);
+                    return true;
             }
 
             // Otherwise, treat as map ID with optional coordinates

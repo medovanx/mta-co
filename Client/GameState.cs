@@ -901,8 +901,8 @@ namespace MTA.Client
                         Database.EntityTable.SaveEntity(this, conn);
                         if (!TransferedPlayer)
                             Database.EntityVariableTable.Save(this, conn);
-                        Database.SkillTable.SaveProficiencies(this, conn);
-                        Database.SkillTable.SaveSpells(this, conn);
+                        Database.SkillTable.SaveProficiencies(this);
+                        Database.SkillTable.SaveSpells(this);
                         if (!TransferedPlayer)
                         {
                             Database.ArenaTable.SaveArenaStatistics(this.ArenaStatistic, conn);
@@ -2567,6 +2567,7 @@ namespace MTA.Client
             else
             {
                 Spells.Add(spell.ID, spell);
+                Spells[spell.ID].Available = false;
                 spell.Send(this);
                 Database.SkillTable.SaveSpells(this);
                 return true;
@@ -6013,8 +6014,8 @@ namespace MTA.Client
                 using (var conn = Database.DataHolder.MySqlConnection)
                 {
                     conn.Open();
-                    Database.SkillTable.LoadProficiencies(this, conn);
-                    Database.SkillTable.LoadSpells(this, conn);
+                    Database.SkillTable.LoadProficiencies(this);
+                    Database.SkillTable.LoadSpells(this);
                 }
 
                 Database.KnownPersons.LoadPartner(this);
