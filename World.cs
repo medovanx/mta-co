@@ -28,7 +28,7 @@ namespace MTA
         /// The script engine for npcs.
         /// </summary>
         /// 
-        public static ProjectX_V3_Lib.ScriptEngine.ScriptEngine ScriptEngine;
+        public static MTA.Game.Npcs.ScriptEngine.ScriptEngine ScriptEngine;
         public static long Carnaval = 0;
         #region Cyclone War
         public static bool cycolne3 = false;

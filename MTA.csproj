@@ -309,14 +309,14 @@
     <Compile Include="MrNiTro\Systems\Inbox.cs" />
     <Compile Include="MrNiTro\Systems\Old\GameUpdatess.cs" />
     <Compile Include="MrNiTro\Systems\Old\NameChange.cs" />
-    <Compile Include="MrNiTro\Systems\Old\Npc Script\ObjectExtensions.cs">
+    <Compile Include="Game\Npcs\ScriptEngine\ObjectExtensions.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MrNiTro\Systems\Old\Npc Script\ScriptDatabase.cs" />
-    <Compile Include="MrNiTro\Systems\Old\Npc Script\ScriptEngine\ScriptCollection.cs" />
-    <Compile Include="MrNiTro\Systems\Old\Npc Script\ScriptEngine\ScriptEngine.cs" />
-    <Compile Include="MrNiTro\Systems\Old\Npc Script\ScriptEngine\ScriptLanguage.cs" />
-    <Compile Include="MrNiTro\Systems\Old\Npc Script\ScriptEngine\ScriptSettings.cs" />
+    <Compile Include="Game\Npcs\ScriptEngine\ScriptDatabase.cs" />
+    <Compile Include="Game\Npcs\ScriptEngine\ScriptCollection.cs" />
+    <Compile Include="Game\Npcs\ScriptEngine\ScriptEngine.cs" />
+    <Compile Include="Game\Npcs\ScriptEngine\ScriptLanguage.cs" />
+    <Compile Include="Game\Npcs\ScriptEngine\ScriptSettings.cs" />
     <None Include="MrNiTro\Systems\Old\Rates.c">
       <SubType>Code</SubType>
     </None>

@@ -1,8 +1,4 @@
-﻿//Project by BaussHacker aka. L33TS
-
-using System;
-
-namespace ProjectX_V3_Lib.ScriptEngine
+namespace MTA.Game.Npcs.ScriptEngine
 {
     /// <summary>
     /// An enum of available script engine languages.
@@ -20,3 +16,4 @@ namespace ProjectX_V3_Lib.ScriptEngine
         VisualBasic = 1
     }
 }
+

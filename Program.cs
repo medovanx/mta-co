@@ -325,8 +325,8 @@ namespace MTA
             Console.WriteLine("Initializing database.");
             World = new World();
             //  World.Init();           
-            ProjectX_V3_Game.Database.ScriptDatabase.LoadSettings();
-            ProjectX_V3_Game.Database.ScriptDatabase.LoadNPCScripts();
+            MTA.Game.Npcs.ScriptEngine.ScriptDatabase.LoadSettings();
+            MTA.Game.Npcs.ScriptEngine.ScriptDatabase.LoadNPCScripts();
             Console.WriteLine("Checking LastItem UID.");
 
             Database.ConquerItemInformation.Load();

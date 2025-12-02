@@ -1,16 +1,12 @@
-﻿//Project by BaussHacker aka. L33TS
-
 using System;
-using System.Threading;
 using System.Text;
-using System.Linq;
 using Microsoft.CSharp;
 using System.Reflection;
 using System.CodeDom.Compiler;
 using Microsoft.VisualBasic;
 using System.Collections.Generic;
 
-namespace ProjectX_V3_Lib.ScriptEngine
+namespace MTA.Game.Npcs.ScriptEngine
 {
     /// <summary>
     /// Description of ScriptEngine.
@@ -180,7 +176,7 @@ End Namespace";
             }
             catch (Exception e)
             {
-                Console.WriteLine("Script loading failed... Exception: {0}{1}", Environment.NewLine, e.ToString());
+                Console.WriteLine("Script loading failed... Exception: " + Environment.NewLine + e.ToString());
             }
         }
 
@@ -299,3 +295,4 @@ End Namespace";
         }
     }
 }
+

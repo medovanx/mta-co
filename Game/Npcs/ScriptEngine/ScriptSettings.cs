@@ -1,10 +1,7 @@
-﻿//Project by BaussHacker aka. L33TS
-
 using System;
 using System.Collections.Concurrent;
-using MTA;
 
-namespace ProjectX_V3_Lib.ScriptEngine
+namespace MTA.Game.Npcs.ScriptEngine
 {
     /// <summary>
     /// Settings for the script engine.
@@ -58,3 +55,4 @@ namespace ProjectX_V3_Lib.ScriptEngine
         }
     }
 }
+

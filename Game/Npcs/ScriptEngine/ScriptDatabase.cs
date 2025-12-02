@@ -1,21 +1,16 @@
-﻿//Project by BaussHacker aka. L33TS
-
-using ProjectX_V3_Lib.ScriptEngine;
-using ProjectX_V3_Lib.Extensions;
+using System;
 using System.Linq;
 using System.Reflection;
-using MTA.Network.GamePackets;
-using MTA;
-using System;
+using MTA.Game.Npcs.ScriptEngine.Extensions;
 
-namespace ProjectX_V3_Game.Database
+namespace MTA.Game.Npcs.ScriptEngine
 {
     /// <summary>
     /// Description of ScriptDatabase.
     /// </summary>
     public class ScriptDatabase
     {
-        private static System.Type[] GetTypesInNamespace(Assembly assembly, string nameSpace)
+        private static Type[] GetTypesInNamespace(Assembly assembly, string nameSpace)
         {
             return assembly.GetTypes().Where(t => String.Equals(t.Namespace, nameSpace, StringComparison.Ordinal)).ToArray();
         }
@@ -30,7 +25,6 @@ namespace ProjectX_V3_Game.Database
             MTA.Console.WriteLine("Loading Script Settings...");
 
             cssettings = new ScriptSettings();
-            //  cssettings.AddNamespace("MTA.Npcs"); // will add some functions to this later, not entirely npc restricted, but mostly hence why it's also used by ItemScripts!
             cssettings.AddNamespace("System");
             cssettings.AddNamespace("System.Collections.Generic");
             cssettings.AddNamespace("System.Linq");
@@ -58,15 +52,15 @@ namespace ProjectX_V3_Game.Database
         /// </summary>
         public static void LoadNPCScripts()
         {
-
-            MTA.Console.WriteLine("Loading NPC Scripts...");
+            Console.WriteLine("Loading NPC Scripts...");
 
             ScriptSettings x = cssettings.DeepClone();
 
             World.ScriptEngine = new ScriptEngine(x, 10000); // scripts updates every 10 sec.
             World.ScriptEngine.Check_Updates();
 
-            MTA.Console.WriteLine(World.ScriptEngine.scriptCollection.scripts.Count + "  NPC Scripts Loaded...");
+            Console.WriteLine(World.ScriptEngine.scriptCollection.scripts.Count + "  NPC Scripts Loaded...");
         }
     }
 }
+
