@@ -9272,7 +9272,7 @@ namespace MTA.Game.Attacking
             }
             return true;
         }
-        public static void cheakteam(Client.GameState client, Npcs dail)
+        public static void cheakteam(Client.GameState client, MTA.Npcs dail)
         {
             if (client.Team == null)
                 //client.Entity.ConquerPoints += 20000000;
