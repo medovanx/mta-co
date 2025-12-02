@@ -1,7 +1,7 @@
 using MTA.Network.GamePackets;
 using MTA.Database;
 
-namespace MTA.Game.Npcs.Handlers
+namespace MTA.Game.Npcs.Handlers.Subclasses
 {
     /// <summary>
     /// Lead Warlock NPC

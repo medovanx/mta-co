@@ -7016,37 +7016,37 @@ namespace MTA
                             #region Promotion Center
                             #region [LeadPerformer]
                             case 355913:
-                                Game.Npcs.Handlers.Npc_355913.Handle(client, npcRequest, dialog);
+                                Game.Npcs.Handlers.Subclasses.Npc_355913.Handle(client, npcRequest, dialog);
                                 break;
                             #endregion
                             #region [LeadApothecary]
                             case 355912:
-                                Game.Npcs.Handlers.Npc_355912.Handle(client, npcRequest, dialog);
+                                Game.Npcs.Handlers.Subclasses.Npc_355912.Handle(client, npcRequest, dialog);
                                 break;
                             #endregion
                             #region [LeadMartialArtist]
                             case 355911:
-                                Game.Npcs.Handlers.Npc_355911.Handle(client, npcRequest, dialog);
+                                Game.Npcs.Handlers.Subclasses.Npc_355911.Handle(client, npcRequest, dialog);
                                 break;
                             #endregion
                             #region [LeadChiMaster]
                             case 355910:
-                                Game.Npcs.Handlers.Npc_355910.Handle(client, npcRequest, dialog);
+                                Game.Npcs.Handlers.Subclasses.Npc_355910.Handle(client, npcRequest, dialog);
                                 break;
                             #endregion
                             #region [Wrangler]
                             case 355916:
-                                Game.Npcs.Handlers.Npc_355916.Handle(client, npcRequest, dialog);
+                                Game.Npcs.Handlers.Subclasses.Npc_355916.Handle(client, npcRequest, dialog);
                                 break;
                             #endregion
                             #region [LeadSage]
                             case 355915:
-                                Game.Npcs.Handlers.Npc_355915.Handle(client, npcRequest, dialog);
+                                Game.Npcs.Handlers.Subclasses.Npc_355915.Handle(client, npcRequest, dialog);
                                 break;
                             #endregion
                             #region [LeadWarlock]
                             case 355914:
-                                Game.Npcs.Handlers.Npc_355914.Handle(client, npcRequest, dialog);
+                                Game.Npcs.Handlers.Subclasses.Npc_355914.Handle(client, npcRequest, dialog);
                                 break;
                             #endregion
                             #region Sub-Class Manager
