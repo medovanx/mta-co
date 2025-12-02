@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Text;
 using System.Collections.Generic;
-using Conquer_Online_Server.Network.GamePackets;
+using MTA.Network.GamePackets;
 
-namespace Conquer_Online_Server.Game
+namespace MTA.Game
 {
     public class ClanWarArena
     {

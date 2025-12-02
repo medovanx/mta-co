@@ -1,8 +1,9 @@
-﻿namespace Conquer_Online_Server.Network.GamePackets
+﻿namespace MTA.Network.GamePackets
 {
-    using Conquer_Online_Server.Game.Features.Flowers;
-    using Conquer_Online_Server.Interfaces;
-    using Conquer_Online_Server.Network;
+    using MTA.Game.Features.Flowers;
+    using MTA.Interfaces;
+    using MTA.Network;
+    using MTA.Client;
     using System;
 
     public class FlowerPacket : Writer, IPacket
@@ -14,7 +15,7 @@
         public const ushort RedRoses = 0;
         public const ushort Tulips = 3;
 
-        public FlowerPacket(Conquer_Online_Server.Game.Features.Flowers.Flowers ClientFlowers, Client.GameState client)
+        public FlowerPacket(MTA.Game.Features.Flowers.Flowers ClientFlowers, Client.GameState client)
         {
             Buffer = new byte[0x44];
             Writer.WriteUInt16(60, 0, Buffer);
@@ -109,11 +110,11 @@
             }
         }
 
-        public Conquer_Online_Server.Game.Features.Flowers.FlowerType FlowerType
+        public MTA.Game.Features.Flowers.FlowerType FlowerType
         {
             get
             {
-                return (Conquer_Online_Server.Game.Features.Flowers.FlowerType)BitConverter.ToUInt32(Buffer, 0x18);
+                return (MTA.Game.Features.Flowers.FlowerType)BitConverter.ToUInt32(Buffer, 0x18);
             }
         }
 
@@ -169,11 +170,11 @@
             }
         }
 
-        public Conquer_Online_Server.Game.Features.Flowers.FlowerType SendFlowerType
+        public MTA.Game.Features.Flowers.FlowerType SendFlowerType
         {
             get
             {
-                return (Conquer_Online_Server.Game.Features.Flowers.FlowerType)BitConverter.ToUInt32(Buffer, 0x34);
+                return (MTA.Game.Features.Flowers.FlowerType)BitConverter.ToUInt32(Buffer, 0x34);
             }
             set
             {

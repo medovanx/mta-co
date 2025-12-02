@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using MTA.Network;
+using MTA.Interfaces;
+using MTA.Client;
 
-namespace Conquer_Online_Server.Network.GamePackets
+namespace MTA.Network.GamePackets
 {
     public enum SpinToWinRequestType : byte
     {
@@ -18,7 +21,7 @@ namespace Conquer_Online_Server.Network.GamePackets
         CPOnearmedBanditII = 9827,
         CPOnearmedBanditIII = 9828
     }
-    public class SpinToWinPacketRequest : Writer, Interfaces.IPacket
+    public class SpinToWinPacketRequest : Writer, IPacket
     {
         byte[] buffer;
 
@@ -71,7 +74,7 @@ namespace Conquer_Online_Server.Network.GamePackets
             this.buffer = buffer;
         }
 
-        public void Send(Client.GameClient client)
+        public void Send(Client.GameState client)
         {
             client.Send(buffer);
         }

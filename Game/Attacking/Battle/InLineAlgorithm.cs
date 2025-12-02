@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Conquer_Online_Server.Game.Attacking
+namespace MTA.Game.Attacking
 {
     public class InLineAlgorithm
     {

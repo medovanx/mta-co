@@ -865,7 +865,7 @@ namespace MTA.Game
             }
         }
 
-        public Game.Features.Flowers MyFlowers;
+        public MTA.Game.Features.Flowers.Flowers MyFlowers;
 
         private uint Flower;
 
@@ -1000,7 +1000,8 @@ namespace MTA.Game
 
         public uint OnlinePoints;
         public Time32 OnlinePointStamp;
-        // public MTA.Game.Features.Flowers.Flowers Flowers;
+        public MTA.Game.Features.Flowers.Flowers Flowers;
+        public MTA.Game.Features.Kisses.Kisses Kisses;
 
         public int KillCount = 0, KillCount2 = 0;
         public uint LastXLocation, LastYLocation;
@@ -1382,7 +1383,7 @@ namespace MTA.Game
         public bool TeamDeathMatch_BlueTeam = false;
         public int TeamDeathMatch_Hits = 0;
         public byte _SubClass, _SubClassLevel;
-        public Game.Subclasses SubClasses = new Game.Subclasses();
+        public MTA.Game.Subclasses SubClasses = new MTA.Game.Subclasses();
         public bool Stunned = false, Confused = false;
 
         public bool Companion;
@@ -2995,6 +2996,30 @@ namespace MTA.Game
                 Kernel.Clans.TryGetValue(ClanId, out cl);
                 return cl;
             }
+        }
+
+        public Clan Clan
+        {
+            get { return GetClan; }
+        }
+
+        public ClanMember ClanMember
+        {
+            get
+            {
+                if (Clan == null)
+                    return null;
+                ClanMember member;
+                if (Clan.Members.TryGetValue(UID, out member))
+                    return member;
+                return null;
+            }
+        }
+
+        public UInt32 ClanUID
+        {
+            get { return ClanId; }
+            set { ClanId = value; }
         }
 
         string clan = "";

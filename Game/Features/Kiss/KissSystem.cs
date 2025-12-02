@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Conquer_Online_Server.Network.GamePackets;
-using Conquer_Online_Server.ServerBase;
-using Conquer_Online_Server.Interfaces;
+using MTA.Network.GamePackets;
+using MTA.Interfaces;
+using MTA.Client;
 
-namespace Conquer_Online_Server.Game.Features.Kisses
+namespace MTA.Game.Features.Kisses
 {
     public class KissSystem
     {

@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using MTA.Network;
+using MTA.Interfaces;
+using MTA.Client;
 
-namespace Conquer_Online_Server.Network.GamePackets
+namespace MTA.Network.GamePackets
 {
     public enum SpinToWinIcon : byte
     {
@@ -16,7 +19,7 @@ namespace Conquer_Online_Server.Network.GamePackets
         DragonBall,
 
     }
-    public class SpinToWinResponse : Writer, Interfaces.IPacket
+    public class SpinToWinResponse : Writer, IPacket
     {
         byte[] buffer;
 
@@ -34,9 +37,9 @@ namespace Conquer_Online_Server.Network.GamePackets
 
         public byte[] Generate()
         {
-            WriteByte((byte)Conquer_Online_Server.ServerBase.Kernel.Random.Next(0, 6), 5, buffer);
-            WriteByte((byte)Conquer_Online_Server.ServerBase.Kernel.Random.Next(0, 6), 6, buffer);
-            WriteByte((byte)Conquer_Online_Server.ServerBase.Kernel.Random.Next(0, 6), 7, buffer);
+            WriteByte((byte)Kernel.Random.Next(0, 6), 5, buffer);
+            WriteByte((byte)Kernel.Random.Next(0, 6), 6, buffer);
+            WriteByte((byte)Kernel.Random.Next(0, 6), 7, buffer);
             return buffer;
         }
         public byte[] End()
@@ -100,7 +103,7 @@ namespace Conquer_Online_Server.Network.GamePackets
             this.buffer = buffer;
         }
 
-        public void Send(Client.GameClient client)
+        public void Send(Client.GameState client)
         {
             client.Send(buffer);
         }

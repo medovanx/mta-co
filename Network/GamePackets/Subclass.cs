@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Conquer_Online_Server.Interfaces;
+using MTA.Interfaces;
+using MTA.Network;
+using MTA.Client;
 
-namespace Conquer_Online_Server.Network.GamePackets
+namespace MTA.Network.GamePackets
 {
     #region Class Level
-    public class SubClassShowFull : Writer, Interfaces.IPacket
+    public class SubClassShowFull : Writer, IPacket
     {
         public enum SubProfessionAction
         {
@@ -43,11 +45,11 @@ namespace Conquer_Online_Server.Network.GamePackets
         {
             get
             {
-                return Conquer_Online_Server.BitConverter.ToUInt16(this.Buffer, 10);
+                return BitConverter.ToUInt16(this.Buffer, 10);
             }
             set
             {
-                Conquer_Online_Server.Network.Writer.WriteUInt16(value, 10, this.Buffer);
+                WriteUInt16(value, 10, this.Buffer);
             }
         }
 
@@ -55,11 +57,11 @@ namespace Conquer_Online_Server.Network.GamePackets
         {
             get
             {
-                return Conquer_Online_Server.BitConverter.ToUInt16(this.Buffer, 0x12);
+                return BitConverter.ToUInt16(this.Buffer, 0x12);
             }
             set
             {
-                Conquer_Online_Server.Network.Writer.WriteUInt16(value, 0x12, this.Buffer);
+                WriteUInt16(value, 0x12, this.Buffer);
             }
         }
         public ushort ID
@@ -161,7 +163,7 @@ namespace Conquer_Online_Server.Network.GamePackets
             Wrangler = 9
         }
     }
-    public class SubClass : Writer, Interfaces.IPacket
+    public class SubClass : Writer, IPacket
     {
         public const byte
         SwitchSubClass = 0,

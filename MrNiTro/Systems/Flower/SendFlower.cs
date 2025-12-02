@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MTA.Game.Features;
+using MTA.Game.Features.Flowers;
 using MTA.Network;
 
 namespace MTA.Network.GamePackets

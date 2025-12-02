@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MTA.Interfaces;
-
+using MTA.Network;
+using MTA.Client;
+using MTA;
 
 namespace MTA.Network.GamePackets
 {
     public class ClanMembers : Writer, IPacket
     {
-        private Byte[] mData;
-        private Int32 Offset = 16;
+        private byte[] mData;
+        private readonly int Offset = 16;
 
-        public ClanMembers(Clan clan)
+        public ClanMembers(MTA.Clan clan)
         {
             mData = new Byte[56 + (36 * clan.Members.Count) + 8];
             WriteUInt16((UInt16)(mData.Length - 8), 0, mData);
@@ -33,11 +35,11 @@ namespace MTA.Network.GamePackets
                 Count -= 1;
             }
             Offset = 16;
-            Type = Clan.Types.Members;
+            Type = MTA.Clan.Types.Members;
         }
-        public Clan.Types Type
+        public MTA.Clan.Types Type
         {
-            get { return (Clan.Types)mData[4]; }
+            get { return (MTA.Clan.Types)mData[4]; }
             set { WriteByte((Byte)value, 4, mData); }
         }
         public void Deserialize(byte[] buffer)

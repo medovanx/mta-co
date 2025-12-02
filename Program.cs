@@ -2246,6 +2246,7 @@ namespace MTA
         public static string coder = "HeMa";
         public static uint Reincarnation;
         public static uint donationrate;
+        public static uint Shit;
         public static string servername { get { return Constants.ServerName; } }
 
         public static void Load(IniFile IniFile)
@@ -2301,6 +2302,7 @@ namespace MTA
             hunter = IniFile.ReadUInt32("Rates", "hunter");
             thief = IniFile.ReadUInt32("Rates", "thief");
             donationrate = IniFile.ReadUInt32("Rates", "donationrate");
+            Shit = IniFile.ReadUInt32("Rates", "Shit");
         }
 
     }

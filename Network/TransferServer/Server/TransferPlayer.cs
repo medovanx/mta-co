@@ -126,7 +126,7 @@ namespace MTA.TransferServer
             client.Entity.Spouse = "None";
             client.Entity.UID = Player.UID;
             client.Entity.Money = Player.Money;
-            client.Entity.MyFlowers = new Game.Features.Flowers(client.Entity.UID, client.Entity.Name);
+            client.Entity.MyFlowers = new MTA.Game.Features.Flowers.Flowers(client.Entity.UID, client.Entity.Name);
             client.Entity.Owner = client;
             client.Entity.MyAchievement = new Game.Achievement(client.Entity);
             client.Entity.Titles = new ConcurrentDictionary<TitlePacket.Titles, DateTime>();

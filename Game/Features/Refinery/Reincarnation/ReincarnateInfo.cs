@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Conquer_Online_Server.Game.Features.Reincarnation
+namespace MTA.Game.Features.Reincarnation
 {
     public class ReincarnateInfo
     {

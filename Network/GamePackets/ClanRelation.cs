@@ -11,7 +11,7 @@ namespace MTA.Network.GamePackets
         private Byte[] mData;
         private Int32 Offset = 20;
 
-        public ClanRelations(Clan clan, RelationTypes type)
+        public ClanRelations(MTA.Clan clan, RelationTypes type)
         {
             switch (type)
             {
@@ -24,7 +24,7 @@ namespace MTA.Network.GamePackets
 
                         WriteByte((Byte)clan.Allies.Count, 16, mData);
 
-                        foreach (Clan clans in clan.Allies.Values)
+                        foreach (MTA.Clan clans in clan.Allies.Values)
                         {
                             WriteUInt16((UInt16)clans.ID, Offset, mData); Offset += 4;
                             WriteString(clans.Name, Offset, mData); Offset += 36;
@@ -42,7 +42,7 @@ namespace MTA.Network.GamePackets
 
                         WriteByte((Byte)clan.Enemies.Count, 16, mData);
 
-                        foreach (Clan clans in clan.Enemies.Values)
+                        foreach (MTA.Clan clans in clan.Enemies.Values)
                         {
                             WriteUInt16((UInt16)clans.ID, Offset, mData); Offset += 4;
                             WriteString(clans.Name, Offset, mData); Offset += 36;

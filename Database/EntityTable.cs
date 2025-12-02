@@ -12,26 +12,26 @@ namespace MTA.Database
         {
             if (Network.PacketHandler.IsGirl((uint)client.Entity.Body))
             {
-                if (!Game.Features.Flowers.Flowers_Poll.ContainsKey(client.Entity.UID))
+                if (!MTA.Game.Features.Flowers.Flowers.Flowers_Poll.ContainsKey(client.Entity.UID))
                 {
-                    client.Entity.MyFlowers = new Game.Features.Flowers(client.Entity.UID, client.Entity.Name);
-                    Game.Features.Flowers.Flowers_Poll.TryAdd(client.Entity.UID, client.Entity.MyFlowers);
+                    client.Entity.MyFlowers = new MTA.Game.Features.Flowers.Flowers(client.Entity.UID, client.Entity.Name);
+                    MTA.Game.Features.Flowers.Flowers.Flowers_Poll.TryAdd(client.Entity.UID, client.Entity.MyFlowers);
                     return;
                 }
 
-                client.Entity.MyFlowers = Game.Features.Flowers.Flowers_Poll[client.Entity.UID];
+                client.Entity.MyFlowers = MTA.Game.Features.Flowers.Flowers.Flowers_Poll[client.Entity.UID];
                 return;
             }
             else
             {
-                if (!Game.Features.Flowers.BoyFlowers.ContainsKey(client.Entity.UID))
+                if (!MTA.Game.Features.Flowers.Flowers.BoyFlowers.ContainsKey(client.Entity.UID))
                 {
-                    client.Entity.MyFlowers = new Game.Features.Flowers(client.Entity.UID, client.Entity.Name);
-                    Game.Features.Flowers.BoyFlowers.TryAdd(client.Entity.UID, client.Entity.MyFlowers);
+                    client.Entity.MyFlowers = new MTA.Game.Features.Flowers.Flowers(client.Entity.UID, client.Entity.Name);
+                    MTA.Game.Features.Flowers.Flowers.BoyFlowers.TryAdd(client.Entity.UID, client.Entity.MyFlowers);
                     return;
                 }
 
-                client.Entity.MyFlowers = Game.Features.Flowers.BoyFlowers[client.Entity.UID];
+                client.Entity.MyFlowers = MTA.Game.Features.Flowers.Flowers.BoyFlowers[client.Entity.UID];
                 return;
             }
         }

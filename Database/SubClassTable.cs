@@ -1,8 +1,9 @@
 ﻿using System;
-using Conquer_Online_Server.Game;
-using Conquer_Online_Server.Network.GamePackets;
+using MTA.Game;
+using MTA.Network.GamePackets;
+using MTA.Client;
 
-namespace Conquer_Online_Server.Database
+namespace MTA.Database
 {
     public class SubClassTable
     {

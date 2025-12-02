@@ -37084,7 +37084,7 @@ namespace MTA
                                                 {
                                                     a.MessageBox(client.Entity.Name + " Wont To Fight You In Clan Arena For " + client.Entity.ClanArenaCps + " CPs Did You Accpet", t =>
                                                     {
-                                                        ClanArena arena = new ClanArena(client, t);
+                                                        MTA.Game.ClanArena arena = new MTA.Game.ClanArena(client, t);
                                                         arena.ValueFight = client.Entity.ClanArenaCps * 2;
                                                         Task.Factory.StartNew(() => arena.import());
                                                         t.Entity.ConquerPoints -= (uint)client.Entity.ClanArenaCps;

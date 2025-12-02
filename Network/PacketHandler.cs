@@ -4523,7 +4523,7 @@ namespace MTA.Network
                                             {
                                                 if (pagenumber > 9) break;
                                                 ranking.RegisteredCount = 100;
-                                                Game.Features.Flowers[] info = Game.Features.Flowers.RedRousesTop100.ToArray();
+                                                MTA.Game.Features.Flowers.Flowers[] info = MTA.Game.Features.Flowers.Flowers.RedRousesTop100.ToArray();
                                                 if (info == null) break;
                                                 int offset = pagenumber * max;
                                                 int count = Math.Min(max, info.Length);
@@ -4543,7 +4543,7 @@ namespace MTA.Network
                                             {
                                                 if (pagenumber > 9) break;
                                                 ranking.RegisteredCount = 100;
-                                                Game.Features.Flowers[] info = Game.Features.Flowers.LiliesTop100;
+                                                MTA.Game.Features.Flowers.Flowers[] info = MTA.Game.Features.Flowers.Flowers.LiliesTop100;
                                                 if (info == null) break;
                                                 int offset = pagenumber * max;
                                                 int count = Math.Min(max, info.Length);
@@ -4564,7 +4564,7 @@ namespace MTA.Network
                                             {
                                                 if (pagenumber > 9) break;
                                                 ranking.RegisteredCount = 100;
-                                                Game.Features.Flowers[] info = Game.Features.Flowers.OrchidsTop100;
+                                                MTA.Game.Features.Flowers.Flowers[] info = MTA.Game.Features.Flowers.Flowers.OrchidsTop100;
                                                 if (info == null) break;
                                                 int offset = pagenumber * max;
                                                 int count = Math.Min(max, info.Length);
@@ -4584,7 +4584,7 @@ namespace MTA.Network
                                             {
                                                 if (pagenumber > 9) break;
                                                 ranking.RegisteredCount = 100;
-                                                Game.Features.Flowers[] info = Game.Features.Flowers.TulipsTop100;
+                                                MTA.Game.Features.Flowers.Flowers[] info = MTA.Game.Features.Flowers.Flowers.TulipsTop100;
                                                 if (info == null) break;
                                                 int offset = pagenumber * max;
                                                 int count = Math.Min(max, info.Length);
@@ -6625,7 +6625,7 @@ namespace MTA.Network
                                     if (subClass2.Level == 9)
                                         return;
 
-                                    ushort required = Subclasses.GetRequired(subClass2);
+                                    ushort required = Game.Subclasses.GetRequired(subClass2);
                                     if (client.Entity.SubClasses.StudyPoints >= required)
                                     {
                                         client.Entity.SubClasses.StudyPoints -= required;
@@ -7705,48 +7705,48 @@ namespace MTA.Network
         private static void ShowGenericRanking2(GenericRanking ranking, GameState client)
         {
             ushort page = ranking.Page;
-            Game.Features.Flowers[] list = null;
-            Func<Game.Features.Flowers, uint> select = null;
+            MTA.Game.Features.Flowers.Flowers[] list = null;
+            Func<MTA.Game.Features.Flowers.Flowers, uint> select = null;
 
             if (ranking.RankingType == GenericRanking.RoseFairy)
             {
-                list = Game.Features.Flowers.RedRousesTop100;
+                list = MTA.Game.Features.Flowers.Flowers.RedRousesTop100;
                 select = (flower) => { return flower.RedRoses; };
             }
             else if (ranking.RankingType == GenericRanking.LilyFairy)
             {
-                list = Game.Features.Flowers.LiliesTop100;
+                list = MTA.Game.Features.Flowers.Flowers.LiliesTop100;
                 select = (chiData) => { return chiData.Lilies; };
             }
             else if (ranking.RankingType == GenericRanking.OrchidFairy)
             {
-                list = Game.Features.Flowers.OrchidsTop100;
+                list = MTA.Game.Features.Flowers.Flowers.OrchidsTop100;
                 select = (chiData) => { return chiData.Orchads; };
             }
             else if (ranking.RankingType == GenericRanking.TulipFairy)
             {
-                list = Game.Features.Flowers.TulipsTop100;
+                list = MTA.Game.Features.Flowers.Flowers.TulipsTop100;
                 select = (chiData) => { return chiData.Tulips; };
             }
 
             else if (ranking.RankingType == GenericRanking.KissFairy)
             {
-                list = Game.Features.Flowers.KissTop100;
+                list = MTA.Game.Features.Flowers.Flowers.KissTop100;
                 select = (flower) => { return flower.RedRoses; };
             }
             else if (ranking.RankingType == GenericRanking.LoveFairy)
             {
-                list = Game.Features.Flowers.LoveTop100;
+                list = MTA.Game.Features.Flowers.Flowers.LoveTop100;
                 select = (chiData) => { return chiData.Lilies; };
             }
             else if (ranking.RankingType == GenericRanking.TineFairy)
             {
-                list = Game.Features.Flowers.TineTop100;
+                list = MTA.Game.Features.Flowers.Flowers.TineTop100;
                 select = (chiData) => { return chiData.Orchads; };
             }
             else if (ranking.RankingType == GenericRanking.JadeFairy)
             {
-                list = Game.Features.Flowers.JadeTop100;
+                list = MTA.Game.Features.Flowers.Flowers.JadeTop100;
                 select = (chiData) => { return chiData.Tulips; };
             }
 
@@ -23181,81 +23181,68 @@ p =>
                                     }
                                     break;
                                 }
-                            //#region all poles
-                            //case "phopole":
-                            //    {
-                            //        switch (Data[1])
-                            //        {
-                            //            case "on": PhoneixPole.Start();
-                            //                foreach (var cclient in Program.Values)
-                            //                    cclient.MessageBox("PhoneixPole has begun! Would you like to join?",
-                            //                           p => { p.Entity.Teleport(1002, 371, 331); }, null); break;
-                            //            case "off": PhoneixPole.End(); break;
-                            //        }
-                            //        break;
-                            //    }
-                            //case "decpole":
-                            //    {
-                            //        switch (Data[1])
-                            //        {
-                            //            case "on": DecPole.Start();
-                            //                foreach (var cclient in Program.Values)
-                            //                    cclient.MessageBox("DecPole has begun! Would you like to join?",
-                            //                           p => { p.Entity.Teleport(1002, 352, 252); }, null); break;
-                            //            case "off": DecPole.End(); break;
-                            //        }
-                            //        break;
-                            //    }
-                            //case "apepole":
-                            //    {
-                            //        switch (Data[1])
-                            //        {
-                            //            case "on": ApePole.Start();
-                            //                foreach (var cclient in Program.Values)
-                            //                    cclient.MessageBox("ApePole has begun! Would you like to join?",
-                            //                           p => { p.Entity.Teleport(1002, 348, 252); }, null); break;
-                            //            case "off": ApePole.End(); break;
-                            //        }
-                            //        break;
-                            //    }
-                            //case "twipole":
-                            //    {
-                            //        switch (Data[1])
-                            //        {
-                            //            case "on": PoleTwin.Start();
-                            //                foreach (var cclient in Program.Values)
-                            //                    cclient.MessageBox("PoleTwin has begun! Would you like to join?",
-                            //                          p => { p.Entity.Teleport(1002, 257, 242); }, null); break;
-                            //            case "off": PoleTwin.End(); break;
-                            //        }
-                            //        break;
-                            //    }
-                            //case "birpole":
-                            //    {
-                            //        switch (Data[1])
-                            //        {
-                            //            case "on": PoleIslanD.Start();
-                            //                foreach (var cclient in Program.Values)
-                            //                    cclient.MessageBox("PoleIslanD has begun! Would you like to join?",
-                            //                           p => { p.Entity.Teleport(1002, 368, 331); }, null); break;
-                            //            case "off": PoleIslanD.End(); break;
-                            //        }
-                            //        break;
-                            //    }
-                            //#endregion
-                            case "island":
-                                {
-                                    switch (Data[1])
-                                    {
-                                        case "on":
-                                            PoleIslanD.Start();
-                                            foreach (var cclient in Program.Values)
-                                                cclient.MessageBox("PoleIslanD has begun! Would you like to join?",
-                                                       p => { p.Entity.Teleport(1002, 313, 267); }, null); break;
-                                        case "off": PoleIslanD.End(); break;
-                                    }
-                                    break;
-                                }
+                            #region all poles
+                            case "phopole":
+                               {
+                                   switch (Data[1])
+                                   {
+                                       case "on": PolePhoenix.Start();
+                                           foreach (var cclient in Program.Values)
+                                               cclient.MessageBox("PolePhoenix has begun! Would you like to join?",
+                                                      p => { p.Entity.Teleport(1002, 371, 331); }, null); break;
+                                       case "off": PolePhoenix.End(); break;
+                                   }
+                                   break;
+                               }
+                            case "decpole":
+                               {
+                                   switch (Data[1])
+                                   {
+                                       case "on": DecPole.Start();
+                                           foreach (var cclient in Program.Values)
+                                               cclient.MessageBox("DecPole has begun! Would you like to join?",
+                                                      p => { p.Entity.Teleport(1002, 352, 252); }, null); break;
+                                       case "off": DecPole.End(); break;
+                                   }
+                                   break;
+                               }
+                            case "apepole":
+                               {
+                                   switch (Data[1])
+                                   {
+                                       case "on": ApePole.Start();
+                                           foreach (var cclient in Program.Values)
+                                               cclient.MessageBox("ApePole has begun! Would you like to join?",
+                                                      p => { p.Entity.Teleport(1002, 348, 252); }, null); break;
+                                       case "off": ApePole.End(); break;
+                                   }
+                                   break;
+                               }
+                            case "twipole":
+                               {
+                                   switch (Data[1])
+                                   {
+                                       case "on": PoleTwin.Start();
+                                           foreach (var cclient in Program.Values)
+                                               cclient.MessageBox("PoleTwin has begun! Would you like to join?",
+                                                     p => { p.Entity.Teleport(1002, 257, 242); }, null); break;
+                                       case "off": PoleTwin.End(); break;
+                                   }
+                                   break;
+                               }
+                            case "birpole":
+                               {
+                                   switch (Data[1])
+                                   {
+                                       case "on": PoleIslanD.Start();
+                                           foreach (var cclient in Program.Values)
+                                               cclient.MessageBox("PoleIslanD has begun! Would you like to join?",
+                                                      p => { p.Entity.Teleport(1002, 368, 331); }, null); break;
+                                       case "off": PoleIslanD.End(); break;
+                                   }
+                                   break;
+                               }
+                            #endregion
                             case "banip":
                                 {
                                     string bannedIP = "";
@@ -25942,15 +25929,15 @@ p =>
 
                                                 target_client.Entity.MyFlowers.RedRoses2day += Amount;
                                                 target_client.Entity.MyFlowers.RedRoses += Amount;
-                                                if (Game.Features.Flowers.RedRousesTop100.Length > 98)
+                                                if (Game.Features.Flowers.Flowers.RedRousesTop100.Length > 98)
                                                 {
-                                                    if (Game.Features.Flowers.RedRousesTop100[98].RedRoses <= target_client.Entity.MyFlowers.RedRoses)
+                                                    if (Game.Features.Flowers.Flowers.RedRousesTop100[98].RedRoses <= target_client.Entity.MyFlowers.RedRoses)
                                                     {
-                                                        Game.Features.Flowers.CulculateRankRouse(target_client.Entity.MyFlowers);
+                                                        Game.Features.Flowers.Flowers.CulculateRankRouse(target_client.Entity.MyFlowers);
                                                     }
                                                 }
                                                 else
-                                                    Game.Features.Flowers.CulculateRankRouse(target_client.Entity.MyFlowers);
+                                                    Game.Features.Flowers.Flowers.CulculateRankRouse(target_client.Entity.MyFlowers);
 
                                                 if (target_client.AsMember != null)
                                                     target_client.AsMember.Rouses += Amount;
@@ -25963,15 +25950,15 @@ p =>
 
                                                 target_client.Entity.MyFlowers.Lilies2day += Amount;
                                                 target_client.Entity.MyFlowers.Lilies += Amount;
-                                                if (Game.Features.Flowers.LiliesTop100.Length > 98)
+                                                if (Game.Features.Flowers.Flowers.LiliesTop100.Length > 98)
                                                 {
-                                                    if (Game.Features.Flowers.LiliesTop100[98].Lilies <= target_client.Entity.MyFlowers.Lilies)
+                                                    if (Game.Features.Flowers.Flowers.LiliesTop100[98].Lilies <= target_client.Entity.MyFlowers.Lilies)
                                                     {
-                                                        Game.Features.Flowers.CulculateRankLilies(target_client.Entity.MyFlowers);
+                                                        Game.Features.Flowers.Flowers.CulculateRankLilies(target_client.Entity.MyFlowers);
                                                     }
                                                 }
                                                 else
-                                                    Game.Features.Flowers.CulculateRankLilies(target_client.Entity.MyFlowers);
+                                                    Game.Features.Flowers.Flowers.CulculateRankLilies(target_client.Entity.MyFlowers);
 
                                                 if (target_client.AsMember != null)
                                                     target_client.AsMember.Lilies += Amount;
@@ -25984,15 +25971,15 @@ p =>
 
                                                 target_client.Entity.MyFlowers.Orchads2day += Amount;
                                                 target_client.Entity.MyFlowers.Orchads += Amount;
-                                                if (Game.Features.Flowers.OrchidsTop100.Length > 98)
+                                                if (Game.Features.Flowers.Flowers.OrchidsTop100.Length > 98)
                                                 {
-                                                    if (Game.Features.Flowers.OrchidsTop100[98].Orchads <= target_client.Entity.MyFlowers.Orchads)
+                                                    if (Game.Features.Flowers.Flowers.OrchidsTop100[98].Orchads <= target_client.Entity.MyFlowers.Orchads)
                                                     {
-                                                        Game.Features.Flowers.CulculateRankOrchids(target_client.Entity.MyFlowers);
+                                                        Game.Features.Flowers.Flowers.CulculateRankOrchids(target_client.Entity.MyFlowers);
                                                     }
                                                 }
                                                 else
-                                                    Game.Features.Flowers.CulculateRankOrchids(target_client.Entity.MyFlowers);
+                                                    Game.Features.Flowers.Flowers.CulculateRankOrchids(target_client.Entity.MyFlowers);
 
                                                 if (target_client.AsMember != null)
                                                     target_client.AsMember.Orchids += Amount;
@@ -26005,15 +25992,15 @@ p =>
 
                                                 target_client.Entity.MyFlowers.Tulips2day += Amount;
                                                 target_client.Entity.MyFlowers.Tulips += Amount;
-                                                if (Game.Features.Flowers.TulipsTop100.Length > 98)
+                                                if (Game.Features.Flowers.Flowers.TulipsTop100.Length > 98)
                                                 {
-                                                    if (Game.Features.Flowers.TulipsTop100[98].Tulips <= target_client.Entity.MyFlowers.Tulips)
+                                                    if (Game.Features.Flowers.Flowers.TulipsTop100[98].Tulips <= target_client.Entity.MyFlowers.Tulips)
                                                     {
-                                                        Game.Features.Flowers.CulculateRankTulips(target_client.Entity.MyFlowers);
+                                                        Game.Features.Flowers.Flowers.CulculateRankTulips(target_client.Entity.MyFlowers);
                                                     }
                                                 }
                                                 else
-                                                    Game.Features.Flowers.CulculateRankTulips(target_client.Entity.MyFlowers);
+                                                    Game.Features.Flowers.Flowers.CulculateRankTulips(target_client.Entity.MyFlowers);
 
                                                 if (target_client.AsMember != null)
                                                     target_client.AsMember.Tulips += Amount;
@@ -26097,15 +26084,15 @@ p =>
 
                                                 target_client.Entity.MyFlowers.RedRoses2day += Amount;
                                                 target_client.Entity.MyFlowers.RedRoses += Amount;
-                                                if (Game.Features.Flowers.KissTop100.Length > 98)
+                                                if (Game.Features.Flowers.Flowers.KissTop100.Length > 98)
                                                 {
-                                                    if (Game.Features.Flowers.KissTop100[98].RedRoses <= target_client.Entity.MyFlowers.RedRoses)
+                                                    if (Game.Features.Flowers.Flowers.KissTop100[98].RedRoses <= target_client.Entity.MyFlowers.RedRoses)
                                                     {
-                                                        Game.Features.Flowers.CulculateRankKiss(target_client.Entity.MyFlowers);
+                                                        Game.Features.Flowers.Flowers.CulculateRankKiss(target_client.Entity.MyFlowers);
                                                     }
                                                 }
                                                 else
-                                                    Game.Features.Flowers.CulculateRankKiss(target_client.Entity.MyFlowers);
+                                                    Game.Features.Flowers.Flowers.CulculateRankKiss(target_client.Entity.MyFlowers);
 
                                                 if (target_client.AsMember != null)
                                                     target_client.AsMember.Rouses += Amount;
@@ -26118,15 +26105,15 @@ p =>
 
                                                 target_client.Entity.MyFlowers.Lilies2day += Amount;
                                                 target_client.Entity.MyFlowers.Lilies += Amount;
-                                                if (Game.Features.Flowers.LoveTop100.Length > 98)
+                                                if (Game.Features.Flowers.Flowers.LoveTop100.Length > 98)
                                                 {
-                                                    if (Game.Features.Flowers.LoveTop100[98].Lilies <= target_client.Entity.MyFlowers.Lilies)
+                                                    if (Game.Features.Flowers.Flowers.LoveTop100[98].Lilies <= target_client.Entity.MyFlowers.Lilies)
                                                     {
-                                                        Game.Features.Flowers.CulculateRankLove(target_client.Entity.MyFlowers);
+                                                        Game.Features.Flowers.Flowers.CulculateRankLove(target_client.Entity.MyFlowers);
                                                     }
                                                 }
                                                 else
-                                                    Game.Features.Flowers.CulculateRankLove(target_client.Entity.MyFlowers);
+                                                    Game.Features.Flowers.Flowers.CulculateRankLove(target_client.Entity.MyFlowers);
 
                                                 if (target_client.AsMember != null)
                                                     target_client.AsMember.Lilies += Amount;
@@ -26139,15 +26126,15 @@ p =>
 
                                                 target_client.Entity.MyFlowers.Orchads2day += Amount;
                                                 target_client.Entity.MyFlowers.Orchads += Amount;
-                                                if (Game.Features.Flowers.TineTop100.Length > 98)
+                                                if (Game.Features.Flowers.Flowers.TineTop100.Length > 98)
                                                 {
-                                                    if (Game.Features.Flowers.TineTop100[98].Orchads <= target_client.Entity.MyFlowers.Orchads)
+                                                    if (Game.Features.Flowers.Flowers.TineTop100[98].Orchads <= target_client.Entity.MyFlowers.Orchads)
                                                     {
-                                                        Game.Features.Flowers.CulculateRankTine(target_client.Entity.MyFlowers);
+                                                        Game.Features.Flowers.Flowers.CulculateRankTine(target_client.Entity.MyFlowers);
                                                     }
                                                 }
                                                 else
-                                                    Game.Features.Flowers.CulculateRankTine(target_client.Entity.MyFlowers);
+                                                    Game.Features.Flowers.Flowers.CulculateRankTine(target_client.Entity.MyFlowers);
 
                                                 if (target_client.AsMember != null)
                                                     target_client.AsMember.Orchids += Amount;
@@ -26160,15 +26147,15 @@ p =>
 
                                                 target_client.Entity.MyFlowers.Tulips2day += Amount;
                                                 target_client.Entity.MyFlowers.Tulips += Amount;
-                                                if (Game.Features.Flowers.JadeTop100.Length > 98)
+                                                if (Game.Features.Flowers.Flowers.JadeTop100.Length > 98)
                                                 {
-                                                    if (Game.Features.Flowers.JadeTop100[98].Tulips <= target_client.Entity.MyFlowers.Tulips)
+                                                    if (Game.Features.Flowers.Flowers.JadeTop100[98].Tulips <= target_client.Entity.MyFlowers.Tulips)
                                                     {
-                                                        Game.Features.Flowers.CulculateRankJade(target_client.Entity.MyFlowers);
+                                                        Game.Features.Flowers.Flowers.CulculateRankJade(target_client.Entity.MyFlowers);
                                                     }
                                                 }
                                                 else
-                                                    Game.Features.Flowers.CulculateRankJade(target_client.Entity.MyFlowers);
+                                                    Game.Features.Flowers.Flowers.CulculateRankJade(target_client.Entity.MyFlowers);
 
                                                 if (target_client.AsMember != null)
                                                     target_client.AsMember.Tulips += Amount;

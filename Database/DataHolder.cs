@@ -7,7 +7,7 @@ namespace MTA.Database
     using MYSQLCONNECTION = MySql.Data.MySqlClient.MySqlConnection;
     public static class DataHolder
     {
-        private static string ConnectionString;
+        public static string ConnectionString;
         public static void CreateConnection(string host, string username, string password, string database)
         {
             ConnectionString = "Server=" + host + ";Port=3306;Database=" + database + ";Uid=" + username + ";Password=" + password + ";Persist Security Info=True;Pooling=true; Min Pool Size = 32;  Max Pool Size = 300;";

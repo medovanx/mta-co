@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-using Conquer_Online_Server.Game.ConquerStructures.Society;
+using MTA.Game.ConquerStructures.Society;
+using MTA.Client;
+using MTA.Game.Features.Flowers;
 
-namespace Conquer_Online_Server.Game.ConquerStructures.Society
+namespace MTA.Game.ConquerStructures.Society
 {
     class FlowerRank
     {
@@ -21,13 +23,13 @@ namespace Conquer_Online_Server.Game.ConquerStructures.Society
             wtr.Write((ushort)0);
             wtr.Write((ushort)pagenumber);
             if (uid == 0x1c9c382)
-                wtr.Write((uint)(Math.Min(Game.Features.Flowers.Flowers.Redrosse.Count, 10)));
+                wtr.Write((uint)(Math.Min(MTA.Game.Features.Flowers.Flowers.Redrosse.Count, 10)));
             if (uid == 0x1c9c3e6)
-                wtr.Write((uint)(Math.Min(Game.Features.Flowers.Flowers.Lilise.Count, 10)));
+                wtr.Write((uint)(Math.Min(MTA.Game.Features.Flowers.Flowers.Lilise.Count, 10)));
             if (uid == 0x1c9c44a)
-                wtr.Write((uint)(Math.Min(Game.Features.Flowers.Flowers.Orchides.Count, 10)));
+                wtr.Write((uint)(Math.Min(MTA.Game.Features.Flowers.Flowers.Orchides.Count, 10)));
             if (uid == 0x1c9c4ae)
-                wtr.Write((uint)(Math.Min(Game.Features.Flowers.Flowers.Tuplise.Count, 10)));
+                wtr.Write((uint)(Math.Min(MTA.Game.Features.Flowers.Flowers.Tuplise.Count, 10)));
             wtr.Write((uint)0);
 
             if (uid == 0x1c9c382)
@@ -36,7 +38,7 @@ namespace Conquer_Online_Server.Game.ConquerStructures.Society
                 {
                     if (pagenumber == 1)
                     {
-                        if (Game.Features.Flowers.Flowers.Redrosse.Count < 11)
+                        if (MTA.Game.Features.Flowers.Flowers.Redrosse.Count < 11)
                         {
                             break;
                         }
@@ -97,16 +99,16 @@ namespace Conquer_Online_Server.Game.ConquerStructures.Society
                             break;
                         }
                     }
-                    wtr.Write((uint)Game.Features.Flowers.Flowers.Redrosse[b].rank);
+                    wtr.Write((uint)MTA.Game.Features.Flowers.Flowers.Redrosse[b].rank);
                     wtr.Write((uint)0);
-                    wtr.Write((uint)Game.Features.Flowers.Flowers.Redrosse[b].redrosse);
+                    wtr.Write((uint)MTA.Game.Features.Flowers.Flowers.Redrosse[b].redrosse);
                     wtr.Write((uint)0);
                     wtr.Write((uint)2301694);
                     for (int s = 0; s < 16; s++)
                     {
-                        if (s < Game.Features.Flowers.Flowers.Redrosse[b].name.Length)
+                        if (s < MTA.Game.Features.Flowers.Flowers.Redrosse[b].name.Length)
                         {
-                            wtr.Write((byte)Game.Features.Flowers.Flowers.Redrosse[b].name[s]);
+                            wtr.Write((byte)MTA.Game.Features.Flowers.Flowers.Redrosse[b].name[s]);
                         }
                         else
                             wtr.Write((byte)0);
@@ -114,9 +116,9 @@ namespace Conquer_Online_Server.Game.ConquerStructures.Society
                     wtr.Write((uint)0);
                     for (int s = 0; s < 16; s++)
                     {
-                        if (s < Game.Features.Flowers.Flowers.Redrosse[b].name.Length)
+                        if (s < MTA.Game.Features.Flowers.Flowers.Redrosse[b].name.Length)
                         {
-                            wtr.Write((byte)Game.Features.Flowers.Flowers.Redrosse[b].name[s]);
+                            wtr.Write((byte)MTA.Game.Features.Flowers.Flowers.Redrosse[b].name[s]);
                         }
                         else
                             wtr.Write((byte)0);
@@ -126,11 +128,11 @@ namespace Conquer_Online_Server.Game.ConquerStructures.Society
             }
             if (uid == 0x1c9c3e6)
             {
-                for (int b = pagenumber * 10; b <= pagenumber * 10 + Math.Min(9, Game.Features.Flowers.Flowers.Lilise.Count) - 1; b++)
+                for (int b = pagenumber * 10; b <= pagenumber * 10 + Math.Min(9, MTA.Game.Features.Flowers.Flowers.Lilise.Count) - 1; b++)
                 {
                     if (pagenumber == 1)
                     {
-                        if (Game.Features.Flowers.Flowers.Lilise.Count < 11)
+                        if (MTA.Game.Features.Flowers.Flowers.Lilise.Count < 11)
                         {
                             break;
                         }
@@ -191,16 +193,16 @@ namespace Conquer_Online_Server.Game.ConquerStructures.Society
                             break;
                         }
                     }
-                    wtr.Write((uint)Game.Features.Flowers.Flowers.Lilise[b].rank);
+                    wtr.Write((uint)MTA.Game.Features.Flowers.Flowers.Lilise[b].rank);
                     wtr.Write((uint)0);
-                    wtr.Write((uint)Game.Features.Flowers.Flowers.Lilise[b].lilise);
+                    wtr.Write((uint)MTA.Game.Features.Flowers.Flowers.Lilise[b].lilise);
                     wtr.Write((uint)0);
                     wtr.Write((uint)2301694);
                     for (int s = 0; s < 16; s++)
                     {
-                        if (s < Game.Features.Flowers.Flowers.Lilise[b].name.Length)
+                        if (s < MTA.Game.Features.Flowers.Flowers.Lilise[b].name.Length)
                         {
-                            wtr.Write((byte)Game.Features.Flowers.Flowers.Lilise[b].name[s]);
+                            wtr.Write((byte)MTA.Game.Features.Flowers.Flowers.Lilise[b].name[s]);
                         }
                         else
                             wtr.Write((byte)0);
@@ -208,9 +210,9 @@ namespace Conquer_Online_Server.Game.ConquerStructures.Society
                     wtr.Write((uint)0);
                     for (int s = 0; s < 16; s++)
                     {
-                        if (s < Game.Features.Flowers.Flowers.Lilise[b].name.Length)
+                        if (s < MTA.Game.Features.Flowers.Flowers.Lilise[b].name.Length)
                         {
-                            wtr.Write((byte)Game.Features.Flowers.Flowers.Lilise[b].name[s]);
+                            wtr.Write((byte)MTA.Game.Features.Flowers.Flowers.Lilise[b].name[s]);
                         }
                         else
                             wtr.Write((byte)0);
@@ -220,11 +222,11 @@ namespace Conquer_Online_Server.Game.ConquerStructures.Society
             }
             if (uid == 0x1c9c44a)
             {
-                for (int b = pagenumber * 10; b <= pagenumber * 10 + Math.Min(9, Game.Features.Flowers.Flowers.Orchides.Count) - 1; b++)
+                for (int b = pagenumber * 10; b <= pagenumber * 10 + Math.Min(9, MTA.Game.Features.Flowers.Flowers.Orchides.Count) - 1; b++)
                 {
                     if (pagenumber == 1)
                     {
-                        if (Game.Features.Flowers.Flowers.Orchides.Count < 11)
+                        if (MTA.Game.Features.Flowers.Flowers.Orchides.Count < 11)
                         {
                             break;
                         }
@@ -285,16 +287,16 @@ namespace Conquer_Online_Server.Game.ConquerStructures.Society
                             break;
                         }
                     }
-                    wtr.Write((uint)Game.Features.Flowers.Flowers.Orchides[b].rank);
+                    wtr.Write((uint)MTA.Game.Features.Flowers.Flowers.Orchides[b].rank);
                     wtr.Write((uint)0);
-                    wtr.Write((uint)Game.Features.Flowers.Flowers.Orchides[b].orchides);
+                    wtr.Write((uint)MTA.Game.Features.Flowers.Flowers.Orchides[b].orchides);
                     wtr.Write((uint)0);
                     wtr.Write((uint)2301694);
                     for (int s = 0; s < 16; s++)
                     {
-                        if (s < Game.Features.Flowers.Flowers.Orchides[b].name.Length)
+                        if (s < MTA.Game.Features.Flowers.Flowers.Orchides[b].name.Length)
                         {
-                            wtr.Write((byte)Game.Features.Flowers.Flowers.Orchides[b].name[s]);
+                            wtr.Write((byte)MTA.Game.Features.Flowers.Flowers.Orchides[b].name[s]);
                         }
                         else
                             wtr.Write((byte)0);
@@ -302,9 +304,9 @@ namespace Conquer_Online_Server.Game.ConquerStructures.Society
                     wtr.Write((uint)0);
                     for (int s = 0; s < 16; s++)
                     {
-                        if (s < Game.Features.Flowers.Flowers.Orchides[b].name.Length)
+                        if (s < MTA.Game.Features.Flowers.Flowers.Orchides[b].name.Length)
                         {
-                            wtr.Write((byte)Game.Features.Flowers.Flowers.Orchides[b].name[s]);
+                            wtr.Write((byte)MTA.Game.Features.Flowers.Flowers.Orchides[b].name[s]);
                         }
                         else
                             wtr.Write((byte)0);
@@ -314,11 +316,11 @@ namespace Conquer_Online_Server.Game.ConquerStructures.Society
             }
             if (uid == 0x1c9c4ae)
             {
-                for (int b = pagenumber * 10; b <= pagenumber * 10 + Math.Min(10, Game.Features.Flowers.Flowers.Tuplise.Count) - 1; b++)
+                for (int b = pagenumber * 10; b <= pagenumber * 10 + Math.Min(10, MTA.Game.Features.Flowers.Flowers.Tuplise.Count) - 1; b++)
                 {
                     if (pagenumber == 1)
                     {
-                        if (Game.Features.Flowers.Flowers.Tuplise.Count < 11)
+                        if (MTA.Game.Features.Flowers.Flowers.Tuplise.Count < 11)
                         {
                             break;
                         }
@@ -379,16 +381,16 @@ namespace Conquer_Online_Server.Game.ConquerStructures.Society
                             break;
                         }
                     }
-                    wtr.Write((uint)Game.Features.Flowers.Flowers.Tuplise[b].rank);
+                    wtr.Write((uint)MTA.Game.Features.Flowers.Flowers.Tuplise[b].rank);
                     wtr.Write((uint)0);
-                    wtr.Write((uint)Game.Features.Flowers.Flowers.Tuplise[b].tuplise);
+                    wtr.Write((uint)MTA.Game.Features.Flowers.Flowers.Tuplise[b].tuplise);
                     wtr.Write((uint)0);
                     wtr.Write((uint)2301694);
                     for (int s = 0; s < 16; s++)
                     {
-                        if (s < Game.Features.Flowers.Flowers.Tuplise[b].name.Length)
+                        if (s < MTA.Game.Features.Flowers.Flowers.Tuplise[b].name.Length)
                         {
-                            wtr.Write((byte)Game.Features.Flowers.Flowers.Tuplise[b].name[s]);
+                            wtr.Write((byte)MTA.Game.Features.Flowers.Flowers.Tuplise[b].name[s]);
                         }
                         else
                             wtr.Write((byte)0);
@@ -396,9 +398,9 @@ namespace Conquer_Online_Server.Game.ConquerStructures.Society
                     wtr.Write((uint)0);
                     for (int s = 0; s < 16; s++)
                     {
-                        if (s < Game.Features.Flowers.Flowers.Tuplise[b].name.Length)
+                        if (s < MTA.Game.Features.Flowers.Flowers.Tuplise[b].name.Length)
                         {
-                            wtr.Write((byte)Game.Features.Flowers.Flowers.Tuplise[b].name[s]);
+                            wtr.Write((byte)MTA.Game.Features.Flowers.Flowers.Tuplise[b].name[s]);
                         }
                         else
                             wtr.Write((byte)0);

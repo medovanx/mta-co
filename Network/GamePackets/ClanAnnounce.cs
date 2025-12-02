@@ -10,7 +10,7 @@ namespace MTA.Network.GamePackets
     {
         private Byte[] mData;
 
-        public ClanAnnouncement(Clan clan)
+        public ClanAnnouncement(MTA.Clan clan)
         {
             if (clan.Announcement == null) clan.Announcement = "";
             mData = new Byte[85 + clan.Announcement.Length + 8];

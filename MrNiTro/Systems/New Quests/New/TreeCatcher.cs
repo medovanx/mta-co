@@ -1,14 +1,14 @@
-﻿using Conquer_Online_Server.Client;
-using Conquer_Online_Server.Game;
-using Conquer_Online_Server.Interfaces;
-using Conquer_Online_Server.Network.GamePackets;
+﻿using MTA.Client;
+using MTA.Game;
+using MTA.Interfaces;
+using MTA.Network.GamePackets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
 
-namespace Conquer_Online_Server.MaTrix.New_Quests
+namespace MTA.MaTrix.New_Quests
 {
     public class TreeCatcher
     {

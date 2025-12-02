@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 
 using System.Linq;
+using MTA.Client;
+using MTA.Game.Features.Flowers;
 
-namespace Conquer_Online_Server.Database
+namespace MTA.Database
 {
 
     public class FlowerSystemTable
     {
         public static uint[] TopLilies = new uint[2];
         public static uint[] TopOrchids = new uint[2];
-        public static List<Game.Features.Flowers.Flowers> flowertoday = new List<Game.Features.Flowers.Flowers>();
+        public static List<MTA.Game.Features.Flowers.Flowers> flowertoday = new List<MTA.Game.Features.Flowers.Flowers>();
         public static uint[] TopRedRoses = new uint[2];
         public static uint[] TopTulips = new uint[2];
         private static bool Exists(uint id)
@@ -35,7 +37,7 @@ namespace Conquer_Online_Server.Database
 
         public static void Flowers(Client.GameState Client)
         {
-            Client.Entity.Flowers = new Conquer_Online_Server.Game.Features.Flowers.Flowers();
+            Client.Entity.Flowers = new MTA.Game.Features.Flowers.Flowers();
             if (!Exists(Client.Entity.UID))
             {
                 Insert(Client);
@@ -74,7 +76,7 @@ namespace Conquer_Online_Server.Database
                         Client.Entity.Flowers.Lilies = reader.ReadUInt32("lilies");
                         Client.Entity.Flowers.Tulips = reader.ReadUInt32("tulips");
                         Client.Entity.Flowers.Orchads = reader.ReadUInt32("orchads");
-                        Client.Entity.Flowers.name = reader.ReadString("name");
+                        Client.Entity.Flowers.Name = reader.ReadString("name");
                         if (flowertoday.Contains(Client.Entity.Flowers))
                         {
                             flowertoday.Remove(Client.Entity.Flowers);

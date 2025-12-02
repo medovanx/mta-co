@@ -5,7 +5,7 @@ using System.Text;
 using MySql.Data.MySqlClient;
 using System.Data;
 
-namespace Conquer_Online_Server.Database
+namespace MTA.Database
 {
     public class KillConnections
     {

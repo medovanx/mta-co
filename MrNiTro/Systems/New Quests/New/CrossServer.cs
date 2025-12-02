@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Conquer_Online_Server.Network.GamePackets;
-using Conquer_Online_Server.Database;
+using MTA.Network.GamePackets;
+using MTA.Database;
 
 
-namespace Conquer_Online_Server.Game
+namespace MTA.Game
 {
     class Countrys
     {        
@@ -259,7 +259,7 @@ namespace Conquer_Online_Server.Game
         private static void UpdatePole(SobNpcSpawn pole)
         {
             if (pole == null) return;
-            new Database.MySqlCommand(Conquer_Online_Server.Database.MySqlCommandType.UPDATE)
+            new Database.MySqlCommand(MTA.Database.MySqlCommandType.UPDATE)
             .Update("sobnpcs").Set("name", pole.Name).Set("life", Pole.Hitpoints).Where("id", pole.UID).Execute();
         }
         public static byte[] generateRanking(uint m)

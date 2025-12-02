@@ -1,9 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using Conquer_Online_Server.Game.ConquerStructures.Society;
+using MTA.Game.ConquerStructures.Society;
+using MTA.Network;
 
-namespace Conquer_Online_Server.Network.GamePackets
+namespace MTA.Network.GamePackets
 {
     public class KissSpawn : Writer
     {

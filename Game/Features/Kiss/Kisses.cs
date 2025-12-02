@@ -1,7 +1,7 @@
-﻿using Conquer_Online_Server.Database;
+﻿using MTA.Database;
 using System;
 using System.Collections.Generic;
-namespace Conquer_Online_Server.Game.Features.Kisses
+namespace MTA.Game.Features.Kisses
 {
     public class Kisses
     {

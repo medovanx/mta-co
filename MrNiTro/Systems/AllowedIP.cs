@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Conquer_Online_Server.Database;
+using MTA.Database;
+using MTA.Client;
 
-namespace Conquer_Online_Server.MaTrix
+namespace MTA.MaTrix
 {
     public class AllowedIPs
     {

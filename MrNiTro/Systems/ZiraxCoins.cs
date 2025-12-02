@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Conquer_Online_Server.Network.GamePackets;
+using MTA.Network.GamePackets;
+using MTA.Client;
 
-namespace Conquer_Online_Server.Game
+namespace MTA.Game
 {
     public class ZiraxCoins
     {

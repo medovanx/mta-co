@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Conquer_Online_Server.Network.GamePackets;
+using MTA.Network.GamePackets;
+using MTA.Client;
+using MTA.Interfaces;
 
-namespace Conquer_Online_Server.Game.Features.Reincarnation
+namespace MTA.Game.Features.Reincarnation
 {
     public class Handle
     {
@@ -33,16 +35,16 @@ namespace Conquer_Online_Server.Game.Features.Reincarnation
     public class Reincarnation
     {
         private Client.GameState _client;
-        private SafeDictionary<ushort, Conquer_Online_Server.Interfaces.ISkill> RemoveSkill = null;
-        private SafeDictionary<ushort, Conquer_Online_Server.Interfaces.ISkill> Addskill = null;
+        private SafeDictionary<ushort, ISkill> RemoveSkill = null;
+        private SafeDictionary<ushort, ISkill> Addskill = null;
 
         public Reincarnation(Client.GameState client, byte new_class)
         {
             if (client.Entity.Level < 130)
                 return;
             _client = client;
-            RemoveSkill = new SafeDictionary<ushort, Conquer_Online_Server.Interfaces.ISkill>(500);
-            Addskill = new SafeDictionary<ushort, Conquer_Online_Server.Interfaces.ISkill>(500);
+            RemoveSkill = new SafeDictionary<ushort, ISkill>(500);
+            Addskill = new SafeDictionary<ushort, ISkill>(500);
 
             #region Low level items
 
@@ -149,7 +151,7 @@ namespace Conquer_Online_Server.Game.Features.Reincarnation
 
 
             client.Spells.Clear();
-            client.Spells = new SafeDictionary<ushort, Conquer_Online_Server.Interfaces.ISkill>(100);
+            client.Spells = new SafeDictionary<ushort, ISkill>(100);
             switch (client.Entity.FirstRebornClass)
             {
                 case 15:
@@ -450,7 +452,7 @@ namespace Conquer_Online_Server.Game.Features.Reincarnation
             Add(Conquer_Online_Server.Game.Enums.SkillIDs.Bless);
 
             Addskill.Clear();
-            Addskill = new SafeDictionary<ushort, Conquer_Online_Server.Interfaces.ISkill>(100);
+            Addskill = new SafeDictionary<ushort, ISkill>(100);
 
             PreviousClass = client.Entity.SecondRebornClass;
             toClass = client.Entity.Class;
@@ -750,7 +752,7 @@ namespace Conquer_Online_Server.Game.Features.Reincarnation
             #endregion
 
             Addskill.Clear();
-            Addskill = new SafeDictionary<ushort, Conquer_Online_Server.Interfaces.ISkill>(20);
+            Addskill = new SafeDictionary<ushort, ISkill>(20);
 
             #region Add Extra Skill
 

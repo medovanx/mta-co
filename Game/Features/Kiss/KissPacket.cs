@@ -1,8 +1,10 @@
-﻿namespace Conquer_Online_Server.Network.GamePackets
+﻿namespace MTA.Network.GamePackets
 {
-    using Conquer_Online_Server.Game.Features.Flowers;
-    using Conquer_Online_Server.Interfaces;
-    using Conquer_Online_Server.Network;
+    using MTA.Game.Features.Flowers;
+    using MTA.Interfaces;
+    using MTA.Network;
+    using MTA.Game.Features.Kisses;
+    using MTA.Client;
     using System;
 
     public class KissPacket : Writer, IPacket
@@ -14,7 +16,7 @@
         public const ushort Kisses = 4;
         public const ushort Jades = 7;
 
-        public KissPacket(Conquer_Online_Server.Game.Features.Kisses.Kisses ClientKisses, Client.GameState client)
+        public KissPacket(Kisses ClientKisses, Client.GameState client)
         {
             Buffer2 = new byte[0x44];
             Writer.WriteUInt16(60, 0, Buffer2);
@@ -98,11 +100,11 @@
             }
         }
 
-        public Conquer_Online_Server.Game.Features.Kisses.KissType KissesType
+        public KissType KissesType
         {
             get
             {
-                return (Conquer_Online_Server.Game.Features.Kisses.KissType)BitConverter.ToUInt32(Buffer2, 0x18);
+                return (KissType)BitConverter.ToUInt32(Buffer2, 0x18);
             }
         }
 
@@ -154,11 +156,11 @@
             }
         }
 
-        public Conquer_Online_Server.Game.Features.Kisses.KissType SendKissesType
+        public KissType SendKissesType
         {
             get
             {
-                return (Conquer_Online_Server.Game.Features.Kisses.KissType)BitConverter.ToUInt32(Buffer2, 0x34);
+                return (KissType)BitConverter.ToUInt32(Buffer2, 0x34);
             }
             set
             {

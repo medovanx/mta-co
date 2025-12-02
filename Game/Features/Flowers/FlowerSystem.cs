@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Conquer_Online_Server.Network.GamePackets;
-using Conquer_Online_Server.Interfaces;
+using MTA.Network.GamePackets;
+using MTA.Interfaces;
+using MTA.Client;
 
-namespace Conquer_Online_Server.Game.Features.Flowers
+namespace MTA.Game.Features.Flowers
 {
     public class FlowerSystem
     {

@@ -1,8 +1,10 @@
 ﻿using System;
+using MTA.Network;
+using MTA.Interfaces;
 
-namespace Conquer_Online_Server.Network.GamePackets
+namespace MTA.Network.GamePackets
 {
-    public class ClanAction : Writer, Interfaces.IPacket
+    public class ClanAction : Writer, IPacket
     {
         byte[] Buffer;
 

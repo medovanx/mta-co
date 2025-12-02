@@ -1,28 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using MTA.Client;
+using MTA.Game.Features.Kisses;
 
-namespace Conquer_Online_Server.Database
+namespace MTA.Database
 {
 
     public class KissSystemTable
     {
         public static uint[] TopLetters = new uint[2];
         public static uint[] TopWine = new uint[2];
-        public static List<Game.Features.Kisses.Kisses> kisstoday = new List<Game.Features.Kisses.Kisses>();
+        public static List<Kisses> kisstoday = new List<Kisses>();
         public static uint[] TopKisses = new uint[2];
         public static uint[] TopJades = new uint[2];
         private static bool Exists(uint id)
         {
             try
             {
-                using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("kisses").Where("id", id))
-                using (var reader = new MySqlReader(cmd))
+                using var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("kisses").Where("id", id);
+                using var reader = new MySqlReader(cmd);
+                if (reader.Read())
                 {
-                    if (reader.Read())
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
             catch
@@ -34,7 +34,7 @@ namespace Conquer_Online_Server.Database
 
         public static void Kisses(Client.GameState Client)
         {
-            Client.Entity.Kisses = new Conquer_Online_Server.Game.Features.Kisses.Kisses();
+            Client.Entity.Kisses = new Kisses();
             if (!Exists(Client.Entity.UID))
             {
                 Insert(Client);

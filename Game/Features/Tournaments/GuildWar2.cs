@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Conquer_Online_Server.Network.GamePackets;
-using Conquer_Online_Server.Game.ConquerStructures.Society;
+using MTA.Network.GamePackets;
+using MTA.Game.ConquerStructures.Society;
 
-namespace Conquer_Online_Server.Game
+namespace MTA.Game
 {
     public class GuildWar2
     {
@@ -221,7 +220,7 @@ namespace Conquer_Online_Server.Game
 
         private static void UpdatePole(SobNpcSpawn pole)
         {
-            new Database.MySqlCommand(Conquer_Online_Server.Database.MySqlCommandType.UPDATE)
+            new MTA.Database.MySqlCommand(MTA.Database.MySqlCommandType.UPDATE)
             .Update("sobnpcs").Set("name", pole.Name).Set("life", Pole.Hitpoints).Where("id", pole.UID).Execute();
         }
     }

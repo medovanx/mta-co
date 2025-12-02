@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Text;
+using MTA.Network;
+using MTA.Client;
 
-namespace Conquer_Online_Server.Network.GamePackets
+namespace MTA.Network.GamePackets
 {
     public class Clan : Writer
     {

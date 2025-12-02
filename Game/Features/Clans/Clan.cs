@@ -129,6 +129,18 @@ namespace MTA
             set { mAllyRequest = value; }
         }
 
+        public UInt32 Donation
+        {
+            get { return Fund; }
+            set { Fund = value; }
+        }
+
+        public string Leader
+        {
+            get { return LeaderName; }
+            set { LeaderName = value; }
+        }
+
         public void Build(GameState c, Types type)
         {
             this.Type = type;
