@@ -17,9 +17,9 @@ namespace MTA.Game.Npcs.Handlers
                 case 0:
                     dialog.Text(
                         "Good day! Have you ever wondered what a Wrangler is? Well, please allow "
-                        + "me to introduce this sub-class to you. Wrangler are masters of the "
-                        + "MaxHp energies and can increase! "
-                        + "Isn`t that wonderful? Would you like to join us? After you join "
+                        + "me to introduce this sub-class to you. Wranglers are masters of the "
+                        + "Max HP energies and can increase their maximum health! "
+                        + "Isn't that wonderful? Would you like to join us? After you join "
                         + "this sub-class, you can level it up and get promoted to increase your power!");
                     if (!client.Entity.SubClasses.Classes.ContainsKey((byte)ClassID.Wrangler))
                         dialog.Option("Yes, I`d like to join it.", 1);
@@ -32,9 +32,9 @@ namespace MTA.Game.Npcs.Handlers
                 case 1:
                     dialog.Text(
                         "I`m glad that you are willing to be one of us. I`m sure you will make a great "
-                        + "Wrangler. Still, there are a few requiriments you need to meet. Though players "
+                        + "Wrangler. Still, there are a few requirements you need to meet. Though players "
                         + "of all classes can join us, we only accept players who are over level 70, and it "
-                        + "takes 40 Saddle`s to pay the tuition fee. After joining the Wrangler sub-class, "
+                        + "takes 40 Saddles to pay the tuition fee. After joining the Wrangler sub-class, "
                         + "click open your character sheet and you`ll find the sub-class button on the "
                         + "left-hand corner. You may level up your sub-class on the sub-class button sheet. You "
                         + "need to meet a certain sub-class level to get promoted to higher sub-class "
@@ -48,8 +48,8 @@ namespace MTA.Game.Npcs.Handlers
                     if (!client.Entity.SubClasses.Classes.ContainsKey((byte)ClassID.Wrangler))
                     {
                         dialog.Text(
-                            "You are not a Wrangler yet and can`t get promoted. Do you want to join the "
-                            + "Warlock sub-class now?");
+                            "You are not a Wrangler yet and can't get promoted. Do you want to join the "
+                            + "Wrangler sub-class now?");
                         dialog.Option("Yes, I`d like to join.", 1);
                         dialog.Option("Oh. Not now.", 255);
                         dialog.Avatar(100);
@@ -58,10 +58,10 @@ namespace MTA.Game.Npcs.Handlers
                     else
                     {
                         dialog.Text(
-                           "To promote to Phase " + (client.Entity.SubClasses.Classes[(byte)ClassID.Wrangler].Phase + 1).ToString() + " you must meet the requirements. have you meet "
-                           + "them into the sub-class sheet?");
+                           "To promote to Phase " + (client.Entity.SubClasses.Classes[(byte)ClassID.Wrangler].Phase + 1).ToString() + " you must meet the requirements. Have you met "
+                           + "them in the sub-class sheet?");
                         dialog.Option("Positive.", 200);
-                        dialog.Option("Oh. not yet.", 255);
+                        dialog.Option("Oh. Not yet.", 255);
                         dialog.Avatar(100);
                         dialog.Send();
                     }
@@ -107,7 +107,7 @@ namespace MTA.Game.Npcs.Handlers
                     else
                     {
                         dialog.Text(
-                            "I`m sorry, you need to give me 40 Saddle's and "
+                            "I'm sorry, you need to give me 40 Saddles and "
                             + "reach level 70 to join us.");
                         dialog.Option("Oh.", 255);
                         dialog.Avatar(100);

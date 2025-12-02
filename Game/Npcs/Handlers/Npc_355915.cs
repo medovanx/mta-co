@@ -33,7 +33,7 @@ namespace MTA.Game.Npcs.Handlers
                 case 1:
                     dialog.Text(
                         "I`m glad that you are willing to be one of us. I`m sure you will be a fantastic "
-                        + "Sage. Still, there are a few requiriments you need to meet. Though players "
+                        + "Sage. Still, there are a few requirements you need to meet. Though players "
                         + "of all classes can join us, we only accept players who are over level 70, and it "
                         + "takes 20 Lucky Amulets to pay the tuition fee. After joining the Sage sub-class, "
                         + "click open your character sheet and you`ll find the sub-class button on the "
@@ -59,10 +59,10 @@ namespace MTA.Game.Npcs.Handlers
                     else
                     {
                         dialog.Text(
-                           "To promote to Phase " + (client.Entity.SubClasses.Classes[(byte)ClassID.Sage].Phase + 1).ToString() + " you must meet the requirements. have you meet "
-                           + "them into the sub-class sheet?");
+                           "To promote to Phase " + (client.Entity.SubClasses.Classes[(byte)ClassID.Sage].Phase + 1).ToString() + " you must meet the requirements. Have you met "
+                           + "them in the sub-class sheet?");
                         dialog.Option("Positive.", 200);
-                        dialog.Option("Oh. not yet.", 255);
+                        dialog.Option("Oh. Not yet.", 255);
                         dialog.Avatar(100);
                         dialog.Send();
                     }

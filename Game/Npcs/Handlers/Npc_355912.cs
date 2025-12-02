@@ -32,7 +32,7 @@ namespace MTA.Game.Npcs.Handlers
                 case 1:
                     dialog.Text(
                         "I`m glad that you desire to become one of us. I`m sure you`ll make a capable  "
-                        + "Apothecary. Still, there are a few requiriments you need to meet. Though "
+                        + "Apothecary. Still, there are a few requirements you need to meet. Though "
                         + "players of all classes can join us, we only accept players who are over level "
                         + "70, and it takes 10 Meteor Tears to pay the tuition fee. After joining the "
                         + "Apothecary sub-class, click open your character sheet and you`ll find the "
@@ -48,7 +48,7 @@ namespace MTA.Game.Npcs.Handlers
                     if (!client.Entity.SubClasses.Classes.ContainsKey((byte)ClassID.Apothecary))
                     {
                         dialog.Text(
-                            "You are not a Apothecary yet and can`t get promoted. Do you want to join the "
+                            "You are not an Apothecary yet and can`t get promoted. Do you want to join the "
                             + "Apothecary sub-class now?");
                         dialog.Option("Yes, I`d like to join.", 1);
                         dialog.Option("Oh. Not now.", 255);
@@ -58,10 +58,10 @@ namespace MTA.Game.Npcs.Handlers
                     else
                     {
                         dialog.Text(
-                           "To promote to Phase " + (client.Entity.SubClasses.Classes[(byte)ClassID.Apothecary].Phase + 1).ToString() + " you must meet the requirements. have you meet "
-                           + "them into the sub-class sheet?");
+                           "To promote to Phase " + (client.Entity.SubClasses.Classes[(byte)ClassID.Apothecary].Phase + 1).ToString() + " you must meet the requirements. Have you met "
+                           + "them in the sub-class sheet?");
                         dialog.Option("Positive.", 200);
-                        dialog.Option("Oh. not yet.", 255);
+                        dialog.Option("Oh. Not yet.", 255);
                         dialog.Avatar(100);
                         dialog.Send();
                     }

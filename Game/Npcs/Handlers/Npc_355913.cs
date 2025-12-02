@@ -16,7 +16,7 @@ namespace MTA.Game.Npcs.Handlers
             {
                 case 0:
                     dialog.Text(
-                        "Hello there! Please allow me to introduce to you the sub-class of Performers to you. "
+                        "Hello there! Please allow me to introduce to you the sub-class of Performers. "
                         + "Performers are gifted in the harmonizing of song and swordplay into "
                         + "beautiful, unique dances. These dances will surely make you the center of "
                         + "people`s attention! Would you like to join us? After you join this sub-class, you "
@@ -33,7 +33,7 @@ namespace MTA.Game.Npcs.Handlers
                 case 1:
                     dialog.Text(
                         "I`m glad that you are willing to be one of us. I`m sure your dances will be very "
-                        + "charming. Still, there are a few requiriments you need to meet. Though "
+                        + "charming. Still, there are a few requirements you need to meet. Though "
                         + "players of all classes can join us, we only accept players who are over level "
                         + "70, and it takes 15 Orchids to pay the tuition fee. After joining the Performer "
                         + "sub-class, click open your character sheet and you`ll find the "
@@ -59,10 +59,10 @@ namespace MTA.Game.Npcs.Handlers
                     else
                     {
                         dialog.Text(
-                           "To promote to Phase " + (client.Entity.SubClasses.Classes[(byte)ClassID.Performer].Phase + 1).ToString() + " you must meet the requirements. have you meet "
-                           + "them into the sub-class sheet?");
+                           "To promote to Phase " + (client.Entity.SubClasses.Classes[(byte)ClassID.Performer].Phase + 1).ToString() + " you must meet the requirements. Have you met "
+                           + "them in the sub-class sheet?");
                         dialog.Option("Positive.", 200);
-                        dialog.Option("Oh. not yet.", 255);
+                        dialog.Option("Oh. Not yet.", 255);
                         dialog.Avatar(100);
                         dialog.Send();
                     }
@@ -117,13 +117,13 @@ namespace MTA.Game.Npcs.Handlers
                     break;
                 case 11:
                     {
-                        dialog.Text("i can help you to learn all UniqueDance you should have Req SubClass and ");
-                        dialog.Text("5,000 cps to Learn the dance what you wana Choose to learn? ");
-                        dialog.Option("BattleDance[P1].", 12);
-                        dialog.Option("Triumph[P3].", 13);
-                        dialog.Option("StepStomp[P5].", 14);
-                        dialog.Option("MoonLight[P7].", 15);
-                        dialog.Option("SnowWind[P9].", 16);
+                        dialog.Text("I can help you learn all Unique Dances. You should have the required Sub-Class and "
+                            + "5,000 CPs to learn the dance. What would you like to choose to learn? ");
+                        dialog.Option("Battle Dance [P1].", 12);
+                        dialog.Option("Triumph [P3].", 13);
+                        dialog.Option("Step Stomp [P5].", 14);
+                        dialog.Option("Moon Light [P7].", 15);
+                        dialog.Option("Snow Wind [P9].", 16);
                         dialog.Option("Oh.", 255);
                         dialog.Avatar(100);
                         dialog.Send();
@@ -137,9 +137,17 @@ namespace MTA.Game.Npcs.Handlers
                             client.AddSpell(new Spell(true) { ID = 1415 });
                             client.Entity.ConquerPoints -= 5000;
                             dialog.Text(
-                                "Congratulations! You`ve learned the BattleDance . Hope you use this power "
+                                "Congratulations! You've learned the Battle Dance. Hope you use this power "
                                 + "for the good of us all.");
-                            dialog.Option("Thanks", 255);
+                            dialog.Option("Thanks.", 255);
+                            dialog.Avatar(100);
+                            dialog.Send();
+                        }
+                        else
+                        {
+                            dialog.Text(
+                                "I'm sorry, you don't have enough CPs or the required Phase.");
+                            dialog.Option("Oh.", 255);
                             dialog.Avatar(100);
                             dialog.Send();
                         }
@@ -147,7 +155,7 @@ namespace MTA.Game.Npcs.Handlers
                     else
                     {
                         dialog.Text(
-                            "I`m sorry, you dont have Enought cps or the Req Phase.");
+                            "I'm sorry, you are not a Performer yet.");
                         dialog.Option("Oh.", 255);
                         dialog.Avatar(100);
                         dialog.Send();
@@ -161,9 +169,17 @@ namespace MTA.Game.Npcs.Handlers
                             client.AddSpell(new Spell(true) { ID = 1416 });
                             client.Entity.ConquerPoints -= 5000;
                             dialog.Text(
-                                "Congratulations! You`ve learned the Triumph. Hope you use this power "
+                                "Congratulations! You've learned the Triumph. Hope you use this power "
                                 + "for the good of us all.");
-                            dialog.Option("Thanks", 255);
+                            dialog.Option("Thanks.", 255);
+                            dialog.Avatar(100);
+                            dialog.Send();
+                        }
+                        else
+                        {
+                            dialog.Text(
+                                "I'm sorry, you don't have enough CPs or the required Phase.");
+                            dialog.Option("Oh.", 255);
                             dialog.Avatar(100);
                             dialog.Send();
                         }
@@ -171,7 +187,7 @@ namespace MTA.Game.Npcs.Handlers
                     else
                     {
                         dialog.Text(
-                            "I`m sorry, you dont have Enought cps or the Req Phase.");
+                            "I'm sorry, you are not a Performer yet.");
                         dialog.Option("Oh.", 255);
                         dialog.Avatar(100);
                         dialog.Send();
@@ -185,9 +201,17 @@ namespace MTA.Game.Npcs.Handlers
                             client.AddSpell(new Spell(true) { ID = 1417 });
                             client.Entity.ConquerPoints -= 5000;
                             dialog.Text(
-                                "Congratulations! You`ve learned the StepStomp. Hope you use this power "
+                                "Congratulations! You've learned the Step Stomp. Hope you use this power "
                                 + "for the good of us all.");
-                            dialog.Option("Thanks", 255);
+                            dialog.Option("Thanks.", 255);
+                            dialog.Avatar(100);
+                            dialog.Send();
+                        }
+                        else
+                        {
+                            dialog.Text(
+                                "I'm sorry, you don't have enough CPs or the required Phase.");
+                            dialog.Option("Oh.", 255);
                             dialog.Avatar(100);
                             dialog.Send();
                         }
@@ -195,7 +219,7 @@ namespace MTA.Game.Npcs.Handlers
                     else
                     {
                         dialog.Text(
-                            "I`m sorry, you dont have Enought cps or the Req Phase.");
+                            "I'm sorry, you are not a Performer yet.");
                         dialog.Option("Oh.", 255);
                         dialog.Avatar(100);
                         dialog.Send();
@@ -209,9 +233,17 @@ namespace MTA.Game.Npcs.Handlers
                             client.AddSpell(new Spell(true) { ID = 1418 });
                             client.Entity.ConquerPoints -= 5000;
                             dialog.Text(
-                                "Congratulations! You`ve learned the MoonLight. Hope you use this power "
+                                "Congratulations! You've learned the Moon Light. Hope you use this power "
                                 + "for the good of us all.");
-                            dialog.Option("Thanks", 255);
+                            dialog.Option("Thanks.", 255);
+                            dialog.Avatar(100);
+                            dialog.Send();
+                        }
+                        else
+                        {
+                            dialog.Text(
+                                "I'm sorry, you don't have enough CPs or the required Phase.");
+                            dialog.Option("Oh.", 255);
                             dialog.Avatar(100);
                             dialog.Send();
                         }
@@ -219,7 +251,7 @@ namespace MTA.Game.Npcs.Handlers
                     else
                     {
                         dialog.Text(
-                            "I`m sorry, you dont have Enought cps or the Req Phase.");
+                            "I'm sorry, you are not a Performer yet.");
                         dialog.Option("Oh.", 255);
                         dialog.Avatar(100);
                         dialog.Send();
@@ -233,9 +265,17 @@ namespace MTA.Game.Npcs.Handlers
                             client.AddSpell(new Spell(true) { ID = 1419 });
                             client.Entity.ConquerPoints -= 5000;
                             dialog.Text(
-                                "Congratulations! You`ve learned the SnowWind. Hope you use this power "
+                                "Congratulations! You've learned the Snow Wind. Hope you use this power "
                                 + "for the good of us all.");
-                            dialog.Option("Thanks", 255);
+                            dialog.Option("Thanks.", 255);
+                            dialog.Avatar(100);
+                            dialog.Send();
+                        }
+                        else
+                        {
+                            dialog.Text(
+                                "I'm sorry, you don't have enough CPs or the required Phase.");
+                            dialog.Option("Oh.", 255);
                             dialog.Avatar(100);
                             dialog.Send();
                         }
@@ -243,7 +283,7 @@ namespace MTA.Game.Npcs.Handlers
                     else
                     {
                         dialog.Text(
-                            "I`m sorry, you dont have Enought cps or the Req Phase.");
+                            "I'm sorry, you are not a Performer yet.");
                         dialog.Option("Oh.", 255);
                         dialog.Avatar(100);
                         dialog.Send();

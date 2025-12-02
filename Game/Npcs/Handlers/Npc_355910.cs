@@ -19,7 +19,7 @@ namespace MTA.Game.Npcs.Handlers
                         "Hello there! Please allow me to introduce to you the sub-class of the Chi "
                         + "Master. The Chi Master is a potent combatant so versed in counter attacks, "
                         + "that they have a chance of preventing their enemy from landing Critical "
-                        + "Strikes! Would you like to join us? After you join this sub-class you can level"
+                        + "Strikes! Would you like to join us? After you join this sub-class, you can level "
                         + "it up and get promoted to increase your immunity to critical strikes.");
                     if (!client.Entity.SubClasses.Classes.ContainsKey((byte)ClassID.ChiMaster))
                         dialog.Option("Yes, I`d like to join it.", 1);
@@ -33,7 +33,7 @@ namespace MTA.Game.Npcs.Handlers
                 case 1:
                     dialog.Text(
                         "I`m glad that you are willing to be one of us. I`m sure you`ll make a capable "
-                        + "Chi Master. Still, there are a few requiriments you need to meet. Though "
+                        + "Chi Master. Still, there are a few requirements you need to meet. Though "
                         + "players of all classes can join us, we only accept players who are over level "
                         + "70, and it takes 1 Yin-Yang Fruit to pay the tuition fee. You can pay 10,000 "
                         + "Horse Racing points to the Horse Race Manager to buy one. After joining the "
@@ -60,10 +60,10 @@ namespace MTA.Game.Npcs.Handlers
                     else
                     {
                         dialog.Text(
-                           "To promote to Phase " + client.Entity.SubClasses.Classes[(byte)ClassID.ChiMaster].Phase + 1 + " you must meet the requirements. have you meet "
-                           + "them into the sub-class sheet?");
+                           "To promote to Phase " + (client.Entity.SubClasses.Classes[(byte)ClassID.ChiMaster].Phase + 1).ToString() + " you must meet the requirements. Have you met "
+                           + "them in the sub-class sheet?");
                         dialog.Option("Positive.", 200);
-                        dialog.Option("Oh. not yet.", 255);
+                        dialog.Option("Oh. Not yet.", 255);
                         dialog.Avatar(100);
                         dialog.Send();
                     }
@@ -108,7 +108,7 @@ namespace MTA.Game.Npcs.Handlers
                         client.Entity.SubClasses.SendLearn(ClassID.ChiMaster, 1, client);
                         client.Entity.SubClasses.SendPromoted(ClassID.ChiMaster, 1, client);
                         dialog.Text(
-                            "Congratulations! You`ve learned the Chi Masters way. Hope you use this power "
+                            "Congratulations! You`ve learned the Chi Master's way. Hope you use this power "
                             + "for the good of us all.");
                         dialog.Option("Oh.", 255);
                         dialog.Avatar(100);
