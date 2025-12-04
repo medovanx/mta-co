@@ -399,6 +399,8 @@ namespace MTA
                 Game.Screen.CreateTimerFactories();
                 PerfectionTable.Load();
                 Network.Cryptography.AuthCryptography.PrepareAuthCryptography();
+                Console.WriteLine("Initializing NPC handlers...");
+                Game.Npcs.NpcHandlerRegistry.Initialize();
                 if (!ServerTransfer)
                     World.CreateTournaments();
                 World.Init(ServerTransfer);

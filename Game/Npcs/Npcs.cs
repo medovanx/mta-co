@@ -14,6 +14,7 @@ using System.Drawing;
 using MTA.Game;
 using System.Threading.Tasks;
 using MTA.Game.Features;
+using MTA.Game.Npcs;
 
 namespace MTA
 {
@@ -14293,9 +14294,16 @@ namespace MTA
                     }
                     #endregion
             }
+
+            // Try automatic NPC handler registry first
+            if (Game.Npcs.NpcHandlerRegistry.TryHandle(client.ActiveNpc, client, npcRequest, dialog))
+            {
+                return;
+            }
+
+            // Fall back to manual switch for legacy NPCs
             switch (client.ActiveNpc)
             {
-
                 #region CPCastle
                 case 50010:
                     {
