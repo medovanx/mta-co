@@ -23,7 +23,6 @@ namespace MTA.Client.Commands
                 "addnpc" => HandleAddNpcCommand(client, data, mess),
                 _ => false,
             };
-
         }
 
         private static bool HandleNpcJumpCommand(GameState client, string[] data, string mess)

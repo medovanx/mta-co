@@ -21553,93 +21553,12 @@ namespace MTA.Network
                                     client.Send(test);
                                     break;
                                 }
-                            #region NPc control
-                            case "addnpc":
-                                {
-                                    INpc npc = new Network.GamePackets.NpcSpawn();
-                                    npc.UID = uint.Parse(Data[1]);
-                                    npc.Mesh = ushort.Parse(Data[2]);
-                                    npc.Type = Enums.NpcType.Talker;
-                                    npc.X = client.Entity.X;
-                                    npc.Y = client.Entity.Y;
-                                    npc.MapID = client.Map.ID;
-                                    ushort X, Y = 0;
-                                    X = npc.X;
-                                    Y = npc.Y;
-                                    client.Map.AddNpc(npc);
-                                    client.Screen.FullWipe();
-                                    client.Screen.Reload(null);
-                                    using (var cmd = new Database.MySqlCommand(Database.MySqlCommandType.INSERT))
-                                        cmd.Insert("npcs").Insert("id", npc.UID)
-                                            .Insert("name", npc.UID).Insert("type", (int)npc.Type)
-                                            .Insert("lookface", npc.Mesh).Insert("mapid", (int)npc.MapID)
-                                            .Insert("cellx", X).Insert("celly", Y)
-                                            .Execute();
-                                    break;
-                                }
-                            case "removenpc":
-                                {
-                                    try
-                                    {
-                                        foreach (INpc npc in client.Map.Npcs.Values)
-                                        {
-                                            if (npc.UID == uint.Parse(Data[1]))
-                                            {
-                                                client.Map.RemoveNpc(npc);
-                                                client.Map.Npcs.Remove(npc.UID);
-                                                using (var cmd = new Database.MySqlCommand(Database.MySqlCommandType.DELETE))
-                                                    cmd.Delete("npcs", "id", npc.UID).Execute();
-                                            }
-                                        }
-                                        client.Screen.Reload(null);
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        Program.SaveException(e);
-                                    }
-                                    break;
-                                }
-                            case "editnpc":
-                                {
-                                    var UID = uint.Parse(Data[1]);
-                                    INpc Npc = null;
-                                    foreach (var map in Kernel.Maps.Values)
-                                    {
-                                        if (map.Npcs.ContainsKey(UID))
-                                        {
-                                            Npc = map.Npcs[UID];
-                                            map.RemoveNpc(Npc);
-                                        }
-                                    }
-                                    Npc.MapID = client.Entity.MapID;
-                                    Npc.X = client.Entity.X;
-                                    Npc.Y = client.Entity.Y;
-                                    ushort X, Y = 0;
-                                    X = Npc.X;
-                                    Y = Npc.Y;
-                                    client.Map.AddNpc(Npc);
-                                    client.Screen.FullWipe();
-                                    client.Screen.Reload(null);
-
-                                    using (var cmd = new MTA.Database.MySqlCommand(MTA.Database.MySqlCommandType.UPDATE))
-                                        cmd.Update("npcs").Set("mapid", Npc.MapID).Set("cellx", X).Set("celly", Y)
-                                            .Where("id", Npc.UID).Execute();
-
-                                    break;
-                                }
-                            #endregion NPc control
-
                             case "portal":
                                 {
                                     foreach (var p in client.Map.portals)
                                     {
                                         Console.WriteLine(string.Format("{0} : {1}", p.XCord.ToString(), p.YCord.ToString()));
                                     }
-                                    break;
-                                }
-                            case "test47":
-                                {
-                                    client.Entity.Update(byte.Parse(Data[1]), byte.Parse(Data[2]), false);
                                     break;
                                 }
                             #region Franko Chi
