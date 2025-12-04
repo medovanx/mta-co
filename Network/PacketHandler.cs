@@ -1433,14 +1433,11 @@ namespace MTA.Network
                             {
                                 client.JustCreated = true;
                                 client.Send(new Message(Message, "ALLUSERS", System.Drawing.Color.Orange, GamePackets.Message.PopUP));
-                                //client.Send(new Message("Your character have been createed. Try to relogin.", "ALLUSERS", System.Drawing.Color.Orange, GamePackets.Message.PopUP));
-                                //client.Disconnect(false);
                             }
                             else
+                            {
                                 client.Send(new Message(Message, "ALLUSERS", System.Drawing.Color.Orange, GamePackets.Message.PopUP));
-
-                            if (Created)
-                                Console.WriteLine(client.Account.Username + " Sucesfully Created a new Character " + EC.Name);
+                            }
                         }
                         break;
                     }
@@ -23183,65 +23180,70 @@ p =>
                                 }
                             #region all poles
                             case "phopole":
-                               {
-                                   switch (Data[1])
-                                   {
-                                       case "on": PolePhoenix.Start();
-                                           foreach (var cclient in Program.Values)
-                                               cclient.MessageBox("PolePhoenix has begun! Would you like to join?",
-                                                      p => { p.Entity.Teleport(1002, 371, 331); }, null); break;
-                                       case "off": PolePhoenix.End(); break;
-                                   }
-                                   break;
-                               }
+                                {
+                                    switch (Data[1])
+                                    {
+                                        case "on":
+                                            PolePhoenix.Start();
+                                            foreach (var cclient in Program.Values)
+                                                cclient.MessageBox("PolePhoenix has begun! Would you like to join?",
+                                                       p => { p.Entity.Teleport(1002, 371, 331); }, null); break;
+                                        case "off": PolePhoenix.End(); break;
+                                    }
+                                    break;
+                                }
                             case "decpole":
-                               {
-                                   switch (Data[1])
-                                   {
-                                       case "on": DecPole.Start();
-                                           foreach (var cclient in Program.Values)
-                                               cclient.MessageBox("DecPole has begun! Would you like to join?",
-                                                      p => { p.Entity.Teleport(1002, 352, 252); }, null); break;
-                                       case "off": DecPole.End(); break;
-                                   }
-                                   break;
-                               }
+                                {
+                                    switch (Data[1])
+                                    {
+                                        case "on":
+                                            DecPole.Start();
+                                            foreach (var cclient in Program.Values)
+                                                cclient.MessageBox("DecPole has begun! Would you like to join?",
+                                                       p => { p.Entity.Teleport(1002, 352, 252); }, null); break;
+                                        case "off": DecPole.End(); break;
+                                    }
+                                    break;
+                                }
                             case "apepole":
-                               {
-                                   switch (Data[1])
-                                   {
-                                       case "on": ApePole.Start();
-                                           foreach (var cclient in Program.Values)
-                                               cclient.MessageBox("ApePole has begun! Would you like to join?",
-                                                      p => { p.Entity.Teleport(1002, 348, 252); }, null); break;
-                                       case "off": ApePole.End(); break;
-                                   }
-                                   break;
-                               }
+                                {
+                                    switch (Data[1])
+                                    {
+                                        case "on":
+                                            ApePole.Start();
+                                            foreach (var cclient in Program.Values)
+                                                cclient.MessageBox("ApePole has begun! Would you like to join?",
+                                                       p => { p.Entity.Teleport(1002, 348, 252); }, null); break;
+                                        case "off": ApePole.End(); break;
+                                    }
+                                    break;
+                                }
                             case "twipole":
-                               {
-                                   switch (Data[1])
-                                   {
-                                       case "on": PoleTwin.Start();
-                                           foreach (var cclient in Program.Values)
-                                               cclient.MessageBox("PoleTwin has begun! Would you like to join?",
-                                                     p => { p.Entity.Teleport(1002, 257, 242); }, null); break;
-                                       case "off": PoleTwin.End(); break;
-                                   }
-                                   break;
-                               }
+                                {
+                                    switch (Data[1])
+                                    {
+                                        case "on":
+                                            PoleTwin.Start();
+                                            foreach (var cclient in Program.Values)
+                                                cclient.MessageBox("PoleTwin has begun! Would you like to join?",
+                                                      p => { p.Entity.Teleport(1002, 257, 242); }, null); break;
+                                        case "off": PoleTwin.End(); break;
+                                    }
+                                    break;
+                                }
                             case "birpole":
-                               {
-                                   switch (Data[1])
-                                   {
-                                       case "on": PoleIslanD.Start();
-                                           foreach (var cclient in Program.Values)
-                                               cclient.MessageBox("PoleIslanD has begun! Would you like to join?",
-                                                      p => { p.Entity.Teleport(1002, 368, 331); }, null); break;
-                                       case "off": PoleIslanD.End(); break;
-                                   }
-                                   break;
-                               }
+                                {
+                                    switch (Data[1])
+                                    {
+                                        case "on":
+                                            PoleIslanD.Start();
+                                            foreach (var cclient in Program.Values)
+                                                cclient.MessageBox("PoleIslanD has begun! Would you like to join?",
+                                                       p => { p.Entity.Teleport(1002, 368, 331); }, null); break;
+                                        case "off": PoleIslanD.End(); break;
+                                    }
+                                    break;
+                                }
                             #endregion
                             case "banip":
                                 {
@@ -25133,7 +25135,7 @@ p =>
                         Message = "You are banned for " + client["banhours"] + " hours [until " + banStamp.ToString("HH:mm MM/dd/yyyy") + "]. Reason: " + client["banreason"];
                     }
                     else if (Account.State == Database.AccountTable.AccountState.NotActivated)
-                        Message = "You cannot login until your account is activated.";
+                        Message = "Your account is currently deactivated, please contact the GM.";
                     Kernel.AwaitingPool.Remove(appendConnect.Identifier);
                     if (Message == string.Empty) // ANSWER_OK
                     {

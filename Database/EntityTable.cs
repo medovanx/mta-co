@@ -755,15 +755,26 @@ namespace MTA.Database
         {
             foreach (char c in Name)
             {
-                if (Kernel.InvalidCharacters.Contains(c) || (byte)c < 48)
+                // Allow: letters (a-z, A-Z), numbers (0-9), and symbols: !#$%^&*()_
+                bool isLetter = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+                bool isDigit = c >= '0' && c <= '9';
+                bool isAllowedSymbol = c == '!' || c == '$' || c == '%' || c == '^' ||
+                                       c == '&' || c == '*' || c == '(' || c == ')' || c == '_';
+
+                if (!isLetter && !isDigit && !isAllowedSymbol)
                 {
-                    return true;
+                    return true; // Invalid character found
                 }
             }
 
             return false;
         }
 
+        /// <summary>
+        /// Creates a new entity in the database for server-side operations (e.g., character transfers).
+        /// Automatically handles duplicate names by appending "+ Z" suffix.
+        /// Used internally by TransferServer for migrating characters between servers.
+        /// </summary>
         public static bool CreateEntity(ref Client.GameState client)
         {
             using (var rdr = new MySqlReader(new MySqlCommand(MySqlCommandType.SELECT).Select("entities")
@@ -777,32 +788,35 @@ namespace MTA.Database
 
             while (true)
             {
-                using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("entities")
-                           .Where("uid", client.Entity.UID))
-                using (var reader = cmd.CreateReader())
-                {
-                    if (reader.Read())
-                        client.Entity.UID = Program.EntityUID.Next;
-                    else
-                        break;
-                }
+                using var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("entities")
+                           .Where("uid", client.Entity.UID);
+                using var reader = cmd.CreateReader();
+                if (reader.Read())
+                    client.Entity.UID = Program.EntityUID.Next;
+                else
+                    break;
             }
 
             while (true)
             {
                 try
                 {
-                    using (var cmd = new MySqlCommand(MySqlCommandType.INSERT))
-                        cmd.Insert("entities").Insert("Name", client.Entity.Name)
-                            .Insert("Owner", client.Account.Username).Insert("Class", client.Entity.Class)
-                            .Insert("UID", client.Entity.UID)
-                            .Insert("Hitpoints", client.Entity.Hitpoints).Insert("Mana", client.Entity.Mana)
-                            .Insert("Body", client.Entity.Body)
-                            .Insert("Face", client.Entity.Face).Insert("HairStyle", client.Entity.HairStyle)
-                            .Insert("Strength", client.Entity.Strength)
-                            .Insert("WarehousePW", "").Insert("Agility", client.Entity.Agility)
-                            .Insert("Vitality", client.Entity.Vitality).Insert("Spirit", client.Entity.Spirit)
-                            .Execute();
+                    using var cmd = new MySqlCommand(MySqlCommandType.INSERT);
+                    cmd.Insert("entities")
+                        .Insert("Name", client.Entity.Name)
+                        .Insert("Owner", client.Account.Username)
+                        .Insert("Class", client.Entity.Class)
+                        .Insert("UID", client.Entity.UID)
+                        .Insert("Hitpoints", client.Entity.Hitpoints)
+                        .Insert("Mana", client.Entity.Mana)
+                        .Insert("Body", client.Entity.Body)
+                        .Insert("Face", client.Entity.Face)
+                        .Insert("HairStyle", client.Entity.HairStyle)
+                        .Insert("Strength", client.Entity.Strength)
+                        .Insert("Agility", client.Entity.Agility)
+                        .Insert("Vitality", client.Entity.Vitality)
+                        .Insert("Spirit", client.Entity.Spirit)
+                        .Execute();
                     break;
                 }
                 catch
@@ -818,112 +832,15 @@ namespace MTA.Database
             return true;
         }
 
+        /// <summary>
+        /// Creates a new character entity from player character creation request.
+        /// </summary>
         public static bool CreateEntity(Network.GamePackets.EnitityCreate eC, Client.GameState client,
             ref string message)
         {
-            if (eC.Name.Length > 16)
-                eC.Name = eC.Name.Substring(0, 16);
-            if (eC.Name == "")
-                return false;
-            if (eC.Name == "ChestDemon") // Golden Secret
-            {
-                message = "Invalid characters inside the name.";
-                return false;
-            }
-
-            if (eC.Name == "ChestDemon") // Golden Secret
-            {
-                message = "Invalid characters inside the name.";
-                return false;
-            }
-
-            if (eC.Name == "[gm]") // Golden Secret
-            {
-                message = "Eh ally bt3melo dah ya kosmak.";
-                return false;
-            }
-
-            if (eC.Name == "{gm}") // Golden Secret
-            {
-                message = "Eh ally bt3melo dah ya kosmak.";
-                return false;
-            }
-
-            if (eC.Name == "|gm|") // Golden Secret
-            {
-                message = "Eh ally bt3melo dah ya kosmak.";
-                return false;
-            }
-
-            if (eC.Name == "(gm)") // Golden Secret
-            {
-                message = "Eh ally bt3melo dah ya kosmak.";
-                return false;
-            }
-
-            if (eC.Name == "<gm>") // Golden Secret
-            {
-                message = "Eh ally bt3melo dah ya kosmak.";
-                return false;
-            }
-
-            if (eC.Name == "IgmI") // Golden Secret
-            {
-                message = "Eh ally bt3melo dah ya kosmak.";
-                return false;
-            }
-
-            if (eC.Name == "lgml") // Golden Secret
-            {
-                message = "Eh ally bt3melo dah ya kosmak.";
-                return false;
-            }
-
-            if (eC.Name == "[GM]") // Golden Secret
-            {
-                message = "Eh ally bt3melo dah ya kosmak.";
-                return false;
-            }
-
-            if (eC.Name == "{GM}") // Golden Secret
-            {
-                message = "Eh ally bt3melo dah ya kosmak.";
-                return false;
-            }
-
-            if (eC.Name == "|GM|") // Golden Secret
-            {
-                message = "Eh ally bt3melo dah ya kosmak.";
-                return false;
-            }
-
-            if (eC.Name == "(GM)") // Golden Secret
-            {
-                message = "Eh ally bt3melo dah ya kosmak.";
-                return false;
-            }
-
-            if (eC.Name == "<GM>") // Golden Secret
-            {
-                message = "Eh ally bt3melo dah ya kosmak.";
-                return false;
-            }
-
-            if (eC.Name == "IGMI") // Golden Secret
-            {
-                message = "Eh ally bt3melo dah ya kosmak.";
-                return false;
-            }
-
-            if (eC.Name == "lGMl") // Golden Secret
-            {
-                message = "Eh ally bt3melo dah ya kosmak.";
-                return false;
-            }
-
             if (InvalidCharacters(eC.Name))
             {
-                message = "Invalid characters inside the name.";
+                message = "You can only use letters, numbers and !$%^&*()_ in your name.";
                 return false;
             }
 
@@ -937,8 +854,10 @@ namespace MTA.Database
                 }
             }
 
-            client.Entity = new Game.Entity(Game.EntityFlag.Player, false);
-            client.Entity.Name = eC.Name;
+            client.Entity = new Game.Entity(Game.EntityFlag.Player, false)
+            {
+                Name = eC.Name
+            };
             switch (eC.Class)
             {
                 case 0:
@@ -972,9 +891,6 @@ namespace MTA.Database
                         break;
                     }
                 default:
-                    {
-                        Console.WriteLine("Error Class = " + eC.Class);
-                    }
                     break;
             }
 
@@ -996,40 +912,45 @@ namespace MTA.Database
 
             while (true)
             {
-                using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("entities")
-                           .Where("uid", client.Entity.UID))
-                using (var reader = cmd.CreateReader())
-                {
-                    if (reader.Read())
-                        client.Entity.UID = Program.EntityUID.Next;
-                    else
-                        break;
-                }
+                using var cmd = new MySqlCommand(MySqlCommandType.SELECT)
+                            .Select("entities")
+                           .Where("uid", client.Entity.UID);
+                using var reader = cmd.CreateReader();
+                if (reader.Read())
+                    client.Entity.UID = Program.EntityUID.Next;
+                else
+                    break;
             }
 
-            while (true)
+            try
             {
-                try
-                {
-                    using (var cmd = new MySqlCommand(MySqlCommandType.INSERT))
-                        cmd.Insert("entities").Insert("Name", eC.Name).Insert("Owner", client.Account.Username)
-                            .Insert("Class", eC.Class).Insert("UID", client.Entity.UID)
-                            .Insert("Hitpoints", client.Entity.Hitpoints).Insert("Mana", client.Entity.Mana)
-                            .Insert("Body", client.Entity.Body)
-                            .Insert("Face", client.Entity.Face).Insert("HairStyle", client.Entity.HairStyle)
-                            .Insert("Strength", client.Entity.Strength)
-                            .Insert("WarehousePW", "").Insert("Agility", client.Entity.Agility)
-                            .Insert("Vitality", client.Entity.Vitality).Insert("Spirit", client.Entity.Spirit)
-                            .Insert("Windwalker", client.Entity.Windwalker)
-                            .Execute();
-
-                    message = "ANSWER_OK";
-                    break;
-                }
-                catch
-                {
-                    client.Entity.UID = Program.EntityUID.Next;
-                }
+                using (var cmd = new MySqlCommand(MySqlCommandType.INSERT))
+                    cmd.Insert("entities")
+                        .Insert("Name", eC.Name)
+                        .Insert("Owner", client.Account.Username)
+                        .Insert("ConquerPoints", 1000000)
+                        .Insert("Money", 15000000)
+                        .Insert("BoundCPs", 10000)
+                        .Insert("Class", eC.Class)
+                        .Insert("UID", client.Entity.UID)
+                        .Insert("Hitpoints", client.Entity.Hitpoints)
+                        .Insert("Mana", client.Entity.Mana)
+                        .Insert("Body", client.Entity.Body)
+                        .Insert("Face", client.Entity.Face)
+                        .Insert("HairStyle", client.Entity.HairStyle)
+                        .Insert("Strength", client.Entity.Strength)
+                        .Insert("WarehousePW", 0)
+                        .Insert("Agility", client.Entity.Agility)
+                        .Insert("Vitality", client.Entity.Vitality)
+                        .Insert("Spirit", client.Entity.Spirit)
+                        .Insert("Windwalker", client.Entity.Windwalker)
+                        .Execute();
+                message = "ANSWER_OK";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Character creation failed: {ex.Message}");
+                client.Entity.UID = Program.EntityUID.Next;
             }
 
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("configuration")

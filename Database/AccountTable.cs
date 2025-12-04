@@ -4,13 +4,13 @@ namespace MTA.Database
 {
     public class AccountTable
     {
-        public enum AccountState : byte
+        public enum AccountState : int
         {
-            Player = 10,
-            Transfered = 9,
-            NotActivated = 8,
-            Banned = 7,
-            GM = 6,
+            Player = 1,
+            GM = 2,
+            Transfered = 3,
+            NotActivated = -1,
+            Banned = -2,
             DoesntExist = 0
         }
 
