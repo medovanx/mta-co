@@ -5,6 +5,7 @@ using MTA.Network;
 using MTA.Game.ConquerStructures;
 using MTA.Game;
 using MTA.MaTrix;
+using MTA.Client.Commands.TestCommands;
 
 namespace MTA.Client.Commands
 {
@@ -19,6 +20,13 @@ namespace MTA.Client.Commands
                     string message_ = message.Substring(1).ToLower();
                     string Mess = message.Substring(1);
                     string[] Data = message_.Split(' ');
+
+                    // Try Test commands
+                    if (NpcTestCommands.HandleCommand(client, Data, Mess))
+                        return true;
+
+                    if (GeneralTestCommands.HandleCommand(client, Data, Mess))
+                        return true;
 
                     // Try NPC commands first
                     if (NpcCommands.HandleCommand(client, Data, Mess))
@@ -51,7 +59,7 @@ namespace MTA.Client.Commands
                     // Try War commands
                     if (WarCommands.HandleCommand(client, Data, Mess))
                         return true;
-                        
+
                     if (Data[0] == "mob" || Data[0] == "effect")
                         Data = message.Substring(1).Split(' ');
 
