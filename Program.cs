@@ -307,6 +307,7 @@ namespace MTA
                         Constants.ServerWebsite = r.ReadString("ServerWebsite");
                         Constants.ServerGMPass = r.ReadString("ServerGMPass");
                         PlayerCap = r.ReadInt32("PlayerCap");
+                        MaxOn = r.ReadInt64("MaxOnline");
                         Database.EntityVariableTable.Load(0, out Vars);
                     }
                 }

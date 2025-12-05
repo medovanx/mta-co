@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.0.11222.15 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTA", "O:\Games\Conquer\MTA Conquer\Source v6609\MTA.csproj", "{0B21AD8E-332D-483B-B7CB-6ACA1769DF4D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTA", "O:\Games\Conquer\MTA Conquer\Source v6609 - MTA\MTA.csproj", "{0B21AD8E-332D-483B-B7CB-6ACA1769DF4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
