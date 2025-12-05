@@ -49,7 +49,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                         dialog.Option("Add Study Point +62000", 9);
                         dialog.Option("Get Level 140", 10);
                         dialog.Option("Adjust Attribute Points", 11);
-                        dialog.Option("I'm just passing by.", 255);
+                        dialog.Option("Change Sex", 21);
                         dialog.Send();
                         break;
                     }
@@ -98,7 +98,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                     }
                 case 5:
                     {
-                        dialog.Text("I can give you wardrobe items. Which would you like?");
+                        dialog.Text("Which wardrobe items would you like to receive?");
                         dialog.Option("Wings", 6);
                         dialog.Option("Titles", 7);
                         dialog.Option("Add Title Points +5000", 8);
@@ -155,7 +155,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                     }
                 case 11:
                     {
-                        dialog.Text("I can adjust your attribute points. Choose your class build:");
+                        dialog.Text("I can adjust your attribute points. Choose your preferred class distribution:");
                         dialog.Option("Monk", 12);
                         dialog.Option("Ninja", 13);
                         dialog.Option("Taoist", 14);
@@ -184,7 +184,6 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                     {
                         if (client.Entity.Level >= 140)
                         {
-                            client.Entity.ConquerPoints -= 10000;
                             client.Entity.Strength = 34;
                             client.Entity.Vitality = 100;
                             client.Entity.Agility = 275;
@@ -197,7 +196,6 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                     {
                         if (client.Entity.Level >= 140)
                         {
-                            client.Entity.ConquerPoints -= 10000;
                             client.Entity.Strength = 0;
                             client.Entity.Vitality = 60;
                             client.Entity.Agility = 100;
@@ -210,7 +208,6 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                     {
                         if (client.Entity.Level >= 140)
                         {
-                            client.Entity.ConquerPoints -= 10000;
                             client.Entity.Strength = 100;
                             client.Entity.Vitality = 70;
                             client.Entity.Agility = 250;
@@ -267,6 +264,105 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                         }
                         break;
                     }
+                case 21: // Change Gender
+                    {
+                        // Check if player is a boy (1003 = Small Boy, 1004 = Big Boy)
+                        if (client.Entity.Body == 1003 || client.Entity.Body == 1004)
+                        {
+                            dialog.Text("Please choose the size for your new gender:");
+                            dialog.Option("Big", 24);
+                            dialog.Option("Small", 25);
+                            dialog.Send();
+                        }
+                        // Check if player is a girl (2001 = Small Girl, 2002 = Big Girl)
+                        else if (client.Entity.Body == 2001 || client.Entity.Body == 2002)
+                        {
+                            dialog.Text("Please choose the size for your new gender:");
+                            dialog.Option("Big", 26);
+                            dialog.Option("Small", 27);
+                            dialog.Send();
+                        }
+                        break;
+                    }
+                case 24: // Big Girl (2002)
+                    {
+                        if (client.Entity.Body == 1003 || client.Entity.Body == 1004)
+                        {
+                            client.Equipment.Remove(9);
+                            if (client.Equipment.Objects[9] != null)
+                            {
+                                client.Equipment.Objects[9] = null;
+                            }
+                            ClientEquip equips = new();
+                            equips.DoEquips(client);
+                            client.Send(equips);
+                            client.NobilityInformation.Gender = 0;
+                            client.Entity.Spouse = "None";
+                            client.Entity.Body = 2002;
+                            client.NobilityInformation.Mesh = client.Entity.Mesh;
+                            client.Equipment.UpdateEntityPacket();
+                            Database.EntityTable.SaveEntity(client);
+                        }
+                        break;
+                    }
+                case 25: // Small Girl (2001)
+                    {
+                        if (client.Entity.Body == 1003 || client.Entity.Body == 1004)
+                        {
+                            client.Equipment.Remove(9);
+                            if (client.Equipment.Objects[9] != null)
+                                client.Equipment.Objects[9] = null;
+                        }
+                        ClientEquip equips = new();
+                        equips.DoEquips(client);
+                        client.Send(equips);
+                        client.NobilityInformation.Gender = 0;
+                        client.Entity.Spouse = "None";
+                        client.Entity.Body = 2001;
+                        client.NobilityInformation.Mesh = client.Entity.Mesh;
+                        client.Equipment.UpdateEntityPacket();
+                        Database.EntityTable.SaveEntity(client);
+                    }
+                    break;
+                case 26: // Big Boy (1004)
+                    {
+                        if (client.Entity.Body == 2001 || client.Entity.Body == 2002)
+                        {
+                            client.Equipment.Remove(9);
+                            if (client.Equipment.Objects[9] != null)
+                                client.Equipment.Objects[9] = null;
+                        }
+                        ClientEquip equips = new();
+                        equips.DoEquips(client);
+                        client.Send(equips);
+                        client.NobilityInformation.Gender = 1;
+                        client.Entity.Spouse = "None";
+                        client.Entity.Body = 1004;
+                        client.NobilityInformation.Mesh = client.Entity.Mesh;
+                        client.Equipment.UpdateEntityPacket();
+                        Database.EntityTable.SaveEntity(client);
+                    }
+                    break;
+
+                case 27: // Small Boy (1003)
+                    {
+                        if (client.Entity.Body == 2001 || client.Entity.Body == 2002)
+                        {
+                            client.Equipment.Remove(9);
+                            if (client.Equipment.Objects[9] != null)
+                                client.Equipment.Objects[9] = null;
+                        }
+                        ClientEquip equips = new();
+                        equips.DoEquips(client);
+                        client.Send(equips);
+                        client.NobilityInformation.Gender = 1;
+                        client.Entity.Spouse = "None";
+                        client.Entity.Body = 1003;
+                        client.NobilityInformation.Mesh = client.Entity.Mesh;
+                        client.Equipment.UpdateEntityPacket();
+                        Database.EntityTable.SaveEntity(client);
+                    }
+                    break;
             }
         }
     }
