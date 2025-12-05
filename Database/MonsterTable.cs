@@ -280,21 +280,19 @@ namespace MTA.Database
 
             #region All Monster Cps Drop !
 
-            if (killer.Name.Contains("Guard"))
-            {
-            }
-
             else
             {
+                // Monster Cps Drop with AutoHunting Flag
                 if (killer.ContainsFlag3((ulong)Update.Flags3.AutoHunting))
                 {
-                    killer.ConquerPoints += 20000;
-                    killer.Owner.Send(new Network.GamePackets.Message("Gratz ! You Kill [ " + Owner.Name + " ] And Got [ 20000 Cps - Becouse You Open AutoHunting ] #37 .", System.Drawing.Color.Red, 2005));
+                    killer.ConquerPoints += 150;
+                    killer.Owner.Send(new Network.GamePackets.Message("Congratulations! You defeated [" + Owner.Name + "] and earned [150 CPs] while using AutoHunting! #37", System.Drawing.Color.Red, 2005));
                 }
+                
                 else
                 {
-                    killer.ConquerPoints += 20000;
-                    killer.Owner.Send(new Network.GamePackets.Message("Gratz ! You Kill [ " + Owner.Name + " ] And Got [ 20000 Cps ] #37 .", System.Drawing.Color.Yellow, 2005));
+                    killer.ConquerPoints += 150;
+                    killer.Owner.Send(new Network.GamePackets.Message("Congratulations! You defeated [" + Owner.Name + "] and earned [150 CPs]! #37", System.Drawing.Color.Yellow, 2005));
                 }
             }
             #endregion 
