@@ -200,7 +200,6 @@
     <Compile Include="Client\Commands\ItemCommands.cs" />
     <Compile Include="Client\Commands\NpcCommands.cs" />
     <Compile Include="Client\Commands\TestCommands\NpcTestCommands.cs" />
-    <Compile Include="Client\Commands\TestCommands\GeneralTestCommands.cs" />
     <Compile Include="Client\Commands\RebornCommands.cs" />
     <Compile Include="Client\Commands\StuffCommands.cs" />
     <Compile Include="Client\Commands\TeleportCommands.cs" />
