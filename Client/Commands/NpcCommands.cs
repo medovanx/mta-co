@@ -10,7 +10,7 @@ namespace MTA.Client.Commands
     {
         public static bool HandleCommand(GameState client, string[] data, string mess)
         {
-            return (global::System.String)data[0] switch
+            return data[0] switch
             {
                 "npcjump" => HandleNpcJumpCommand(client, data, mess),
                 "npceffect" => HandleNpcEffectCommand(client, data, mess),
