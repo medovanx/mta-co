@@ -21,26 +21,25 @@ namespace MTA
 
         public void Add(int index)
         {
-            if (index < Size)
-            {
-                int idx = index / 32;
-                uint bites = (uint)(1 << (index % 32));
-                bits[idx] |= bites;
-            }
+            if (index < 0 || index >= Size) return;
+            int idx = index / 32;
+            if (idx < 0 || idx >= bits.Length) return;
+            uint bites = (uint)(1 << (index % 32));
+            bits[idx] |= bites;
         }
         public void Remove(int index)
         {
-            if (index < Size)
-            {
-                int idx = index / 32;
-                uint bites = (uint)(1 << (index % 32));
-                bits[idx] &= ~bites;
-            }
+            if (index < 0 || index >= Size) return;
+            int idx = index / 32;
+            if (idx < 0 || idx >= bits.Length) return;
+            uint bites = (uint)(1 << (index % 32));
+            bits[idx] &= ~bites;
         }
         public bool Contain(int index)
         {
-            if (index > Size) return false;
+            if (index < 0 || index >= Size) return false;
             int idx = index / 32;
+            if (idx < 0 || idx >= bits.Length) return false;
             uint bites = (uint)(1 << (index % 32));
             return ((bits[idx] & bites) == bites);
         }
