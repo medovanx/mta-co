@@ -392,7 +392,7 @@
     <Compile Include="Game\Npcs\Handlers\TwinCity\Npc_GuildDirector.cs" />
     <Compile Include="Game\Npcs\Handlers\TwinCity\Npc_Information.cs" />
     <Compile Include="Game\Npcs\Handlers\TwinCity\Npc_VipSeller.cs" />
-    <Compile Include="Game\Npcs\Handlers\TwinCity\Npc_PlayerUtility.cs" />
+    <Compile Include="Game\Npcs\Handlers\TwinCity\Npc_PlayerUtilities.cs" />
     <Compile Include="Game\Npcs\NpcHandlerAttribute.cs" />
     <Compile Include="Game\Npcs\NpcHandlerRegistry.cs" />
     <Compile Include="Game\Npcs\Npcs.cs" />
