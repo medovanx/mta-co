@@ -36,7 +36,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <RuntimeIdentifiers>win-x86</RuntimeIdentifiers>
+    <RuntimeIdentifiers>win-x86;win-x64</RuntimeIdentifiers>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -190,7 +190,7 @@
   </ItemGroup>
   <ItemGroup>
     <!-- Automatically include all .cs files recursively -->
-    <Compile Include="BitVector32.cs" />
+    <Compile Include="Extensions\BitVector32.cs" />
     <Compile Include="Client\AuthClient.cs" />
     <Compile Include="Client\AuthCryptography.cs" />
     <Compile Include="Client\Authentication.cs" />
@@ -648,8 +648,16 @@
     <Compile Include="Network\WebServer\TransferPlayer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs" />
-    <Compile Include="Properties\Settings.Designer.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="World.cs" />
     <Compile Include="Writer.cs" />
     <!-- Exclude files that shouldn't be compiled -->
