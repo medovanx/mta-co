@@ -23,14 +23,6 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
             {
                 case 0:
                     {
-                        dialog.Text("Hello! I can upgrade your VIP level using CPs.");
-                        dialog.Option("Exchange CPs for VIP Level", 12);
-                        dialog.Option("Never mind.", 255);
-                        dialog.Send();
-                        break;
-                    }
-                case 12:
-                    {
                         dialog.Text("Which VIP level would you like to purchase?");
                         dialog.Option("VIP 1 = " + VIP1_PRICE + " CPs", 1);
                         dialog.Option("VIP 2 = " + VIP2_PRICE + " CPs", 2);
@@ -38,8 +30,6 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                         dialog.Option("VIP 4 = " + VIP4_PRICE + " CPs", 4);
                         dialog.Option("VIP 5 = " + VIP5_PRICE + " CPs", 5);
                         dialog.Option("VIP 6 = " + VIP6_PRICE + " CPs", 6);
-                        dialog.Option("Never mind.", 255);
-
                         dialog.Send();
                         break;
                     }
@@ -54,7 +44,6 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                         {
                             dialog.Text("You need " + VIP1_PRICE + " CPs to purchase VIP Level 1.");
                             dialog.Option("Understood.", 255);
-
                             dialog.Send();
                         }
                         break;
@@ -70,7 +59,6 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                         {
                             dialog.Text("You need " + VIP2_PRICE + " CPs to purchase VIP Level 2.");
                             dialog.Option("Understood.", 255);
-
                             dialog.Send();
                         }
                         break;
@@ -86,7 +74,6 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                         {
                             dialog.Text("You need " + VIP3_PRICE + " CPs to purchase VIP Level 3.");
                             dialog.Option("Understood.", 255);
-
                             dialog.Send();
                         }
                         break;
@@ -102,7 +89,6 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                         {
                             dialog.Text("You need " + VIP4_PRICE + " CPs to purchase VIP Level 4.");
                             dialog.Option("Understood.", 255);
-
                             dialog.Send();
                         }
                         break;
@@ -118,7 +104,6 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                         {
                             dialog.Text("You need " + VIP5_PRICE + " CPs to purchase VIP Level 5.");
                             dialog.Option("Understood.", 255);
-
                             dialog.Send();
                         }
                         break;
@@ -134,7 +119,6 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                         {
                             dialog.Text("You need " + VIP6_PRICE + " CPs to purchase VIP Level 6.");
                             dialog.Option("Understood.", 255);
-
                             dialog.Send();
                         }
                         break;
