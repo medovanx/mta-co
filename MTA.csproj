@@ -388,7 +388,11 @@
     <Compile Include="Game\Npcs\Handlers\Subclasses\Npc_355914.cs" />
     <Compile Include="Game\Npcs\Handlers\Subclasses\Npc_355915.cs" />
     <Compile Include="Game\Npcs\Handlers\Subclasses\Npc_355916.cs" />
-    <Compile Include="Game\Npcs\Handlers\Teleporting\Npc_Luna.cs" />
+    <Compile Include="Game\Npcs\Handlers\TwinCity\Npc_Luna.cs" />
+    <Compile Include="Game\Npcs\Handlers\TwinCity\Npc_GuildDirector.cs" />
+    <Compile Include="Game\Npcs\Handlers\TwinCity\Npc_Information.cs" />
+    <Compile Include="Game\Npcs\Handlers\TwinCity\Npc_VipSeller.cs" />
+    <Compile Include="Game\Npcs\Handlers\TwinCity\Npc_PlayerUtility.cs" />
     <Compile Include="Game\Npcs\NpcHandlerAttribute.cs" />
     <Compile Include="Game\Npcs\NpcHandlerRegistry.cs" />
     <Compile Include="Game\Npcs\Npcs.cs" />

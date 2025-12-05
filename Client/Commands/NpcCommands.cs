@@ -404,18 +404,36 @@ namespace MTA.Client.Commands
         {
             if (data.Length < 3)
             {
-                client.Send(new Message("Usage: @addnpc <mesh> <type> [name]", System.Drawing.Color.Yellow,
+                client.Send(new Message("Usage: @addnpc <name> <mesh>", System.Drawing.Color.Yellow,
                     Message.Tip));
-                client.Send(new Message("Example: @addnpc 100 2 TestNPC", System.Drawing.Color.Yellow,
+                client.Send(new Message("Example: @addnpc TestNPC 100", System.Drawing.Color.Yellow,
                     Message.Tip));
                 return true;
             }
 
-            ushort mesh = ushort.Parse(data[1]);
-            byte type = byte.Parse(data[2]);
-            string name = data.Length >= 4
-                ? mess.Substring(data[0].Length + data[1].Length + data[2].Length + 3)
-                : "NPC";
+            // Last token is the mesh
+            ushort mesh = ushort.Parse(data[data.Length - 1]);
+
+            // Everything between command and mesh is the name
+            string name;
+            if (data.Length == 3)
+            {
+                name = data[1];
+            }
+            else
+            {
+                // Extract name from message, removing command and mesh
+                int meshStartPos = mess.LastIndexOf(" " + data[data.Length - 1]);
+                name = mess.Substring(data[0].Length + 1, meshStartPos - data[0].Length - 1).Trim();
+            }
+
+            if (string.IsNullOrEmpty(name))
+            {
+                name = "NPC";
+            }
+
+            // Default type to Talker
+            byte type = 2;
 
             // Generate a unique NPC ID
             uint npcId = 100000; // Start from 100000
@@ -424,29 +442,13 @@ namespace MTA.Client.Commands
                 using (var cmd = new Database.MySqlCommand(Database.MySqlCommandType.SELECT))
                 {
                     cmd.Select("npcs");
-                    using (var reader = new Database.MySqlReader(cmd))
+                    using var reader = new Database.MySqlReader(cmd);
+                    while (reader.Read())
                     {
-                        while (reader.Read())
-                        {
-                            uint existingId = reader.ReadUInt32("id");
-                            if (existingId >= npcId)
-                                npcId = existingId + 1;
-                        }
-                    }
-                }
+                        uint existingId = reader.ReadUInt32("id");
+                        if (existingId >= npcId)
+                            npcId = existingId + 1;
 
-                // Also check sobnpcs table
-                using (var cmd = new Database.MySqlCommand(Database.MySqlCommandType.SELECT))
-                {
-                    cmd.Select("sobnpcs");
-                    using (var reader = new Database.MySqlReader(cmd))
-                    {
-                        while (reader.Read())
-                        {
-                            uint existingId = reader.ReadUInt32("id");
-                            if (existingId >= npcId)
-                                npcId = existingId + 1;
-                        }
                     }
                 }
 
@@ -475,14 +477,16 @@ namespace MTA.Client.Commands
             }
 
             // Create new NPC
-            INpc npc = new NpcSpawn();
-            npc.UID = npcId;
-            npc.Mesh = mesh;
-            npc.Type = (Enums.NpcType)type;
-            npc.X = client.Entity.X;
-            npc.Y = client.Entity.Y;
-            npc.MapID = client.Entity.MapID;
-            npc.Name = name;
+            INpc npc = new NpcSpawn
+            {
+                UID = npcId,
+                Mesh = mesh,
+                Type = (Enums.NpcType)type,
+                X = client.Entity.X,
+                Y = client.Entity.Y,
+                MapID = client.Entity.MapID,
+                Name = name
+            };
 
             // Add to map
             client.Map.AddNpc(npc);
@@ -511,10 +515,6 @@ namespace MTA.Client.Commands
                     player.Screen.FullWipe();
                     player.Screen.Reload();
                 }
-
-                client.Send(new Message(
-                    "NPC [" + name + "] (ID: " + npcId + ") created successfully at your position",
-                    System.Drawing.Color.Green, Message.Tip));
             }
             catch (Exception ex)
             {

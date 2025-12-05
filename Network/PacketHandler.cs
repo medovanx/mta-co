@@ -22651,90 +22651,6 @@ p =>
                                                         }
                                                         break;
                                                     }
-                                                case "item":
-                                                    {
-                                                        string ItemName = Data[3].ToLower();
-                                                        Game.Enums.ItemQuality Quality = Game.Enums.ItemQuality.Fixed;
-                                                        switch (Data[4].ToLower())
-                                                        {
-                                                            case "fixed": Quality = Game.Enums.ItemQuality.Fixed; break;
-                                                            case "normal": Quality = Game.Enums.ItemQuality.Normal; break;
-                                                            case "normalv1": Quality = Game.Enums.ItemQuality.NormalV1; break;
-                                                            case "normalv2": Quality = Game.Enums.ItemQuality.NormalV2; break;
-                                                            case "normalv3": Quality = Game.Enums.ItemQuality.NormalV3; break;
-                                                            case "refined": Quality = Game.Enums.ItemQuality.Refined; break;
-                                                            case "unique": Quality = Game.Enums.ItemQuality.Unique; break;
-                                                            case "elite": Quality = Game.Enums.ItemQuality.Elite; break;
-                                                            case "super": Quality = Game.Enums.ItemQuality.Super; break;
-                                                            case "other": Quality = Game.Enums.ItemQuality.Other; break;
-                                                            default:
-                                                                {
-                                                                    Quality = (MTA.Game.Enums.ItemQuality)int.Parse(Data[4]);
-                                                                    break;
-                                                                }
-                                                        }
-                                                        Database.ConquerItemBaseInformation CIBI = null;
-                                                        foreach (Database.ConquerItemBaseInformation infos in Database.ConquerItemInformation.BaseInformations.Values)
-                                                        {
-                                                            if (infos.LowerName == ItemName && Quality == (Game.Enums.ItemQuality)(infos.ID % 10))
-                                                            {
-                                                                CIBI = infos;
-                                                            }
-                                                        }
-                                                        if (CIBI == null)
-                                                            break;
-                                                        ConquerItem newItem = new GamePackets.ConquerItem(true);
-                                                        newItem.ID = CIBI.ID;
-                                                        newItem.Durability = CIBI.Durability;
-                                                        newItem.MaximDurability = CIBI.Durability;
-                                                        if (Data.Length > 3)
-                                                        {
-                                                            byte plus = 0;
-                                                            byte.TryParse(Data[5], out plus);
-                                                            newItem.Plus = Math.Min((byte)12, plus);
-                                                            if (Data.Length > 4)
-                                                            {
-                                                                byte bless = 0;
-                                                                byte.TryParse(Data[6], out bless);
-                                                                newItem.Bless = Math.Min((byte)7, bless);
-                                                                if (Data.Length > 5)
-                                                                {
-                                                                    byte ench = 0;
-                                                                    byte.TryParse(Data[7], out ench);
-                                                                    newItem.Enchant = Math.Min((byte)255, ench);
-                                                                    if (Data.Length > 6)
-                                                                    {
-                                                                        byte soc1 = 0;
-                                                                        byte.TryParse(Data[8], out soc1);
-                                                                        if (Enum.IsDefined(typeof(Game.Enums.Gem), soc1))
-                                                                        {
-                                                                            newItem.SocketOne = (Game.Enums.Gem)soc1;
-                                                                        }
-                                                                        if (Data.Length > 7)
-                                                                        {
-                                                                            byte soc2 = 0;
-                                                                            byte.TryParse(Data[9], out soc2);
-                                                                            if (Enum.IsDefined(typeof(Game.Enums.Gem), soc2))
-                                                                            {
-                                                                                newItem.SocketTwo = (Game.Enums.Gem)soc2;
-                                                                            }
-                                                                        }
-                                                                        if (Data.Length > 10)
-                                                                        {
-                                                                            byte R = 0, G = 0, B = 0;
-                                                                            byte.TryParse(Data[10], out R);
-                                                                            byte.TryParse(Data[11], out G);
-                                                                            byte.TryParse(Data[12], out B);
-                                                                            newItem.SocketProgress = (uint)(B | (G << 8) | (R << 16));
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                        newItem.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
-                                                        Client.Inventory.Add(newItem, Game.Enums.ItemUse.CreateAndAdd);
-                                                        break;
-                                                    }
                                                 case "equip":
                                                     {
                                                         string ItemName = Data[3].ToLower();
@@ -22783,12 +22699,6 @@ p =>
                                     data.wParam1 = client.Entity.X;
                                     data.wParam2 = client.Entity.Y;
                                     client.Send(data);
-                                    break;
-                                }
-                            case "xp":
-                                {
-                                    client.Entity.AddFlag(Update.Flags.XPList);
-                                    client.XPListStamp = Time32.Now;
                                     break;
                                 }
                             case "who":
@@ -22861,26 +22771,6 @@ p =>
 
                                     break;
                                 }
-                            case "rev":
-                                {
-                                    client.Entity.Action = MTA.Game.Enums.ConquerAction.None;
-                                    client.ReviveStamp = Time32.Now;
-                                    client.Attackable = false;
-
-                                    client.Entity.TransformationID = 0;
-                                    client.Entity.RemoveFlag(Update.Flags.Dead);
-                                    client.Entity.RemoveFlag(Update.Flags.Ghost);
-                                    client.Entity.Hitpoints = client.Entity.MaxHitpoints;
-                                    break;
-                                }
-                            case "life":
-                                {
-                                    client.Entity.Hitpoints = client.Entity.MaxHitpoints;
-                                    client.Entity.Mana = client.Entity.MaxMana;
-                                    break;
-
-                                }
-
                             case "testsinf":
                                 {
                                     byte[] mazen = new byte[] { 0x2C, 0x00, 0x21, 0x27, 0x58, 0xD8, 0x3B, 0x09, 0x7D, 0x92, 0x54, 0x00, 0x01, 0x00, 0x00, 0x00, 0x19, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x54, 0x51, 0x53, 0x65, 0x72, 0x76, 0x65, 0x72 };
@@ -23675,95 +23565,6 @@ p =>
                                 }
                                 break;
                             #endregion
-                            case "item":
-                                {
-                                    if (Data.Length > 2)
-                                    {
-                                        string ItemName = Data[1].ToLower();
-                                        Game.Enums.ItemQuality Quality = Game.Enums.ItemQuality.Fixed;
-                                        switch (Data[2].ToLower())
-                                        {
-                                            case "fixed": Quality = Game.Enums.ItemQuality.Fixed; break;
-                                            case "normal": Quality = Game.Enums.ItemQuality.Normal; break;
-                                            case "normalv1": Quality = Game.Enums.ItemQuality.NormalV1; break;
-                                            case "normalv2": Quality = Game.Enums.ItemQuality.NormalV2; break;
-                                            case "normalv3": Quality = Game.Enums.ItemQuality.NormalV3; break;
-                                            case "refined": Quality = Game.Enums.ItemQuality.Refined; break;
-                                            case "unique": Quality = Game.Enums.ItemQuality.Unique; break;
-                                            case "elite": Quality = Game.Enums.ItemQuality.Elite; break;
-                                            case "super": Quality = Game.Enums.ItemQuality.Super; break;
-                                            case "other": Quality = Game.Enums.ItemQuality.Other; break;
-                                            default:
-                                                {
-                                                    Quality = (MTA.Game.Enums.ItemQuality)int.Parse(Data[2]);
-                                                    break;
-                                                }
-                                        }
-                                        Database.ConquerItemBaseInformation CIBI = null;
-                                        foreach (Database.ConquerItemBaseInformation infos in Database.ConquerItemInformation.BaseInformations.Values)
-                                        {
-                                            if (infos.LowerName == ItemName && Quality == (Game.Enums.ItemQuality)(infos.ID % 10))
-                                            {
-                                                CIBI = infos;
-                                            }
-                                        }
-                                        if (CIBI == null)
-                                            break;
-                                        ConquerItem newItem = new GamePackets.ConquerItem(true);
-                                        newItem.ID = CIBI.ID;
-                                        newItem.Durability = CIBI.Durability;
-                                        newItem.MaximDurability = CIBI.Durability;
-                                        if (Data.Length > 3)
-                                        {
-                                            byte plus = 0;
-                                            byte.TryParse(Data[3], out plus);
-                                            newItem.Plus = Math.Min((byte)12, plus);
-                                            if (Data.Length > 4)
-                                            {
-                                                byte bless = 0;
-                                                byte.TryParse(Data[4], out bless);
-                                                newItem.Bless = Math.Min((byte)7, bless);
-                                                if (Data.Length > 5)
-                                                {
-                                                    byte ench = 0;
-                                                    byte.TryParse(Data[5], out ench);
-                                                    newItem.Enchant = Math.Min((byte)255, ench);
-                                                    if (Data.Length > 6)
-                                                    {
-                                                        byte soc1 = 0;
-                                                        byte.TryParse(Data[6], out soc1);
-                                                        if (Enum.IsDefined(typeof(Game.Enums.Gem), soc1))
-                                                        {
-                                                            newItem.SocketOne = (Game.Enums.Gem)soc1;
-                                                        }
-                                                        if (Data.Length > 7)
-                                                        {
-                                                            byte soc2 = 0;
-                                                            byte.TryParse(Data[7], out soc2);
-                                                            if (Enum.IsDefined(typeof(Game.Enums.Gem), soc2))
-                                                            {
-                                                                newItem.SocketTwo = (Game.Enums.Gem)soc2;
-                                                            }
-                                                        }
-                                                        if (Data.Length > 10)
-                                                        {
-                                                            byte R = 0, G = 0, B = 0;
-                                                            byte.TryParse(Data[8], out R);
-                                                            byte.TryParse(Data[9], out G);
-                                                            byte.TryParse(Data[10], out B);
-                                                            newItem.SocketProgress = (uint)(B | (G << 8) | (R << 16));
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        newItem.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
-                                        if (client.Account.State == MTA.Database.AccountTable.AccountState.GM)
-                                            newItem.Bound = true;
-                                        client.Inventory.Add(newItem, Game.Enums.ItemUse.CreateAndAdd);
-                                    }
-                                    break;
-                                }
 
                         }
                         return true;

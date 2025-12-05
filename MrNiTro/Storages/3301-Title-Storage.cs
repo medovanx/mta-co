@@ -73,9 +73,11 @@ namespace MTA.Network.GamePackets
             {
                 if (!StorageManager.Data.TryGetValue(client.Entity.UID, out client.Entity.WTitles))
                 {
-                    client.Entity.WTitles = new WardrobeTitles();
-                    client.Entity.WTitles.Id = client.Entity.UID;
-                    client.Entity.WTitles.Data = new byte[1];
+                    client.Entity.WTitles = new WardrobeTitles
+                    {
+                        Id = client.Entity.UID,
+                        Data = new byte[1]
+                    };
                     client.Entity.WTitles.Create();
                 }
             }
@@ -110,8 +112,8 @@ namespace MTA.Network.GamePackets
                     client.Entity.EquippedWing = StorageManager.Wing<int>(_type, _id);
                 else if (StorageManager.Title<bool>(_type, _id))
                     client.Entity.EquippedTitle = StorageManager.Title<int>(_type, _id);
-
         }
+
         public void Login(Client.GameState client)
         {
             if (client.Entity.WTitles == null)
@@ -202,6 +204,7 @@ namespace MTA.Network.GamePackets
             Unequip = 5,
         }
     }
+
     [ProtoContract]
     public class TitleStorageProto
     {
@@ -216,6 +219,7 @@ namespace MTA.Network.GamePackets
         [ProtoMember(5, IsRequired = true)]
         public TitleValue Value;
     }
+
     [ProtoContract]
     public class TitleValue
     {

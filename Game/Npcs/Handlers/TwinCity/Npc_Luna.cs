@@ -2,7 +2,7 @@ using System;
 using static MTA.Game.Enums;
 using MTA.Network.GamePackets;
 
-namespace MTA.Game.Npcs.Handlers
+namespace MTA.Game.Npcs.Handlers.TwinCity
 {
     /// <summary>
     /// Tree Conductress

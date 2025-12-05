@@ -25,6 +25,8 @@ namespace MTA.Client.Commands
                 "heal" => HandleHealCommand(client, data, mess),
                 "spell" => HandleSpellCommand(client, data, mess),
                 "die" => HandleDieCommand(client, data, mess),
+                "xp" => HandleXpCommand(client, data, mess),
+                "rev" => HandleRevCommand(client, data, mess),
                 _ => false,
             };
         }
@@ -724,6 +726,82 @@ namespace MTA.Client.Commands
             client.Send(new Network.GamePackets.Message("You have died.", System.Drawing.Color.Red, Network.GamePackets.Message.Tip));
             return true;
         }
+
+        private static bool HandleXpCommand(GameState client, string[] data, string mess)
+        {
+            if (ulong.TryParse(data[1], out var xp))
+            {
+                client.Entity.AddFlag(Network.GamePackets.Update.Flags.XPList);
+                client.XPListStamp = Time32.Now;
+                return true;
+            }
+            return false;
+        }
+
+        private static bool HandleRevCommand(GameState client, string[] data, string mess)
+        {
+            GameState targetClient = client;
+
+            // If a parameter is provided, try to find the target player
+            if (data.Length > 1)
+            {
+                string targetName = data[1];
+                GameState foundClient = null;
+
+                // If not found by UID, search by name using the utility function
+                if (targetClient == client && foundClient == null)
+                {
+                    if (FindPlayerByName(targetName, out GameState foundPlayer, out int matchCount))
+                    {
+                        targetClient = foundPlayer;
+                    }
+                    else
+                    {
+                        if (matchCount == 0)
+                        {
+                            client.Send(new Network.GamePackets.Message($"Player matching [{targetName}] not found or offline!",
+                                System.Drawing.Color.Red, Network.GamePackets.Message.Tip));
+                        }
+                        else
+                        {
+                            client.Send(new Network.GamePackets.Message($"Multiple players found matching [{targetName}]. Please be more specific.",
+                                System.Drawing.Color.Red, Network.GamePackets.Message.Tip));
+                        }
+                        return true;
+                    }
+                }
+
+                // If target not found, send error message
+                if (targetClient == client && foundClient == null)
+                {
+                    client.Send(new Network.GamePackets.Message("Player not found: " + targetName, System.Drawing.Color.Red, Network.GamePackets.Message.Tip));
+                    return true;
+                }
+
+                // Send confirmation to the GM
+                if (targetClient != client)
+                {
+                    client.Send(new Network.GamePackets.Message("Revived player: " + targetClient.Entity.Name, System.Drawing.Color.Green, Network.GamePackets.Message.Tip));
+                }
+            }
+
+            // Apply revive logic to target
+            targetClient.Entity.Action = MTA.Game.Enums.ConquerAction.None;
+            targetClient.ReviveStamp = Time32.Now;
+            targetClient.Attackable = false;
+
+            targetClient.Entity.TransformationID = 0;
+            targetClient.Entity.RemoveFlag(Network.GamePackets.Update.Flags.Dead);
+            targetClient.Entity.RemoveFlag(Network.GamePackets.Update.Flags.Ghost);
+            targetClient.Entity.Hitpoints = targetClient.Entity.MaxHitpoints;
+
+            // Send notification to target if reviving someone else
+            if (targetClient != client)
+            {
+                targetClient.Send(new Network.GamePackets.Message(client.Entity.Name + " has revived you!", System.Drawing.Color.Green, Network.GamePackets.Message.Tip));
+            }
+
+            return true;
+        }
     }
 }
-
