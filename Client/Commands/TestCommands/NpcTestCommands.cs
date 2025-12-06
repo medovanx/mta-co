@@ -17,13 +17,12 @@ namespace MTA.Client.Commands.TestCommands
 
         public static bool HandleCommand(GameState client, string[] data, string mess)
         {
-            if (data.Length < 3 || data[0].ToLower() != "test" || data[1].ToLower() != "npc")
-                return false;
+            if (data.Length == 0) return false;
 
-            return data[2].ToLower() switch
+            return data[0].ToLower() switch
             {
-                "spawnmeshes" => HandleSpawnMeshesCommand(client, data.Skip(2).ToArray(), mess),
-                "deletemeshes" => HandleDeleteMeshesCommand(client, data.Skip(2).ToArray(), mess),
+                "spawnmeshes" => HandleSpawnMeshesCommand(client, data, mess),
+                "deletemeshes" => HandleDeleteMeshesCommand(client, data, mess),
                 _ => false,
             };
         }
@@ -32,19 +31,57 @@ namespace MTA.Client.Commands.TestCommands
         {
             try
             {
-                const int npcsPerPage = 500, maxMeshId = 65535, meshesPerNpc = 10;
+                const int maxMeshId = 65535, meshesPerNpc = 10;
                 const uint baseNpcIdStart = 900000000;
 
-                int totalNpcs = (maxMeshId / meshesPerNpc) + 1; // 6554 NPCs total
-                int maxPages = (int)Math.Ceiling((double)totalNpcs / npcsPerPage); // ~14 pages
+                // Parse parameters
+                int amount = 500; // Default amount
+                int page = 1; // Default page
+                ushort spacing = 2; // Default spacing
+                ushort zigzagOffset = 1; // Default zigzag offset
 
-                // Validate input
-                if (data.Length < 2 || !int.TryParse(data[1], out int page) || page < 1 || page > maxPages)
+                // Parse amount (first parameter after spawnmeshes)
+                if (data.Length < 2 || !int.TryParse(data[1], out amount) || amount < 1)
                 {
-                    client.Send(new Message(data.Length < 2
-                        ? $"Usage: @test npc spawnmeshes <page> (pages 1-{maxPages}, {npcsPerPage} NPCs per page)"
-                        : $"Invalid page number. Use pages 1-{maxPages}.",
-                        data.Length < 2 ? System.Drawing.Color.Yellow : System.Drawing.Color.Red, Message.Tip));
+                    client.Send(new Message("Usage: @test npc spawnmeshes <amount> [-p <page>] [-spacing <value>]\nExample: @test npc spawnmeshes 200 -p 2 -spacing 3",
+                        System.Drawing.Color.Yellow, Message.Tip));
+                    return true;
+                }
+
+                // Parse flags
+                for (int i = 2; i < data.Length; i++)
+                {
+                    if (data[i].ToLower() == "-p" && i + 1 < data.Length)
+                    {
+                        if (!int.TryParse(data[i + 1], out page) || page < 1)
+                        {
+                            client.Send(new Message("Invalid page number. Must be a positive integer.",
+                                System.Drawing.Color.Red, Message.Tip));
+                            return true;
+                        }
+                        i++; // Skip the next parameter as we've consumed it
+                    }
+                    else if (data[i].ToLower() == "-spacing" && i + 1 < data.Length)
+                    {
+                        if (!ushort.TryParse(data[i + 1], out spacing) || spacing < 1)
+                        {
+                            client.Send(new Message("Invalid spacing value. Must be a positive integer.",
+                                System.Drawing.Color.Red, Message.Tip));
+                            return true;
+                        }
+                        i++; // Skip the next parameter as we've consumed it
+                    }
+                }
+
+                // Calculate total NPCs and max pages dynamically
+                int totalNpcs = (maxMeshId / meshesPerNpc) + 1; // 6554 NPCs total
+                int maxPages = (int)Math.Ceiling((double)totalNpcs / amount); // Dynamic pages based on amount
+
+                // Validate page
+                if (page > maxPages)
+                {
+                    client.Send(new Message($"Invalid page number. Maximum pages: {maxPages} (with {amount} NPCs per page)",
+                        System.Drawing.Color.Red, Message.Tip));
                     return true;
                 }
 
@@ -52,12 +89,10 @@ namespace MTA.Client.Commands.TestCommands
                 const ushort targetMapId = 1000;
                 const ushort lineStartX = 704, lineStartY = 763; // Starting position
                 const ushort lineEndX = 315, lineEndY = 79; // Ending position
-                const ushort spacing = 15; // Spacing between NPCs along the line
-                const ushort zigzagOffset = 8; // Offset for zigzag pattern (left/right)
 
-                // Calculate mesh ranges
-                int startMeshIndex = (page - 1) * npcsPerPage;
-                int npcsThisPage = Math.Min(npcsPerPage, totalNpcs - startMeshIndex);
+                // Calculate mesh ranges based on amount
+                int startMeshIndex = (page - 1) * amount;
+                int npcsThisPage = Math.Min(amount, totalNpcs - startMeshIndex);
                 uint baseNpcId = baseNpcIdStart + ((uint)(page - 1) * 1000000);
 
                 // Remove previous page if switching
@@ -77,7 +112,7 @@ namespace MTA.Client.Commands.TestCommands
                     TestMeshNpcsByMap[targetMapId] = [];
                 var createdNpcs = TestMeshNpcsByMap[targetMapId];
 
-                client.Send(new Message($"Spawning page {page}/{maxPages}: {npcsThisPage} NPCs (meshes {startMeshIndex * meshesPerNpc}-{(startMeshIndex + npcsThisPage - 1) * meshesPerNpc})...",
+                client.Send(new Message($"Spawning page {page}/{maxPages}: {npcsThisPage} NPCs (meshes {startMeshIndex * meshesPerNpc}-{(startMeshIndex + npcsThisPage - 1) * meshesPerNpc}) with spacing {spacing}...",
                     System.Drawing.Color.Yellow, Message.Tip));
 
                 RemovePageNPCs(targetMapId, page, baseNpcId);
