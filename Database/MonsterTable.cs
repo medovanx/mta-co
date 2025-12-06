@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using MTA.Network.GamePackets;
+using MTA.Game.Events;
 
 namespace MTA.Database
 {
@@ -121,6 +122,9 @@ namespace MTA.Database
 
         public void Drop(Game.Entity killer)
         {
+            // Notify event system of monster death (for event-specific monsters)
+            MTA.Game.Events.EventScheduler.OnMonsterKilled(this, killer);
+
             #region Ramadan kareem
             #region V1
 
@@ -282,17 +286,21 @@ namespace MTA.Database
 
             else
             {
-                // Monster Cps Drop with AutoHunting Flag
-                if (killer.ContainsFlag3((ulong)Update.Flags3.AutoHunting))
+                // Check if any event wants to skip normal drop (event handles rewards instead)
+                if (!EventScheduler.ShouldSkipNormalDrop(this, Owner.MapID))
                 {
-                    killer.ConquerPoints += 150;
-                    killer.Owner.Send(new Network.GamePackets.Message("Congratulations! You defeated [" + Owner.Name + "] and earned [150 CPs] while using AutoHunting! #37", System.Drawing.Color.Red, 2005));
-                }
-                
-                else
-                {
-                    killer.ConquerPoints += 150;
-                    killer.Owner.Send(new Network.GamePackets.Message("Congratulations! You defeated [" + Owner.Name + "] and earned [150 CPs]! #37", System.Drawing.Color.Yellow, 2005));
+                    // Monster Cps Drop with AutoHunting Flag
+                    if (killer.ContainsFlag3((ulong)Update.Flags3.AutoHunting))
+                    {
+                        killer.ConquerPoints += 150;
+                        killer.Owner.Send(new Network.GamePackets.Message("Congratulations! You defeated [" + Owner.Name + "] and earned [150 CPs] while using AutoHunting! #37", System.Drawing.Color.Red, 2005));
+                    }
+
+                    else
+                    {
+                        killer.ConquerPoints += 150;
+                        killer.Owner.Send(new Network.GamePackets.Message("Congratulations! You defeated [" + Owner.Name + "] and earned [150 CPs]! #37", System.Drawing.Color.Yellow, 2005));
+                    }
                 }
             }
             #endregion 
@@ -785,18 +793,6 @@ namespace MTA.Database
                     killer.MonstersPoints += 5;
                 }
             }
-            #endregion    
-            #region Captain
-            if (Owner.MapID == 3033)
-            {
-                if (Name == "Captain")
-                {
-                    {
-                        killer.ConquerPoints += 100;
-                        killer.Owner.Send(new Message("You received 200 CPs! because " + Name + " In This Quest", System.Drawing.Color.Black, Message.TopLeft));
-                    }
-                }
-            }
             #endregion
             #region Cloud Jar
             if (Name == killer.QuestMob)
@@ -1169,7 +1165,7 @@ namespace MTA.Database
             }
             return 0;
         }
-        
+
         public static ushort GetMeshFromName(string Name)
         {
             foreach (var item in MonsterInformations.Values)
@@ -1179,7 +1175,7 @@ namespace MTA.Database
             }
             return 0;
         }
-        
+
         public static SafeDictionary<uint, MonsterInformation> MonsterInformations = new SafeDictionary<uint, MonsterInformation>(8000);
 
         public static void Load()

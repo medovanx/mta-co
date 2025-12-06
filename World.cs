@@ -65,6 +65,9 @@ namespace MTA
         {
             if (!onlylogin)
             {
+                // Initialize event system
+                MTA.Game.Events.EventScheduler.Initialize();
+                
                 Buffers = new TimerRule<GameState>(BuffersCallback, 1000, ThreadPriority.BelowNormal);
                 Characters = new TimerRule<GameState>(CharactersCallback, 1000, ThreadPriority.BelowNormal);
                 AutoAttack = new TimerRule<GameState>(AutoAttackCallback, 1000, ThreadPriority.BelowNormal);
@@ -2099,98 +2102,12 @@ namespace MTA
         {
             Time32 Now = new Time32(time);
             DateTime Now64 = DateTime.Now;
-            /*#region Server Auto Restart
-            if (Now64.Hour == 12 && Now64.Minute >= 00 && Now64.Minute <= 10 && Now64.Second == 01)
-            {
-                foreach (Client.GameState Server in Kernel.GamePool.Values)
-                {
-                    Program.mess--;
-                    MTA.Network.GamePackets.Message FiveMinute = new Network.GamePackets.Message("The server will be brought down for maintenance in "+Program.mess+" Minutes. Please exit the game now.", System.Drawing.Color.Red, Network.GamePackets.Message.Center);
-                    Server.Send(FiveMinute);
-                    if (Program.mess == 0 || Program.mess == 1)
-                    {
-                        Program.CommandsAI("@restart");
-                        return;
-                    }
-                }
-            }
-            #endregion*/
-            #region CP Castle Event
-            #region CP Castle Event
-            if (DateTime.Now.Hour == 13 && DateTime.Now.Minute == 50 && DateTime.Now.Second == 0 ||
-                DateTime.Now.Hour == 19 && DateTime.Now.Minute == 50 && DateTime.Now.Second == 0)
-            {
-                foreach (var client in Program.Values)
-                {
-                    client.Send(new Message("Hurry! CP Castle Event It Will Begin 10 Minutes After Getting Ready", Message.System));
-                }
-            }
-            if (DateTime.Now.Hour == 13 && DateTime.Now.Minute == 55 && DateTime.Now.Second == 0 ||
-                DateTime.Now.Hour == 19 && DateTime.Now.Minute == 55 && DateTime.Now.Second == 0)
-            {
-                foreach (var client in Program.Values)
-                {
-                    client.Send(new Message("CP Castle Event It Will Begin 5 Minutes After Getting Ready", Message.System));
-                }
-            }
-            if (DateTime.Now.Hour == 13 && DateTime.Now.Minute == 59 && DateTime.Now.Second == 50 ||
-                DateTime.Now.Hour == 19 && DateTime.Now.Minute == 59 && DateTime.Now.Second == 50)
-            {
-                foreach (var client in Program.Values)
-                {
-                    client.Send(new Message("CP Castle Event It Will Begin 10 Second After Getting Ready", Message.System));
-                }
-            }
-            if (DateTime.Now.Hour == 14 && DateTime.Now.Minute == 00 && DateTime.Now.Second == 0 ||
-                DateTime.Now.Hour == 20 && DateTime.Now.Minute == 00 && DateTime.Now.Second == 0)
-            {
-                foreach (var client in Program.Values)
-                {
-                    Kernel.SendWorldMessage(new Message("Hurry! CP Castle Event Then He Began To Log on Now Quickly", Color.White, Message.Service));
-                }
-            }
-            if (DateTime.Now.Hour == 14 && DateTime.Now.Minute == 20 && DateTime.Now.Second == 0 ||
-                DateTime.Now.Hour == 20 && DateTime.Now.Minute == 20 && DateTime.Now.Second == 0)
-            {
-                foreach (var client in Program.Values)
-                {
-                    Kernel.SendWorldMessage(new Message("CP Castle Event Will End After 10 Minutes. Hurry To Get Reward", Color.White, Message.System));
-                }
-            }
-            if (DateTime.Now.Hour == 14 && DateTime.Now.Minute == 25 && DateTime.Now.Second == 0 ||
-                DateTime.Now.Hour == 20 && DateTime.Now.Minute == 25 && DateTime.Now.Second == 0)
-            {
-                foreach (var client in Program.Values)
-                {
-                    Kernel.SendWorldMessage(new Message("CP Castle Event Will End After 5 Minutes. Hurry To Get Reward", Color.White, Message.System));
-                }
-            }
-            if (DateTime.Now.Hour == 14 && DateTime.Now.Minute == 30 && DateTime.Now.Second == 0 ||
-                DateTime.Now.Hour == 20 && DateTime.Now.Minute == 30 && DateTime.Now.Second == 0)
-            {
-                foreach (var client in Program.Values)
-                {
-                    Kernel.SendWorldMessage(new Message("CP Castle Event I Ended up Next Time", Color.White, Message.System));
-                    if (client.Entity.MapID == 3030 ||
-                        client.Entity.MapID == 3031 ||
-                        client.Entity.MapID == 3032 ||
-                        client.Entity.MapID == 3033)
-                    {
-                        client.Entity.Teleport(1002, 300, 280);
-                    }
-                }
-            }
-            #endregion
-            #region CP Castle Event(AutoInvite)
-            if (DateTime.Now.Hour == 14 && DateTime.Now.Minute == 00 && DateTime.Now.Second == 0 ||
-                DateTime.Now.Hour == 20 && DateTime.Now.Minute == 00 && DateTime.Now.Second == 0)
-            {
-                Kernel.SendWorldMessage(new Message("CP Castle War began !", Color.White, Message.Center), Program.Values);
-                foreach (var client in Program.Values)
-                    client.MessageBox("CP Castle began! Would you Like to join ...?",
-                       p => { p.Entity.Teleport(1002, 288, 280); }, null, 60);
-            }
-            #endregion
+            #region Event System
+            // Update all scheduled events
+            MTA.Game.Events.EventScheduler.Update(DateTime.Now);
+            
+            // Send pre-event warnings for CP Castle
+            MTA.Game.Events.CpCastle.CpCastleEvent.SendPreEventWarnings(DateTime.Now);
             #endregion
 
             HeroOFGame.CheakUp();

@@ -1,6 +1,7 @@
 using System;
 using static MTA.Game.Enums;
 using MTA.Network.GamePackets;
+using MTA.Game.Events.CpCastle;
 
 namespace MTA.Game.Npcs.Handlers.TwinCity
 {
@@ -10,26 +11,11 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
     [NpcHandler(115522005)]
     public static class Npc_CpCastle
     {
-        private const int EVENT_START_HOUR_1 = 14;
-        private const int EVENT_START_HOUR_2 = 20;
-        private const int EVENT_DURATION_MINUTES = 30;
         private const int CASTLE_MAP_ID = 3033;
         private const int CASTLE_X = 54;
         private const int CASTLE_Y = 82;
         private const int MIN_LEVEL = 1;
         private const int MAX_LEVEL = 140;
-
-        /// <summary>
-        /// Checks if the CP Castle event is currently active
-        /// </summary>
-        private static bool IsEventActive()
-        {
-            int currentHour = DateTime.Now.Hour;
-            int currentMinute = DateTime.Now.Minute;
-
-            return (currentHour == EVENT_START_HOUR_1 && currentMinute <= EVENT_DURATION_MINUTES - 1) ||
-                   (currentHour == EVENT_START_HOUR_2 && currentMinute <= EVENT_DURATION_MINUTES - 1);
-        }
 
         public static void Handle(Client.GameState client, NpcRequest npcRequest, MTA.Npcs dialog)
         {
@@ -37,15 +23,15 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
             {
                 case 0:
                     {
-                        dialog.Text("The CP Castle Event starts every day at 14:00 and 20:00 Server Time and lasts for 30 minutes. Separate maps are available for beginner and advanced players.");
+                        dialog.Text("The CP Castle Event starts every day at 14:00 and 20:00 Server Time and lasts for 30 minutes.\n\nRewards: Kill Captain monsters to receive 1,000 Conquer Points per kill.");
 
-                        if (IsEventActive())
+                        if (CpCastleEvent.IsEventActive())
                         {
                             dialog.Option("Enter CP Castle Event", 5);
                         }
                         else
                         {
-                            dialog.Option("What are the rewards?", 2);
+                            dialog.Option("I see!", 255);
                         }
 
                         dialog.Avatar(31);
@@ -55,8 +41,8 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
 
                 case 5:
                     {
-                        dialog.Text("Choose your destination:");
-                        dialog.Option("Level 1-140 (1st Reborn - 2nd Reborn)", 7);
+                        dialog.Text("Enter the CP Castle Event?");
+                        dialog.Option("Yes, enter.", 7);
                         dialog.Option("No, thank you.", 255);
                         dialog.Avatar(31);
                         dialog.Send();
@@ -65,24 +51,17 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
 
                 case 7:
                     {
-                        if (IsEventActive())
+                        if (CpCastleEvent.IsEventActive())
                         {
-                            if ((client.Entity.Level >= MIN_LEVEL && client.Entity.Level <= MAX_LEVEL) &&
+                            if (client.Entity.Level >= MIN_LEVEL && client.Entity.Level <= MAX_LEVEL &&
                                 (client.Entity.Reborn == 1 || client.Entity.Reborn == 2))
                             {
-                                Random random = new Random();
-                                int result = random.Next(1, 2); // Random.Next is exclusive of upper bound, so this gives 1
-
-                                if (result == 1)
-                                {
-                                    client.Entity.Teleport(CASTLE_MAP_ID, CASTLE_X, CASTLE_Y);
-                                }
-
+                                client.Entity.Teleport(CASTLE_MAP_ID, CASTLE_X, CASTLE_Y);
                                 client.Entity.Update(_String.Effect, "accession4", true);
                             }
                             else
                             {
-                                dialog.Text("Sorry, the Advanced map is for Level 130-140 (1st Reborn and 2nd Reborn) only.");
+                                dialog.Text("Sorry, the CP Castle Event is for Level 1-140 (1st Reborn and 2nd Reborn) only.");
                                 dialog.Option("I see!", 255);
                                 dialog.Avatar(31);
                                 dialog.Send();
@@ -95,15 +74,6 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                             dialog.Avatar(31);
                             dialog.Send();
                         }
-                        break;
-                    }
-
-                case 2:
-                    {
-                        dialog.Text("Rewards: DragonBalls, CPs, CPs (B), Study Points, Chi Packs, Scrolls, Meteor.");
-                        dialog.Option("Thank you", 255);
-                        dialog.Avatar(31);
-                        dialog.Send();
                         break;
                     }
             }

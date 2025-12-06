@@ -195,6 +195,7 @@
     <Compile Include="Client\AuthCryptography.cs" />
     <Compile Include="Client\Authentication.cs" />
     <Compile Include="Client\Commands\EntityCommands.cs" />
+    <Compile Include="Client\Commands\EventCommands.cs" />
     <Compile Include="Client\Commands\GameCommands.cs" />
     <Compile Include="Client\Commands\GMCommand.cs" />
     <Compile Include="Client\Commands\ItemCommands.cs" />
@@ -399,6 +400,11 @@
     <Compile Include="Game\Npcs\Handlers\TwinCity\Npc_StuffSeller.cs" />
     <Compile Include="Game\Npcs\Handlers\TwinCity\Npc_AttributeSeller.cs" />
     <Compile Include="Game\Npcs\Handlers\TwinCity\Npc_CpCastle.cs" />
+    <Compile Include="Game\Events\IEvent.cs" />
+    <Compile Include="Game\Events\BaseEvent.cs" />
+    <Compile Include="Game\Events\EventScheduler.cs" />
+    <Compile Include="Game\Events\CpCastle\CpCastleEvent.cs" />
+    <Compile Include="Game\Events\CpCastle\CpCastleRewards.cs" />
     <Compile Include="Game\Npcs\NpcHandlerAttribute.cs" />
     <Compile Include="Game\Npcs\NpcHandlerRegistry.cs" />
     <Compile Include="Game\Npcs\Npcs.cs" />
