@@ -17,7 +17,9 @@ namespace MTA
 
         public IniFile(string _FileName, string section = "data")
         {
-            this.FileName = Environment.CurrentDirectory + "\\" + _FileName;
+            // Normalize path separators to backslashes for Windows API
+            string normalizedPath = _FileName.Replace('/', '\\');
+            this.FileName = Path.Combine(Environment.CurrentDirectory, normalizedPath);
             this.FileSection = section;
         }
 

@@ -9,7 +9,7 @@ namespace Throne.World.Database.Information.Files
 {
     public static class Storage
     {
-        private const string Path = "Storage.ini";
+        private const string Path = "Database/Storage.ini";
 
         public static void Read(out StorageInfo storageInfo)
         {

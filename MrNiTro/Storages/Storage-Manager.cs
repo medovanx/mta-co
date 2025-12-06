@@ -12,6 +12,13 @@ namespace MTA
         public static void Load()
         {
             Storage.Read(out Info);
+
+            // Validate that storage data was loaded
+            if (Info == null || Info.Count == 0 || Info.Storages == null || Info.Storages.Length == 0)
+            {
+                throw new System.Exception("WARNING: Database/Storage.ini is missing, empty.");
+            }
+
             Data = new Dictionary<uint, Network.GamePackets.WardrobeTitles>();
             using (var cmd = new Database.MySqlCommand(Database.MySqlCommandType.SELECT))
             {
