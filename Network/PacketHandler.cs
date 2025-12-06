@@ -3771,7 +3771,7 @@ namespace MTA.Network
                                     return;
                                 Npcs.GetDialog(req, client);
                                 if (client.Account.State == MTA.Database.AccountTable.AccountState.GM)
-                                    client.Send(new Message($"#53 NPC ID : [{client.ActiveNpc}], Skin: [{npc.Mesh}]", System.Drawing.Color.White, Message.TopLeft));
+                                    client.Send(new Message($"#53 NPC ID : [{client.ActiveNpc}], Skin: [{npc.Mesh}]", System.Drawing.Color.White, Message.System));
                             }
                         }
                         break;
