@@ -379,7 +379,6 @@
     <Compile Include="Game\Features\Tournaments\TeamArena.cs" />
     <Compile Include="Game\guildtop.cs" />
     <Compile Include="Game\jiMMyQuest.cs" />
-    <Compile Include="Game\KillConnections.cs" />
     <Compile Include="Game\Lottery.cs" />
     <Compile Include="Game\Map.cs" />
     <Compile Include="Game\NightDay.cs" />
