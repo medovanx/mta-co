@@ -9,27 +9,16 @@ namespace MTA.Client.Commands
 {
     public static class NpcCommands
     {
-        // Track test mesh NPCs for cleanup
-        private static readonly Dictionary<ushort, HashSet<uint>> TestMeshNpcsByMap = [];
-
-        // Track pagination data per player
-        private static readonly Dictionary<uint, (ushort mapId, ushort startX, ushort startY, int currentPage)> PlayerMeshPageData = [];
-
         public static bool HandleCommand(GameState client, string[] data, string mess)
         {
             return data[0] switch
             {
                 "npcjump" => HandleNpcJumpCommand(client, data, mess),
-                "npceffect" => HandleNpcEffectCommand(client, data, mess),
                 "gotonpc" => HandleGotoNpcCommand(client, data, mess),
-                "reloadnpc" => HandleReloadNpcCommand(client, data, mess),
-                "npcskin" => HandleNpcSkinCommand(client, data, mess),
-                "renamenpc" => HandleRenameNpcCommand(client, data, mess),
+                "editnpc" => HandleEditNpcCommand(client, data, mess),
                 "movenpc" => HandleMoveNpcCommand(client, data, mess),
                 "deletenpc" => HandleDeleteNpcCommand(client, data, mess),
                 "addnpc" => HandleAddNpcCommand(client, data, mess),
-                "spawnmeshes" => HandleSpawnMeshesCommand(client, data, mess),
-                "deletemeshes" => HandleDeleteMeshesCommand(client, data, mess),
                 _ => false,
             };
         }
@@ -49,30 +38,6 @@ namespace MTA.Client.Commands
                     MovementType = TwoMovements.Jump
                 };
                 client.SendScreen(jump);
-            }
-
-            return true;
-        }
-
-        private static bool HandleNpcEffectCommand(GameState client, string[] data, string mess)
-        {
-            if (data.Length < 2)
-            {
-                client.Send(new Message("Usage: @npceffect <effect_id>", System.Drawing.Color.Yellow,
-                    Message.Tip));
-                return true;
-            }
-
-            foreach (var npc in client.Map.Npcs.Values)
-            {
-                _String str = new _String(true)
-                {
-                    UID = npc.UID,
-                    TextsCount = 1,
-                    Type = _String.Effect
-                };
-                str.Texts.Add(data[1]);
-                client.SendScreen(str);
             }
 
             return true;
@@ -110,108 +75,42 @@ namespace MTA.Client.Commands
             return true;
         }
 
-        private static bool HandleReloadNpcCommand(GameState client, string[] data, string mess)
+        private static Dictionary<string, string> ParseArguments(string[] data, string mess, int startIndex = 1)
         {
-            try
+            var args = new Dictionary<string, string>();
+            for (int i = startIndex; i < data.Length; i++)
             {
-                World.ScriptEngine.Check_Updates();
-                client.Send(new Message("NPC scripts reloaded successfully!", System.Drawing.Color.Green,
-                    Message.Tip));
+                if (data[i].StartsWith("-"))
+                {
+                    string key = data[i].Substring(1).ToLower();
+                    if (i + 1 < data.Length && !data[i + 1].StartsWith("-"))
+                    {
+                        args[key] = data[i + 1];
+                        i++; // Skip the value in next iteration
+                    }
+                    else
+                    {
+                        args[key] = "";
+                    }
+                }
             }
-            catch (Exception ex)
-            {
-                client.Send(new Message("Error reloading NPC scripts: " + ex.Message, System.Drawing.Color.Yellow,
-                    Message.Tip));
-            }
-
-            return true;
+            return args;
         }
 
-        private static bool HandleNpcSkinCommand(GameState client, string[] data, string mess)
+        private static bool HandleEditNpcCommand(GameState client, string[] data, string mess)
         {
-            if (data.Length < 3)
+            if (data.Length < 2)
             {
-                client.Send(new Message("Usage: @npcskin <npc_id> <mesh_id>", System.Drawing.Color.Yellow,
+                client.Send(new Message("Usage: @editnpc <npc_id> [-n <name>] [-s <skin>] [-e <effect>|none]", System.Drawing.Color.Yellow,
                     Message.Tip));
-                client.Send(
-                    new Message("Example: @npcskin 100 29680", System.Drawing.Color.Yellow, Message.Tip));
+                client.Send(new Message("Example: @editnpc 100 -n NewName -s 29680 -e ninjapk_third", System.Drawing.Color.Yellow, Message.Tip));
+                client.Send(new Message("To remove effect: @editnpc 100 -e none", System.Drawing.Color.Yellow, Message.Tip));
                 return true;
             }
 
-            var npcId = uint.Parse(data[1]);
-            var meshId = ushort.Parse(data[2]);
-            INpc foundNpc = null;
-            Map foundMap = null;
-
-            // Search through all maps for the NPC
-            foreach (var map in Kernel.Maps.Values)
+            if (!uint.TryParse(data[1], out var npcId))
             {
-                if (!map.Npcs.TryGetValue(npcId, out var npc)) continue;
-                foundNpc = npc;
-                foundMap = map;
-                break;
-            }
-
-            if (foundNpc == null)
-            {
-                client.Send(new Message("NPC with ID " + npcId + " not found!", System.Drawing.Color.Yellow,
-                    Message.Tip));
-                return true;
-            }
-
-            // Update NPC mesh
-            foundNpc.Mesh = meshId;
-
-            // Update database
-            try
-            {
-                using (var cmd = new Database.MySqlCommand(Database.MySqlCommandType.UPDATE))
-                {
-                    cmd.Update("npcs")
-                        .Set("lookface", meshId)
-                        .Where("id", npcId)
-                        .Execute();
-                }
-
-                // Reload screens for all players on the map
-                foreach (var player in Kernel.GamePool.Values)
-                {
-                    if (player.Entity == null || player.Entity.MapID != foundMap.ID) continue;
-                    player.Screen.FullWipe();
-                    player.Screen.Reload();
-                }
-
-                client.Send(new Message(
-                    "NPC [" + (foundNpc.Name ?? "ID: " + npcId) + "] skin changed to " + meshId,
-                    System.Drawing.Color.Green, Message.Tip));
-            }
-            catch (Exception ex)
-            {
-                client.Send(new Message("Error updating NPC skin in database: " + ex.Message,
-                    System.Drawing.Color.Yellow, Message.Tip));
-            }
-
-            return true;
-        }
-
-        private static bool HandleRenameNpcCommand(GameState client, string[] data, string mess)
-        {
-            if (data.Length < 3)
-            {
-                client.Send(new Message("Usage: @renamenpc <npc_id> <new_name>", System.Drawing.Color.Yellow,
-                    Message.Tip));
-                client.Send(
-                    new Message("Example: @renamenpc 100 NewNPCName", System.Drawing.Color.Yellow, Message.Tip));
-                return true;
-            }
-
-            var npcId = uint.Parse(data[1]);
-            var newName = mess.Substring(data[0].Length + data[1].Length + 2).Trim();
-
-            if (string.IsNullOrEmpty(newName))
-            {
-                client.Send(new Message("Error: NPC name cannot be empty!", System.Drawing.Color.Yellow,
-                    Message.Tip));
+                client.Send(new Message("Invalid NPC ID!", System.Drawing.Color.Yellow, Message.Tip));
                 return true;
             }
 
@@ -234,20 +133,84 @@ namespace MTA.Client.Commands
                 return true;
             }
 
-            var oldName = foundNpc.Name ?? "ID: " + npcId;
+            var args = ParseArguments(data, mess, 2); // Start from index 2 to skip NPC ID
+            bool hasChanges = false;
+            var changes = new List<string>();
 
-            // Update NPC name
-            foundNpc.Name = newName;
+            // Update name if provided
+            if (args.ContainsKey("n") && !string.IsNullOrEmpty(args["n"]))
+            {
+                var oldName = foundNpc.Name ?? "ID: " + npcId;
+                foundNpc.Name = args["n"];
+                changes.Add("name: " + oldName + " -> " + args["n"]);
+                hasChanges = true;
+            }
+
+            // Update skin/mesh if provided
+            if (args.ContainsKey("s") && !string.IsNullOrEmpty(args["s"]))
+            {
+                if (ushort.TryParse(args["s"], out var meshId))
+                {
+                    foundNpc.Mesh = meshId;
+                    changes.Add("skin: " + meshId);
+                    hasChanges = true;
+                }
+                else
+                {
+                    client.Send(new Message("Invalid skin/mesh ID!", System.Drawing.Color.Yellow, Message.Tip));
+                    return true;
+                }
+            }
+
+            // Update effect if provided (empty string or "none" removes effect)
+            if (args.ContainsKey("e"))
+            {
+                if (string.IsNullOrEmpty(args["e"]) || args["e"].ToLower() == "none")
+                {
+                    changes.Add("effect: removed");
+                    hasChanges = true;
+                }
+                else
+                {
+                    changes.Add("effect: " + args["e"]);
+                    hasChanges = true;
+                }
+            }
+
+            if (!hasChanges)
+            {
+                client.Send(new Message("No changes specified. Use -n, -s, or -e to modify NPC.", System.Drawing.Color.Yellow,
+                    Message.Tip));
+                return true;
+            }
 
             // Update database
             try
             {
                 using (var cmd = new Database.MySqlCommand(Database.MySqlCommandType.UPDATE))
                 {
-                    cmd.Update("npcs")
-                        .Set("name", newName)
-                        .Where("id", npcId)
-                        .Execute();
+                    var updateCmd = cmd.Update("npcs");
+
+                    if (args.ContainsKey("n") && !string.IsNullOrEmpty(args["n"]))
+                    {
+                        updateCmd.Set("name", args["n"]);
+                    }
+
+                    if (args.ContainsKey("s") && !string.IsNullOrEmpty(args["s"]) && ushort.TryParse(args["s"], out var meshId))
+                    {
+                        updateCmd.Set("lookface", meshId);
+                    }
+
+                    if (args.ContainsKey("e"))
+                    {
+                        // Empty string or "none" removes the effect
+                        string effectValue = (string.IsNullOrEmpty(args["e"]) || args["e"].ToLower() == "none") ? "" : args["e"];
+                        updateCmd.Set("effect", effectValue);
+                        // Also update the NPC object in memory
+                        foundNpc.effect = effectValue;
+                    }
+
+                    updateCmd.Where("id", npcId).Execute();
                 }
 
                 // Reload screens for all players on the map
@@ -259,14 +222,12 @@ namespace MTA.Client.Commands
                 }
 
                 client.Send(new Message(
-                    "NPC [" + oldName + "] renamed to [" + newName + "]",
+                    "NPC [" + (foundNpc.Name ?? "ID: " + npcId) + "] updated: " + string.Join(", ", changes),
                     System.Drawing.Color.Green, Message.Tip));
             }
             catch (Exception ex)
             {
-                // Revert name change on error
-                foundNpc.Name = oldName;
-                client.Send(new Message("Error updating NPC name in database: " + ex.Message,
+                client.Send(new Message("Error updating NPC in database: " + ex.Message,
                     System.Drawing.Color.Yellow, Message.Tip));
             }
 
@@ -411,34 +372,50 @@ namespace MTA.Client.Commands
 
         private static bool HandleAddNpcCommand(GameState client, string[] data, string mess)
         {
-            if (data.Length < 3)
+            if (data.Length < 2)
             {
-                client.Send(new Message("Usage: @addnpc <name> <mesh>", System.Drawing.Color.Yellow,
+                client.Send(new Message("Usage: @addnpc -n <name> -s <skin> [-e <effect>]", System.Drawing.Color.Yellow,
                     Message.Tip));
-                client.Send(new Message("Example: @addnpc TestNPC 100", System.Drawing.Color.Yellow,
+                client.Send(new Message("Example: @addnpc -n test -s 1002 -e ninjapk_third", System.Drawing.Color.Yellow,
                     Message.Tip));
                 return true;
             }
 
-            // Last token is the mesh
-            ushort mesh = ushort.Parse(data[data.Length - 1]);
+            var args = ParseArguments(data, mess);
 
-            // Everything between command and mesh is the name
-            string name;
-            if (data.Length == 3)
+            // Get name
+            string name = "NPC";
+            if (args.ContainsKey("n") && !string.IsNullOrEmpty(args["n"]))
             {
-                name = data[1];
+                name = args["n"];
             }
             else
             {
-                // Extract name from message, removing command and mesh
-                int meshStartPos = mess.LastIndexOf(" " + data[data.Length - 1]);
-                name = mess.Substring(data[0].Length + 1, meshStartPos - data[0].Length - 1).Trim();
+                client.Send(new Message("Name (-n) is required!", System.Drawing.Color.Yellow, Message.Tip));
+                return true;
             }
 
-            if (string.IsNullOrEmpty(name))
+            // Get skin/mesh
+            ushort mesh = 0;
+            if (args.ContainsKey("s") && !string.IsNullOrEmpty(args["s"]))
             {
-                name = "NPC";
+                if (!ushort.TryParse(args["s"], out mesh))
+                {
+                    client.Send(new Message("Invalid skin/mesh ID!", System.Drawing.Color.Yellow, Message.Tip));
+                    return true;
+                }
+            }
+            else
+            {
+                client.Send(new Message("Skin (-s) is required!", System.Drawing.Color.Yellow, Message.Tip));
+                return true;
+            }
+
+            // Get effect (optional)
+            string effect = "";
+            if (args.ContainsKey("e") && !string.IsNullOrEmpty(args["e"]))
+            {
+                effect = args["e"];
             }
 
             // Default type to Talker
@@ -513,7 +490,7 @@ namespace MTA.Client.Commands
                         .Insert("mapid", npc.MapID)
                         .Insert("cellx", npc.X)
                         .Insert("celly", npc.Y)
-                        .Insert("effect", "")
+                        .Insert("effect", effect)
                         .Execute();
                 }
 
@@ -524,6 +501,13 @@ namespace MTA.Client.Commands
                     player.Screen.FullWipe();
                     player.Screen.Reload();
                 }
+
+                var successMsg = "NPC [" + name + "] created with ID " + npcId + " (skin: " + mesh + ")";
+                if (!string.IsNullOrEmpty(effect))
+                {
+                    successMsg += " (effect: " + effect + ")";
+                }
+                client.Send(new Message(successMsg, System.Drawing.Color.Green, Message.Tip));
             }
             catch (Exception ex)
             {
@@ -531,221 +515,6 @@ namespace MTA.Client.Commands
                 client.Map.RemoveNpc(npc);
                 client.Send(new Message("Error saving NPC to database: " + ex.Message, System.Drawing.Color.Yellow,
                     Message.Tip));
-            }
-
-            return true;
-        }
-
-        private static bool HandleSpawnMeshesCommand(GameState client, string[] data, string mess)
-        {
-            try
-            {
-                const int npcsPerPage = 500, maxMeshId = 65535, meshesPerNpc = 10;
-                const uint baseNpcIdStart = 900000000;
-
-                int totalNpcs = (maxMeshId / meshesPerNpc) + 1; // 6554 NPCs total
-                int maxPages = (int)Math.Ceiling((double)totalNpcs / npcsPerPage); // ~14 pages
-
-                // Validate input
-                if (data.Length < 2 || !int.TryParse(data[1], out int page) || page < 1 || page > maxPages)
-                {
-                    client.Send(new Message(data.Length < 2
-                        ? $"Usage: @spawnmeshes <page> (pages 1-{maxPages}, {npcsPerPage} NPCs per page)"
-                        : $"Invalid page number. Use pages 1-{maxPages}.",
-                        data.Length < 2 ? System.Drawing.Color.Yellow : System.Drawing.Color.Red, Message.Tip));
-                    return true;
-                }
-
-                // Fixed map and line positions
-                const ushort targetMapId = 1000;
-                const ushort lineStartX = 704, lineStartY = 763; // Starting position
-                const ushort lineEndX = 315, lineEndY = 79; // Ending position
-                const ushort spacing = 15; // Spacing between NPCs along the line
-                const ushort zigzagOffset = 8; // Offset for zigzag pattern (left/right)
-
-                // Calculate mesh ranges
-                int startMeshIndex = (page - 1) * npcsPerPage;
-                int npcsThisPage = Math.Min(npcsPerPage, totalNpcs - startMeshIndex);
-                uint baseNpcId = baseNpcIdStart + ((uint)(page - 1) * 1000000);
-
-                // Remove previous page if switching
-                if (PlayerMeshPageData.TryGetValue(client.Entity.UID, out var pageData) &&
-                    pageData.currentPage != page && pageData.currentPage > 0)
-                {
-                    RemovePageNPCs(targetMapId, pageData.currentPage,
-                        baseNpcIdStart + ((uint)(pageData.currentPage - 1) * 1000000));
-                    client.Send(new Message($"Removed page {pageData.currentPage} NPCs.", System.Drawing.Color.Cyan, Message.Tip));
-                }
-
-                PlayerMeshPageData[client.Entity.UID] = (targetMapId, lineStartX, lineStartY, page);
-                Map targetMap = Kernel.Maps[targetMapId];
-
-                // Initialize NPC tracking
-                if (!TestMeshNpcsByMap.ContainsKey(targetMapId))
-                    TestMeshNpcsByMap[targetMapId] = [];
-                var createdNpcs = TestMeshNpcsByMap[targetMapId];
-
-                client.Send(new Message($"Spawning page {page}/{maxPages}: {npcsThisPage} NPCs (meshes {startMeshIndex * meshesPerNpc}-{(startMeshIndex + npcsThisPage - 1) * meshesPerNpc})...",
-                    System.Drawing.Color.Yellow, Message.Tip));
-
-                RemovePageNPCs(targetMapId, page, baseNpcId);
-
-                // Calculate line direction and perpendicular for zigzag
-                double dx = lineEndX - lineStartX, dy = lineEndY - lineStartY;
-                double lineLength = Math.Sqrt(dx * dx + dy * dy);
-                double unitX = dx / lineLength, unitY = dy / lineLength;
-                double perpX = -unitY, perpY = unitX; // Perpendicular vector for zigzag
-
-                // Create NPCs in a zigzag line
-                int created = 0;
-                for (int i = 0; i < npcsThisPage; i++)
-                {
-                    // Calculate position along the line with spacing
-                    double distanceAlongLine = i * spacing;
-                    double t = distanceAlongLine / lineLength; // Normalized position (0 to 1)
-                    if (t > 1.0) break; // Stop if we've gone past the end
-
-                    // Base position along the line
-                    double baseX = lineStartX + (dx * t);
-                    double baseY = lineStartY + (dy * t);
-
-                    // Apply zigzag pattern (alternate left/right)
-                    bool zigRight = (i % 2) == 0;
-                    double offsetX = perpX * zigzagOffset * (zigRight ? 1 : -1);
-                    double offsetY = perpY * zigzagOffset * (zigRight ? 1 : -1);
-
-                    ushort x = (ushort)(baseX + offsetX);
-                    ushort y = (ushort)(baseY + offsetY);
-
-                    INpc npc = new NpcSpawn
-                    {
-                        UID = baseNpcId + (uint)created,
-                        Mesh = (ushort)((startMeshIndex + created) * meshesPerNpc),
-                        Type = Enums.NpcType.Talker,
-                        X = x,
-                        Y = y,
-                        MapID = targetMapId,
-                        Name = ((startMeshIndex + created) * meshesPerNpc).ToString()
-                    };
-
-                    targetMap.AddNpc(npc, false);
-                    createdNpcs.Add(npc.UID);
-                    created++;
-                }
-
-                // Always teleport player to starting position
-                client.Entity.Teleport(targetMapId, lineStartX, lineStartY);
-                ReloadMapScreens(targetMapId);
-
-                client.Send(new Message($"Page {page}/{maxPages} complete! Created {created} NPCs (mesh range: {startMeshIndex * meshesPerNpc}-{(startMeshIndex + created - 1) * meshesPerNpc})",
-                    System.Drawing.Color.Green, Message.Tip));
-                client.Send(new Message($"Line from ({lineStartX},{lineStartY}) to ({lineEndX},{lineEndY}) on map {targetMapId}",
-                    System.Drawing.Color.Cyan, Message.Tip));
-            }
-            catch (Exception ex)
-            {
-                client.Send(new Message($"Error spawning mesh page: {ex.Message}", System.Drawing.Color.Red, Message.Tip));
-            }
-            return true;
-        }
-
-        private static void ReloadMapScreens(ushort mapId)
-        {
-            foreach (var player in Kernel.GamePool.Values)
-            {
-                if (player.Entity == null || player.Entity.MapID != mapId) continue;
-                player.Screen.FullWipe();
-                player.Screen.Reload();
-            }
-        }
-
-        private static void RemovePageNPCs(ushort mapId, int page, uint baseNpcId)
-        {
-            // Validate map and NPC tracking exist
-            if (!Kernel.Maps.ContainsKey(mapId) || !TestMeshNpcsByMap.ContainsKey(mapId))
-                return;
-
-            const uint pageIdRange = 1000000; // ID range per page
-            var map = Kernel.Maps[mapId];
-            var npcs = TestMeshNpcsByMap[mapId];
-
-            // Calculate ID range for this page
-            uint pageStartId = baseNpcId;
-            uint pageEndId = baseNpcId + pageIdRange;
-
-            // Find and remove all NPCs in this page's ID range
-            var toRemove = npcs.Where(id => id >= pageStartId && id < pageEndId).ToList();
-            foreach (var npcId in toRemove)
-            {
-                if (map.Npcs.ContainsKey(npcId))
-                {
-                    map.RemoveNpc(map.Npcs[npcId]);
-                }
-                npcs.Remove(npcId);
-            }
-        }
-
-        private static bool HandleDeleteMeshesCommand(GameState client, string[] data, string mess)
-        {
-            try
-            {
-                ushort mapId = client.Entity.MapID;
-
-                // Check if there are any mesh NPCs on this map
-                if (!TestMeshNpcsByMap.ContainsKey(mapId) || TestMeshNpcsByMap[mapId].Count == 0)
-                {
-                    client.Send(new Message("No mesh NPCs found on this map.",
-                        System.Drawing.Color.Yellow, Message.Tip));
-                    return true;
-                }
-
-                // Validate map exists
-                if (!Kernel.Maps.ContainsKey(mapId))
-                {
-                    client.Send(new Message("Map not found.",
-                        System.Drawing.Color.Red, Message.Tip));
-                    return true;
-                }
-
-                // Remove all NPCs from the map
-                var map = Kernel.Maps[mapId];
-                var createdNpcs = TestMeshNpcsByMap[mapId];
-                int removed = 0;
-
-                foreach (var npcId in createdNpcs.ToList())
-                {
-                    if (map.Npcs.ContainsKey(npcId))
-                    {
-                        map.RemoveNpc(map.Npcs[npcId]);
-                        removed++;
-                    }
-                }
-
-                // Clean up tracking data
-                createdNpcs.Clear();
-                TestMeshNpcsByMap.Remove(mapId);
-
-                // Clear player page data for players on this map
-                var playersToClear = PlayerMeshPageData
-                    .Where(kvp => kvp.Value.mapId == mapId)
-                    .Select(kvp => kvp.Key)
-                    .ToList();
-
-                foreach (var playerId in playersToClear)
-                {
-                    PlayerMeshPageData.Remove(playerId);
-                }
-
-                // Reload screens for all players on the map
-                ReloadMapScreens(mapId);
-
-                client.Send(new Message($"Removed {removed} mesh NPCs from the map.",
-                    System.Drawing.Color.Green, Message.Tip));
-            }
-            catch (Exception ex)
-            {
-                client.Send(new Message($"Error deleting mesh NPCs: {ex.Message}",
-                    System.Drawing.Color.Red, Message.Tip));
             }
 
             return true;

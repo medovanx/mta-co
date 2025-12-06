@@ -16530,66 +16530,6 @@ namespace MTA
                     }
                 #endregion Npc Format Points
 
-                #region Nobility Donor
-                case 34224:
-                    {
-                        switch (npcRequest.OptionID)
-                        {
-                            case 0:
-                                {
-                                    dialog.Text("Hello friend. I can help you get on the top faster! Instead of donating gold, you can give me your cps and I will automatically do the hard work for you. The exchange ratio is 1:50000. That means you give me 1 CPs, I donate for you 50000 gold. The minimum amount is 6,000,000 CPs.");
-                                    dialog.Input("Insert amount:", 1, 10);
-                                    dialog.Option("No thank you.", 255);
-                                    break;
-                                }
-                            case 1:
-                                {
-                                    uint input;
-                                    if (uint.TryParse(npcRequest.Input, out input))
-                                    {
-                                        if (input < 6000000)
-                                        {
-                                            dialog.Text("You need to input more or atleast 6,000,000 CPs..");
-                                            dialog.Input("Insert amount:", 1, 9);
-                                            dialog.Option("No thank you.", 255);
-                                            return;
-                                        }
-                                        if (client.Entity.ConquerPoints >= input)
-                                        {
-                                            client.NpcCpsInput = input;
-                                            dialog.Text("Are you sure you want to donate " + input + " CPs? That means I will donate for you " + (((ulong)input) * 50000ul) + " gold.");
-                                            dialog.Option("Yes", 2);
-                                            dialog.Option("No thank you.", 255);
-                                        }
-                                        else
-                                        {
-                                            dialog.Text("You don't have that much CPs. Try again. \nThe exchange ratio is 1:50000. That means you give me 1 CPs, I donate for you 50000 gold. The minimum amount is 6,000,000 CPs.");
-                                            dialog.Input("Insert amount:", 1, 9);
-                                            dialog.Option("No thank you.", 255);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        dialog.Text("Try again. \nThe exchange ratio is 1:50000. That means you give me 1 CPs, I donate for you 50000 gold. The minimum amount is 6,000,000 CPs.");
-                                        dialog.Input("Insert amount:", 1, 9);
-                                        dialog.Option("No thank you.", 255);
-                                    }
-                                    break;
-                                }
-                            case 2:
-                                {
-                                    if (client.Entity.ConquerPoints >= client.NpcCpsInput && client.NpcCpsInput != 0)
-                                    {
-                                        client.Entity.ConquerPoints -= client.NpcCpsInput;
-                                        Game.ConquerStructures.Nobility.Donate((ulong)client.NpcCpsInput * 50000ul, client);
-                                        client.NpcCpsInput = 0;
-                                    }
-                                    break;
-                                }
-                        }
-                        break;
-                    }
-                #endregion
                 #region SteedSeller Npc
                 case 34216://and this id
                     {
