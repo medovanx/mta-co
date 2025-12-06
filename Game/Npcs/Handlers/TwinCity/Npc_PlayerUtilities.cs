@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using static MTA.Game.Enums;
 using MTA.Network.GamePackets;
 using MTA.Database;
@@ -15,25 +13,76 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
         // Wing definitions: (type, id)
         private static readonly (short Type, short Id)[] Wings =
         [
-            (6002, 21), (6003, 22), (6004, 23), (6001, 20),
-            (6005, 6005), (6009, 6009), (6008, 6008), (6007, 6007),
-            (6011, 6011), (6012, 6012), (6013, 6013), (6014, 6014),
-            (6015, 6015), (6016, 6016), (6017, 6017)
+            (WingsConstants.Type_KingWing, WingsConstants.Id_KingWing),
+            (WingsConstants.Type_FlagWing, WingsConstants.Id_FlagWing),
+            (WingsConstants.Type_StarlightWing, WingsConstants.Id_StarlightWing),
+            (WingsConstants.Type_MoonlightWing, WingsConstants.Id_MoonlightWing),
+            (WingsConstants.Type_WinnerWing, WingsConstants.Id_WinnerWing),
+            (WingsConstants.Type_FairyWing, WingsConstants.Id_FairyWing),
+            (WingsConstants.Type_PlanetWing, WingsConstants.Id_PlanetWing),
+            (WingsConstants.Type_VioletLightningWing, WingsConstants.Id_VioletLightningWing),
+            (WingsConstants.Type_VioletCloudWing, WingsConstants.Id_VioletCloudWing),
+            (WingsConstants.Type_SupremeWing, WingsConstants.Id_SupremeWing),
+            (WingsConstants.Type_RomanceWing, WingsConstants.Id_RomanceWing),
+            (WingsConstants.Type_EmeraldGlowWing, WingsConstants.Id_EmeraldGlowWing),
+            (WingsConstants.Type_OrangeGlowWing, WingsConstants.Id_OrangeGlowWing),
+            (WingsConstants.Type_FlameGlowWing, WingsConstants.Id_FlameGlowWing),
+            (WingsConstants.Type_BrightGlowWing, WingsConstants.Id_BrightGlowWing),
+            (WingsConstants.Type_SirenSongWing, WingsConstants.Id_SirenSongWing)
         ];
 
         // Title definitions: (type, id)
         private static readonly (short Type, short Id)[] Titles =
         [
-            (1, 1000), (2018, 1), (2001, 2), (2002, 3), (2003, 4),
-            (2004, 5), (2005, 6), (2006, 7), (2023, 2023), (2022, 2022),
-            (2021, 2021), (2020, 2020), (2025, 2025), (2028, 2028), (2029, 2029),
-            (2030, 2030), (2031, 2031), (2027, 2027), (2026, 2026), (2032, 2032),
-            (2033, 2033), (2034, 2034), (2013, 14), (2014, 15), (2015, 16),
-            (2016, 17), (2035, 2035), (2036, 2036), (2037, 2037), (2038, 2038),
-            (2040, 2040), (2041, 2041), (2044, 2044), (2045, 2045), (2050, 2050),
-            (2051, 2051), (2052, 2052), (2053, 2053), (2054, 2054), (2057, 2057),
-            (2046, 2046), (2047, 2047), (2048, 2048), (2049, 2049), (2059, 2059),
-            (2060, 2060), (2061, 2061), (2062, 2062)
+            (TitlesConstants.Type_Overlord, TitlesConstants.Id_Overlord),
+            (TitlesConstants.Type_ChiBloom, TitlesConstants.Id_ChiBloom),
+            (TitlesConstants.Type_Experienced, TitlesConstants.Id_Experienced),
+            (TitlesConstants.Type_Valiant, TitlesConstants.Id_Valiant),
+            (TitlesConstants.Type_Supremacy, TitlesConstants.Id_Supremacy),
+            (TitlesConstants.Type_Original, TitlesConstants.Id_Original),
+            (TitlesConstants.Type_Luxury, TitlesConstants.Id_Luxury),
+            (TitlesConstants.Type_Brilliant, TitlesConstants.Id_Brilliant),
+            (TitlesConstants.Type_MrConquerChampion, TitlesConstants.Id_MrConquerChampion),
+            (TitlesConstants.Type_Beauty, TitlesConstants.Id_Beauty),
+            (TitlesConstants.Type_MsConquerPlace, TitlesConstants.Id_MsConquerPlace),
+            (TitlesConstants.Type_MsConquerChampion, TitlesConstants.Id_MsConquerChampion),
+            (TitlesConstants.Type_Wise, TitlesConstants.Id_Wise),
+            (TitlesConstants.Type_EarthKnight, TitlesConstants.Id_EarthKnight),
+            (TitlesConstants.Type_GloryKnight, TitlesConstants.Id_GloryKnight),
+            (TitlesConstants.Type_SkyKnight, TitlesConstants.Id_SkyKnight),
+            (TitlesConstants.Type_Paladin, TitlesConstants.Id_Paladin),
+            (TitlesConstants.Type_WorldRenowned, TitlesConstants.Id_WorldRenowned),
+            (TitlesConstants.Type_WorldDominator, TitlesConstants.Id_WorldDominator),
+            (TitlesConstants.Type_BigFan, TitlesConstants.Id_BigFan),
+            (TitlesConstants.Type_EuroCollector, TitlesConstants.Id_EuroCollector),
+            (TitlesConstants.Type_Invincible, TitlesConstants.Id_Invincible),
+            (TitlesConstants.Type_Pioneer, TitlesConstants.Id_Pioneer),
+            (TitlesConstants.Type_Mighty, TitlesConstants.Id_Mighty),
+            (TitlesConstants.Type_Supernatural, TitlesConstants.Id_Supernatural),
+            (TitlesConstants.Type_SaintRider, TitlesConstants.Id_SaintRider),
+            (TitlesConstants.Type_Legendary, TitlesConstants.Id_Legendary),
+            (TitlesConstants.Type_Peerless, TitlesConstants.Id_Peerless),
+            (TitlesConstants.Type_Outstanding, TitlesConstants.Id_Outstanding),
+            (TitlesConstants.Type_Expert, TitlesConstants.Id_Expert),
+            (TitlesConstants.Type_PeerlessBeauty, TitlesConstants.Id_PeerlessBeauty),
+            (TitlesConstants.Type_SuperIdol, TitlesConstants.Id_SuperIdol),
+            (TitlesConstants.Type_MostRadiant, TitlesConstants.Id_MostRadiant),
+            (TitlesConstants.Type_MostAttractive, TitlesConstants.Id_MostAttractive),
+            (TitlesConstants.Type_CelestialFox, TitlesConstants.Id_CelestialFox),
+            (TitlesConstants.Type_CelestialFoxFantasy, TitlesConstants.Id_CelestialFoxFantasy),
+            (TitlesConstants.Type_FashionIcon, TitlesConstants.Id_FashionIcon),
+            (TitlesConstants.Type_FashionIdol, TitlesConstants.Id_FashionIdol),
+            (TitlesConstants.Type_FashionMaster, TitlesConstants.Id_FashionMaster),
+            (TitlesConstants.Type_HonoredHero, TitlesConstants.Id_HonoredHero),
+            (TitlesConstants.Type_BasketballLeader, TitlesConstants.Id_BasketballLeader),
+            (TitlesConstants.Type_PokerKing, TitlesConstants.Id_PokerKing),
+            (TitlesConstants.Type_PokerLord, TitlesConstants.Id_PokerLord),
+            (TitlesConstants.Type_PokerMaster, TitlesConstants.Id_PokerMaster),
+            (TitlesConstants.Type_PokerStar, TitlesConstants.Id_PokerStar),
+            (TitlesConstants.Type_KingTeam, TitlesConstants.Id_KingTeam),
+            (TitlesConstants.Type_DominatorTeam, TitlesConstants.Id_DominatorTeam),
+            (TitlesConstants.Type_PowerTeam, TitlesConstants.Id_PowerTeam),
+            (TitlesConstants.Type_EliteTeam, TitlesConstants.Id_EliteTeam)
         ];
 
         public static void Handle(Client.GameState client, NpcRequest npcRequest, MTA.Npcs dialog)

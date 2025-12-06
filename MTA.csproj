@@ -208,6 +208,8 @@
     <Compile Include="Client\LoaderEncryption.cs" />
     <Compile Include="Client\PacketFilter.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Game\Constants\Wings.cs" />
+    <Compile Include="Game\Constants\Titles.cs" />
     <Compile Include="Database\AccountTable.cs" />
     <Compile Include="Database\AddingInformationTable.cs" />
     <Compile Include="Database\ArenaTable.cs" />
