@@ -863,12 +863,6 @@ namespace MTA
                             Database.IPBan.Load();
                             break;
                         }
-                    case "@GUI":
-                        {
-                            Franko.GUI.GUI Franko = new Franko.GUI.GUI();
-                            Franko.ShowDialog();
-                            break;
-                        }
                     case "@alivetime":
                         {
                             DateTime now = DateTime.Now;
