@@ -362,9 +362,15 @@ namespace MTA
             newItem.ID = item.ID;
             newItem.Durability = item.Durability;
             newItem.MaximDurability = item.Durability;
-            newItem.Plus = Convert.ToByte(Plus.Text);
-            newItem.Bless = Convert.ToByte(Bless.Text);
-            newItem.Enchant = Convert.ToByte(HP.Text);
+            byte plus = 0;
+            byte.TryParse(Plus.Text, out plus);
+            newItem.Plus = plus;
+            byte bless = 0;
+            byte.TryParse(Bless.Text, out bless);
+            newItem.Bless = bless;
+            byte enchant = 0;
+            byte.TryParse(HP.Text, out enchant);
+            newItem.Enchant = enchant;
             byte soc1 = 0;
             byte.TryParse(Soc1.Text, out soc1);
             newItem.SocketOne = (Game.Enums.Gem)soc1;
@@ -452,13 +458,13 @@ namespace MTA
             comboBox2.Items.Clear();
             foreach (var itemx in client.Equipment.Objects)
             {
-                if (item == null || !Database.ConquerItemInformation.BaseInformations.ContainsKey(item.ID))
+                if (itemx == null || !Database.ConquerItemInformation.BaseInformations.ContainsKey(itemx.ID))
                     continue;
                 comboBox2.Items.Add(String.Format(" {0} @@ {1} @@ [Equipment]", Database.ConquerItemInformation.BaseInformations[itemx.ID].Name, itemx.UID));
             }
             foreach (var itemx in client.Inventory.Objects)
             {
-                if (item == null || !Database.ConquerItemInformation.BaseInformations.ContainsKey(item.ID))
+                if (itemx == null || !Database.ConquerItemInformation.BaseInformations.ContainsKey(itemx.ID))
                     continue;
                 comboBox2.Items.Add(String.Format(" {0} @@ {1} @@ [Inventory]", Database.ConquerItemInformation.BaseInformations[itemx.ID].Name, itemx.UID));
             }
@@ -466,7 +472,7 @@ namespace MTA
             {
                 foreach (var itemx in ware.Objects)
                 {
-                    if (item == null || !Database.ConquerItemInformation.BaseInformations.ContainsKey(item.ID))
+                    if (itemx == null || !Database.ConquerItemInformation.BaseInformations.ContainsKey(itemx.ID))
                         continue;
                     comboBox2.Items.Add(String.Format(" {0} @@ {1} @@ [Warehouse] @@ {2}", Database.ConquerItemInformation.BaseInformations[itemx.ID].Name, itemx.UID, itemx.Warehouse));
                 }

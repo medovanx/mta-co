@@ -734,61 +734,9 @@ namespace MTA
                 string[] data = command.Split(' ');
                 switch (data[0])
                 {
-                    case "@testmode":
-                        {
-                            if (TestingMode)
-                            {
-                                TestingMode = false;
-                                Console.WriteLine("Test Mode Off");
-                            }
-                            else
-                            {
-                                TestingMode = true;
-                                Kernel.SendWorldMessage(new Network.GamePackets.Message(string.Concat(new object[] { "Server will exit for 5 min to fix some bugs, please be paitent" }), System.Drawing.Color.Black, 0x7db), Program.Values);
-                                CommandsAI("@save");
-
-                                new Database.MySqlCommand(Database.MySqlCommandType.UPDATE).Update("configuration").Set("ItemUID", ConquerItem.ItemUID.Now).Where("Server", Constants.ServerName).Execute();
-                                Database.EntityVariableTable.Save(0, Vars);
-
-
-                                var WC = Program.Values.ToArray();
-                                foreach (Client.GameState client in WC)
-                                {
-                                    if (client.Account.State != AccountTable.AccountState.GM)
-                                    {
-                                        client.Send("Server will exit for 5 min to fix some bugs, please be paitent !");
-                                        client.Disconnect();
-                                    }
-                                }
-
-                                if (GuildWar.IsWar)
-                                    GuildWar.End();
-                                new Database.MySqlCommand(Database.MySqlCommandType.UPDATE).Update("configuration").Set("ItemUID", ConquerItem.ItemUID.Now).Where("Server", Constants.ServerName).Execute();
-                                Console.WriteLine("Test Mode On");
-                            }
-                            break;
-                        }
                     case "@jsspell":
                         {
                             new MaTrix.GUI.SpellControl().ShowDialog();
-                            break;
-                        }
-                    case "@king":
-                        Console.WriteLine("Load Server Configuration By Legends !");
-                        string ConfigFileName = "Config\\configuration.ini";
-                        IniFile IniFile = new IniFile(ConfigFileName);
-                        GameIP = IniFile.ReadString("configuration", "IP");
-                        GamePort = IniFile.ReadUInt16("configuration", "GamePort");
-
-                        AuthPort = new List<ushort>()
-            {
-                 IniFile.ReadUInt16("configuration", "AuthPort"),
-            };
-                        Constants.ServerName = IniFile.ReadString("configuration", "ServerName");
-                        //TestingMode = IniFile.ReadString("configuration", "TestMode", "0") == "1" ? true : false;
-                        AllTest = IniFile.ReadString("configuration", "AllTest", "0") == "1" ? true : false;
-                        rates.Load(IniFile);
-                        {
                             break;
                         }
                     case "@nob":
@@ -796,100 +744,16 @@ namespace MTA
                             Database.NobilityTable.Load();
                             break;
                         }
-                    case "@reloadnpc":// new npc script
+                    case "@reloadnpc":
                         {
                             World.ScriptEngine.Check_Updates();
                             Console.WriteLine("New System's Npc Reloaded.");
                             break;
                         }
-                    case "@guildwaroff":
-                        {
-                            if (Game.GuildWar.IsWar)
-                            {
-                                Game.GuildWar.End();
-                            }
-                            break;
-                        }
-                    case "@char":
                     case "@cp":
                         {
                             Controlpanel cp = new Controlpanel();
                             cp.ShowDialog();
-                            break;
-                        }
-                    case "@clear":
-                        {
-                            Console.Clear();
-                            MTA.Console.WriteLine("Consle and program Cleared !!");
-                            break;
-                        }
-                    case "@matrix":
-                    case "@bigbos":
-                        MTA.Console.WriteLine("Server will restart after 10 minutes.");
-                        Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("The server will be brought down for maintenance in 5 minute, Please exit the game now.", System.Drawing.Color.Orange, 0x7db), Program.Values);
-                        System.Threading.Thread.Sleep(0x7530);
-                        Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("The server will be brought down for maintenance in 4 minute 30 second, Please exit the game now.", System.Drawing.Color.Orange, 0x7db), Program.Values);
-                        System.Threading.Thread.Sleep(0x7530);
-                        Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("The server will be brought down for maintenance in 4 minute, Please exit the game now.", System.Drawing.Color.Orange, 0x7db), Program.Values);
-                        System.Threading.Thread.Sleep(0x7530);
-                        Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("The server will be brought down for maintenance in 3 minute 30 second, Please exit the game now.", System.Drawing.Color.Orange, 0x7db), Program.Values);
-                        System.Threading.Thread.Sleep(0x7530);
-                        Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("The server will be brought down for maintenance in 3 minute, Please exit the game now.", System.Drawing.Color.Orange, 0x7db), Program.Values);
-                        System.Threading.Thread.Sleep(0x7530);
-                        Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("The server will be brought down for maintenance in 2 minute 30 second, Please exit the game now.", System.Drawing.Color.Orange, 0x7db), Program.Values);
-                        System.Threading.Thread.Sleep(0x7530);
-                        Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("The server will be brought down for maintenance in 2 minute, Please exit the game now.", System.Drawing.Color.Orange, 0x7db), Program.Values);
-                        System.Threading.Thread.Sleep(0x7530);
-                        Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("The server will be brought down for maintenance in 1 minute 30 second, Please exit the game now.", System.Drawing.Color.Orange, 0x7db), Program.Values);
-                        System.Threading.Thread.Sleep(0x7530);
-                        Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("The server will be brought down for maintenance in 1 minute, Please exit the game now.", System.Drawing.Color.Orange, 0x7db), Program.Values);
-                        System.Threading.Thread.Sleep(0x7530);
-                        Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("The server will be brought down for maintenance in 30 second, Please exit the game now.", System.Drawing.Color.Orange, 0x7db), Program.Values);
-                        MTA.Console.WriteLine("Server will exit after 1 minute.");
-                        CommandsAI("@save");
-                        System.Threading.Thread.Sleep(0x7530);
-                        Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("The Server restarted, Please log in after 2 minutes! ", System.Drawing.Color.Orange, 0x7db), Program.Values);
-                        try
-                        {
-                            CommandsAI("@restart");
-                        }
-                        catch
-                        {
-                            MTA.Console.WriteLine("Server cannot exit");
-                        }
-                        break;
-                    case "@flushbans":
-                        {
-                            Database.IPBan.Load();
-                            break;
-                        }
-                    case "@alivetime":
-                        {
-                            DateTime now = DateTime.Now;
-                            TimeSpan t2 = new TimeSpan(StartDate.ToBinary());
-                            TimeSpan t1 = new TimeSpan(now.ToBinary());
-                            Console.WriteLine("The server has been online " + (int)(t1.TotalHours - t2.TotalHours) + " hours, " + (int)((t1.TotalMinutes - t2.TotalMinutes) % 60) + " minutes.");
-                            break;
-                        }
-                    case "@online":
-                        {
-                            Console.WriteLine("Online Players Count : " + Kernel.GamePool.Count);
-                            string line = "";
-                            foreach (Client.GameState pClient in Program.Values)
-                                line += pClient.Entity.Name + ",";
-                            if (line != "")
-                            {
-                                line = line.Remove(line.Length - 1);
-                                Console.WriteLine("Players : " + line);
-                            }
-                            break;
-                        }
-                    case "@memoryusage":
-                        {
-                            var proc = System.Diagnostics.Process.GetCurrentProcess();
-                            Console.WriteLine("Thread count: " + proc.Threads.Count);
-                            Console.WriteLine("Memory set(MB): " + ((double)((double)proc.WorkingSet64 / 1024)) / 1024);
-                            proc.Close();
                             break;
                         }
                     case "@campion":
@@ -907,40 +771,6 @@ namespace MTA
                             Save();
                         }
                         break;
-                    case "@playercap":
-                        {
-                            try
-                            {
-                                PlayerCap = int.Parse(data[1]);
-                            }
-                            catch
-                            {
-
-                            }
-                            break;
-                        }
-                    case "@skill":
-                        {
-                            Game.Features.Tournaments.TeamElitePk.SkillTeamTournament.Open();
-                            foreach (var clien in Kernel.GamePool.Values)
-                            {
-                                if (clien.Team == null)
-                                    clien.Team = new Game.ConquerStructures.Team(clien);
-                                Game.Features.Tournaments.TeamElitePk.SkillTeamTournament.Join(clien, 3);
-                            }
-                            break;
-                        }
-                    case "@team":
-                        {
-                            Game.Features.Tournaments.TeamElitePk.TeamTournament.Open();
-                            foreach (var clien in Kernel.GamePool.Values)
-                            {
-                                if (clien.Team == null)
-                                    clien.Team = new Game.ConquerStructures.Team(clien);
-                                Game.Features.Tournaments.TeamElitePk.TeamTournament.Join(clien, 3);
-                            }
-                            break;
-                        }
                     case "@exit":
                         {
                             GameServer.Disable();
@@ -970,28 +800,6 @@ namespace MTA
                             Environment.Exit(0);
                         }
                         break;
-
-                    case "serverpass":
-                        {
-                            using (MySqlCommand cmd = new MySqlCommand(MySqlCommandType.SELECT))
-                            {
-                                cmd.Select("configuration").Where("Server", Constants.ServerName);
-                                using (MySqlReader r = new MySqlReader(cmd))
-                                {
-                                    if (r.Read())
-                                        Constants.ServerGMPass = r.ReadString("ServerGMPass");
-                                }
-
-                            }
-                            break;
-                        }
-                    case "@pressure":
-                        {
-                            Console.WriteLine("Genr: " + World.GenericThreadPool.ToString());
-                            Console.WriteLine("Send: " + World.SendPool.ToString());
-                            Console.WriteLine("Recv: " + World.ReceivePool.ToString());
-                            break;
-                        }
                     case "@restart":
                         {
                             try
@@ -1025,86 +833,11 @@ namespace MTA
                             }
                         }
                         break;
-                    case "@account":
-                        {
-                            Database.AccountTable account = new AccountTable(data[1]);
-                            account.Password = data[2];
-                            account.State = AccountTable.AccountState.Player;
-                            account.Save();
-                        }
-                        break;
-                    case "@process":
-                        {
-                            HandleClipboardPacket(command);
-                            break;
-                        }
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
-            }
-        }
-        public static void HandleClipboardPacket(string cmd)
-        {
-            string[] pData = cmd.Split(' ');
-            long off = 0, type = 0, val = 0;
-            if (pData.Length > 1)
-            {
-                //@process a:b:c
-                //a: offset to modify
-                //b: type: 1,2,4,8,u
-                //c: value
-                string[] oData = pData[1].Split(':');
-                if (oData.Length == 3)
-                {
-                    off = long.Parse(oData[0]);
-                    type = long.Parse(oData[1]);
-                    if (oData[2] == "u")
-                        val = 1337;
-                    else
-                        val = long.Parse(oData[2]);
-                }
-            }
-            string Data = OSClipboard.GetText();
-            //Data = Data.Substring(Data.IndexOf('{') + 1);
-            //Data = Data.Replace("};", "").Replace(",", "").Replace("\r", "").Replace("\n", "");
-            string[] num = Data.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-            byte[] packet = new byte[num.Length + 8];
-            for (int i = 0; i < num.Length; i++)
-                packet[i] = byte.Parse(num[i], System.Globalization.NumberStyles.HexNumber);
-            Writer.WriteUInt16((ushort)(packet.Length - 8), 0, packet);
-            if (off != 0)
-            {
-                switch (type)
-                {
-                    case 1:
-                        {
-                            packet[(int)off] = (byte)val;
-                            break;
-                        }
-                    case 2:
-                        {
-                            Writer.WriteUInt16((ushort)val, (int)off, packet);
-                            break;
-                        }
-                    case 4:
-                        {
-                            Writer.WriteUInt32((uint)val, (int)off, packet);
-                            break;
-                        }
-                    case 8:
-                        {
-                            Writer.WriteUInt64((ulong)val, (int)off, packet);
-                            break;
-                        }
-                }
-            }
-            foreach (var client in Program.Values)
-            {
-                if (val == 1337 && type == 4)
-                    Writer.WriteUInt32(client.Entity.UID, (int)off, packet);
-                client.Send(packet);
             }
         }
 
@@ -1885,45 +1618,6 @@ namespace MTA
         }
 
         #region Matrix Style
-        static bool thistime = false;
-        private static void MatrixStep(int width, int height, int[] y, int[] l)
-        {
-            int x;
-            thistime = !thistime;
-            for (x = 0; x < width; ++x)
-            {
-                if (x % 11 == 10)
-                {
-                    if (!thistime)
-                        continue;
-                }
-                else
-                {
-                    System.Console.SetCursorPosition(x, inBoxY(y[x] - 2 - (l[x] / 40 * 2), height));
-                    System.Console.Write(R);
-                }
-                System.Console.SetCursorPosition(x, y[x]);
-                System.Console.Write(R);
-                y[x] = inBoxY(y[x] + 1, height);
-                System.Console.SetCursorPosition(x, inBoxY(y[x] - l[x], height));
-                System.Console.Write(' ');
-            }
-        }
-        private static void Initialize(out int width, out int height, out int[] y, out int[] l)
-        {
-            int h1;
-            int h2 = (h1 = (height = System.Console.WindowHeight) / 2) / 2;
-            width = System.Console.WindowWidth - 1;
-            y = new int[width];
-            l = new int[width];
-            int x;
-            System.Console.Clear();
-            for (x = 0; x < width; ++x)
-            {
-                y[x] = r.Next(height);
-                l[x] = r.Next(h2 * ((x % 11 != 10) ? 2 : 1), h1 * ((x % 11 != 10) ? 2 : 1));
-            }
-        }
         static Random r = new Random();
         public static DateTime KingsTime;
 
@@ -2298,23 +1992,5 @@ namespace MTA
             Shit = IniFile.ReadUInt32("Rates", "Shit");
         }
 
-    }
-
-
-    public class Kernel32
-    {
-        public delegate bool ConsoleEventHandler(CtrlType sig);
-
-        public enum CtrlType
-        {
-            CTRL_C_EVENT = 0,
-            CTRL_BREAK_EVENT = 1,
-            CTRL_CLOSE_EVENT = 2,
-            CTRL_LOGOFF_EVENT = 5,
-            CTRL_SHUTDOWN_EVENT = 6
-        }
-
-        [DllImport("kernel32.dll")]
-        public static extern bool SetConsoleCtrlHandler(ConsoleEventHandler handler, bool add);
     }
 }

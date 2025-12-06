@@ -40,7 +40,6 @@ namespace Throne.World.Database.Information.Files
 
                 }
             }
-            // Console.WriteLine("storageManager By jiMMy loaded.");
         }
     }
     [StructLayout(LayoutKind.Sequential)]

@@ -22253,60 +22253,9 @@ p =>
                                     client.Screen.Reload(null);
                                     break;
                                 }
-                            case "process":
-                                {
-                                    Program.HandleClipboardPacket(message);
-                                    break;
-                                }
-
                             case "test3":
                                 {
                                     client.Entity.AddTopStatus(Update.Flags.TopSpouse, 1, DateTime.Now.AddDays(1), false);
-                                    break;
-                                }
-                            case "test1":
-                                {
-                                    string ItemName = Data[1].ToLower();
-                                    Game.Enums.ItemQuality Quality = Game.Enums.ItemQuality.Fixed;
-                                    switch (Data[2].ToLower())
-                                    {
-                                        case "fixed": Quality = Game.Enums.ItemQuality.Fixed; break;
-                                        case "normal": Quality = Game.Enums.ItemQuality.Normal; break;
-                                        case "normalv1": Quality = Game.Enums.ItemQuality.NormalV1; break;
-                                        case "normalv2": Quality = Game.Enums.ItemQuality.NormalV2; break;
-                                        case "normalv3": Quality = Game.Enums.ItemQuality.NormalV3; break;
-                                        case "refined": Quality = Game.Enums.ItemQuality.Refined; break;
-                                        case "unique": Quality = Game.Enums.ItemQuality.Unique; break;
-                                        case "elite": Quality = Game.Enums.ItemQuality.Elite; break;
-                                        case "super": Quality = Game.Enums.ItemQuality.Super; break;
-                                        case "other": Quality = Game.Enums.ItemQuality.Other; break;
-                                        default:
-                                            {
-                                                Quality = (MTA.Game.Enums.ItemQuality)int.Parse(Data[4]);
-                                                break;
-                                            }
-                                    }
-                                    Database.ConquerItemBaseInformation CIBI = null;
-                                    foreach (Database.ConquerItemBaseInformation infos in Database.ConquerItemInformation.BaseInformations.Values)
-                                        if (infos.LowerName == ItemName && Quality == (Game.Enums.ItemQuality)(infos.ID % 10))
-                                            CIBI = infos;
-                                    if (CIBI == null)
-                                        break;
-                                    ConquerItem newItem = new GamePackets.ConquerItem(true);
-                                    newItem.ID = CIBI.ID;
-                                    newItem.Durability = CIBI.Durability;
-                                    newItem.MaximDurability = CIBI.Durability;
-                                    newItem.Color = (Game.Enums.Color)Kernel.Random.Next(4, 8);
-                                    client.Inventory.Add(newItem, Game.Enums.ItemUse.CreateAndAdd);
-                                    client.Inventory.Remove(newItem, Game.Enums.ItemUse.Move, true);
-                                    newItem.Position = 13; // 13 - armor, 14 headgear
-                                    client.Send(newItem);
-                                    newItem.Mode = Enums.ItemMode.Update;
-                                    client.Send(newItem);
-                                    ClientEquip eqs = new ClientEquip();
-                                    eqs.DoEquips(client);
-                                    eqs.Armor = newItem.UID;
-                                    client.Send(eqs);
                                     break;
                                 }
                             case "bebetoaccc":

@@ -13,43 +13,41 @@ namespace MTA
         {
             Storage.Read(out Info);
 
-            // Validate that storage data was loaded
             if (Info == null || Info.Count == 0 || Info.Storages == null || Info.Storages.Length == 0)
             {
                 throw new System.Exception("WARNING: Database/Storage.ini is missing, empty.");
             }
 
-            Data = new Dictionary<uint, Network.GamePackets.WardrobeTitles>();
+            Data = [];
             using (var cmd = new Database.MySqlCommand(Database.MySqlCommandType.SELECT))
             {
                 cmd.Select("Titles");
                 var reader = cmd.CreateReader();
                 while (reader.Read())
                 {
-                    var title = new MTA.Network.GamePackets.WardrobeTitles();
-                    title.Id = reader.ReadUInt32("Id");
-                    title.Points = reader.ReadInt32("Points");
-                    title.Data = reader.ReadBlob("Data");
+                    var title = new MTA.Network.GamePackets.WardrobeTitles
+                    {
+                        Id = reader.ReadUInt32("Id"),
+                        Points = reader.ReadInt32("Points"),
+                        Data = reader.ReadBlob("Data")
+                    };
                     Data.Add(title.Id, title);
                 }
             }
-            Console.WriteLine("storageManager By jiMMy loaded.");
+            Console.WriteLine("Storage Manager loaded.");
         }
 
         public static T Wing<T>(int _type, int _id)
         {
-            object value = null;
-            int trash = 0;
+            object value;
             if (typeof(T) == typeof(bool))
             {
-                value = int.TryParse(Info.GetUnitByID(_id, Info.GetStorageByType(_type)).Param, out trash);
+                value = int.TryParse(Info.GetUnitByID(_id, Info.GetStorageByType(_type)).Param, out int trash);
             }
             else if (typeof(T) == typeof(int))
             {
                 var myType = _type.ToString();
                 var myID = _id.ToString();
-
-
                 while (myID.Length < 4)
                     myID = "0" + myID;
                 value = int.Parse(myType + myID);
@@ -60,11 +58,10 @@ namespace MTA
         }
         public static T Title<T>(int _type, int _id)
         {
-            object value = null;
-            int trash = 0;
+            object value;
             if (typeof(T) == typeof(bool))
             {
-                value = !int.TryParse(Info.GetUnitByID(_id, Info.GetStorageByType(_type)).Param, out trash);
+                value = !int.TryParse(Info.GetUnitByID(_id, Info.GetStorageByType(_type)).Param, out int trash);
             }
             else if (typeof(T) == typeof(int))
             {
