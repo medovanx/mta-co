@@ -396,6 +396,7 @@
     <Compile Include="Game\Npcs\Handlers\TwinCity\Npc_VipSeller.cs" />
     <Compile Include="Game\Npcs\Handlers\TwinCity\Npc_PlayerUtilities.cs" />
     <Compile Include="Game\Npcs\Handlers\TwinCity\Npc_SteedSeller.cs" />
+    <Compile Include="Game\Npcs\Handlers\TwinCity\Npc_StuffSeller.cs" />
     <Compile Include="Game\Npcs\NpcHandlerAttribute.cs" />
     <Compile Include="Game\Npcs\NpcHandlerRegistry.cs" />
     <Compile Include="Game\Npcs\Npcs.cs" />
