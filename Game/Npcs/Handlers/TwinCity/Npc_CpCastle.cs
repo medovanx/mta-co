@@ -7,7 +7,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
     /// <summary>
     /// CP Castle NPC - Handles CP Castle event entry and exit
     /// </summary>
-    [NpcHandler(50010)]
+    [NpcHandler(115522005)]
     public static class Npc_CpCastle
     {
         private const int EVENT_START_HOUR_1 = 14;
@@ -37,7 +37,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
             {
                 case 0:
                     {
-                        dialog.Text("CP Castle Event starts every day at 14:00 and 20:00 Server Time and ends after 30 minutes. [Beginner Map and Advanced Map for High Level and Low Level players]");
+                        dialog.Text("The CP Castle Event starts every day at 14:00 and 20:00 Server Time and lasts for 30 minutes. Separate maps are available for beginner and advanced players.");
 
                         if (IsEventActive())
                         {
@@ -45,7 +45,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                         }
                         else
                         {
-                            dialog.Option("Rewards?", 2);
+                            dialog.Option("What are the rewards?", 2);
                         }
 
                         dialog.Avatar(31);
@@ -55,9 +55,9 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
 
                 case 5:
                     {
-                        dialog.Text("Go to the place for you");
+                        dialog.Text("Choose your destination:");
                         dialog.Option("Level 1-140 (1st Reborn - 2nd Reborn)", 7);
-                        dialog.Option("No, sorry.", 255);
+                        dialog.Option("No, thank you.", 255);
                         dialog.Avatar(31);
                         dialog.Send();
                         break;
@@ -82,7 +82,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                             }
                             else
                             {
-                                dialog.Text("Sorry, Advanced map: Level 130-140 (1st Reborn and 2nd Reborn)");
+                                dialog.Text("Sorry, the Advanced map is for Level 130-140 (1st Reborn and 2nd Reborn) only.");
                                 dialog.Option("I see!", 255);
                                 dialog.Avatar(31);
                                 dialog.Send();
@@ -90,7 +90,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                         }
                         else
                         {
-                            dialog.Text("The event runs every day at 14:00 and 20:00 Server Time");
+                            dialog.Text("The event runs every day at 14:00 and 20:00 Server Time and lasts for 30 minutes.");
                             dialog.Option("I see!", 255);
                             dialog.Avatar(31);
                             dialog.Send();
@@ -100,8 +100,8 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
 
                 case 2:
                     {
-                        dialog.Text("<tip color=0xffffae00 desc=DragonBalls#ConquerPoints#BoundCps#StudyPoints#ChiPacks#ScrollsMeteor#>Rewards:</tip>");
-                        dialog.Option("Thank You", 255);
+                        dialog.Text("Rewards: DragonBalls, CPs, CPs (B), Study Points, Chi Packs, Scrolls, Meteor.");
+                        dialog.Option("Thank you", 255);
                         dialog.Avatar(31);
                         dialog.Send();
                         break;
@@ -128,7 +128,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                     {
                         dialog.Text("Do you want to go to Twin City?");
                         dialog.Option("Yes, please.", 1);
-                        dialog.Option("Just passing by!", 255);
+                        dialog.Option("Just passing by.", 255);
                         dialog.Send();
                         break;
                     }
