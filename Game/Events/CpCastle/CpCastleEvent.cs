@@ -8,7 +8,7 @@ using MTA.Network.GamePackets;
 namespace MTA.Game.Events.CpCastle
 {
     /// <summary>
-    /// CP Castle Event - Runs daily at 14:00 and 20:00 for 30 minutes
+    /// CP Castle Event
     /// </summary>
     public class CpCastleEvent : BaseEvent
     {
@@ -20,11 +20,9 @@ namespace MTA.Game.Events.CpCastle
         private const int EVENT_DURATION_MINUTES = 30;
         private const int WARNING_TIME_10_MIN = 10;
         private const int WARNING_TIME_5_MIN = 5;
-        private const int WARNING_TIME_10_SEC = 10;
 
         // Castle map IDs
-        private static readonly ushort[] CASTLE_MAPS = [3030, 3031, 3032, 3033];
-        private const ushort TWIN_CITY_MAP = 1002;
+        private static readonly ushort[] CASTLE_MAPS = [MapConstants.CP_CASTLE_BEGINNER, MapConstants.CP_CASTLE_ADVANCED];
         private const ushort TWIN_CITY_X = 300;
         private const ushort TWIN_CITY_Y = 280;
 
@@ -72,10 +70,12 @@ namespace MTA.Game.Events.CpCastle
             foreach (var client in Program.Values)
             {
                 client.MessageBox("The CP Castle Event has begun! Would you like to join?",
-                   p => { p.Entity.Teleport(TWIN_CITY_MAP, 288, 280); }, null, 60);
+                   p => { p.Entity.Teleport(MapConstants.TWIN_CITY, 288, 280); }, null, 60);
             }
 
             Kernel.SendWorldMessage(new Message("The CP Castle War has begun!", Color.White, Message.Center), Program.Values);
+
+            EnsureMonsterRespawns([MapConstants.CP_CASTLE_BEGINNER, MapConstants.CP_CASTLE_ADVANCED], ["Captain"], 10);
         }
 
         public override void OnEnd()
@@ -85,7 +85,7 @@ namespace MTA.Game.Events.CpCastle
             BroadcastMessage("The CP Castle Event has ended. See you next time!", Color.White, Message.System);
 
             // Teleport all players out of castle maps
-            TeleportPlayersFromMaps(CASTLE_MAPS, TWIN_CITY_MAP, TWIN_CITY_X, TWIN_CITY_Y);
+            TeleportPlayersFromMaps(CASTLE_MAPS, MapConstants.TWIN_CITY, TWIN_CITY_X, TWIN_CITY_Y);
         }
 
         public override void OnUpdate(DateTime now)
@@ -138,14 +138,16 @@ namespace MTA.Game.Events.CpCastle
         /// </summary>
         public override void OnMonsterKilled(Database.MonsterInformation monster, Game.Entity killer)
         {
-            // Only handle Captain monsters in CP Castle map (3033) during active event
+            // Only handle Captain monsters in CP Castle maps (3030, 3031, 3032, 3033) during active event
             if (!IsActive)
                 return;
 
             if (monster.Owner == null)
                 return;
 
-            if (monster.Owner.MapID != 3033)
+            // Check if monster is in any CP Castle map
+            ushort mapId = monster.Owner.MapID;
+            if (mapId != MapConstants.CP_CASTLE_BEGINNER && mapId != MapConstants.CP_CASTLE_ADVANCED)
                 return;
 
             if (monster.Name != "Captain")
@@ -160,16 +162,16 @@ namespace MTA.Game.Events.CpCastle
 
         /// <summary>
         /// Skip normal drop for Captain in CP Castle map when event is active
-        /// Event system handles rewards (1000 CPs)
+        /// Event system handles rewards
         /// </summary>
         public override bool ShouldSkipNormalDrop(MTA.Database.MonsterInformation monster, ushort mapId)
         {
-            // Use the same conditions as OnMonsterKilled to ensure consistency
-            // Skip normal 150 CP drop for Captain in map 3033 when event is active
+            // Skip normal CP drop for Captain in any CP Castle map when event is active
             if (!IsActive || monster.Owner == null)
                 return false;
 
-            return monster.Owner.MapID == 3033 && monster.Name == "Captain";
+            ushort ownerMapId = monster.Owner.MapID;
+            return (ownerMapId == MapConstants.CP_CASTLE_BEGINNER || ownerMapId == MapConstants.CP_CASTLE_ADVANCED) && monster.Name == "Captain";
         }
 
         /// <summary>
@@ -177,16 +179,6 @@ namespace MTA.Game.Events.CpCastle
         /// </summary>
         public static void SendPreEventWarnings(DateTime now)
         {
-            // 10 minutes before (13:50 / 19:50)
-            if ((now.Hour == EVENT_START_HOUR_1 - 1 && now.Minute == 50 && now.Second == 0) ||
-                (now.Hour == EVENT_START_HOUR_2 - 1 && now.Minute == 50 && now.Second == 0))
-            {
-                foreach (var client in Program.Values)
-                {
-                    client.Send(new Message("Hurry! The CP Castle Event will begin in 10 minutes. Get ready!", Message.System));
-                }
-            }
-
             // 5 minutes before (13:55 / 19:55)
             if ((now.Hour == EVENT_START_HOUR_1 - 1 && now.Minute == 55 && now.Second == 0) ||
                 (now.Hour == EVENT_START_HOUR_2 - 1 && now.Minute == 55 && now.Second == 0))

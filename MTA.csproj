@@ -211,6 +211,7 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Game\Constants\Wings.cs" />
     <Compile Include="Game\Constants\Titles.cs" />
+    <Compile Include="Game\Constants\MapConstants.cs" />
     <Compile Include="Database\AccountTable.cs" />
     <Compile Include="Database\AddingInformationTable.cs" />
     <Compile Include="Database\ArenaTable.cs" />

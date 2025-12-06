@@ -246,7 +246,7 @@ namespace MTA
             1633,
             1024,
             2351,
-            3033,
+            Game.MapConstants.CP_CASTLE_BEGINNER, // CP Castle Beginner Map (safe, no PvP)
             601
         };
         public static readonly System.Collections.Generic.List<ushort> NoHp = new System.Collections.Generic.List<ushort> {

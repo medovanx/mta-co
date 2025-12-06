@@ -4,6 +4,7 @@ using System.Linq;
 using MTA.Client;
 using System.Drawing;
 using MTA.Network.GamePackets;
+using MTA;
 
 namespace MTA.Game.Events
 {
@@ -144,6 +145,72 @@ namespace MTA.Game.Events
                     {
                         client.Entity.Teleport(targetMapId, targetX, targetY);
                         break;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Ensure monsters in specified maps have proper respawn settings
+        /// Called automatically when event starts
+        /// Override this method to customize respawn behavior for specific events
+        /// </summary>
+        /// <param name="mapIds">Maps to configure respawns for</param>
+        /// <param name="monsterNames">Monster names to configure (null = all monsters)</param>
+        /// <param name="respawnTimeSeconds">Respawn time in seconds (default: 30)</param>
+        protected virtual void EnsureMonsterRespawns(IEnumerable<ushort> mapIds, IEnumerable<string> monsterNames = null, int respawnTimeSeconds = 30)
+        {
+            if (mapIds == null)
+                return;
+
+            foreach (var mapId in mapIds)
+            {
+                if (!Kernel.Maps.ContainsKey(mapId))
+                    continue;
+
+                var map = Kernel.Maps[mapId];
+                if (map?.Entities == null)
+                    continue;
+
+                foreach (var entity in map.Entities.Values)
+                {
+                    if (entity?.MonsterInfo == null)
+                        continue;
+
+                    // If specific monster names provided, only configure those
+                    if (monsterNames != null && !monsterNames.Contains(entity.MonsterInfo.Name))
+                        continue;
+
+                    // Ensure monsters can respawn
+                    entity.MonsterInfo.IsRespawnAble = true;
+                    entity.MonsterInfo.RespawnTime = respawnTimeSeconds;
+
+                    // Revive dead monsters immediately
+                    if (entity.Dead)
+                    {
+                        entity.Hitpoints = entity.MonsterInfo.Hitpoints;
+                        entity.RemoveFlag(entity.StatusFlag);
+                        entity.StatusFlag = 0;
+                        entity.CauseOfDeathIsMagic = false;
+
+                        // Send spawn to nearby players
+                        foreach (var client in Program.Values)
+                        {
+                            if (client.Map.ID == mapId)
+                            {
+                                if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, entity.X, entity.Y) < Constants.nScreenDistance)
+                                {
+                                    entity.SendSpawn(client, false);
+                                    var stringPacket = new _String(true)
+                                    {
+                                        UID = entity.UID,
+                                        Type = _String.Effect
+                                    };
+                                    stringPacket.Texts.Add("MBStandard");
+                                    client.Send(stringPacket);
+                                }
+                            }
+                        }
                     }
                 }
             }
