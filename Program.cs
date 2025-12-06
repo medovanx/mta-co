@@ -64,9 +64,6 @@ namespace MTA
         //  public static bool SpookSpawned = false;
         //  public static DateTime SpookTime;
         public static DayOfWeek Today;
-        public static MemoryCompressor MCompressor = new MemoryCompressor();
-        public static bool CpuUsageTimer = true;
-        public static int CpuUse = 0;
         public static long Carnaval = 0;
         public static long Carnaval2 = 0;
         public static long Carnaval3 = 0;
@@ -194,7 +191,6 @@ namespace MTA
 
         static void Main(string[] args)
         {
-            MCompressor.Optimize();
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(Application_ThreadException);
             ALEXPC = true;
             Time32 Start = Time32.Now;

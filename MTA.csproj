@@ -430,8 +430,6 @@
     <Compile Include="Interfaces\ISkill.cs" />
     <Compile Include="Interfaces\ISobNpc.cs" />
     <Compile Include="Kernel.cs" />
-    <Compile Include="MrNiTro\Cpu\CpuUsage.cs" />
-    <Compile Include="MrNiTro\Cpu\MemoryCompressor.cs" />
     <Compile Include="MrNiTro\GUI\GUI.cs">
       <SubType>Form</SubType>
     </Compile>
