@@ -213,12 +213,83 @@ namespace MTA.Network.GamePackets
 
         internal void AppendP(uint p, uint p_2, uint p_3, string p_4, byte p_5, byte p_6, uint p_7)
         {
-            throw new NotImplementedException();
+            int offset = this.current * 72 + 24;
+            if (offset + 72 <= this.Buffer.Length)
+            {
+                this.current++;
+                this.Count = (uint)this.current;
+                Writer.WriteUInt32(p, offset, this.Buffer);
+                offset += 8;
+                Writer.WriteUInt32(p_2, offset, this.Buffer);
+                offset += 8;
+                Writer.WriteUInt32(p_3, offset, this.Buffer);
+                offset += 4;
+                Writer.WriteUInt32(p_3, offset, this.Buffer);
+                offset += 4;
+                Writer.WriteString(p_4, offset, this.Buffer);
+                offset += 16;
+                Writer.WriteString(p_4, offset, this.Buffer);
+                offset += 16;
+                Writer.WriteUInt32((uint)p_5, offset, this.Buffer);
+                offset += 4;
+                Writer.WriteUInt32((uint)p_6, offset, this.Buffer);
+                offset += 4;
+                Writer.WriteUInt32(p_7, offset, this.Buffer);
+                offset += 4;
+            }
         }
 
         internal void Append2(int p, uint p_2, uint p_3, string p_4, byte p_5, byte p_6, uint p_7, bool p_8)
         {
-            throw new NotImplementedException();
+            if (p_8) // Top player - write at fixed offset 24
+            {
+                int offset = 24;
+                Writer.WriteUInt32((uint)p, offset, this.Buffer);
+                offset += 8;
+                Writer.WriteUInt32(p_2, offset, this.Buffer);
+                offset += 8;
+                Writer.WriteUInt32(p_3, offset, this.Buffer);
+                offset += 4;
+                Writer.WriteUInt32(p_3, offset, this.Buffer);
+                offset += 4;
+                Writer.WriteString(p_4, offset, this.Buffer);
+                offset += 16;
+                Writer.WriteString(p_4, offset, this.Buffer);
+                offset += 16;
+                Writer.WriteUInt32((uint)p_5, offset, this.Buffer);
+                offset += 4;
+                Writer.WriteUInt32((uint)p_6, offset, this.Buffer);
+                offset += 4;
+                Writer.WriteUInt32(p_7, offset, this.Buffer);
+                offset += 4;
+            }
+            else // Regular list item
+            {
+                int offset = this.current * 72 + 24;
+                if (offset + 72 <= this.Buffer.Length)
+                {
+                    this.current++;
+                    this.Count = (uint)this.current;
+                    Writer.WriteUInt32((uint)p, offset, this.Buffer);
+                    offset += 8;
+                    Writer.WriteUInt32(p_2, offset, this.Buffer);
+                    offset += 8;
+                    Writer.WriteUInt32(p_3, offset, this.Buffer);
+                    offset += 4;
+                    Writer.WriteUInt32(p_3, offset, this.Buffer);
+                    offset += 4;
+                    Writer.WriteString(p_4, offset, this.Buffer);
+                    offset += 16;
+                    Writer.WriteString(p_4, offset, this.Buffer);
+                    offset += 16;
+                    Writer.WriteUInt32((uint)p_5, offset, this.Buffer);
+                    offset += 4;
+                    Writer.WriteUInt32((uint)p_6, offset, this.Buffer);
+                    offset += 4;
+                    Writer.WriteUInt32(p_7, offset, this.Buffer);
+                    offset += 4;
+                }
+            }
         }
     }
 }
