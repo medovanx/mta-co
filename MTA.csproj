@@ -518,7 +518,6 @@
     <Compile Include="Network\ConcurrentPacketQueue.cs" />
     <Compile Include="Network\Cryptography\AuthCryptography.cs" />
     <Compile Include="Network\Cryptography\GameCryptography.cs" />
-    <Compile Include="Network\Cryptography\LoaderEncryption.cs" />
     <Compile Include="Network\GamePackets\AddToTeam.cs" />
     <Compile Include="Network\GamePackets\ApprenticeInformation.cs" />
     <Compile Include="Network\GamePackets\ArenaStatistic.cs" />
