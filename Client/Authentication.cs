@@ -34,8 +34,7 @@ namespace MTA.Network.AuthPackets
                         Username = Encoding.Default.GetString(BR.ReadBytes(32)).Replace("\0", "");
                         BR.ReadBytes(36);
 
-                        byte[] PasswordArray = BR.ReadBytes(32);
-                        Password = Encoding.Default.GetString(PasswordArray).Replace("\0", "");
+                        Password = Encoding.Default.GetString(BR.ReadBytes(32)).Replace("\0", "");
                         BR.ReadBytes(32);
 
                         Server = Encoding.Default.GetString(BR.ReadBytes(32)).Replace("\0", "");

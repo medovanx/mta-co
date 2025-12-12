@@ -1500,7 +1500,7 @@ namespace MTA
 
                     Forward Fw = new Forward();
                     Console.WriteLine("[LOGIN] Username: " + player.Info.Username + ", Password: " + player.Info.Password);
-                    if (player.Account.Password == player.Info.Password && player.Account.exists)
+                    if (player.Info.Password == player.Account.Password && player.Account.exists)
                         Fw.Type = Forward.ForwardType.Ready;
                     else
                         Fw.Type = Forward.ForwardType.InvalidInfo;
