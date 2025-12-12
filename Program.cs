@@ -1499,8 +1499,8 @@ namespace MTA
                     msvcrt.msvcrt.srand(player.PasswordSeed);
 
                     Forward Fw = new Forward();
-                    Console.WriteLine("[LOGIN]: Username: " + player.Info.Username + " Password: " + player.Info.Password);
-                    if (player.Account.exists)
+                    Console.WriteLine("[LOGIN] Username: " + player.Info.Username + ", Password: " + player.Info.Password);
+                    if (player.Account.Password == player.Info.Password && player.Account.exists)
                         Fw.Type = Forward.ForwardType.Ready;
                     else
                         Fw.Type = Forward.ForwardType.InvalidInfo;
