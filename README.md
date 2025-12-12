@@ -33,3 +33,8 @@ Conquer Online game server implementation in C#.
 ```cmd
 mysqldump -h 127.0.0.1 -u root -pROOT --lock-all-tables --set-gtid-purged=OFF mta > mta.sql
 ```
+
+## Compressing the Client
+```cmd
+7z a -t7z MTAConquer.7z "Client v6609  - MTA" -m0=lzma2 -mx=9 -mfb=273 -md=256m -ms=on
+```
