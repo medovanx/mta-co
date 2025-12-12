@@ -1911,7 +1911,6 @@ namespace MTA
         public static uint DragonBall;
         public static uint Meteor;
         public static string VoteUrl;
-        public static string coder = "HeMa";
         public static uint Reincarnation;
         public static uint donationrate;
         public static uint Shit;
@@ -1939,7 +1938,6 @@ namespace MTA
             Night = IniFile.ReadUInt32("Rates", "Night");
             VoteUrl = IniFile.ReadString("Rates", "VoteUrl");
             Portals = IniFile.ReadUInt32("Rates", "Portals");
-            coder = IniFile.ReadString("Rates", "coder");
             SkillTeam1 = IniFile.ReadUInt32("Rates", "SkillTeam1");
             SkillTeam2 = IniFile.ReadUInt32("Rates", "SkillTeam2");
             SkillTeam3 = IniFile.ReadUInt32("Rates", "SkillTeam3");

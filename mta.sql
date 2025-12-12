@@ -1531,7 +1531,6 @@ CREATE TABLE `rates` (
   `CpsMethodNum` char(45) DEFAULT NULL,
   `ClassPk` bigint unsigned DEFAULT '0',
   `WeeklyPk` bigint unsigned DEFAULT '0',
-  `Coder` char(45) NOT NULL DEFAULT '0',
   `CryptKey` char(255) NOT NULL DEFAULT '0',
   `ChangeName` int NOT NULL DEFAULT '0',
   `MonthlyPk` int NOT NULL DEFAULT '0',
