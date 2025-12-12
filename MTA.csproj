@@ -206,7 +206,6 @@
     <Compile Include="Client\Commands\TeleportCommands.cs" />
     <Compile Include="Client\Commands\WarCommands.cs" />
     <Compile Include="Client\GameState.cs" />
-    <Compile Include="Client\LoaderEncryption.cs" />
     <Compile Include="Client\PacketFilter.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Game\Constants\Wings.cs" />

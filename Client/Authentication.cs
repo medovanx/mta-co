@@ -39,7 +39,6 @@ namespace MTA.Network.AuthPackets
                         Username = Username.Replace("\0", "");
                         BR.ReadBytes(36);
                         var PasswordArray = BR.ReadBytes(32);
-                        LoaderEncryption.Decrypt(PasswordArray, 32);
                         Password = Encoding.Default.GetString(PasswordArray);
                         Password = Password.Replace("\0", "");
                         BR.ReadBytes(32);

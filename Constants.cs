@@ -169,7 +169,7 @@ namespace MTA
         UnhandledExceptionsPath = DatabaseBasePath + "exceptions\\",
         ServerKey = "TQServer",
         QuizShow = DatabaseBasePath + "QuizShow.txt",
-        GameCryptographyKey = "qL0UVCXB6BY9txb2";
+        GameCryptographyKey = "C238xs65pjy7HU9Q";
         public static string ServerName;
         public const int MaxBroadcasts = 50;
         public static uint ExtraExperienceRate, ExtraSpellRate, ExtraProficiencyRate, ConquerPointsDropRate, ConquerPointsDropMultiple, ItemDropRate;

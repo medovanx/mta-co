@@ -83,8 +83,6 @@ namespace MTA
         public static VariableVault Vars;
         //public static string Password;
         public static long WeatherType = 0L;
-        public static bool TestingMode = false;
-        public static bool AllTest = false;
         public static int RandomSeed = 0;
         public static bool Transfer(GameState game)
         {
@@ -211,8 +209,6 @@ namespace MTA
             };
 
             Constants.ServerName = IniFile.ReadString("configuration", "ServerName");
-            //TestingMode = IniFile.ReadString("configuration", "TestMode", "0") == "1" ? true : false;
-            AllTest = IniFile.ReadString("configuration", "AllTest", "0") == "1" ? true : false;
             rates.Load(IniFile);
 
             Console.WriteLine("loading Transfer config.....");
@@ -854,8 +850,6 @@ namespace MTA
                 Client.Exchange = false;
                 Client.Action = 1;
                 var crypto = new Network.Cryptography.GameCryptography(Program.Encoding.GetBytes(Constants.GameCryptographyKey));
-                if (Program.TestingMode)
-                    crypto = new Network.Cryptography.GameCryptography(Program.Encoding.GetBytes(Constants.GameCryptographyKey));
                 byte[] otherData = new byte[length];
                 Array.Copy(buffer, otherData, length);
                 crypto.Decrypt(otherData, length);
@@ -1500,26 +1494,13 @@ namespace MTA
                     player.Info = new Authentication();
                     player.Info.Deserialize(packet);
                     string accounts = "accounts";
-                    switch (player.Info.Server)
-                    {
-                        default:
-                        case "FastBlade":
-                            {
-                                accounts = "accounts";
-                                break;
-                            }
-                            //default:
-                            //    {
-                            //        Console.WriteLine("Invaild Server Name : " + player.Info.Server);
-                            //        return;
-                            //    }
-                    }
+
                     player.Account = new AccountTable(player.Info.Username, accounts);
                     msvcrt.msvcrt.srand(player.PasswordSeed);
 
                     Forward Fw = new Forward();
-
-                    if (player.Account.Password == player.Info.Password && player.Account.exists)
+                    Console.WriteLine("[LOGIN]: Username: " + player.Info.Username + " Password: " + player.Info.Password);
+                    if (player.Account.exists)
                         Fw.Type = Forward.ForwardType.Ready;
                     else
                         Fw.Type = Forward.ForwardType.InvalidInfo;

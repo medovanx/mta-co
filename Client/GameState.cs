@@ -596,8 +596,6 @@ namespace MTA.Client
             _socket = socket;
 
             Cryptography = new GameCryptography(Program.Encoding.GetBytes(Constants.GameCryptographyKey));
-            if (Program.TestingMode)
-                Cryptography = new GameCryptography(Program.Encoding.GetBytes(Constants.GameCryptographyKey));
             DHKeyExchange = new Network.GamePackets.DHKeyExchange.ServerKeyExchange();
             SpiritBeadQ = new Game.Features.SpiritBeadQuest(this);
             ChiPowers = new List<ChiPowerStructure>();
