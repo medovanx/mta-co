@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using MTA.Network.GamePackets;
 using MTA.Interfaces;
 using MTA.Game;
@@ -78,14 +79,54 @@ namespace MTA.Client.Commands
         private static Dictionary<string, string> ParseArguments(string[] data, string mess, int startIndex = 1)
         {
             var args = new Dictionary<string, string>();
+
+            // For name parameter (-n), extract quoted value directly from original message to preserve casing
+            Match nameMatch = Regex.Match(mess, @"-n\s+(['""])(.*?)\1", RegexOptions.IgnoreCase);
+            if (nameMatch.Success)
+            {
+                args["n"] = nameMatch.Groups[2].Value;
+            }
+
+            // Parse other arguments normally
             for (int i = startIndex; i < data.Length; i++)
             {
                 if (data[i].StartsWith("-"))
                 {
                     string key = data[i].Substring(1).ToLower();
+
+                    // Skip -n if we already extracted it from the quoted string
+                    if (key == "n" && nameMatch.Success)
+                    {
+                        // Skip the value tokens for -n
+                        if (i + 1 < data.Length && !data[i + 1].StartsWith("-"))
+                        {
+                            // Check if it's a quoted value that spans multiple tokens
+                            string firstValue = data[i + 1];
+                            if (firstValue.StartsWith("'") || firstValue.StartsWith("\""))
+                            {
+                                char quoteChar = firstValue[0];
+                                // Count tokens until closing quote
+                                int tokensToSkip = 1;
+                                for (int j = i + 2; j < data.Length; j++)
+                                {
+                                    tokensToSkip++;
+                                    if (data[j].EndsWith(quoteChar.ToString()))
+                                        break;
+                                }
+                                i += tokensToSkip;
+                            }
+                            else
+                            {
+                                i++; // Skip single token value
+                            }
+                        }
+                        continue;
+                    }
+
                     if (i + 1 < data.Length && !data[i + 1].StartsWith("-"))
                     {
-                        args[key] = data[i + 1];
+                        string value = data[i + 1];
+                        args[key] = value;
                         i++; // Skip the value in next iteration
                     }
                     else
@@ -103,7 +144,7 @@ namespace MTA.Client.Commands
             {
                 client.Send(new Message("Usage: @editnpc <npc_id> [-n <name>] [-s <skin>] [-e <effect>|none]", System.Drawing.Color.Yellow,
                     Message.Tip));
-                client.Send(new Message("Example: @editnpc 100 -n NewName -s 29680 -e ninjapk_third", System.Drawing.Color.Yellow, Message.Tip));
+                client.Send(new Message("Example: @editnpc 100 -n 'New Name' -s 29680 -e ninjapk_third", System.Drawing.Color.Yellow, Message.Tip));
                 client.Send(new Message("To remove effect: @editnpc 100 -e none", System.Drawing.Color.Yellow, Message.Tip));
                 return true;
             }
@@ -377,6 +418,8 @@ namespace MTA.Client.Commands
                 client.Send(new Message("Usage: @addnpc -n <name> -s <skin> [-e <effect>]", System.Drawing.Color.Yellow,
                     Message.Tip));
                 client.Send(new Message("Example: @addnpc -n test -s 1002 -e ninjapk_third", System.Drawing.Color.Yellow,
+                    Message.Tip));
+                client.Send(new Message("Use quotes for values with spaces: @addnpc -n \"Some Name\" -s 1002 -e \"effect name\"", System.Drawing.Color.Yellow,
                     Message.Tip));
                 return true;
             }
