@@ -5,9 +5,10 @@ using MTA.Network.GamePackets;
 namespace MTA.Game.Npcs.Handlers
 {
     /// <summary>
-    /// Super Guild War Prize Claimer NPC
+    /// Super Guild War Prize Claimer
     /// </summary>
-    public static class Npc_44821140
+    [NpcHandler(44821140)]
+    public static class Npc_SuperGuildWarPrizeClaimer
     {
         public static void Handle(Client.GameState client, NpcRequest npcRequest, MTA.Npcs dialog)
         {

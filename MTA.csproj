@@ -383,7 +383,7 @@
     <Compile Include="Game\Lottery.cs" />
     <Compile Include="Game\Map.cs" />
     <Compile Include="Game\NightDay.cs" />
-    <Compile Include="Game\Npcs\Handlers\Npc_44821140.cs" />
+    <Compile Include="Game\Npcs\Handlers\Npc_SuperGuildWarPrizeClaimer.cs" />
     <Compile Include="Game\Npcs\Handlers\Subclasses\Npc_SubclassManager.cs" />
     <Compile Include="Game\Npcs\Handlers\Subclasses\Npc_LeadChiMaster.cs" />
     <Compile Include="Game\Npcs\Handlers\Subclasses\Npc_LeadMartialArtist.cs" />

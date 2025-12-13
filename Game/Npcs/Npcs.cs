@@ -6428,17 +6428,6 @@ namespace MTA
                                     break;
                                 }
                             #endregion
-
-                            #region SuperClaimGuildPrize
-                            case 44821140:
-                                {
-                                    Game.Npcs.Handlers.Npc_44821140.Handle(client, npcRequest, dialog);
-                                    break;
-                                }
-                            #endregion
-
-
-
                             #region Gates
                             case 516174:
                                 {
