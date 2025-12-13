@@ -444,7 +444,7 @@ namespace MTA
                     new PerfectionScore().GetRankingList();
                     new PerfectionRank().UpdateRanking();
                     Console.WriteLine("Loading Booths");
-                    MaTrix.Booths.Load();
+                    MTA.MrNiTro.Systems.Booths.Load();
                 }
                 Console.WriteLine("Server is now online and ready to accept players. Loaded in " + (Time32.Now - Start) + " Milliseconds.", ConsoleColor.Green);
                 GC.Collect();
