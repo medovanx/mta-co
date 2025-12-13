@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using MTA.Network.GamePackets;
-using MTA.Game.ConquerStructures;
 using MTA.Client;
 using MTA.Game;
 
-namespace MTA.MaTrix
+namespace MTA.MrNiTro.Systems
 {
     public class Booths
     {
@@ -17,15 +14,15 @@ namespace MTA.MaTrix
             Npc = 0,
             Entity = 1
         }
-        public class booth
+        public class Booth
         {
             public uint UID;
             public ushort Mesh = 100;
-            public string Name;
+            public string? Name;
             public ushort Map;
             public ushort X;
             public ushort Y;
-            public List<string> Items;
+            public List<string>? Items;
             public BoothType Type;
             public string BotMessage = "Selling Items.[Boothing AI]";
             public uint Garment = 194300;
@@ -34,11 +31,11 @@ namespace MTA.MaTrix
             public uint WeaponL = 601439;
             public uint Armor = 135259;
         }
-        public static SafeDictionary<uint, booth> Boooths = new SafeDictionary<uint, booth>();
+        public static SafeDictionary<uint, Booth> Boooths = new SafeDictionary<uint, Booth>();
         public static void Load()
         {
             string[] text = File.ReadAllLines(Constants.BoothsPath);
-            booth booth = new booth();
+            Booth booth = new();
             for (int x = 0; x < text.Length; x++)
             {
                 string line = text[x];
@@ -52,8 +49,10 @@ namespace MTA.MaTrix
                         if (!Boooths.ContainsKey(booth.UID))
                         {
                             Boooths.Add(booth.UID, booth);
-                            booth = new booth();
-                            booth.UID = uint.Parse(split[1]);
+                            booth = new Booth
+                            {
+                                UID = uint.Parse(split[1])
+                            };
                         }
                     }
                 }
@@ -65,8 +64,6 @@ namespace MTA.MaTrix
                 {
                     booth.Name = split[1];
                 }
-
-
                 else if (split[0] == "BotMessage")
                 {
                     booth.BotMessage = split[1];
@@ -91,8 +88,6 @@ namespace MTA.MaTrix
                 {
                     booth.Armor = uint.Parse(split[1]);
                 }
-
-
                 else if (split[0] == "Mesh")
                 {
                     booth.Mesh = ushort.Parse(split[1]);
@@ -149,19 +144,16 @@ namespace MTA.MaTrix
 
                 Game.ConquerStructures.Booth booth = new Game.ConquerStructures.Booth();
 
-                SobNpcSpawn Base = new SobNpcSpawn();
-                Base.UID = bo.UID;
+                SobNpcSpawn Base = new SobNpcSpawn
+                {
+                    UID = bo.UID
+                };
 
 
-                if (Booth.Booths2.ContainsKey(Base.UID))
-                    Booth.Booths2.Remove(Base.UID);
-                Booth.Booths2.Add(Base.UID, booth);
-
-                //if (Booth.Booths2.ContainsKey(Base.UID))
-                //    Booth.Booths2.Remove(Base.UID);
-                //Booth.Booths2.Add(Base.UID, booth);
+                if (Game.ConquerStructures.Booth.Booths2.ContainsKey(Base.UID))
+                    Game.ConquerStructures.Booth.Booths2.Remove(Base.UID);
+                Game.ConquerStructures.Booth.Booths2.Add(Base.UID, booth);
                 Base.Mesh = bo.Mesh;
-                // Base.Mesh = 400;
                 Base.Type = Game.Enums.NpcType.Booth;
                 Base.ShowName = true;
                 Base.Name = bo.Name;
@@ -176,28 +168,27 @@ namespace MTA.MaTrix
                     var c = new GameState(null);
                     c.FakeLoad2(bo.UID, bo.Name);
 
-
-                    #region Equip
-
                     uint WeaponR = bo.WeaponR;
                     uint WeaponL = bo.WeaponL;
                     uint Armor = bo.Armor;
                     uint Head = bo.Head;
                     uint Garment = bo.Garment;
 
-                    ConquerItem item7 = null;
-                    ClientEquip equip = null;
+                    ConquerItem? item7 = null;
+                    ClientEquip? equip = null;
                     if (WeaponR > 0)
                     {
                         Database.ConquerItemBaseInformation CIBI = Database.ConquerItemInformation.BaseInformations[WeaponR];
                         if (CIBI == null) return;
-                        item7 = new ConquerItem(true);
-                        item7.ID = WeaponR;
-                        item7.UID = Program.NextItemID;
-                        //Program.NextItemID++;
-                        item7.Position = 4;
-                        item7.Durability = CIBI.Durability;
-                        item7.MaximDurability = CIBI.Durability;
+                        item7 = new ConquerItem(true)
+                        {
+                            ID = WeaponR,
+                            UID = Program.NextItemID,
+                            //Program.NextItemID++;
+                            Position = 4,
+                            Durability = CIBI.Durability,
+                            MaximDurability = CIBI.Durability
+                        };
                         c.Equipment.Remove(4);
                         if (c.Equipment.Objects[3] != null)
                         {
@@ -216,13 +207,14 @@ namespace MTA.MaTrix
                     {
                         Database.ConquerItemBaseInformation CIBI = Database.ConquerItemInformation.BaseInformations[WeaponL];
                         if (CIBI == null) return;
-                        item7 = new ConquerItem(true);
-                        item7.ID = WeaponL;
-                        item7.UID = Program.NextItemID;
-                        //Program.NextItemID++;
-                        item7.Position = 5;
-                        item7.Durability = CIBI.Durability;
-                        item7.MaximDurability = CIBI.Durability;
+                        item7 = new ConquerItem(true)
+                        {
+                            ID = WeaponL,
+                            UID = Program.NextItemID,
+                            Position = 5,
+                            Durability = CIBI.Durability,
+                            MaximDurability = CIBI.Durability
+                        };
                         c.Equipment.Remove(5);
                         if (c.Equipment.Objects[4] != null)
                         {
@@ -241,13 +233,15 @@ namespace MTA.MaTrix
                     {
                         Database.ConquerItemBaseInformation CIBI = Database.ConquerItemInformation.BaseInformations[Armor];
                         if (CIBI == null) return;
-                        item7 = new ConquerItem(true);
-                        item7.ID = Armor;
-                        item7.UID = Program.NextItemID;
-                        //Program.NextItemID++;
-                        item7.Position = 3;
-                        item7.Durability = CIBI.Durability;
-                        item7.MaximDurability = CIBI.Durability;
+                        item7 = new ConquerItem(true)
+                        {
+                            ID = Armor,
+                            UID = Program.NextItemID,
+                            //Program.NextItemID++;
+                            Position = 3,
+                            Durability = CIBI.Durability,
+                            MaximDurability = CIBI.Durability
+                        };
                         c.Equipment.Remove(3);
                         if (c.Equipment.Objects[2] != null)
                         {
@@ -267,13 +261,15 @@ namespace MTA.MaTrix
                     {
                         Database.ConquerItemBaseInformation CIBI = Database.ConquerItemInformation.BaseInformations[Head];
                         if (CIBI == null) return;
-                        item7 = new ConquerItem(true);
-                        item7.ID = Head;
-                        item7.UID = Program.NextItemID;
-                        //Program.NextItemID++;
-                        item7.Position = 1;
-                        item7.Durability = CIBI.Durability;
-                        item7.MaximDurability = CIBI.Durability;
+                        item7 = new ConquerItem(true)
+                        {
+                            ID = Head,
+                            UID = Program.NextItemID,
+                            //Program.NextItemID++;
+                            Position = 1,
+                            Durability = CIBI.Durability,
+                            MaximDurability = CIBI.Durability
+                        };
                         c.Equipment.Remove(1);
                         if (c.Equipment.Objects[0] != null)
                         {
@@ -293,13 +289,15 @@ namespace MTA.MaTrix
                     {
                         Database.ConquerItemBaseInformation CIBI = Database.ConquerItemInformation.BaseInformations[Garment];
                         if (CIBI == null) return;
-                        item7 = new ConquerItem(true);
-                        item7.ID = Garment;
-                        item7.UID = Program.NextItemID;
-                        //Program.NextItemID++;
-                        item7.Position = 9;
-                        item7.Durability = CIBI.Durability;
-                        item7.MaximDurability = CIBI.Durability;
+                        item7 = new ConquerItem(true)
+                        {
+                            ID = Garment,
+                            UID = Program.NextItemID,
+                            //Program.NextItemID++;
+                            Position = 9,
+                            Durability = CIBI.Durability,
+                            MaximDurability = CIBI.Durability
+                        };
                         c.Equipment.Remove(9);
                         if (c.Equipment.Objects[8] != null)
                         {
@@ -313,9 +311,6 @@ namespace MTA.MaTrix
                         c.Send(equip);
                         c.Equipment.UpdateEntityPacket();
                     }
-
-                    #endregion Equip
-
                     c.Entity.Facing = (Enums.ConquerAngle)(bo.Mesh % 10);
                     UpdateCoordonatesForAngle(ref bo.X, ref bo.Y, c.Entity.Facing);
                     c.Entity.X = bo.X;
@@ -325,13 +320,14 @@ namespace MTA.MaTrix
                     c.Booth.HawkMessage = new Message(bo.BotMessage, Message.HawkMessage);
                     c.Entity.Action = Enums.ConquerAction.Sit;
                     c.Send(new Data(true) { ID = Data.ChangeAction, UID = c.Entity.UID, dwParam = 0 });
-
-                    var data = new Data(true);
-                    data.UID = c.Entity.UID;
-                    data.dwParam = Base.UID;
-                    data.wParam1 = Base.X;
-                    data.wParam2 = Base.Y;
-                    data.ID = Data.OwnBooth;
+                    var data = new Data(true)
+                    {
+                        UID = c.Entity.UID,
+                        dwParam = Base.UID,
+                        wParam1 = Base.X,
+                        wParam2 = Base.Y,
+                        ID = Data.OwnBooth
+                    };
                     c.Send(data);
                     Base.Owner = c;
                 }
@@ -339,10 +335,10 @@ namespace MTA.MaTrix
                 {
                     if (!Kernel.Maps.ContainsKey(bo.Map))
                     {
-                        if (Database.DMaps.MapPaths.ContainsKey(bo.Map))
-                            new Game.Map(bo.Map, Database.DMaps.MapPaths[bo.Map]);
+                        if (Database.DMaps.MapPaths.TryGetValue(bo.Map, out string? value))
+                            _ = new Map(bo.Map, value);
                         else
-                            new Game.Map(bo.Map, "");
+                            _ = new Map(bo.Map, "");
                     }
                     if (Kernel.Maps[bo.Map].Npcs.ContainsKey(Base.UID))
                         Kernel.Maps[bo.Map].Npcs.Remove(Base.UID);
@@ -351,16 +347,18 @@ namespace MTA.MaTrix
 
                 for (int i = 0; i < bo.Items.Count; i++)
                 {
-                    var line = bo.Items[i].Split(new string[] { "@@", "@" }, StringSplitOptions.RemoveEmptyEntries);
+                    var line = bo.Items[i].Split(["@@", "@"], StringSplitOptions.RemoveEmptyEntries);
                     #region booth
-                    Game.ConquerStructures.BoothItem item = new Game.ConquerStructures.BoothItem();
+                    Game.ConquerStructures.BoothItem item = new();
 
-                    booth booth1 = new booth();
-                    item.Item = new ConquerItem(true);
-                    item.Item.UID = Program.NextItemID;
+                    Booth booth1 = new();
+                    item.Item = new ConquerItem(true)
+                    {
+                        UID = Program.NextItemID,
 
-                    //Program.NextItemID++;
-                    item.Item.ID = uint.Parse(line[0]);
+                        //Program.NextItemID++;
+                        ID = uint.Parse(line[0])
+                    };
                     if (line.Length >= 2)
                         item.Cost = uint.Parse(line[1]);
                     if (line.Length >= 3)
@@ -381,7 +379,7 @@ namespace MTA.MaTrix
                         item.Item.Bound = true;
 
 
-                    Database.ConquerItemBaseInformation CIBI = null;
+                    Database.ConquerItemBaseInformation? CIBI = null;
                     CIBI = Database.ConquerItemInformation.BaseInformations[item.Item.ID];
                     if (CIBI == null)
                         break;
@@ -393,7 +391,7 @@ namespace MTA.MaTrix
                 }
 
             }
-            MTA.Console.WriteLine("" + Booth.Booths2.Count + " New Booths Loaded.");
+            MTA.Console.WriteLine("" + Game.ConquerStructures.Booth.Booths2.Count + " New Booths Loaded.");
         }
 
 
