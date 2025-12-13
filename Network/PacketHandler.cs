@@ -20303,7 +20303,7 @@ namespace MTA.Network
                 return ConquerItem.RightWeapon;
             else if ((ID >= 900000 && ID <= 900309) || ID >= 1050000 && ID <= 1051052 || ID >= 619000 && ID <= 619439 || ID >= 624003 && ID <= 624439 || ID >= 626003 && ID <= 626439/* || ID >= 624000 && ID <= 624439*/)
                 return ConquerItem.LeftWeapon;
-            else if (ID >= 2100005 && ID <= 2100125)
+            else if (ID >= 2100005 && ID <= 2100999)
                 return ConquerItem.Bottle;
             else if (ID >= 350001 && ID <= 380030)
                 return ConquerItem.LeftWeaponAccessory;
