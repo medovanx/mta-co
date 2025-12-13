@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using MTA.Game.Npcs.ScriptEngine.Extensions;
 
 namespace MTA.Game.Npcs.ScriptEngine
 {

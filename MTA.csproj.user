@@ -17,4 +17,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <StartWorkingDirectory>$(OutDir)</StartWorkingDirectory>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="Extensions\C-Panel\Controlpanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="MrNiTro\Systems\GUI\SpellControl.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
 </Project>

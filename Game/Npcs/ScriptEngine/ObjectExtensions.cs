@@ -1,7 +1,6 @@
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.Json;
 
-namespace MTA.Game.Npcs.ScriptEngine.Extensions
+namespace MTA.Game.Npcs.ScriptEngine
 {
     /// <summary>
     /// Extensions for System.Object
@@ -13,15 +12,13 @@ namespace MTA.Game.Npcs.ScriptEngine.Extensions
         /// </summary>
         /// <param name="a">The object to copy.</param>
         /// <returns>Returns the new copy.</returns>
-        public static T DeepClone<T>(this T a)
+        public static T? DeepClone<T>(this T obj)
         {
-            using (MemoryStream stream = new MemoryStream())
-            {
-                BinaryFormatter formatter = new BinaryFormatter();
-                formatter.Serialize(stream, a);
-                stream.Position = 0;
-                return (T)formatter.Deserialize(stream);
-            }
+            if (obj == null)
+                return default;
+
+            var json = JsonSerializer.Serialize(obj);
+            return JsonSerializer.Deserialize<T>(json);
         }
     }
 }

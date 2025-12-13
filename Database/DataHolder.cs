@@ -44,7 +44,7 @@ namespace MTA.Database
 
         public static void ReadStats()
         {
-            string Path = Constants.DataHolderPath + "Stats.ini";
+            string Path = Constants.StatsPath;
             IniFile IniFile = new IniFile(Path);
 
             for (byte lvl = 1; lvl < 122; lvl++)

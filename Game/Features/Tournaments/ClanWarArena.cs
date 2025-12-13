@@ -206,7 +206,7 @@ namespace MTA.Game
         }
         public static void Save()
         {
-            using (Database.Write _wr = new Database.Write(Constants.DatabaseBasePath + "ClanWar.txt"))
+            using (Database.Write _wr = new Database.Write(Constants.ClanWarPath))
             {
                 string[] items = new string[(byte)ClanArena.Count];
                 for (byte x = 0; x < Tournaments.Length; x++)
@@ -216,7 +216,7 @@ namespace MTA.Game
         }
         public static void Load()
         {
-            using (Database.Read r = new Database.Read(Constants.DatabaseBasePath + "ClanWar.txt"))
+            using (Database.Read r = new Database.Read(Constants.ClanWarPath))
             {
                 if (r.Reader())
                 {

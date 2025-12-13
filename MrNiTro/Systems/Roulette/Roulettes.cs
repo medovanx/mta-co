@@ -567,7 +567,7 @@ namespace MTA.MaTrix.Roulette.Database
 
         internal static void Load()
         {
-            string[] baseText = File.ReadAllLines(Constants.DataHolderPath + "Roulettes.txt");
+            string[] baseText = File.ReadAllLines(Constants.RoulettesPath);
             if (baseText.Length <= 1)
                 return;
             //x = 1..... first line is info

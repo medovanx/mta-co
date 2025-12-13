@@ -37,7 +37,7 @@ namespace MTA.MaTrix
         public static SafeDictionary<uint, booth> Boooths = new SafeDictionary<uint, booth>();
         public static void Load()
         {
-            string[] text = File.ReadAllLines(Constants.DataHolderPath + "/Booths.txt");
+            string[] text = File.ReadAllLines(Constants.BoothsPath);
             booth booth = new booth();
             for (int x = 0; x < text.Length; x++)
             {
@@ -337,6 +337,13 @@ namespace MTA.MaTrix
                 }
                 else
                 {
+                    if (!Kernel.Maps.ContainsKey(bo.Map))
+                    {
+                        if (Database.DMaps.MapPaths.ContainsKey(bo.Map))
+                            new Game.Map(bo.Map, Database.DMaps.MapPaths[bo.Map]);
+                        else
+                            new Game.Map(bo.Map, "");
+                    }
                     if (Kernel.Maps[bo.Map].Npcs.ContainsKey(Base.UID))
                         Kernel.Maps[bo.Map].Npcs.Remove(Base.UID);
                     Kernel.Maps[bo.Map].Npcs.Add(Base.UID, Base);

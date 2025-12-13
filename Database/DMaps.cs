@@ -12,10 +12,10 @@ namespace MTA.Database
         public static SafeDictionary<ushort, string> MapPaths = new SafeDictionary<ushort, string>(280);
         public static void Load()
         {
-            if (File.Exists(Constants.DataHolderPath + "GameMap.dat"))
+            if (File.Exists(Constants.GameMapPath))
             {
                 Time32 start = Time32.Now;
-                FileStream FS = new FileStream(Constants.DataHolderPath + "GameMap.dat", FileMode.Open);
+                FileStream FS = new FileStream(Constants.GameMapPath, FileMode.Open);
                 BinaryReader BR = new BinaryReader(FS);
                 uint MapCount = BR.ReadUInt32();
                 for (uint i = 0; i < MapCount; i++)

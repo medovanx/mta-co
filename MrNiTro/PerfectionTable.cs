@@ -67,10 +67,10 @@ namespace MTA.Network.GamePackets
             public uint Stars;
             public byte Type;
         }
-        public static string Cost = Constants.DatabaseBasePath + "item_refine_cost.txt";
-        public static string Upgrade = Constants.DatabaseBasePath + "item_refine_upgrade.txt";
-        public static string Ability = Constants.DatabaseBasePath + "ability_score.txt";
-        public static string Storage = Constants.DatabaseBasePath + "coat_storage_type.txt";
+        public static string Cost = Constants.ItemRefineCostPath;
+        public static string Upgrade = Constants.ItemRefineUpgradePath;
+        public static string Ability = Constants.AbilityScorePath;
+        public static string Storage = Constants.CoatStorageTypePath;
         public static uint AmountStarGarments(Client.GameState client, byte Star)
         {
             uint Count = 0;

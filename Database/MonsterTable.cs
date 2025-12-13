@@ -1190,7 +1190,6 @@ namespace MTA.Database
                         MonsterInformation mf = new MonsterInformation();
                         mf.ID = reader.ReadUInt32("id");
                         mf.Name = reader.ReadString("name");
-                        //  mf.Name2 = reader.ReadString("name2");
                         mf.Mesh = reader.ReadUInt16("lookface");
                         mf.Level = reader.ReadByte("level");
                         mf.Hitpoints = reader.ReadUInt32("life");
@@ -1201,22 +1200,6 @@ namespace MTA.Database
                         mf.weaponl_type = reader.ReadUInt32("weaponl_type");
                         mf.Boss = reader.ReadBoolean("Boss");
                         mf.SuperBoss = reader.ReadBoolean("SuperBoss");
-                        //IniFile IniFile = new IniFile(Constants.MonstersPath);
-                        //if (IniFile.ReadString(mf.Name, "MaxLife") != "")
-                        //{
-                        //    if (uint.Parse(IniFile.ReadString(mf.Name, "MaxLife")) != 0)
-                        //    {
-                        //        mf.Hitpoints = uint.Parse(IniFile.ReadString(mf.Name, "MaxLife"));
-                        //        byte boss = byte.Parse(IniFile.ReadString(mf.Name, "Boss"));
-                        //        if (boss == 0)
-                        //            mf.Boss = false;
-                        //        else mf.Boss = true;
-                        //    }
-                        //}
-                        //                        if (mf.Name == "Clannad" ||
-                        //mf.Name == "Btooom" || mf.Name == "Cyclops" ||
-                        //mf.Name == "Hades" || mf.Name == "Centar" || mf.Name == "CoinsThief" || mf.Name == "CoinsMaster")
-                        //                            mf.Boss = true;
                         mf.Guard = mf.Name.Contains("Guard");
                         mf.Reviver = mf.ID == ReviverID;
                         mf.ViewRange = reader.ReadUInt16("view_range");

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using MTA.Network.GamePackets;
 using System.Collections.Generic;
 
@@ -6,11 +7,51 @@ namespace MTA
 {
     public class Constants
     {
+        /// <summary>
+        /// Returns the full path to a file or folder in the Database folder. Throws an exception if the file/folder is not found.
+        /// </summary>
+        private static string Database(string filename)
+        {
+            var directory = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
+            while (directory != null && !Directory.Exists(Path.Combine(directory.FullName, "Database")))
+                directory = directory.Parent;
+
+            if (directory == null)
+                throw new DirectoryNotFoundException("Database directory not found from base directory upwards.");
+
+            string dbPath = Path.Combine(directory.FullName, "Database");
+            
+            // If filename is empty, return the Database folder path
+            if (string.IsNullOrEmpty(filename))
+                return dbPath + Path.DirectorySeparatorChar;
+
+            string fullPath = Path.Combine(dbPath, filename);
+
+            // Check if it's a folder path (ends with separator) or a file path
+            bool isFolder = filename.EndsWith(Path.DirectorySeparatorChar.ToString()) || filename.EndsWith("/") || filename.EndsWith("\\");
+            
+            if (isFolder)
+            {
+                // For folders, check if directory exists
+                if (!Directory.Exists(fullPath))
+                    throw new DirectoryNotFoundException($"Directory '{filename}' not found in Database folder at '{directory.FullName}'.");
+            }
+            else
+            {
+                // For files, check if file exists
+                if (!File.Exists(fullPath))
+                    throw new FileNotFoundException($"File '{filename}' not found in Database folder at '{directory.FullName}'.");
+            }
+
+            return fullPath;
+        }
+
         public static readonly System.Collections.Generic.List<ushort> RideForbiddenMaps = new System.Collections.Generic.List<ushort>()
         {
             1004,
             1511
         };
+
         public static readonly Message FullInventory = new Message("There is not enough room in your inventory!", System.Drawing.Color.Red, Message.TopLeft),
             OneFlowerADay = new Message("You may only send 1 flower a day", System.Drawing.Color.Red, Message.TopLeft),
             TradeRequest = new Message("Trade request sent.", System.Drawing.Color.Red, Message.TopLeft),
@@ -145,37 +186,52 @@ namespace MTA
             return new Message("You haven't voted in the past 12 hours. Vote now to gain an extra point!", System.Drawing.Color.Red, Message.TopLeft);
         }
 
-        // Base database path - change this to relocate all database files
-        public const string DatabaseBasePath = "..\\..\\Database\\";
+        public const string ScriptsBasePath = "scripts\\";
+        public static readonly string DataHolderPath = Database("");
+        public static readonly string DMapsPath = Database("");
+        public static readonly string BroadcastsPath = Database("broadcasts.txt");
+        public static readonly string NpcPath = Database("npc.ini");
+        public static readonly string RaceRecordsPath = Database("racerecords.ini");
+        public static readonly string ItemRefineCostPath = Database("item_refine_cost.txt");
+        public static readonly string ItemRefineUpgradePath = Database("item_refine_upgrade.txt");
+        public static readonly string AbilityScorePath = Database("ability_score.txt");
+        public static readonly string CoatStorageTypePath = Database("coat_storage_type.txt");
+        public static readonly string SoulProtectionPath = Database("souls_protection.txt");
+        public static readonly string RoulettesPath = Database("Roulettes.txt");
+        public static readonly string FurniturePath = Database("Furniture.txt");
+        // public static readonly string DMapOwnerPath = Database("DMapOwner.dat");
+        public static readonly string StatsPath = Database("Stats.ini");
+        public static readonly string GameMapPath = Database("GameMap.dat");
+        public static readonly string ShopsPath = Database("shops\\Shop.dat");
+        public static readonly string EShopsPath = Database("shops\\emoneyshop.ini");
+        public static readonly string EShopsV2Path = Database("shops\\emoneyshopV2.ini");
+        public static readonly string HonorShopPath = Database("shops\\HonorShop.ini");
+        public static readonly string RaceShopPath = Database("shops\\RacePointShop.ini");
+        public static readonly string ChampionShopPath = Database("shops\\GoldenLeagueShop.ini");
+        public static readonly string PortalsPath = Database("Portals.ini");
+        public static readonly string RevivePoints = Database("RevivePoints.ini");
+        public static readonly string ItemPlusInfosPath = Database("ItemAdd.ini");
+        public static readonly string SoulGearInformation = Database("soulgear.txt");
+        public static readonly string UnhandledExceptionsPath = Database("exceptions\\");
+        public static readonly string QuizShow = Database("QuizShow.txt");
+        public static readonly string ItemBaseInfosPath = Database("items.txt");
+        public static readonly string QuestInfoPath = Database("Questinfo.ini");
+        public static readonly string StoragePath = Database("Storage.ini");
+        public static readonly string PokerTablesPath = Database("PokerTables.txt");
+        public static readonly string PoleDominationPath = Database("poledomination.txt");
+        public static readonly string ClanWarPath = Database("ClanWar.txt");
+        public static readonly string BoothsPath = Database("Booths.txt");
+        public static readonly string FlowersPath = Database("flowers.txt");
+        public static readonly string BoyFlowersPath = Database("boyflowers.txt");
 
-        // Base scripts path - change this to relocate all script files
-        public const string ScriptsBasePath = DatabaseBasePath + "scripts\\";
-
-        public const string DataHolderPath = DatabaseBasePath,
-        NpcFilePath = DatabaseBasePath + "Npcs.txt",
-        DMapsPath = DatabaseBasePath,
-        ShopsPath = DatabaseBasePath + "shops\\Shop.dat",
-        EShopsPath = DatabaseBasePath + "shops\\emoneyshop.ini",
-        EShopsV2Path = DatabaseBasePath + "shops\\emoneyshopV2.ini",
-        HonorShopPath = DatabaseBasePath + "shops\\HonorShop.ini",
-        RaceShopPath = DatabaseBasePath + "shops\\RacePointShop.ini",
-        ChampionShopPath = DatabaseBasePath + "shops\\GoldenLeagueShop.ini",
-        PortalsPath = DatabaseBasePath + "Portals.ini",
-        RevivePoints = DatabaseBasePath + "RevivePoints.ini",
-        MonstersPath = DatabaseBasePath + "Monsters.txt",
-        ItemBaseInfosPath = DatabaseBasePath + "Items.txt",
-        ItemPlusInfosPath = DatabaseBasePath + "ItemAdd.ini",
-        SoulGearInformation = DatabaseBasePath + "soulgear.txt",
-        UnhandledExceptionsPath = DatabaseBasePath + "exceptions\\",
-        ServerKey = "TQServer",
-        QuizShow = DatabaseBasePath + "QuizShow.txt",
-        GameCryptographyKey = "C238xs65pjy7HU9Q";
-        public static string ServerName;
+        public const string ServerKey = "TQServer";
+        public const string GameCryptographyKey = "C238xs65pjy7HU9Q";
+        public static string? ServerName;
         public const int MaxBroadcasts = 50;
         public static uint ExtraExperienceRate, ExtraSpellRate, ExtraProficiencyRate, ConquerPointsDropRate, ConquerPointsDropMultiple, ItemDropRate;
         public static ulong MoneyDropRate, MoneyDropMultiple;
-        public static string[] ItemDropQualityRates;
-        public static string WebAccExt, ServerWebsite, WebVoteExt, WebDonateExt, ServerGMPass;
+        public static string[]? ItemDropQualityRates;
+        public static string? WebAccExt, ServerWebsite, WebVoteExt, WebDonateExt, ServerGMPass;
         public const sbyte pScreenDistance = 19;
         public const sbyte nScreenDistance = 19;
         public const sbyte remScreenDistance = 19;

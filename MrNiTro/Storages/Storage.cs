@@ -9,12 +9,10 @@ namespace Throne.World.Database.Information.Files
 {
     public static class Storage
     {
-        private const string Path = "Database/Storage.ini";
-
         public static void Read(out StorageInfo storageInfo)
         {
             storageInfo = new StorageInfo();
-            var reader = new MTA.IniFile(Path);
+            var reader = new MTA.IniFile(MTA.Constants.StoragePath);
             {
                 storageInfo.Count = reader.ReadInt32("Storage", "StorageTypeCount", 0);
                 storageInfo.Storages = new StorageInfo.Storage[storageInfo.Count];

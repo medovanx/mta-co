@@ -26,36 +26,31 @@ namespace MTA.Database
         public static SafeDictionary<uint, FurInfo> Furnitures = new SafeDictionary<uint, FurInfo>();
         public static void Load()
         {
-            if (File.Exists(Constants.DataHolderPath + "Furniture.txt"))
+            string[] lines = File.ReadAllLines(Constants.FurniturePath);
+            foreach (var item in lines)
             {
-                string[] lines = File.ReadAllLines(Constants.DataHolderPath + "Furniture.txt");
-                foreach (var item in lines)
+                var coloums = item.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                FurInfo info = new FurInfo();
+                info.npcid = uint.Parse(coloums[0]);
+                info.type = (Enums.NpcType)uint.Parse(coloums[1]);
+                info.mesh = ushort.Parse(coloums[2]);
+                info.map = ushort.Parse(coloums[3]);
+                info.x = ushort.Parse(coloums[4]);
+                info.y = ushort.Parse(coloums[5]);
+                info.itemid = uint.Parse(coloums[6]);
+                if (!Furnitures.ContainsKey(info.npcid))
+                    Furnitures.Add(info.npcid, info);
+                if (!FurnituresItems.ContainsKey(info.itemid))
+                    FurnituresItems.Add(info.itemid, info.mesh);
+                if (Kernel.Maps.ContainsKey(info.map))
                 {
-                    var coloums = item.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-                    FurInfo info = new FurInfo();
-                    info.npcid = uint.Parse(coloums[0]);
-                    info.type = (Enums.NpcType)uint.Parse(coloums[1]);
-                    info.mesh = ushort.Parse(coloums[2]);
-                    info.map = ushort.Parse(coloums[3]);
-                    info.x = ushort.Parse(coloums[4]);
-                    info.y = ushort.Parse(coloums[5]);
-                    info.itemid = uint.Parse(coloums[6]);
-                    if (!Furnitures.ContainsKey(info.npcid))
-                        Furnitures.Add(info.npcid, info);
-                    if (!FurnituresItems.ContainsKey(info.itemid))
-                        FurnituresItems.Add(info.itemid, info.mesh);
-                    if (Kernel.Maps.ContainsKey(info.map))
-                    {
-                        if (Kernel.Maps[info.map].Npcs.ContainsKey(info.npcid))
-                            Kernel.Maps[info.map].Npcs.Remove(info.npcid);
-                        Kernel.Maps[info.map].AddNpc(new Network.GamePackets.NpcSpawn() { Type = info.type, UID = info.npcid, MapID = info.map, Mesh = info.mesh, X = info.x, Y = info.y });
-                    }
-
+                    if (Kernel.Maps[info.map].Npcs.ContainsKey(info.npcid))
+                        Kernel.Maps[info.map].Npcs.Remove(info.npcid);
+                    Kernel.Maps[info.map].AddNpc(new Network.GamePackets.NpcSpawn() { Type = info.type, UID = info.npcid, MapID = info.map, Mesh = info.mesh, X = info.x, Y = info.y });
                 }
 
-                Console.WriteLine(Furnitures.Count + " Furnitures loaded successfully.");
             }
-
+            Console.WriteLine(Furnitures.Count + " Furnitures loaded successfully.");
         }
 
     }

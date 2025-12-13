@@ -22,14 +22,7 @@ namespace MTA.Database
             GradeInformations = new SafeDictionary<string, SafeDictionary<int, ConquerItemBaseInformation>>(10000);
             GradeInformations2 = new SafeDictionary<string, SafeDictionary<uint, int>>(10000);
             string[] baseText = File.ReadAllLines(Constants.ItemBaseInfosPath);
-            //string text = "►◄►◄►◄►◄►◄►◄►◄►◄►◄►◄►◄►◄►◄►◄►◄►◄►◄►◄►◄►◄";
-            //int for1prg = baseText.Length / (System.Console.WindowWidth - text.Length);
             int count = 0;
-            //System.Console.Write(text);
-            //var old1 = System.Console.BackgroundColor;
-            //var old2 = System.Console.ForegroundColor;
-            //System.Console.BackgroundColor = ConsoleColor.Gray;
-            //System.Console.ForegroundColor = ConsoleColor.Gray;
             int gkey = 0;
             int lastlevel = 0;
             string lastgr = "";

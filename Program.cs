@@ -346,6 +346,7 @@ namespace MTA
                     Database.EShopV2File.Load();
                     StorageManager.Load();
                     new Map(2073, DMaps.MapPaths[1015]);
+                    new Map(2075, DMaps.MapPaths[2075]);
                     Game.PoleIslanD.PoleIslanDIni();// PoleIslanD
                     Console.WriteLine("PoleIslanD initializated.");
                     new Map(3990, DMaps.MapPaths[3990]);
@@ -360,6 +361,7 @@ namespace MTA
                     new Game.Map(1002, Database.DMaps.MapPaths[1002]);
                     new Game.Map(1038, Database.DMaps.MapPaths[1038]);
                     new Game.Map(2071, Database.DMaps.MapPaths[2071]);
+                    new Game.Map(10380, Database.DMaps.MapPaths[10380]);
                     Game.GuildWar.Initiate();
                     Game.SuperGuildWar.Initiate();
                     new Game.Map(1509, Database.DMaps.MapPaths[1509]);
@@ -394,6 +396,9 @@ namespace MTA
                 Network.Cryptography.AuthCryptography.PrepareAuthCryptography();
                 Console.WriteLine("Initializing NPC handlers...");
                 Game.Npcs.NpcHandlerRegistry.Initialize();
+                new Game.Map(700, Database.DMaps.MapPaths[700]);
+                new Game.Map(1730, Database.DMaps.MapPaths[1730]);
+                new Game.Map(2068, Database.DMaps.MapPaths[2068]);
                 if (!ServerTransfer)
                     World.CreateTournaments();
                 World.Init(ServerTransfer);

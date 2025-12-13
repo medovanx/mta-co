@@ -9,7 +9,7 @@ namespace MTA.Database
 
         public static void LoadTables()
         {
-            string[] TDs = System.IO.File.ReadAllLines(Constants.DataHolderPath + "PokerTables.txt");
+            string[] TDs = System.IO.File.ReadAllLines(Constants.PokerTablesPath);
             foreach (string Tinfo in TDs)
             {
                 string[] line = Tinfo.Split(',');

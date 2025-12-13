@@ -1,22 +1,28 @@
 using System;
 using System.Text;
-using Microsoft.CSharp;
 using System.Reflection;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using System.Collections.Generic;
 using System.CodeDom.Compiler;
 using Microsoft.VisualBasic;
-using System.Collections.Generic;
 
 namespace MTA.Game.Npcs.ScriptEngine
 {
     /// <summary>
     /// Description of ScriptEngine.
     /// </summary>
-    public class ScriptEngine
+    /// <remarks>
+    /// Creates a new instance of ScriptEngine.
+    /// </remarks>
+    /// <param name="Settings">The settings associated to the script engine.</param>
+    /// <param name="scriptcheckinterval">The interval between each script update.</param>
+    public class ScriptEngine(ScriptSettings Settings, int scriptcheckinterval = 10000)
     {
         /// <summary>
         /// The settings associated with the script engine.
         /// </summary>
-        private ScriptSettings Settings;
+        private ScriptSettings Settings = Settings;
 
         /// <summary>
         /// The thread checking for script updates.
@@ -26,22 +32,7 @@ namespace MTA.Game.Npcs.ScriptEngine
         /// <summary>
         /// The interval between each script update.
         /// </summary>
-        private int checkInterval;
-
-        /// <summary>
-        /// Creates a new instance of ScriptEngine.
-        /// </summary>
-        /// <param name="Settings">The settings associated to the script engine.</param>
-        /// <param name="scriptcheckinterval">The interval between each script update.</param>
-        public ScriptEngine(ScriptSettings Settings, int scriptcheckinterval = 10000)
-        {
-            this.checkInterval = scriptcheckinterval;
-            this.Settings = Settings;
-            scriptCollection = new ScriptCollection(Settings);
-            //scriptCheckerThread = new ProjectX_V3_Lib.Threading.BaseThread(new Threading.ThreadAction(Check_Updates),
-            //         scriptcheckinterval, "Script Engine");
-            //scriptCheckerThread.Start();
-        }
+        private int checkInterval = scriptcheckinterval;
 
         public static void SetNamespaces(ScriptSettings settings)
         {
@@ -105,7 +96,7 @@ End Namespace";
             return namespaceBuilder.ToString();
         }
 
-        private string currentcompilefile;
+        private string? currentcompilefile;
 
         /// <summary>
         /// Checks for updates.
@@ -181,39 +172,49 @@ End Namespace";
         }
 
         /// <summary>
-        /// Compiles all the c# scripts.
+        /// Compiles all the c# scripts using Roslyn.
         /// </summary>
         private void CompileCSScripts()
         {
-            Dictionary<string, string> dictionary = new Dictionary<string, string>();
-            dictionary.Add("CompilerVersion", Settings.Framework);
-            CompilerParameters compilerParameters = new CompilerParameters
-            {
-                GenerateInMemory = true
-            };
+            var scriptPath = Settings.ScriptLocation + currentcompilefile + ".cs";
+            var code = System.IO.File.ReadAllText(scriptPath);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
-            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            for (int i = 0; i < assemblies.Length; i++)
+            var references = new List<MetadataReference>();
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
-                Assembly assembly = assemblies[i];
-                compilerParameters.ReferencedAssemblies.Add(assembly.Location);
+                if (!assembly.IsDynamic && !string.IsNullOrEmpty(assembly.Location))
+                    references.Add(MetadataReference.CreateFromFile(assembly.Location));
             }
-
             foreach (Type type in Settings.types.Values)
-                compilerParameters.ReferencedAssemblies.Add(Assembly.GetAssembly(type).Location);
-            CSharpCodeProvider cSharpCodeProvider = new CSharpCodeProvider();
-            CompilerResults compilerResults = cSharpCodeProvider.CompileAssemblyFromFile(compilerParameters,
-                Settings.ScriptLocation + currentcompilefile + ".cs");
-            if (compilerResults.Errors.Count != 0)
             {
-                foreach (CompilerError err in compilerResults.Errors)
-                    Console.WriteLine(err.ToString());
-                Console.ReadLine();
-                return;
+                var asm = Assembly.GetAssembly(type);
+                if (asm != null && !string.IsNullOrEmpty(asm.Location))
+                    references.Add(MetadataReference.CreateFromFile(asm.Location));
             }
-            else
+
+            var compilation = CSharpCompilation.Create(
+                "ScriptAssembly",
+                new[] { syntaxTree },
+                references,
+                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
+            using (var ms = new System.IO.MemoryStream())
             {
-                foreach (Type type in compilerResults.CompiledAssembly.GetTypes())
+                var result = compilation.Emit(ms);
+                if (!result.Success)
+                {
+                    foreach (var diagnostic in result.Diagnostics)
+                    {
+                        if (diagnostic.Severity == DiagnosticSeverity.Error)
+                            Console.WriteLine(diagnostic.ToString());
+                    }
+                    Console.ReadLine();
+                    return;
+                }
+                ms.Seek(0, System.IO.SeekOrigin.Begin);
+                var assembly = Assembly.Load(ms.ToArray());
+                foreach (Type type in assembly.GetTypes())
                 {
                     if (type.Namespace == "scriptnamespace" && type.IsClass && type.Name == "scriptclass")
                     {
@@ -235,9 +236,11 @@ End Namespace";
         /// </summary>
         private void CompileVBScripts()
         {
-            Dictionary<string, string> dictionary = new Dictionary<string, string>();
-            dictionary.Add("CompilerVersion", Settings.Framework);
-            CompilerParameters compilerParameters = new CompilerParameters
+            Dictionary<string, string> dictionary = new()
+            {
+                { "CompilerVersion", Settings.Framework }
+            };
+            CompilerParameters compilerParameters = new()
             {
                 GenerateInMemory = true
             };
@@ -250,8 +253,12 @@ End Namespace";
             }
 
             foreach (Type type in Settings.types.Values)
-                compilerParameters.ReferencedAssemblies.Add(Assembly.GetAssembly(type).Location);
-            VBCodeProvider vbCodeProvider = new VBCodeProvider();
+            {
+                var asm = Assembly.GetAssembly(type);
+                if (asm != null && !string.IsNullOrEmpty(asm.Location))
+                    compilerParameters.ReferencedAssemblies.Add(asm.Location);
+            }
+            VBCodeProvider vbCodeProvider = new();
             CompilerResults compilerResults = vbCodeProvider.CompileAssemblyFromFile(compilerParameters,
                 Settings.ScriptLocation + currentcompilefile + ".vb");
             if (compilerResults.Errors.Count != 0)
@@ -281,7 +288,7 @@ End Namespace";
         /// <summary>
         /// The collection of the scripts.
         /// </summary>
-        public ScriptCollection scriptCollection;
+        public ScriptCollection scriptCollection = new ScriptCollection(Settings);
 
         /// <summary>
         /// Invokes a script.
