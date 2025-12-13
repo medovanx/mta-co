@@ -1421,12 +1421,6 @@ namespace MTA.Network
                         {
                             EnitityCreate EC = new EnitityCreate();
                             EC.Deserialize(packet);
-                            if (EC.Name.Contains("~"))
-                            {
-                                client.Send(new Message("Chose a name without '~'!", "ALLUSERS", System.Drawing.Color.Orange, GamePackets.Message.PopUP));
-                                return;
-                            }
-                            EC.Name = EC.Name.Remove("pm").Remove("gm").Remove("owner").Remove("owwner").Remove("~").Remove("¶").Remove("");
                             string Message = "";
                             Boolean Created = Database.EntityTable.CreateEntity(EC, client, ref Message);
                             if (Created)
