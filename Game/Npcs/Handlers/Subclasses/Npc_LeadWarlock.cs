@@ -4,9 +4,10 @@ using MTA.Database;
 namespace MTA.Game.Npcs.Handlers.Subclasses
 {
     /// <summary>
-    /// Lead Warlock NPC
+    /// Lead Warlock
     /// </summary>
-    public static class Npc_355914
+    [NpcHandler(355914)]
+    public static class Npc_LeadWarlock
     {
         public static void Handle(Client.GameState client, NpcRequest npcRequest, MTA.Npcs dialog)
         {

@@ -4,9 +4,10 @@ using MTA.Database;
 namespace MTA.Game.Npcs.Handlers.Subclasses
 {
     /// <summary>
-    /// Wrangler NPC
+    /// Lead Sage
     /// </summary>
-    public static class Npc_355916
+    [NpcHandler(355915)]
+    public static class Npc_LeadSage
     {
         public static void Handle(Client.GameState client, NpcRequest npcRequest, MTA.Npcs dialog)
         {
@@ -14,12 +15,13 @@ namespace MTA.Game.Npcs.Handlers.Subclasses
             {
                 case 0:
                     dialog.Text(
-                        "Good day! Have you ever wondered what a Wrangler is? Well, please allow "
-                        + "me to introduce this sub-class to you. Wranglers are masters of the "
-                        + "Max HP energies and can increase their maximum health! "
-                        + "Isn't that wonderful? Would you like to join us? After you join "
-                        + "this sub-class, you can level it up and get promoted to increase your power!");
-                    if (!client.Entity.SubClasses.Classes.ContainsKey((byte)ClassID.Wrangler))
+                        "Hello, my friend. Are you here to join the Sage sub-class? Before we start, "
+                        + "please allow me to introduce this sub-class to you. Sages have strong "
+                        + "spiritual powers and have a gruesome ability to reduce a target`s Magical "
+                        + "Defense. This is very helpful in defeating those who might underestimate "
+                        + "your power! Would you like to join us? After you join this sub-class, you can "
+                        + "level it up and get promoted to reduce more of your target`s Magical Defense.");
+                    if (!client.Entity.SubClasses.Classes.ContainsKey((byte)Game.ClassID.Sage))
                         dialog.Option("Yes, I`d like to join it.", 1);
                     dialog.Option("I want to get promoted.", 2);
                     dialog.Option("How can I get promoted?", 3);
@@ -29,10 +31,10 @@ namespace MTA.Game.Npcs.Handlers.Subclasses
                     break;
                 case 1:
                     dialog.Text(
-                        "I`m glad that you are willing to be one of us. I`m sure you will make a great "
-                        + "Wrangler. Still, there are a few requirements you need to meet. Though players "
+                        "I`m glad that you are willing to be one of us. I`m sure you will be a fantastic "
+                        + "Sage. Still, there are a few requirements you need to meet. Though players "
                         + "of all classes can join us, we only accept players who are over level 70, and it "
-                        + "takes 40 Saddles to pay the tuition fee. After joining the Wrangler sub-class, "
+                        + "takes 20 Lucky Amulets to pay the tuition fee. After joining the Sage sub-class, "
                         + "click open your character sheet and you`ll find the sub-class button on the "
                         + "left-hand corner. You may level up your sub-class on the sub-class button sheet. You "
                         + "need to meet a certain sub-class level to get promoted to higher sub-class "
@@ -43,11 +45,11 @@ namespace MTA.Game.Npcs.Handlers.Subclasses
                     dialog.Send();
                     break;
                 case 2:
-                    if (!client.Entity.SubClasses.Classes.ContainsKey((byte)ClassID.Wrangler))
+                    if (!client.Entity.SubClasses.Classes.ContainsKey((byte)ClassID.Sage))
                     {
                         dialog.Text(
-                            "You are not a Wrangler yet and can't get promoted. Do you want to join the "
-                            + "Wrangler sub-class now?");
+                            "You are not a Sage yet and can`t get promoted. Do you want to join the "
+                            + "Sage sub-class now?");
                         dialog.Option("Yes, I`d like to join.", 1);
                         dialog.Option("Oh. Not now.", 255);
                         dialog.Avatar(100);
@@ -56,7 +58,7 @@ namespace MTA.Game.Npcs.Handlers.Subclasses
                     else
                     {
                         dialog.Text(
-                           "To promote to Phase " + (client.Entity.SubClasses.Classes[(byte)ClassID.Wrangler].Phase + 1).ToString() + " you must meet the requirements. Have you met "
+                           "To promote to Phase " + (client.Entity.SubClasses.Classes[(byte)ClassID.Sage].Phase + 1).ToString() + " you must meet the requirements. Have you met "
                            + "them in the sub-class sheet?");
                         dialog.Option("Positive.", 200);
                         dialog.Option("Oh. Not yet.", 255);
@@ -89,14 +91,14 @@ namespace MTA.Game.Npcs.Handlers.Subclasses
                     dialog.Send();
                     break;
                 case 100:
-                    if (Network.PacketHandler.PassLearn((byte)ClassID.Wrangler, client.Entity))
+                    if (Network.PacketHandler.PassLearn((byte)ClassID.Sage, client.Entity))
                     {
-                        client.Entity.SubClasses.Classes.Add((byte)ClassID.Wrangler, new Game.SubClass() { ID = (byte)ClassID.Wrangler, Level = 1, Phase = 1 });
-                        SubClassTable.Insert(client.Entity, (byte)ClassID.Wrangler);
-                        client.Entity.SubClasses.SendLearn(ClassID.Wrangler, 1, client);
-                        client.Entity.SubClasses.SendPromoted(ClassID.Wrangler, 1, client);
+                        client.Entity.SubClasses.Classes.Add((byte)ClassID.Sage, new Game.SubClass() { ID = (byte)ClassID.Sage, Level = 1, Phase = 1 });
+                        SubClassTable.Insert(client.Entity, (byte)ClassID.Sage);
+                        client.Entity.SubClasses.SendLearn(ClassID.Sage, 1, client);
+                        client.Entity.SubClasses.SendPromoted(ClassID.Sage, 1, client);
                         dialog.Text(
-                            "Congratulations! You`ve learned the Wrangler way. Hope you use this power "
+                            "Congratulations! You`ve learned the Sage way. Hope you use this power "
                             + "for the good of us all.");
                         dialog.Option("Oh.", 255);
                         dialog.Avatar(100);
@@ -105,7 +107,7 @@ namespace MTA.Game.Npcs.Handlers.Subclasses
                     else
                     {
                         dialog.Text(
-                            "I'm sorry, you need to give me 40 Saddles and "
+                            "I`m sorry, you need to give me 20 Lucky Amulets and "
                             + "reach level 70 to join us.");
                         dialog.Option("Oh.", 255);
                         dialog.Avatar(100);
@@ -113,7 +115,7 @@ namespace MTA.Game.Npcs.Handlers.Subclasses
                     }
                     break;
                 case 200:
-                    if (client.Entity.SubClasses.Classes[(byte)ClassID.Wrangler].Phase == 9)
+                    if (client.Entity.SubClasses.Classes[(byte)ClassID.Sage].Phase == 9)
                     {
                         dialog.Text("Your sub-class phase is already 9, you can`t promote it anymore!");
                         dialog.Option("Oh.", 255);
@@ -121,14 +123,14 @@ namespace MTA.Game.Npcs.Handlers.Subclasses
                         dialog.Send();
                         return;
                     }
-                    if (client.Entity.SubClasses.Classes[(byte)ClassID.Wrangler].Phase < client.Entity.SubClasses.Classes[(byte)ClassID.Wrangler].Level)
+                    if (client.Entity.SubClasses.Classes[(byte)ClassID.Sage].Phase < client.Entity.SubClasses.Classes[(byte)ClassID.Sage].Level)
                     {
-                        client.Entity.SubClasses.Classes[(byte)ClassID.Wrangler].Phase++;
+                        client.Entity.SubClasses.Classes[(byte)ClassID.Sage].Phase++;
                         dialog.Text("You have promoted your sub-class successfully.");
                         dialog.Option("Oh, Thanks.", 255);
                         dialog.Avatar(100);
                         dialog.Send();
-                        SubClassTable.Update(client.Entity, client.Entity.SubClasses.Classes[(byte)ClassID.Wrangler]);
+                        SubClassTable.Update(client.Entity, client.Entity.SubClasses.Classes[(byte)ClassID.Sage]);
                     }
                     else
                     {
