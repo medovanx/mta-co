@@ -247,9 +247,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                                 if (client.Inventory.Add(item, MTA.Game.Enums.ItemUse.CreateAndAdd))
                                 {
                                     client.Entity.Teleport(1002, 303, 278);
-                                    Network.GamePackets.NpcReply npc = new Network.GamePackets.NpcReply(6, "Have fun in MTA Conquer!");
-                                    npc.OptionID = 255;
-                                    client.Send(npc.ToArray());
+                                    
                                 }
                                 else
                                 {
@@ -372,8 +370,8 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                                 if (client.Inventory.Add(item, MTA.Game.Enums.ItemUse.CreateAndAdd))
                                 {
                                     client.Entity.Teleport(1002, 303, 278);
-                                    npc.OptionID = 255;
-                                    client.Send(npc.ToArray());
+                                    
+                                    
                                 }
                                 else
                                 {
@@ -488,8 +486,8 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                                 if (client.Inventory.Add(item, MTA.Game.Enums.ItemUse.CreateAndAdd))
                                 {
                                     client.Entity.Teleport(1002, 303, 278);
-                                    npc.OptionID = 255;
-                                    client.Send(npc.ToArray());
+                                    
+                                    
                                 }
                                 else
                                 {
@@ -611,8 +609,8 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                                 if (client.Inventory.Add(item, MTA.Game.Enums.ItemUse.CreateAndAdd))
                                 {
                                     client.Entity.Teleport(1002, 303, 278);
-                                    npc.OptionID = 255;
-                                    client.Send(npc.ToArray());
+                                    
+                                    
                                 }
                                 else
                                 {
@@ -734,8 +732,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                                 if (client.Inventory.Add(item, MTA.Game.Enums.ItemUse.CreateAndAdd))
                                 {
                                     client.Entity.Teleport(1002, 303, 278);
-                                    npc.OptionID = 255;
-                                    client.Send(npc.ToArray());
+                                    
                                 }
                                 else
                                 {
@@ -857,8 +854,8 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                                 if (client.Inventory.Add(item, MTA.Game.Enums.ItemUse.CreateAndAdd))
                                 {
                                     client.Entity.Teleport(1002, 303, 278);
-                                    npc.OptionID = 255;
-                                    client.Send(npc.ToArray());
+                                    
+                                    
                                 }
                                 else
                                 {
@@ -980,8 +977,8 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                                 if (client.Inventory.Add(item, MTA.Game.Enums.ItemUse.CreateAndAdd))
                                 {
                                     client.Entity.Teleport(1002, 303, 278);
-                                    npc.OptionID = 255;
-                                    client.Send(npc.ToArray());
+                                    
+                                    
                                 }
                                 else
                                 {
@@ -1103,8 +1100,8 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                                 if (client.Inventory.Add(item, MTA.Game.Enums.ItemUse.CreateAndAdd))
                                 {
                                     client.Entity.Teleport(1002, 303, 278);
-                                    npc.OptionID = 255;
-                                    client.Send(npc.ToArray());
+                                    
+                                    
                                 }
                                 else
                                 {
@@ -1225,8 +1222,8 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                                 if (client.Inventory.Add(item, MTA.Game.Enums.ItemUse.CreateAndAdd))
                                 {
                                     client.Entity.Teleport(1002, 303, 278);
-                                    npc.OptionID = 255;
-                                    client.Send(npc.ToArray());
+                                    
+                                    
                                 }
                                 else
                                 {
@@ -1349,8 +1346,8 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                                 if (client.Inventory.Add(item, MTA.Game.Enums.ItemUse.CreateAndAdd))
                                 {
                                     client.Entity.Teleport(1002, 303, 278);
-                                    npc.OptionID = 255;
-                                    client.Send(npc.ToArray());
+                                    
+                                    
                                 }
                                 else
                                 {
