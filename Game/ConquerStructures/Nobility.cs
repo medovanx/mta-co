@@ -1,8 +1,4 @@
-﻿// ☺ Created by jiMMy
-// ☺ Copyright © 2010 - 2016 TQ Digital
-// ☺ Franko - Project
-
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using MTA.Client;
@@ -31,20 +27,22 @@ namespace MTA.Game.ConquerStructures
                         client.NobilityInformation.Gender = (byte)(client.Entity.Body % 10);
                         if (client.NobilityInformation.Donation == 0)
                             newDonator = true;
+                        // Donate with CPS
                         if (information.MoneyType == 1)
                         {
                             ulong cps = silvers;
                             if (client.Entity.ConquerPoints >= cps)
                             {
-                                client.Entity.ConquerPoints -= (uint)cps;
+                                client.Entity.ConquerPoints -= (uint) cps;
                                 client.NobilityInformation.Donation += silvers;
                             }
                         }
-                        //else if (client.Entity.Money >= silvers)
-                        //{
-                        //    client.Entity.Money -= (ulong)silvers;
-                        //    client.NobilityInformation.Donation += silvers;
-                        //}
+                        // Donate with Gold
+                        else if (client.Entity.Money >= silvers)
+                        {
+                            client.Entity.Money -= silvers;
+                            client.NobilityInformation.Donation += silvers;
+                        }
                         if (!Board.ContainsKey(client.Entity.UID) && client.NobilityInformation.Donation == silvers && newDonator)
                         {
                             Board.Add(client.Entity.UID, client.NobilityInformation);
@@ -68,7 +66,6 @@ namespace MTA.Game.ConquerStructures
                     {
                         try
                         {
-
                             if (BoardList == null)
                                 return;
                             if (client.NobilityInformation == null)
@@ -107,7 +104,6 @@ namespace MTA.Game.ConquerStructures
                             byte[] Ranks = { 1, 3, 5, 7, 9, 12 };
                             foreach (var Rank in Ranks)
                             {
-                                //Console.WriteLine(Rank);
                                 wtr.Write((ulong)Contributions[Rank]);
                                 wtr.Write((uint)4294967295);
                                 wtr.Write((uint)Rank);
@@ -171,6 +167,7 @@ namespace MTA.Game.ConquerStructures
                     }
             }
         }
+
         public static void Donate(ulong silvers, Client.GameState client)
         {
             bool newDonator = false;
@@ -196,6 +193,7 @@ namespace MTA.Game.ConquerStructures
             }
             Sort(client.Entity.UID);
         }
+
         public static void Sort(uint updateUID)
         {
             SafeDictionary<uint, NobilityInformation> sortedBoard = new SafeDictionary<uint, NobilityInformation>();
@@ -260,29 +258,32 @@ namespace MTA.Game.ConquerStructures
                             if (oldRank != Rank)
                             {
                                 updateTheClient = true;
-                                if (Rank == NobilityRank.Knight)
+                                string message = null;
+                                switch (Rank)
                                 {
-                                    Kernel.SendWorldMessage(new Message("Congratulation! " + client.Entity.Name + " Donation To Knight in Nobility Rank.", Color.Red, Network.GamePackets.Message.Center));
+                                    case NobilityRank.Knight:
+                                        message = $"Congratulations! {client.Entity.Name} has advanced to Knight in nobility.";
+                                        break;
+                                    case NobilityRank.Baron:
+                                        message = $"Congratulations! {client.Entity.Name} has advanced to Baron in nobility.";
+                                        break;
+                                    case NobilityRank.Earl:
+                                        message = $"Congratulations! {client.Entity.Name} has advanced to Earl in nobility.";
+                                        break;
+                                    case NobilityRank.Duke:
+                                        message = $"Congratulations! {client.Entity.Name} has advanced to Duke in nobility.";
+                                        break;
+                                    case NobilityRank.Prince:
+                                        message = $"Congratulations! {client.Entity.Name} has advanced to Prince in nobility.";
+                                        break;
+                                    case NobilityRank.King:
+                                        message = $"Congratulations! {client.Entity.Name} has become the new King/Queen of the server!";
+                                        break;
                                 }
-                                if (Rank == NobilityRank.Baron)
+
+                                if (!string.IsNullOrEmpty(message))
                                 {
-                                    Kernel.SendWorldMessage(new Message("Congratulation! " + client.Entity.Name + " Donation To Baron in Nobility Rank.", Color.Red, Network.GamePackets.Message.Center));
-                                }
-                                if (Rank == NobilityRank.Earl)
-                                {
-                                    Kernel.SendWorldMessage(new Message("Congratulation! " + client.Entity.Name + " Donation To Earl in Nobility Rank.", Color.Red, Network.GamePackets.Message.Center));
-                                }
-                                if (Rank == NobilityRank.Duke)
-                                {
-                                    Kernel.SendWorldMessage(new Message("Congratulation! " + client.Entity.Name + " Donation To Duke in Nobility Rank.", Color.Red, Network.GamePackets.Message.Center));
-                                }
-                                if (Rank == NobilityRank.Prince)
-                                {
-                                    Kernel.SendWorldMessage(new Message("Congratulation! " + client.Entity.Name + " Donation To Knight in Nobility Rank.", Color.Red, Network.GamePackets.Message.Center));
-                                }
-                                if (Rank == NobilityRank.King)
-                                {
-                                    Kernel.SendWorldMessage(new Message("Congratulation! " + client.Entity.Name + " has become the new King/Queen in Nobility Rank.", Color.Red, Network.GamePackets.Message.Center));
+                                    Kernel.SendWorldMessage(new Message(message, Color.Red, Network.GamePackets.Message.Center));
                                 }
                             }
                             else
@@ -292,7 +293,6 @@ namespace MTA.Game.ConquerStructures
                                     updateTheClient = true;
                                 }
                             }
-
                             if (updateTheClient || client.Entity.UID == updateUID)
                             {
                                 NobilityInfo update = new NobilityInfo(true);
@@ -315,6 +315,7 @@ namespace MTA.Game.ConquerStructures
                 BoardList = Board.Values.ToList();
         }
     }
+    
     public unsafe class NobilityInformation
     {
         public string Name;
@@ -325,6 +326,7 @@ namespace MTA.Game.ConquerStructures
         public int Position;
         public NobilityRank Rank;
     }
+
     public enum NobilityRank : byte
     {
         Serf = 0,
