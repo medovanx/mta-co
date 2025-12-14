@@ -194,61 +194,61 @@
         public enum ChiAttribute
         {
             None = 0,
-            CriticalStrike = 1,
-            SkillCriticalStrike = 2,
+            PStrike = 1,
+            MStrike = 2,
             Immunity = 3,
-            Breakthrough = 4,
+            Break = 4,
             Counteraction = 5,
-            HPAdd = 6,
-            AddAttack = 7,
-            AddMagicAttack = 8,
-            AddMagicDefense = 9,
-            PhysicalDamageIncrease = 10,
-            MagicDamageIncrease = 11,
-            PhysicalDamageDecrease = 12,
-            MagicDamageDecrease = 13
+            MaxHP = 6,
+            PAttack = 7,
+            MAttack = 8,
+            MDefense = 9,
+            FinalPAttack = 10,
+            FinalMAttack = 11,
+            FinalPDamage = 12,
+            FinalMDamage = 13
         }
 
         public static int ChiMinValues(ChiAttribute attribute)
         {
             switch (attribute)
             {
-                case ChiAttribute.CriticalStrike: return 10;
-                case ChiAttribute.SkillCriticalStrike: return 10;
+                case ChiAttribute.PStrike: return 10;
+                case ChiAttribute.MStrike: return 10;
                 case ChiAttribute.Immunity: return 10;
-                case ChiAttribute.Breakthrough: return 10;
+                case ChiAttribute.Break: return 10;
                 case ChiAttribute.Counteraction: return 10;
-                case ChiAttribute.HPAdd: return 1000;
-                case ChiAttribute.AddAttack: return 500;
-                case ChiAttribute.AddMagicAttack: return 500;
-                case ChiAttribute.AddMagicDefense: return 50;
-                case ChiAttribute.PhysicalDamageIncrease: return 50;
-                case ChiAttribute.PhysicalDamageDecrease: return 50;
-                case ChiAttribute.MagicDamageIncrease: return 50;
-                case ChiAttribute.MagicDamageDecrease: return 50;
+                case ChiAttribute.MaxHP: return 1000;
+                case ChiAttribute.PAttack: return 500;
+                case ChiAttribute.MAttack: return 500;
+                case ChiAttribute.MDefense: return 50;
+                case ChiAttribute.FinalPAttack: return 50;
+                case ChiAttribute.FinalPDamage: return 50;
+                case ChiAttribute.FinalMAttack: return 50;
+                case ChiAttribute.FinalMDamage: return 50;
                 default: return 10;
             }
         }
 
         public static int ChiMaxValues(ChiAttribute attribute)
         {
-            switch (attribute)
+            return attribute switch
             {
-                case ChiAttribute.CriticalStrike: return 200;
-                case ChiAttribute.SkillCriticalStrike: return 200;
-                case ChiAttribute.Immunity: return 200;
-                case ChiAttribute.Breakthrough: return 200;
-                case ChiAttribute.Counteraction: return 200;
-                case ChiAttribute.HPAdd: return 3500;
-                case ChiAttribute.AddMagicDefense: return 250;
-                case ChiAttribute.AddAttack: return 2000;
-                case ChiAttribute.AddMagicAttack: return 2500;
-                case ChiAttribute.PhysicalDamageIncrease: return 500;
-                case ChiAttribute.PhysicalDamageDecrease: return 500;
-                case ChiAttribute.MagicDamageIncrease: return 300;
-                case ChiAttribute.MagicDamageDecrease: return 300;
-                default: return 100;
-            }
+                ChiAttribute.PStrike => 200,
+                ChiAttribute.MStrike => 200,
+                ChiAttribute.Immunity => 200,
+                ChiAttribute.Break => 200,
+                ChiAttribute.Counteraction => 200,
+                ChiAttribute.MaxHP => 3500,
+                ChiAttribute.MDefense => 250,
+                ChiAttribute.PAttack => 2000,
+                ChiAttribute.MAttack => 2500,
+                ChiAttribute.FinalPAttack => 500,
+                ChiAttribute.FinalPDamage => 500,
+                ChiAttribute.FinalMAttack => 300,
+                ChiAttribute.FinalMDamage => 300,
+                _ => 100,
+            };
         }
 
         public enum ChiPowerType

@@ -21,7 +21,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
         // Chi service option ranges
         private const byte CHI_STAGE_BASE = 10;       // 10-13: Select Chi stage (1-4)
         private const byte CHI_ATTRIBUTE_BASE = 20;   // 20-23: Select attribute slot (1-4)
-        private const byte CHI_TYPE_SELECT = 30;       // 30+: Select attribute type (multiplied by 10)
+        private const byte CHI_TYPE_SELECT = 30;       // 30+: Select attribute type (direct enum value offset)
 
         // Perfection service option IDs (100+)
         private const byte PERFECTION_MENU = 100;
@@ -33,7 +33,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
 
         // Prices
         private const uint CHI_CHANGE_PRICE = 1000;
-        private const uint PERFECTION_PRICE = 1000000;
+        private const uint PERFECTION_PRICE = 10000;
         private const uint PERFECTION_WING_PRICE = 200;
         private const uint DAMAGE_PRICE = 250000;
 
@@ -108,12 +108,11 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
                         }
 
                         dialog.Text("You have chosen Attribute [" + attributeSlot + "]. Please select the attribute type you want to change it to.");
-                        for (int i = 0; i < (int)ChiAttribute.MagicDamageDecrease; i++)
+                        foreach (ChiAttribute type in Enum.GetValues<ChiAttribute>())
                         {
-                            var type = (ChiAttribute)(i + 1);
-                            if (!existingAttributes.Contains(type))
+                            if (type != ChiAttribute.None && !existingAttributes.Contains(type))
                             {
-                                dialog.Option(type.ToString(), (byte)(CHI_TYPE_SELECT + (i + 1) * 10));
+                                dialog.Option(type.ToString(), (byte)(CHI_TYPE_SELECT + (byte)type));
                             }
                         }
                         dialog.Option("Back", (byte)(CHI_STAGE_BASE + client.Entity.SelectedStage - 1));
@@ -170,13 +169,13 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
         {
             if (client.Entity.ConquerPoints < CHI_CHANGE_PRICE)
             {
-                dialog.Text("Sorry, but you don't have enough Conquer Points. You need at least " + CHI_CHANGE_PRICE + " CPs.");
+                dialog.Text("Sorry, but you don't have enough CPs. You need at least " + CHI_CHANGE_PRICE + " CPs.");
                 dialog.Option("I understand.", 255);
                 dialog.Send();
                 return;
             }
 
-            int attributeType = (optionId - CHI_TYPE_SELECT) / 10;
+            ChiAttribute attributeType = (ChiAttribute)(optionId - CHI_TYPE_SELECT);
             int stage = client.Entity.SelectedStage;
             int attributePosition = client.Entity.SelectedAttribute - 1;
             var powers = client.ChiPowers[stage - 1];
@@ -185,7 +184,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
             // Check if attribute type already exists
             foreach (var attr in attributes)
             {
-                if (attr.Type == (ChiAttribute)attributeType)
+                if (attr.Type == attributeType)
                 {
                     client.MessageBox("Sorry, you can't have duplicate attribute types.", null, null);
                     return;
@@ -193,8 +192,8 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
             }
 
             // Apply the change
-            attributes[attributePosition].Type = (ChiAttribute)attributeType;
-            attributes[attributePosition].Value = (ushort)ChiMaxValues(attributes[attributePosition].Type);
+            attributes[attributePosition].Type = attributeType;
+            attributes[attributePosition].Value = (ushort)ChiMaxValues(attributeType);
             powers.CalculatePoints();
             Database.ChiTable.Sort((ChiPowerType)stage);
             powers.Power = (ChiPowerType)stage;
@@ -304,7 +303,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
             }
             else
             {
-                dialog.Text("Please come back with " + price + " Conquer Points.");
+                dialog.Text("Please come back with " + price + " CPs.");
                 dialog.Option("I understand.", 255);
                 dialog.Send();
             }
@@ -362,7 +361,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity
             }
             else
             {
-                dialog.Text("Please come back with " + DAMAGE_PRICE + " Conquer Points.");
+                dialog.Text("Please come back with " + DAMAGE_PRICE + " CPs.");
                 dialog.Option("I understand.", 255);
                 dialog.Send();
             }

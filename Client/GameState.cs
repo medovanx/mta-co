@@ -4826,44 +4826,44 @@ namespace MTA.Client
                 {
                     switch (attribute.Type)
                     {
-                        case Game.Enums.ChiAttribute.CriticalStrike:
+                        case Game.Enums.ChiAttribute.PStrike:
                             Entity.CriticalStrike += (int)((ushort)(attribute.Value * 10) * percentage / 100);
                             break;
                         case Game.Enums.ChiAttribute.Counteraction:
                             Entity.Counteraction += (ushort)(attribute.Value * percentage / 100);
                             break;
-                        case Game.Enums.ChiAttribute.AddAttack:
+                        case Game.Enums.ChiAttribute.PAttack:
                             Entity.BaseMinAttack += attribute.Value * percentage / 100;
                             Entity.BaseMaxAttack += attribute.Value * percentage / 100;
                             break;
-                        case Game.Enums.ChiAttribute.AddMagicAttack:
+                        case Game.Enums.ChiAttribute.MAttack:
                             Entity.BaseMagicAttack += attribute.Value * percentage / 100;
                             break;
-                        case Game.Enums.ChiAttribute.AddMagicDefense:
+                        case Game.Enums.ChiAttribute.MDefense:
                             Entity.BaseMagicDefence += attribute.Value * percentage / 100;
                             break;
-                        case Game.Enums.ChiAttribute.Breakthrough:
+                        case Game.Enums.ChiAttribute.Break:
                             Entity.Breaktrough += (ushort)(attribute.Value * percentage / 100);
                             break;
-                        case Game.Enums.ChiAttribute.HPAdd:
+                        case Game.Enums.ChiAttribute.MaxHP:
                             Entity.ItemHP += attribute.Value * percentage / 100;
                             break;
                         case Game.Enums.ChiAttribute.Immunity:
                             Entity.Immunity += (int)((ushort)(attribute.Value * 10) * percentage / 100);
                             break;
-                        case Game.Enums.ChiAttribute.MagicDamageDecrease:
+                        case Game.Enums.ChiAttribute.FinalMDamage:
                             Entity.MagicDamageDecrease += (ushort)(attribute.Value * percentage / 100);
                             break;
-                        case Game.Enums.ChiAttribute.MagicDamageIncrease:
+                        case Game.Enums.ChiAttribute.FinalMAttack:
                             Entity.MagicDamageIncrease += (ushort)(attribute.Value * percentage / 100);
                             break;
-                        case Game.Enums.ChiAttribute.PhysicalDamageDecrease:
+                        case Game.Enums.ChiAttribute.FinalPDamage:
                             Entity.PhysicalDamageDecrease += (ushort)(attribute.Value * percentage / 100);
                             break;
-                        case Game.Enums.ChiAttribute.PhysicalDamageIncrease:
+                        case Game.Enums.ChiAttribute.FinalPAttack:
                             Entity.PhysicalDamageIncrease += 1;
                             break;
-                        case Game.Enums.ChiAttribute.SkillCriticalStrike:
+                        case Game.Enums.ChiAttribute.MStrike:
                             Entity.SkillCStrike += (int)((ushort)(attribute.Value * 10) * percentage / 100);
                             break;
                     }
