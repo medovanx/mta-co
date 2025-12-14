@@ -59,7 +59,6 @@ namespace MTA.Game
             set { PokerTableUID = value.UID; }
         }
 
-        public uint BankCps;
         public bool InAutoHunt;
         public uint DeputyLeader = 0;
         public Time32 XpBlueStamp;
@@ -2084,19 +2083,6 @@ namespace MTA.Game
                 {
                     Update(Network.GamePackets.Update.ConquerPoints, (uint)value, false);
                 }
-            }
-        }
-
-        long _CpsBank;
-
-        public long CpsBank
-        {
-            get { return _CpsBank; }
-            set
-            {
-                value = Math.Max(0, value);
-                _CpsBank = value;
-                Database.EntityTable.UpdateBankCps(this.Owner);
             }
         }
 

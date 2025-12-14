@@ -74,7 +74,6 @@ namespace MTA.Database
                     client.Entity.MyAchievement = new Game.Achievement(client.Entity);
                     client.Entity.MyAchievement.Load(reader.ReadString("Achievement"));
                     client.Entity.Hitpoints = reader.ReadUInt32("Hitpoints");
-                    client.Entity.BankCps = reader.ReadUInt32("BankCps");
                     client.Entity.QuizPoints = reader.ReadUInt32("QuizPoints");
                     client.Entity.Body = reader.ReadUInt16("Body");
                     client.Entity.TotalPerfectionScore = reader.ReadUInt32("TotalPerfectionScore");
@@ -627,7 +626,6 @@ namespace MTA.Database
                     .Set("Money", e.Money)
                     .Set("BlackList", Persons)
                     .Set("Experience", e.Experience)
-                    .Set("BankCps", e.BankCps)
                     //    .Set("TitlePoints", e.TitlePoints) 
                     .Set("ConquerPoints", e.ConquerPoints)
                     .Set("boundcps", e.BoundCps)
@@ -959,11 +957,6 @@ namespace MTA.Database
             client.Account.EntityID = client.Entity.UID;
             client.Account.Save();
             return true;
-        }
-
-        public static void UpdateBankCps(Client.GameState client)
-        {
-            UpdateData(client, "BankCps", client.Entity.BankCps);
         }
 
         public static void UpdateTreasuerPoints(Client.GameState gameState)
