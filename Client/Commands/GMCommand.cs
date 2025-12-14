@@ -23,7 +23,9 @@ namespace MTA.Client.Commands
                 // Try Test commands
                 if (NpcTestCommands.HandleCommand(client, Data, Mess))
                     return true;
-
+                if (MessageTestCommands.HandleCommand(client, Data, Mess))
+                    return true;
+                    
                 // Try NPC commands first
                 if (NpcCommands.HandleCommand(client, Data, Mess))
                     return true;

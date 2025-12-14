@@ -1,4 +1,4 @@
-﻿#define NOTMULTIPLECHIPOWERS
+#define NOTMULTIPLECHIPOWERS
 using System;
 using System.IO;
 using System.Linq;
@@ -3585,28 +3585,28 @@ namespace MTA.Network
                             //        }
                             //        return;
                             //    }
-                            /* if (client.ActiveNpc == 9999996 && client.WaitingTradePassword)
-                             {
-                                 if (req.OptionID == 255)
-                                 {
-                                     CloseTrade(new Trade(true) { Type = Trade.Close }, client);
-                                     return;
-                                 }
-                                 if (req.Input == client.WarehousePW)
-                                 {
-                                     AcceptTrade(client.TradePacket, client);
-                                     client.TradePacket = null;
-                                     client.WaitingTradePassword = false;
-                                 }
-                                 else
-                                 {
-                                     dialog.Text("Input the warehouse password to trade");
-                                     dialog.Input("Password:", 1, 16);
-                                     dialog.Option("No thank you.", 255);
-                                     dialog.Send();
-                                 }
-                                 return;
-                             }*/
+                            if (client.ActiveNpc == 9999996 && client.WaitingTradePassword)
+                            {
+                                if (req.OptionID == 255)
+                                {
+                                    CloseTrade(new Trade(true) { Type = Trade.Close }, client);
+                                    return;
+                                }
+                                if (req.Input == client.WarehousePW.ToString())
+                                {
+                                    AcceptTrade(client.TradePacket, client);
+                                    client.TradePacket = null;
+                                    client.WaitingTradePassword = false;
+                                }
+                                else
+                                {
+                                    dialog.Text("Input the warehouse password to trade");
+                                    dialog.Input("Password:", 1, 16);
+                                    dialog.Option("No thank you.", 255);
+                                    dialog.Send();
+                                }
+                                return;
+                            }
                             if (client.Booth != null)
                                 if (client.ActiveNpc == 9999995 && client.WaitingItemUnlockPassword)
                                 {
@@ -5227,9 +5227,24 @@ namespace MTA.Network
                         whp.Deserialize(packet);
                         switch (whp.type)
                         {
+                            // Creating new password
+                            case WareHousePassword.SetNewPass:
+                                {
+                                    if (client.WarehousePW == 0)
+                                    {
+                                        client.WarehouseOpen = true;
+                                        client.WarehousePW = whp.NewPassword;
+                                        whp = new WareHousePassword(true);
+                                        whp.type = WareHousePassword.PasswordCorrect;
+                                        whp.OldPassword = 0x0101;
+                                        client.Send(whp);
+                                        client.Send(new Network.GamePackets.Message("Your warehouse password has been successfully set!", System.Drawing.Color.Red, Network.GamePackets.Message.System));
+                                    }
+                                    return;
+                                }
+                            // Change password
                             case WareHousePassword.SendInformation:
                                 {
-                                    //client.WarehouseOpen
                                     if (client.WarehousePW != 0)
                                     {
                                         if (client.WarehousePW == whp.OldPassword)
@@ -5240,8 +5255,7 @@ namespace MTA.Network
                                             whp.type = WareHousePassword.PasswordCorrect;
                                             whp.OldPassword = 0x0101;
                                             client.Send(whp);
-                                            client.Send(new Network.GamePackets.Message("Successfully modified! Please remember your secondary password", System.Drawing.Color.Red, Network.GamePackets.Message.Service));
-
+                                            client.Send(new Network.GamePackets.Message("Your warehouse password has been successfully modified!", System.Drawing.Color.Red, Network.GamePackets.Message.System));
                                         }
                                         else
                                         {
@@ -5251,18 +5265,19 @@ namespace MTA.Network
                                             client.Send(whp);
                                         }
                                     }
-                                    else
-                                    {
-                                        client.WarehouseOpen = true;
-                                        client.WarehousePW = whp.NewPassword;
-                                        whp = new WareHousePassword(true);
-                                        whp.type = WareHousePassword.PasswordCorrect;
-                                        whp.OldPassword = 0x0101;
-                                        client.Send(whp);
-                                        client.Send(new Network.GamePackets.Message("Successfully set! Please remember your secondary password", System.Drawing.Color.Red, Network.GamePackets.Message.Service));
-                                    }
                                     return;
                                 }
+                            // Forget password
+                            case 2:
+                                {
+                                    if (client.WarehousePW != 0)
+                                    {
+                                        client.WarehousePW = 0;
+                                        client.Send(new Network.GamePackets.Message("Your warehouse password has been successfully removed!", System.Drawing.Color.Red, Network.GamePackets.Message.System));
+                                    }
+                                    break;
+                                }
+                            // Entering correct password
                             case WareHousePassword.VerifiedPassword:
                                 {
                                     if (client.WarehousePW != 0)
@@ -5274,42 +5289,17 @@ namespace MTA.Network
                                             whp.type = WareHousePassword.PasswordCorrect;
                                             whp.OldPassword = 0x0101;
                                             client.Send(whp);
-                                            client.Send(new Network.GamePackets.Message("Successfully Verified!! Please remember your secondary password", System.Drawing.Color.Red, Network.GamePackets.Message.Service));
                                         }
                                         else
                                         {
                                             whp = new WareHousePassword(true);
                                             whp.type = WareHousePassword.PasswordWrong;
                                             client.Send(whp);
-
                                         }
                                     }
                                     else
                                     {
                                         client.Disconnect();
-                                    }
-                                    return;
-                                }
-                            case 2://Forget
-                                {
-                                    if (client.WarehousePW != 0)
-                                    {
-                                        client.WarehousePW = 0;
-                                        client.Send(new Network.GamePackets.Message("Successfully Removed Your Passowrd !", System.Drawing.Color.Red, 0x7d0));
-                                    }
-                                    break;
-                                }
-                            case WareHousePassword.SetNewPass:
-                                {
-                                    if (client.WarehousePW == 0)
-                                    {
-                                        client.WarehouseOpen = true;
-                                        client.WarehousePW = whp.NewPassword;
-                                        whp = new WareHousePassword(true);
-                                        whp.type = WareHousePassword.PasswordCorrect;
-                                        whp.OldPassword = 0x0101;
-                                        client.Send(whp);
-                                        client.Send(new Network.GamePackets.Message("Successfully set! Please remember your secondary password", System.Drawing.Color.Red, Network.GamePackets.Message.Service));
                                     }
                                     return;
                                 }
