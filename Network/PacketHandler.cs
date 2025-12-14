@@ -13,6 +13,8 @@ using MTA.Game;
 using MTA.Interfaces;
 using System.Collections.Concurrent;
 using MTA.Network;
+using MTA.MrNiTro.Systems.House;
+using MTA.MaTrix;
 
 namespace MTA.Network
 {
@@ -807,24 +809,24 @@ namespace MTA.Network
                 #region 1134: Quest
                 case 1135:
                     {
-                        MaTrix.QuestData quest = new MaTrix.QuestData(true);
+                        QuestData quest = new QuestData(true);
                         quest.Deserialize(packet);
                         break;
                     }
                 case 1134:
                     {
-                        MaTrix.QuestPacket quest = new MaTrix.QuestPacket(false);
+                        QuestPacket quest = new QuestPacket(false);
                         quest.Deserialize(packet);
                         switch (quest.Action)
                         {
-                            case MaTrix.QuestPacket.QuestAction.Begin:
+                            case QuestPacket.QuestAction.Begin:
                                 {
                                     if (client.Quests.AllowAccept())
-                                        client.Quests.Accept((MaTrix.QuestID)quest[0].UID, 0);
+                                        client.Quests.Accept((QuestID)quest[0].UID, 0);
                                     client.Send(quest);
                                     break;
                                 }
-                            case MaTrix.QuestPacket.QuestAction.List:
+                            case QuestPacket.QuestAction.List:
                                 {
                                     if (quest.Amount < 80)
                                         client.Quests.SendFullGUI();
@@ -993,7 +995,7 @@ namespace MTA.Network
                 case 1046:
                     {
                         uint page = BitConverter.ReadUint(packet, 8);
-                        MaTrix.Inbox inbox = new MaTrix.Inbox();
+                        Inbox inbox = new Inbox();
                         inbox.check(client.Prizes, page);
                         inbox.Send(client);
                         break;
@@ -1019,8 +1021,8 @@ namespace MTA.Network
                                     if (client.Prizes.ContainsKey(id))
                                         client.Prizes.Remove(id);
                                     if (client.Prizes.Count == 0)
-                                        MaTrix.Inbox.SendInbox(client, false);
-                                    MaTrix.Inbox.Save(client);
+                                        Inbox.SendInbox(client, false);
+                                    Inbox.Save(client);
                                     break;
                                 }
                             case 3://Money
@@ -1244,14 +1246,14 @@ namespace MTA.Network
                             #endregion
 
                         }
-                        else if (MaTrix.House.Houses.ContainsKey(client.Entity.UID))
+                        else if (House.Houses.ContainsKey(client.Entity.UID))
                         {
                             if ((spawn.Mesh / 10) == 820)
                                 Base.Type = (Enums.NpcType)2;
                             else
                                 Base.Type = (Enums.NpcType)26;
                             // client.Map.AddNpc(Base);
-                            var itembox = MaTrix.House.CheckItemBox(client, MaTrix.House.Houses[client.Entity.UID]);
+                            var itembox = House.CheckItemBox(client, House.Houses[client.Entity.UID]);
                             if (itembox != null)
                             {
                                 client.MessageBox("You already Have ItemBox in your House");
@@ -1262,10 +1264,10 @@ namespace MTA.Network
                             {
                                 Base.UID = client.Map.EntityUIDCounter2.Next;
                             }
-                            while (MaTrix.House.Houses[client.Entity.UID].Furnitures.ContainsKey(Base.UID));
+                            while (House.Houses[client.Entity.UID].Furnitures.ContainsKey(Base.UID));
 
-                            MaTrix.House.Houses[client.Entity.UID].Furnitures.Add(Base.UID, Base);
-                            MaTrix.House.SaveFurnitures(client);
+                            House.Houses[client.Entity.UID].Furnitures.Add(Base.UID, Base);
+                            House.SaveFurnitures(client);
 
                         }
                         if (client.Entity.MapID != 1038)
@@ -2349,7 +2351,7 @@ namespace MTA.Network
                             return;
                         Warehouse warehousepacket = new Warehouse(false);
                         warehousepacket.Deserialize(packet);
-                        if (MaTrix.House.SpouseWarehouse(client, warehousepacket))
+                        if (House.SpouseWarehouse(client, warehousepacket))
                             return;
                         switch (warehousepacket.Type)
                         {
@@ -3221,8 +3223,8 @@ namespace MTA.Network
 
                         if (req.InteractType == 102)
                         {
-                            var quest = req.NpcID - MaTrix.QuestInfo.ActionBase;
-                            client.Quests.QuitQuest((MaTrix.QuestID)quest);
+                            var quest = req.NpcID - QuestInfo.ActionBase;
+                            client.Quests.QuitQuest((QuestID)quest);
                         }
                         //if (ID == 2032)
                         //    if (client.Map.BaseID == 6000 || client.Map.BaseID == 6000)
@@ -3419,13 +3421,13 @@ namespace MTA.Network
                                 }
                             }
                             #region House
-                            if (MaTrix.House.Houses.ContainsKey(client.Entity.UID))
+                            if (House.Houses.ContainsKey(client.Entity.UID))
                             {
-                                var info = MaTrix.House.Houses[client.Entity.UID];
+                                var info = House.Houses[client.Entity.UID];
                                 if (info.Furnitures.ContainsKey(req.NpcID))
                                 {
 
-                                    var itembox = MaTrix.House.CheckItemBox(client, info);//info.Furnitures.Values.Where(xx => (xx.Mesh / 10) == 820).FirstOrDefault();
+                                    var itembox = House.CheckItemBox(client, info);//info.Furnitures.Values.Where(xx => (xx.Mesh / 10) == 820).FirstOrDefault();
                                     if (itembox != null)
                                     {
                                         if (req.NpcID == itembox.UID)
@@ -3441,7 +3443,7 @@ namespace MTA.Network
                                         }
                                     }
                                     SobNpcSpawn sobnpc = info.Furnitures[req.NpcID];
-                                    MaTrix.House.Move(client, sobnpc, info);
+                                    House.Move(client, sobnpc, info);
                                     //client.MessageBox("Do u Want To change its place?", (p) =>
                                     //{
                                     //    info.Furnitures.Remove(sobnpc.UID);
@@ -3455,15 +3457,15 @@ namespace MTA.Network
 
                                 }
                             }
-                            else if (MaTrix.House.SpouseHouse(client.Entity.Spouse) != null)
+                            else if (House.SpouseHouse(client.Entity.Spouse) != null)
                             {
-                                var info = MaTrix.House.SpouseHouse(client.Entity.Spouse);
+                                var info = House.SpouseHouse(client.Entity.Spouse);
                                 if (client.Entity.MapID == info.ID)
                                 {
                                     if (info.Furnitures.ContainsKey(req.NpcID))
                                     {
 
-                                        var itembox = MaTrix.House.CheckItemBox(client, info);//info.Furnitures.Values.Where(xx => (xx.Mesh / 10) == 820).FirstOrDefault();
+                                        var itembox = House.CheckItemBox(client, info);//info.Furnitures.Values.Where(xx => (xx.Mesh / 10) == 820).FirstOrDefault();
                                         if (itembox != null)
                                         {
                                             if (req.NpcID == itembox.UID)
@@ -3758,7 +3760,7 @@ namespace MTA.Network
                                 }*/
                                 //if (!client.Voted)
                                 //{
-                                //    MaTrix.Vote_System.Voted(client);
+                                //    Vote_System.Voted(client);
                                 //    return;
                                 //}
                                 if ((client.Map.BaseID >= 6000 && client.Map.BaseID <= 6004) && (!(Constants.ActiveNPC.Contains(client.ActiveNpc))))
@@ -5780,9 +5782,9 @@ namespace MTA.Network
                                         }
                                     }
                                 }
-                                else if (MaTrix.AI.Ais.ContainsKey(Fighter))
+                                else if (AI.Ais.ContainsKey(Fighter))
                                 {
-                                    Client.GameState Client = MaTrix.AI.Ais[Fighter].Bot;
+                                    Client.GameState Client = AI.Ais[Fighter].Bot;
                                     if (Client == null)
                                         return;
                                     if (Client.Team != null)
@@ -6772,7 +6774,7 @@ namespace MTA.Network
                 #region Chi retreat (2536)
                 case 2536:
                     {
-                        MaTrix.RetreatChi.Retreat(packet, client);
+                        RetreatChi.Retreat(packet, client);
                         break;
                     }
                 #endregion Chi retreat (2536)
@@ -13189,9 +13191,9 @@ namespace MTA.Network
                         DateTime itemtime = client[item.ID.ToString()];
                         if (DateTime.Now >= itemtime.AddHours(3.0))
                         {
-                            if (MaTrix.House.Houses.ContainsKey(client.Entity.UID))
+                            if (House.Houses.ContainsKey(client.Entity.UID))
                             {
-                                var myhouse = MaTrix.House.Houses[(client.Entity.UID)];
+                                var myhouse = House.Houses[(client.Entity.UID)];
                                 if (client.Entity.MapID == myhouse.ID)
                                 {
                                     #region Summoning
@@ -14435,7 +14437,7 @@ namespace MTA.Network
                             str.Texts.Add("zf2-e300");
                             client.Inventory.Add(729304, 0, 1);
                             client.IncreaseExperience(client.ExpBalls += 1, false);
-                            client.Quests.FinishQuest(MaTrix.QuestID.Spirit_Beads);
+                            client.Quests.FinishQuest(QuestID.Spirit_Beads);
                             client.Inventory.Remove(item, Game.Enums.ItemUse.Remove);
                         }
                         break;
@@ -14461,7 +14463,7 @@ namespace MTA.Network
 
                             client.Inventory.Add(729304, 0, 1);
                             client.IncreaseExperience(client.ExpBalls += (byte)1.5, false);
-                            client.Quests.FinishQuest(MaTrix.QuestID.Spirit_Beads);
+                            client.Quests.FinishQuest(QuestID.Spirit_Beads);
                             client.Inventory.Remove(item, Game.Enums.ItemUse.Remove);
                         }
                         break;
@@ -14486,7 +14488,7 @@ namespace MTA.Network
                             str.Texts.Add("zf2-e300");
                             client.Inventory.Add(729304, 0, 1);
                             client.IncreaseExperience(client.ExpBalls += 2, false);
-                            client.Quests.FinishQuest(MaTrix.QuestID.Spirit_Beads);
+                            client.Quests.FinishQuest(QuestID.Spirit_Beads);
                             client.Inventory.Remove(item, Game.Enums.ItemUse.Remove);
                         }
                         break;
@@ -14511,7 +14513,7 @@ namespace MTA.Network
                             str.Texts.Add("zf2-e300");
                             client.Inventory.Add(729304, 0, 1);
                             client.IncreaseExperience(client.ExpBalls += (byte)2.5, false);
-                            client.Quests.FinishQuest(MaTrix.QuestID.Spirit_Beads);
+                            client.Quests.FinishQuest(QuestID.Spirit_Beads);
                             client.Inventory.Remove(item, Game.Enums.ItemUse.Remove);
                         }
                         break;
@@ -14536,7 +14538,7 @@ namespace MTA.Network
                             str.Texts.Add("zf2-e300");
                             client.Inventory.Add(729304, 0, 1);
                             client.IncreaseExperience(client.ExpBalls += 3, false);
-                            client.Quests.FinishQuest(MaTrix.QuestID.Spirit_Beads);
+                            client.Quests.FinishQuest(QuestID.Spirit_Beads);
                             client.Inventory.Remove(item, Game.Enums.ItemUse.Remove);
                         }
                         break;
@@ -14552,7 +14554,7 @@ namespace MTA.Network
                             Client = client,
                             Replies = new List<NpcReply>()
                         };
-                        var quest = client.Quests.GetQuest(MaTrix.QuestID.Eth_has_price);
+                        var quest = client.Quests.GetQuest(QuestID.Eth_has_price);
                         dialog.Text("************************");
                         dialog.Text("Item : [" + quest.Mob + "]");
                         dialog.Text("Amount : [" + quest.Kills + "]");
@@ -14582,7 +14584,7 @@ namespace MTA.Network
                                 str.Texts.Add("end_task");
                                 p.Inventory.Add(729304, 0, 1);
                                 p.SendScreen(str.ToArray(), true);
-                                p.Quests.FinishQuest(MaTrix.QuestID.Magnolias);
+                                p.Quests.FinishQuest(QuestID.Magnolias);
 
                             }, "Done", 5);
 
@@ -14613,7 +14615,7 @@ namespace MTA.Network
                                     str.Texts.Add("end_task");
                                     p.Inventory.Add(729304, 0, 1);
                                     p.SendScreen(str.ToArray(), true);
-                                    p.Quests.FinishQuest(MaTrix.QuestID.Magnolias);
+                                    p.Quests.FinishQuest(QuestID.Magnolias);
 
                                 }, "Done", 5);
                             }
@@ -14645,7 +14647,7 @@ namespace MTA.Network
                                     str.Texts.Add("end_task");
                                     p.Inventory.Add(729304, 0, 1);
                                     p.SendScreen(str.ToArray(), true);
-                                    p.Quests.FinishQuest(MaTrix.QuestID.Magnolias);
+                                    p.Quests.FinishQuest(QuestID.Magnolias);
 
                                 }, "Done", 5);
                             }
@@ -14677,7 +14679,7 @@ namespace MTA.Network
                                     str.Texts.Add("end_task");
                                     p.Inventory.Add(729304, 0, 1);
                                     p.SendScreen(str.ToArray(), true);
-                                    p.Quests.FinishQuest(MaTrix.QuestID.Magnolias);
+                                    p.Quests.FinishQuest(QuestID.Magnolias);
 
                                 }, "Done", 5);
                             }
@@ -14708,7 +14710,7 @@ namespace MTA.Network
                                     str.Texts.Add("end_task");
                                     p.Inventory.Add(729304, 0, 1);
                                     p.SendScreen(str.ToArray(), true);
-                                    p.Quests.FinishQuest(MaTrix.QuestID.Magnolias);
+                                    p.Quests.FinishQuest(QuestID.Magnolias);
 
                                 }, "Done", 5);
                             }
@@ -25462,7 +25464,7 @@ p =>
 
             client.Challenge = null;
             if (client.Prizes.Count > 0)
-                MaTrix.Inbox.SendInbox(client, true);
+                Inbox.SendInbox(client, true);
             client.GetArsenalDonation();
             // client.Entity.Effect = client.Entity.Effect;
             if (client.Entity.MyAchievement != null)

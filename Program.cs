@@ -15,6 +15,7 @@ using MTA.Client;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using MTA.Franko;
+using MTA.MrNiTro.Systems.House;
 
 namespace MTA
 {
@@ -373,7 +374,7 @@ namespace MTA
                     Game.EliteGuildWar.EliteGwint();
                     Console.WriteLine("Elite Guild war initializated.");
                     Database.Furniture.Load();
-                    MaTrix.House.LoadHouses();
+                    House.LoadHouses();
                     Database.PokerTables.LoadTables();
                     Console.WriteLine("Poker [Money + CPs] Tables Loaded.");
 

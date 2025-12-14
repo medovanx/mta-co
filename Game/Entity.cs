@@ -1176,19 +1176,19 @@ namespace MTA.Game
             switch (flagtype)
             {
                 case 0:
-                {
-                    var title = (TitlePacket.Titles)baseFlag;
-                    if (Titles.ContainsKey(title))
                     {
-                        Titles.Remove(title);
-                        if (MyTitle == title)
-                            MyTitle = Network.GamePackets.TitlePacket.Titles.None;
+                        var title = (TitlePacket.Titles)baseFlag;
+                        if (Titles.ContainsKey(title))
+                        {
+                            Titles.Remove(title);
+                            if (MyTitle == title)
+                                MyTitle = Network.GamePackets.TitlePacket.Titles.None;
 
-                        Owner.SendScreenSpawn(this, true);
+                            Owner.SendScreenSpawn(this, true);
+                        }
+
+                        break;
                     }
-
-                    break;
-                }
                 case 1:
                     RemoveFlag(baseFlag);
                     break;
@@ -3274,7 +3274,8 @@ namespace MTA.Game
             if (EntityFlag == EntityFlag.Player)
                 Owner.Send(new MapStatus()
                 {
-                    BaseID = Owner.Map.BaseID, ID = Owner.Map.ID,
+                    BaseID = Owner.Map.BaseID,
+                    ID = Owner.Map.ID,
                     Status = Database.MapsTable.MapInformations[Owner.Map.ID].Status,
                     Weather = Database.MapsTable.MapInformations[Owner.Map.ID].Weather
                 });
@@ -3292,7 +3293,8 @@ namespace MTA.Game
             if (EntityFlag == EntityFlag.Player)
                 Owner.Send(new MapStatus()
                 {
-                    BaseID = Owner.Map.BaseID, ID = Owner.Map.ID,
+                    BaseID = Owner.Map.BaseID,
+                    ID = Owner.Map.ID,
                     Status = Database.MapsTable.MapInformations[Owner.Map.ID].Status
                 });
             if (EntityFlag == Game.EntityFlag.Player)
@@ -3750,7 +3752,8 @@ namespace MTA.Game
 
                 Owner.Send(new MapStatus()
                 {
-                    BaseID = Owner.Map.BaseID, ID = Owner.Map.ID,
+                    BaseID = Owner.Map.BaseID,
+                    ID = Owner.Map.ID,
                     Status = Database.MapsTable.MapInformations[Owner.Map.ID].Status,
                     Weather = Database.MapsTable.MapInformations[Owner.Map.ID].Weather
                 });
@@ -4221,7 +4224,7 @@ namespace MTA.Game
             }
 
             RemoveFlag(Network.GamePackets.Update.Flags.FlashingName);
-            Over:
+        Over:
 
             Network.GamePackets.Attack attack = new Attack(true);
             attack.Attacker = killer.UID;
@@ -4287,7 +4290,8 @@ namespace MTA.Game
                 Owner.SendScreen(attack, true);
                 Owner.Send(new MapStatus()
                 {
-                    BaseID = Owner.Map.BaseID, ID = Owner.Map.ID,
+                    BaseID = Owner.Map.BaseID,
+                    ID = Owner.Map.ID,
                     Status = Database.MapsTable.MapInformations[Owner.Map.ID].Status,
                     Weather = Database.MapsTable.MapInformations[Owner.Map.ID].Weather
                 });
@@ -5077,7 +5081,8 @@ namespace MTA.Game
                 Owner.Screen.Reload(null);
                 Owner.Send(new MapStatus()
                 {
-                    BaseID = Owner.Map.BaseID, ID = Owner.Map.ID,
+                    BaseID = Owner.Map.BaseID,
+                    ID = Owner.Map.ID,
                     Status = Database.MapsTable.MapInformations[Owner.Map.ID].Status,
                     Weather = Database.MapsTable.MapInformations[Owner.Map.ID].Weather
                 });
@@ -5111,8 +5116,12 @@ namespace MTA.Game
                 if (EntityFlag == EntityFlag.Player)
                 {
                     if (Owner.InQualifier())
+                    {
                         if (MapID != 700 && MapID < 11000)
+                        {
                             Owner.EndQualifier();
+                        }
+                    }
                 }
 
                 if (MapID == this.MapID)
@@ -5137,7 +5146,8 @@ namespace MTA.Game
                 Owner.Send(Data);
                 Owner.Send(new MapStatus()
                 {
-                    BaseID = Owner.Map.BaseID, ID = Owner.Map.ID,
+                    BaseID = Owner.Map.BaseID,
+                    ID = Owner.Map.ID,
                     Status = Database.MapsTable.MapInformations[Owner.Map.ID].Status,
                     Weather = Database.MapsTable.MapInformations[Owner.Map.ID].Weather
                 });
@@ -5221,7 +5231,8 @@ namespace MTA.Game
                 Owner.Screen.Reload(null);
                 Owner.Send(new MapStatus()
                 {
-                    BaseID = Owner.Map.BaseID, ID = Owner.Map.ID,
+                    BaseID = Owner.Map.BaseID,
+                    ID = Owner.Map.ID,
                     Status = Database.MapsTable.MapInformations[Owner.Map.ID].Status,
                     Weather = Database.MapsTable.MapInformations[Owner.Map.ID].Weather
                 });
@@ -5277,7 +5288,8 @@ namespace MTA.Game
                 if (Owner.ChampionGroup == null)
                     Owner.Send(new MapStatus()
                     {
-                        BaseID = Owner.Map.BaseID, ID = Owner.Map.ID,
+                        BaseID = Owner.Map.BaseID,
+                        ID = Owner.Map.ID,
                         Status = Database.MapsTable.MapInformations[Owner.Map.BaseID].Status,
                         Weather = Database.MapsTable.MapInformations[Owner.Map.BaseID].Weather
                     });

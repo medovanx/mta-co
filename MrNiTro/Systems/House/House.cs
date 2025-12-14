@@ -8,7 +8,7 @@ using System.IO;
 using MTA.Game;
 using MTA.Client;
 
-namespace MTA.MaTrix
+namespace MTA.MrNiTro.Systems.House
 {
     public class House
     {
@@ -19,60 +19,58 @@ namespace MTA.MaTrix
             public ushort ID;
             public ushort maptype;
             public ushort level;
-            public Dictionary<uint, SobNpcSpawn> Furnitures;
-            public Game.ConquerStructures.Warehouse Warehouse;
+            public Dictionary<uint, SobNpcSpawn> ?Furnitures;
+            public Game.ConquerStructures.Warehouse ?Warehouse;
         }
-        public static SafeDictionary<uint, HouseInfo> Houses = new SafeDictionary<uint, HouseInfo>();
+        public static SafeDictionary<uint, HouseInfo> Houses = [];
         public static void LoadHouses()
         {
             try
             {
-                MySqlCommand command = new MySqlCommand(MySqlCommandType.SELECT);
+                MySqlCommand command = new(MySqlCommandType.SELECT);
                 command.Select("house");
-                MySqlReader reader = new MySqlReader(command);
+                MySqlReader reader = new(command);
                 while (reader.Read())
                 {
-                    HouseInfo info = new HouseInfo();
-                    info.UID = reader.ReadUInt32("UID");
-                    info.Name = reader.ReadString("Name");
-                    info.ID = reader.ReadUInt16("ID");
-                    info.maptype = reader.ReadUInt16("maptype");
-                    info.level = reader.ReadUInt16("level");
-                    info.Furnitures = new Dictionary<uint, SobNpcSpawn>();
+                    HouseInfo info = new()
+                    {
+                        UID = reader.ReadUInt32("UID"),
+                        Name = reader.ReadString("Name"),
+                        ID = reader.ReadUInt16("ID"),
+                        maptype = reader.ReadUInt16("maptype"),
+                        level = reader.ReadUInt16("level"),
+                        Furnitures = []
+                    };
                     byte[] data = reader.ReadBlob("Furnitures");
                     if (data.Length > 0)
                     {
-                        using (var stream = new MemoryStream(data))
-                        using (var r = new BinaryReader(stream))
+                        using var stream = new MemoryStream(data);
+                        using var r = new BinaryReader(stream);
+                        int count = r.ReadByte();
+                        for (uint x = 0; x < count; x++)
                         {
-                            int count = r.ReadByte();
-                            for (uint x = 0; x < count; x++)
+                            SobNpcSpawn Base = new SobNpcSpawn();
+                            Base = ReadItem(r);
+                            if ((Base.Mesh / 10) == 820)
                             {
-                                SobNpcSpawn Base = new SobNpcSpawn();
-                                Base = ReadItem(r);
-                                if ((Base.Mesh / 10) == 820)
+                                Base.Type = (Enums.NpcType)2;
+                                info.Warehouse = new Game.ConquerStructures.Warehouse(null, (Game.ConquerStructures.Warehouse.WarehouseID)Base.UID);
+                                var items = LOadItems(Base.UID);
+                                foreach (var item in items.Values)
                                 {
-                                    Base.Type = (Enums.NpcType)2;
-                                    info.Warehouse = new Game.ConquerStructures.Warehouse(null, (Game.ConquerStructures.Warehouse.WarehouseID)Base.UID);
-                                    var items = LOadItems(Base.UID);
-                                    foreach (var item in items.Values)
-                                    {
-                                        if (!info.Warehouse.ContainsUID(item.UID))
-                                            info.Warehouse.Add2(item, null);
-                                    }
+                                    if (!info.Warehouse.ContainsUID(item.UID))
+                                        info.Warehouse.Add2(item, null);
                                 }
-                                else
-                                    Base.Type = (Enums.NpcType)26;
-                                Base.MapID = info.ID;
-                                if (!info.Furnitures.ContainsKey(Base.UID))
-                                    info.Furnitures.Add(Base.UID, Base);
-
                             }
+                            else
+                                Base.Type = (Enums.NpcType)26;
+                            Base.MapID = info.ID;
+                            info.Furnitures.TryAdd(Base.UID, Base);
                         }
                     }
                     if (!Houses.ContainsKey(info.UID))
                         Houses.Add(info.UID, info);
-                    new Map(info.ID, info.maptype, Kernel.Maps[info.maptype].Path);
+                    _ = new Map(info.ID, info.maptype, Kernel.Maps[info.maptype].Path);
 
                 }
             }
@@ -104,10 +102,10 @@ namespace MTA.MaTrix
         {
             if (!Houses.ContainsKey(client.Entity.UID))
                 return;
-            MemoryStream stream = new MemoryStream();
-            BinaryWriter writer = new BinaryWriter(stream);
+            MemoryStream stream = new();
+            BinaryWriter writer = new(stream);
             var info = Houses[client.Entity.UID];
-            writer.Write((byte)info.Furnitures.Count);
+            writer.Write(value: (byte)info.Furnitures.Count);
             foreach (var fur in info.Furnitures.Values)
                 WriteItem(writer, fur);
             string SQL = "UPDATE `house` SET Furnitures=@Furnitures where UID = " + client.Entity.UID + " ;";
@@ -115,25 +113,25 @@ namespace MTA.MaTrix
             using (var conn = DataHolder.MySqlConnection)
             {
                 conn.Open();
-                using (var cmd = new MySql.Data.MySqlClient.MySqlCommand())
-                {
-                    cmd.Connection = conn;
-                    cmd.CommandText = SQL;
-                    cmd.Parameters.AddWithValue("@Furnitures", rawData);
-                    cmd.ExecuteNonQuery();
-                }
+                using var cmd = new MySql.Data.MySqlClient.MySqlCommand();
+                cmd.Connection = conn;
+                cmd.CommandText = SQL;
+                cmd.Parameters.AddWithValue("@Furnitures", rawData);
+                cmd.ExecuteNonQuery();
             }
         }
         ///////////////////////////////////////////////////
         public static void createhouse(GameState client)
         {
-            HouseInfo info = new HouseInfo();
-            info.UID = client.Entity.UID;
-            info.Name = client.Entity.Name;
-            info.ID = (ushort)client.Entity.UID;
-            info.maptype = 1098;
-            info.level = 1;
-            info.Furnitures = new Dictionary<uint, SobNpcSpawn>();
+            HouseInfo info = new HouseInfo
+            {
+                UID = client.Entity.UID,
+                Name = client.Entity.Name,
+                ID = (ushort)client.Entity.UID,
+                maptype = 1098,
+                level = 1,
+                Furnitures = new Dictionary<uint, SobNpcSpawn>()
+            };
             if (!Houses.ContainsKey(info.UID))
                 Houses.Add(info.UID, info);
             new Map(info.ID, info.maptype, Kernel.Maps[info.maptype].Path);
@@ -180,46 +178,43 @@ namespace MTA.MaTrix
 
         public static void TelePort(GameState client, HouseInfo info)
         {
+            client.Entity.AdvancedTeleport(true);
+            ushort MapID;
+            ushort X, Y;
+            MapID = info.ID;
+            var cord = Kernel.Maps[info.maptype].RandomCoordinates();
+            X = cord.Item1;
+            Y = cord.Item2;
             if (client.Entity.EntityFlag == EntityFlag.Player)
             {
-                client.Entity.AdvancedTeleport(true);
-                ushort MapID;
-                ushort X, Y;
-                MapID = info.ID;
-                var cord = Kernel.Maps[info.maptype].RandomCoordinates();
-                X = cord.Item1;
-                Y = cord.Item2;
-                if (!Houses.ContainsKey(info.UID) && client.QualifierGroup == null)
-                {
-                    MapID = 1002;
-                    X = 432;
-                    Y = 378;
-                }
-                if (client.Entity.EntityFlag == EntityFlag.Player)
+                if (client.InQualifier())
                 {
                     if (client.InQualifier())
-                        if (client.InQualifier())
-                            if (client.Entity.MapID != 700 && client.Entity.MapID < 11000)
-                                client.EndQualifier();
+                    {
+                        if (client.Entity.MapID != 700 && client.Entity.MapID < 11000)
+                        {
+                            client.EndQualifier();
+                        }
+                    }
                 }
-
-                client.Entity.X = X;
-                client.Entity.Y = Y;
-                client.Entity.PX = 0;
-                client.Entity.PY = 0;
-                client.Entity.PreviousMapID = client.Entity.MapID;
-                client.Entity.MapID = info.ID;
-
-                Network.GamePackets.Data Data = new Network.GamePackets.Data(true);
-                Data.UID = client.Entity.UID;
-                Data.ID = Network.GamePackets.Data.Teleport;
-                Data.dwParam = info.maptype;
-                Data.wParam1 = X;
-                Data.wParam2 = Y;
-                client.Send(Data);
-                client.Send(new MapStatus() { BaseID = info.maptype, ID = info.ID });
-                client.Entity.AdvancedTeleport(true);
             }
+
+            client.Entity.X = X;
+            client.Entity.Y = Y;
+            client.Entity.PX = 0;
+            client.Entity.PY = 0;
+            client.Entity.PreviousMapID = client.Entity.MapID;
+            client.Entity.MapID = info.ID;
+
+            Network.GamePackets.Data Data = new Network.GamePackets.Data(true);
+            Data.UID = client.Entity.UID;
+            Data.ID = Network.GamePackets.Data.Teleport;
+            Data.dwParam = info.maptype;
+            Data.wParam1 = X;
+            Data.wParam2 = Y;
+            client.Send(Data);
+            client.Send(new MapStatus() { BaseID = info.maptype, ID = info.ID });
+            client.Entity.AdvancedTeleport(true);
         }
         public static void HouseWarehouse(GameState client, Warehouse warehousepacket = null)
         {
@@ -312,7 +307,7 @@ namespace MTA.MaTrix
             return item;
         }
 
-        public static HouseInfo SpouseHouse(string Spousename)
+        public static HouseInfo? SpouseHouse(string Spousename)
         {
             foreach (var house in Houses.Values)
                 if (house.Name == Spousename)
@@ -323,7 +318,7 @@ namespace MTA.MaTrix
         public static bool SpouseWarehouse(GameState client, Warehouse warehousepacket)
         {
             HouseWarehouse(client, warehousepacket);
-            var info = MaTrix.House.SpouseHouse(client.Entity.Spouse);
+            var info = House.SpouseHouse(client.Entity.Spouse);
             if (info == null || client.Entity.MapID == client.Entity.UID)
                 info = Houses[client.Entity.UID];
             if (info != null)
@@ -421,7 +416,7 @@ namespace MTA.MaTrix
 
         public static SobNpcSpawn CheckItemBox(GameState client, HouseInfo info)
         {
-            return info.Furnitures.Values.Where(xx => (xx.Mesh / 10) == 820).FirstOrDefault();
+            return info.Furnitures.Values.FirstOrDefault(xx => (xx.Mesh / 10) == 820);
 
         }
 

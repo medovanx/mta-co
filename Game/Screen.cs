@@ -9,6 +9,7 @@ using MTA.Network.GamePackets;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Threading.Generic;
+using MTA.MrNiTro.Systems.House;
 
 namespace MTA.Game
 {
@@ -1428,12 +1429,12 @@ namespace MTA.Game
             {
                 var Map = Owner.Map;
                 #region House
-                var spouse = MaTrix.House.SpouseHouse(Owner.Entity.Spouse);
+                var spouse = House.SpouseHouse(Owner.Entity.Spouse);
                 if (Owner.Map.ID == (ushort)Owner.Entity.UID)
                 {
-                    if (MaTrix.House.Houses.ContainsKey(Owner.Entity.UID))
+                    if (House.Houses.ContainsKey(Owner.Entity.UID))
                     {
-                        var info = MaTrix.House.Houses[Owner.Entity.UID];
+                        var info = House.Houses[Owner.Entity.UID];
                         foreach (var fur in info.Furnitures.Values)
                         {
                             if (fur == null) continue;
