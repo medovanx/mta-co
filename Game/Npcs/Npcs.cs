@@ -5791,42 +5791,6 @@ namespace MTA
                                     break;
                                 }
                             #endregion Poker
-
-                            #region StarLit
-                            case 600055:
-                                {
-                                    switch (npcRequest.OptionID)
-                                    {
-                                        case 0:
-                                            {
-                                                dialog.Text("Hello mate, how do you do? Listen, i can help you to Divcore your Spouse Just you must agree First.");
-                                                dialog.Option("Yes,Divcore me.", 1);
-                                                dialog.Option("Nothing thank you.", 255);
-                                                dialog.Send();
-                                                break;
-                                            }
-                                        case 1:
-                                            {
-                                                if (client.Entity.Spouse == "None")
-                                                {
-                                                    dialog.Text("Sorry, you not married i cant help you ^^.");
-                                                    dialog.Option("Thank you.", 255);
-                                                    dialog.Send();
-                                                }
-                                                else
-                                                {
-                                                    dialog.Text("You are Free Now.Hope you will find the Good Person for you.");
-                                                    dialog.Option("Alright that's what I'll do.", 255);
-                                                    dialog.Send();
-                                                    client.Entity.Spouse = "None";
-                                                }
-                                                break;
-                                            }
-                                    }
-                                    break;
-                                }
-                            #endregion
-
                             #region CollecterZhao
                             case 2070:
                                 {
