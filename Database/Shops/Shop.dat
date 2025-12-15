@@ -181,7 +181,7 @@ Item19=1060024
 
 [Shop7]
 ID=5
-Name=Ë«Áú³ÇÎäÆ÷µê
+Name=Ë«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=160
@@ -348,7 +348,7 @@ Item159=612053
 
 [Shop8]
 ID=10
-Name=ÔÆÃÅ¹ØÎäÆ÷µê
+Name=ï¿½ï¿½ï¿½Å¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=160
@@ -515,7 +515,7 @@ Item159=612173
 
 [Shop9]
 ID=10013
-Name=Ãù·ï±¤ÎäÆ÷µê
+Name=ï¿½ï¿½ï¿½ï±¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=158
@@ -680,7 +680,7 @@ Item157=612093
 
 [Shop10]
 ID=10015
-Name=ÔÆÃÅ¹ØÐ¡³ÇÎäÆ÷µê
+Name=ï¿½ï¿½ï¿½Å¹ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=107
@@ -873,7 +873,7 @@ Item71=540233
 
 [Shop12]
 ID=10025
-Name=°×ðØ³ÇÎäÆ÷µê
+Name=ï¿½ï¿½ï¿½Ø³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=159
@@ -1039,7 +1039,7 @@ Item158=612213
 
 [Shop13]
 ID=10029
-Name=ºÚ»¢³ÇÎäÆ÷µê
+Name=ï¿½Ú»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=158
@@ -1429,38 +1429,39 @@ ID=141
 Name=Drugstore
 Type=1
 MoneyType=0
-ItemAmount=31
+ItemAmount=32
 Item0=1000000
 Item1=1000010
 Item2=1000040
 Item3=721157
 Item4=721158
-Item5=720031
-Item6=720032
-Item7=725000
-Item8=725001
-Item9=725002
-Item10=725003
-Item11=725004
-Item12=725005
-Item13=725010
-Item14=725011
-Item15=725012
-Item16=725013
-Item17=725014
-Item18=725015
-Item19=725028
-Item20=725027
-Item21=725025
-Item22=725030
-Item23=725031
-Item24=725026
-Item25=725029
-Item26=725040
-Item27=725041
-Item28=725042
-Item29=725043
-Item30=725044
+Item5=720030
+Item6=720031
+Item7=720032
+Item8=725000
+Item9=725001
+Item10=725002
+Item11=725003
+Item12=725004
+Item13=725005
+Item14=725010
+Item15=725011
+Item16=725012
+Item17=725013
+Item18=725014
+Item19=725015
+Item20=725028
+Item21=725027
+Item22=725025
+Item23=725030
+Item24=725031
+Item25=725026
+Item26=725029
+Item27=725040
+Item28=725041
+Item29=725042
+Item30=725043
+Item31=725044
 
 [Shop19]
 ID=4100
@@ -2043,7 +2044,7 @@ Item7=722793
 
 [Shop38]
 ID=7909
-Name=°ïÅÉÕù°ÔÈüÖ´ÊÂ
+Name=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=16
@@ -2066,7 +2067,7 @@ Item15=1050002
 
 [Shop39]
 ID=7910
-Name=°ïÅÉÕù°ÔÈüÖ´ÊÂ
+Name=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=16
@@ -2089,7 +2090,7 @@ Item15=1050002
 
 [Shop40]
 ID=7911
-Name=°ïÅÉÕù°ÔÈüÖ´ÊÂ
+Name=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=16
@@ -2112,7 +2113,7 @@ Item15=1050002
 
 [Shop41]
 ID=7912
-Name=°ïÅÉÕù°ÔÈüÖ´ÊÂ
+Name=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=16
@@ -2135,7 +2136,7 @@ Item15=1050002
 
 [Shop42]
 ID=7913
-Name=°ïÅÉÕù°ÔÈüÖ´ÊÂ
+Name=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=16
@@ -2158,7 +2159,7 @@ Item15=1050002
 
 [Shop43]
 ID=7914
-Name=°ïÅÉÕù°ÔÈüÖ´ÊÂ
+Name=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=16
@@ -2181,7 +2182,7 @@ Item15=1050002
 
 [Shop44]
 ID=7915
-Name=°ïÅÉÕù°ÔÈüÖ´ÊÂ
+Name=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=16
@@ -2204,7 +2205,7 @@ Item15=1050002
 
 [Shop45]
 ID=7916
-Name=°ïÅÉÕù°ÔÈüÖ´ÊÂ
+Name=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=16
@@ -2227,7 +2228,7 @@ Item15=1050002
 
 [Shop46]
 ID=7880
-Name=¾«Ó¢PKÈüÀë³¡Ô±
+Name=ï¿½ï¿½Ó¢PKï¿½ï¿½ï¿½ë³¡Ô±
 Type=1
 MoneyType=0
 ItemAmount=16
@@ -2250,7 +2251,7 @@ Item15=1050002
 
 [Shop47]
 ID=7881
-Name=¾«Ó¢PKÈüÀë³¡Ô±
+Name=ï¿½ï¿½Ó¢PKï¿½ï¿½ï¿½ë³¡Ô±
 Type=1
 MoneyType=0
 ItemAmount=16
@@ -2273,7 +2274,7 @@ Item15=1050002
 
 [Shop48]
 ID=7882
-Name=¾«Ó¢PKÈüÀë³¡Ô±
+Name=ï¿½ï¿½Ó¢PKï¿½ï¿½ï¿½ë³¡Ô±
 Type=1
 MoneyType=0
 ItemAmount=16
@@ -2296,7 +2297,7 @@ Item15=1050002
 
 [Shop49]
 ID=7883
-Name=¾«Ó¢PKÈüÀë³¡Ô±
+Name=ï¿½ï¿½Ó¢PKï¿½ï¿½ï¿½ë³¡Ô±
 Type=1
 MoneyType=0
 ItemAmount=16
@@ -2319,7 +2320,7 @@ Item15=1050002
 
 [Shop50]
 ID=7926
-Name=°ïÅÉ¾ºÈüÖ´ÊÂ
+Name=ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½Ö´ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=16
@@ -2353,7 +2354,7 @@ Item3=710077
 
 [Shop52]
 ID=5793
-Name=ÉñÃØÊ³²ÄÉÌÈË
+Name=ï¿½ï¿½ï¿½ï¿½Ê³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=6
@@ -2366,7 +2367,7 @@ Item5=722790
 
 [Shop53]
 ID=6300
-Name=Ë«Áú³ÇÊ³²ÄÉÌÈË
+Name=Ë«ï¿½ï¿½ï¿½ï¿½Ê³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=8
@@ -2381,7 +2382,7 @@ Item7=722791
 
 [Shop54]
 ID=6301
-Name=ºÚ»¢³ÇÊ³²ÄÉÌÈË
+Name=ï¿½Ú»ï¿½ï¿½ï¿½Ê³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=7
@@ -2395,7 +2396,7 @@ Item6=722792
 
 [Shop55]
 ID=6302
-Name=Ãù·ï±¤Ê³²ÄÉÌÈË
+Name=ï¿½ï¿½ï¿½ï±¤Ê³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=8
@@ -2410,7 +2411,7 @@ Item7=722793
 
 [Shop56]
 ID=8231
-Name=PKÐ­ÒéµØÍ¼Ò©ÆÌ
+Name=PKÐ­ï¿½ï¿½ï¿½Í¼Ò©ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=15
@@ -2432,7 +2433,7 @@ Item14=1002040
 
 [Shop57]
 ID=8159
-Name=×é¶ÓPKÈüÀë³¡Ô±
+Name=ï¿½ï¿½ï¿½PKï¿½ï¿½ï¿½ë³¡Ô±
 MoneyType=0
 ItemAmount=19
 Item0=1000000
@@ -2457,7 +2458,7 @@ Item18=1050002
 
 [Shop58]
 ID=8160
-Name=×é¶ÓPKÈüÀë³¡Ô±
+Name=ï¿½ï¿½ï¿½PKï¿½ï¿½ï¿½ë³¡Ô±
 MoneyType=0
 ItemAmount=19
 Item0=1000000
@@ -2482,7 +2483,7 @@ Item18=1050002
 
 [Shop59]
 ID=8161
-Name=×é¶ÓPKÈüÀë³¡Ô±
+Name=ï¿½ï¿½ï¿½PKï¿½ï¿½ï¿½ë³¡Ô±
 MoneyType=0
 ItemAmount=19
 Item0=1000000
@@ -2507,7 +2508,7 @@ Item18=1050002
 
 [Shop60]
 ID=8162
-Name=×é¶ÓPKÈüÀë³¡Ô±
+Name=ï¿½ï¿½ï¿½PKï¿½ï¿½ï¿½ë³¡Ô±
 MoneyType=0
 ItemAmount=19
 Item0=1000000
@@ -2704,7 +2705,7 @@ Item17=1050002
 
 [Shop68]
 ID=9465
-Name=º£Ì²×°±¸µê
+Name=ï¿½ï¿½Ì²×°ï¿½ï¿½ï¿½ï¿½
 MoneyType=0
 ItemAmount=55
 Item0=170093
@@ -2793,7 +2794,7 @@ Item21=562000
 
 [Shop70]
 ID=9468
-Name=º£Ì²ÎäÆ÷µê
+Name=ï¿½ï¿½Ì²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 MoneyType=0
 ItemAmount=153
 Item0=626163
@@ -2986,7 +2987,7 @@ Item0=725061
 
 [Shop73]
 ID=9836
-Name=½ÐÌì¼¦ÍâÐÎË«Áú³ÇÔÓ»õµê
+Name=ï¿½ï¿½ï¿½ì¼¦ï¿½ï¿½ï¿½ï¿½Ë«ï¿½ï¿½ï¿½ï¿½ï¿½Ó»ï¿½ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=26
@@ -3019,7 +3020,7 @@ Item25=1060090
 
 [Shop74]
 ID=9837
-Name=¹í¸«ÍõÍâÐÎË«Áú³ÇÔÓ»õµê
+Name=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë«ï¿½ï¿½ï¿½ï¿½ï¿½Ó»ï¿½ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=26
@@ -3052,7 +3053,7 @@ Item25=1060090
 
 [Shop75]
 ID=9838
-Name=»ðÊóÍâÐÎË«Áú³ÇÔÓ»õµê
+Name=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë«ï¿½ï¿½ï¿½ï¿½ï¿½Ó»ï¿½ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=26
@@ -3085,7 +3086,7 @@ Item25=1060090
 
 [Shop76]
 ID=9839
-Name=ÒíÉßÍâÐÎË«Áú³ÇÔÓ»õµê
+Name=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë«ï¿½ï¿½ï¿½ï¿½ï¿½Ó»ï¿½ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=26
@@ -3118,7 +3119,7 @@ Item25=1060090
 
 [Shop77]
 ID=9840
-Name=½ÐÌì¼¦ÍâÐÎÃù·ï±¤Ò©µê
+Name=ï¿½ï¿½ï¿½ì¼¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï±¤Ò©ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=19
@@ -3144,7 +3145,7 @@ Item18=1002040
 
 [Shop78]
 ID=9841
-Name=¹í¸«ÍõÍâÐÎÃù·ï±¤Ò©µê
+Name=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï±¤Ò©ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=19
@@ -3170,7 +3171,7 @@ Item18=1002040
 
 [Shop79]
 ID=9842
-Name=»ðÊóÍâÐÎÃù·ï±¤Ò©µê
+Name=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï±¤Ò©ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=19
@@ -3196,7 +3197,7 @@ Item18=1002040
 
 [Shop80]
 ID=9842
-Name=»ðÊóÍâÐÎÃù·ï±¤Ò©µê
+Name=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï±¤Ò©ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=19
@@ -3222,7 +3223,7 @@ Item18=1002040
 
 [Shop81]
 ID=9843
-Name=ÒíÉßÍâÐÎÃù·ï±¤Ò©µê
+Name=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï±¤Ò©ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=19
@@ -3248,7 +3249,7 @@ Item18=1002040
 
 [Shop82]
 ID=9844
-Name=½ÐÌì¼¦ÍâÐÎÔÆÃÅ¹ØÎäÆ÷µê
+Name=ï¿½ï¿½ï¿½ì¼¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=136
@@ -3391,7 +3392,7 @@ Item135=612173
 
 [Shop83]
 ID=9845
-Name=¹í¸«ÍõÍâÐÎÔÆÃÅ¹ØÎäÆ÷µê
+Name=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=136
@@ -3534,7 +3535,7 @@ Item135=612173
 
 [Shop84]
 ID=9846
-Name=»ðÊóÍâÐÎÔÆÃÅ¹ØÎäÆ÷µê
+Name=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=136
@@ -3677,7 +3678,7 @@ Item135=612173
 
 [Shop85]
 ID=9847
-Name=ÒíÉßÍâÐÎÔÆÃÅ¹ØÎäÆ÷µê
+Name=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=140
@@ -3820,7 +3821,7 @@ Item135=612173
 
 [Shop86]
 ID=9848
-Name=½ÐÌì¼¦ÍâÐÎºÚ»¢³Ç×°±¸µê
+Name=ï¿½ï¿½ï¿½ì¼¦ï¿½ï¿½ï¿½ÎºÚ»ï¿½ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=56
@@ -3883,7 +3884,7 @@ Item55=139063
 
 [Shop87]
 ID=9849
-Name=¹í¸«ÍõÍâÐÎºÚ»¢³Ç×°±¸µê
+Name=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎºÚ»ï¿½ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=56
@@ -3946,7 +3947,7 @@ Item55=139063
 
 [Shop88]
 ID=9850
-Name=»ðÊóÍâÐÎºÚ»¢³Ç×°±¸µê
+Name=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎºÚ»ï¿½ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=56
@@ -4009,7 +4010,7 @@ Item55=139063
 
 [Shop89]
 ID=9851
-Name=ÒíÉßÍâÐÎºÚ»¢³Ç×°±¸µê
+Name=ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÎºÚ»ï¿½ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½
 Type=1
 MoneyType=0
 ItemAmount=56
@@ -4072,7 +4073,7 @@ Item55=139063
 
 [Shop90]
 ID=10118
-Name=·üÄ§µÀ³¤
+Name=ï¿½ï¿½Ä§ï¿½ï¿½ï¿½ï¿½
 MoneyType=0
 ItemAmount=18
 Item0=1000000
@@ -4096,7 +4097,7 @@ Item17=1050002
 
 [Shop91]
 ID=10119
-Name=·üÄ§µÀ³¤
+Name=ï¿½ï¿½Ä§ï¿½ï¿½ï¿½ï¿½
 MoneyType=0
 ItemAmount=18
 Item0=1000000
@@ -4120,7 +4121,7 @@ Item17=1050002
 
 [Shop92]
 ID=10120
-Name=·üÄ§µÀ³¤
+Name=ï¿½ï¿½Ä§ï¿½ï¿½ï¿½ï¿½
 MoneyType=0
 ItemAmount=18
 Item0=1000000
@@ -4144,7 +4145,7 @@ Item17=1050002
 
 [Shop93]
 ID=10121
-Name=·üÄ§µÀ³¤
+Name=ï¿½ï¿½Ä§ï¿½ï¿½ï¿½ï¿½
 MoneyType=0
 ItemAmount=18
 Item0=1000000
@@ -4168,7 +4169,7 @@ Item17=1050002
 
 [Shop94]
 ID=10122
-Name=·üÄ§µÀ³¤
+Name=ï¿½ï¿½Ä§ï¿½ï¿½ï¿½ï¿½
 MoneyType=0
 ItemAmount=18
 Item0=1000000
@@ -4192,7 +4193,7 @@ Item17=1050002
 
 [Shop95]
 ID=10124
-Name=·üÄ§µÀ³¤
+Name=ï¿½ï¿½Ä§ï¿½ï¿½ï¿½ï¿½
 MoneyType=0
 ItemAmount=18
 Item0=1000000
@@ -4216,7 +4217,7 @@ Item17=1050002
 
 [Shop96]
 ID=10132
-Name=·üÄ§µÀ³¤
+Name=ï¿½ï¿½Ä§ï¿½ï¿½ï¿½ï¿½
 MoneyType=0
 ItemAmount=18
 Item0=1000000
@@ -4240,7 +4241,7 @@ Item17=1050002
 
 [Shop97]
 ID=10133
-Name=·üÄ§µÀ³¤
+Name=ï¿½ï¿½Ä§ï¿½ï¿½ï¿½ï¿½
 MoneyType=0
 ItemAmount=18
 Item0=1000000
@@ -4264,7 +4265,7 @@ Item17=1050002
 
 [Shop98]
 ID=10134
-Name=·üÄ§µÀ³¤
+Name=ï¿½ï¿½Ä§ï¿½ï¿½ï¿½ï¿½
 MoneyType=0
 ItemAmount=18
 Item0=1000000
@@ -4288,7 +4289,7 @@ Item17=1050002
 
 [Shop99]
 ID=10135
-Name=·üÄ§µÀ³¤
+Name=ï¿½ï¿½Ä§ï¿½ï¿½ï¿½ï¿½
 MoneyType=0
 ItemAmount=18
 Item0=1000000
@@ -4312,7 +4313,7 @@ Item17=1050002
 
 [Shop100]
 ID=10136
-Name=·üÄ§µÀ³¤
+Name=ï¿½ï¿½Ä§ï¿½ï¿½ï¿½ï¿½
 MoneyType=0
 ItemAmount=18
 Item0=1000000
@@ -4336,7 +4337,7 @@ Item17=1050002
 
 [Shop101]
 ID=16857
-Name=à©ÑªÉîº£Ò©µê
+Name=ï¿½Ñªï¿½îº£Ò©ï¿½ï¿½
 MoneyType=0
 ItemAmount=15
 Item0=1000000
@@ -4357,7 +4358,7 @@ Item14=1002040
 
 [Shop102]
 ID=16858
-Name=à©ÑªÉîº£Ò©µê
+Name=ï¿½Ñªï¿½îº£Ò©ï¿½ï¿½
 MoneyType=0
 ItemAmount=15
 Item0=1000000
@@ -4378,7 +4379,7 @@ Item14=1002040
 
 [Shop103]
 ID=16859
-Name=à©ÑªÉîº£Ò©µê
+Name=ï¿½Ñªï¿½îº£Ò©ï¿½ï¿½
 MoneyType=0
 ItemAmount=15
 Item0=1000000
@@ -4399,7 +4400,7 @@ Item14=1002040
 
 [Shop104]
 ID=16860
-Name=à©ÑªÉîº£Ò©µê
+Name=ï¿½Ñªï¿½îº£Ò©ï¿½ï¿½
 MoneyType=0
 ItemAmount=15
 Item0=1000000
@@ -4420,7 +4421,7 @@ Item14=1002040
 
 [Shop105]
 ID=16861
-Name=à©ÑªÉîº£Ò©µê
+Name=ï¿½Ñªï¿½îº£Ò©ï¿½ï¿½
 MoneyType=0
 ItemAmount=15
 Item0=1000000
@@ -4441,7 +4442,7 @@ Item14=1002040
 
 [Shop106]
 ID=16862
-Name=à©ÑªÉîº£Ò©µê
+Name=ï¿½Ñªï¿½îº£Ò©ï¿½ï¿½
 MoneyType=0
 ItemAmount=15
 Item0=1000000

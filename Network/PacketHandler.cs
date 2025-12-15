@@ -17579,6 +17579,13 @@ namespace MTA.Network
                     break;
                 #endregion
                 #region Fireworks
+                case 720030:
+                    {
+                        // Firework
+                        client.Entity.Update(Network.GamePackets._String.Effect, "firework-like", true);
+                        client.Inventory.Remove(item, Enums.ItemUse.Remove);
+                        break;
+                    }
                 case 720031:
                     {
                         // Endless Love
