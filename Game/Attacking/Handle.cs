@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -533,7 +533,9 @@ namespace MTA.Game.Attacking
                 {
                     if (attacker.Companion)
                     {
-                        if (Constants.PKForbiddenMaps.Contains(attacker.MapID))
+                        // Check PK forbidden maps, including BaseID for dynamic maps (houses)
+                        Game.Map attackerMap = attacker.Owner != null ? attacker.Owner.Map : null;
+                        if (Constants.IsPKForbidden(attacker.MapID, attackerMap))
                             return;
                     }
                     if (!attacked.Owner.Attackable)
@@ -9455,7 +9457,7 @@ namespace MTA.Game.Attacking
             if (attacker.MapID == DeathMatch.MAPID)
                 return attacker.TeamDeathMatchTeamKey != attacked.TeamDeathMatchTeamKey;
             if (spell != null)
-                if (spell.CanKill && attacker.EntityFlag == EntityFlag.Player && Constants.PKForbiddenMaps.Contains(attacker.Owner.Map.ID) && attacked.EntityFlag == EntityFlag.Player)
+                if (spell.CanKill && attacker.EntityFlag == EntityFlag.Player && Constants.IsPKForbidden(attacker.Owner.Map.ID, attacker.Owner.Map) && attacked.EntityFlag == EntityFlag.Player)
                     return false;
             if (attacker.EntityFlag == EntityFlag.Player)
                 if (attacker.Owner.WatchingGroup != null)
@@ -9477,7 +9479,7 @@ namespace MTA.Game.Attacking
             {
                 if (attacked.Companion)
                 {
-                    if (Constants.PKForbiddenMaps.Contains(attacker.Owner.Map.ID))
+                    if (Constants.IsPKForbidden(attacker.Owner.Map.ID, attacker.Owner.Map))
                     {
                         if (attacked.Owner == attacker.Owner)
                             return false;
@@ -9523,7 +9525,7 @@ namespace MTA.Game.Attacking
                                 return false;
 
 
-                if (Constants.PKForbiddenMaps.Contains(attacker.Owner.Map.ID))
+                if (Constants.IsPKForbidden(attacker.Owner.Map.ID, attacker.Owner.Map))
                 {
                     if (attacker.PKMode == MTA.Game.Enums.PkMode.PK ||
                         attacker.PKMode == MTA.Game.Enums.PkMode.Team || (spell != null && spell.CanKill))
@@ -9705,7 +9707,7 @@ namespace MTA.Game.Attacking
                                     {
                                         if (attacked != null)
                                         {
-                                            if (Constants.PKForbiddenMaps.Contains(client.Entity.MapID))
+                                            if (Constants.IsPKForbidden(client.Entity.MapID, client.Map))
                                                 return;
                                             if (client.Map.BaseID == 700)
                                                 return;
@@ -9805,7 +9807,7 @@ namespace MTA.Game.Attacking
                                         {
                                             if (attacked.UID == client.Entity.UID)
                                                 return;
-                                            if (Constants.PKForbiddenMaps.Contains(client.Entity.MapID))
+                                            if (Constants.IsPKForbidden(client.Entity.MapID, client.Map))
                                                 return;
                                             if (client.Map.BaseID == 700)
                                                 return;

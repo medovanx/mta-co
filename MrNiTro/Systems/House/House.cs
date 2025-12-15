@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -161,7 +161,7 @@ namespace MTA.MrNiTro.Systems.House
 
             new MySqlCommand(MySqlCommandType.UPDATE).Update("house")
                 .Set("Name", client.Entity.Name).Set("ID", (ushort)client.Entity.UID)
-                .Set("maptype", _base).Set("level", 0).Where("UID", client.Entity.UID).Execute();
+                .Set("maptype", _base).Set("level", level).Where("UID", client.Entity.UID).Execute();
             if (Kernel.Maps.ContainsKey((ushort)client.Entity.UID))
             {
                 Kernel.Maps.Remove((ushort)client.Entity.UID);
@@ -172,6 +172,42 @@ namespace MTA.MrNiTro.Systems.House
                 Houses[client.Entity.UID].maptype = _base;
                 Houses[client.Entity.UID].level = level;
                 //     Houses[client.Entity.UID].Furnitures = new Dictionary<uint, SobNpcSpawn>();
+                SaveFurnitures(client);
+            }
+        }
+
+        public static void DowngradeHouse(GameState client, byte currentLevel)
+        {
+            if (currentLevel <= 1)
+                return; // Cannot downgrade below level 1
+
+            byte newLevel = (byte)(currentLevel - 1);
+            ushort _base = 1098; // Default for level 1
+
+            // Determine maptype based on the new level
+            if (newLevel == 1)
+                _base = 1098;
+            else if (newLevel == 2)
+                _base = 1099;
+            else if (newLevel == 3)
+                _base = 2080;
+            else if (newLevel == 4)
+                _base = 1765;
+
+            new MySqlCommand(MySqlCommandType.UPDATE).Update("house")
+                .Set("Name", client.Entity.Name).Set("ID", (ushort)client.Entity.UID)
+                .Set("maptype", _base).Set("level", newLevel).Where("UID", client.Entity.UID).Execute();
+            
+            if (Kernel.Maps.ContainsKey((ushort)client.Entity.UID))
+            {
+                Kernel.Maps.Remove((ushort)client.Entity.UID);
+                new Map((ushort)client.Entity.UID, _base, Kernel.Maps[_base].Path);
+            }
+            
+            if (Houses.ContainsKey(client.Entity.UID))
+            {
+                Houses[client.Entity.UID].maptype = _base;
+                Houses[client.Entity.UID].level = newLevel;
                 SaveFurnitures(client);
             }
         }

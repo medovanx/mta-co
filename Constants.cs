@@ -20,7 +20,7 @@ namespace MTA
                 throw new DirectoryNotFoundException("Database directory not found from base directory upwards.");
 
             string dbPath = Path.Combine(directory.FullName, "Database");
-            
+
             // If filename is empty, return the Database folder path
             if (string.IsNullOrEmpty(filename))
                 return dbPath + Path.DirectorySeparatorChar;
@@ -29,7 +29,7 @@ namespace MTA
 
             // Check if it's a folder path (ends with separator) or a file path
             bool isFolder = filename.EndsWith(Path.DirectorySeparatorChar.ToString()) || filename.EndsWith("/") || filename.EndsWith("\\");
-            
+
             if (isFolder)
             {
                 // For folders, check if directory exists
@@ -291,8 +291,8 @@ namespace MTA
             11030,
             11034,
             8880,
-            1858, // Poker Gold
-            8881, // Poker CPs
+            Game.MapConstants.POKER_GOLD,
+            Game.MapConstants.POKER_CPs,
             1950,
             8800,
             8801,
@@ -302,9 +302,39 @@ namespace MTA
             1633,
             1024,
             2351,
-            Game.MapConstants.CP_CASTLE_BEGINNER, // CP Castle Beginner Map (safe, no PvP)
-            601
+            601,
+            Game.MapConstants.CP_CASTLE_BEGINNER,
+            Game.MapConstants.HOUSE_LV1,
+            Game.MapConstants.HOUSE_LV2,
+            Game.MapConstants.HOUSE_LV3,
+            Game.MapConstants.HOUSE_LV4,
+            Game.MapConstants.HOUSE_LV5,
         };
+
+        /// <summary>
+        /// Checks if a map is PK forbidden. For dynamic maps (like houses), checks both MapID and BaseID.
+        /// </summary>
+        /// <param name="mapID">The MapID to check</param>
+        /// <param name="map">Optional Map object to check BaseID if MapID doesn't match</param>
+        /// <returns>True if PK is forbidden on this map</returns>
+        public static bool IsPKForbidden(ushort mapID, Game.Map map = null)
+        {
+            // First check if the MapID itself is in the forbidden list
+            if (PKForbiddenMaps.Contains(mapID))
+                return true;
+
+            // For dynamic maps (houses), check BaseID if map is provided
+            if (map != null && map.BaseID != map.ID)
+            {
+                if (PKForbiddenMaps.Contains(map.BaseID))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public static readonly System.Collections.Generic.List<ushort> NoHp = new System.Collections.Generic.List<ushort> {
             1707,
             3070,

@@ -197,8 +197,19 @@ namespace MTA.Client.Commands
         {
             if (client.Entity != null)
             {
-                client.Send(new Message($"Current Map ID: {client.Entity.MapID} | Position: ({client.Entity.X}, {client.Entity.Y})",
-                    System.Drawing.Color.Cyan, Message.Tip));
+                string mapInfo = $"Current Map ID: {client.Entity.MapID} | Position: ({client.Entity.X}, {client.Entity.Y})";
+
+                // Show BaseID (maptype) if it's different from MapID (for dynamic maps like houses)
+                if (Kernel.Maps.ContainsKey(client.Entity.MapID))
+                {
+                    var map = Kernel.Maps[client.Entity.MapID];
+                    if (map.BaseID != map.ID)
+                    {
+                        mapInfo += $" | Base Map ID: {map.BaseID}";
+                    }
+                }
+
+                client.Send(new Message(mapInfo, System.Drawing.Color.Cyan, Message.Tip));
             }
             return true;
         }
