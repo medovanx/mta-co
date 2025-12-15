@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static MTA.Game.Enums;
+using MTA.MrNiTro.Systems.House;
 using MTA.Network;
 using MTA.Network.GamePackets;
-using MTA.MrNiTro.Systems.House;
+using static MTA.Game.Enums;
 
 namespace MTA.Game.Npcs.Handlers.Market
 {
@@ -107,18 +107,18 @@ namespace MTA.Game.Npcs.Handlers.Market
 
 										if (distance <= MaxTeleportRange)
 										{
-											House.TelePort(teammate, info);
+											House.Teleport(teammate, info);
 										}
 									}
 								}
 							}
 							// Always teleport the team leader to the house
-							House.TelePort(client, info);
+							House.Teleport(client, info);
 						}
 						// If the player is not a team leader, only teleport the player to the house
 						else
 						{
-							House.TelePort(client, info);
+							House.Teleport(client, info);
 						}
 						break;
 					}
@@ -128,7 +128,7 @@ namespace MTA.Game.Npcs.Handlers.Market
 						if (House.SpouseHouse(client.Entity.Spouse) != null)
 						{
 							var spouseHouse = House.SpouseHouse(client.Entity.Spouse);
-							House.TelePort(client, spouseHouse);
+							House.Teleport(client, spouseHouse!);
 						}
 						else
 						{

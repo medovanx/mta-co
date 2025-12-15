@@ -212,7 +212,7 @@ namespace MTA.MrNiTro.Systems.House
             }
         }
 
-        public static void TelePort(GameState client, HouseInfo info)
+        public static void Teleport(GameState client, HouseInfo info)
         {
             client.Entity.AdvancedTeleport(true);
             ushort MapID;
