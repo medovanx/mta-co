@@ -1752,14 +1752,14 @@ namespace MTA
                 #region starTeam
                 if (client.Team != null)
                 {
-                    if (client.Entity.MapID == client.Team.Lider.Entity.MapID)
+                    if (client.Entity.MapID == client.Team.Leader.Entity.MapID)
                     {
                         Data Data = new Data(true);
-                        Data.UID = client.Team.Lider.Entity.UID;
-                        Data.dwParam = client.Team.Lider.Entity.MapID;
+                        Data.UID = client.Team.Leader.Entity.UID;
+                        Data.dwParam = client.Team.Leader.Entity.MapID;
                         Data.ID = Data.TeamMemberPos;
-                        Data.wParam1 = client.Team.Lider.Entity.X;
-                        Data.wParam2 = client.Team.Lider.Entity.Y;
+                        Data.wParam1 = client.Team.Leader.Entity.X;
+                        Data.wParam2 = client.Team.Leader.Entity.Y;
                         Data.Send(client);
                     }
                 }

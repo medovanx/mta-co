@@ -28821,7 +28821,7 @@ namespace MTA
                                     if (client.Quests.HasQuest(MaTrix.QuestID.Exorcism))
                                     {
                                         if (client.Team != null)
-                                            client.Entity.Teleport(1013, (ushort)(8892 - client.Team.Lider.Entity.UID), 41, 40);
+                                            client.Entity.Teleport(1013, (ushort)(8892 - client.Team.Leader.Entity.UID), 41, 40);
                                         else
                                             client.Entity.Teleport(1013, (ushort)(8892 - client.Entity.UID), 41, 40);
                                         if (Kernel.Maps.ContainsKey((ushort)(8892 - client.Entity.UID)))

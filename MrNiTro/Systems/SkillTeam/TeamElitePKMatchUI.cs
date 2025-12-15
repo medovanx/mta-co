@@ -66,7 +66,7 @@ namespace MTA.Network.GamePackets
 
         public void Append(Game.ConquerStructures.Team opponent)
         {
-            OpponentUID = opponent.Lider.Entity.UID;
+            OpponentUID = opponent.Leader.Entity.UID;
             if (opponent.EliteFighterStats != null)
                 OpponentName = opponent.EliteFighterStats.Name;
         }

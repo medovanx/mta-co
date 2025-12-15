@@ -69,14 +69,14 @@ namespace MTA.Game.ConquerStructures
         public void SetEliteFighterStats(bool Create)
         {
             if (Create)
-                EliteFighterStats = new TeamElitePk.FighterStats(Lider.Entity.UID, Lider.Entity.Name + "`s team", Lider.Entity.Mesh, this);
+                EliteFighterStats = new TeamElitePk.FighterStats(Leader.Entity.UID, Leader.Entity.Name + "`s team", Leader.Entity.Mesh, this);
             else
             {
                 if (EliteFighterStats != null)
                 {
-                    EliteFighterStats.LeaderUID = Lider.Entity.UID;
-                    EliteFighterStats.LeaderMesh = Lider.Entity.Mesh;
-                    EliteFighterStats.Name = Lider.Entity.Name + "`s team";
+                    EliteFighterStats.LeaderUID = Leader.Entity.UID;
+                    EliteFighterStats.LeaderMesh = Leader.Entity.Mesh;
+                    EliteFighterStats.Name = Leader.Entity.Name + "`s team";
                 }
             }
         }
@@ -91,11 +91,11 @@ namespace MTA.Game.ConquerStructures
         public bool TeamLeader = false;
         public uint UID;
 
-        public Client.GameState Lider;
+        public Client.GameState Leader;
         public Dictionary<uint, Client.GameState> m_Team;
         private ConcurrentDictionary<uint, Member> Members;
 
-        public bool TeamLider(Client.GameState client) { return client.Entity.UID == Lider.Entity.UID; }
+        public bool TeamLider(Client.GameState client) { return client.Entity.UID == Leader.Entity.UID; }
 
         public static Counter TeamCounter = new Counter(1);
 
@@ -109,8 +109,8 @@ namespace MTA.Game.ConquerStructures
         }
         public void GetClanShareBp(Client.GameState Target)
         {
-            if (Lider == null) return;
-            var LeaderClan = Lider.Entity.GetClan;
+            if (Leader == null) return;
+            var LeaderClan = Leader.Entity.GetClan;
             var TargetClan = Target.Entity.GetClan;
             if (LeaderClan != null && TargetClan != null)
             {
@@ -120,7 +120,7 @@ namespace MTA.Game.ConquerStructures
                     TargetClan.SendClanShareBp(0, 0, Target);
                     return;
                 }
-                if (Lider.Entity.MapID != Target.Entity.MapID)
+                if (Leader.Entity.MapID != Target.Entity.MapID)
                 {
                     Target.Entity.ClanSharedBp = 0;
                     TargetClan.SendClanShareBp(0, 0, Target);
@@ -128,18 +128,18 @@ namespace MTA.Game.ConquerStructures
                 }
                 if (LeaderClan.ID == TargetClan.ID)
                 {
-                    if (Lider.Entity.ClanRank != Clan.Ranks.ClanLeader)
+                    if (Leader.Entity.ClanRank != Clan.Ranks.ClanLeader)
                     {
                         Target.Entity.ClanSharedBp = 0;
                         TargetClan.SendClanShareBp(0, 0, Target);
                         return;
                     }
-                    if (Lider.Entity.BattlePower > Target.Entity.BattlePower)
+                    if (Leader.Entity.BattlePower > Target.Entity.BattlePower)
                     {
-                        uint Bp = (uint)(Lider.Entity.BattlePower - Target.Entity.BattlePower);
+                        uint Bp = (uint)(Leader.Entity.BattlePower - Target.Entity.BattlePower);
                         Bp = (uint)Math.Ceiling((double)((Bp * ProcentClanSharedBp(LeaderClan.BPTower)) / 100));
                         Target.Entity.ClanSharedBp = Bp;
-                        TargetClan.SendClanShareBp(Lider.Entity.UID, Bp, Target);
+                        TargetClan.SendClanShareBp(Leader.Entity.UID, Bp, Target);
                     }
                     else
                     {
@@ -201,7 +201,7 @@ namespace MTA.Game.ConquerStructures
         public Team(Client.GameState owner)
         {
             UID = TeamCounter.Next;
-            Lider = owner;
+            Leader = owner;
             Members = new ConcurrentDictionary<uint, Member>();
             Member member = new Member();
             member.entry = owner;
@@ -247,12 +247,12 @@ namespace MTA.Game.ConquerStructures
 
                 lider.Type = Network.GamePackets.Leadership.Leader;
                 lider.UID = client.Entity.UID;
-                lider.LeaderUID = Lider.Entity.UID;
+                lider.LeaderUID = Leader.Entity.UID;
                 lider.Count = (ushort)(Members.Count);
                 client.Send(lider.ToArray());
 
-                lider.UID = lider.LeaderUID = Lider.Entity.UID;
-                Lider.Send(lider.ToArray());
+                lider.UID = lider.LeaderUID = Leader.Entity.UID;
+                Leader.Send(lider.ToArray());
                 client.Send(lider.ToArray());
 
                 Network.GamePackets.AddToTeam addme = new Network.GamePackets.AddToTeam();
@@ -321,7 +321,7 @@ namespace MTA.Game.ConquerStructures
                 if (mem.entry != null)
                 {
 
-                    Lider = mem.entry;
+                    Leader = mem.entry;
                     mem.Lider = true;
                     mem.entry.Entity.AddFlag(Network.GamePackets.Update.Flags.TeamLeader);
 
