@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MTA.MrNiTro.Systems.House;
+using MTA.Game.ConquerStructures.House;
 using MTA.Network;
 using MTA.Network.GamePackets;
 using static MTA.Game.Enums;
@@ -89,14 +89,14 @@ namespace MTA.Game.Npcs.Handlers.Market
 				case 3:
 					{
 						var info = House.Houses[client.Entity.UID];
-						const ushort MaxTeleportRange = 18; // Maximum straight-line distance (Euclidean) in tiles for team teleport
+						const ushort MaxTeleportRange = 18; 
 
 						// If the player is in a team and is a team leader, teleport all team members to the house
 						if (client.Team != null && client.Team.TeamLeader)
 						{
 							foreach (Client.GameState teammate in client.Team.Teammates)
 							{
-								// Check if team member is on the same map and within the maximum straight-line distance
+								// Check if team member is on the same map and within the range 
 								if (teammate != null && teammate.Entity != null)
 								{
 									if (teammate.Entity.MapID == client.Entity.MapID)

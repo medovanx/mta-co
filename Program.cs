@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -15,7 +15,7 @@ using MTA.Client;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using MTA.Franko;
-using MTA.MrNiTro.Systems.House;
+using MTA.Game.ConquerStructures.House;
 
 namespace MTA
 {
@@ -373,7 +373,7 @@ namespace MTA
                     Console.WriteLine("Guild war initializated.");
                     Game.EliteGuildWar.EliteGwint();
                     Console.WriteLine("Elite Guild war initializated.");
-                    Database.Furniture.Load();
+                    Furniture.Load();
                     House.LoadHouses();
                     Database.PokerTables.LoadTables();
                     Console.WriteLine("Poker [Money + CPs] Tables Loaded.");

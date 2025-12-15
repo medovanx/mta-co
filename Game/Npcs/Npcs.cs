@@ -15,6 +15,7 @@ using MTA.Game;
 using System.Threading.Tasks;
 using MTA.Game.Features;
 using MTA.Game.Npcs;
+using MTA.Game.ConquerStructures.House;
 
 namespace MTA
 {
@@ -32619,9 +32620,9 @@ namespace MTA
                         //}
                         #endregion Chase
                         #region Furnitures
-                        if (Database.Furniture.Furnitures.ContainsKey(client.ActiveNpc))
+                        if (Furniture.Furnitures.ContainsKey(client.ActiveNpc))
                         {
-                            var info = Database.Furniture.Furnitures[client.ActiveNpc];
+                            var info = Furniture.Furnitures[client.ActiveNpc];
                             switch (npcRequest.OptionID)
                             {
                                 case 0:

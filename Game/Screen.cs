@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using MTA.Network.GamePackets;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Threading.Generic;
-using MTA.MrNiTro.Systems.House;
+using MTA.Game.ConquerStructures.House;
 
 namespace MTA.Game
 {

@@ -13,7 +13,7 @@ using MTA.Game;
 using MTA.Interfaces;
 using System.Collections.Concurrent;
 using MTA.Network;
-using MTA.MrNiTro.Systems.House;
+using MTA.Game.ConquerStructures.House;
 using MTA.MaTrix;
 
 namespace MTA.Network
@@ -13252,13 +13252,13 @@ namespace MTA.Network
                 #endregion
                 default:
                     {
-                        if (Database.Furniture.FurnituresItems.ContainsKey(item.ID))
+                        if (Furniture.FurnituresItems.ContainsKey(item.ID))
                         {
                             if (client.Entity.MapID != (ushort)client.Entity.UID)
                                 return;
                             client.spwansitem = item;
                             NpcRequest req = new NpcRequest(5);
-                            req.Mesh = Database.Furniture.FurnituresItems[item.ID];
+                            req.Mesh = Furniture.FurnituresItems[item.ID];
                             if (req.Mesh == 8200)
                                 req.NpcTyp = (Enums.NpcType)2;
                             else

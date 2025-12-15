@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-using MTA.Game;
-using MTA.Interfaces;
-using MTA.Network.GamePackets;
 
-namespace MTA.Database
+namespace MTA.Game.ConquerStructures.House
 {
     public class Furniture
     {

@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using MTA.Network.GamePackets;
 
 namespace MTA.Game.ConquerStructures
@@ -9,7 +9,7 @@ namespace MTA.Game.ConquerStructures
     {
         Dictionary<uint, ConquerItem> items;
         ConquerItem[] objects;
-        Client.GameState Owner;
+        Client.GameState? Owner;
         private WarehouseID _ID;
         private byte MaxCount = 20;
 
@@ -59,7 +59,7 @@ namespace MTA.Game.ConquerStructures
             }
             return 60;
         }
-        public Warehouse(Client.GameState client, WarehouseID ID, byte maxCount = 60)
+        public Warehouse(Client.GameState? client, WarehouseID ID, byte maxCount = 60)
         {
             Owner = client;
             _ID = ID;
@@ -90,7 +90,7 @@ namespace MTA.Game.ConquerStructures
                 if (Owner.Inventory.Add(item, Enums.ItemUse.Move))
                 {
                     items.Remove(item.UID);
-                    objects = items.Values.ToArray();
+                    objects = [.. items.Values];
                     Network.GamePackets.Warehouse warehouse = new MTA.Network.GamePackets.Warehouse(true);
                     warehouse.Type = Network.GamePackets.Warehouse.RemoveItem;
                     warehouse.Count = 1;
@@ -119,16 +119,15 @@ namespace MTA.Game.ConquerStructures
         }
 
         #region House
-        public bool Add2(ConquerItem item, Client.GameState client)
+        public bool Add2(ConquerItem item, Client.GameState? client)
         {
             if (!items.ContainsKey(item.UID) && Count < MaxCount)
             {
                 item.Warehouse = (uint)_ID;
                 item.Position = 0;
-                if (client != null)
-                    client.Inventory.Remove(item, Game.Enums.ItemUse.Move);
+                client?.Inventory.Remove(item, Game.Enums.ItemUse.Move);
                 items.Add(item.UID, item);
-                objects = items.Values.ToArray();
+                objects = [.. items.Values];
                 return true;
             }
             return false;
@@ -136,9 +135,8 @@ namespace MTA.Game.ConquerStructures
 
         public bool Remove2(uint UID, Client.GameState client)
         {
-            if (items.ContainsKey(UID))
+            if (items.TryGetValue(UID, out ConquerItem? item))
             {
-                ConquerItem item = items[UID];
                 item.Warehouse = 0;
                 if (client.Inventory.Add(item, Enums.ItemUse.Move))
                 {
@@ -161,10 +159,9 @@ namespace MTA.Game.ConquerStructures
 
         public byte Count { get { return (byte)Objects.Length; } }
 
-        public ConquerItem GetItem(uint UID)
+        public ConquerItem? GetItem(uint UID)
         {
-            ConquerItem item = null;
-            items.TryGetValue(UID, out item);
+            items.TryGetValue(UID, out ConquerItem? item);
             return item;
         }
 

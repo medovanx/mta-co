@@ -5955,7 +5955,7 @@ namespace MTA.Client
             return str;
         }
 
-        public void MessageBox(string text, Action<GameState> msg_ok = null, Action<GameState> msg_cancel = null,
+        public void MessageBox(string text, Action<GameState>? msg_ok = null, Action<GameState>? msg_cancel = null,
             uint time = 0, Game.Languages language = Game.Languages.English, bool egbary = false)
         {
             if (!egbary)
