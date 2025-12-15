@@ -33,7 +33,7 @@ namespace MTA.Game.Npcs.Handlers.Market
 			{
 				case 0:
 					{
-						if (!House.Houses.ContainsKey(client.Entity.UID))
+						if (!House.Houses.TryGetValue(client.Entity.UID, out House.HouseInfo? value))
 						{
 							dialog.Text("Good day, my friend, How may I help you");
 							dialog.Option("I want to buy a house.", 1);
@@ -45,10 +45,20 @@ namespace MTA.Game.Npcs.Handlers.Market
 						else
 						{
 							dialog.Text("Good day, my friend, How may I help you");
-							dialog.Option("Enter my house", 3);
-							dialog.Option("Enter my spouse's house", 4);
-							dialog.Option("Upgrade my house", 5);
-							dialog.Option("Downgrade my house", 13);
+							dialog.Option($"Enter my house (Lv.{value.level})", 3);
+							var spouseHouse = House.SpouseHouse(client.Entity.Spouse);
+							if (spouseHouse != null)
+							{
+								dialog.Option($"Enter my spouse's house (Lv.{spouseHouse.level})", 4);
+							}
+							if (value.level < 5)
+							{
+								dialog.Option($"Upgrade my house to Lv.{value.level + 1}", 5);
+							}
+							if (value.level > 1)
+							{
+								dialog.Option($"Downgrade my house to Lv.{value.level - 1}", 13);
+							}
 							dialog.Option("Buy house certificate.", 6);
 							dialog.Option("Just Passing By!.", 255);
 							dialog.Send();
@@ -89,7 +99,7 @@ namespace MTA.Game.Npcs.Handlers.Market
 				case 3:
 					{
 						var info = House.Houses[client.Entity.UID];
-						const ushort MaxTeleportRange = 18; 
+						const ushort MaxTeleportRange = 18;
 
 						// If the player is in a team and is a team leader, teleport all team members to the house
 						if (client.Team != null && client.Team.TeamLeader)
