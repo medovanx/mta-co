@@ -935,6 +935,11 @@ namespace MTA.Game.Attacking
                                 {
                                     Spouse.Entity.Spouse = attacker.Name;
                                     attacker.Spouse = Spouse.Entity.Name;
+                                    
+                                    // Explicitly send Spouse updates to refresh profile
+                                    Spouse.Entity.Update(Network.GamePackets._String.Spouse, attacker.Name, true);
+                                    attacker.Update(Network.GamePackets._String.Spouse, Spouse.Entity.Name, true);
+                                    
                                     Message message = null;
                                     if (Spouse.Entity.Mesh % 10 >= 3)
                                         message = new Message("Joy and happiness! " + Spouse.Entity.Name + " and " + attacker.Name + " have joined together in the holy marriage. We wish them a stone house.", System.Drawing.Color.BurlyWood, Message.Center);
