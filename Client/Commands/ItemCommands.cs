@@ -115,8 +115,27 @@ namespace MTA.Client.Commands
 
         private static bool HandleItemCommand(GameState client, string[] data, string mess)
         {
-            if (data.Length > 2)
+            if (data.Length < 2)
             {
+                client.Send(new Message("Usage: @item <item id or name> [quality] [plus] [bless] [enchant] [socket1] [socket2] [R] [G] [B]", System.Drawing.Color.Red, Message.Tip));
+                return true;
+            }
+
+            ConquerItemBaseInformation? CIBI = null;
+
+            // Check if first parameter is a numeric ID
+            if (uint.TryParse(data[1], out uint itemId))
+            {
+                // Direct item ID lookup
+                if (!ConquerItemInformation.BaseInformations.TryGetValue(itemId, out CIBI))
+                {
+                    client.Send(new Message($"Item ID {itemId} not found.", System.Drawing.Color.Red, Message.Tip));
+                    return true;
+                }
+            }
+            else if (data.Length > 2)
+            {
+                // Item name lookup (original behavior)
                 string ItemName = data[1].ToLower();
                 Enums.ItemQuality Quality = Enums.ItemQuality.Fixed;
                 switch (data[2].ToLower())
@@ -137,7 +156,6 @@ namespace MTA.Client.Commands
                             break;
                         }
                 }
-                ConquerItemBaseInformation CIBI = null;
                 foreach (ConquerItemBaseInformation infos in ConquerItemInformation.BaseInformations.Values)
                 {
                     if (infos.LowerName == ItemName && Quality == (Enums.ItemQuality)(infos.ID % 10))
@@ -145,57 +163,67 @@ namespace MTA.Client.Commands
                         CIBI = infos;
                     }
                 }
-                if (CIBI == null)
-                    return true;
-                ConquerItem newItem = new ConquerItem(true)
+            }
+            else
+            {
+                client.Send(new Message("Usage: @item <item id or name> [quality] [plus] [bless] [enchant] [socket1] [socket2] [R] [G] [B]", System.Drawing.Color.Red, Message.Tip));
+                return true;
+            }
+
+            if (CIBI == null)
+                return true;
+
+            ConquerItem newItem = new ConquerItem(true)
+            {
+                ID = CIBI.ID,
+                Durability = CIBI.Durability,
+                MaximDurability = CIBI.Durability
+            };
+
+            // Handle optional parameters (plus, bless, enchant, sockets, etc.)
+            int paramOffset = uint.TryParse(data[1], out _) ? 2 : 3; // Offset depends on whether we used ID or name
+            if (data.Length > paramOffset)
+            {
+                byte.TryParse(data[paramOffset], out byte plus);
+                newItem.Plus = System.Math.Min((byte)12, plus);
+                if (data.Length > paramOffset + 1)
                 {
-                    ID = CIBI.ID,
-                    Durability = CIBI.Durability,
-                    MaximDurability = CIBI.Durability
-                };
-                if (data.Length > 3)
-                {
-                    byte.TryParse(data[3], out byte plus);
-                    newItem.Plus = System.Math.Min((byte)12, plus);
-                    if (data.Length > 4)
+                    byte.TryParse(data[paramOffset + 1], out byte bless);
+                    newItem.Bless = System.Math.Min((byte)7, bless);
+                    if (data.Length > paramOffset + 2)
                     {
-                        byte.TryParse(data[4], out byte bless);
-                        newItem.Bless = System.Math.Min((byte)7, bless);
-                        if (data.Length > 5)
+                        byte.TryParse(data[paramOffset + 2], out byte ench);
+                        newItem.Enchant = System.Math.Min((byte)255, ench);
+                        if (data.Length > paramOffset + 3)
                         {
-                            byte.TryParse(data[5], out byte ench);
-                            newItem.Enchant = System.Math.Min((byte)255, ench);
-                            if (data.Length > 6)
+                            byte.TryParse(data[paramOffset + 3], out byte soc1);
+                            if (System.Enum.IsDefined(typeof(Enums.Gem), soc1))
                             {
-                                byte.TryParse(data[6], out byte soc1);
-                                if (System.Enum.IsDefined(typeof(Enums.Gem), soc1))
+                                newItem.SocketOne = (Enums.Gem)soc1;
+                            }
+                            if (data.Length > paramOffset + 4)
+                            {
+                                byte.TryParse(data[paramOffset + 4], out byte soc2);
+                                if (System.Enum.IsDefined(typeof(Enums.Gem), soc2))
                                 {
-                                    newItem.SocketOne = (Enums.Gem)soc1;
+                                    newItem.SocketTwo = (Enums.Gem)soc2;
                                 }
-                                if (data.Length > 7)
-                                {
-                                    byte.TryParse(data[7], out byte soc2);
-                                    if (System.Enum.IsDefined(typeof(Enums.Gem), soc2))
-                                    {
-                                        newItem.SocketTwo = (Enums.Gem)soc2;
-                                    }
-                                }
-                                if (data.Length > 10)
-                                {
-                                    byte.TryParse(data[8], out byte R);
-                                    byte.TryParse(data[9], out byte G);
-                                    byte.TryParse(data[10], out byte B);
-                                    newItem.SocketProgress = (uint)(B | (G << 8) | (R << 16));
-                                }
+                            }
+                            if (data.Length > paramOffset + 7)
+                            {
+                                byte.TryParse(data[paramOffset + 5], out byte R);
+                                byte.TryParse(data[paramOffset + 6], out byte G);
+                                byte.TryParse(data[paramOffset + 7], out byte B);
+                                newItem.SocketProgress = (uint)(B | (G << 8) | (R << 16));
                             }
                         }
                     }
                 }
-                newItem.Color = (Enums.Color)Kernel.Random.Next(4, 8);
-                if (client.Account.State == Database.AccountTable.AccountState.GM)
-                    newItem.Bound = true;
-                client.Inventory.Add(newItem, Enums.ItemUse.CreateAndAdd);
             }
+            newItem.Color = (Enums.Color)Kernel.Random.Next(4, 8);
+            if (client.Account.State == Database.AccountTable.AccountState.GM)
+                newItem.Bound = true;
+            client.Inventory.Add(newItem, Enums.ItemUse.CreateAndAdd);
             return true;
         }
     }
