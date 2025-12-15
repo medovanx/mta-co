@@ -1,11 +1,11 @@
 using System;
 using System.Linq;
-using MTA.Network.GamePackets;
-using MTA.Network;
-using MTA.Game.ConquerStructures;
-using MTA.Game;
-using MTA.MaTrix;
 using MTA.Client.Commands.TestCommands;
+using MTA.Game;
+using MTA.Game.ConquerStructures;
+using MTA.MaTrix;
+using MTA.Network;
+using MTA.Network.GamePackets;
 
 namespace MTA.Client.Commands
 {
@@ -25,7 +25,7 @@ namespace MTA.Client.Commands
                     return true;
                 if (MessageTestCommands.HandleCommand(client, Data, Mess))
                     return true;
-                    
+
                 // Try NPC commands first
                 if (NpcCommands.HandleCommand(client, Data, Mess))
                     return true;
@@ -63,7 +63,7 @@ namespace MTA.Client.Commands
                     return true;
 
                 if (Data[0] == "mob" || Data[0] == "effect")
-                    Data = message.Substring(1).Split(' ');
+                    Data = message[1..].Split(' ');
 
                 switch (Data[0])
                 {
@@ -86,9 +86,9 @@ namespace MTA.Client.Commands
                             floorItem.Y = (ushort)Kernel.Random.Next(client.Entity.Y - 5, client.Entity.Y + 5);
                             floorItem.OnFloor = Time32.Now;
                             floorItem.Owner = client;
-                            floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                            floorItem.UID = FloorItem.FloorUID.Next;
                             while (client.Map.FloorItems.ContainsKey(floorItem.UID))
-                                floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                                floorItem.UID = FloorItem.FloorUID.Next;
 
                             floorItem.MaxLife = 25;
                             floorItem.Life = 25;
@@ -175,10 +175,12 @@ namespace MTA.Client.Commands
                         }
                     case "transferserver":
                         {
-                            Data data = new Network.GamePackets.Data(true);
-                            data.UID = client.Entity.UID;
-                            data.dwParam = 666;
-                            data.ID = 126;
+                            Data data = new(true)
+                            {
+                                UID = client.Entity.UID,
+                                dwParam = 666,
+                                ID = 126
+                            };
                             client.Send(data);
                             break;
                         }
@@ -190,7 +192,7 @@ namespace MTA.Client.Commands
                         }
                     case "progressbar":
                         {
-                            new Franko.ProgressBar(client, "Loading", null, "Completed", uint.Parse(Data[1]));
+                            _ = new Franko.ProgressBar(client, "Loading", doneeffect: "Completed", Time: uint.Parse(Data[1]));
                             break;
                         }
                     case "gmchi":
@@ -364,14 +366,15 @@ namespace MTA.Client.Commands
                         }
                     case "mob":
                         {
-                            Database.MonsterInformation mt;
-                            Database.MonsterInformation.MonsterInformations.TryGetValue(1, out mt);
+                            _ = Database.MonsterInformation.MonsterInformations.TryGetValue(1, out Database.MonsterInformation? mt);
                             //  client.Map.SpawnMonsterNearToHero(mob, client);
                             if (mt == null) break;
                             mt.RespawnTime = 5;
-                            MTA.Game.Entity entity = new MTA.Game.Entity(EntityFlag.Monster, false);
-                            entity.MapObjType = MTA.Game.MapObjectType.Monster;
-                            entity.MonsterInfo = mt.Copy();
+                            Entity entity = new(EntityFlag.Monster, false)
+                            {
+                                MapObjType = MapObjectType.Monster,
+                                MonsterInfo = mt.Copy()
+                            };
                             entity.MonsterInfo.Owner = entity;
                             entity.Name = Data[2];
                             entity.Body = ushort.Parse(Data[1]);
@@ -422,12 +425,14 @@ namespace MTA.Client.Commands
                         }
                     case "blue":
                         {
-                            Attack attack = new Attack(true);
-                            attack.Attacker = client.Screen.Objects.First().UID;
-                            attack.Attacked = client.Entity.UID;
-                            attack.X = client.Entity.X;
-                            attack.Y = client.Entity.Y;
-                            attack.Effect1 = Attack.AttackEffects1.None;
+                            Attack attack = new(true)
+                            {
+                                Attacker = client.Screen.Objects.First().UID,
+                                Attacked = client.Entity.UID,
+                                X = client.Entity.X,
+                                Y = client.Entity.Y,
+                                Effect1 = Attack.AttackEffects1.None
+                            };
                             attack.Effect1 |= (Attack.AttackEffects1)byte.Parse(Data[1]);
                             attack.AttackType = Attack.Melee;
                             attack.Damage = 500;
@@ -465,8 +470,7 @@ namespace MTA.Client.Commands
                             for (int i = 0; i < count; i++)
                             {
                                 MaTrix.Inbox.AddPrize(client, "Matrix" + i.ToString(), "Inbox Test" + i.ToString(),
-                                    "Message" + i.ToString(), 5000000, 5000000,
-                                    600, /*p => { p.Entity.Level = 255; p.Entity.ConquerPoints = 0; }*/null);
+                                    "Message" + i.ToString(), 5000000, 5000000, 600);
                                 /*   MaTrix.Inbox.PrizeInfo prize = new MaTrix.Inbox.PrizeInfo()
                                    {
                                        ID = (uint)i,
@@ -547,32 +551,31 @@ namespace MTA.Client.Commands
                                 case "remove":
                                     {
                                         uint UID = uint.Parse(Data[2]);
-                                        if (client.Map.Npcs.ContainsKey(UID))
-                                            client.Map.Npcs.Remove(UID);
-
+                                        client.Map.Npcs.Remove(UID);
                                         client.Screen.FullWipe();
                                         client.Screen.Reload();
                                         break;
                                     }
                                 case "clear":
                                     {
-                                        Game.ConquerStructures.Booth booth = null;
                                         uint UID = uint.Parse(Data[2]);
-                                        Booth.TryGetValue2(UID, out booth);
+                                        Booth.TryGetValue2(UID, out Booth booth);
                                         if (booth == null) break;
                                         booth.ItemList.Clear();
                                         break;
                                     }
                                 case "additem":
                                     {
-                                        Booth booth = null;
                                         uint UID = uint.Parse(Data[2]);
-                                        Booth.TryGetValue2(UID, out booth);
+                                        Booth.TryGetValue2(UID, out Booth booth);
                                         if (booth == null) break;
                                         //  booth.ItemList.Clear();
-                                        Game.ConquerStructures.BoothItem item = new Game.ConquerStructures.BoothItem();
-                                        item.Cost = uint.Parse(Data[3]);
-                                        item.Item = new ConquerItem(true);
+                                        Game.ConquerStructures.BoothItem item = new()
+
+                                        {
+                                            Cost = uint.Parse(Data[3]),
+                                            Item = new ConquerItem(true)
+                                        };
                                         item.Item.ID = uint.Parse(Data[4]);
                                         item.Item.UID = Program.NextItemID;
                                         //Program.NextItemID++;
@@ -594,7 +597,7 @@ namespace MTA.Client.Commands
                                             }
                                         }
 
-                                        Database.ConquerItemBaseInformation CIBI = null;
+                                        Database.ConquerItemBaseInformation? CIBI = null;
                                         CIBI = Database.ConquerItemInformation.BaseInformations[item.Item.ID];
                                         if (CIBI == null)
                                             break;
@@ -614,7 +617,7 @@ namespace MTA.Client.Commands
             }
             catch (Exception e)
             {
-                MTA.Console.WriteLine(e);
+                Console.WriteLine(e);
                 client.Send(new Message("Impossible to handle this command. Check your syntax.", System.Drawing.Color.BurlyWood, Message.TopLeft));
                 return false;
             }

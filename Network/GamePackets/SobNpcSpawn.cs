@@ -1,5 +1,5 @@
-﻿using MTA.Database;
-using System;
+﻿using System;
+using MTA.Database;
 using MTA.Game;
 
 namespace MTA.Network.GamePackets
@@ -16,6 +16,10 @@ namespace MTA.Network.GamePackets
             WriteUInt16(82, 0, Buffer);
             WriteUInt16(1109, 2, Buffer);
             ShowName = false;
+            LoweredName = string.Empty;
+            _Name = string.Empty;
+            Effect = null!;
+            effect = string.Empty;
         }
 
         public uint UID
@@ -57,9 +61,9 @@ namespace MTA.Network.GamePackets
             set { WriteUInt16(value, 24, Buffer); }
         }
 
-        public MTA.Game.Enums.NpcType Type
+        public Enums.NpcType Type
         {
-            get { return (MTA.Game.Enums.NpcType)Buffer[26]; }
+            get { return (Enums.NpcType)Buffer[26]; }
             set { Buffer[26] = (byte)value; }
         }
 
@@ -108,17 +112,17 @@ namespace MTA.Network.GamePackets
 
         public ushort MapID { get; set; }
 
-        public MTA.Game.MapObjectType MapObjType
+        public MapObjectType MapObjType
         {
             get
             {
                 if (MaxHitpoints == 0)
-                    return MTA.Game.MapObjectType.Npc;
-                return MTA.Game.MapObjectType.SobNpc;
+                    return MapObjectType.Npc;
+                return MapObjectType.SobNpc;
             }
         }
 
-        public void Die(Game.Entity killer)
+        public void Die(Entity killer)
         {
             if (MapID == 2078)
             {
@@ -137,28 +141,34 @@ namespace MTA.Network.GamePackets
                         killer.Owner.SendScreen(upd, true);
                         Hitpoints = 0;
                     }
-                    Attack attack = new Attack(true);
-                    attack.Attacker = killer.UID;
-                    attack.Attacked = UID;
-                    attack.AttackType = Network.GamePackets.Attack.Kill;
-                    attack.X = X;
-                    attack.Y = Y;
+                    Attack attack = new(true)
+                    {
+                        Attacker = killer.UID,
+                        Attacked = UID,
+                        AttackType = Attack.Kill,
+                        X = X,
+                        Y = Y
+                    };
                     killer.Owner.Send(attack);
                     killer.KOCount++;
                 }
             }
             else
             {
-                Attack attack = new Attack(true);
-                attack.Attacker = killer.UID;
-                attack.Attacked = UID;
-                attack.AttackType = Network.GamePackets.Attack.Kill;
-                attack.X = X;
-                attack.Y = Y;
+                Attack attack = new(true)
+                {
+                    Attacker = killer.UID,
+                    Attacked = UID,
+                    AttackType = Attack.Kill,
+                    X = X,
+                    Y = Y
+                };
                 killer.Owner.Send(attack);
                 Hitpoints = MaxHitpoints;
-                Update upd = new Update(true);
-                upd.UID = UID;
+                Update upd = new(true)
+                {
+                    UID = UID
+                };
                 upd.Append(Update.Hitpoints, MaxHitpoints);
                 killer.Owner.SendScreen(upd, true);
             }
@@ -173,34 +183,42 @@ namespace MTA.Network.GamePackets
                         else
                             Mesh = (ushort)(280 + Mesh % 10);
 
-                        Update upd = new Update(true);
-                        upd.UID = UID;
+                        Update upd = new(true)
+                        {
+                            UID = UID
+                        };
                         upd.Append(Update.Mesh, Mesh);
                         killer.Owner.SendScreen(upd, true);
                         Hitpoints = 0;
                     }
-                    Attack attack = new Attack(true);
-                    attack.Attacker = killer.UID;
-                    attack.Attacked = UID;
-                    attack.AttackType = Network.GamePackets.Attack.Kill;
-                    attack.X = X;
-                    attack.Y = Y;
+                    Attack attack = new(true)
+                    {
+                        Attacker = killer.UID,
+                        Attacked = UID,
+                        AttackType = Attack.Kill,
+                        X = X,
+                        Y = Y
+                    };
                     killer.Owner.Send(attack);
                     killer.KOCount++;
                 }
             }
             else
             {
-                Attack attack = new Attack(true);
-                attack.Attacker = killer.UID;
-                attack.Attacked = UID;
-                attack.AttackType = Network.GamePackets.Attack.Kill;
-                attack.X = X;
-                attack.Y = Y;
+                Attack attack = new(true)
+                {
+                    Attacker = killer.UID,
+                    Attacked = UID,
+                    AttackType = Attack.Kill,
+                    X = X,
+                    Y = Y
+                };
                 killer.Owner.Send(attack);
                 Hitpoints = MaxHitpoints;
-                Update upd = new Update(true);
-                upd.UID = UID;
+                Update upd = new(true)
+                {
+                    UID = UID
+                };
                 upd.Append(Update.Hitpoints, MaxHitpoints);
                 killer.Owner.SendScreen(upd, true);
             }
@@ -221,12 +239,14 @@ namespace MTA.Network.GamePackets
                         killer.Owner.SendScreen(upd, true);
                         Hitpoints = 0;
                     }
-                    Attack attack = new Attack(true);
-                    attack.Attacker = killer.UID;
-                    attack.Attacked = UID;
-                    attack.AttackType = Network.GamePackets.Attack.Kill;
-                    attack.X = X;
-                    attack.Y = Y;
+                    Attack attack = new(true)
+                    {
+                        Attacker = killer.UID,
+                        Attacked = UID,
+                        AttackType = Attack.Kill,
+                        X = X,
+                        Y = Y
+                    };
                     killer.Owner.Send(attack);
                     killer.KOCount++;
                 }
@@ -236,7 +256,7 @@ namespace MTA.Network.GamePackets
                 Attack attack = new Attack(true);
                 attack.Attacker = killer.UID;
                 attack.Attacked = UID;
-                attack.AttackType = Network.GamePackets.Attack.Kill;
+                attack.AttackType = Attack.Kill;
                 attack.X = X;
                 attack.Y = Y;
                 killer.Owner.Send(attack);
@@ -633,23 +653,23 @@ namespace MTA.Network.GamePackets
                 Kernel.Maps[1038].Statues.Remove(UID);
                 Kernel.Maps[1038].Npcs.Remove(UID);
                 killer.Owner.Screen.FullWipe();
-                killer.Owner.Screen.Reload(null);
+                killer.Owner.Screen.Reload();
             }
         }
-        private Client.GameState owner_null = null;
+        private Client.GameState? owner_null = null;
         public bool _isprize;
         public Client.GameState Owner
         {
             get
             {
-                return owner_null;
+                return owner_null!;
             }
             set
             {
                 owner_null = value;
             }
         }
-        public byte[] SpawnPacket;
+        public byte[]? SpawnPacket;
         public uint GuildRank;
         public byte Class;
         public void SendSpawn(Client.GameState client, bool checkScreen)
@@ -658,17 +678,20 @@ namespace MTA.Network.GamePackets
             {
                 if (Kernel.Maps[MapID].Statues.ContainsKey(UID))
                 {
-                    Writer.WriteUshort(Mesh, Entity._Facing, SpawnPacket);
-                    Writer.WriteUshort((ushort)Type, Entity._Action, SpawnPacket);
-                    Writer.WriteUshort(X, Entity._X, SpawnPacket);
-                    Writer.WriteUshort(Y, Entity._Y, SpawnPacket);
-                    Writer.WriteUInt32(Hitpoints, Entity._Hitpoints, SpawnPacket);
-                    Writer.WriteUInt32(UID, Entity._UID, SpawnPacket);
-                    client.Send(SpawnPacket);
-                    return;
+                    if (SpawnPacket != null)
+                    {
+                        WriteUshort(Mesh, Entity._Facing, SpawnPacket);
+                        WriteUshort((ushort)Type, Entity._Action, SpawnPacket);
+                        WriteUshort(X, Entity._X, SpawnPacket);
+                        WriteUshort(Y, Entity._Y, SpawnPacket);
+                        WriteUInt32(Hitpoints, Entity._Hitpoints, SpawnPacket);
+                        WriteUInt32(UID, Entity._UID, SpawnPacket);
+                        client.Send(SpawnPacket);
+                        return;
+                    }
                 }
                 client.Send(Buffer);
-                if (effect != "" && effect != null)
+                if (!string.IsNullOrEmpty(effect))
                 {
                     client.SendScreen(new _String(true)
                     {
@@ -688,7 +711,7 @@ namespace MTA.Network.GamePackets
         public void SendSpawn(Client.GameState client)
         {
             SendSpawn(client, false);
-            if (effect != "" && effect != null)
+            if (!string.IsNullOrEmpty(effect))
             {
                 client.SendScreen(new _String(true)
                 {
