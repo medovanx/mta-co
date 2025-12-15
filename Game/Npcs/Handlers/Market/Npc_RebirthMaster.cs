@@ -216,43 +216,24 @@ namespace MTA.Game.Npcs.Handlers.Market
                 case 253: // Violet Gem [Super]
                 case 254: // Moon Gem [Super]
                     {
-                        // Only accessible during first rebirth (normal rebirth flow)
-                        if (client.Entity.Reborn == 0)
+                        // Only reachable from case 15, which is only reachable from case 1 (already validated)
+                        client.SelectedGem = (byte)(npcRequest.OptionID % 100);
+                        if (client.SelectedGem == 54)
                         {
-                            if (client.Entity.Class % 10 == MasterClassType &&
-                                client.Entity.Level >= (client.Entity.Class == WaterSaintClassId ? WaterSaintRequiredLevel : OtherClassesRequiredLevel))
-                            {
-                                client.SelectedGem = (byte)(npcRequest.OptionID % 100);
-                                if (client.SelectedGem == 54)
-                                {
-                                    client.SelectedGem = 63;
-                                }
-                                dialog.Text("Select the class you want to be reborn as.");
-                                dialog.Option("Trojan.", 14);
-                                dialog.Option("Warrior.", 24);
-                                dialog.Option("Archer.", 44);
-                                dialog.Option("Water Taoist.", 136);
-                                dialog.Option("Fire Taoist.", 146);
-                                dialog.Option("Ninja.", 54);
-                                dialog.Option("Monk.", 64);
-                                dialog.Option("Pirate.", 74);
-                                dialog.Option("Dragon Warrior.", 84);
-                                dialog.Option("Windwalker.", 164);
-                                dialog.Send();
-                            }
-                            else
-                            {
-                                dialog.Text("You cannot be reborn if your level is not 110+ for water saints and 120+ for other masters.");
-                                dialog.Option("I understand.", 255);
-                                dialog.Send();
-                            }
+                            client.SelectedGem = 63;
                         }
-                        else
-                        {
-                            dialog.Text("You cannot be reborn again here. Alex, an elder who lives in Ape Canyon, will tell you about the third life.");
-                            dialog.Option("Thank you.", 255);
-                            dialog.Send();
-                        }
+                        dialog.Text("Select the class you want to be reborn as.");
+                        dialog.Option("Trojan.", 14);
+                        dialog.Option("Warrior.", 24);
+                        dialog.Option("Archer.", 44);
+                        dialog.Option("Water Taoist.", 136);
+                        dialog.Option("Fire Taoist.", 146);
+                        dialog.Option("Ninja.", 54);
+                        dialog.Option("Monk.", 64);
+                        dialog.Option("Pirate.", 74);
+                        dialog.Option("Dragon Warrior.", 84);
+                        dialog.Option("Windwalker.", 164);
+                        dialog.Send();
                         break;
                     }
                 #endregion
@@ -457,7 +438,7 @@ namespace MTA.Game.Npcs.Handlers.Market
                     }
                 case 8:
                     {
-                        if (client.Entity.Reborn > 0)
+                        if (client.Entity.Reborn > 0 && client.Entity.Level >= 70)
                         {
                             if (client.Inventory.Contains(DragonBallId, 1))
                             {
@@ -486,14 +467,14 @@ namespace MTA.Game.Npcs.Handlers.Market
                             }
                             else
                             {
-                                dialog.Text("You don't have a Dragon Ball.");
+                                dialog.Text("You don't have a Dragon Ball in your inventory.");
                                 dialog.Option("Sorry, I'll just leave.", 255);
                                 dialog.Send();
                             }
                         }
                         else
                         {
-                            dialog.Text("You must get the first reborn to reset your attribute points.");
+                            dialog.Text("You must get the first reborn and be level 70+ to reset your attribute points.");
                             dialog.Option("Okay.", 255);
                             dialog.Send();
                         }
