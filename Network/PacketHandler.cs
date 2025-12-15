@@ -1,20 +1,20 @@
 #define NOTMULTIPLECHIPOWERS
 using System;
+using System.Collections;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using MTA.Network.GamePackets;
-using MTA.Client;
-using System.Drawing;
 using System.Text;
-using MTA.Networking.GamePackets;
+using MTA.Client;
 using MTA.Game;
-using MTA.Interfaces;
-using System.Collections.Concurrent;
-using MTA.Network;
 using MTA.Game.ConquerStructures.House;
+using MTA.Interfaces;
 using MTA.MaTrix;
+using MTA.Network;
+using MTA.Network.GamePackets;
+using MTA.Networking.GamePackets;
 
 namespace MTA.Network
 {
@@ -17577,6 +17577,22 @@ namespace MTA.Network
                         client.Send(new Message("Congratulations you got 50 study Points keep going", System.Drawing.Color.Red, Message.TopLeft));
                     }
                     break;
+                #endregion
+                #region Fireworks
+                case 720031:
+                    {
+                        // Endless Love
+                        client.Entity.Update(Network.GamePackets._String.Effect, "firework-1love", true);
+                        client.Inventory.Remove(item, Enums.ItemUse.Remove);
+                        break;
+                    }
+                case 720032:
+                    {
+                        // My Wish
+                        client.Entity.Update(Network.GamePackets._String.Effect, "firework-2love", true);
+                        client.Inventory.Remove(item, Enums.ItemUse.Remove);
+                        break;
+                    }
                 #endregion
                 #region DragonGemPack
                 case 727065:
