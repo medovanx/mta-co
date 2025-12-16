@@ -12,3 +12,4 @@ packages/
 # Game related 
 Database/exceptions/*
 Database/scripts/cmpl/*
+/.idea/.idea.MTA/.idea/copilot.data.*

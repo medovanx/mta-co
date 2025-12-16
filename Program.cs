@@ -447,7 +447,7 @@ namespace MTA
                     Console.WriteLine("Loading Booths");
                     MTA.MrNiTro.Systems.Booths.Load();
                 }
-                Console.WriteLine("Server is now online and ready to accept players. Loaded in " + (Time32.Now - Start) + " Milliseconds.", ConsoleColor.Green);
+                Console.WriteLine($"Server has been loaded in {(((Time32.Now - Start).Value) / 1000.0):F2} seconds and is now online and ready to accept players.", ConsoleColor.Green);
                 GC.Collect();
                 WorkConsole();
             }
