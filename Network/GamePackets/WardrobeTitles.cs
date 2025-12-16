@@ -1,64 +1,56 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.IO;
+using MTA.Database;
+using MySqlCommand = MySql.Data.MySqlClient.MySqlCommand;
 
-namespace MTA.Network.GamePackets
-{
-    public class WardrobeTitles
-    {
-        public uint Id;
+namespace MTA.Network.GamePackets {
+    public class WardrobeTitles {
         public byte[] Data;
+        public uint Id;
         public int Points;
 
-        public void Create()
-        {
+        public void Create() {
             string SQL = "INSERT INTO `Titles` (Id, Points, Data) VALUES (@Id, @Points ,@Data)";
-            using (var conn = Database.DataHolder.MySqlConnection)
-            {
+            using (var conn = DataHolder.MySqlConnection) {
                 conn.Open();
-                using (var cmd = new MySql.Data.MySqlClient.MySqlCommand(SQL, conn))
-                {
-                    var reader = new Database.MySqlCommand(Database.MySqlCommandType.SELECT).Select("Titles").Where("Id", Id).CreateReader();
-                    if (reader.Read())
-                    {
+                using (var cmd = new MySqlCommand(SQL, conn)) {
+                    var reader = new Database.MySqlCommand(MySqlCommandType.SELECT).Select("Titles").Where("Id", Id)
+                        .CreateReader();
+                    if (reader.Read()) {
                         Update();
                         return;
                     }
+
                     cmd.Parameters.AddWithValue("@Id", Id);
                     cmd.Parameters.AddWithValue("@Points", Points);
                     cmd.Parameters.AddWithValue("@Data", Data);
                     cmd.ExecuteNonQuery();
                 }
             }
+
             if (StorageManager.Data.ContainsKey(Id))
                 StorageManager.Data[Id] = this;
             else StorageManager.Data.Add(Id, this);
         }
-        public void Update()
-        {
+
+        public void Update() {
             string SQL = "UPDATE `Titles` SET Data=@Data where ID = " + Id + " ;";
-            using (var conn = Database.DataHolder.MySqlConnection)
-            {
+            using (var conn = DataHolder.MySqlConnection) {
                 conn.Open();
-                using (var cmd = new MySql.Data.MySqlClient.MySqlCommand())
-                {
+                using (var cmd = new MySqlCommand()) {
                     cmd.Connection = conn;
                     cmd.CommandText = SQL;
                     cmd.Parameters.AddWithValue("@Data", Data);
                     cmd.ExecuteNonQuery();
                 }
             }
+
             if (StorageManager.Data.ContainsKey(Id))
                 StorageManager.Data[Id] = this;
             else StorageManager.Data.Add(Id, this);
         }
 
-        public void AddTitle(short _type, short _id, bool equipped = false)
-        {
-            using (var writer = new BinaryWriter(new MemoryStream()))
-            {
+        public void AddTitle(short _type, short _id, bool equipped = false) {
+            using (var writer = new BinaryWriter(new MemoryStream())) {
                 Data[0]++;
                 writer.Write(Data);
                 writer.Write(_type);
@@ -72,17 +64,13 @@ namespace MTA.Network.GamePackets
             Update();
         }
 
-        public void Update(short _type, short _id, bool equipped)
-        {
-            using (var reader = new BinaryReader(new MemoryStream(Data)))
-            {
+        public void Update(short _type, short _id, bool equipped) {
+            using (var reader = new BinaryReader(new MemoryStream(Data))) {
                 var count = reader.ReadByte();
-                for (var i = 0; i < count; i++)
-                {
+                for (var i = 0; i < count; i++) {
                     var type = reader.ReadInt16();
                     var id = reader.ReadInt16();
-                    if (type == _type && id == _id)
-                    {
+                    if (type == _type && id == _id) {
                         Data[reader.BaseStream.Position++] = equipped ? (byte)1 : (byte)0;
                     }
                     else if (StorageManager.Wing<bool>(_type, _id) && StorageManager.Wing<bool>(type, id))
@@ -93,25 +81,23 @@ namespace MTA.Network.GamePackets
                         reader.BaseStream.Position++;
                 }
             }
+
             Update();
         }
 
-        public bool Containts(short _type, short _id)
-        {
-            using (var reader = new BinaryReader(new MemoryStream(Data)))
-            {
+        public bool Containts(short _type, short _id) {
+            using (var reader = new BinaryReader(new MemoryStream(Data))) {
                 var count = reader.ReadByte();
-                for (var i = 0; i < count; i++)
-                {
+                for (var i = 0; i < count; i++) {
                     var type = reader.ReadInt16();
                     var id = reader.ReadInt16();
                     reader.ReadBoolean();
-                    if (type == _type && id == _id)
-                    {
+                    if (type == _type && id == _id) {
                         return true;
                     }
                 }
             }
+
             return false;
         }
     }
