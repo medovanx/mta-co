@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace MTA.MaTrix.Roulette
-{
-    class GamePackets
-    {
+﻿namespace MTA.Network.GamePackets.Roulette {
+    class GamePackets {
         public const ushort MsgRouletteShareBetting = 2810,
             MsgRoulettedAddNewPlayer = 2809,
             MsgRouletteOpenGui = 2808,

@@ -1,59 +1,59 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.IO;
-using MTA.Network.GamePackets;
+using System.Drawing;
+using MTA.Client;
+using MTA.Game;
 using MTA.Game.Events;
+using MTA.Interfaces;
+using MTA.MaTrix;
+using MTA.Network;
+using MTA.Network.GamePackets;
 
-namespace MTA.Database
-{
-    public class MonsterInformation
-    {
-        #region Special Mobs Matrix
-        public uint Type;
-        public byte Switch;
-        public uint helmet_type;
-        public uint armor_type;
-        public uint weaponr_type;
-        public uint weaponl_type;
-        public Time32 Lastpop;
-        #endregion
-        private struct SpecialItemDrop
-        {
-            public int ItemID, Rate, Discriminant, Map;
-        }
+namespace MTA.Database {
+    public class MonsterInformation {
+        public const int ReviverID = 9879;
         private static List<SpecialItemDrop> SpecialItemDropList = new List<SpecialItemDrop>();
-        public bool IsRespawnAble = true;
-        public Game.Entity Owner;
-        public uint ExcludeFromSend = 0;
-        private bool LabirinthDrop = false;
-        public bool Guard, Reviver;
-        public uint ID;
-        public ushort Mesh;
-        public byte Level;
-        public string Name;
-        public string Name2;
-        public uint Hitpoints;
-        public ushort Defence;
-        public ushort ViewRange;
+        public static bool ItemsInInventory = false;
+
+        public static SafeDictionary<uint, MonsterInformation> MonsterInformations =
+            new SafeDictionary<uint, MonsterInformation>(8000);
+
         public ushort AttackRange;
-        public int RespawnTime;
-        public uint MinAttack, MaxAttack;
+        public int AttackSpeed;
         public byte AttackType;
-        public ushort SpellID;
+        public bool Boss;
+        public ushort BoundCX, BoundCY;
+
+        public ushort BoundX, BoundY;
+        public ushort Defence;
+        public uint ExcludeFromSend = 0;
+        public uint ExtraExperience;
+        public bool Guard, Reviver;
+        public uint Hitpoints;
+        public int HPPotionID, MPPotionID;
+        public uint ID;
         public uint InSight;
         public bool ISLava = false;
-        public bool Boss;
-        public bool SuperBoss;
+        public bool IsRespawnAble = true;
+        private bool LabirinthDrop = false;
         public Time32 LastMove;
+        public byte Level;
+        public ulong MaxMoneyDropAmount;
+        public ushort Mesh;
+        public uint MinAttack, MaxAttack;
+        public ulong MinMoneyDropAmount;
         public int MoveSpeed;
+        public string Name;
+        public string Name2;
+        public Entity Owner;
+        public int RespawnTime;
         public int RunSpeed;
-        public int HPPotionID, MPPotionID;
-        public int AttackSpeed;
-        public int MinimumSpeed
-        {
-            get
-            {
+        public ushort SpellID;
+        public bool SuperBoss;
+        public ushort ViewRange;
+
+        public int MinimumSpeed {
+            get {
                 int min = 10000000;
                 if (min > MoveSpeed)
                     min = MoveSpeed;
@@ -64,53 +64,37 @@ namespace MTA.Database
                 return min;
             }
         }
-        public uint ExtraExperience;
-        public ulong MinMoneyDropAmount;
-        public ulong MaxMoneyDropAmount;
 
-        public ushort BoundX, BoundY;
-        public ushort BoundCX, BoundCY;
-
-        public void SendScreen(byte[] buffer)
-        {
-            foreach (Client.GameState client in Program.Values)
-            {
-                if (client != null)
-                {
-                    if (client.Entity != null)
-                    {
-                        if (client.Entity.UID != ExcludeFromSend)
-                        {
-                            if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, Owner.X, Owner.Y) > 18)
-                            {
+        public void SendScreen(byte[] buffer) {
+            foreach (GameState client in Program.Values) {
+                if (client != null) {
+                    if (client.Entity != null) {
+                        if (client.Entity.UID != ExcludeFromSend) {
+                            if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, Owner.X, Owner.Y) > 18) {
                                 continue;
                             }
+
                             client.Send(buffer);
                         }
                     }
                 }
             }
         }
-        public void SendScreen(Interfaces.IPacket buffer)
-        {
+
+        public void SendScreen(IPacket buffer) {
             SendScreen(buffer.ToArray());
         }
-        public void SendScreenSpawn(Interfaces.IMapObject _object)
-        {
-            foreach (Client.GameState client in Program.Values)
-            {
-                if (client != null)
-                {
-                    if (client.Entity != null)
-                    {
-                        if (client.Entity.UID != ExcludeFromSend)
-                        {
-                            if (client.Map.ID == Owner.MapID)
-                            {
-                                if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, Owner.X, Owner.Y) > 25)
-                                {
+
+        public void SendScreenSpawn(IMapObject _object) {
+            foreach (GameState client in Program.Values) {
+                if (client != null) {
+                    if (client.Entity != null) {
+                        if (client.Entity.UID != ExcludeFromSend) {
+                            if (client.Map.ID == Owner.MapID) {
+                                if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, Owner.X, Owner.Y) > 25) {
                                     continue;
                                 }
+
                                 _object.SendSpawn(client, false);
                             }
                         }
@@ -118,206 +102,202 @@ namespace MTA.Database
                 }
             }
         }
-        public static bool ItemsInInventory = false;
 
-        public void Drop(Game.Entity killer)
-        {
+        public void Drop(Entity killer) {
             // Notify event system of monster death (for event-specific monsters)
-            MTA.Game.Events.EventScheduler.OnMonsterKilled(this, killer);
+            EventScheduler.OnMonsterKilled(this, killer);
 
             #region Ramadan kareem
+
             #region V1
 
-            if (Name == "RamadankareemV1")
-            {//MenaMaGice
+            if (Name == "RamadankareemV1") {
+                //MenaMaGice
                 uint ItemID = 0;
                 byte type1 = 2;
-                for (int i = 0; i < 1; i++)
-                {
+                for (int i = 0; i < 1; i++) {
                     type1 = (byte)Kernel.Random.Next(1, 2);
-                    switch (type1)
-                    {
+                    switch (type1) {
                         case 1:
                             ItemID = 767099;
                             break;
                     }
-                    var infos = Database.ConquerItemInformation.BaseInformations[ItemID];
+
+                    var infos = ConquerItemInformation.BaseInformations[ItemID];
                     ushort X = Owner.X, Y = Owner.Y;
-                    Game.Map Map = Kernel.Maps[Owner.MapID];
-                    if (Map.SelectCoordonates(ref X, ref Y))
-                    {
-                        Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
-                        floorItem.Item = new Network.GamePackets.ConquerItem(true);
-                        floorItem.Item.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
+                    Map Map = Kernel.Maps[Owner.MapID];
+                    if (Map.SelectCoordonates(ref X, ref Y)) {
+                        FloorItem floorItem = new FloorItem(true);
+                        floorItem.Item = new ConquerItem(true);
+                        floorItem.Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                         floorItem.Item.ID = ItemID;
                         floorItem.Item.Plus = floorItem.Item.Plus;
                         floorItem.Item.MaximDurability = infos.Durability;
                         floorItem.Item.Durability = infos.Durability;
                         floorItem.Item.MobDropped = true;
-                        floorItem.ValueType = Network.GamePackets.FloorItem.FloorValueType.Item;
+                        floorItem.ValueType = FloorItem.FloorValueType.Item;
                         floorItem.ItemID = ItemID;
                         floorItem.MapID = Owner.MapID;
-                        floorItem.MapObjType = Game.MapObjectType.Item;
+                        floorItem.MapObjType = MapObjectType.Item;
                         floorItem.X = X;
                         floorItem.Y = Y;
-                        floorItem.Type = Network.GamePackets.FloorItem.Drop;
+                        floorItem.Type = FloorItem.Drop;
                         floorItem.OnFloor = Time32.Now;
                         floorItem.ItemColor = floorItem.Item.Color;
-                        floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                        floorItem.UID = FloorItem.FloorUID.Next;
                         while (Map.Npcs.ContainsKey(floorItem.UID))
-                            floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                            floorItem.UID = FloorItem.FloorUID.Next;
                         Map.AddFloorItem(floorItem);
                         SendScreenSpawn(floorItem);
                     }
                 }
+
                 return;
             }
 
             #endregion
+
             #region V2
 
-            if (Name == "RamadankareemV2")
-            {//MenaMaGice
+            if (Name == "RamadankareemV2") {
+                //MenaMaGice
                 uint ItemID = 0;
                 byte type1 = 2;
-                for (int i = 0; i < 1; i++)
-                {
+                for (int i = 0; i < 1; i++) {
                     type1 = (byte)Kernel.Random.Next(1, 2);
-                    switch (type1)
-                    {
+                    switch (type1) {
                         case 1:
                             ItemID = 767100;
                             break;
                     }
-                    var infos = Database.ConquerItemInformation.BaseInformations[ItemID];
+
+                    var infos = ConquerItemInformation.BaseInformations[ItemID];
                     ushort X = Owner.X, Y = Owner.Y;
-                    Game.Map Map = Kernel.Maps[Owner.MapID];
-                    if (Map.SelectCoordonates(ref X, ref Y))
-                    {
-                        Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
-                        floorItem.Item = new Network.GamePackets.ConquerItem(true);
-                        floorItem.Item.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
+                    Map Map = Kernel.Maps[Owner.MapID];
+                    if (Map.SelectCoordonates(ref X, ref Y)) {
+                        FloorItem floorItem = new FloorItem(true);
+                        floorItem.Item = new ConquerItem(true);
+                        floorItem.Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                         floorItem.Item.ID = ItemID;
                         floorItem.Item.Plus = floorItem.Item.Plus;
                         floorItem.Item.MaximDurability = infos.Durability;
                         floorItem.Item.Durability = infos.Durability;
                         floorItem.Item.MobDropped = true;
-                        floorItem.ValueType = Network.GamePackets.FloorItem.FloorValueType.Item;
+                        floorItem.ValueType = FloorItem.FloorValueType.Item;
                         floorItem.ItemID = ItemID;
                         floorItem.MapID = Owner.MapID;
-                        floorItem.MapObjType = Game.MapObjectType.Item;
+                        floorItem.MapObjType = MapObjectType.Item;
                         floorItem.X = X;
                         floorItem.Y = Y;
-                        floorItem.Type = Network.GamePackets.FloorItem.Drop;
+                        floorItem.Type = FloorItem.Drop;
                         floorItem.OnFloor = Time32.Now;
                         floorItem.ItemColor = floorItem.Item.Color;
-                        floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                        floorItem.UID = FloorItem.FloorUID.Next;
                         while (Map.Npcs.ContainsKey(floorItem.UID))
-                            floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                            floorItem.UID = FloorItem.FloorUID.Next;
                         Map.AddFloorItem(floorItem);
                         SendScreenSpawn(floorItem);
                     }
                 }
+
                 return;
             }
 
             #endregion
+
             #region V3
 
-            if (Name == "RamadankareemV3")
-            {//MenaMaGice
+            if (Name == "RamadankareemV3") {
+                //MenaMaGice
                 uint ItemID = 0;
                 byte type1 = 2;
-                for (int i = 0; i < 1; i++)
-                {
+                for (int i = 0; i < 1; i++) {
                     type1 = (byte)Kernel.Random.Next(1, 2);
-                    switch (type1)
-                    {
+                    switch (type1) {
                         case 1:
                             ItemID = 767101;
                             break;
                     }
-                    var infos = Database.ConquerItemInformation.BaseInformations[ItemID];
+
+                    var infos = ConquerItemInformation.BaseInformations[ItemID];
                     ushort X = Owner.X, Y = Owner.Y;
-                    Game.Map Map = Kernel.Maps[Owner.MapID];
-                    if (Map.SelectCoordonates(ref X, ref Y))
-                    {
-                        Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
-                        floorItem.Item = new Network.GamePackets.ConquerItem(true);
-                        floorItem.Item.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
+                    Map Map = Kernel.Maps[Owner.MapID];
+                    if (Map.SelectCoordonates(ref X, ref Y)) {
+                        FloorItem floorItem = new FloorItem(true);
+                        floorItem.Item = new ConquerItem(true);
+                        floorItem.Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                         floorItem.Item.ID = ItemID;
                         floorItem.Item.Plus = floorItem.Item.Plus;
                         floorItem.Item.MaximDurability = infos.Durability;
                         floorItem.Item.Durability = infos.Durability;
                         floorItem.Item.MobDropped = true;
-                        floorItem.ValueType = Network.GamePackets.FloorItem.FloorValueType.Item;
+                        floorItem.ValueType = FloorItem.FloorValueType.Item;
                         floorItem.ItemID = ItemID;
                         floorItem.MapID = Owner.MapID;
-                        floorItem.MapObjType = Game.MapObjectType.Item;
+                        floorItem.MapObjType = MapObjectType.Item;
                         floorItem.X = X;
                         floorItem.Y = Y;
-                        floorItem.Type = Network.GamePackets.FloorItem.Drop;
+                        floorItem.Type = FloorItem.Drop;
                         floorItem.OnFloor = Time32.Now;
                         floorItem.ItemColor = floorItem.Item.Color;
-                        floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                        floorItem.UID = FloorItem.FloorUID.Next;
                         while (Map.Npcs.ContainsKey(floorItem.UID))
-                            floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                            floorItem.UID = FloorItem.FloorUID.Next;
                         Map.AddFloorItem(floorItem);
                         SendScreenSpawn(floorItem);
                     }
                 }
+
                 return;
             }
 
             #endregion
+
             #endregion
-            if (killer.EntityFlag == Game.EntityFlag.Monster)
-            {
+
+            if (killer.EntityFlag == EntityFlag.Monster) {
                 if (killer.Owner != null)
                     killer = killer.Owner.Entity;
                 else
                     return;
             }
 
-            if (MaTrix.MatrixMob.Drop(killer, Owner))
+            if (MatrixMob.Drop(killer, Owner))
                 return;
 
             #region All Monster Cps Drop !
 
-            else
-            {
+            else {
                 // Check if any event wants to skip normal drop (event handles rewards instead)
-                if (!EventScheduler.ShouldSkipNormalDrop(this, Owner.MapID))
-                {
+                if (!EventScheduler.ShouldSkipNormalDrop(this, Owner.MapID)) {
                     // Monster Cps Drop with AutoHunting Flag
-                    if (killer.ContainsFlag3((ulong)Update.Flags3.AutoHunting))
-                    {
+                    if (killer.ContainsFlag3((ulong)Update.Flags3.AutoHunting)) {
                         killer.ConquerPoints += 150;
-                        killer.Owner.Send(new Network.GamePackets.Message("Congratulations! You defeated [" + Owner.Name + "] and earned [150 CPs] while using AutoHunting! #37", System.Drawing.Color.Red, 2005));
+                        killer.Owner.Send(new Message(
+                            "Congratulations! You defeated [" + Owner.Name +
+                            "] and earned [150 CPs] while using AutoHunting! #37", Color.Red, 2005));
                     }
 
-                    else
-                    {
+                    else {
                         killer.ConquerPoints += 150;
-                        killer.Owner.Send(new Network.GamePackets.Message("Congratulations! You defeated [" + Owner.Name + "] and earned [150 CPs]! #37", System.Drawing.Color.Yellow, 2005));
+                        killer.Owner.Send(new Message(
+                            "Congratulations! You defeated [" + Owner.Name + "] and earned [150 CPs]! #37",
+                            Color.Yellow, 2005));
                     }
                 }
             }
-            #endregion 
+
+            #endregion
 
             #region ThirillingSpook
-            if (killer.Owner.Quests.HasQuest(MaTrix.QuestID.Exorcism))
-            {
-                var quest = killer.Owner.Quests.GetQuest(MaTrix.QuestID.Exorcism);
-                if (Name == quest.Mob)
-                {
-                    if (killer.Owner.Team != null)
-                    {
-                        foreach (var member in killer.Owner.Team.Teammates)
-                        {
-                            if (member.Quests.HasQuest(MaTrix.QuestID.Exorcism))
-                            {
-                                quest = member.Quests.GetQuest(MaTrix.QuestID.Exorcism);
+
+            if (killer.Owner.Quests.HasQuest(QuestID.Exorcism)) {
+                var quest = killer.Owner.Quests.GetQuest(QuestID.Exorcism);
+                if (Name == quest.Mob) {
+                    if (killer.Owner.Team != null) {
+                        foreach (var member in killer.Owner.Team.Teammates) {
+                            if (member.Quests.HasQuest(QuestID.Exorcism)) {
+                                quest = member.Quests.GetQuest(QuestID.Exorcism);
                                 uint kills = 1;
                                 if (quest.Mob == "ThrillingSpook2")
                                     kills = 2;
@@ -326,12 +306,14 @@ namespace MTA.Database
 
                                 if (quest.Kills >= kills)
                                     continue;
-                                member.Quests.IncreaseQuestKills(MaTrix.QuestID.Exorcism, kills);
-                                Network.GamePackets.NpcReply npc = new Network.GamePackets.NpcReply(6, "Congratulations, You have killed " + quest.Mob + " 1 go to HeavenMaster to get Your reward");
+                                member.Quests.IncreaseQuestKills(QuestID.Exorcism, kills);
+                                NpcReply npc = new NpcReply(6,
+                                    "Congratulations, You have killed " + quest.Mob +
+                                    " 1 go to HeavenMaster to get Your reward");
                                 npc.OptionID = 255;
                                 member.Send(npc.ToArray());
 
-                                Network.GamePackets._String str = new _String(true);
+                                _String str = new _String(true);
                                 str.UID = killer.UID;
                                 str.TextsCount = 1;
                                 str.Type = _String.Effect;
@@ -340,8 +322,7 @@ namespace MTA.Database
                             }
                         }
                     }
-                    else
-                    {
+                    else {
                         uint kills = 1;
                         if (quest.Mob == "ThrillingSpook2")
                             kills = 2;
@@ -350,563 +331,557 @@ namespace MTA.Database
 
                         if (quest.Kills >= kills)
                             return;
-                        killer.Owner.Quests.IncreaseQuestKills(MaTrix.QuestID.Exorcism, kills);
-                        Network.GamePackets.NpcReply npc = new Network.GamePackets.NpcReply(6, "Congratulations, You have killed " + quest.Mob + " 1 go to HeavenMaster to get Your reward");
+                        killer.Owner.Quests.IncreaseQuestKills(QuestID.Exorcism, kills);
+                        NpcReply npc = new NpcReply(6,
+                            "Congratulations, You have killed " + quest.Mob +
+                            " 1 go to HeavenMaster to get Your reward");
                         npc.OptionID = 255;
                         killer.Owner.Send(npc.ToArray());
 
-                        Network.GamePackets._String str = new _String(true);
+                        _String str = new _String(true);
                         str.UID = killer.UID;
                         str.TextsCount = 1;
                         str.Type = _String.Effect;
                         str.Texts.Add("cortege");
                         killer.Owner.Send(str);
                     }
+
                     return;
                 }
-
             }
+
             #endregion
 
             #region EveryThingHas
+
             #region ApeSkin
-            {
-                if (Name == "ThunderApe" && Kernel.Rate(30))
-                {
 
-                    var infos = Database.ConquerItemInformation.BaseInformations[729088];
+            {
+                if (Name == "ThunderApe" && Kernel.Rate(30)) {
+                    var infos = ConquerItemInformation.BaseInformations[729088];
                     ushort X = Owner.X, Y = Owner.Y;
-                    Game.Map Map = Kernel.Maps[Owner.MapID];
-                    if (Map.SelectCoordonates(ref X, ref Y))
-                    {
-                        Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
-                        floorItem.Item = new Network.GamePackets.ConquerItem(true);
-                        floorItem.Item.Color = (Game.Enums.Color)Kernel.Random.Next(4, 8);
+                    Map Map = Kernel.Maps[Owner.MapID];
+                    if (Map.SelectCoordonates(ref X, ref Y)) {
+                        FloorItem floorItem = new FloorItem(true);
+                        floorItem.Item = new ConquerItem(true);
+                        floorItem.Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                         floorItem.Item.ID = 729088;
                         floorItem.Item.MobDropped = true;
                         floorItem.Item.MaximDurability = infos.Durability;
-                        floorItem.ValueType = Network.GamePackets.FloorItem.FloorValueType.Item;
+                        floorItem.ValueType = FloorItem.FloorValueType.Item;
                         floorItem.Item.StackSize = 1;
                         floorItem.Item.MaxStackSize = infos.StackSize;
                         floorItem.ItemID = 729088;
                         floorItem.MapID = Owner.MapID;
-                        floorItem.MapObjType = Game.MapObjectType.Item;
+                        floorItem.MapObjType = MapObjectType.Item;
                         floorItem.X = X;
                         floorItem.Y = Y;
-                        floorItem.Type = Network.GamePackets.FloorItem.Drop;
+                        floorItem.Type = FloorItem.Drop;
                         floorItem.OnFloor = Time32.Now;
                         floorItem.Owner = killer.Owner;
                         floorItem.ItemColor = floorItem.Item.Color;
-                        floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                        floorItem.UID = FloorItem.FloorUID.Next;
                         while (Map.Npcs.ContainsKey(floorItem.UID))
-                            floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                            floorItem.UID = FloorItem.FloorUID.Next;
                         Map.AddFloorItem(floorItem);
                         SendScreenSpawn(floorItem);
                     }
                 }
-                if (Name == "ThunderApe" && Kernel.Rate(10))
-                {
 
-                    var infos = Database.ConquerItemInformation.BaseInformations[729088];
+                if (Name == "ThunderApe" && Kernel.Rate(10)) {
+                    var infos = ConquerItemInformation.BaseInformations[729088];
                     ushort X = Owner.X, Y = Owner.Y;
-                    Game.Map Map = Kernel.Maps[Owner.MapID];
-                    if (Map.SelectCoordonates(ref X, ref Y))
-                    {
-                        Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
-                        floorItem.Item = new Network.GamePackets.ConquerItem(true);
-                        floorItem.Item.Color = (Game.Enums.Color)Kernel.Random.Next(4, 8);
+                    Map Map = Kernel.Maps[Owner.MapID];
+                    if (Map.SelectCoordonates(ref X, ref Y)) {
+                        FloorItem floorItem = new FloorItem(true);
+                        floorItem.Item = new ConquerItem(true);
+                        floorItem.Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                         floorItem.Item.ID = 729088;
                         floorItem.Item.MobDropped = true;
                         floorItem.Item.MaximDurability = infos.Durability;
-                        floorItem.ValueType = Network.GamePackets.FloorItem.FloorValueType.Item;
+                        floorItem.ValueType = FloorItem.FloorValueType.Item;
                         floorItem.Item.StackSize = 5;
                         floorItem.Item.MaxStackSize = infos.StackSize;
                         floorItem.ItemID = 729088;
                         floorItem.MapID = Owner.MapID;
-                        floorItem.MapObjType = Game.MapObjectType.Item;
+                        floorItem.MapObjType = MapObjectType.Item;
                         floorItem.X = X;
                         floorItem.Y = Y;
-                        floorItem.Type = Network.GamePackets.FloorItem.Drop;
+                        floorItem.Type = FloorItem.Drop;
                         floorItem.OnFloor = Time32.Now;
                         floorItem.Owner = killer.Owner;
                         floorItem.ItemColor = floorItem.Item.Color;
-                        floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                        floorItem.UID = FloorItem.FloorUID.Next;
                         while (Map.Npcs.ContainsKey(floorItem.UID))
-                            floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                            floorItem.UID = FloorItem.FloorUID.Next;
                         Map.AddFloorItem(floorItem);
                         SendScreenSpawn(floorItem);
                     }
                 }
             }
+
             #endregion
+
             #region SnakeHeart
-            {
-                if (Name == "Snakeman" && Kernel.Rate(30))
-                {
 
-                    var infos = Database.ConquerItemInformation.BaseInformations[729089];
+            {
+                if (Name == "Snakeman" && Kernel.Rate(30)) {
+                    var infos = ConquerItemInformation.BaseInformations[729089];
                     ushort X = Owner.X, Y = Owner.Y;
-                    Game.Map Map = Kernel.Maps[Owner.MapID];
-                    if (Map.SelectCoordonates(ref X, ref Y))
-                    {
-                        Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
-                        floorItem.Item = new Network.GamePackets.ConquerItem(true);
-                        floorItem.Item.Color = (Game.Enums.Color)Kernel.Random.Next(4, 8);
+                    Map Map = Kernel.Maps[Owner.MapID];
+                    if (Map.SelectCoordonates(ref X, ref Y)) {
+                        FloorItem floorItem = new FloorItem(true);
+                        floorItem.Item = new ConquerItem(true);
+                        floorItem.Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                         floorItem.Item.ID = 729089;
                         floorItem.Item.MobDropped = true;
                         floorItem.Item.MaximDurability = infos.Durability;
-                        floorItem.ValueType = Network.GamePackets.FloorItem.FloorValueType.Item;
+                        floorItem.ValueType = FloorItem.FloorValueType.Item;
                         floorItem.Item.StackSize = 1;
                         floorItem.Item.MaxStackSize = infos.StackSize;
                         floorItem.ItemID = 729089;
                         floorItem.MapID = Owner.MapID;
-                        floorItem.MapObjType = Game.MapObjectType.Item;
+                        floorItem.MapObjType = MapObjectType.Item;
                         floorItem.X = X;
                         floorItem.Y = Y;
-                        floorItem.Type = Network.GamePackets.FloorItem.Drop;
+                        floorItem.Type = FloorItem.Drop;
                         floorItem.OnFloor = Time32.Now;
                         floorItem.Owner = killer.Owner;
                         floorItem.ItemColor = floorItem.Item.Color;
-                        floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                        floorItem.UID = FloorItem.FloorUID.Next;
                         while (Map.Npcs.ContainsKey(floorItem.UID))
-                            floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                            floorItem.UID = FloorItem.FloorUID.Next;
                         Map.AddFloorItem(floorItem);
                         SendScreenSpawn(floorItem);
                     }
                 }
-                if (Name == "Snakeman" && Kernel.Rate(10))
-                {
 
-                    var infos = Database.ConquerItemInformation.BaseInformations[729089];
+                if (Name == "Snakeman" && Kernel.Rate(10)) {
+                    var infos = ConquerItemInformation.BaseInformations[729089];
                     ushort X = Owner.X, Y = Owner.Y;
-                    Game.Map Map = Kernel.Maps[Owner.MapID];
-                    if (Map.SelectCoordonates(ref X, ref Y))
-                    {
-                        Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
-                        floorItem.Item = new Network.GamePackets.ConquerItem(true);
-                        floorItem.Item.Color = (Game.Enums.Color)Kernel.Random.Next(4, 8);
+                    Map Map = Kernel.Maps[Owner.MapID];
+                    if (Map.SelectCoordonates(ref X, ref Y)) {
+                        FloorItem floorItem = new FloorItem(true);
+                        floorItem.Item = new ConquerItem(true);
+                        floorItem.Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                         floorItem.Item.ID = 729089;
                         floorItem.Item.MobDropped = true;
                         floorItem.Item.MaximDurability = infos.Durability;
-                        floorItem.ValueType = Network.GamePackets.FloorItem.FloorValueType.Item;
+                        floorItem.ValueType = FloorItem.FloorValueType.Item;
                         floorItem.Item.StackSize = 5;
                         floorItem.Item.MaxStackSize = infos.StackSize;
                         floorItem.ItemID = 729089;
                         floorItem.MapID = Owner.MapID;
-                        floorItem.MapObjType = Game.MapObjectType.Item;
+                        floorItem.MapObjType = MapObjectType.Item;
                         floorItem.X = X;
                         floorItem.Y = Y;
-                        floorItem.Type = Network.GamePackets.FloorItem.Drop;
+                        floorItem.Type = FloorItem.Drop;
                         floorItem.OnFloor = Time32.Now;
                         floorItem.Owner = killer.Owner;
                         floorItem.ItemColor = floorItem.Item.Color;
-                        floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                        floorItem.UID = FloorItem.FloorUID.Next;
                         while (Map.Npcs.ContainsKey(floorItem.UID))
-                            floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                            floorItem.UID = FloorItem.FloorUID.Next;
                         Map.AddFloorItem(floorItem);
                         SendScreenSpawn(floorItem);
                     }
                 }
             }
+
             #endregion
+
             #region BirdClaw
-            {
-                if (Name == "Birdman" && Kernel.Rate(30))
-                {
 
-                    var infos = Database.ConquerItemInformation.BaseInformations[729094];
+            {
+                if (Name == "Birdman" && Kernel.Rate(30)) {
+                    var infos = ConquerItemInformation.BaseInformations[729094];
                     ushort X = Owner.X, Y = Owner.Y;
-                    Game.Map Map = Kernel.Maps[Owner.MapID];
-                    if (Map.SelectCoordonates(ref X, ref Y))
-                    {
-                        Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
-                        floorItem.Item = new Network.GamePackets.ConquerItem(true);
-                        floorItem.Item.Color = (Game.Enums.Color)Kernel.Random.Next(4, 8);
+                    Map Map = Kernel.Maps[Owner.MapID];
+                    if (Map.SelectCoordonates(ref X, ref Y)) {
+                        FloorItem floorItem = new FloorItem(true);
+                        floorItem.Item = new ConquerItem(true);
+                        floorItem.Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                         floorItem.Item.ID = 729094;
                         floorItem.Item.MobDropped = true;
                         floorItem.Item.MaximDurability = infos.Durability;
-                        floorItem.ValueType = Network.GamePackets.FloorItem.FloorValueType.Item;
+                        floorItem.ValueType = FloorItem.FloorValueType.Item;
                         floorItem.Item.StackSize = 1;
                         floorItem.Item.MaxStackSize = infos.StackSize;
                         floorItem.ItemID = 729094;
                         floorItem.MapID = Owner.MapID;
-                        floorItem.MapObjType = Game.MapObjectType.Item;
+                        floorItem.MapObjType = MapObjectType.Item;
                         floorItem.X = X;
                         floorItem.Y = Y;
-                        floorItem.Type = Network.GamePackets.FloorItem.Drop;
+                        floorItem.Type = FloorItem.Drop;
                         floorItem.OnFloor = Time32.Now;
                         floorItem.Owner = killer.Owner;
                         floorItem.ItemColor = floorItem.Item.Color;
-                        floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                        floorItem.UID = FloorItem.FloorUID.Next;
                         while (Map.Npcs.ContainsKey(floorItem.UID))
-                            floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                            floorItem.UID = FloorItem.FloorUID.Next;
                         Map.AddFloorItem(floorItem);
                         SendScreenSpawn(floorItem);
                     }
                 }
-                if (Name == "Birdman" && Kernel.Rate(10))
-                {
 
-                    var infos = Database.ConquerItemInformation.BaseInformations[729094];
+                if (Name == "Birdman" && Kernel.Rate(10)) {
+                    var infos = ConquerItemInformation.BaseInformations[729094];
                     ushort X = Owner.X, Y = Owner.Y;
-                    Game.Map Map = Kernel.Maps[Owner.MapID];
-                    if (Map.SelectCoordonates(ref X, ref Y))
-                    {
-                        Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
-                        floorItem.Item = new Network.GamePackets.ConquerItem(true);
-                        floorItem.Item.Color = (Game.Enums.Color)Kernel.Random.Next(4, 8);
+                    Map Map = Kernel.Maps[Owner.MapID];
+                    if (Map.SelectCoordonates(ref X, ref Y)) {
+                        FloorItem floorItem = new FloorItem(true);
+                        floorItem.Item = new ConquerItem(true);
+                        floorItem.Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                         floorItem.Item.ID = 729094;
                         floorItem.Item.MobDropped = true;
                         floorItem.Item.MaximDurability = infos.Durability;
-                        floorItem.ValueType = Network.GamePackets.FloorItem.FloorValueType.Item;
+                        floorItem.ValueType = FloorItem.FloorValueType.Item;
                         floorItem.Item.StackSize = 5;
                         floorItem.Item.MaxStackSize = infos.StackSize;
                         floorItem.ItemID = 729094;
                         floorItem.MapID = Owner.MapID;
-                        floorItem.MapObjType = Game.MapObjectType.Item;
+                        floorItem.MapObjType = MapObjectType.Item;
                         floorItem.X = X;
                         floorItem.Y = Y;
-                        floorItem.Type = Network.GamePackets.FloorItem.Drop;
+                        floorItem.Type = FloorItem.Drop;
                         floorItem.OnFloor = Time32.Now;
                         floorItem.Owner = killer.Owner;
                         floorItem.ItemColor = floorItem.Item.Color;
-                        floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                        floorItem.UID = FloorItem.FloorUID.Next;
                         while (Map.Npcs.ContainsKey(floorItem.UID))
-                            floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                            floorItem.UID = FloorItem.FloorUID.Next;
                         Map.AddFloorItem(floorItem);
                         SendScreenSpawn(floorItem);
                     }
                 }
             }
+
             #endregion
+
             #region BatWing
-            {
-                if (Name == "TombBat" && Kernel.Rate(30))
-                {
 
-                    var infos = Database.ConquerItemInformation.BaseInformations[729098];
+            {
+                if (Name == "TombBat" && Kernel.Rate(30)) {
+                    var infos = ConquerItemInformation.BaseInformations[729098];
                     ushort X = Owner.X, Y = Owner.Y;
-                    Game.Map Map = Kernel.Maps[Owner.MapID];
-                    if (Map.SelectCoordonates(ref X, ref Y))
-                    {
-                        Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
-                        floorItem.Item = new Network.GamePackets.ConquerItem(true);
-                        floorItem.Item.Color = (Game.Enums.Color)Kernel.Random.Next(4, 8);
+                    Map Map = Kernel.Maps[Owner.MapID];
+                    if (Map.SelectCoordonates(ref X, ref Y)) {
+                        FloorItem floorItem = new FloorItem(true);
+                        floorItem.Item = new ConquerItem(true);
+                        floorItem.Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                         floorItem.Item.ID = 729098;
                         floorItem.Item.MobDropped = true;
                         floorItem.Item.MaximDurability = infos.Durability;
-                        floorItem.ValueType = Network.GamePackets.FloorItem.FloorValueType.Item;
+                        floorItem.ValueType = FloorItem.FloorValueType.Item;
                         floorItem.Item.StackSize = 1;
                         floorItem.Item.MaxStackSize = infos.StackSize;
                         floorItem.ItemID = 729098;
                         floorItem.MapID = Owner.MapID;
-                        floorItem.MapObjType = Game.MapObjectType.Item;
+                        floorItem.MapObjType = MapObjectType.Item;
                         floorItem.X = X;
                         floorItem.Y = Y;
-                        floorItem.Type = Network.GamePackets.FloorItem.Drop;
+                        floorItem.Type = FloorItem.Drop;
                         floorItem.OnFloor = Time32.Now;
                         floorItem.Owner = killer.Owner;
                         floorItem.ItemColor = floorItem.Item.Color;
-                        floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                        floorItem.UID = FloorItem.FloorUID.Next;
                         while (Map.Npcs.ContainsKey(floorItem.UID))
-                            floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                            floorItem.UID = FloorItem.FloorUID.Next;
                         Map.AddFloorItem(floorItem);
                         SendScreenSpawn(floorItem);
                     }
                 }
-                if (Name == "Tombat" && Kernel.Rate(10))
-                {
 
-                    var infos = Database.ConquerItemInformation.BaseInformations[729098];
+                if (Name == "Tombat" && Kernel.Rate(10)) {
+                    var infos = ConquerItemInformation.BaseInformations[729098];
                     ushort X = Owner.X, Y = Owner.Y;
-                    Game.Map Map = Kernel.Maps[Owner.MapID];
-                    if (Map.SelectCoordonates(ref X, ref Y))
-                    {
-                        Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
-                        floorItem.Item = new Network.GamePackets.ConquerItem(true);
-                        floorItem.Item.Color = (Game.Enums.Color)Kernel.Random.Next(4, 8);
+                    Map Map = Kernel.Maps[Owner.MapID];
+                    if (Map.SelectCoordonates(ref X, ref Y)) {
+                        FloorItem floorItem = new FloorItem(true);
+                        floorItem.Item = new ConquerItem(true);
+                        floorItem.Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                         floorItem.Item.ID = 729098;
                         floorItem.Item.MobDropped = true;
                         floorItem.Item.MaximDurability = infos.Durability;
-                        floorItem.ValueType = Network.GamePackets.FloorItem.FloorValueType.Item;
+                        floorItem.ValueType = FloorItem.FloorValueType.Item;
                         floorItem.Item.StackSize = 5;
                         floorItem.Item.MaxStackSize = infos.StackSize;
                         floorItem.ItemID = 729098;
                         floorItem.MapID = Owner.MapID;
-                        floorItem.MapObjType = Game.MapObjectType.Item;
+                        floorItem.MapObjType = MapObjectType.Item;
                         floorItem.X = X;
                         floorItem.Y = Y;
-                        floorItem.Type = Network.GamePackets.FloorItem.Drop;
+                        floorItem.Type = FloorItem.Drop;
                         floorItem.OnFloor = Time32.Now;
                         floorItem.Owner = killer.Owner;
                         floorItem.ItemColor = floorItem.Item.Color;
-                        floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                        floorItem.UID = FloorItem.FloorUID.Next;
                         while (Map.Npcs.ContainsKey(floorItem.UID))
-                            floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                            floorItem.UID = FloorItem.FloorUID.Next;
                         Map.AddFloorItem(floorItem);
                         SendScreenSpawn(floorItem);
                     }
                 }
             }
+
             #endregion
+
             #endregion
+
             #region MonstersPoints
-            if (Name == "TompBat")
-            {
-                {
-                    killer.MonstersPoints += 1;
 
-                }
-            }
-            if (Name == "RedDevilL117")
-            {
-                {
-                    killer.MonstersPoints += 1;
-
-                }
-            }
-            if (Name == "BullMonsterL113")
-            {
-                {
-                    killer.MonstersPoints += 1;
-
-                }
-            }
-            if (Name == "RedDevil")
-            {
-                {
-                    killer.MonstersPoints += 1;
-
-                }
-            }
-            if (Name == "BullMonster")
-            {
-                {
-                    killer.MonstersPoints += 1;
-
-                }
-            }
-            if (Name == "BloodyBatL108")
-            {
-                {
-                    killer.MonstersPoints += 1;
-
-                }
-            }
-            if (Name == "BloodyBat")
-            {
-                {
-                    killer.MonstersPoints += 1;
-
-                }
-            }
-            if (Name == "RedDevilL118")
-            {
-                {
-                    killer.MonstersPoints += 1;
-
-                }
-            }
-            if (Name == "HawKing")
-            {
-                {
-                    killer.MonstersPoints += 1;
-
-                }
-            }
-            if (Name == "HawkL93")
-            {
-                {
-                    killer.MonstersPoints += 1;
-
-                }
-            }
-            if (Name == "WingedSnake")
-            {
-                {
-                    killer.MonstersPoints += 1;
-
-                }
-            }
-            if (Name == "Pheasant")
-            {
-                {
-                    killer.MonstersPoints += 1;
-
-                }
-            }
-            if (Name == "Birdman")
-            {
-                {
-                    killer.MonstersPoints += 1;
-
-                }
-            }
-
-            if (Name == "Bandit")
-            {
+            if (Name == "TompBat") {
                 {
                     killer.MonstersPoints += 1;
                 }
             }
 
-            if (Name == "Macaque")
-            {
+            if (Name == "RedDevilL117") {
                 {
                     killer.MonstersPoints += 1;
                 }
             }
 
-            if (Name == "TombBat")
-            {
+            if (Name == "BullMonsterL113") {
                 {
                     killer.MonstersPoints += 1;
                 }
             }
-            if (Name == "TeratoDragon")
-            {
+
+            if (Name == "RedDevil") {
+                {
+                    killer.MonstersPoints += 1;
+                }
+            }
+
+            if (Name == "BullMonster") {
+                {
+                    killer.MonstersPoints += 1;
+                }
+            }
+
+            if (Name == "BloodyBatL108") {
+                {
+                    killer.MonstersPoints += 1;
+                }
+            }
+
+            if (Name == "BloodyBat") {
+                {
+                    killer.MonstersPoints += 1;
+                }
+            }
+
+            if (Name == "RedDevilL118") {
+                {
+                    killer.MonstersPoints += 1;
+                }
+            }
+
+            if (Name == "HawKing") {
+                {
+                    killer.MonstersPoints += 1;
+                }
+            }
+
+            if (Name == "HawkL93") {
+                {
+                    killer.MonstersPoints += 1;
+                }
+            }
+
+            if (Name == "WingedSnake") {
+                {
+                    killer.MonstersPoints += 1;
+                }
+            }
+
+            if (Name == "Pheasant") {
+                {
+                    killer.MonstersPoints += 1;
+                }
+            }
+
+            if (Name == "Birdman") {
+                {
+                    killer.MonstersPoints += 1;
+                }
+            }
+
+            if (Name == "Bandit") {
+                {
+                    killer.MonstersPoints += 1;
+                }
+            }
+
+            if (Name == "Macaque") {
+                {
+                    killer.MonstersPoints += 1;
+                }
+            }
+
+            if (Name == "TombBat") {
+                {
+                    killer.MonstersPoints += 1;
+                }
+            }
+
+            if (Name == "TeratoDragon") {
                 {
                     killer.MonstersPoints += 5000000;
                 }
             }
-            if (Name == "ThrillingSpook")
-            {
+
+            if (Name == "ThrillingSpook") {
                 {
                     killer.MonstersPoints += 5000000;
                 }
             }
-            if (Name == "SnowBanshee")
-            {
+
+            if (Name == "SnowBanshee") {
                 {
                     killer.MonstersPoints += 5000000;
                 }
             }
-            if (Name == "SnowBansheeSoul")
-            {
+
+            if (Name == "SnowBansheeSoul") {
                 {
                     killer.MonstersPoints += 5000000;
                 }
             }
-            if (Name == "Piglet")
-            {
+
+            if (Name == "Piglet") {
                 {
                     killer.MonstersPoints += 5;
                 }
             }
+
             #endregion
+
             #region Cloud Jar
-            if (Name == killer.QuestMob)
-            {
+
+            if (Name == killer.QuestMob) {
                 killer.QuestKO++;
-                killer.Send(new Message(" " + killer.QuestMob + "s Killed: " + killer.QuestKO + ". Target: 300. From: " + killer.QuestFrom + "Captain.", 2005));
-                if (killer.QuestKO >= 300)
-                {
-                    killer.Send(new Message("You have killed enough monsters for the quest. Go report to the " + killer.QuestFrom + "Captain.", 2005));
+                killer.Send(new Message(
+                    " " + killer.QuestMob + "s Killed: " + killer.QuestKO + ". Target: 300. From: " + killer.QuestFrom +
+                    "Captain.", 2005));
+                if (killer.QuestKO >= 300) {
+                    killer.Send(new Message(
+                        "You have killed enough monsters for the quest. Go report to the " + killer.QuestFrom +
+                        "Captain.", 2005));
                 }
             }
+
             #endregion
+
             #region DisCity
-            if (Name == "Naga")
-            {
+
+            if (Name == "Naga") {
                 {
                     killer.DisKO += 1;
-                    killer.Owner.Send(new Message("Congratulations! You have got 1 Kill you have Now " + killer.DisKO + " DisKo Points", System.Drawing.Color.Azure, Message.TopLeft));
+                    killer.Owner.Send(new Message(
+                        "Congratulations! You have got 1 Kill you have Now " + killer.DisKO + " DisKo Points",
+                        Color.Azure, Message.TopLeft));
                     return;
                 }
             }
-            if (Name == "Temptress")
-            {
+
+            if (Name == "Temptress") {
                 {
                     killer.DisKO += 1;
-                    killer.Owner.Send(new Message("Congratulations! You have got 1 Kill you have Now " + killer.DisKO + " DisKo Points", System.Drawing.Color.Azure, Message.TopLeft));
+                    killer.Owner.Send(new Message(
+                        "Congratulations! You have got 1 Kill you have Now " + killer.DisKO + " DisKo Points",
+                        Color.Azure, Message.TopLeft));
                     return;
                 }
             }
-            if (Name == "Centicore")
-            {
+
+            if (Name == "Centicore") {
                 {
                     killer.DisKO += 1;
-                    killer.Owner.Send(new Message("Congratulations! You have got 1 Kill you have Now " + killer.DisKO + " DisKo Points", System.Drawing.Color.Azure, Message.TopLeft));
+                    killer.Owner.Send(new Message(
+                        "Congratulations! You have got 1 Kill you have Now " + killer.DisKO + " DisKo Points",
+                        Color.Azure, Message.TopLeft));
                     return;
                 }
             }
-            if (Name == "HellTroll")
-            {
+
+            if (Name == "HellTroll") {
                 {
                     killer.DisKO += 3;
-                    killer.Owner.Send(new Message("Congratulations! You have got 3 Kill you have Now " + killer.DisKO + " DisKo Points", System.Drawing.Color.Azure, Message.TopLeft));
+                    killer.Owner.Send(new Message(
+                        "Congratulations! You have got 3 Kill you have Now " + killer.DisKO + " DisKo Points",
+                        Color.Azure, Message.TopLeft));
                     return;
                 }
             }
 
             #endregion
+
             #region SpecialItemDrop
-            foreach (SpecialItemDrop sitem in SpecialItemDropList)
-            {
+
+            foreach (SpecialItemDrop sitem in SpecialItemDropList) {
                 if (sitem.Map != 0 && Owner.MapID != sitem.Map)
                     continue;
-                if (Kernel.Rate(sitem.Rate, sitem.Discriminant))
-                {
-                    if (killer.VIPLevel < 0)
-                    {
-                        if (killer.Owner.Inventory.Count <= 39)
-                        {
+                if (Kernel.Rate(sitem.Rate, sitem.Discriminant)) {
+                    if (killer.VIPLevel < 0) {
+                        if (killer.Owner.Inventory.Count <= 39) {
                             killer.Owner.Inventory.Add((uint)sitem.ItemID, 0, 1);
                             return;
                         }
                     }
-                    if (sitem.ItemID == 0 || !Database.ConquerItemInformation.BaseInformations.ContainsKey((uint)sitem.ItemID))
+
+                    if (sitem.ItemID == 0 || !ConquerItemInformation.BaseInformations.ContainsKey((uint)sitem.ItemID))
                         return;
-                    var infos = Database.ConquerItemInformation.BaseInformations[(uint)sitem.ItemID];
+                    var infos = ConquerItemInformation.BaseInformations[(uint)sitem.ItemID];
                     ushort X = Owner.X, Y = Owner.Y;
-                    Game.Map Map = Kernel.Maps[Owner.MapID];
-                    if (Map.SelectCoordonates(ref X, ref Y))
-                    {
-                        Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
-                        floorItem.Item = new Network.GamePackets.ConquerItem(true);
-                        floorItem.Item.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
+                    Map Map = Kernel.Maps[Owner.MapID];
+                    if (Map.SelectCoordonates(ref X, ref Y)) {
+                        FloorItem floorItem = new FloorItem(true);
+                        floorItem.Item = new ConquerItem(true);
+                        floorItem.Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                         floorItem.Item.ID = (uint)sitem.ItemID;
                         floorItem.Item.MaximDurability = infos.Durability;
                         floorItem.Item.MobDropped = true;
-                        if (!Network.PacketHandler.IsEquipment(sitem.ItemID) && infos.ConquerPointsWorth == 0)
-                        {
+                        if (!PacketHandler.IsEquipment(sitem.ItemID) && infos.ConquerPointsWorth == 0) {
                             floorItem.Item.StackSize = 1;
                             floorItem.Item.MaxStackSize = infos.StackSize;
                         }
-                        floorItem.ValueType = Network.GamePackets.FloorItem.FloorValueType.Item;
+
+                        floorItem.ValueType = FloorItem.FloorValueType.Item;
                         floorItem.ItemID = (uint)sitem.ItemID;
                         floorItem.MapID = Owner.MapID;
-                        floorItem.MapObjType = Game.MapObjectType.Item;
+                        floorItem.MapObjType = MapObjectType.Item;
                         floorItem.X = X;
                         floorItem.Y = Y;
-                        floorItem.Type = Network.GamePackets.FloorItem.Drop;
+                        floorItem.Type = FloorItem.Drop;
                         floorItem.OnFloor = Time32.Now;
                         floorItem.ItemColor = floorItem.Item.Color;
                         floorItem.Owner = killer.Owner;
-                        floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                        floorItem.UID = FloorItem.FloorUID.Next;
                         while (Map.Npcs.ContainsKey(floorItem.UID))
-                            floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                            floorItem.UID = FloorItem.FloorUID.Next;
                         Map.AddFloorItem(floorItem);
                         SendScreenSpawn(floorItem);
                         break;
                     }
                 }
             }
+
             #endregion
+
             #region ChestDemon - Franko
-            uint ran1 = (uint)MTA.Kernel.Random.Next(1, 22);
-            if (ran1 > 15)
-            {
-                if (this.Name == "ChestDemon")
-                {
+
+            uint ran1 = (uint)Kernel.Random.Next(1, 22);
+            if (ran1 > 15) {
+                if (this.Name == "ChestDemon") {
                     if (killer.Name.Contains("Guard"))
                         return;
 
                     uint Uid = 0;
                     Random R = new Random();
                     //int Nr = R.Next(1, 1);
-                    switch (((byte)Kernel.Random.Next(1, 8)))
-                    {
+                    switch (((byte)Kernel.Random.Next(1, 8))) {
                         case 1:
                             Uid = 3000625;
                             break;
@@ -922,271 +897,261 @@ namespace MTA.Database
                             break;
                     }
 
-                    if (Uid != 0)
-                    {
+                    if (Uid != 0) {
                         ushort X = Owner.X, Y = Owner.Y;
-                        Game.Map Map = Kernel.Maps[Owner.MapID];
-                        if (Map.SelectCoordonates(ref X, ref Y))
-                        {
-                            Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
-                            floorItem.Item = new Network.GamePackets.ConquerItem(true);
-                            floorItem.Item.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
+                        Map Map = Kernel.Maps[Owner.MapID];
+                        if (Map.SelectCoordonates(ref X, ref Y)) {
+                            FloorItem floorItem = new FloorItem(true);
+                            floorItem.Item = new ConquerItem(true);
+                            floorItem.Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                             floorItem.Item.ID = Uid;
                             floorItem.Item.MaximDurability = floorItem.Item.Durability = 65535;
-                            floorItem.Item.UID = Program.NextItemID; ;
-                            floorItem.ValueType = Network.GamePackets.FloorItem.FloorValueType.Item;
+                            floorItem.Item.UID = Program.NextItemID;
+                            ;
+                            floorItem.ValueType = FloorItem.FloorValueType.Item;
                             floorItem.ItemID = Uid;
                             floorItem.MapID = Owner.MapID;
-                            floorItem.MapObjType = Game.MapObjectType.Item;
+                            floorItem.MapObjType = MapObjectType.Item;
                             floorItem.X = X;
                             floorItem.Y = Y;
-                            floorItem.Type = Network.GamePackets.FloorItem.Drop;
+                            floorItem.Type = FloorItem.Drop;
                             floorItem.OnFloor = Time32.Now;
                             floorItem.ItemColor = floorItem.Item.Color;
-                            floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                            floorItem.UID = FloorItem.FloorUID.Next;
                             while (Map.Npcs.ContainsKey(floorItem.UID))
-                                floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                                floorItem.UID = FloorItem.FloorUID.Next;
                             Map.AddFloorItem(floorItem);
                             SendScreenSpawn(floorItem);
                         }
                     }
                 }
             }
+
             #endregion
+
             #region FuriousDevastato ( FirstStage Monster in TrojanEpicQuest ( Matrix Edition ) )
-            if (Name == "FuriousDevastato")
-            {
-                if (Kernel.Rate(80, 100))
-                {
-                    if (killer.Name.Contains("Guard"))
-                    {
+
+            if (Name == "FuriousDevastato") {
+                if (Kernel.Rate(80, 100)) {
+                    if (killer.Name.Contains("Guard")) {
                         return;
                     }
 
                     uint ItemID = 3003336;
-                    var infos = Database.ConquerItemInformation.BaseInformations[ItemID];
+                    var infos = ConquerItemInformation.BaseInformations[ItemID];
                     ushort X = Owner.X, Y = Owner.Y;
-                    Game.Map Map = Kernel.Maps[Owner.MapID];
-                    if (Map.SelectCoordonates(ref X, ref Y))
-                    {
-                        Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
-                        floorItem.Item = new Network.GamePackets.ConquerItem(true);
-                        floorItem.Item.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
+                    Map Map = Kernel.Maps[Owner.MapID];
+                    if (Map.SelectCoordonates(ref X, ref Y)) {
+                        FloorItem floorItem = new FloorItem(true);
+                        floorItem.Item = new ConquerItem(true);
+                        floorItem.Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                         floorItem.Item.ID = ItemID;
                         floorItem.Item.Plus = floorItem.Item.Plus;
                         floorItem.Item.MaximDurability = infos.Durability;
                         floorItem.Item.Durability = infos.Durability;
                         floorItem.Item.MobDropped = true;
-                        floorItem.ValueType = Network.GamePackets.FloorItem.FloorValueType.Item;
+                        floorItem.ValueType = FloorItem.FloorValueType.Item;
                         floorItem.ItemID = ItemID;
                         floorItem.MapID = Owner.MapID;
-                        floorItem.MapObjType = Game.MapObjectType.Item;
+                        floorItem.MapObjType = MapObjectType.Item;
                         floorItem.X = X;
                         floorItem.Y = Y;
-                        floorItem.Type = Network.GamePackets.FloorItem.Drop;
+                        floorItem.Type = FloorItem.Drop;
                         floorItem.OnFloor = Time32.Now;
                         floorItem.ItemColor = floorItem.Item.Color;
-                        floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                        floorItem.UID = FloorItem.FloorUID.Next;
                         while (Map.Npcs.ContainsKey(floorItem.UID))
 
-                            floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                            floorItem.UID = FloorItem.FloorUID.Next;
 
                         Map.AddFloorItem(floorItem);
 
                         SendScreenSpawn(floorItem);
                     }
-                    killer.Owner.Send(new Network.GamePackets.Message("Wow ! You Killed the " + Name + " and Got SolarScarp ! Keep Going !", System.Drawing.Color.Blue, 2005));
+
+                    killer.Owner.Send(new Message("Wow ! You Killed the " + Name + " and Got SolarScarp ! Keep Going !",
+                        Color.Blue, 2005));
                     return;
                 }
             }
+
             #endregion
+
             #region AwakeDevastator ( SecondStage Monster in TrojanEpicQuest ( Matrix Edition ) )
-            if (Name == "AwakeDevastator")
-            {
-                if (Kernel.Rate(80, 100))
-                {
-                    if (killer.Name.Contains("Guard"))
-                    {
+
+            if (Name == "AwakeDevastator") {
+                if (Kernel.Rate(80, 100)) {
+                    if (killer.Name.Contains("Guard")) {
                         return;
                     }
 
                     uint ItemID = 3003338;
-                    var infos = Database.ConquerItemInformation.BaseInformations[ItemID];
+                    var infos = ConquerItemInformation.BaseInformations[ItemID];
                     ushort X = Owner.X, Y = Owner.Y;
-                    Game.Map Map = Kernel.Maps[Owner.MapID];
-                    if (Map.SelectCoordonates(ref X, ref Y))
-                    {
-                        Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
-                        floorItem.Item = new Network.GamePackets.ConquerItem(true);
-                        floorItem.Item.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
+                    Map Map = Kernel.Maps[Owner.MapID];
+                    if (Map.SelectCoordonates(ref X, ref Y)) {
+                        FloorItem floorItem = new FloorItem(true);
+                        floorItem.Item = new ConquerItem(true);
+                        floorItem.Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                         floorItem.Item.ID = ItemID;
                         floorItem.Item.Plus = floorItem.Item.Plus;
                         floorItem.Item.MaximDurability = infos.Durability;
                         floorItem.Item.Durability = infos.Durability;
                         floorItem.Item.MobDropped = true;
-                        floorItem.ValueType = Network.GamePackets.FloorItem.FloorValueType.Item;
+                        floorItem.ValueType = FloorItem.FloorValueType.Item;
                         floorItem.ItemID = ItemID;
                         floorItem.MapID = Owner.MapID;
-                        floorItem.MapObjType = Game.MapObjectType.Item;
+                        floorItem.MapObjType = MapObjectType.Item;
                         floorItem.X = X;
                         floorItem.Y = Y;
-                        floorItem.Type = Network.GamePackets.FloorItem.Drop;
+                        floorItem.Type = FloorItem.Drop;
                         floorItem.OnFloor = Time32.Now;
                         floorItem.ItemColor = floorItem.Item.Color;
-                        floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                        floorItem.UID = FloorItem.FloorUID.Next;
                         while (Map.Npcs.ContainsKey(floorItem.UID))
 
-                            floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                            floorItem.UID = FloorItem.FloorUID.Next;
 
                         Map.AddFloorItem(floorItem);
 
                         SendScreenSpawn(floorItem);
                     }
-                    killer.Owner.Send(new Network.GamePackets.Message("Wow ! You Killed the " + Name + " and Got SolarEssence ! Keep Going !", System.Drawing.Color.Blue, 2005));
+
+                    killer.Owner.Send(new Message(
+                        "Wow ! You Killed the " + Name + " and Got SolarEssence ! Keep Going !", Color.Blue, 2005));
                     return;
                 }
             }
+
             #endregion
+
             #region EvilMonkMiseryA ( ThirdStage Monster in TrojanEpicQuest ( Matrix Edition ) )
-            if (Name == "EvilMonkMiseryA")
-            {
-                if (Kernel.Rate(80, 100))
-                {
-                    if (killer.Name.Contains("Guard"))
-                    {
+
+            if (Name == "EvilMonkMiseryA") {
+                if (Kernel.Rate(80, 100)) {
+                    if (killer.Name.Contains("Guard")) {
                         return;
                     }
 
                     uint ItemID = 3003335;
-                    var infos = Database.ConquerItemInformation.BaseInformations[ItemID];
+                    var infos = ConquerItemInformation.BaseInformations[ItemID];
                     ushort X = Owner.X, Y = Owner.Y;
-                    Game.Map Map = Kernel.Maps[Owner.MapID];
-                    if (Map.SelectCoordonates(ref X, ref Y))
-                    {
-                        Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
-                        floorItem.Item = new Network.GamePackets.ConquerItem(true);
-                        floorItem.Item.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
+                    Map Map = Kernel.Maps[Owner.MapID];
+                    if (Map.SelectCoordonates(ref X, ref Y)) {
+                        FloorItem floorItem = new FloorItem(true);
+                        floorItem.Item = new ConquerItem(true);
+                        floorItem.Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                         floorItem.Item.ID = ItemID;
                         floorItem.Item.Plus = floorItem.Item.Plus;
                         floorItem.Item.MaximDurability = infos.Durability;
                         floorItem.Item.Durability = infos.Durability;
                         floorItem.Item.MobDropped = true;
-                        floorItem.ValueType = Network.GamePackets.FloorItem.FloorValueType.Item;
+                        floorItem.ValueType = FloorItem.FloorValueType.Item;
                         floorItem.ItemID = ItemID;
                         floorItem.MapID = Owner.MapID;
-                        floorItem.MapObjType = Game.MapObjectType.Item;
+                        floorItem.MapObjType = MapObjectType.Item;
                         floorItem.X = X;
                         floorItem.Y = Y;
-                        floorItem.Type = Network.GamePackets.FloorItem.Drop;
+                        floorItem.Type = FloorItem.Drop;
                         floorItem.OnFloor = Time32.Now;
                         floorItem.ItemColor = floorItem.Item.Color;
-                        floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                        floorItem.UID = FloorItem.FloorUID.Next;
                         while (Map.Npcs.ContainsKey(floorItem.UID))
 
-                            floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                            floorItem.UID = FloorItem.FloorUID.Next;
 
                         Map.AddFloorItem(floorItem);
 
                         SendScreenSpawn(floorItem);
                     }
-                    killer.Owner.Send(new Network.GamePackets.Message("Wow ! You Killed the " + Name + " and Got SolarBladeRemain ! Keep Going !", System.Drawing.Color.Blue, 2005));
+
+                    killer.Owner.Send(new Message(
+                        "Wow ! You Killed the " + Name + " and Got SolarBladeRemain ! Keep Going !", Color.Blue, 2005));
                     return;
                 }
             }
+
             #endregion
+
             #region GhostReaverAdv ( FourthStage Monster in TrojanEpicQuest ( Matrix Edition ) )
-            if (Name == "GhostReaverAdv")
-            {
-                if (Kernel.Rate(80, 100))
-                {
-                    if (killer.Name.Contains("Guard"))
-                    {
+
+            if (Name == "GhostReaverAdv") {
+                if (Kernel.Rate(80, 100)) {
+                    if (killer.Name.Contains("Guard")) {
                         return;
                     }
 
                     uint ItemID = 3003340;
-                    var infos = Database.ConquerItemInformation.BaseInformations[ItemID];
+                    var infos = ConquerItemInformation.BaseInformations[ItemID];
                     ushort X = Owner.X, Y = Owner.Y;
-                    Game.Map Map = Kernel.Maps[Owner.MapID];
-                    if (Map.SelectCoordonates(ref X, ref Y))
-                    {
-                        Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
-                        floorItem.Item = new Network.GamePackets.ConquerItem(true);
-                        floorItem.Item.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
+                    Map Map = Kernel.Maps[Owner.MapID];
+                    if (Map.SelectCoordonates(ref X, ref Y)) {
+                        FloorItem floorItem = new FloorItem(true);
+                        floorItem.Item = new ConquerItem(true);
+                        floorItem.Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                         floorItem.Item.ID = ItemID;
                         floorItem.Item.Plus = floorItem.Item.Plus;
                         floorItem.Item.MaximDurability = infos.Durability;
                         floorItem.Item.Durability = infos.Durability;
                         floorItem.Item.MobDropped = true;
-                        floorItem.ValueType = Network.GamePackets.FloorItem.FloorValueType.Item;
+                        floorItem.ValueType = FloorItem.FloorValueType.Item;
                         floorItem.ItemID = ItemID;
                         floorItem.MapID = Owner.MapID;
-                        floorItem.MapObjType = Game.MapObjectType.Item;
+                        floorItem.MapObjType = MapObjectType.Item;
                         floorItem.X = X;
                         floorItem.Y = Y;
-                        floorItem.Type = Network.GamePackets.FloorItem.Drop;
+                        floorItem.Type = FloorItem.Drop;
                         floorItem.OnFloor = Time32.Now;
                         floorItem.ItemColor = floorItem.Item.Color;
-                        floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                        floorItem.UID = FloorItem.FloorUID.Next;
                         while (Map.Npcs.ContainsKey(floorItem.UID))
 
-                            floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                            floorItem.UID = FloorItem.FloorUID.Next;
 
                         Map.AddFloorItem(floorItem);
 
                         SendScreenSpawn(floorItem);
                     }
-                    killer.Owner.Send(new Network.GamePackets.Message("Wow ! You Killed the " + Name + " and Got SolarBlade ! Keep Going !", System.Drawing.Color.Blue, 2005));
+
+                    killer.Owner.Send(new Message("Wow ! You Killed the " + Name + " and Got SolarBlade ! Keep Going !",
+                        Color.Blue, 2005));
                     return;
                 }
             }
-            #endregion                    
-            if (Name.Contains("ChestDemon"))
-            {
+
+            #endregion
+
+            if (Name.Contains("ChestDemon")) {
                 killer.ChestDemonkill += 1;
-                killer.Owner.Send(new Message("You have killed ChestDemon!", System.Drawing.Color.Azure, Message.Center));
+                killer.Owner.Send(new Message("You have killed ChestDemon!", Color.Azure, Message.Center));
             }
 
-            else
-            {
-
-
-
-            }
+            else { }
         }
-        public const int ReviverID = 9879;
 
-        public static uint GetIDFromName(string Name)
-        {
-            foreach (var item in MonsterInformations.Values)
-            {
+        public static uint GetIDFromName(string Name) {
+            foreach (var item in MonsterInformations.Values) {
                 if (item.Name == Name)
                     return item.ID;
             }
+
             return 0;
         }
 
-        public static ushort GetMeshFromName(string Name)
-        {
-            foreach (var item in MonsterInformations.Values)
-            {
+        public static ushort GetMeshFromName(string Name) {
+            foreach (var item in MonsterInformations.Values) {
                 if (item.Name == Name)
                     return item.Mesh;
             }
+
             return 0;
         }
 
-        public static SafeDictionary<uint, MonsterInformation> MonsterInformations = new SafeDictionary<uint, MonsterInformation>(8000);
-
-        public static void Load()
-        {
-            using (var command = new MySqlCommand(MySqlCommandType.SELECT))
-            {
+        public static void Load() {
+            using (var command = new MySqlCommand(MySqlCommandType.SELECT)) {
                 command.Select("monsterinfos");
-                using (var reader = command.CreateReader())
-                {
-                    while (reader.Read())
-                    {
+                using (var reader = command.CreateReader()) {
+                    while (reader.Read()) {
                         MonsterInformation mf = new MonsterInformation();
                         mf.ID = reader.ReadUInt32("id");
                         mf.Name = reader.ReadString("name");
@@ -1219,18 +1184,17 @@ namespace MTA.Database
                         mf.AttackSpeed = reader.ReadInt32("attack_speed");
                         mf.ExtraExperience = reader.ReadUInt32("extra_exp");
                         ulong MoneyDropAmount = reader.ReadUInt16("level");
-                        if (MoneyDropAmount != 0)
-                        {
+                        if (MoneyDropAmount != 0) {
                             mf.MaxMoneyDropAmount = MoneyDropAmount * 25;
                             if (mf.MaxMoneyDropAmount != 0)
                                 mf.MinMoneyDropAmount = 1;
                         }
+
                         if (mf.MoveSpeed <= 500)
                             mf.MoveSpeed += 500;
                         if (mf.AttackSpeed <= 500)
                             mf.AttackSpeed += 500;
-                        if (mf.ID == 9003)
-                        {
+                        if (mf.ID == 9003) {
                             var x = mf;
                         }
 
@@ -1242,20 +1206,19 @@ namespace MTA.Database
                             mf.Name == "Bladeling" ||
                             mf.Name == "BlueBird" ||
                             mf.Name == "BlueFiend" ||
-                            mf.Name == "MinotaurL120")
-                        {
+                            mf.Name == "MinotaurL120") {
                             mf.LabirinthDrop = true;
                             lvl = 20;
                         }
                     }
                 }
             }
+
             Console.WriteLine("Monster information loaded.");
             //Console.WriteLine("Monster drops generated.");
         }
 
-        public MonsterInformation Copy()
-        {
+        public MonsterInformation Copy() {
             MonsterInformation mf = new MonsterInformation();
             mf.ID = this.ID;
             mf.Name = this.Name;
@@ -1293,5 +1256,21 @@ namespace MTA.Database
             mf.Reviver = this.Reviver;
             return mf;
         }
+
+        private struct SpecialItemDrop {
+            public int ItemID, Rate, Discriminant, Map;
+        }
+
+        #region Special Mobs Matrix
+
+        public uint Type;
+        public byte Switch;
+        public uint helmet_type;
+        public uint armor_type;
+        public uint weaponr_type;
+        public uint weaponl_type;
+        public Time32 Lastpop;
+
+        #endregion
     }
 }

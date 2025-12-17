@@ -1,32 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using Throne.World.Database.Information.Files;
+using MTA.Network.GamePackets;
 
-namespace MTA
-{
-    public sealed class StorageManager
-    {
+namespace MTA.Database {
+    public sealed class StorageManager {
         private static StorageInfo Info;
-        public static Dictionary<uint, MTA.Network.GamePackets.WardrobeTitles> Data;
+        public static Dictionary<uint, WardrobeTitles> Data;
 
-        public static void Load()
-        {
+        public static void Load() {
             Storage.Read(out Info);
 
-            if (Info == null || Info.Count == 0 || Info.Storages == null || Info.Storages.Length == 0)
-            {
-                throw new System.Exception("WARNING: Database/Storage.ini is missing, empty.");
+            if (Info == null || Info.Count == 0 || Info.Storages == null || Info.Storages.Length == 0) {
+                throw new Exception("WARNING: Database/Storage.ini is missing, empty.");
             }
 
             Data = [];
-            using (var cmd = new Database.MySqlCommand(Database.MySqlCommandType.SELECT))
-            {
+            using (var cmd = new MySqlCommand(MySqlCommandType.SELECT)) {
                 cmd.Select("Titles");
                 var reader = cmd.CreateReader();
-                while (reader.Read())
-                {
-                    var title = new MTA.Network.GamePackets.WardrobeTitles
-                    {
+                while (reader.Read()) {
+                    var title = new WardrobeTitles {
                         Id = reader.ReadUInt32("Id"),
                         Points = reader.ReadInt32("Points"),
                         Data = reader.ReadBlob("Data")
@@ -34,18 +27,16 @@ namespace MTA
                     Data.Add(title.Id, title);
                 }
             }
+
             Console.WriteLine("Storage Manager loaded.");
         }
 
-        public static T Wing<T>(int _type, int _id)
-        {
+        public static T Wing<T>(int _type, int _id) {
             object value;
-            if (typeof(T) == typeof(bool))
-            {
+            if (typeof(T) == typeof(bool)) {
                 value = int.TryParse(Info.GetUnitByID(_id, Info.GetStorageByType(_type)).Param, out int trash);
             }
-            else if (typeof(T) == typeof(int))
-            {
+            else if (typeof(T) == typeof(int)) {
                 var myType = _type.ToString();
                 var myID = _id.ToString();
                 while (myID.Length < 4)
@@ -54,17 +45,16 @@ namespace MTA
             }
             else
                 throw new Exception("Unknow type : " + typeof(T).Name);
+
             return (T)Convert.ChangeType(value, typeof(T));
         }
-        public static T Title<T>(int _type, int _id)
-        {
+
+        public static T Title<T>(int _type, int _id) {
             object value;
-            if (typeof(T) == typeof(bool))
-            {
+            if (typeof(T) == typeof(bool)) {
                 value = !int.TryParse(Info.GetUnitByID(_id, Info.GetStorageByType(_type)).Param, out int trash);
             }
-            else if (typeof(T) == typeof(int))
-            {
+            else if (typeof(T) == typeof(int)) {
                 var myType = _type.ToString();
                 var myID = _id.ToString();
 
@@ -74,21 +64,20 @@ namespace MTA
             }
             else
                 throw new Exception("Unknow type : " + typeof(T).Name);
+
             return (T)Convert.ChangeType(value, typeof(T));
         }
 
-        public static Network.GamePackets.WardrobeTitles Find(Func<Network.GamePackets.WardrobeTitles, bool> predicate)
-        {
-            foreach (var title in Data.Values)
-            {
+        public static WardrobeTitles Find(Func<WardrobeTitles, bool> predicate) {
+            foreach (var title in Data.Values) {
                 if (predicate(title))
                     return title;
             }
+
             return null;
         }
 
-        public static int GetTitlePoints(short _type, short _id)
-        {
+        public static int GetTitlePoints(short _type, short _id) {
             if (_type == 1 && _id == 1000)
                 return 150;
             else if (_type == 2018 && _id == 1)
