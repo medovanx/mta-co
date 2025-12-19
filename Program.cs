@@ -17,7 +17,6 @@ using MTA.Game.ConquerStructures.Society;
 using MTA.Game.Npcs;
 using MTA.Game.Npcs.ScriptEngine;
 using MTA.MaTrix;
-using MTA.MaTrix.GUI;
 using MTA.MrNiTro.Systems;
 using MTA.Network;
 using MTA.Network.AuthPackets;
@@ -455,10 +454,6 @@ namespace MTA {
                     return;
                 string[] data = command.Split(' ');
                 switch (data[0]) {
-                    case "@jsspell": {
-                        new SpellControl().ShowDialog();
-                        break;
-                    }
                     case "@nob": {
                         NobilityTable.Load();
                         break;
@@ -466,11 +461,6 @@ namespace MTA {
                     case "@reloadnpc": {
                         World.ScriptEngine.Check_Updates();
                         Console.WriteLine("New System's Npc Reloaded.");
-                        break;
-                    }
-                    case "@cp": {
-                        Controlpanel cp = new Controlpanel();
-                        cp.ShowDialog();
                         break;
                     }
                     case "@campion": {
