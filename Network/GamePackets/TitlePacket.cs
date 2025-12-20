@@ -12,14 +12,14 @@ namespace MTA.Network.GamePackets
             if (create)
             {
                 mData = new Byte[24 + 8];
-                Writer.WriteUInt16((UInt16)(mData.Length - 8), 0, mData);
-                Writer.WriteUInt16(1130, 2, mData);
+                WriteUInt16((UInt16)(mData.Length - 8), 0, mData);
+                WriteUInt16(1130, 2, mData);
             }
         }
         public UInt32 Identifier // UID
         {
             get { return BitConverter.ToUInt32(mData, 4); }
-            set { Writer.WriteUInt32(value, 4, mData); }
+            set { WriteUInt32(value, 4, mData); }
         }
         public Titles Title
         {
@@ -29,7 +29,7 @@ namespace MTA.Network.GamePackets
         public Types Type
         {
             get { return (Types)mData[9]; }
-            set { Writer.WriteUInt16((UInt16)value, 9, mData); }
+            set { WriteUInt16((UInt16)value, 9, mData); }
         }
         public Byte Count //dwParam
         {
@@ -44,15 +44,15 @@ namespace MTA.Network.GamePackets
             mData = new Byte[tmp.Length + 1 + 8];
             Buffer.BlockCopy(tmp, 0, mData, 0, tmp.Length);
 
-            Writer.WriteUInt16((UInt16)(mData.Length - 8), 0, mData);
+            WriteUInt16((UInt16)(mData.Length - 8), 0, mData);
 
-            Writer.WriteByte(id, Offset, mData);
+            WriteByte(id, Offset, mData);
 
             Offset++;
         }
         public void Deserialize(byte[] buffer)
         {
-            this.mData = buffer;
+            mData = buffer;
         }
         public byte[] ToArray()
         {

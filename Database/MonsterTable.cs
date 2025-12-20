@@ -874,7 +874,7 @@ namespace MTA.Database {
 
             uint ran1 = (uint)Kernel.Random.Next(1, 22);
             if (ran1 > 15) {
-                if (this.Name == "ChestDemon") {
+                if (Name == "ChestDemon") {
                     if (killer.Name.Contains("Guard"))
                         return;
 
@@ -1219,40 +1219,40 @@ namespace MTA.Database {
 
         public MonsterInformation Copy() {
             MonsterInformation mf = new MonsterInformation();
-            mf.ID = this.ID;
-            mf.Name = this.Name;
-            mf.Name2 = this.Name2;
-            mf.Mesh = this.Mesh;
-            mf.Level = this.Level;
-            mf.Hitpoints = this.Hitpoints;
-            mf.ViewRange = this.ViewRange;
-            mf.AttackRange = this.AttackRange;
-            mf.AttackType = this.AttackType;
-            mf.MinAttack = this.MinAttack;
-            mf.MaxAttack = this.MaxAttack;
-            mf.SpellID = this.SpellID;
-            mf.MoveSpeed = this.MoveSpeed;
-            mf.RunSpeed = this.RunSpeed;
-            mf.AttackSpeed = this.AttackSpeed;
-            mf.BoundX = this.BoundX;
-            mf.BoundY = this.BoundY;
-            mf.BoundCX = this.BoundCX;
-            mf.BoundCY = this.BoundCY;
-            mf.RespawnTime = this.RespawnTime;
-            mf.IsRespawnAble = this.IsRespawnAble;
-            mf.ExtraExperience = this.ExtraExperience;
-            mf.MaxMoneyDropAmount = this.MaxMoneyDropAmount;
-            mf.MinMoneyDropAmount = this.MinMoneyDropAmount;
+            mf.ID = ID;
+            mf.Name = Name;
+            mf.Name2 = Name2;
+            mf.Mesh = Mesh;
+            mf.Level = Level;
+            mf.Hitpoints = Hitpoints;
+            mf.ViewRange = ViewRange;
+            mf.AttackRange = AttackRange;
+            mf.AttackType = AttackType;
+            mf.MinAttack = MinAttack;
+            mf.MaxAttack = MaxAttack;
+            mf.SpellID = SpellID;
+            mf.MoveSpeed = MoveSpeed;
+            mf.RunSpeed = RunSpeed;
+            mf.AttackSpeed = AttackSpeed;
+            mf.BoundX = BoundX;
+            mf.BoundY = BoundY;
+            mf.BoundCX = BoundCX;
+            mf.BoundCY = BoundCY;
+            mf.RespawnTime = RespawnTime;
+            mf.IsRespawnAble = IsRespawnAble;
+            mf.ExtraExperience = ExtraExperience;
+            mf.MaxMoneyDropAmount = MaxMoneyDropAmount;
+            mf.MinMoneyDropAmount = MinMoneyDropAmount;
             // mf.OwnItemID = this.OwnItemID;
-            mf.HPPotionID = this.HPPotionID;
-            mf.MPPotionID = this.MPPotionID;
+            mf.HPPotionID = HPPotionID;
+            mf.MPPotionID = MPPotionID;
             //mf.OwnItemRate = this.OwnItemRate;
-            mf.LabirinthDrop = this.LabirinthDrop;
-            mf.Boss = this.Boss;
-            mf.SuperBoss = this.SuperBoss;
-            mf.Guard = this.Guard;
-            mf.Defence = this.Defence;
-            mf.Reviver = this.Reviver;
+            mf.LabirinthDrop = LabirinthDrop;
+            mf.Boss = Boss;
+            mf.SuperBoss = SuperBoss;
+            mf.Guard = Guard;
+            mf.Defence = Defence;
+            mf.Reviver = Reviver;
             return mf;
         }
 

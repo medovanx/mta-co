@@ -123,7 +123,7 @@ namespace MTA.Client.Commands
                                 floorItem.OnFloor = Time32.Now;
                                 floorItem.Owner = client;
                                 while (client.Map.Npcs.ContainsKey(floorItem.UID))
-                                    floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                                    floorItem.UID = FloorItem.FloorUID.Next;
                                 client.Map.AddFloorItem(floorItem);
                                 client.SendScreenSpawn(floorItem, true);
                             }
@@ -144,7 +144,7 @@ namespace MTA.Client.Commands
                             floorItem.OnFloor = Time32.Now;
                             floorItem.Owner = client;
                             while (client.Map.Npcs.ContainsKey(floorItem.UID))
-                                floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                                floorItem.UID = FloorItem.FloorUID.Next;
                             client.Map.AddFloorItem(floorItem);
                             client.SendScreenSpawn(floorItem, true);
                             break;
@@ -244,8 +244,8 @@ namespace MTA.Client.Commands
                             Map dynamicMap = Kernel.Maps[700].MakeDynamicMap();
                             client.Entity.Teleport(700, dynamicMap.ID, 50, 50);
 
-                            client.AI = new MaTrix.AI(client, MaTrix.AI.BotLevel.MaTrix);
-                            new MaTrix.AI(client.Entity.MapID, client.Entity.X, client.Entity.Y, MaTrix.AI.BotLevel.MaTrix);
+                            client.AI = new AI(client, AI.BotLevel.MaTrix);
+                            new AI(client.Entity.MapID, client.Entity.X, client.Entity.Y, AI.BotLevel.MaTrix);
 
                             break;
                         }
@@ -443,7 +443,7 @@ namespace MTA.Client.Commands
                         {
                             foreach (var skill in client.Spells.Values)
                             {
-                                Network.GamePackets.Data data = new Data(true);
+                                Data data = new Data(true);
                                 data.UID = client.Entity.UID;
                                 data.dwParam = client.Spells[skill.ID].ID;
                                 data.ID = 109;
@@ -469,7 +469,7 @@ namespace MTA.Client.Commands
                             int count = int.Parse(Data[1]);
                             for (int i = 0; i < count; i++)
                             {
-                                MaTrix.Inbox.AddPrize(client, "Matrix" + i.ToString(), "Inbox Test" + i.ToString(),
+                                Inbox.AddPrize(client, "Matrix" + i.ToString(), "Inbox Test" + i.ToString(),
                                     "Message" + i.ToString(), 5000000, 5000000);
                                 /*   MaTrix.Inbox.PrizeInfo prize = new MaTrix.Inbox.PrizeInfo()
                                    {
@@ -529,14 +529,14 @@ namespace MTA.Client.Commands
                             {
                                 case "add":
                                     {
-                                        Game.ConquerStructures.Booth booth = new Game.ConquerStructures.Booth();
+                                        Booth booth = new Booth();
                                         SobNpcSpawn Base = new SobNpcSpawn();
                                         Base.UID = uint.Parse(Data[2]);
                                         if (Booth.Booths2.ContainsKey(Base.UID))
                                             Booth.Booths2.Remove(Base.UID);
                                         Booth.Booths2.Add(Base.UID, booth);
                                         Base.Mesh = 100;
-                                        Base.Type = Game.Enums.NpcType.Booth;
+                                        Base.Type = Enums.NpcType.Booth;
                                         Base.ShowName = true;
                                         Base.Name = "matrix™[" + Base.UID.ToString() + "]";
                                         Base.MapID = client.Entity.MapID;

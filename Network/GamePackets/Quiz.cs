@@ -19,10 +19,10 @@ namespace MTA.Networking.GamePackets
         public OpenQuiz()
         {
             Buffer = new byte[52];
-            Writer.WriteUInt16(44, 0, Buffer);
-            Writer.WriteUInt16(2068, 2, Buffer);
+            WriteUInt16(44, 0, Buffer);
+            WriteUInt16(2068, 2, Buffer);
         }
-        public ushort Type { get { return BitConverter.ToUInt16(Buffer, 4); } set { Writer.WriteUInt16(value, 4, Buffer); } }
+        public ushort Type { get { return BitConverter.ToUInt16(Buffer, 4); } set { WriteUInt16(value, 4, Buffer); } }
         public ushort StartInTimeSecouds { get { return BitConverter.ToUInt16(Buffer, 6); } set { WriteUInt16(value, 6, Buffer); } }
         public ushort AllQuestions { get { return BitConverter.ToUInt16(Buffer, 8); } set { WriteUInt16(value, 8, Buffer); } }
 
@@ -63,30 +63,30 @@ namespace MTA.Networking.GamePackets
         public QuizQuestions(string[] Questions)
         {
             Buffer = new byte[52 + 4 + GetLeng(Questions)];
-            Writer.WriteUInt16((ushort)(44 + 4 + GetLeng(Questions)), 0, Buffer);
-            Writer.WriteUInt16(2068, 2, Buffer);
+            WriteUInt16((ushort)(44 + 4 + GetLeng(Questions)), 0, Buffer);
+            WriteUInt16(2068, 2, Buffer);
 
             Buffer[24] = (byte)Questions.Length;
 
             int position = 25;
             for (ushort i = 0; i < (ushort)Questions.Length; i++)
             {
-                Writer.WriteStringWithLength(Questions[i], position, Buffer);
+                WriteStringWithLength(Questions[i], position, Buffer);
                 position += 1 + Questions[i].Length;
             }
         }
 
-        public ushort Type { get { return BitConverter.ToUInt16(Buffer, 4); } set { Writer.WriteUInt16(value, 4, Buffer); } }
+        public ushort Type { get { return BitConverter.ToUInt16(Buffer, 4); } set { WriteUInt16(value, 4, Buffer); } }
 
-        public ushort NoQuestion { get { return BitConverter.ToUInt16(Buffer, 6); } set { Writer.WriteUInt16(value, 6, Buffer); } }
+        public ushort NoQuestion { get { return BitConverter.ToUInt16(Buffer, 6); } set { WriteUInt16(value, 6, Buffer); } }
 
-        public ushort Right { get { return BitConverter.ToUInt16(Buffer, 8); } set { Writer.WriteUInt16(value, 8, Buffer); } }//1 = right answer and 2 wrong
+        public ushort Right { get { return BitConverter.ToUInt16(Buffer, 8); } set { WriteUInt16(value, 8, Buffer); } }//1 = right answer and 2 wrong
 
-        public ushort AllQuestions { get { return BitConverter.ToUInt16(Buffer, 10); } set { Writer.WriteUInt16(value, 10, Buffer); } }//20
+        public ushort AllQuestions { get { return BitConverter.ToUInt16(Buffer, 10); } set { WriteUInt16(value, 10, Buffer); } }//20
 
-        public ushort FullTimeLimit { get { return BitConverter.ToUInt16(Buffer, 12); } set { Writer.WriteUInt16(value, 12, Buffer); } }//30
+        public ushort FullTimeLimit { get { return BitConverter.ToUInt16(Buffer, 12); } set { WriteUInt16(value, 12, Buffer); } }//30
 
-        public ushort MyPoints { get { return BitConverter.ToUInt16(Buffer, 14); } set { Writer.WriteUInt16(value, 14, Buffer); } }
+        public ushort MyPoints { get { return BitConverter.ToUInt16(Buffer, 14); } set { WriteUInt16(value, 14, Buffer); } }
 
 
         public void Send(GameState client)
@@ -111,14 +111,14 @@ namespace MTA.Networking.GamePackets
         public QuizRank()
         {
             Buffer = new byte[92];
-            Writer.WriteUInt16(84, 0, Buffer);
-            Writer.WriteUInt16(2068, 2, Buffer);
+            WriteUInt16(84, 0, Buffer);
+            WriteUInt16(2068, 2, Buffer);
         }
-        public ushort Type { get { return BitConverter.ToUInt16(Buffer, 4); } set { Writer.WriteUInt16(value, 4, Buffer); } }
+        public ushort Type { get { return BitConverter.ToUInt16(Buffer, 4); } set { WriteUInt16(value, 4, Buffer); } }
 
-        public ushort MyPoints { get { return BitConverter.ToUInt16(Buffer, 6); } set { Writer.WriteUInt16(value, 6, Buffer); } }
+        public ushort MyPoints { get { return BitConverter.ToUInt16(Buffer, 6); } set { WriteUInt16(value, 6, Buffer); } }
 
-        public ushort MyTime { get { return BitConverter.ToUInt16(Buffer, 8); } set { Writer.WriteUInt16(value, 8, Buffer); } }
+        public ushort MyTime { get { return BitConverter.ToUInt16(Buffer, 8); } set { WriteUInt16(value, 8, Buffer); } }
 
         public byte MyRank { get { return Buffer[10]; } set { Buffer[10] = value; } }
 

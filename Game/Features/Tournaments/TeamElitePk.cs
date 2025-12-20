@@ -1521,8 +1521,8 @@ namespace MTA.Game.Features.Tournaments {
 
             public FighterStats Clone() {
                 FighterStats stats = new FighterStats(LeaderUID, Name, LeaderMesh, Team);
-                stats.Points = this.Points;
-                stats.Flag = this.Flag;
+                stats.Points = Points;
+                stats.Flag = Flag;
 
                 return stats;
             }
@@ -1691,7 +1691,7 @@ namespace MTA.Game.Features.Tournaments {
 
                                     if (!dismised.Lost) {
                                         Console.WriteLine("team " + dismised.Team.EliteFighterStats.Name + " has lost");
-                                        this.End(dismised.Team);
+                                        End(dismised.Team);
                                     }
                                 }
                             }

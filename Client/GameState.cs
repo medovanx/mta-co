@@ -488,8 +488,8 @@ namespace MTA.Client {
                         }
 
                         if (!Auras.ContainsKey(aura)) {
-                            if (this.Entity.UID != monk.Entity.UID &&
-                                Kernel.GetDistance(this.Entity.X, this.Entity.Y, monk.Entity.X, monk.Entity.Y) <=
+                            if (Entity.UID != monk.Entity.UID &&
+                                Kernel.GetDistance(Entity.X, Entity.Y, monk.Entity.X, monk.Entity.Y) <=
                                 Constants.pScreenDistance) {
                                 Auras Aura = new Auras();
                                 Aura.TeamAuraOwner = monk;
@@ -499,10 +499,10 @@ namespace MTA.Client {
                                 Aura.aura = aura;
                                 if (!Auras.ContainsKey(Aura.aura)) {
                                     Auras.Add(Aura.aura, Aura);
-                                    this.Entity.AddFlag2(Aura.TeamAuraStatusFlag);
-                                    new Update(true).Aura(this.Entity, Update.AuraDataTypes.Add, aura,
+                                    Entity.AddFlag2(Aura.TeamAuraStatusFlag);
+                                    new Update(true).Aura(Entity, Update.AuraDataTypes.Add, aura,
                                         Aura.TeamAuraLevel, Aura.TeamAuraPower);
-                                    this.doAuraBonuses(Aura.TeamAuraStatusFlag, Aura.TeamAuraPower, 1);
+                                    doAuraBonuses(Aura.TeamAuraStatusFlag, Aura.TeamAuraPower, 1);
                                 }
                             }
                         }
@@ -513,34 +513,34 @@ namespace MTA.Client {
             foreach (var Aura in Auras.Values.ToArray()) {
                 var pthis = Aura.TeamAuraOwner;
                 if (pthis == null) {
-                    new Update(true).Aura(this.Entity, Update.AuraDataTypes.Remove, Aura.aura, Aura.TeamAuraLevel,
+                    new Update(true).Aura(Entity, Update.AuraDataTypes.Remove, Aura.aura, Aura.TeamAuraLevel,
                         Aura.TeamAuraPower);
                     //this.removeAuraBonuses(this.TeamAuraStatusFlag, this.TeamAuraPower, 1);
-                    this.removeAuraBonuses(Aura.TeamAuraStatusFlag, Aura.TeamAuraPower, 1);
-                    this.Entity.RemoveFlag2(Aura.TeamAuraStatusFlag);
+                    removeAuraBonuses(Aura.TeamAuraStatusFlag, Aura.TeamAuraPower, 1);
+                    Entity.RemoveFlag2(Aura.TeamAuraStatusFlag);
                     Auras.Remove(Aura.aura);
                 }
                 else {
                     if (!pthis.Entity.Aura_isActive || !pthis.Socket.Alive || pthis.Entity.Dead ||
-                        pthis.Entity.MapID != this.Entity.MapID ||
+                        pthis.Entity.MapID != Entity.MapID ||
                         pthis.Entity.Aura_actType != Aura.TeamAuraStatusFlag) {
-                        new Update(true).Aura(this.Entity, Update.AuraDataTypes.Remove, Aura.aura, Aura.TeamAuraLevel,
+                        new Update(true).Aura(Entity, Update.AuraDataTypes.Remove, Aura.aura, Aura.TeamAuraLevel,
                             Aura.TeamAuraPower);
                         //this.removeAuraBonuses(this.TeamAuraStatusFlag, this.TeamAuraPower, 1);
-                        this.removeAuraBonuses(Aura.TeamAuraStatusFlag, Aura.TeamAuraPower, 1);
-                        this.Entity.RemoveFlag2(Aura.TeamAuraStatusFlag);
+                        removeAuraBonuses(Aura.TeamAuraStatusFlag, Aura.TeamAuraPower, 1);
+                        Entity.RemoveFlag2(Aura.TeamAuraStatusFlag);
                         Auras.Remove(Aura.aura);
                     }
                     else {
-                        if (this.Team == null ||
-                            (pthis.Team == null || (pthis.Team != null && !pthis.Team.IsTeammate(this.Entity.UID))) ||
-                            this.Entity.Dead ||
-                            Kernel.GetDistance(this.Entity.X, this.Entity.Y, pthis.Entity.X, pthis.Entity.Y) >
+                        if (Team == null ||
+                            (pthis.Team == null || (pthis.Team != null && !pthis.Team.IsTeammate(Entity.UID))) ||
+                            Entity.Dead ||
+                            Kernel.GetDistance(Entity.X, Entity.Y, pthis.Entity.X, pthis.Entity.Y) >
                             Constants.pScreenDistance) {
-                            new Update(true).Aura(this.Entity, Update.AuraDataTypes.Remove, Aura.aura,
+                            new Update(true).Aura(Entity, Update.AuraDataTypes.Remove, Aura.aura,
                                 Aura.TeamAuraLevel, Aura.TeamAuraPower);
-                            this.removeAuraBonuses(Aura.TeamAuraStatusFlag, Aura.TeamAuraPower, 1);
-                            this.Entity.RemoveFlag2(Aura.TeamAuraStatusFlag);
+                            removeAuraBonuses(Aura.TeamAuraStatusFlag, Aura.TeamAuraPower, 1);
+                            Entity.RemoveFlag2(Aura.TeamAuraStatusFlag);
                             Auras.Remove(Aura.aura);
                         }
                     }
@@ -715,7 +715,7 @@ namespace MTA.Client {
                 }
                 else if (Team != null) {
                     if (Team.EliteMatch != null) {
-                        var opponent = Team.EliteMatch.targetOfWin(this.Team);
+                        var opponent = Team.EliteMatch.targetOfWin(Team);
                         if (opponent != null) {
                             opponent.Points += (uint)damage;
                             opponent.Team.SendMesageTeam(opponent.Team.EliteMatch.CreateUpdate().ToArray(), 0);
@@ -802,7 +802,7 @@ namespace MTA.Client {
                 DeatinedItem = new SafeDictionary<uint, DetainedItem>();
             }
 
-            SubClassTable.Load(this.Entity);
+            SubClassTable.Load(Entity);
             if (!loadFake) {
                 using (var conn = DataHolder.MySqlConnection) {
                     conn.Open();
@@ -835,27 +835,27 @@ namespace MTA.Client {
         public void FakeLoad(uint UID, bool enterserver = true) {
             if (!Kernel.GamePool.ContainsKey(UID)) {
                 ReadyToPlay();
-                this.Account = new AccountTable(null);
-                this.Account.EntityID = UID;
+                Account = new AccountTable(null);
+                Account.EntityID = UID;
                 if (EntityTable.LoadEntity(this)) {
-                    if (this.Entity.FullyLoaded) {
+                    if (Entity.FullyLoaded) {
                         VariableVault variables;
-                        EntityVariableTable.Load(this.Entity.UID, out variables);
-                        this.Variables = variables;
+                        EntityVariableTable.Load(Entity.UID, out variables);
+                        Variables = variables;
 
-                        if (this.BackupArmorLook != 0)
-                            this.SetNewArmorLook(this.BackupArmorLook);
+                        if (BackupArmorLook != 0)
+                            SetNewArmorLook(BackupArmorLook);
                         else
-                            this.SetNewArmorLook(this.ArmorLook);
-                        this.SetNewHeadgearLook(this.HeadgearLook);
-                        this.BackupArmorLook = 0;
+                            SetNewArmorLook(ArmorLook);
+                        SetNewHeadgearLook(HeadgearLook);
+                        BackupArmorLook = 0;
 
-                        this.LoadData(enterserver);
+                        LoadData(enterserver);
 
-                        if (this.Entity.GuildID != 0)
-                            this.Entity.GuildBattlePower = this.Guild.GetSharedBattlepower(this.Entity.GuildRank);
+                        if (Entity.GuildID != 0)
+                            Entity.GuildBattlePower = Guild.GetSharedBattlepower(Entity.GuildRank);
 
-                        this.ReviewMentor();
+                        ReviewMentor();
 
                         Entity.NobilityRank = NobilityInformation.Rank;
 
@@ -876,77 +876,77 @@ namespace MTA.Client {
             if (Name == "")
                 Name = "MaTrix[" + UID + "]";
             if (!Kernel.GamePool.ContainsKey(UID)) {
-                this.ReadyToPlay();
-                this.Account = new AccountTable(null);
-                this.Account.EntityID = UID;
-                this.Entity = new Entity(EntityFlag.Player, false);
-                this.Entity.Owner = this;
-                this.Entity.Name = Name;
-                this.Entity.UID = UID;
-                this.Entity.Vitality = 537;
-                this.Entity.Face = 37;
-                this.Entity.Body = 1003;
-                this.Entity.HairStyle = 630;
-                this.Entity.Level = 140;
-                this.Entity.Class = 15;
-                this.Entity.Reborn = 2;
-                this.Entity.MaxHitpoints = 20000;
-                this.Entity.Hitpoints = this.Entity.MaxHitpoints;
-                this.Entity.Mana = 800;
+                ReadyToPlay();
+                Account = new AccountTable(null);
+                Account.EntityID = UID;
+                Entity = new Entity(EntityFlag.Player, false);
+                Entity.Owner = this;
+                Entity.Name = Name;
+                Entity.UID = UID;
+                Entity.Vitality = 537;
+                Entity.Face = 37;
+                Entity.Body = 1003;
+                Entity.HairStyle = 630;
+                Entity.Level = 140;
+                Entity.Class = 15;
+                Entity.Reborn = 2;
+                Entity.MaxHitpoints = 20000;
+                Entity.Hitpoints = Entity.MaxHitpoints;
+                Entity.Mana = 800;
 
-                this.Variables = new VariableVault();
-                this.Friends = new SafeDictionary<uint, Friend>();
-                this.Enemy = new SafeDictionary<uint, Enemy>();
-                this.ChiData = new ChiTable.ChiData();
-                this.ChiPowers = new List<ChiPowerStructure>();
+                Variables = new VariableVault();
+                Friends = new SafeDictionary<uint, Friend>();
+                Enemy = new SafeDictionary<uint, Enemy>();
+                ChiData = new ChiTable.ChiData();
+                ChiPowers = new List<ChiPowerStructure>();
 
 
-                this.NobilityInformation = new NobilityInformation();
-                this.NobilityInformation.EntityUID = this.Entity.UID;
-                this.NobilityInformation.Name = this.Entity.Name;
-                this.NobilityInformation.Donation = 0;
-                this.NobilityInformation.Rank = NobilityRank.Serf;
-                this.NobilityInformation.Position = -1;
-                this.NobilityInformation.Gender = 1;
-                this.NobilityInformation.Mesh = this.Entity.Mesh;
-                if (this.Entity.Body % 10 >= 3)
-                    this.NobilityInformation.Gender = 0;
+                NobilityInformation = new NobilityInformation();
+                NobilityInformation.EntityUID = Entity.UID;
+                NobilityInformation.Name = Entity.Name;
+                NobilityInformation.Donation = 0;
+                NobilityInformation.Rank = NobilityRank.Serf;
+                NobilityInformation.Position = -1;
+                NobilityInformation.Gender = 1;
+                NobilityInformation.Mesh = Entity.Mesh;
+                if (Entity.Body % 10 >= 3)
+                    NobilityInformation.Gender = 0;
 
-                this.TeamArenaStatistic = new TeamArenaStatistic(true);
-                this.TeamArenaStatistic.EntityID = this.Entity.UID;
-                this.TeamArenaStatistic.Name = this.Entity.Name;
-                this.TeamArenaStatistic.Level = this.Entity.Level;
-                this.TeamArenaStatistic.Class = this.Entity.Class;
-                this.TeamArenaStatistic.Model = this.Entity.Mesh;
-                this.TeamArenaStatistic.Status = TeamArenaStatistic.NotSignedUp;
+                TeamArenaStatistic = new TeamArenaStatistic(true);
+                TeamArenaStatistic.EntityID = Entity.UID;
+                TeamArenaStatistic.Name = Entity.Name;
+                TeamArenaStatistic.Level = Entity.Level;
+                TeamArenaStatistic.Class = Entity.Class;
+                TeamArenaStatistic.Model = Entity.Mesh;
+                TeamArenaStatistic.Status = TeamArenaStatistic.NotSignedUp;
 
-                this.ArenaStatistic = new ArenaStatistic(true);
-                this.ArenaStatistic.EntityID = this.Entity.UID;
-                this.ArenaStatistic.Name = this.Entity.Name;
-                this.ArenaStatistic.Level = this.Entity.Level;
-                this.ArenaStatistic.Class = this.Entity.Class;
-                this.ArenaStatistic.Model = this.Entity.Mesh;
-                this.ArenaPoints = ArenaTable.ArenaPointFill(this.Entity.Level);
-                this.ArenaStatistic.LastArenaPointFill = DateTime.Now;
-                this.ArenaStatistic.Status = ArenaStatistic.NotSignedUp;
+                ArenaStatistic = new ArenaStatistic(true);
+                ArenaStatistic.EntityID = Entity.UID;
+                ArenaStatistic.Name = Entity.Name;
+                ArenaStatistic.Level = Entity.Level;
+                ArenaStatistic.Class = Entity.Class;
+                ArenaStatistic.Model = Entity.Mesh;
+                ArenaPoints = ArenaTable.ArenaPointFill(Entity.Level);
+                ArenaStatistic.LastArenaPointFill = DateTime.Now;
+                ArenaStatistic.Status = ArenaStatistic.NotSignedUp;
 
-                this.ChampionStats = new ChampionStatistic(true);
-                this.ChampionStats.UID = this.Entity.UID;
-                this.ChampionStats.Name = this.Entity.Name;
-                this.ChampionStats.Level = this.Entity.Level;
-                this.ChampionStats.Class = this.Entity.Class;
-                this.ChampionStats.Model = this.Entity.Mesh;
-                this.ChampionStats.Points = 0;
-                this.ChampionStats.LastReset = DateTime.Now;
-                this.ChiPowers = new List<ChiPowerStructure>();
-                this.Retretead_ChiPowers = new ChiPowerStructure[4];
-                this.ChiData = new ChiTable.ChiData()
-                    { Name = this.Entity.Name, UID = this.Entity.UID, Powers = this.ChiPowers };
+                ChampionStats = new ChampionStatistic(true);
+                ChampionStats.UID = Entity.UID;
+                ChampionStats.Name = Entity.Name;
+                ChampionStats.Level = Entity.Level;
+                ChampionStats.Class = Entity.Class;
+                ChampionStats.Model = Entity.Mesh;
+                ChampionStats.Points = 0;
+                ChampionStats.LastReset = DateTime.Now;
+                ChiPowers = new List<ChiPowerStructure>();
+                Retretead_ChiPowers = new ChiPowerStructure[4];
+                ChiData = new ChiTable.ChiData()
+                    { Name = Entity.Name, UID = Entity.UID, Powers = ChiPowers };
 
-                this.Entity.Stamina = 150;
+                Entity.Stamina = 150;
 
-                this.Spells = new SafeDictionary<ushort, ISkill>();
-                this.Proficiencies = new SafeDictionary<ushort, IProf>();
+                Spells = new SafeDictionary<ushort, ISkill>();
+                Proficiencies = new SafeDictionary<ushort, IProf>();
 
                 PacketHandler.LoginMessages(this);
 
@@ -969,8 +969,8 @@ namespace MTA.Client {
         public void FakeLoadx(uint UID) {
             if (!Kernel.GamePool.ContainsKey(UID)) {
                 ReadyToPlay();
-                this.Account = new AccountTable(null);
-                this.Account.EntityID = UID;
+                Account = new AccountTable(null);
+                Account.EntityID = UID;
                 //   if (Database.EntityTable.LoadEntity(this))
                 {
                     #region Load Entity
@@ -982,24 +982,24 @@ namespace MTA.Client {
                         return;
                     }
 
-                    this.Entity = new Entity(EntityFlag.Player, false);
-                    this.Entity.Name = reader.ReadString("BotName");
-                    this.Entity.Owner = this;
-                    this.Entity.UID = UID;
-                    this.Entity.Body = reader.ReadUInt16("BotBody");
-                    this.Entity.Face = reader.ReadUInt16("BotFace");
-                    this.Entity.HairStyle = reader.ReadUInt16("BotHairStyle");
-                    this.Entity.Level = reader.ReadByte("BotLevel");
-                    this.Entity.Class = reader.ReadByte("BotClass");
-                    this.Entity.Reborn = reader.ReadByte("BotReborns");
-                    this.Entity.Titles =
+                    Entity = new Entity(EntityFlag.Player, false);
+                    Entity.Name = reader.ReadString("BotName");
+                    Entity.Owner = this;
+                    Entity.UID = UID;
+                    Entity.Body = reader.ReadUInt16("BotBody");
+                    Entity.Face = reader.ReadUInt16("BotFace");
+                    Entity.HairStyle = reader.ReadUInt16("BotHairStyle");
+                    Entity.Level = reader.ReadByte("BotLevel");
+                    Entity.Class = reader.ReadByte("BotClass");
+                    Entity.Reborn = reader.ReadByte("BotReborns");
+                    Entity.Titles =
                         new ConcurrentDictionary<TitlePacket.Titles, DateTime>();
-                    this.Entity.MyTitle = (TitlePacket.Titles)reader.ReadUInt32("BotTitle");
-                    this.Entity.MapID = reader.ReadUInt16("BotMap");
-                    if (this.VendingDisguise == 0)
-                        this.VendingDisguise = 0xdf;
-                    this.Entity.X = reader.ReadUInt16("BotMapx");
-                    this.Entity.Y = reader.ReadUInt16("BotMapy");
+                    Entity.MyTitle = (TitlePacket.Titles)reader.ReadUInt32("BotTitle");
+                    Entity.MapID = reader.ReadUInt16("BotMap");
+                    if (VendingDisguise == 0)
+                        VendingDisguise = 0xdf;
+                    Entity.X = reader.ReadUInt16("BotMapx");
+                    Entity.Y = reader.ReadUInt16("BotMapy");
                     uint WeaponR = reader.ReadUInt32("BotWeaponR");
                     uint WeaponL = reader.ReadUInt32("BotWeaponL");
                     uint Armor = reader.ReadUInt32("BotArmor");
@@ -1025,134 +1025,134 @@ namespace MTA.Client {
                     string[] itemSocketTwo = reader.ReadString("BItemSoc2").Split(new string[] { "~", "@@", " " },
                         StringSplitOptions.RemoveEmptyEntries);
 
-                    this.ElitePKStats = new ElitePK.FighterStats(this.Entity.UID, this.Entity.Name, this.Entity.Mesh);
-                    if (!Nobility.Board.TryGetValue(this.Entity.UID,
-                            out this.NobilityInformation)) {
-                        this.NobilityInformation = new NobilityInformation();
-                        this.NobilityInformation.EntityUID = this.Entity.UID;
-                        this.NobilityInformation.Name = this.Entity.Name;
-                        this.NobilityInformation.Donation = 0L;
-                        this.NobilityInformation.Rank = NobilityRank.Serf;
-                        this.NobilityInformation.Position = -1;
-                        this.NobilityInformation.Gender = 1;
-                        this.NobilityInformation.Mesh = this.Entity.Mesh;
-                        if ((this.Entity.Body % 10) >= 3) {
-                            this.NobilityInformation.Gender = 0;
+                    ElitePKStats = new ElitePK.FighterStats(Entity.UID, Entity.Name, Entity.Mesh);
+                    if (!Nobility.Board.TryGetValue(Entity.UID,
+                            out NobilityInformation)) {
+                        NobilityInformation = new NobilityInformation();
+                        NobilityInformation.EntityUID = Entity.UID;
+                        NobilityInformation.Name = Entity.Name;
+                        NobilityInformation.Donation = 0L;
+                        NobilityInformation.Rank = NobilityRank.Serf;
+                        NobilityInformation.Position = -1;
+                        NobilityInformation.Gender = 1;
+                        NobilityInformation.Mesh = Entity.Mesh;
+                        if ((Entity.Body % 10) >= 3) {
+                            NobilityInformation.Gender = 0;
                         }
                     }
                     else {
-                        this.Entity.NobilityRank = this.NobilityInformation.Rank;
+                        Entity.NobilityRank = NobilityInformation.Rank;
                     }
 
-                    Arena.ArenaStatistics.TryGetValue(this.Entity.UID, out this.ArenaStatistic);
-                    if ((this.ArenaStatistic == null) || (this.ArenaStatistic.EntityID == 0)) {
-                        this.ArenaStatistic = new ArenaStatistic(true);
-                        this.ArenaStatistic.EntityID = this.Entity.UID;
-                        this.ArenaStatistic.Name = this.Entity.Name;
-                        this.ArenaStatistic.Level = this.Entity.Level;
-                        this.ArenaStatistic.Class = this.Entity.Class;
-                        this.ArenaStatistic.Model = this.Entity.Mesh;
-                        this.ArenaStatistic.ArenaPoints = ArenaTable.ArenaPointFill(this.Entity.Level);
-                        this.ArenaStatistic.LastArenaPointFill = DateTime.Now;
+                    Arena.ArenaStatistics.TryGetValue(Entity.UID, out ArenaStatistic);
+                    if ((ArenaStatistic == null) || (ArenaStatistic.EntityID == 0)) {
+                        ArenaStatistic = new ArenaStatistic(true);
+                        ArenaStatistic.EntityID = Entity.UID;
+                        ArenaStatistic.Name = Entity.Name;
+                        ArenaStatistic.Level = Entity.Level;
+                        ArenaStatistic.Class = Entity.Class;
+                        ArenaStatistic.Model = Entity.Mesh;
+                        ArenaStatistic.ArenaPoints = ArenaTable.ArenaPointFill(Entity.Level);
+                        ArenaStatistic.LastArenaPointFill = DateTime.Now;
                         ArenaTable.InsertArenaStatistic(this);
-                        this.ArenaStatistic.Status = 0;
-                        Arena.ArenaStatistics.Add(this.Entity.UID, this.ArenaStatistic);
+                        ArenaStatistic.Status = 0;
+                        Arena.ArenaStatistics.Add(Entity.UID, ArenaStatistic);
                     }
                     else {
-                        this.ArenaStatistic.Level = this.Entity.Level;
-                        this.ArenaStatistic.Class = this.Entity.Class;
-                        this.ArenaStatistic.Model = this.Entity.Mesh;
-                        if (DateTime.Now.DayOfYear != this.ArenaStatistic.LastArenaPointFill.DayOfYear) {
-                            this.ArenaStatistic.LastSeasonArenaPoints = this.ArenaStatistic.ArenaPoints;
-                            this.ArenaStatistic.LastSeasonWin = this.ArenaStatistic.TodayWin;
-                            this.ArenaStatistic.LastSeasonLose =
-                                this.ArenaStatistic.TodayBattles - this.ArenaStatistic.TodayWin;
-                            this.ArenaStatistic.ArenaPoints = ArenaTable.ArenaPointFill(this.Entity.Level);
-                            this.ArenaStatistic.LastArenaPointFill = DateTime.Now;
-                            this.ArenaStatistic.TodayWin = 0;
-                            this.ArenaStatistic.TodayBattles = 0;
+                        ArenaStatistic.Level = Entity.Level;
+                        ArenaStatistic.Class = Entity.Class;
+                        ArenaStatistic.Model = Entity.Mesh;
+                        if (DateTime.Now.DayOfYear != ArenaStatistic.LastArenaPointFill.DayOfYear) {
+                            ArenaStatistic.LastSeasonArenaPoints = ArenaStatistic.ArenaPoints;
+                            ArenaStatistic.LastSeasonWin = ArenaStatistic.TodayWin;
+                            ArenaStatistic.LastSeasonLose =
+                                ArenaStatistic.TodayBattles - ArenaStatistic.TodayWin;
+                            ArenaStatistic.ArenaPoints = ArenaTable.ArenaPointFill(Entity.Level);
+                            ArenaStatistic.LastArenaPointFill = DateTime.Now;
+                            ArenaStatistic.TodayWin = 0;
+                            ArenaStatistic.TodayBattles = 0;
                             Arena.Sort();
                             Arena.YesterdaySort();
                         }
                     }
 
-                    TeamArena.ArenaStatistics.TryGetValue(this.Entity.UID, out this.TeamArenaStatistic);
-                    if (this.TeamArenaStatistic == null) {
-                        this.TeamArenaStatistic = new TeamArenaStatistic(true);
-                        this.TeamArenaStatistic.EntityID = this.Entity.UID;
-                        this.TeamArenaStatistic.Name = this.Entity.Name;
-                        this.TeamArenaStatistic.Level = this.Entity.Level;
-                        this.TeamArenaStatistic.Class = this.Entity.Class;
-                        this.TeamArenaStatistic.Model = this.Entity.Mesh;
+                    TeamArena.ArenaStatistics.TryGetValue(Entity.UID, out TeamArenaStatistic);
+                    if (TeamArenaStatistic == null) {
+                        TeamArenaStatistic = new TeamArenaStatistic(true);
+                        TeamArenaStatistic.EntityID = Entity.UID;
+                        TeamArenaStatistic.Name = Entity.Name;
+                        TeamArenaStatistic.Level = Entity.Level;
+                        TeamArenaStatistic.Class = Entity.Class;
+                        TeamArenaStatistic.Model = Entity.Mesh;
                         TeamArenaTable.InsertArenaStatistic(this);
-                        this.TeamArenaStatistic.Status = 0;
-                        if (TeamArena.ArenaStatistics.ContainsKey(this.Entity.UID)) {
-                            TeamArena.ArenaStatistics.Remove(this.Entity.UID);
+                        TeamArenaStatistic.Status = 0;
+                        if (TeamArena.ArenaStatistics.ContainsKey(Entity.UID)) {
+                            TeamArena.ArenaStatistics.Remove(Entity.UID);
                         }
 
-                        TeamArena.ArenaStatistics.Add(this.Entity.UID, this.TeamArenaStatistic);
+                        TeamArena.ArenaStatistics.Add(Entity.UID, TeamArenaStatistic);
                     }
-                    else if (this.TeamArenaStatistic.EntityID == 0) {
-                        this.TeamArenaStatistic = new TeamArenaStatistic(true);
-                        this.TeamArenaStatistic.EntityID = this.Entity.UID;
-                        this.TeamArenaStatistic.Name = this.Entity.Name;
-                        this.TeamArenaStatistic.Level = this.Entity.Level;
-                        this.TeamArenaStatistic.Class = this.Entity.Class;
-                        this.TeamArenaStatistic.Model = this.Entity.Mesh;
+                    else if (TeamArenaStatistic.EntityID == 0) {
+                        TeamArenaStatistic = new TeamArenaStatistic(true);
+                        TeamArenaStatistic.EntityID = Entity.UID;
+                        TeamArenaStatistic.Name = Entity.Name;
+                        TeamArenaStatistic.Level = Entity.Level;
+                        TeamArenaStatistic.Class = Entity.Class;
+                        TeamArenaStatistic.Model = Entity.Mesh;
                         TeamArenaTable.InsertArenaStatistic(this);
-                        this.TeamArenaStatistic.Status = 0;
-                        if (TeamArena.ArenaStatistics.ContainsKey(this.Entity.UID)) {
-                            TeamArena.ArenaStatistics.Remove(this.Entity.UID);
+                        TeamArenaStatistic.Status = 0;
+                        if (TeamArena.ArenaStatistics.ContainsKey(Entity.UID)) {
+                            TeamArena.ArenaStatistics.Remove(Entity.UID);
                         }
 
-                        TeamArena.ArenaStatistics.Add(this.Entity.UID, this.TeamArenaStatistic);
+                        TeamArena.ArenaStatistics.Add(Entity.UID, TeamArenaStatistic);
                     }
                     else {
-                        this.TeamArenaStatistic.Level = this.Entity.Level;
-                        this.TeamArenaStatistic.Class = this.Entity.Class;
-                        this.TeamArenaStatistic.Model = this.Entity.Mesh;
-                        this.TeamArenaStatistic.Name = this.Entity.Name;
+                        TeamArenaStatistic.Level = Entity.Level;
+                        TeamArenaStatistic.Class = Entity.Class;
+                        TeamArenaStatistic.Model = Entity.Mesh;
+                        TeamArenaStatistic.Name = Entity.Name;
                     }
 
                     #region Champion
 
-                    Champion.ChampionStats.TryGetValue(this.Entity.UID, out this.ChampionStats);
-                    if (this.ChampionStats == null) {
-                        this.ChampionStats = new ChampionStatistic(true);
-                        this.ChampionStats.UID = this.Entity.UID;
-                        this.ChampionStats.Name = this.Entity.Name;
-                        this.ChampionStats.Level = this.Entity.Level;
-                        this.ChampionStats.Class = this.Entity.Class;
-                        this.ChampionStats.Model = this.Entity.Mesh;
-                        this.ChampionStats.Points = 0;
-                        this.ChampionStats.LastReset = DateTime.Now;
+                    Champion.ChampionStats.TryGetValue(Entity.UID, out ChampionStats);
+                    if (ChampionStats == null) {
+                        ChampionStats = new ChampionStatistic(true);
+                        ChampionStats.UID = Entity.UID;
+                        ChampionStats.Name = Entity.Name;
+                        ChampionStats.Level = Entity.Level;
+                        ChampionStats.Class = Entity.Class;
+                        ChampionStats.Model = Entity.Mesh;
+                        ChampionStats.Points = 0;
+                        ChampionStats.LastReset = DateTime.Now;
                         ChampionTable.InsertStatistic(this);
-                        if (Champion.ChampionStats.ContainsKey(this.Entity.UID))
-                            Champion.ChampionStats.Remove(this.Entity.UID);
-                        Champion.ChampionStats.Add(this.Entity.UID, this.ChampionStats);
+                        if (Champion.ChampionStats.ContainsKey(Entity.UID))
+                            Champion.ChampionStats.Remove(Entity.UID);
+                        Champion.ChampionStats.Add(Entity.UID, ChampionStats);
                     }
-                    else if (this.ChampionStats.UID == 0) {
-                        this.ChampionStats = new ChampionStatistic(true);
-                        this.ChampionStats.UID = this.Entity.UID;
-                        this.ChampionStats.Name = this.Entity.Name;
-                        this.ChampionStats.Level = this.Entity.Level;
-                        this.ChampionStats.Class = this.Entity.Class;
-                        this.ChampionStats.Model = this.Entity.Mesh;
-                        this.ChampionStats.Points = 0;
-                        this.ChampionStats.LastReset = DateTime.Now;
+                    else if (ChampionStats.UID == 0) {
+                        ChampionStats = new ChampionStatistic(true);
+                        ChampionStats.UID = Entity.UID;
+                        ChampionStats.Name = Entity.Name;
+                        ChampionStats.Level = Entity.Level;
+                        ChampionStats.Class = Entity.Class;
+                        ChampionStats.Model = Entity.Mesh;
+                        ChampionStats.Points = 0;
+                        ChampionStats.LastReset = DateTime.Now;
                         ArenaTable.InsertArenaStatistic(this);
-                        this.ArenaStatistic.Status = ArenaStatistic.NotSignedUp;
-                        if (Champion.ChampionStats.ContainsKey(this.Entity.UID))
-                            Champion.ChampionStats.Remove(this.Entity.UID);
-                        Champion.ChampionStats.Add(this.Entity.UID, this.ChampionStats);
+                        ArenaStatistic.Status = ArenaStatistic.NotSignedUp;
+                        if (Champion.ChampionStats.ContainsKey(Entity.UID))
+                            Champion.ChampionStats.Remove(Entity.UID);
+                        Champion.ChampionStats.Add(Entity.UID, ChampionStats);
                     }
                     else {
-                        this.ChampionStats.Level = this.Entity.Level;
-                        this.ChampionStats.Class = this.Entity.Class;
-                        this.ChampionStats.Model = this.Entity.Mesh;
-                        this.ChampionStats.Name = this.Entity.Name;
-                        if (this.ChampionStats.LastReset.DayOfYear != DateTime.Now.DayOfYear)
-                            ChampionTable.Reset(this.ChampionStats);
+                        ChampionStats.Level = Entity.Level;
+                        ChampionStats.Class = Entity.Class;
+                        ChampionStats.Model = Entity.Mesh;
+                        ChampionStats.Name = Entity.Name;
+                        if (ChampionStats.LastReset.DayOfYear != DateTime.Now.DayOfYear)
+                            ChampionTable.Reset(ChampionStats);
                     }
 
                     Champion.Clear(this);
@@ -1161,29 +1161,29 @@ namespace MTA.Client {
 
                     DetainedItemTable.LoadDetainedItems(this);
                     ClaimItemTable.LoadClaimableItems(this);
-                    this.Entity.LoadTopStatus();
-                    this.Entity.FullyLoaded = true;
+                    Entity.LoadTopStatus();
+                    Entity.FullyLoaded = true;
 
                     #endregion
 
-                    if (this.Entity.FullyLoaded) {
+                    if (Entity.FullyLoaded) {
                         VariableVault variables;
-                        EntityVariableTable.Load(this.Entity.UID, out variables);
-                        this.Variables = variables;
+                        EntityVariableTable.Load(Entity.UID, out variables);
+                        Variables = variables;
 
-                        if (this.BackupArmorLook != 0)
-                            this.SetNewArmorLook(this.BackupArmorLook);
+                        if (BackupArmorLook != 0)
+                            SetNewArmorLook(BackupArmorLook);
                         else
-                            this.SetNewArmorLook(this.ArmorLook);
-                        this.SetNewHeadgearLook(this.HeadgearLook);
-                        this.BackupArmorLook = 0;
+                            SetNewArmorLook(ArmorLook);
+                        SetNewHeadgearLook(HeadgearLook);
+                        BackupArmorLook = 0;
 
-                        this.LoadData(true);
+                        LoadData(true);
 
-                        if (this.Entity.GuildID != 0)
-                            this.Entity.GuildBattlePower = this.Guild.GetSharedBattlepower(this.Entity.GuildRank);
+                        if (Entity.GuildID != 0)
+                            Entity.GuildBattlePower = Guild.GetSharedBattlepower(Entity.GuildRank);
 
-                        this.ReviewMentor();
+                        ReviewMentor();
 
 
                         PacketHandler.LoginMessages(this);
@@ -1203,18 +1203,18 @@ namespace MTA.Client {
                             item7.Position = 4;
                             item7.Durability = CIBI.Durability;
                             item7.MaximDurability = CIBI.Durability;
-                            this.Equipment.Remove(4);
-                            if (this.Equipment.Objects[3] != null) {
-                                this.Equipment.Objects[3] = null;
+                            Equipment.Remove(4);
+                            if (Equipment.Objects[3] != null) {
+                                Equipment.Objects[3] = null;
                             }
 
-                            this.Equipment.Add(item7);
+                            Equipment.Add(item7);
                             item7.Mode = Enums.ItemMode.Update;
                             item7.Send(this);
                             equip = new ClientEquip();
                             equip.DoEquips(this);
-                            this.Send(equip);
-                            this.Equipment.UpdateEntityPacket();
+                            Send(equip);
+                            Equipment.UpdateEntityPacket();
                         }
 
                         if (WeaponL > 0) {
@@ -1228,18 +1228,18 @@ namespace MTA.Client {
                             item7.Position = 5;
                             item7.Durability = CIBI.Durability;
                             item7.MaximDurability = CIBI.Durability;
-                            this.Equipment.Remove(5);
-                            if (this.Equipment.Objects[4] != null) {
-                                this.Equipment.Objects[4] = null;
+                            Equipment.Remove(5);
+                            if (Equipment.Objects[4] != null) {
+                                Equipment.Objects[4] = null;
                             }
 
-                            this.Equipment.Add(item7);
+                            Equipment.Add(item7);
                             item7.Mode = Enums.ItemMode.Update;
                             item7.Send(this);
                             equip = new ClientEquip();
                             equip.DoEquips(this);
-                            this.Send(equip);
-                            this.Equipment.UpdateEntityPacket();
+                            Send(equip);
+                            Equipment.UpdateEntityPacket();
                         }
 
                         if (Armor > 0) {
@@ -1253,18 +1253,18 @@ namespace MTA.Client {
                             item7.Position = 3;
                             item7.Durability = CIBI.Durability;
                             item7.MaximDurability = CIBI.Durability;
-                            this.Equipment.Remove(3);
-                            if (this.Equipment.Objects[2] != null) {
-                                this.Equipment.Objects[2] = null;
+                            Equipment.Remove(3);
+                            if (Equipment.Objects[2] != null) {
+                                Equipment.Objects[2] = null;
                             }
 
-                            this.Equipment.Add(item7);
+                            Equipment.Add(item7);
                             item7.Mode = Enums.ItemMode.Update;
                             item7.Send(this);
                             equip = new ClientEquip();
                             equip.DoEquips(this);
-                            this.Send(equip);
-                            this.Equipment.UpdateEntityPacket();
+                            Send(equip);
+                            Equipment.UpdateEntityPacket();
                         }
 
                         if (Head > 0) {
@@ -1278,18 +1278,18 @@ namespace MTA.Client {
                             item7.Position = 1;
                             item7.Durability = CIBI.Durability;
                             item7.MaximDurability = CIBI.Durability;
-                            this.Equipment.Remove(1);
-                            if (this.Equipment.Objects[0] != null) {
-                                this.Equipment.Objects[0] = null;
+                            Equipment.Remove(1);
+                            if (Equipment.Objects[0] != null) {
+                                Equipment.Objects[0] = null;
                             }
 
-                            this.Equipment.Add(item7);
+                            Equipment.Add(item7);
                             item7.Mode = Enums.ItemMode.Update;
                             item7.Send(this);
                             equip = new ClientEquip();
                             equip.DoEquips(this);
-                            this.Send(equip);
-                            this.Equipment.UpdateEntityPacket();
+                            Send(equip);
+                            Equipment.UpdateEntityPacket();
                         }
 
                         if (Garment > 0) {
@@ -1303,18 +1303,18 @@ namespace MTA.Client {
                             item7.Position = 9;
                             item7.Durability = CIBI.Durability;
                             item7.MaximDurability = CIBI.Durability;
-                            this.Equipment.Remove(9);
-                            if (this.Equipment.Objects[8] != null) {
-                                this.Equipment.Objects[8] = null;
+                            Equipment.Remove(9);
+                            if (Equipment.Objects[8] != null) {
+                                Equipment.Objects[8] = null;
                             }
 
-                            this.Equipment.Add(item7);
+                            Equipment.Add(item7);
                             item7.Mode = Enums.ItemMode.Update;
                             item7.Send(this);
                             equip = new ClientEquip();
                             equip.DoEquips(this);
-                            this.Send(equip);
-                            this.Equipment.UpdateEntityPacket();
+                            Send(equip);
+                            Equipment.UpdateEntityPacket();
                         }
 
                         #endregion Equip
@@ -1326,19 +1326,19 @@ namespace MTA.Client {
                         LoggedIn = true;
                         Entity.NobilityRank = NobilityInformation.Rank;
                         {
-                            if (this.FakeLoaded) {
+                            if (FakeLoaded) {
                                 #region booth
 
-                                if (this.Booth == null) {
-                                    this.Send(new MapStatus() {
-                                        BaseID = this.Map.BaseID,
-                                        ID = this.Map.ID,
+                                if (Booth == null) {
+                                    Send(new MapStatus() {
+                                        BaseID = Map.BaseID,
+                                        ID = Map.ID,
                                         Status = MapsTable.MapInformations[1036].Status
                                     });
-                                    this.Booth = new Booth(this,
-                                        new Data(true) { UID = this.Entity.UID });
-                                    this.Send(new Data(true)
-                                        { ID = Data.ChangeAction, UID = this.Entity.UID, dwParam = 0 });
+                                    Booth = new Booth(this,
+                                        new Data(true) { UID = Entity.UID });
+                                    Send(new Data(true)
+                                        { ID = Data.ChangeAction, UID = Entity.UID, dwParam = 0 });
 
                                     #region new multi items
 
@@ -1378,12 +1378,12 @@ namespace MTA.Client {
                                                         { ID = ItemUsage.AddItemOnBoothForConquerPoints };
                                                     item.Cost_Type = BoothItem.CostType
                                                         .ConquerPoints;
-                                                    this.Booth.ItemList.Add(item.Item.UID, item);
-                                                    this.Send(usage);
+                                                    Booth.ItemList.Add(item.Item.UID, item);
+                                                    Send(usage);
                                                     Network.GamePackets.BoothItem buffer =
                                                         new Network.GamePackets.BoothItem(true);
-                                                    buffer.Fill(item, this.Booth.Base.UID);
-                                                    this.SendScreen(buffer, false);
+                                                    buffer.Fill(item, Booth.Base.UID);
+                                                    SendScreen(buffer, false);
                                                 }
                                             }
                                         }
@@ -1394,7 +1394,7 @@ namespace MTA.Client {
 
                                     #endregion
 
-                                    this.Booth.HawkMessage = new Message(hawkmessage, "ALL", this.Entity.Name,
+                                    Booth.HawkMessage = new Message(hawkmessage, "ALL", Entity.Name,
                                         Color.White, Message.HawkMessage);
                                 }
 
@@ -1563,9 +1563,9 @@ namespace MTA.Client {
                     Warehouses =
                         new SafeDictionary<Warehouse.WarehouseID,
                             Warehouse>(20);
-                    Warehouses.Add((Warehouse.WarehouseID)this.Account.EntityID,
+                    Warehouses.Add((Warehouse.WarehouseID)Account.EntityID,
                         new Warehouse(this,
-                            (Warehouse.WarehouseID)this.Account.EntityID, 200));
+                            (Warehouse.WarehouseID)Account.EntityID, 200));
                     Warehouses.Add(Warehouse.WarehouseID.TwinCity,
                         new Warehouse(this,
                             Warehouse.WarehouseID.TwinCity));
@@ -1753,9 +1753,9 @@ namespace MTA.Client {
         private void ShutDown() {
             if (Socket.Connector == null) return;
             Socket.Connector = null;
-            if (this.Entity != null) {
+            if (Entity != null) {
                 try {
-                    if (this.Entity.JustCreated) return;
+                    if (Entity.JustCreated) return;
 
                     #region Poker
 
@@ -1773,8 +1773,8 @@ namespace MTA.Client {
                     #endregion
 
                     Time32 now = Time32.Now;
-                    Kernel.DisconnectPool.Add(this.Entity.UID, this);
-                    RemoveScreenSpawn(this.Entity, false);
+                    Kernel.DisconnectPool.Add(Entity.UID, this);
+                    RemoveScreenSpawn(Entity, false);
                     if (Entity != null && Entity.WTitles != null)
                         Entity.WTitles.Update();
                     using (var conn = DataHolder.MySqlConnection) {
@@ -1786,9 +1786,9 @@ namespace MTA.Client {
                         SkillTable.SaveProficiencies(this);
                         SkillTable.SaveSpells(this);
                         if (!TransferedPlayer) {
-                            ArenaTable.SaveArenaStatistics(this.ArenaStatistic, conn);
-                            TeamArenaTable.SaveArenaStatistics(this.TeamArenaStatistic, conn);
-                            ChampionTable.SaveStatistics(this.ChampionStats, conn);
+                            ArenaTable.SaveArenaStatistics(ArenaStatistic, conn);
+                            TeamArenaTable.SaveArenaStatistics(TeamArenaStatistic, conn);
+                            ChampionTable.SaveStatistics(ChampionStats, conn);
                         }
                     }
 
@@ -1796,7 +1796,7 @@ namespace MTA.Client {
                         ConquerItemTable.UpdateWardrobe(true, kerO.Key);
                     }
 
-                    Kernel.GamePool.Remove(this.Entity.UID);
+                    Kernel.GamePool.Remove(Entity.UID);
 
 
                     if (Booth != null)
@@ -1836,7 +1836,7 @@ namespace MTA.Client {
                     TeamArena.Clear(this);
                     Champion.Clear(this);
 
-                    RemoveScreenSpawn(this.Entity, false);
+                    RemoveScreenSpawn(Entity, false);
 
                     #region Friend/TradePartner/Apprentice
 
@@ -1988,8 +1988,8 @@ namespace MTA.Client {
                     Program.SaveException(e);
                 }
                 finally {
-                    Kernel.DisconnectPool.Remove(this.Entity.UID);
-                    Console.WriteLine(this.Entity.Name + " logged out. IP: " + this.Account.IP + "  ");
+                    Kernel.DisconnectPool.Remove(Entity.UID);
+                    Console.WriteLine(Entity.Name + " logged out. IP: " + Account.IP + "  ");
                     new MySqlCommand(MySqlCommandType.UPDATE).Update("configuration")
                         .Set("LastPlayer", Entity.Name).Set("login", "has logged off").Execute();
                 }
@@ -2046,7 +2046,7 @@ namespace MTA.Client {
             ScreenColor = 5855577;
 
             ScreenColor Packet = new ScreenColor(true);
-            Packet.UID = this.Entity.UID;
+            Packet.UID = Entity.UID;
             Packet.ID = 104;
             Packet.dwParam = ScreenColor;
             foreach (GameState pclient in Kernel.GamePool.Values) {
@@ -2058,7 +2058,7 @@ namespace MTA.Client {
             ScreenColor = 3358767;
 
             ScreenColor Packet = new ScreenColor(true);
-            Packet.UID = this.Entity.UID;
+            Packet.UID = Entity.UID;
             Packet.ID = 104;
             Packet.dwParam = ScreenColor;
             foreach (GameState pclient in Kernel.GamePool.Values) {
@@ -2070,7 +2070,7 @@ namespace MTA.Client {
             ScreenColor = 97358;
 
             ScreenColor Packet = new ScreenColor(true);
-            Packet.UID = this.Entity.UID;
+            Packet.UID = Entity.UID;
             Packet.ID = 104;
             Packet.dwParam = ScreenColor;
             foreach (GameState pclient in Kernel.GamePool.Values) {
@@ -2086,7 +2086,7 @@ namespace MTA.Client {
             ScreenColor = 69852;
 
             ScreenColor Packet = new ScreenColor(true);
-            Packet.UID = this.Entity.UID;
+            Packet.UID = Entity.UID;
             Packet.ID = 104;
             Packet.dwParam = ScreenColor;
             foreach (GameState pclient in Kernel.GamePool.Values) {
@@ -2098,7 +2098,7 @@ namespace MTA.Client {
             ScreenColor = 4532453;
 
             ScreenColor Packet = new ScreenColor(true);
-            Packet.UID = this.Entity.UID;
+            Packet.UID = Entity.UID;
             Packet.ID = 104;
             Packet.dwParam = ScreenColor;
             foreach (GameState pclient in Kernel.GamePool.Values) {
@@ -2110,7 +2110,7 @@ namespace MTA.Client {
             ScreenColor = 684533;
 
             ScreenColor Packet = new ScreenColor(true);
-            Packet.UID = this.Entity.UID;
+            Packet.UID = Entity.UID;
             Packet.ID = 104;
             Packet.dwParam = ScreenColor;
             foreach (GameState pclient in Kernel.GamePool.Values) {
@@ -2126,7 +2126,7 @@ namespace MTA.Client {
             ScreenColor = 838915;
 
             ScreenColor Packet = new ScreenColor(true);
-            Packet.UID = this.Entity.UID;
+            Packet.UID = Entity.UID;
             Packet.ID = 104;
             Packet.dwParam = ScreenColor;
             foreach (GameState pclient in Kernel.GamePool.Values) {
@@ -2138,7 +2138,7 @@ namespace MTA.Client {
             ScreenColor = 824383;
 
             ScreenColor Packet = new ScreenColor(true);
-            Packet.UID = this.Entity.UID;
+            Packet.UID = Entity.UID;
             Packet.ID = 104;
             Packet.dwParam = ScreenColor;
             foreach (GameState pclient in Kernel.GamePool.Values) {
@@ -2150,7 +2150,7 @@ namespace MTA.Client {
             ScreenColor = 456828;
 
             ScreenColor Packet = new ScreenColor(true);
-            Packet.UID = this.Entity.UID;
+            Packet.UID = Entity.UID;
             Packet.ID = 104;
             Packet.dwParam = ScreenColor;
             foreach (GameState pclient in Kernel.GamePool.Values) {
@@ -2162,7 +2162,7 @@ namespace MTA.Client {
             ScreenColor = 5547633;
 
             ScreenColor Packet = new ScreenColor(true);
-            Packet.UID = this.Entity.UID;
+            Packet.UID = Entity.UID;
             Packet.ID = 104;
             Packet.dwParam = ScreenColor;
             foreach (GameState pclient in Kernel.GamePool.Values) {
@@ -2174,7 +2174,7 @@ namespace MTA.Client {
             ScreenColor = 453450;
 
             ScreenColor Packet = new ScreenColor(true);
-            Packet.UID = this.Entity.UID;
+            Packet.UID = Entity.UID;
             Packet.ID = 104;
             Packet.dwParam = ScreenColor;
             foreach (GameState pclient in Kernel.GamePool.Values) {
@@ -2190,7 +2190,7 @@ namespace MTA.Client {
             ScreenColor = 0;
 
             ScreenColor Packet = new ScreenColor(true);
-            Packet.UID = this.Entity.UID;
+            Packet.UID = Entity.UID;
             Packet.ID = 104;
             Packet.dwParam = ScreenColor;
             foreach (GameState pclient in Kernel.GamePool.Values) {
@@ -2791,7 +2791,7 @@ namespace MTA.Client {
                     RaceExcitementAmount = 200;
                     RaceExcitementStamp = Time32.Now;
                     RaceExcitement = true;
-                    this.Entity.AddFlag(Update.Flags.SpeedIncreased);
+                    Entity.AddFlag(Update.Flags.SpeedIncreased);
                     {
                         var upd = new GameCharacterUpdates(true);
                         upd.UID = Entity.UID;
@@ -2874,7 +2874,7 @@ namespace MTA.Client {
                         X = Entity.X,
                         Y = Entity.Y
                     }.AddTarget(Entity, 0, null));
-                    foreach (var obj in this.Screen.SelectWhere<Entity>(MapObjectType.Player,
+                    foreach (var obj in Screen.SelectWhere<Entity>(MapObjectType.Player,
                                  (o) => Kernel.GetDistance(o.X, o.Y, Entity.X, Entity.Y) <= 10)) {
                         var Owner = obj.Owner;
                         if (!Owner.RaceGuard) {
@@ -2901,7 +2901,7 @@ namespace MTA.Client {
                         X = Entity.X,
                         Y = Entity.Y
                     }.AddTarget(Entity, 0, null));
-                    foreach (var obj in this.Screen.SelectWhere<Entity>(MapObjectType.Player,
+                    foreach (var obj in Screen.SelectWhere<Entity>(MapObjectType.Player,
                                  o => Kernel.GetDistance(o.X, o.Y, Entity.X, Entity.Y) <= 10)) {
                         var Owner = obj.Owner;
                         if (!Owner.RaceGuard) {
@@ -3305,8 +3305,8 @@ namespace MTA.Client {
                     experience += (uint)(experience * 20 / 100);
                 if (Entity.Reborn >= 2)
                     experience /= 3;
-                if (Entity.DoubleExperienceTime > 0 && this.SuperPotion > 0)
-                    experience *= this.SuperPotion;
+                if (Entity.DoubleExperienceTime > 0 && SuperPotion > 0)
+                    experience *= SuperPotion;
 
                 if (Guild != null) {
                     if (Guild.Level > 0) {
@@ -5068,7 +5068,7 @@ namespace MTA.Client {
                 val += Uint;
 
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE))
-                cmd.Update("entities").Set("GuildArsenalDonation", val).Where("UID", this.Entity.UID)
+                cmd.Update("entities").Set("GuildArsenalDonation", val).Where("UID", Entity.UID)
                     .Execute();
             if (AsMember != null)
                 AsMember.ArsenalDonation = val;
@@ -5106,7 +5106,7 @@ namespace MTA.Client {
         }
 
         public void SendStatMessage() {
-            this.ReviewMentor();
+            ReviewMentor();
             Message Msg = new Message(" Your status has been changed",
                 Color.DarkGoldenrod
                 , Message.TopLeft);
@@ -5117,7 +5117,7 @@ namespace MTA.Client {
                     Entity.MagicDamageDecrease, Entity.PhysicalDamageIncrease, Entity.MagicDamageIncrease,
                     Entity.Hitpoints, Entity.MaxHitpoints, Entity.Mana, Entity.MaxMana, Entity.BattlePower
                 });
-            this.Send(Msg);
+            Send(Msg);
         }
 
         private bool AreStatsLoadable(ConquerItem item) {
@@ -5450,15 +5450,15 @@ namespace MTA.Client {
 
             #region Vip 6
 
-            if (this.Entity.VIPLevel == 6) {
-                Entity expr_1951 = this.Entity;
+            if (Entity.VIPLevel == 6) {
+                Entity expr_1951 = Entity;
                 expr_1951.BaseMinAttack += 2000;
-                Entity expr_1952 = this.Entity;
+                Entity expr_1952 = Entity;
                 expr_1951.BaseMaxAttack += 2000;
-                this.Entity.ItemHP += 2000u;
-                this.Entity.CriticalStrike += 400;
-                this.Entity.Immunity += 400;
-                Entity expr_1950 = this.Entity;
+                Entity.ItemHP += 2000u;
+                Entity.CriticalStrike += 400;
+                Entity.Immunity += 400;
+                Entity expr_1950 = Entity;
                 expr_1950.Defence += 2000;
             }
 
@@ -5539,9 +5539,9 @@ namespace MTA.Client {
 
         private void CalculateVigor(ConquerItem item, ConquerItemInformation dbi) {
             if (!Equipment.Free(12)) {
-                if (!this.Entity.ContainsFlag2(Update.Flags.Ride)) {
-                    this.Vigor = 0;
-                    this.MaxVigor = 0;
+                if (!Entity.ContainsFlag2(Update.Flags.Ride)) {
+                    Vigor = 0;
+                    MaxVigor = 0;
                     MaxVigor += dbi.PlusInformation.Agility;
                     MaxVigor += 30;
                     if (!Equipment.Free(ConquerItem.SteedCrop)) {

@@ -68,8 +68,8 @@ namespace MTA.Network.GamePackets
             prize.Deserialize(packet);
             switch (prize.Prize_Type)
             {
-                case MentorPrize.ClaimExperience:
-                case MentorPrize.ClaimSomeExperience:
+                case ClaimExperience:
+                case ClaimSomeExperience:
                     {
                         client.IncreaseExperience((ulong)(((double)client.PrizeExperience / 600) * client.ExpBall), false);
                         client.PrizeExperience = 0;
@@ -79,14 +79,14 @@ namespace MTA.Network.GamePackets
                             Database.KnownPersons.SaveApprenticeInfo(appr);
                         }
                         prize.Mentor_ID = client.Entity.UID;
-                        prize.Prize_Type = MentorPrize.Show;
+                        prize.Prize_Type = Show;
                         prize.Prize_Experience = client.PrizeExperience;
                         prize.Prize_HeavensBlessing = client.PrizeHeavenBlessing;
                         prize.Prize_PlusStone = client.PrizePlusStone;
                         client.Send(prize);
                         break;
                     }
-                case MentorPrize.ClaimHeavenBlessing:
+                case ClaimHeavenBlessing:
                     {
                         client.AddBless(client.PrizeHeavenBlessing);
                         client.PrizeHeavenBlessing = 0;
@@ -96,14 +96,14 @@ namespace MTA.Network.GamePackets
                             Database.KnownPersons.SaveApprenticeInfo(appr);
                         }
                         prize.Mentor_ID = client.Entity.UID;
-                        prize.Prize_Type = MentorPrize.Show;
+                        prize.Prize_Type = Show;
                         prize.Prize_Experience = client.PrizeExperience;
                         prize.Prize_HeavensBlessing = client.PrizeHeavenBlessing;
                         prize.Prize_PlusStone = client.PrizePlusStone;
                         client.Send(prize);
                         break;
                     }
-                case MentorPrize.ClaimPlus:
+                case ClaimPlus:
                     {
                         int stones = client.PrizePlusStone / 100;
                         int totake = stones;
@@ -131,7 +131,7 @@ namespace MTA.Network.GamePackets
                             Database.KnownPersons.SaveApprenticeInfo(appr);
                         }
                         prize.Mentor_ID = client.Entity.UID;
-                        prize.Prize_Type = MentorPrize.Show;
+                        prize.Prize_Type = Show;
                         prize.Prize_Experience = client.PrizeExperience;
                         prize.Prize_HeavensBlessing = client.PrizeHeavenBlessing;
                         prize.Prize_PlusStone = client.PrizePlusStone;

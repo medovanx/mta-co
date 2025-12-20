@@ -6,8 +6,8 @@
         public PasswordCryptographySeed()
         {
             Buffer = new byte[8];
-            Network.Writer.WriteUInt16(8, 0, Buffer);
-            Network.Writer.WriteUInt16(1059, 2, Buffer);
+            Writer.WriteUInt16(8, 0, Buffer);
+            Writer.WriteUInt16(1059, 2, Buffer);
         }
         public int Seed
         {
@@ -17,7 +17,7 @@
             }
             set
             {
-                Network.Writer.WriteInt32(value, 4, Buffer);
+                Writer.WriteInt32(value, 4, Buffer);
             }
         }
 

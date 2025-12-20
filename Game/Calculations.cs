@@ -70,9 +70,9 @@ namespace MTA.Game
         }
         public static void IsBreaking(Client.GameState client, ushort oldX, ushort oldY)
         {
-            if (client.Entity.MapID == MTA.Game.GuildWar.RightGate.MapID)
+            if (client.Entity.MapID == GuildWar.RightGate.MapID)
             {
-                if (MTA.Game.GuildWar.RightGate.Mesh == (270 + MTA.Game.GuildWar.RightGate.Mesh % 10) && oldX >= MTA.Game.GuildWar.RightGate.X && client.Entity.X <= MTA.Game.GuildWar.RightGate.X && client.Entity.Y < MTA.Game.GuildWar.LeftGate.Y)
+                if (GuildWar.RightGate.Mesh == (270 + GuildWar.RightGate.Mesh % 10) && oldX >= GuildWar.RightGate.X && client.Entity.X <= GuildWar.RightGate.X && client.Entity.Y < GuildWar.LeftGate.Y)
                 {
                     client.Entity.X = oldX;
                     client.Entity.Y = oldY;
@@ -80,7 +80,7 @@ namespace MTA.Game
                     return;
                 }
 
-                if (MTA.Game.GuildWar.LeftGate.Mesh == (240 + MTA.Game.GuildWar.LeftGate.Mesh % 10) && oldY >= MTA.Game.GuildWar.LeftGate.Y && client.Entity.Y <= MTA.Game.GuildWar.LeftGate.Y && client.Entity.X < MTA.Game.GuildWar.RightGate.X)
+                if (GuildWar.LeftGate.Mesh == (240 + GuildWar.LeftGate.Mesh % 10) && oldY >= GuildWar.LeftGate.Y && client.Entity.Y <= GuildWar.LeftGate.Y && client.Entity.X < GuildWar.RightGate.X)
                 {
                     client.Entity.X = oldX;
                     client.Entity.Y = oldY;
@@ -88,9 +88,9 @@ namespace MTA.Game
                     return;
                 }
             }
-            if (client.Entity.MapID == MTA.Game.SuperGuildWar.RightGate.MapID)
+            if (client.Entity.MapID == SuperGuildWar.RightGate.MapID)
             {
-                if (MTA.Game.SuperGuildWar.RightGate.Mesh == (270 + MTA.Game.SuperGuildWar.RightGate.Mesh % 10) && oldX >= MTA.Game.SuperGuildWar.RightGate.X && client.Entity.X <= MTA.Game.SuperGuildWar.RightGate.X && client.Entity.Y < MTA.Game.SuperGuildWar.LeftGate.Y)
+                if (SuperGuildWar.RightGate.Mesh == (270 + SuperGuildWar.RightGate.Mesh % 10) && oldX >= SuperGuildWar.RightGate.X && client.Entity.X <= SuperGuildWar.RightGate.X && client.Entity.Y < SuperGuildWar.LeftGate.Y)
                 {
                     client.Entity.X = oldX;
                     client.Entity.Y = oldY;
@@ -98,7 +98,7 @@ namespace MTA.Game
                     return;
                 }
 
-                if (MTA.Game.SuperGuildWar.LeftGate.Mesh == (240 + MTA.Game.SuperGuildWar.LeftGate.Mesh % 10) && oldY >= MTA.Game.SuperGuildWar.LeftGate.Y && client.Entity.Y <= MTA.Game.SuperGuildWar.LeftGate.Y && client.Entity.X < MTA.Game.SuperGuildWar.RightGate.X)
+                if (SuperGuildWar.LeftGate.Mesh == (240 + SuperGuildWar.LeftGate.Mesh % 10) && oldY >= SuperGuildWar.LeftGate.Y && client.Entity.Y <= SuperGuildWar.LeftGate.Y && client.Entity.X < SuperGuildWar.RightGate.X)
                 {
                     client.Entity.X = oldX;
                     client.Entity.Y = oldY;

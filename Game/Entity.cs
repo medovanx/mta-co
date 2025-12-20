@@ -46,12 +46,12 @@ namespace MTA.Game
         public int MyAllin { get; set; }
         public uint PokerTableUID = 0;
 
-        public Game.ConquerStructures.PokerTable PokerTable
+        public ConquerStructures.PokerTable PokerTable
         {
             get
             {
-                if (Database.PokerTables.Tables.ContainsKey(PokerTableUID))
-                    return Database.PokerTables.Tables[PokerTableUID];
+                if (PokerTables.Tables.ContainsKey(PokerTableUID))
+                    return PokerTables.Tables[PokerTableUID];
                 else return null;
             }
             set { PokerTableUID = value.UID; }
@@ -66,7 +66,7 @@ namespace MTA.Game
 
         public bool EpicWarrior()
         {
-            if (EntityFlag == Game.EntityFlag.Player)
+            if (EntityFlag == EntityFlag.Player)
             {
                 var weapons = Owner.Weapons;
                 if (weapons.Item1 != null)
@@ -245,7 +245,7 @@ namespace MTA.Game
                 {
                     if (Owner.Weapons.Item1.ID / 1000 != 620)
                         return false;
-                    Network.GamePackets.Update upgrade = new Network.GamePackets.Update(true);
+                    Update upgrade = new Update(true);
                     upgrade.UID = UID;
                     upgrade.AppendFull(Network.GamePackets.Update.StatusFlag, StatusFlag, StatusFlag2, StatusFlag3,
                         StatusFlag4);
@@ -307,7 +307,7 @@ namespace MTA.Game
             Entity.NobilityRank = NobilityRank;
             Entity.HairStyle = HairStyle;
             Entity.HairColor = HairColor;
-            Entity.EquipmentColor = (uint)this.BattlePower;
+            Entity.EquipmentColor = (uint)BattlePower;
             Entity.StatusFlag = StatusFlag;
             Entity.StatusFlag2 = StatusFlag2;
             Entity.StatusFlag3 = StatusFlag3;
@@ -323,111 +323,111 @@ namespace MTA.Game
                 if (!item.IsWorn) continue;
                 switch (item.Position)
                 {
-                    case Network.GamePackets.ConquerItem.AlternateHead:
-                    case Network.GamePackets.ConquerItem.Head:
+                    case ConquerItem.AlternateHead:
+                    case ConquerItem.Head:
                         if (Owner.HeadgearLook != 0)
                         {
-                            Network.Writer.WriteUInt32(0, Game.ConquerStructures.Equipment.HeadSoul,
+                            WriteUInt32(0, ConquerStructures.Equipment.HeadSoul,
                                 Entity.SpawnPacket);
-                            Network.Writer.WriteUInt32(Owner.HeadgearLook, Game.ConquerStructures.Equipment.Head,
+                            WriteUInt32(Owner.HeadgearLook, ConquerStructures.Equipment.Head,
                                 Entity.SpawnPacket);
                         }
                         else
                         {
                             if (item.Purification.Available)
-                                Network.Writer.WriteUInt32(item.Purification.PurificationItemID,
-                                    Game.ConquerStructures.Equipment.HeadSoul, Entity.SpawnPacket);
+                                WriteUInt32(item.Purification.PurificationItemID,
+                                    ConquerStructures.Equipment.HeadSoul, Entity.SpawnPacket);
                             else
-                                Network.Writer.WriteUInt32(0, Game.ConquerStructures.Equipment.HeadSoul,
+                                WriteUInt32(0, ConquerStructures.Equipment.HeadSoul,
                                     Entity.SpawnPacket);
-                            Network.Writer.WriteUInt32(item.ID, Game.ConquerStructures.Equipment.Head,
+                            WriteUInt32(item.ID, ConquerStructures.Equipment.Head,
                                 Entity.SpawnPacket);
                         }
 
-                        Network.Writer.WriteUInt16((byte)item.Color, Game.ConquerStructures.Equipment.HeadColor,
+                        WriteUInt16((byte)item.Color, ConquerStructures.Equipment.HeadColor,
                             Entity.SpawnPacket);
                         break;
-                    case Network.GamePackets.ConquerItem.AlternateGarment:
-                    case Network.GamePackets.ConquerItem.Garment:
-                        Network.Writer.WriteUInt32(item.ID, Game.ConquerStructures.Equipment.Garment,
+                    case ConquerItem.AlternateGarment:
+                    case ConquerItem.Garment:
+                        WriteUInt32(item.ID, ConquerStructures.Equipment.Garment,
                             Entity.SpawnPacket);
                         break;
-                    case Network.GamePackets.ConquerItem.AlternateArmor:
-                    case Network.GamePackets.ConquerItem.Armor:
+                    case ConquerItem.AlternateArmor:
+                    case ConquerItem.Armor:
                         if (Owner.ArmorLook != 0)
                         {
-                            Network.Writer.WriteUInt32(0, Game.ConquerStructures.Equipment.ArmorSoul,
+                            WriteUInt32(0, ConquerStructures.Equipment.ArmorSoul,
                                 Entity.SpawnPacket);
-                            Network.Writer.WriteUInt32(Owner.ArmorLook, Game.ConquerStructures.Equipment.Armor,
+                            WriteUInt32(Owner.ArmorLook, ConquerStructures.Equipment.Armor,
                                 Entity.SpawnPacket);
                         }
                         else
                         {
                             if (item.Purification.Available)
-                                Network.Writer.WriteUInt32(item.Purification.PurificationItemID,
-                                    Game.ConquerStructures.Equipment.ArmorSoul, Entity.SpawnPacket);
+                                WriteUInt32(item.Purification.PurificationItemID,
+                                    ConquerStructures.Equipment.ArmorSoul, Entity.SpawnPacket);
                             else
-                                Network.Writer.WriteUInt32(0, Game.ConquerStructures.Equipment.ArmorSoul,
+                                WriteUInt32(0, ConquerStructures.Equipment.ArmorSoul,
                                     Entity.SpawnPacket);
-                            Network.Writer.WriteUInt32(item.ID, Game.ConquerStructures.Equipment.Armor,
+                            WriteUInt32(item.ID, ConquerStructures.Equipment.Armor,
                                 Entity.SpawnPacket);
                         }
 
-                        Network.Writer.WriteUInt16((byte)item.Color, Game.ConquerStructures.Equipment.ArmorColor,
+                        WriteUInt16((byte)item.Color, ConquerStructures.Equipment.ArmorColor,
                             Entity.SpawnPacket);
                         break;
-                    case Network.GamePackets.ConquerItem.AlternateRightWeapon:
-                    case Network.GamePackets.ConquerItem.RightWeapon:
+                    case ConquerItem.AlternateRightWeapon:
+                    case ConquerItem.RightWeapon:
                         if (item.Purification.Available)
-                            Network.Writer.WriteUInt32(item.Purification.PurificationItemID,
-                                Game.ConquerStructures.Equipment.RightWeaponSoul, Entity.SpawnPacket);
+                            WriteUInt32(item.Purification.PurificationItemID,
+                                ConquerStructures.Equipment.RightWeaponSoul, Entity.SpawnPacket);
                         else
-                            Network.Writer.WriteUInt32(0, Game.ConquerStructures.Equipment.RightWeaponSoul,
+                            WriteUInt32(0, ConquerStructures.Equipment.RightWeaponSoul,
                                 Entity.SpawnPacket);
-                        Network.Writer.WriteUInt32(item.ID, Game.ConquerStructures.Equipment.RightWeapon,
+                        WriteUInt32(item.ID, ConquerStructures.Equipment.RightWeapon,
                             Entity.SpawnPacket);
-                        if (Network.PacketHandler.IsTwoHand(item.ID))
+                        if (PacketHandler.IsTwoHand(item.ID))
                         {
-                            Network.Writer.WriteUInt32(0, Game.ConquerStructures.Equipment.LeftWeaponSoul,
+                            WriteUInt32(0, ConquerStructures.Equipment.LeftWeaponSoul,
                                 Entity.SpawnPacket);
-                            Network.Writer.WriteUInt32(0, Game.ConquerStructures.Equipment.LeftWeapon,
+                            WriteUInt32(0, ConquerStructures.Equipment.LeftWeapon,
                                 Entity.SpawnPacket);
-                            Network.Writer.WriteUInt16(0, Game.ConquerStructures.Equipment.LeftWeaponColor,
+                            WriteUInt16(0, ConquerStructures.Equipment.LeftWeaponColor,
                                 Entity.SpawnPacket);
                         }
 
                         break;
-                    case Network.GamePackets.ConquerItem.RightWeaponAccessory:
-                        Network.Writer.WriteUInt32(item.ID, Game.ConquerStructures.Equipment.RightWeaponAccessory,
+                    case ConquerItem.RightWeaponAccessory:
+                        WriteUInt32(item.ID, ConquerStructures.Equipment.RightWeaponAccessory,
                             Entity.SpawnPacket);
                         break;
-                    case Network.GamePackets.ConquerItem.AlternateLeftWeapon:
-                    case Network.GamePackets.ConquerItem.LeftWeapon:
+                    case ConquerItem.AlternateLeftWeapon:
+                    case ConquerItem.LeftWeapon:
                         if (item.Purification.Available)
-                            Network.Writer.WriteUInt32(item.Purification.PurificationItemID,
-                                Game.ConquerStructures.Equipment.LeftWeaponSoul, Entity.SpawnPacket);
+                            WriteUInt32(item.Purification.PurificationItemID,
+                                ConquerStructures.Equipment.LeftWeaponSoul, Entity.SpawnPacket);
                         else
-                            Network.Writer.WriteUInt32(0, Game.ConquerStructures.Equipment.LeftWeaponSoul,
+                            WriteUInt32(0, ConquerStructures.Equipment.LeftWeaponSoul,
                                 Entity.SpawnPacket);
 
-                        Network.Writer.WriteUInt32(item.ID, Game.ConquerStructures.Equipment.LeftWeapon,
+                        WriteUInt32(item.ID, ConquerStructures.Equipment.LeftWeapon,
                             Entity.SpawnPacket);
-                        Network.Writer.WriteUInt16((byte)item.Color, Game.ConquerStructures.Equipment.LeftWeaponColor,
-                            Entity.SpawnPacket);
-                        break;
-                    case Network.GamePackets.ConquerItem.LeftWeaponAccessory:
-                        Network.Writer.WriteUInt32(item.ID, Game.ConquerStructures.Equipment.LeftWeaponAccessory,
+                        WriteUInt16((byte)item.Color, ConquerStructures.Equipment.LeftWeaponColor,
                             Entity.SpawnPacket);
                         break;
-                    case Network.GamePackets.ConquerItem.Steed:
-                        Network.Writer.WriteUInt32(item.ID, Game.ConquerStructures.Equipment.Steed, Entity.SpawnPacket);
-                        Network.Writer.WriteUInt16(item.Plus, Game.ConquerStructures.Equipment.SteedPlus,
-                            Entity.SpawnPacket);
-                        Network.Writer.WriteUInt32(item.SocketProgress, Game.ConquerStructures.Equipment.SteedColor,
+                    case ConquerItem.LeftWeaponAccessory:
+                        WriteUInt32(item.ID, ConquerStructures.Equipment.LeftWeaponAccessory,
                             Entity.SpawnPacket);
                         break;
-                    case Network.GamePackets.ConquerItem.SteedArmor:
-                        Network.Writer.WriteUInt32(item.ID, Game.ConquerStructures.Equipment.MountArmor,
+                    case ConquerItem.Steed:
+                        WriteUInt32(item.ID, ConquerStructures.Equipment.Steed, Entity.SpawnPacket);
+                        WriteUInt16(item.Plus, ConquerStructures.Equipment.SteedPlus,
+                            Entity.SpawnPacket);
+                        WriteUInt32(item.SocketProgress, ConquerStructures.Equipment.SteedColor,
+                            Entity.SpawnPacket);
+                        break;
+                    case ConquerItem.SteedArmor:
+                        WriteUInt32(item.ID, ConquerStructures.Equipment.MountArmor,
                             Entity.SpawnPacket);
                         break;
                 }
@@ -442,8 +442,8 @@ namespace MTA.Game
 
             Entity.UID = 703400 + Owner.Map.CloneCounter.Next;
             Entity.CUID = Owner.Entity.UID;
-            Entity.SpawnPacket[Entity._CUID - 3] = 2;
-            Writer.Ushort(cloneid, Entity._CUID - 2, Entity.SpawnPacket);
+            Entity.SpawnPacket[_CUID - 3] = 2;
+            Ushort(cloneid, _CUID - 2, Entity.SpawnPacket);
             Entity.MapID = Owner.Map.ID;
             Entity.SendUpdates = true;
             Entity.X = Owner.Entity.X;
@@ -458,9 +458,9 @@ namespace MTA.Game
             WriteUInt64(StatusFlag, _StatusFlag, Entity.SpawnPacket);
             Owner.SendScreenSpawn(Entity, false);
 
-            Network.GamePackets._String stringPacket = new Network.GamePackets._String(true);
+            _String stringPacket = new _String(true);
             stringPacket.UID = Entity.UID;
-            stringPacket.Type = Network.GamePackets._String.Effect;
+            stringPacket.Type = _String.Effect;
             stringPacket.Texts.Add("replaceappear");
             Owner.SendScreen(stringPacket);
         }
@@ -488,7 +488,7 @@ namespace MTA.Game
             {
                 _Name = value;
                 LoweredName = value.ToLower();
-                if (EntityFlag == Game.EntityFlag.Player)
+                if (EntityFlag == EntityFlag.Player)
                 {
                     if (ClanName != "")
                     {
@@ -627,7 +627,7 @@ namespace MTA.Game
         {
             get
             {
-                if (EntityFlag == Game.EntityFlag.Player)
+                if (EntityFlag == EntityFlag.Player)
                 {
                     var right = Owner.Equipment.TryGetItem(ConquerItem.RightWeapon);
                     if (right != null)
@@ -645,7 +645,7 @@ namespace MTA.Game
         {
             get
             {
-                if (EntityFlag == Game.EntityFlag.Player)
+                if (EntityFlag == EntityFlag.Player)
                 {
                     var right = Owner.Equipment.TryGetItem(ConquerItem.LeftWeapon);
                     if (right != null)
@@ -682,7 +682,7 @@ namespace MTA.Game
                 return defense2;
             }
 
-            if (target.EntityFlag == Game.EntityFlag.Monster)
+            if (target.EntityFlag == EntityFlag.Monster)
             {
                 return DefaultDefense2;
             }
@@ -769,7 +769,7 @@ namespace MTA.Game
         {
             get
             {
-                if (EntityFlag == Game.EntityFlag.Player)
+                if (EntityFlag == EntityFlag.Player)
                 {
                     var item = Owner.Equipment.TryGetItem(ConquerItem.Armor);
                     if (item != null)
@@ -790,7 +790,7 @@ namespace MTA.Game
         public void AzureShieldPacket()
         {
             var Remain = AzureShieldStamp.AddSeconds(MagicShieldTime) - DateTime.Now;
-            Network.GamePackets.Update aupgrade = new Network.GamePackets.Update(true);
+            Update aupgrade = new Update(true);
             aupgrade.UID = UID;
             aupgrade.Append(49
                 , 93
@@ -868,11 +868,11 @@ namespace MTA.Game
 
         public uint FlowerRank
         {
-            get { return this.Flower; }
+            get { return Flower; }
             set
             {
-                this.Flower = value;
-                Writer.WriteUInt32(value + 10000, 154, this.SpawnPacket); //146
+                Flower = value;
+                WriteUInt32(value + 10000, 154, SpawnPacket); //146
             }
         }
 
@@ -989,7 +989,7 @@ namespace MTA.Game
 
         public void InsertXorNameToDB(string oldName, string newName)
         {
-            new Database.MySqlCommand(Database.MySqlCommandType.UPDATE).Update("entities").Set(oldName, newName)
+            new MySqlCommand(MySqlCommandType.UPDATE).Update("entities").Set(oldName, newName)
                 .Where("UID", UID).Execute();
         }
 
@@ -998,12 +998,12 @@ namespace MTA.Game
         public uint OnlinePoints;
         public Time32 OnlinePointStamp;
         public MTA.Game.Features.Flowers.Flowers Flowers;
-        public MTA.Game.Features.Kisses.Kisses Kisses;
+        public Features.Kisses.Kisses Kisses;
 
         public int KillCount = 0, KillCount2 = 0;
         public uint LastXLocation, LastYLocation;
         public bool InSteedRace, Invisable, IsBlackSpotted, IsEagleEyeShooted = false;
-        public Database.MonsterInformation MonsterInfo;
+        public MonsterInformation MonsterInfo;
 
         public Time32 DeathStamp,
             VortexAttackStamp,
@@ -1180,7 +1180,7 @@ namespace MTA.Game
                         {
                             Titles.Remove(title);
                             if (MyTitle == title)
-                                MyTitle = Network.GamePackets.TitlePacket.Titles.None;
+                                MyTitle = TitlePacket.Titles.None;
 
                             Owner.SendScreenSpawn(this, true);
                         }
@@ -1353,7 +1353,7 @@ namespace MTA.Game
         public static byte DisMax1 = 0;
         public static byte DisMax2 = 0;
         public static byte DisMax3 = 0;
-        public Client.GameState ClientStats;
+        public GameState ClientStats;
         public StatusStatics Statistics = new StatusStatics();
         public double DragonGems;
         public double PhoenixGems;
@@ -1380,7 +1380,7 @@ namespace MTA.Game
         public bool TeamDeathMatch_BlueTeam = false;
         public int TeamDeathMatch_Hits = 0;
         public byte _SubClass, _SubClassLevel;
-        public MTA.Game.Subclasses SubClasses = new MTA.Game.Subclasses();
+        public Subclasses SubClasses = new Subclasses();
         public bool Stunned = false, Confused = false;
 
         public bool Companion;
@@ -1506,13 +1506,13 @@ namespace MTA.Game
 
         public ushort KOCount = 0;
         public bool CounterKillSwitch = false;
-        public Network.GamePackets.Attack AttackPacket;
-        public Network.GamePackets.Attack VortexPacket;
+        public Attack AttackPacket;
+        public Attack VortexPacket;
         public byte[] SpawnPacket;
         private string _Name, _Spouse;
         private ushort _MDefence, _MDefencePercent;
         public ushort BaseDefence;
-        private Client.GameState _Owner;
+        private GameState _Owner;
         public uint ItemHP = 0;
 
         public ushort ItemMP = 0,
@@ -1599,7 +1599,7 @@ namespace MTA.Game
 
         public byte FirstRebornLevel, SecondRebornLevel;
         public bool FullyLoaded = false, SendUpdates = false, HandleTiming = false;
-        private Network.GamePackets.Update update;
+        private Update update;
 
         #endregion
 
@@ -1616,7 +1616,7 @@ namespace MTA.Game
             {
                 value = (uint)Math.Max(0, (int)value);
                 _BoundCps = value;
-                Database.EntityTable.UpdatebCps(this.Owner);
+                EntityTable.UpdatebCps(Owner);
                 if (EntityFlag == EntityFlag.Player)
                 {
                     Update(Network.GamePackets.Update.BoundConquerPoints, value, false);
@@ -1686,7 +1686,7 @@ namespace MTA.Game
         }
 
         public bool Auto = false;
-        public Dictionary<uint, Game.PkExpeliate> PkExplorerValues = new Dictionary<uint, PkExpeliate>();
+        public Dictionary<uint, PkExpeliate> PkExplorerValues = new Dictionary<uint, PkExpeliate>();
 
         public Enums.Maps Mapa { get; set; }
 
@@ -1704,7 +1704,7 @@ namespace MTA.Game
 
         public bool RebornCheck(byte id)
         {
-            if (EntityFlag == Game.EntityFlag.Player)
+            if (EntityFlag == EntityFlag.Player)
             {
                 if ((FirstRebornClass / 10 != id || SecondRebornClass / 10 != id || Class / 10 != id))
                     return true;
@@ -1730,7 +1730,7 @@ namespace MTA.Game
 
             #region Get
 
-            ConquerItem Item = this.Owner.Equipment.TryGetItem(10);
+            ConquerItem Item = Owner.Equipment.TryGetItem(10);
 
             if (Item != null)
             {
@@ -1855,7 +1855,7 @@ namespace MTA.Game
 
             #region Get
 
-            ConquerItem Item = this.Owner.Equipment.TryGetItem(11);
+            ConquerItem Item = Owner.Equipment.TryGetItem(11);
 
             if (Item != null)
             {
@@ -2004,8 +2004,8 @@ namespace MTA.Game
 
         public DateTime LastLogin
         {
-            get { return this.mLastLogin; }
-            set { this.mLastLogin = value; }
+            get { return mLastLogin; }
+            set { mLastLogin = value; }
         }
 
         public bool WearsGoldPrize = false;
@@ -2018,7 +2018,7 @@ namespace MTA.Game
             {
                 if (EntityFlag == EntityFlag.Player)
                 {
-                    Update(Network.GamePackets._String.Spouse, value, false);
+                    Update(_String.Spouse, value, false);
                 }
 
                 _Spouse = value;
@@ -2076,7 +2076,7 @@ namespace MTA.Game
 
                 value = (uint)Math.Max(0, (int)value);
                 _conquerpoints = value;
-                Database.EntityTable.UpdateCps(this.Owner);
+                EntityTable.UpdateCps(Owner);
                 if (EntityFlag == EntityFlag.Player)
                 {
                     Update(Network.GamePackets.Update.ConquerPoints, value, false);
@@ -2093,7 +2093,7 @@ namespace MTA.Game
                     value = 0;
 
                 _TreasuerPoints = value;
-                Database.EntityTable.UpdateTreasuerPoints(this.Owner);
+                EntityTable.UpdateTreasuerPoints(Owner);
             }
         }
 
@@ -2169,7 +2169,7 @@ namespace MTA.Game
                         {
                             AddFlag(Network.GamePackets.Update.Flags.HeavenBlessing);
                             Update(Network.GamePackets.Update.HeavensBlessing, HeavenBlessing, false);
-                            Update(Network.GamePackets._String.Effect, "bless", true);
+                            Update(_String.Effect, "bless", true);
                         }
             }
         }
@@ -2290,7 +2290,7 @@ namespace MTA.Game
                     update.Data24_Uint = value;
                     if (Owner != null)
                     {
-                        (Owner as Client.GameState).SendScreen(update);
+                        (Owner as GameState).SendScreen(update);
                         Owner.ArenaStatistic.Level = value;
                         Owner.ArenaStatistic.ArenaPoints = 1000;
                     }
@@ -2600,14 +2600,14 @@ namespace MTA.Game
 
         public byte SubClass
         {
-            get { return this._SubClass; }
+            get { return _SubClass; }
             set
             {
-                this._SubClass = value;
-                this.SpawnPacket[237] = (this.EntityFlag != MTA.Game.EntityFlag.Monster) ? this._SubClass : ((byte)0);
+                _SubClass = value;
+                SpawnPacket[237] = (EntityFlag != EntityFlag.Monster) ? _SubClass : ((byte)0);
                 if (SubClasses != null)
                     WriteUInt32(SubClasses.GetHashPoint(), _ActiveSubclass + 1, SpawnPacket);
-                if (EntityFlag == Game.EntityFlag.Player)
+                if (EntityFlag == EntityFlag.Player)
                 {
                     if (FullyLoaded)
                     {
@@ -2619,10 +2619,10 @@ namespace MTA.Game
 
         public byte SubClassLevel
         {
-            get { return this._SubClassLevel; }
+            get { return _SubClassLevel; }
             set
             {
-                this._SubClassLevel = value;
+                _SubClassLevel = value;
                 switch (EntityFlag)
                 {
                     case EntityFlag.Player:
@@ -2701,8 +2701,8 @@ namespace MTA.Game
 
         public uint Quest
         {
-            get { return this._Quest; }
-            set { this._Quest = value; }
+            get { return _Quest; }
+            set { _Quest = value; }
         }
 
         public ushort X
@@ -2784,7 +2784,7 @@ namespace MTA.Game
             set { _MDefence = value; }
         }
 
-        public Client.GameState Owner
+        public GameState Owner
         {
             get { return _Owner; }
             set { _Owner = value; }
@@ -3012,8 +3012,8 @@ namespace MTA.Game
 
         public UInt32 ClanJoinTarget
         {
-            get { return this.mClanJoinTarget; }
-            set { this.mClanJoinTarget = value; }
+            get { return mClanJoinTarget; }
+            set { mClanJoinTarget = value; }
         }
 
         public Enums.PkMode PKMode
@@ -3127,14 +3127,14 @@ namespace MTA.Game
 
         #region Send Screen Acessor
 
-        public void SendScreen(Interfaces.IPacket Data)
+        public void SendScreen(IPacket Data)
         {
-            Client.GameState[] Chars = new Client.GameState[Kernel.GamePool.Count];
+            GameState[] Chars = new GameState[Kernel.GamePool.Count];
             Kernel.GamePool.Values.CopyTo(Chars, 0);
-            foreach (Client.GameState C in Chars)
+            foreach (GameState C in Chars)
                 if (C != null)
                     if (C.Entity != null)
-                        if (Game.Calculations.PointDistance(X, Y, C.Entity.X, C.Entity.Y) <= 20)
+                        if (Calculations.PointDistance(X, Y, C.Entity.X, C.Entity.Y) <= 20)
                             C.Send(Data);
             Chars = null;
         }
@@ -3144,14 +3144,14 @@ namespace MTA.Game
         public void DieString()
         {
             _String str = new _String(true);
-            str.UID = this.UID;
+            str.UID = UID;
             str.Type = _String.Effect;
             str.Texts.Add("ghost");
             str.Texts.Add("1ghost");
             str.TextsCount = 1;
-            if (EntityFlag == Game.EntityFlag.Player)
+            if (EntityFlag == EntityFlag.Player)
             {
-                this.SendScreen(str);
+                SendScreen(str);
             }
         }
 
@@ -3207,7 +3207,7 @@ namespace MTA.Game
 
             if (weapons.Item2 != null)
                 BP += ItemBatlePower(weapons.Item2);
-            if (EntityFlag == Game.EntityFlag.Player)
+            if (EntityFlag == EntityFlag.Player)
             {
                 if (Owner.DoChampStats)
                     BP += (Byte)(Math.Min((byte)e.NobilityRank,
@@ -3252,16 +3252,16 @@ namespace MTA.Game
         public Entity(EntityFlag Flag, bool companion)
         {
             Companion = companion;
-            this.EntityFlag = Flag;
+            EntityFlag = Flag;
             Mode = Enums.Mode.None;
-            update = new MTA.Network.GamePackets.Update(true);
+            update = new Update(true);
             update.UID = UID;
             switch (Flag)
             {
                 case EntityFlag.Player:
-                    MapObjType = Game.MapObjectType.Player;
+                    MapObjType = MapObjectType.Player;
                     break;
-                case EntityFlag.Monster: MapObjType = Game.MapObjectType.Monster; break;
+                case EntityFlag.Monster: MapObjType = MapObjectType.Monster; break;
             }
 
             SpawnPacket = new byte[0];
@@ -3274,8 +3274,8 @@ namespace MTA.Game
                 {
                     BaseID = Owner.Map.BaseID,
                     ID = Owner.Map.ID,
-                    Status = Database.MapsTable.MapInformations[Owner.Map.ID].Status,
-                    Weather = Database.MapsTable.MapInformations[Owner.Map.ID].Weather
+                    Status = MapsTable.MapInformations[Owner.Map.ID].Status,
+                    Weather = MapsTable.MapInformations[Owner.Map.ID].Weather
                 });
         }
 
@@ -3293,9 +3293,9 @@ namespace MTA.Game
                 {
                     BaseID = Owner.Map.BaseID,
                     ID = Owner.Map.ID,
-                    Status = Database.MapsTable.MapInformations[Owner.Map.ID].Status
+                    Status = MapsTable.MapInformations[Owner.Map.ID].Status
                 });
-            if (EntityFlag == Game.EntityFlag.Player)
+            if (EntityFlag == EntityFlag.Player)
             {
                 Owner.ReviveStamp = Time32.Now;
                 Owner.Attackable = false;
@@ -3310,25 +3310,25 @@ namespace MTA.Game
                 amount = Kernel.Random.Next(amount);
                 if (Kernel.Rate(40))
                 {
-                    uint ItemID = Network.PacketHandler.MoneyItemID((uint)amount);
+                    uint ItemID = PacketHandler.MoneyItemID((uint)amount);
                     ushort x = X, y = Y;
-                    Game.Map Map = Kernel.Maps[MapID];
+                    Map Map = Kernel.Maps[MapID];
                     if (Map.SelectCoordonates(ref x, ref y))
                     {
                         Money -= (ulong)amount;
-                        Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
-                        floorItem.ValueType = Network.GamePackets.FloorItem.FloorValueType.Money;
+                        FloorItem floorItem = new FloorItem(true);
+                        floorItem.ValueType = FloorItem.FloorValueType.Money;
                         floorItem.Value = (uint)amount;
                         floorItem.ItemID = ItemID;
                         floorItem.MapID = MapID;
-                        floorItem.MapObjType = Game.MapObjectType.Item;
+                        floorItem.MapObjType = MapObjectType.Item;
                         floorItem.X = x;
                         floorItem.Y = y;
-                        floorItem.Type = Network.GamePackets.FloorItem.Drop;
+                        floorItem.Type = FloorItem.Drop;
                         floorItem.OnFloor = Time32.Now;
-                        floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                        floorItem.UID = FloorItem.FloorUID.Next;
                         while (Map.Npcs.ContainsKey(floorItem.UID))
-                            floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                            floorItem.UID = FloorItem.FloorUID.Next;
                         Map.AddFloorItem(floorItem);
                         Owner.SendScreenSpawn(floorItem, true);
                     }
@@ -3345,7 +3345,7 @@ namespace MTA.Game
                     int index = c + startfrom;
                     if (array[index] != null)
                     {
-                        var infos = Database.ConquerItemInformation.BaseInformations[array[index].ID];
+                        var infos = ConquerItemInformation.BaseInformations[array[index].ID];
                         if (infos.Type == ConquerItemBaseInformation.ItemType.Dropable)
                         {
                             if (array[index].Lock == 0)
@@ -3365,26 +3365,26 @@ namespace MTA.Game
                                                     return;
                                                 Item.Lock = 0;
                                                 ushort x = X, y = Y;
-                                                Game.Map Map = Kernel.Maps[MapID];
+                                                Map Map = Kernel.Maps[MapID];
                                                 if (Map.SelectCoordonates(ref x, ref y))
                                                 {
-                                                    Network.GamePackets.FloorItem floorItem =
-                                                        new Network.GamePackets.FloorItem(true);
+                                                    FloorItem floorItem =
+                                                        new FloorItem(true);
                                                     Owner.Inventory.Remove(Item, Enums.ItemUse.Remove);
                                                     floorItem.Item = Item;
-                                                    floorItem.ValueType = Network.GamePackets.FloorItem.FloorValueType
+                                                    floorItem.ValueType = FloorItem.FloorValueType
                                                         .Item;
                                                     floorItem.ItemID = Item.ID;
                                                     floorItem.MapID = MapID;
-                                                    floorItem.MapObjType = Game.MapObjectType.Item;
+                                                    floorItem.MapObjType = MapObjectType.Item;
                                                     floorItem.X = x;
                                                     floorItem.Y = y;
-                                                    floorItem.Type = Network.GamePackets.FloorItem.Drop;
+                                                    floorItem.Type = FloorItem.Drop;
                                                     floorItem.OnFloor = Time32.Now;
                                                     floorItem.ItemColor = floorItem.Item.Color;
-                                                    floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                                                    floorItem.UID = FloorItem.FloorUID.Next;
                                                     while (Map.Npcs.ContainsKey(floorItem.UID))
-                                                        floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                                                        floorItem.UID = FloorItem.FloorUID.Next;
                                                     Map.AddFloorItem(floorItem);
                                                     Owner.SendScreenSpawn(floorItem, true);
                                                 }
@@ -3435,29 +3435,29 @@ namespace MTA.Game
                         if (Kernel.Rate(25 + (PKPoints > 30 ? 75 : 0)))
                         {
                             ushort x = X, y = Y;
-                            Game.Map Map = Kernel.Maps[MapID];
+                            Map Map = Kernel.Maps[MapID];
                             if (Map.SelectCoordonates(ref x, ref y))
                             {
                                 Owner.Equipment.RemoveToGround(Item.Position);
-                                var infos = Database.ConquerItemInformation.BaseInformations[Item.ID];
+                                var infos = ConquerItemInformation.BaseInformations[Item.ID];
 
-                                Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
+                                FloorItem floorItem = new FloorItem(true);
                                 floorItem.Item = Item;
-                                floorItem.ValueType = Network.GamePackets.FloorItem.FloorValueType.Item;
+                                floorItem.ValueType = FloorItem.FloorValueType.Item;
                                 floorItem.ItemID = Item.ID;
                                 floorItem.MapID = MapID;
-                                floorItem.MapObjType = Game.MapObjectType.Item;
+                                floorItem.MapObjType = MapObjectType.Item;
                                 floorItem.X = x;
                                 floorItem.Y = y;
-                                floorItem.Type = Network.GamePackets.FloorItem.DropDetain;
+                                floorItem.Type = FloorItem.DropDetain;
                                 floorItem.OnFloor = Time32.Now;
                                 floorItem.ItemColor = floorItem.Item.Color;
-                                floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                                floorItem.UID = FloorItem.FloorUID.Next;
                                 while (Map.Npcs.ContainsKey(floorItem.UID))
-                                    floorItem.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                                    floorItem.UID = FloorItem.FloorUID.Next;
                                 Owner.SendScreenSpawn(floorItem, true);
 
-                                Database.DetainedItemTable.DetainItem(Item, Owner, Killer.Owner);
+                                DetainedItemTable.DetainItem(Item, Owner, Killer.Owner);
                                 Owner.Equipment.UpdateEntityPacket();
                                 ClientEquip eq = new ClientEquip(Owner);
                                 eq.DoEquips(Owner);
@@ -3523,7 +3523,7 @@ namespace MTA.Game
                 if (KillerName.EntityFlag == EntityFlag.Player)
                 {
                     Kernel.SendWorldMessage(
-                        new Network.GamePackets.Message(
+                        new Message(
                             Name + " has been captured by " + KillerName.Name +
                             " and sent in jail! The world is now safer!", System.Drawing.Color.Red, Message.Talk),
                         Program.Values);
@@ -3532,7 +3532,7 @@ namespace MTA.Game
                 else
                 {
                     Kernel.SendWorldMessage(
-                        new Network.GamePackets.Message(
+                        new Message(
                             Name + " has been captured and sent in jail! The world is now safer!",
                             System.Drawing.Color.Red, Message.Talk), Program.Values);
                     Teleport(6000, 50, 50);
@@ -3650,7 +3650,7 @@ namespace MTA.Game
             {
                 AddFlag(Network.GamePackets.Update.Flags.Ghost | Network.GamePackets.Update.Flags.Dead |
                         Network.GamePackets.Update.Flags.FadeAway);
-                Network.GamePackets.Attack attack = new Network.GamePackets.Attack(true);
+                Attack attack = new Attack(true);
                 attack.Attacked = UID;
                 attack.AttackType = Network.GamePackets.Attack.Kill;
                 attack.X = X;
@@ -3665,7 +3665,7 @@ namespace MTA.Game
                 Owner.Pet.RemovePet(pettype);
             }
 
-            if (EntityFlag == Game.EntityFlag.Player)
+            if (EntityFlag == EntityFlag.Player)
             {
                 Owner.Pet.ClearAll();
                 if (MyClones.Count > 0)
@@ -3674,7 +3674,7 @@ namespace MTA.Game
                     {
                         Data data = new Data(true);
                         data.UID = item.UID;
-                        data.ID = Network.GamePackets.Data.RemoveEntity;
+                        data.ID = Data.RemoveEntity;
                         item.MonsterInfo.SendScreen(data);
                     }
 
@@ -3734,7 +3734,7 @@ namespace MTA.Game
                     Lotus(FlameLotusEnergy, Network.GamePackets.Update.FlameLotus);
                 }
 
-                Network.GamePackets.Attack attack = new Attack(true);
+                Attack attack = new Attack(true);
                 attack.AttackType = Network.GamePackets.Attack.Kill;
                 attack.X = X;
                 attack.Y = Y;
@@ -3752,8 +3752,8 @@ namespace MTA.Game
                 {
                     BaseID = Owner.Map.BaseID,
                     ID = Owner.Map.ID,
-                    Status = Database.MapsTable.MapInformations[Owner.Map.ID].Status,
-                    Weather = Database.MapsTable.MapInformations[Owner.Map.ID].Weather
+                    Status = MapsTable.MapInformations[Owner.Map.ID].Status,
+                    Weather = MapsTable.MapInformations[Owner.Map.ID].Weather
                 });
                 if (CLanArenaBattleFight != null)
                     CLanArenaBattleFight.CheakToEnd(Owner);
@@ -3776,7 +3776,7 @@ namespace MTA.Game
 
         public void Die(Entity killer) //just replace this whole void for die delay
         {
-            if (killer.EntityFlag == Game.EntityFlag.Player)
+            if (killer.EntityFlag == EntityFlag.Player)
             {
                 if (ContainsFlag3(1UL << 53))
                     RemoveFlag3(1UL << 53);
@@ -3839,7 +3839,7 @@ namespace MTA.Game
                         killer.Owner.uniquepoints += 1;
                         if (killer.Owner.uniquepoints >= 20)
                         {
-                            Network.GamePackets.NpcReply npc = new Network.GamePackets.NpcReply(6,
+                            NpcReply npc = new NpcReply(6,
                                 "Congratulations, You Have Now " + killer.Owner.uniquepoints +
                                 "  Points you can claim your prize now!");
                             npc.OptionID = 255;
@@ -3847,7 +3847,7 @@ namespace MTA.Game
                         }
                         else
                         {
-                            Network.GamePackets.NpcReply npc = new Network.GamePackets.NpcReply(6,
+                            NpcReply npc = new NpcReply(6,
                                 "You Have Now " + killer.Owner.uniquepoints + "  Points Congratz you still need " +
                                 (20 - killer.Owner.uniquepoints) + " more!");
                             npc.OptionID = 255;
@@ -3914,7 +3914,7 @@ namespace MTA.Game
                                 "The " + killer.Owner.AsMember.Rank + " " + killer.Name + " of the Guild " +
                                 killer.Owner.Guild.Name + " has killed the " + killer.Owner.AsMember.Rank + " " + Name +
                                 " of the Guild " + Owner.Guild.Name + " at BirdIsland!", System.Drawing.Color.Yellow,
-                                Network.GamePackets.Message.Guild), Program.Values);
+                                Message.Guild), Program.Values);
                     }
 
                     if (Owner.Guild != null && killer.Owner.Guild != null && Owner.Map.ID == 1020)
@@ -3927,7 +3927,7 @@ namespace MTA.Game
                                 "The " + killer.Owner.AsMember.Rank + " " + killer.Name + " of the Guild " +
                                 killer.Owner.Guild.Name + " has killed the " + killer.Owner.AsMember.Rank + " " + Name +
                                 " of the Guild " + Owner.Guild.Name + " at ApeCity!", System.Drawing.Color.Yellow,
-                                Network.GamePackets.Message.Guild), Program.Values);
+                                Message.Guild), Program.Values);
                     }
 
                     if (Owner.Guild != null && killer.Owner.Guild != null && Owner.Map.ID == 1011)
@@ -3940,7 +3940,7 @@ namespace MTA.Game
                                 "The " + killer.Owner.AsMember.Rank + " " + killer.Name + " of the Guild " +
                                 killer.Owner.Guild.Name + " has killed the " + killer.Owner.AsMember.Rank + " " + Name +
                                 " of the Guild " + Owner.Guild.Name + " at PhoenixCastle!", System.Drawing.Color.Yellow,
-                                Network.GamePackets.Message.Guild), Program.Values);
+                                Message.Guild), Program.Values);
                     }
 
                     if (Owner.Guild != null && killer.Owner.Guild != null && Owner.Map.ID == 1000)
@@ -3953,7 +3953,7 @@ namespace MTA.Game
                                 "The " + killer.Owner.AsMember.Rank + " " + killer.Name + " of the Guild " +
                                 killer.Owner.Guild.Name + " has killed the " + killer.Owner.AsMember.Rank + " " + Name +
                                 " of the Guild " + Owner.Guild.Name + " at DesertCity!", System.Drawing.Color.Yellow,
-                                Network.GamePackets.Message.Guild), Program.Values);
+                                Message.Guild), Program.Values);
                     }
 
                     if (Owner.Guild != null && killer.Owner.Guild != null && Owner.Map.ID == 1001)
@@ -3966,7 +3966,7 @@ namespace MTA.Game
                                 "The " + killer.Owner.AsMember.Rank + " " + killer.Name + " of the Guild " +
                                 killer.Owner.Guild.Name + " has killed the " + killer.Owner.AsMember.Rank + " " + Name +
                                 " of the Guild " + Owner.Guild.Name + " at MysticCastle!", System.Drawing.Color.Yellow,
-                                Network.GamePackets.Message.Guild), Program.Values);
+                                Message.Guild), Program.Values);
                     }
 
                     if (Owner.Guild != null && killer.Owner.Guild != null && Owner.Map.ID == 1762)
@@ -3979,7 +3979,7 @@ namespace MTA.Game
                                 "The " + killer.Owner.AsMember.Rank + " " + killer.Name + " of the Guild " +
                                 killer.Owner.Guild.Name + " has killed the " + killer.Owner.AsMember.Rank + " " + Name +
                                 " of the Guild " + Owner.Guild.Name + " at FrozenGrotto 2!",
-                                System.Drawing.Color.Yellow, Network.GamePackets.Message.Guild), Program.Values);
+                                System.Drawing.Color.Yellow, Message.Guild), Program.Values);
                     }
 
                     if (Owner.Guild != null && killer.Owner.Guild != null && Owner.Map.ID == 2056)
@@ -3992,7 +3992,7 @@ namespace MTA.Game
                                 "The " + killer.Owner.AsMember.Rank + " " + killer.Name + " of the Guild " +
                                 killer.Owner.Guild.Name + " has killed the " + killer.Owner.AsMember.Rank + " " + Name +
                                 " of the Guild " + Owner.Guild.Name + " at FrozenGrotto 6!",
-                                System.Drawing.Color.Yellow, Network.GamePackets.Message.Guild), Program.Values);
+                                System.Drawing.Color.Yellow, Message.Guild), Program.Values);
                     }
                 }
 
@@ -4037,7 +4037,7 @@ namespace MTA.Game
                 //    Hunt_Thief.AddScore(killer.Owner);
             }
 
-            if (EntityFlag == Game.EntityFlag.Player && Owner.Fake && Owner.Booth != null)
+            if (EntityFlag == EntityFlag.Player && Owner.Fake && Owner.Booth != null)
                 return;
             if (killer.MapID == 7777)
                 killer.Owner.elitepoints += 1;
@@ -4066,7 +4066,7 @@ namespace MTA.Game
             {
                 AddFlag(Network.GamePackets.Update.Flags.Ghost | Network.GamePackets.Update.Flags.Dead |
                         Network.GamePackets.Update.Flags.FadeAway);
-                Network.GamePackets.Attack zattack = new Network.GamePackets.Attack(true);
+                Attack zattack = new Attack(true);
                 zattack.Attacked = UID;
                 zattack.AttackType = Network.GamePackets.Attack.Kill;
                 zattack.X = X;
@@ -4082,7 +4082,7 @@ namespace MTA.Game
                 Owner.Pet.RemovePet(pettype);
             }
 
-            if (EntityFlag == Game.EntityFlag.Player)
+            if (EntityFlag == EntityFlag.Player)
             {
                 Owner.Pet.ClearAll();
                 if (MyClones.Count > 0)
@@ -4091,7 +4091,7 @@ namespace MTA.Game
                     {
                         Data data = new Data(true);
                         data.UID = item.UID;
-                        data.ID = Network.GamePackets.Data.RemoveEntity;
+                        data.ID = Data.RemoveEntity;
                         item.MonsterInfo.SendScreen(data);
                     }
 
@@ -4172,15 +4172,15 @@ namespace MTA.Game
                             }
                         }
 
-                        Network.PacketHandler.AddEnemy(this.Owner, killer.Owner);
+                        PacketHandler.AddEnemy(Owner, killer.Owner);
                     }
 
 
-                    if (killer.EntityFlag == Game.EntityFlag.Player)
+                    if (killer.EntityFlag == EntityFlag.Player)
                     {
-                        if (EntityFlag == Game.EntityFlag.Player)
+                        if (EntityFlag == EntityFlag.Player)
                         {
-                            Game.PkExpeliate pk = new Game.PkExpeliate();
+                            PkExpeliate pk = new PkExpeliate();
                             if (!killer.PkExplorerValues.ContainsKey(UID))
                             {
                                 pk.UID = killer.UID;
@@ -4209,8 +4209,8 @@ namespace MTA.Game
                         }
                     }
 
-                    uint ran = (uint)MTA.Kernel.Random.Next(1, 10);
-                    if (killer.EntityFlag == MTA.Game.EntityFlag.Player)
+                    uint ran = (uint)Kernel.Random.Next(1, 10);
+                    if (killer.EntityFlag == EntityFlag.Player)
                     {
                         if (ran > 5)
                         {
@@ -4224,7 +4224,7 @@ namespace MTA.Game
             RemoveFlag(Network.GamePackets.Update.Flags.FlashingName);
         Over:
 
-            Network.GamePackets.Attack attack = new Attack(true);
+            Attack attack = new Attack(true);
             attack.Attacker = killer.UID;
             attack.Attacked = UID;
             attack.AttackType = Network.GamePackets.Attack.Kill;
@@ -4290,8 +4290,8 @@ namespace MTA.Game
                 {
                     BaseID = Owner.Map.BaseID,
                     ID = Owner.Map.ID,
-                    Status = Database.MapsTable.MapInformations[Owner.Map.ID].Status,
-                    Weather = Database.MapsTable.MapInformations[Owner.Map.ID].Weather
+                    Status = MapsTable.MapInformations[Owner.Map.ID].Status,
+                    Weather = MapsTable.MapInformations[Owner.Map.ID].Weather
                 });
                 //if (CLanArenaBattleFight != null)
                 //    CLanArenaBattleFight.CheakToEnd(Owner);
@@ -4312,7 +4312,7 @@ namespace MTA.Game
 
                     if (killer.Owner.Team != null)
                     {
-                        foreach (Client.GameState teammate in killer.Owner.Team.Teammates)
+                        foreach (GameState teammate in killer.Owner.Team.Teammates)
                         {
                             if (teammate == null)
                                 continue;
@@ -4412,17 +4412,17 @@ namespace MTA.Game
                     {
                         mate.Entity.HasMagicDefender = false;
                         mate.Entity.MagicDefenderSecs = 0;
-                        mate.Entity.RemoveFlag3(MTA.Network.GamePackets.Update.Flags3.MagicDefender);
+                        mate.Entity.RemoveFlag3(Network.GamePackets.Update.Flags3.MagicDefender);
                         mate.Entity.Update(mate.Entity.StatusFlag, mate.Entity.StatusFlag2, mate.Entity.StatusFlag3,
-                            MTA.Network.GamePackets.Update.MagicDefenderIcone, 0x80, 0, 0, false);
+                            Network.GamePackets.Update.MagicDefenderIcone, 0x80, 0, 0, false);
                     }
                 }
 
                 MagicDefenderOwner = false;
             }
 
-            RemoveFlag3(MTA.Network.GamePackets.Update.Flags3.MagicDefender);
-            Update(StatusFlag, StatusFlag2, StatusFlag3, MTA.Network.GamePackets.Update.MagicDefenderIcone, 0x80, 0, 0,
+            RemoveFlag3(Network.GamePackets.Update.Flags3.MagicDefender);
+            Update(StatusFlag, StatusFlag2, StatusFlag3, Network.GamePackets.Update.MagicDefenderIcone, 0x80, 0, 0,
                 false);
             HasMagicDefender = false;
         }
@@ -4431,7 +4431,7 @@ namespace MTA.Game
         {
             if (!SendUpdates)
                 return;
-            if (this.Owner == null)
+            if (Owner == null)
                 return;
             update = new Update(true);
             update.UID = UID;
@@ -4445,7 +4445,7 @@ namespace MTA.Game
 
         public void Update(byte type, uint value, uint secondvalue)
         {
-            Network.GamePackets.Update upd = new Update(true);
+            Update upd = new Update(true);
             upd.Append(type, value);
             upd.Append(type, secondvalue);
             upd.UID = UID;
@@ -4456,7 +4456,7 @@ namespace MTA.Game
         {
             if (!SendUpdates)
                 return;
-            if (this.Owner == null)
+            if (Owner == null)
                 return;
             update = new Update(true);
             update.UID = UID;
@@ -4476,9 +4476,9 @@ namespace MTA.Game
             update.UID = UID;
             update.Append(type, value);
             if (!screen)
-                update.Send(Owner as Client.GameState);
+                update.Send(Owner as GameState);
             else
-                (Owner as Client.GameState).SendScreen(update);
+                (Owner as GameState).SendScreen(update);
         }
 
         public void Update(byte type, uint value, bool screen)
@@ -4489,9 +4489,9 @@ namespace MTA.Game
             update.UID = UID;
             update.Append(type, value);
             if (!screen)
-                update.Send(Owner as Client.GameState);
+                update.Send(Owner as GameState);
             else
-                (Owner as Client.GameState).SendScreen(update);
+                (Owner as GameState).SendScreen(update);
         }
 
         public void Update(byte type, ulong value, bool screen)
@@ -4504,9 +4504,9 @@ namespace MTA.Game
             if (EntityFlag == EntityFlag.Player)
             {
                 if (!screen)
-                    update.Send(Owner as Client.GameState);
+                    update.Send(Owner as GameState);
                 else
-                    (Owner as Client.GameState).SendScreen(update);
+                    (Owner as GameState).SendScreen(update);
             }
             else
             {
@@ -4522,9 +4522,9 @@ namespace MTA.Game
             update.UID = UID;
             update.PoPAppend(type, value, value2);
             if (!screen)
-                update.Send(Owner as Client.GameState);
+                update.Send(Owner as GameState);
             else
-                (Owner as Client.GameState).SendScreen(update);
+                (Owner as GameState).SendScreen(update);
         }
 
         public void UpdateEffects(bool screen)
@@ -4537,9 +4537,9 @@ namespace MTA.Game
             if (EntityFlag == EntityFlag.Player)
             {
                 if (!screen)
-                    update.Send(Owner as Client.GameState);
+                    update.Send(Owner as GameState);
                 else
-                    (Owner as Client.GameState).SendScreen(update);
+                    (Owner as GameState).SendScreen(update);
             }
             else
             {
@@ -4557,9 +4557,9 @@ namespace MTA.Game
             if (EntityFlag == EntityFlag.Player)
             {
                 if (!screen)
-                    update.Send(Owner as Client.GameState);
+                    update.Send(Owner as GameState);
                 else
-                    (Owner as Client.GameState).SendScreen(update);
+                    (Owner as GameState).SendScreen(update);
             }
             else
             {
@@ -4571,17 +4571,17 @@ namespace MTA.Game
         {
             if (!SendUpdates)
                 return;
-            Network.GamePackets._String update = new _String(true);
-            update.UID = this.UID;
+            _String update = new _String(true);
+            update.UID = UID;
             update.Type = type;
             update.TextsCount = 1;
             update.Texts.Add(value);
             if (EntityFlag == EntityFlag.Player)
             {
                 if (!screen)
-                    update.Send(Owner as Client.GameState);
+                    update.Send(Owner as GameState);
                 else
-                    (Owner as Client.GameState).SendScreen(update);
+                    (Owner as GameState).SendScreen(update);
             }
             else
             {
@@ -4591,31 +4591,31 @@ namespace MTA.Game
 
         private void UpdateDatabase(string column, byte value)
         {
-            new Database.MySqlCommand(MTA.Database.MySqlCommandType.UPDATE).Update("entities").Set(column, value)
+            new MySqlCommand(MySqlCommandType.UPDATE).Update("entities").Set(column, value)
                 .Where("UID", UID).Execute();
         }
 
         private void UpdateDatabase(string column, long value)
         {
-            new Database.MySqlCommand(MTA.Database.MySqlCommandType.UPDATE).Update("entities").Set(column, value)
+            new MySqlCommand(MySqlCommandType.UPDATE).Update("entities").Set(column, value)
                 .Where("UID", UID).Execute();
         }
 
         private void UpdateDatabase(string column, ulong value)
         {
-            new Database.MySqlCommand(MTA.Database.MySqlCommandType.UPDATE).Update("entities").Set(column, value)
+            new MySqlCommand(MySqlCommandType.UPDATE).Update("entities").Set(column, value)
                 .Where("UID", UID).Execute();
         }
 
         private void UpdateDatabase(string column, bool value)
         {
-            new Database.MySqlCommand(MTA.Database.MySqlCommandType.UPDATE).Update("entities").Set(column, value)
+            new MySqlCommand(MySqlCommandType.UPDATE).Update("entities").Set(column, value)
                 .Where("UID", UID).Execute();
         }
 
         private void UpdateDatabase(string column, string value)
         {
-            new Database.MySqlCommand(MTA.Database.MySqlCommandType.UPDATE).Update("entities").Set(column, value)
+            new MySqlCommand(MySqlCommandType.UPDATE).Update("entities").Set(column, value)
                 .Where("UID", UID).Execute();
         }
 
@@ -4636,7 +4636,7 @@ namespace MTA.Game
             sbyte xi = XDir[dir], yi = YDir[dir];
             _X = (ushort)(X + xi);
             _Y = (ushort)(Y + yi);
-            Game.Map Map = null;
+            Map Map = null;
             if (Kernel.Maps.TryGetValue(MapID, out Map))
             {
                 var objType = MapObjType;
@@ -4684,7 +4684,7 @@ namespace MTA.Game
             _X = (ushort)(X + xi);
             _Y = (ushort)(Y + yi);
 
-            Game.Map Map = null;
+            Map Map = null;
 
             if (Kernel.Maps.TryGetValue(MapID, out Map))
             {
@@ -4722,7 +4722,7 @@ namespace MTA.Game
             return true;
         }
 
-        public void SendSpawn(Client.GameState client)
+        public void SendSpawn(GameState client)
         {
             SendSpawn(client, true);
         }
@@ -4749,27 +4749,27 @@ namespace MTA.Game
         //        }
         //    }
         //}
-        public void SendSpawn(Client.GameState client, bool checkScreen = true)
+        public void SendSpawn(GameState client, bool checkScreen = true)
         {
-            if (!this.Invisable)
+            if (!Invisable)
             {
                 if (client.Screen.Add(this) || !checkScreen)
                 {
-                    if (EntityFlag == Game.EntityFlag.Player)
+                    if (EntityFlag == EntityFlag.Player)
                     {
-                        if (client.InQualifier() && this.Owner.IsWatching() ||
-                            (this.SkillTeamWatchingElitePKMatch != null || this.Owner.WatchingElitePKMatch != null) ||
-                            this.Invisable)
+                        if (client.InQualifier() && Owner.IsWatching() ||
+                            (SkillTeamWatchingElitePKMatch != null || Owner.WatchingElitePKMatch != null) ||
+                            Invisable)
                             return;
                         if (Owner.WatchingElitePKMatch != null)
                             return;
                         if (Invisable) return;
-                        if (this.Owner.IsFairy)
+                        if (Owner.IsFairy)
                         {
                             FairySpawn FS = new FairySpawn(true);
-                            FS.SType = this.Owner.SType;
-                            FS.FairyType = this.Owner.FairyType;
-                            FS.UID = this.UID;
+                            FS.SType = Owner.SType;
+                            FS.FairyType = Owner.FairyType;
+                            FS.UID = UID;
                             client.Send(FS);
                         }
 
@@ -4857,9 +4857,9 @@ namespace MTA.Game
                 if (EntityFlag == EntityFlag.Player)
                 {
                     if (!screen)
-                        update.Send(Owner as Client.GameState);
+                        update.Send(Owner as GameState);
                     else
-                        (Owner as Client.GameState).SendScreen(update);
+                        (Owner as GameState).SendScreen(update);
                 }
                 else
                 {
@@ -4942,7 +4942,7 @@ namespace MTA.Game
             }
         }
 
-        public void Shift(ushort X, ushort Y, uint mapID, Interfaces.IPacket shift = null)
+        public void Shift(ushort X, ushort Y, uint mapID, IPacket shift = null)
         {
             if (_mapid != mapID) return;
 
@@ -4955,10 +4955,10 @@ namespace MTA.Game
             this.Y = Y;
             if (shift == null)
             {
-                shift = new Network.GamePackets.Data(true)
+                shift = new Data(true)
                 {
                     UID = UID,
-                    ID = Network.GamePackets.Data.FlashStep,
+                    ID = Data.FlashStep,
                     dwParam = MapID,
                     wParam1 = X,
                     wParam2 = Y
@@ -4976,13 +4976,13 @@ namespace MTA.Game
         {
             if (EntityFlag == EntityFlag.Player)
             {
-                if (!Database.MapsTable.MapInformations.ContainsKey(MapID))
+                if (!MapsTable.MapInformations.ContainsKey(MapID))
                     return;
                 this.X = X;
                 this.Y = Y;
-                Network.GamePackets.Data Data = new Network.GamePackets.Data(true);
+                Data Data = new Data(true);
                 Data.UID = UID;
-                Data.ID = Network.GamePackets.Data.FlashStep;
+                Data.ID = Data.FlashStep;
                 Data.dwParam = MapID;
                 Data.wParam1 = X;
                 Data.wParam2 = Y;
@@ -5027,7 +5027,7 @@ namespace MTA.Game
 
             _X = (ushort)(_X + xi);
             _Y = (ushort)(_Y + yi);
-            if (EntityFlag == Game.EntityFlag.Player)
+            if (EntityFlag == EntityFlag.Player)
             {
                 if (Owner.Map.Floor[_X, _Y, MapObjType])
                     return true;
@@ -5036,7 +5036,7 @@ namespace MTA.Game
             }
             else
             {
-                Game.Map Map = null;
+                Map Map = null;
                 if (Kernel.Maps.TryGetValue(MapID, out Map))
                 {
                     if (Map.Floor[_X, _Y, MapObjType])
@@ -5054,7 +5054,7 @@ namespace MTA.Game
             if (EntityFlag == EntityFlag.Player)
             {
                 AdvancedTeleport(true);
-                if (!Database.MapsTable.MapInformations.ContainsKey(MapID) && !Kernel.Maps.ContainsKey(MapID) &&
+                if (!MapsTable.MapInformations.ContainsKey(MapID) && !Kernel.Maps.ContainsKey(MapID) &&
                     !Owner.InQualifier())
                 {
                     MapID = 1002;
@@ -5068,10 +5068,10 @@ namespace MTA.Game
                     Owner.ProgressBar.End(Owner);
                 this.X = X;
                 this.Y = Y;
-                Network.GamePackets.Data Data = new Network.GamePackets.Data(true);
+                Data Data = new Data(true);
                 Data.UID = UID;
-                Data.ID = Network.GamePackets.Data.Teleport;
-                Data.dwParam = Database.MapsTable.MapInformations[MapID].BaseID;
+                Data.ID = Data.Teleport;
+                Data.dwParam = MapsTable.MapInformations[MapID].BaseID;
                 Data.wParam1 = X;
                 Data.wParam2 = Y;
                 Owner.Send(Data);
@@ -5081,8 +5081,8 @@ namespace MTA.Game
                 {
                     BaseID = Owner.Map.BaseID,
                     ID = Owner.Map.ID,
-                    Status = Database.MapsTable.MapInformations[Owner.Map.ID].Status,
-                    Weather = Database.MapsTable.MapInformations[Owner.Map.ID].Weather
+                    Status = MapsTable.MapInformations[Owner.Map.ID].Status,
+                    Weather = MapsTable.MapInformations[Owner.Map.ID].Weather
                 });
                 AdvancedTeleport();
             }
@@ -5104,7 +5104,7 @@ namespace MTA.Game
             if (EntityFlag == EntityFlag.Player)
             {
                 AdvancedTeleport(true);
-                if (!Database.MapsTable.MapInformations.ContainsKey(MapID) && Owner.QualifierGroup == null)
+                if (!MapsTable.MapInformations.ContainsKey(MapID) && Owner.QualifierGroup == null)
                 {
                     MapID = 1002;
                     X = 432;
@@ -5132,13 +5132,13 @@ namespace MTA.Game
                 this.Y = Y;
                 PX = 0;
                 PY = 0;
-                this.PreviousMapID = this.MapID;
+                PreviousMapID = this.MapID;
                 this.MapID = MapID;
 
-                Network.GamePackets.Data Data = new Network.GamePackets.Data(true);
+                Data Data = new Data(true);
                 Data.UID = UID;
-                Data.ID = Network.GamePackets.Data.Teleport;
-                Data.dwParam = Database.MapsTable.MapInformations[MapID].BaseID;
+                Data.ID = Data.Teleport;
+                Data.dwParam = MapsTable.MapInformations[MapID].BaseID;
                 Data.wParam1 = X;
                 Data.wParam2 = Y;
                 Owner.Send(Data);
@@ -5146,8 +5146,8 @@ namespace MTA.Game
                 {
                     BaseID = Owner.Map.BaseID,
                     ID = Owner.Map.ID,
-                    Status = Database.MapsTable.MapInformations[Owner.Map.ID].Status,
-                    Weather = Database.MapsTable.MapInformations[Owner.Map.ID].Weather
+                    Status = MapsTable.MapInformations[Owner.Map.ID].Status,
+                    Weather = MapsTable.MapInformations[Owner.Map.ID].Weather
                 });
                 if (!Owner.Equipment.Free(12))
                     if (Owner.Map.ID == 1036 && Owner.Equipment.TryGetItem(12).Plus < 6)
@@ -5163,18 +5163,18 @@ namespace MTA.Game
             if (EntityFlag == EntityFlag.Player)
             {
                 AdvancedTeleport(true);
-                if (this.SpookMap != null && this.Owner.Team == null &&
-                    this.Owner.Map.Entities.ContainsKey(501177 + (uint)this.MapID))
+                if (SpookMap != null && Owner.Team == null &&
+                    Owner.Map.Entities.ContainsKey(501177 + (uint)this.MapID))
                 {
-                    Entity entity = this.Owner.Map.Entities[501177 + (uint)this.MapID];
-                    this.Owner.Map.RemoveEntity(entity);
-                    this.SpookMap.Dispose();
+                    Entity entity = Owner.Map.Entities[501177 + (uint)this.MapID];
+                    Owner.Map.RemoveEntity(entity);
+                    SpookMap.Dispose();
                 }
 
                 ushort baseID = 0;
                 if (!Kernel.Maps.ContainsKey(MapID))
                 {
-                    if (!Database.MapsTable.MapInformations.ContainsKey(MapID) && Owner.QualifierGroup == null)
+                    if (!MapsTable.MapInformations.ContainsKey(MapID) && Owner.QualifierGroup == null)
                     {
                         baseID = MapID = 1002;
                         X = 302;
@@ -5182,7 +5182,7 @@ namespace MTA.Game
                     }
                     else
                     {
-                        baseID = Database.MapsTable.MapInformations[MapID].BaseID;
+                        baseID = MapsTable.MapInformations[MapID].BaseID;
                     }
                 }
                 else
@@ -5205,13 +5205,13 @@ namespace MTA.Game
 
                 this.X = X;
                 this.Y = Y;
-                this.PreviousMapID = this.MapID;
-                if (this.PreviousMapID == 2057)
+                PreviousMapID = this.MapID;
+                if (PreviousMapID == 2057)
                 {
                     byte[] buffer = new byte[68];
-                    Writer.WriteUshort(60, 0, buffer);
-                    Writer.WriteUshort(2224, 2, buffer);
-                    Writer.WriteUint(9, 4, buffer);
+                    WriteUshort(60, 0, buffer);
+                    WriteUshort(2224, 2, buffer);
+                    WriteUint(9, 4, buffer);
                     Owner.Entity.RemoveFlag2(Network.GamePackets.Update.Flags2.CarryingFlag);
                     Owner.Send(buffer);
                 }
@@ -5231,8 +5231,8 @@ namespace MTA.Game
                 {
                     BaseID = Owner.Map.BaseID,
                     ID = Owner.Map.ID,
-                    Status = Database.MapsTable.MapInformations[Owner.Map.ID].Status,
-                    Weather = Database.MapsTable.MapInformations[Owner.Map.ID].Weather
+                    Status = MapsTable.MapInformations[Owner.Map.ID].Status,
+                    Weather = MapsTable.MapInformations[Owner.Map.ID].Weather
                 });
                 Owner.Entity.Action = Enums.ConquerAction.None;
                 Owner.ReviveStamp = Time32.Now;
@@ -5257,7 +5257,7 @@ namespace MTA.Game
         {
             if (EntityFlag == EntityFlag.Player)
             {
-                if (!Database.DMaps.MapPaths.ContainsKey(BaseID))
+                if (!DMaps.MapPaths.ContainsKey(BaseID))
                     return;
                 if (Owner.ProgressBar != null)
                     Owner.ProgressBar.End(Owner);
@@ -5266,21 +5266,21 @@ namespace MTA.Game
                     if (BaseID != 700 && BaseID < 11000)
                         Owner.EndQualifier();
                 AdvancedTeleport(true);
-                if (!Kernel.Maps.ContainsKey(DynamicID)) new Map(DynamicID, BaseID, Database.DMaps.MapPaths[BaseID]);
-                this.PrevX = this.X;
-                this.PrevY = this.Y;
+                if (!Kernel.Maps.ContainsKey(DynamicID)) new Map(DynamicID, BaseID, DMaps.MapPaths[BaseID]);
+                PrevX = this.X;
+                PrevY = this.Y;
                 this.X = X;
                 this.Y = Y;
-                this.PreviousMapID = this.MapID;
-                this.MapID = DynamicID;
-                Network.GamePackets.Data Data = new Network.GamePackets.Data(true);
+                PreviousMapID = MapID;
+                MapID = DynamicID;
+                Data Data = new Data(true);
                 Data.UID = UID;
-                Data.ID = Network.GamePackets.Data.Teleport;
+                Data.ID = Data.Teleport;
                 Data.dwParam = BaseID;
                 Data.wParam1 = X;
                 Data.wParam2 = Y;
                 Owner.Send(Data);
-                Owner.Entity.Action = MTA.Game.Enums.ConquerAction.None;
+                Owner.Entity.Action = Enums.ConquerAction.None;
                 Owner.ReviveStamp = Time32.Now;
                 Owner.Attackable = false;
                 if (Owner.ChampionGroup == null)
@@ -5288,8 +5288,8 @@ namespace MTA.Game
                     {
                         BaseID = Owner.Map.BaseID,
                         ID = Owner.Map.ID,
-                        Status = Database.MapsTable.MapInformations[Owner.Map.BaseID].Status,
-                        Weather = Database.MapsTable.MapInformations[Owner.Map.BaseID].Weather
+                        Status = MapsTable.MapInformations[Owner.Map.BaseID].Status,
+                        Weather = MapsTable.MapInformations[Owner.Map.BaseID].Weather
                     });
                 if (!Owner.Equipment.Free(12))
                     if (Owner.Map.ID == 1036 && Owner.Equipment.TryGetItem(12).Plus < 6)
@@ -5313,20 +5313,20 @@ namespace MTA.Game
                         {
                             Data data = new Data(true);
                             data.UID = clone.UID;
-                            data.ID = Network.GamePackets.Data.RemoveEntity;
+                            data.ID = Data.RemoveEntity;
                             Owner.SendScreen(data);
                             Owner.RemoveScreenSpawn(clone, true);
                         }
                         else
                         {
-                            clone.MapID = this.MapID;
-                            clone.X = this.X;
-                            clone.Y = this.Y;
+                            clone.MapID = MapID;
+                            clone.X = X;
+                            clone.Y = Y;
 
-                            Network.GamePackets.Data Data = new Network.GamePackets.Data(true);
+                            Data Data = new Data(true);
                             Data.UID = clone.UID;
-                            Data.ID = Network.GamePackets.Data.Teleport;
-                            Data.dwParam = Database.MapsTable.MapInformations[MapID].BaseID;
+                            Data.ID = Data.Teleport;
+                            Data.dwParam = MapsTable.MapInformations[MapID].BaseID;
                             Data.wParam1 = clone.X;
                             Data.wParam2 = clone.Y;
                             Owner.SendScreen(Data);
@@ -5348,15 +5348,15 @@ namespace MTA.Game
                             {
                                 Data data = new Data(true);
                                 data.UID = pet.Entity.UID;
-                                data.ID = Network.GamePackets.Data.RemoveEntity;
+                                data.ID = Data.RemoveEntity;
                                 Owner.SendScreen(data);
                                 Owner.RemoveScreenSpawn(pet.Entity, true);
                             }
                             else
                             {
-                                pet.Entity.MapID = this.MapID;
-                                pet.Entity.X = this.X;
-                                pet.Entity.Y = this.Y;
+                                pet.Entity.MapID = MapID;
+                                pet.Entity.X = X;
+                                pet.Entity.Y = Y;
 
                                 Owner.SendScreenSpawn(pet.Entity, true);
                             }
@@ -5418,7 +5418,7 @@ namespace MTA.Game
         {
             if (MapID == 1036 && TransformationTime == 3600)
                 return;
-            this.TransformationID = 0;
+            TransformationID = 0;
 
             double maxHP = TransformationMaxHP;
             double HP = Hitpoints;
@@ -5443,23 +5443,23 @@ namespace MTA.Game
             SpawnPacket[_WindowSpawn] = 0;
         }
 
-        public MTA.Game.Enums.CountryID CountryID
+        public Enums.CountryID CountryID
         {
-            get { return (MTA.Game.Enums.CountryID)BitConverter.ToUInt16(SpawnPacket, _CountryCode); }
+            get { return (Enums.CountryID)BitConverter.ToUInt16(SpawnPacket, _CountryCode); }
             set { WriteUInt16((ushort)value, _CountryCode, SpawnPacket); }
         }
 
         public uint EquipmentColor
         {
-            get { return BitConverter.ToUInt32(this.SpawnPacket, _EquipmentColor); }
-            set { WriteUInt32(value, _EquipmentColor, this.SpawnPacket); }
+            get { return BitConverter.ToUInt32(SpawnPacket, _EquipmentColor); }
+            set { WriteUInt32(value, _EquipmentColor, SpawnPacket); }
         }
 
         private uint guildBP = 0;
 
         public bool Archer()
         {
-            if (EntityFlag == Game.EntityFlag.Player)
+            if (EntityFlag == EntityFlag.Player)
             {
                 var weapons = Owner.Weapons;
                 if (weapons.Item1 != null)
@@ -5475,7 +5475,7 @@ namespace MTA.Game
 
         public bool Assassin()
         {
-            if (EntityFlag == Game.EntityFlag.Player)
+            if (EntityFlag == EntityFlag.Player)
             {
                 if (Class >= 40 && Class <= 45)
                 {
@@ -6649,7 +6649,7 @@ namespace MTA.Game
 
         public bool Ninja()
         {
-            if (EntityFlag == Game.EntityFlag.Player)
+            if (EntityFlag == EntityFlag.Player)
             {
                 if (Class >= 50 && Class <= 55)
                 {
@@ -6667,7 +6667,7 @@ namespace MTA.Game
 
         public bool Fire()
         {
-            if (EntityFlag == Game.EntityFlag.Player)
+            if (EntityFlag == EntityFlag.Player)
             {
                 if (Class >= 140 && Class >= 145)
                     return true;
@@ -6680,7 +6680,7 @@ namespace MTA.Game
 
         public bool Water()
         {
-            if (EntityFlag == Game.EntityFlag.Player)
+            if (EntityFlag == EntityFlag.Player)
             {
                 if (Class >= 130 && Class >= 135)
                     return true;
@@ -6800,13 +6800,13 @@ namespace MTA.Game
         {
             get
             {
-                if (EntityFlag == Game.EntityFlag.Player)
+                if (EntityFlag == EntityFlag.Player)
                     return Owner["QuestFrom"];
                 return "";
             }
             set
             {
-                if (EntityFlag == Game.EntityFlag.Player)
+                if (EntityFlag == EntityFlag.Player)
                     Owner["QuestFrom"] = value;
             }
         }
@@ -6815,13 +6815,13 @@ namespace MTA.Game
         {
             get
             {
-                if (EntityFlag == Game.EntityFlag.Player)
+                if (EntityFlag == EntityFlag.Player)
                     return Owner["QuestMob"];
                 return "";
             }
             set
             {
-                if (EntityFlag == Game.EntityFlag.Player)
+                if (EntityFlag == EntityFlag.Player)
                     Owner["QuestMob"] = value;
             }
         }
@@ -6830,13 +6830,13 @@ namespace MTA.Game
         {
             get
             {
-                if (EntityFlag == Game.EntityFlag.Player)
+                if (EntityFlag == EntityFlag.Player)
                     return Owner["QuestKO"];
                 return 0;
             }
             set
             {
-                if (EntityFlag == Game.EntityFlag.Player)
+                if (EntityFlag == EntityFlag.Player)
                     Owner["QuestKO"] = value;
             }
         }
@@ -6844,8 +6844,8 @@ namespace MTA.Game
 
         public uint race
         {
-            get { return this._race; }
-            set { this._race = value; }
+            get { return _race; }
+            set { _race = value; }
         }
 
         #endregion
@@ -6870,26 +6870,26 @@ namespace MTA.Game
 
         public bool IsThisLeftGate(int X, int Y)
         {
-            if (Game.GuildWar.RightGate == null)
+            if (GuildWar.RightGate == null)
                 return false;
             if (MapID == 1038)
             {
                 if ((X == 223 || X == 222) && (Y >= 175 && Y <= 185))
                 {
-                    if (Game.GuildWar.RightGate.Mesh / 10 == 27)
+                    if (GuildWar.RightGate.Mesh / 10 == 27)
                     {
                         return true;
                     }
                 }
             }
 
-            if (Game.SuperGuildWar.RightGate == null)
+            if (SuperGuildWar.RightGate == null)
                 return false;
             if (MapID == 10380)
             {
                 if ((X == 223 || X == 222) && (Y >= 175 && Y <= 185))
                 {
-                    if (Game.SuperGuildWar.RightGate.Mesh / 10 == 27)
+                    if (SuperGuildWar.RightGate.Mesh / 10 == 27)
                     {
                         return true;
                     }
@@ -6901,26 +6901,26 @@ namespace MTA.Game
 
         public bool IsThisRightGate(int X, int Y)
         {
-            if (Game.GuildWar.LeftGate == null)
+            if (GuildWar.LeftGate == null)
                 return false;
             if (MapID == 1038)
             {
                 if ((Y == 210 || Y == 209) && (X >= 154 && X <= 166))
                 {
-                    if (Game.GuildWar.LeftGate.Mesh / 10 == 24)
+                    if (GuildWar.LeftGate.Mesh / 10 == 24)
                     {
                         return true;
                     }
                 }
             }
 
-            if (Game.SuperGuildWar.LeftGate == null)
+            if (SuperGuildWar.LeftGate == null)
                 return false;
             if (MapID == 10380)
             {
                 if ((Y == 210 || Y == 209) && (X >= 154 && X <= 166))
                 {
-                    if (Game.SuperGuildWar.LeftGate.Mesh / 10 == 24)
+                    if (SuperGuildWar.LeftGate.Mesh / 10 == 24)
                     {
                         return true;
                     }
@@ -6941,19 +6941,19 @@ namespace MTA.Game
             set
             {
                 assassinBP = value;
-                Writer.WriteUInt32(value, 233 + 4 + 4 + 9 + 4, SpawnPacket);
+                WriteUInt32(value, 233 + 4 + 4 + 9 + 4, SpawnPacket);
             }
         }
 
         public uint TrojanBP
         {
-            get { return BitConverter.ToUInt32(this.SpawnPacket, 237 + 4 + 9); }
-            set { Writer.WriteUInt32(value, 237 + 4 + 9 + 4, SpawnPacket); }
+            get { return BitConverter.ToUInt32(SpawnPacket, 237 + 4 + 9); }
+            set { WriteUInt32(value, 237 + 4 + 9 + 4, SpawnPacket); }
         }
 
         public bool EpicMonk()
         {
-            if (EntityFlag == Game.EntityFlag.Player)
+            if (EntityFlag == EntityFlag.Player)
             {
                 var weapons = Owner.Weapons;
                 if (weapons.Item1 != null)

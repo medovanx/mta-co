@@ -18,7 +18,7 @@ namespace MTA
         private UInt32 mLeader, mFund, mAllyRequest;
         private String mName, mInfo, mAnnouncement;
         private Byte mLevel, mBPTower;
-        public Client.GameState client;
+        public GameState client;
         public UInt32 WarScore = 0;
         public bool PoleKeeper = false;
 
@@ -94,7 +94,7 @@ namespace MTA
             set
             {
                 leaderName = value;
-                Writer.WriteString(value, 32, mData);
+                WriteString(value, 32, mData);
             }
         }
         public UInt32 Fund
@@ -142,7 +142,7 @@ namespace MTA
 
         public void Build(GameState c, Types type)
         {
-            this.Type = type;
+            Type = type;
             switch (type)
             {
                 case Types.Info:
@@ -168,18 +168,18 @@ namespace MTA
                             Position++;
 
                             string text2 = "0 0 0 0 0 0 0";
-                            Writer.WriteStringWithLength(text2, Position, mData);
+                            WriteStringWithLength(text2, Position, mData);
                             ClanWarArena.ClientWar clientWar;
-                            if (ClanWarArena.GetMyWar(this.ID, out clientWar))
+                            if (ClanWarArena.GetMyWar(ID, out clientWar))
                             {
                                 string dominationMap = clientWar.DominationMap;
                                 Position += text2.Length;
                                 Position++;
-                                Writer.WriteStringWithLength(dominationMap, Position, mData);
+                                WriteStringWithLength(dominationMap, Position, mData);
                                 string curentMap = clientWar.CurentMap;
                                 Position += dominationMap.Length;
                                 Position++;
-                                Writer.WriteStringWithLength(curentMap, Position, mData);
+                                WriteStringWithLength(curentMap, Position, mData);
                             }
                             Position = 17;
                         }
@@ -189,39 +189,39 @@ namespace MTA
                     {
                         string text = "0 0 0 0 0 0 0";
                         ClanWarArena.ClientWar clientWar;
-                        if (ClanWarArena.GetMyWar(this.ID, out clientWar))
+                        if (ClanWarArena.GetMyWar(ID, out clientWar))
                         {
                             text = string.Concat(new object[]{"1 ",
                         clientWar.OccupationDays," ",
                         clientWar.Reward," ",
                         clientWar.NextReward," 0 0 0"});
                         }
-                        this.Offset16 = 1;
-                        this.Offset17 = (byte)text.Length;
-                        Writer.WriteString(text, 18, this.mData);
+                        Offset16 = 1;
+                        Offset17 = (byte)text.Length;
+                        WriteString(text, 18, mData);
                         break;
                     }
             }
         }
-        private static void UpdateData(Client.GameState client, string column, object value)
+        private static void UpdateData(GameState client, string column, object value)
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE))
                 cmd.Update("clans").Set(column, value).Where("identifier", client.Entity.ClanId)
                     .Execute();
         }
-        public void Save(Client.GameState client, String row, UInt16 value)
+        public void Save(GameState client, String row, UInt16 value)
         {
             UpdateData(client, row, value);
         }
-        public void Save(Client.GameState client, String row, Byte value)
+        public void Save(GameState client, String row, Byte value)
         {
             UpdateData(client, row, value);
         }
-        public void Save(Client.GameState client, String row, String value)
+        public void Save(GameState client, String row, String value)
         {
             UpdateData(client, row, value);
         }
-        public void Save(Client.GameState client, String row, UInt32 value)
+        public void Save(GameState client, String row, UInt32 value)
         {
             UpdateData(client, row, value);
         }
@@ -237,14 +237,14 @@ namespace MTA
             }
             return 0;
         }
-        public Dictionary<UInt32, ClanMember> Members { get { return this.mMembers; } }
-        public Dictionary<UInt32, Clan> Allies { get { return this.mAllies; } }
-        public Dictionary<UInt32, Clan> Enemies { get { return this.mEnemies; } }
+        public Dictionary<UInt32, ClanMember> Members { get { return mMembers; } }
+        public Dictionary<UInt32, Clan> Allies { get { return mAllies; } }
+        public Dictionary<UInt32, Clan> Enemies { get { return mEnemies; } }
 
         public void InfoToMembers()
         {
             GameState mem;
-            foreach (ClanMember member in this.Members.Values)
+            foreach (ClanMember member in Members.Values)
             {
                 if (Kernel.GamePool.TryGetValue(member.Identifier, out mem))
                 {
@@ -258,15 +258,15 @@ namespace MTA
         public void SendMessage(IPacket packet)
         {
             GameState mem;
-            foreach (ClanMember member in this.Members.Values)
+            foreach (ClanMember member in Members.Values)
             {
                 if (Kernel.GamePool.TryGetValue(member.Identifier, out mem))
                     mem.Send(packet);
             }
         }
-        public static void nobmas(Client.GameState client)
+        public static void nobmas(GameState client)
         {
-            Kernel.SendWorldMessage(new Message("Congratulation! " + client.Entity.Name + "Donation To " + client.NobilityInformation.Rank + " in Nobility Rank!", System.Drawing.Color.White, 2011), Program.Values);
+            Kernel.SendWorldMessage(new Message("Congratulation! " + client.Entity.Name + "Donation To " + client.NobilityInformation.Rank + " in Nobility Rank!", Color.White, 2011), Program.Values);
         }
         public static UInt32 NextClanId
         {
@@ -302,8 +302,8 @@ namespace MTA
             c.Entity.ClanId = ID;
             c.Entity.ClanRank = Ranks.Member;
             c.Entity.ClanName = Name;
-            Database.EntityTable.UpdateClanID(c);
-            Database.EntityTable.UpdateClanRank(c);
+            EntityTable.UpdateClanID(c);
+            EntityTable.UpdateClanRank(c);
 
             Members.Add(c.Entity.UID, new ClanMember()
             {
@@ -359,8 +359,8 @@ namespace MTA
 
             c.Entity.ClanId = id;
             c.Entity.ClanRank = Ranks.ClanLeader;
-            Database.EntityTable.UpdateClanID(c);
-            Database.EntityTable.UpdateClanRank(c);
+            EntityTable.UpdateClanID(c);
+            EntityTable.UpdateClanRank(c);
 
             clan.Build(c, Types.Info);
             c.Send(clan);
@@ -368,7 +368,7 @@ namespace MTA
             clan = c.Entity.GetClan;
             if (clan != null)
             {
-                clan.Build(c, Clan.Types.Info);
+                clan.Build(c, Types.Info);
                 c.Send(clan);
 
                 c.Entity.ClanName = clan.Name;
@@ -435,15 +435,15 @@ namespace MTA
         public static void DisbandClan(GameState c)
         {
             byte[] Packet = new byte[90];
-            Writer.WriteUInt16(82, 0, Packet);
-            Writer.WriteUInt16(1312, 2, Packet);
-            Writer.WriteUInt32(23, 4, Packet);
-            Writer.WriteUInt32(c.Entity.UID, 8, Packet);
+            WriteUInt16(82, 0, Packet);
+            WriteUInt16(1312, 2, Packet);
+            WriteUInt32(23, 4, Packet);
+            WriteUInt32(c.Entity.UID, 8, Packet);
             /*
             if (c.Team != null)
                 c.Team.GetClanShareBp(c);
             */
-            Database.EntityTable.RemoveClan(c);
+            EntityTable.RemoveClan(c);
             using (var cmd = new MySqlCommand(MySqlCommandType.DELETE))
                 cmd.Delete("clans", "leaderid", c.Entity.UID).Execute();
 
@@ -452,7 +452,7 @@ namespace MTA
                 var hero = Program.Values.SingleOrDefault(x => x.Entity.UID == h.Identifier);
                 if (hero != null)
                 {
-                    hero.Entity.ClanRank = Clan.Ranks.None;
+                    hero.Entity.ClanRank = Ranks.None;
                     hero.Entity.ClanName = "";
                     hero.Entity.ClanId = 0;
                     hero.Send(Packet);
@@ -475,7 +475,7 @@ namespace MTA
         }
         private void LoadAssociates()
         {
-            using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("clanrelation").Where("clanid", this.ID))
+            using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("clanrelation").Where("clanid", ID))
             using (var reader = cmd.CreateReader())
             {
                 while (reader.Read())
@@ -486,9 +486,9 @@ namespace MTA
                     if (Kernel.Clans.TryGetValue(AssociateId, out c))
                     {
                         if (Type == ClanRelations.RelationTypes.Allies)
-                            this.Allies.Add(AssociateId, c);
+                            Allies.Add(AssociateId, c);
                         else
-                            this.Enemies.Add(AssociateId, c);
+                            Enemies.Add(AssociateId, c);
                     }
                 }
             }
@@ -525,11 +525,11 @@ namespace MTA
         public byte[] ToArray() { return mData; }
         public void Deserialize(byte[] buffer) { mData = buffer; }
 
-        public void SendClanShareBp(uint leaderUID, uint BpShare, Client.GameState client)
+        public void SendClanShareBp(uint leaderUID, uint BpShare, GameState client)
         {
-            Network.GamePackets.Update update = new Network.GamePackets.Update(true) { UID = client.Entity.UID };
-            update.Append(Network.GamePackets.Update.ClanShareBp, leaderUID);
-            update.Append4(Network.GamePackets.Update.ClanShareBp, BpShare);
+            Update update = new Update(true) { UID = client.Entity.UID };
+            update.Append(Update.ClanShareBp, leaderUID);
+            update.Append4(Update.ClanShareBp, BpShare);
             client.Send(update.ToArray());
 
         }

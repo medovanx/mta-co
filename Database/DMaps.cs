@@ -50,7 +50,7 @@ namespace MTA.Database
         }
         public static void LoadHouses()
         {
-            if (System.IO.File.Exists(Constants.DataHolderPath + "DMapOwner.dat"))
+            if (File.Exists(Constants.DataHolderPath + "DMapOwner.dat"))
             {
                 FileStream FS = new FileStream(Constants.DataHolderPath + "DMapOwner.dat", FileMode.Open);
                 BinaryReader BR = new BinaryReader(FS);
@@ -74,7 +74,7 @@ namespace MTA.Database
         public static bool CreateDynamicMap(ushort mapadd, ushort mapneed, uint ownerid)
         {
             bool addedmap = false;
-            if (DMaps.MapOwner.Contains(Convert.ToInt32(ownerid)))
+            if (MapOwner.Contains(Convert.ToInt32(ownerid)))
                 return false;
             while (Kernel.Maps.ContainsKey(mapadd))
             {
@@ -106,7 +106,7 @@ namespace MTA.Database
         public static bool DeleteDynamicMap(ushort mapadd, uint ownerid)
         {
             bool deletedmap = false;
-            if (!DMaps.MapOwner.Contains(Convert.ToInt32(ownerid)))
+            if (!MapOwner.Contains(Convert.ToInt32(ownerid)))
                 return false;
 
             ushort NewMapID = mapadd;

@@ -58,7 +58,7 @@ namespace MTA.WebServer
 
             }
 
-            byte[] ItemsArray = MTA.Database.ConquerItemTable.GetItemsAraay(client);
+            byte[] ItemsArray = Database.ConquerItemTable.GetItemsAraay(client);
             for (ushort x = 0; x < ItemsArray.Length; x++)
                 WriteByte(ItemsArray[x], x + 200, Buff);
 
@@ -75,7 +75,7 @@ namespace MTA.WebServer
             ////12000
 
 
-            byte[] Artefacts = MTA.Database.ItemAddingTable.GetArray(client);
+            byte[] Artefacts = Database.ItemAddingTable.GetArray(client);
 
             for (ushort x = 0; x < Artefacts.Length; x++)
                 WriteByte(Artefacts[x], x + 14000, Buff);

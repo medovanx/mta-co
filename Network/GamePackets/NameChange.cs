@@ -20,42 +20,42 @@ namespace MTA.Network.GamePackets {
 
         public NameChange(bool Create) {
             if (Create) {
-                this.Buffer = new byte[0x22];
-                WriteUInt16((ushort)this.Buffer.Length, 0, this.Buffer);
-                WriteUInt16(0x820, 2, this.Buffer);
+                Buffer = new byte[0x22];
+                WriteUInt16((ushort)Buffer.Length, 0, Buffer);
+                WriteUInt16(0x820, 2, Buffer);
             }
         }
 
         public NameChangeAction Action {
-            get { return this._Action; }
-            set { this._Action = (NameChangeAction)this.Buffer[4]; }
+            get { return _Action; }
+            set { _Action = (NameChangeAction)Buffer[4]; }
         }
 
         public ushort EditAllowed {
-            get { return this._EditAllowed; }
-            set { this._EditAllowed = BitConverter.ToUInt16(this.Buffer, 8); }
+            get { return _EditAllowed; }
+            set { _EditAllowed = BitConverter.ToUInt16(Buffer, 8); }
         }
 
         public ushort EditCount {
-            get { return this._EditCount; }
-            set { this._EditCount = BitConverter.ToUInt16(this.Buffer, 6); }
+            get { return _EditCount; }
+            set { _EditCount = BitConverter.ToUInt16(Buffer, 6); }
         }
 
         public string Name {
-            get { return this._name; }
-            set { this._name = Encoding.ASCII.GetString(this.Buffer, 10, 0x10).TrimEnd(new char[1]); }
+            get { return _name; }
+            set { _name = Encoding.ASCII.GetString(Buffer, 10, 0x10).TrimEnd(new char[1]); }
         }
 
         public void Deserialize(byte[] buffer) {
-            this.Buffer = buffer;
+            Buffer = buffer;
         }
 
         public void Send(GameState client) {
-            client.Send(this.Buffer);
+            client.Send(Buffer);
         }
 
         public byte[] ToArray() {
-            return this.Buffer;
+            return Buffer;
         }
     }
 }

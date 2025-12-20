@@ -6,7 +6,7 @@ namespace MTA.Client.Commands
     {
         public static bool HandleCommand(GameState client, string[] data, string mess)
         {
-            return (global::System.String)data[0] switch
+            return (System.String)data[0] switch
             {
                 "tone" => HandleToneCommand(client, data, mess),
                 "clearinv" => HandleClearInventoryCommand(client, data, mess),
@@ -79,7 +79,7 @@ namespace MTA.Client.Commands
 
             foreach (ConquerItem item in inventory)
             {
-                client.Inventory.Remove(item, MTA.Game.Enums.ItemUse.Remove);
+                client.Inventory.Remove(item, Game.Enums.ItemUse.Remove);
             }
             return true;
         }

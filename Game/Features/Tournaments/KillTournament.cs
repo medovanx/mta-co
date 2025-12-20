@@ -34,9 +34,9 @@ namespace MTA.Game
             this.name = name;
             this.message = message;
             this.selectFunc = selectFunc;
-            this.Subscriber = World.Subscribe(work, 1000);
-            this.onGoing = this.announcement = this.canAttack = false;
-            this.players = new ConcurrentDictionary<uint, GameState>();
+            Subscriber = World.Subscribe(work, 1000);
+            onGoing = announcement = canAttack = false;
+            players = new ConcurrentDictionary<uint, GameState>();
         }
 
         private void work(int time)

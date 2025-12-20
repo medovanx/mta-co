@@ -114,7 +114,7 @@ namespace MTA.Network.GamePackets {
         }
 
         public byte[] ToArray() {
-            return this.Buffer2;
+            return Buffer2;
         }
     }
 }

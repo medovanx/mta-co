@@ -11,8 +11,8 @@
             if (Create)
             {
                 Buffer = new byte[24];
-                Writer.Write(16, 0, Buffer);
-                Writer.Write(2048, 2, Buffer);
+                Write(16, 0, Buffer);
+                Write(2048, 2, Buffer);
             }
         }
         public uint UID

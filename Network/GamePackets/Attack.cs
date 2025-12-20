@@ -130,7 +130,7 @@ namespace MTA.Network.GamePackets
 
         public void Deserialize(byte[] buffer)
         {
-            this.Buffer = buffer;
+            Buffer = buffer;
         }
         public byte[] ToArray()
         {
@@ -194,11 +194,11 @@ namespace MTA.Network.GamePackets
         {
             get
             {
-                return MTA.BitConverter.ToUInt16(this.Buffer, 24 + 4);
+                return BitConverter.ToUInt16(Buffer, 24 + 4);
             }
             set
             {
-                Writer.WriteUInt16(value, 24 + 4, this.Buffer);
+                Writer.WriteUInt16(value, 24 + 4, Buffer);
             }
         }
     }

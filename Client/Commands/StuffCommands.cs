@@ -6,7 +6,7 @@ namespace MTA.Client.Commands
     {
         public static bool HandleCommand(GameState client, string[] data, string mess)
         {
-            return (global::System.String)data[0] switch
+            return (System.String)data[0] switch
             {
                 "stuff" => HandleStuffCommand(client, data, mess),
                 _ => false,

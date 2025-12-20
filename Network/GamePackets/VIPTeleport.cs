@@ -55,19 +55,19 @@ namespace MTA.Network.GamePackets
 
         public VIPTeleport()
         {
-            this.Buffer = new Byte[32 + 8];
+            Buffer = new Byte[32 + 8];
             WriteUInt16(32, 0, Buffer);
             WriteUInt16(1128, 2, Buffer);
         }
 
         public VIPTeleportTypes TeleportType
         {
-            get { return (VIPTeleportTypes)BitConverter.ToUInt32(this.Buffer, 4); }
+            get { return (VIPTeleportTypes)BitConverter.ToUInt32(Buffer, 4); }
             set { WriteUInt32((UInt32)value, 4, Buffer); }
         }
         public VIPTeleportLocations Location
         {
-            get { return (VIPTeleportLocations)BitConverter.ToUInt32(this.Buffer, 8); }
+            get { return (VIPTeleportLocations)BitConverter.ToUInt32(Buffer, 8); }
             set { WriteUInt32((UInt32)value, 8, Buffer); }
         }
         public Byte Countdown

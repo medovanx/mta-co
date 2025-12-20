@@ -58,7 +58,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 3691 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap22 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in Nobility King: " + howmanyinmap22 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in Nobility King: " + howmanyinmap22 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
             }
         }
@@ -70,7 +70,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 3073 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap25 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in KillerWar: " + howmanyinmap25 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in KillerWar: " + howmanyinmap25 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
             }
         }
@@ -82,7 +82,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 3693 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap24 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in Nobility Duke: " + howmanyinmap24 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in Nobility Duke: " + howmanyinmap24 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
             }
         }
@@ -94,7 +94,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 3692 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap23 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in Nobility Prince: " + howmanyinmap23 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in Nobility Prince: " + howmanyinmap23 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
             }
         }
@@ -106,7 +106,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 3694 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap29 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in Nobility Earl: " + howmanyinmap29 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in Nobility Earl: " + howmanyinmap29 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
             }
         }
@@ -118,7 +118,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 3071 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap53 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in BlackName Now: " + howmanyinmap53 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in BlackName Now: " + howmanyinmap53 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
@@ -131,7 +131,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 1701 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap10 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in TopMaster Now: " + howmanyinmap10 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in TopMaster Now: " + howmanyinmap10 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
@@ -144,7 +144,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 3070 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap52 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in HorsePk Now: " + howmanyinmap52 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in HorsePk Now: " + howmanyinmap52 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
@@ -157,7 +157,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 1702 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap11 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in TopConquer Now: " + howmanyinmap11 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in TopConquer Now: " + howmanyinmap11 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
@@ -170,7 +170,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 8877 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in DailyPk Now: " + howmanyinmap + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in DailyPk Now: " + howmanyinmap + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
@@ -183,7 +183,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 3333 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap2 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in LastManStanding: " + howmanyinmap2 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in LastManStanding: " + howmanyinmap2 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
@@ -196,7 +196,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 3333 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap12 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in LastManStanding: " + howmanyinmap2 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in LastManStanding: " + howmanyinmap2 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
@@ -209,7 +209,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 8510 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap180 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in ConquerPK Now: " + howmanyinmap180 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in ConquerPK Now: " + howmanyinmap180 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
@@ -222,7 +222,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 8511 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap181 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in Ghostpk Now: " + howmanyinmap181 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in Ghostpk Now: " + howmanyinmap181 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
@@ -235,7 +235,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 8512 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap182 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in StayAlivePK Now: " + howmanyinmap182 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in StayAlivePK Now: " + howmanyinmap182 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
@@ -248,7 +248,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 8513 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap183 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in Fighter Now: " + howmanyinmap183 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in Fighter Now: " + howmanyinmap183 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
@@ -261,7 +261,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 8514 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap184 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in [T]The Prince Now: " + howmanyinmap184 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in [T]The Prince Now: " + howmanyinmap184 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
@@ -274,7 +274,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 8515 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap185 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in RedName Now: " + howmanyinmap185 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in RedName Now: " + howmanyinmap185 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
@@ -287,7 +287,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 8516 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap186 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in Master Now: " + howmanyinmap186 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in Master Now: " + howmanyinmap186 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
@@ -300,7 +300,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 8517 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap187 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in [T]Final-WaR Now: " + howmanyinmap187 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in [T]Final-WaR Now: " + howmanyinmap187 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
@@ -313,7 +313,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 8518 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap188 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in Rabbit Now: " + howmanyinmap188 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in Rabbit Now: " + howmanyinmap188 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
@@ -326,7 +326,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 8519 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap189 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in Assassin Now: " + howmanyinmap189 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in Assassin Now: " + howmanyinmap189 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
@@ -339,7 +339,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 8520 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap190 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in AitherWar Now: " + howmanyinmap190 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in AitherWar Now: " + howmanyinmap190 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
@@ -352,7 +352,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 8521 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap191 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in [T]Class PK Now: " + howmanyinmap191 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in [T]Class PK Now: " + howmanyinmap191 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
@@ -365,7 +365,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 8522 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap192 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in [T]Dead World Now: " + howmanyinmap192 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in [T]Dead World Now: " + howmanyinmap192 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
@@ -378,7 +378,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 8523 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap193 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in MemberAlter Now: " + howmanyinmap193 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in MemberAlter Now: " + howmanyinmap193 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
@@ -391,7 +391,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 8524 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap194 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in FirstKiller Now: " + howmanyinmap194 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in FirstKiller Now: " + howmanyinmap194 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
@@ -404,7 +404,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 8525 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap195 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in Top Death Now: " + howmanyinmap195 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in Top Death Now: " + howmanyinmap195 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
@@ -417,7 +417,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 8526 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap196 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in ReVengerWar Now: " + howmanyinmap196 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in ReVengerWar Now: " + howmanyinmap196 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
@@ -430,7 +430,7 @@ namespace MTA.Game.ConquerStructures
                 if (client.Entity.MapID == 8527 && client.Entity.Hitpoints >= 1)
                 {
                     howmanyinmap197 += 1;
-                    MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Players Alive in AttackersWar Now: " + howmanyinmap197 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                    Kernel.SendWorldMessage(new Message("Players Alive in AttackersWar Now: " + howmanyinmap197 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
@@ -446,7 +446,7 @@ namespace MTA.Game.ConquerStructures
                     if (client.Entity.Body == 1003 || client.Entity.Body == 1004)
                     {
                         howmanyinmap3 += 1;
-                        MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Teams Alive in CouplesPk: " + howmanyinmap3 + " ", System.Drawing.Color.Black, MTA.Network.GamePackets.Message.FirstRightCorner), Program.Values);
+                        Kernel.SendWorldMessage(new Message("Teams Alive in CouplesPk: " + howmanyinmap3 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
 
                     }
                 }
@@ -460,7 +460,7 @@ namespace MTA.Game.ConquerStructures
                     signup = true;
                     DailyPks = true;
                     client.Entity.Status = 0;
-                    client.Entity.RemoveFlag(MTA.Network.GamePackets.Update.Flags.TopTrojan);
+                    client.Entity.RemoveFlag(Update.Flags.TopTrojan);
                 }
         }
 
@@ -476,7 +476,7 @@ namespace MTA.Game.ConquerStructures
                     if (DateTime.Now.Minute == 30)
                     {
                         client.Entity.ConquerPoints += 1500000;
-                        MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("[PhoenixCo]: Daily Has Ended Come Next Hour ", System.Drawing.Color.Red, MTA.Network.GamePackets.Message.TopLeft), Program.Values);
+                        Kernel.SendWorldMessage(new Message("[PhoenixCo]: Daily Has Ended Come Next Hour ", System.Drawing.Color.Red, Message.TopLeft), Program.Values);
                     }
                     if (client.Entity.MapID == 8877)
                     {

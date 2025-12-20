@@ -19,7 +19,7 @@
         {
             get
             {
-                if (base.ContainsKey(key))
+                if (ContainsKey(key))
                 {
                     return base[key];
                 }

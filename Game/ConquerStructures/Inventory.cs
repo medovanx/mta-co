@@ -54,8 +54,8 @@ namespace MTA.Game.ConquerStructures
                         item.Bless = 7;
                         item.Enchant = 255;
                         item.MaxStackSize = infos.BaseInformation.StackSize;
-                        item.SocketOne = Game.Enums.Gem.SuperDragonGem;
-                        item.SocketTwo = Game.Enums.Gem.SuperDragonGem;
+                        item.SocketOne = Enums.Gem.SuperDragonGem;
+                        item.SocketTwo = Enums.Gem.SuperDragonGem;
                         Add(item, Enums.ItemUse.CreateAndAdd);
                         if (!purfystabliz)
                         {
@@ -69,7 +69,7 @@ namespace MTA.Game.ConquerStructures
                             purify.PurificationItemID = soulitem;
                             Database.ItemAddingTable.AddPurification(purify);
                             item.Purification = purify;
-                            item.Mode = Game.Enums.ItemMode.Update;
+                            item.Mode = Enums.ItemMode.Update;
                             item.Send(Owner);
                             ItemAdding effect = new ItemAdding(true);
                             effect.Type = ItemAdding.PurificationEffect;
@@ -89,7 +89,7 @@ namespace MTA.Game.ConquerStructures
                             purify.PurificationItemID = soulitem;
                             Database.ItemAddingTable.AddPurification(purify);
                             item.Purification = purify;
-                            item.Mode = Game.Enums.ItemMode.Update;
+                            item.Mode = Enums.ItemMode.Update;
                             item.Send(Owner);
                             ItemAdding effect = new ItemAdding(true);
                             effect.Type = ItemAdding.PurificationEffect;
@@ -325,14 +325,14 @@ namespace MTA.Game.ConquerStructures
                             item.DayStamp = DateTime.Now;
                             //item.Days = Days;
                             item.Bound = false;
-                            item.Color = Game.Enums.Color.White;
+                            item.Color = Enums.Color.White;
                             TimeSpan Remain = item.DayStamp.AddDays(item.Days) - DateTime.Now;
                             item.TimeLeftInMinutes = (uint)Remain.TotalSeconds;
                             item.Durability = item.MaximDurability = infos.BaseInformation.Durability;
 
                         }
                         ;
-                        this.Add(item, Enums.ItemUse.CreateAndAdd);
+                        Add(item, Enums.ItemUse.CreateAndAdd);
                         Database.ConquerItemTable.Update_Free(item, Owner);
                         if (!Permnant)
                         {
@@ -346,7 +346,7 @@ namespace MTA.Game.ConquerStructures
                             purify.PurificationItemID = PurificationItemID;
                             Database.ItemAddingTable.AddPurification(purify);
                             item.Purification = purify;
-                            item.Mode = MTA.Game.Enums.ItemMode.Update;
+                            item.Mode = Enums.ItemMode.Update;
                             item.Send(Owner);
                             ItemAdding effect = new ItemAdding(true);
                             effect.Type = ItemAdding.PurificationEffect;
@@ -366,7 +366,7 @@ namespace MTA.Game.ConquerStructures
                             purify.PurificationItemID = PurificationItemID;
                             Database.ItemAddingTable.AddPurification(purify);
                             item.Purification = purify;
-                            item.Mode = MTA.Game.Enums.ItemMode.Update;
+                            item.Mode = Enums.ItemMode.Update;
                             item.Send(Owner);
                             ItemAdding effect = new ItemAdding(true);
                             effect.Type = ItemAdding.PurificationEffect;
@@ -436,7 +436,7 @@ namespace MTA.Game.ConquerStructures
 
                         }
                         ;
-                        this.Add(item, Enums.ItemUse.CreateAndAdd);
+                        Add(item, Enums.ItemUse.CreateAndAdd);
                     }
                     else
                     {
@@ -462,7 +462,7 @@ namespace MTA.Game.ConquerStructures
             {
                 if (Count <= 39)
                 {
-                    ConquerItem item = new Network.GamePackets.ConquerItem(true);
+                    ConquerItem item = new ConquerItem(true);
                     item.ID = id;
                     item.Plus = plus;
                     //if (soc1 != 0)
@@ -479,11 +479,11 @@ namespace MTA.Game.ConquerStructures
             }
             return true;
         }
-        public bool Add(uint id, Game.Enums.ItemEffect effect)
+        public bool Add(uint id, Enums.ItemEffect effect)
         {
             try
             {
-                ConquerItem item = new Network.GamePackets.ConquerItem(true);
+                ConquerItem item = new ConquerItem(true);
                 item.ID = id;
                 item.Effect = effect;
                 Database.ConquerItemInformation infos = new Database.ConquerItemInformation(id, 0);
@@ -535,7 +535,7 @@ namespace MTA.Game.ConquerStructures
                             break;
                     }
                     if (use != Enums.ItemUse.None)
-                        Database.ItemLog.LogItem(item.UID, Owner.Entity.UID, MTA.Database.ItemLog.ItemLogAction.Add);
+                        Database.ItemLog.LogItem(item.UID, Owner.Entity.UID, Database.ItemLog.ItemLogAction.Add);
                     inventory.Add(item.UID, item);
                     objects = inventory.Values.ToArray();
                     item.Mode = Enums.ItemMode.Default;
@@ -577,7 +577,7 @@ namespace MTA.Game.ConquerStructures
                                 {
                                     item.StackSize -= 1;
                                     Database.ConquerItemTable.UpdateStack(item);
-                                    item.Mode = Game.Enums.ItemMode.Update;
+                                    item.Mode = Enums.ItemMode.Update;
                                     item.Send(Owner);
                                     return true;
                                 }
@@ -592,13 +592,13 @@ namespace MTA.Game.ConquerStructures
                             Database.ConquerItemTable.RemoveItem(item.UID); break;
                         case Enums.ItemUse.Move: Database.ConquerItemTable.UpdateLocation(item, Owner); break;
                     }
-                    Database.ItemLog.LogItem(item.UID, Owner.Entity.UID, MTA.Database.ItemLog.ItemLogAction.Remove);
+                    Database.ItemLog.LogItem(item.UID, Owner.Entity.UID, Database.ItemLog.ItemLogAction.Remove);
 
                     inventory.Remove(item.UID);
                     objects = inventory.Values.ToArray();
-                    Network.GamePackets.ItemUsage iu = new Network.GamePackets.ItemUsage(true);
+                    ItemUsage iu = new ItemUsage(true);
                     iu.UID = item.UID;
-                    iu.ID = Network.GamePackets.ItemUsage.RemoveInventory;
+                    iu.ID = ItemUsage.RemoveInventory;
                     Owner.Send(iu);
                     return true;
                 }
@@ -617,9 +617,9 @@ namespace MTA.Game.ConquerStructures
                 {
                     inventory.Remove(item.UID);
                     objects = inventory.Values.ToArray();
-                    Network.GamePackets.ItemUsage iu = new Network.GamePackets.ItemUsage(true);
+                    ItemUsage iu = new ItemUsage(true);
                     iu.UID = item.UID;
-                    iu.ID = Network.GamePackets.ItemUsage.RemoveInventory;
+                    iu.ID = ItemUsage.RemoveInventory;
                     Owner.Send(iu);
                     return true;
                 }
@@ -641,14 +641,14 @@ namespace MTA.Game.ConquerStructures
                         case Enums.ItemUse.Remove: Database.ConquerItemTable.RemoveItem(UID); break;
                         case Enums.ItemUse.Move: Database.ConquerItemTable.UpdateLocation(inventory[UID], Owner); break;
                     }
-                    Database.ItemLog.LogItem(UID, Owner.Entity.UID, MTA.Database.ItemLog.ItemLogAction.Remove);
+                    Database.ItemLog.LogItem(UID, Owner.Entity.UID, Database.ItemLog.ItemLogAction.Remove);
                     inventory.Remove(UID);
                     objects = inventory.Values.ToArray();
                     if (sendRemove)
                     {
-                        Network.GamePackets.ItemUsage iu = new Network.GamePackets.ItemUsage(true);
+                        ItemUsage iu = new ItemUsage(true);
                         iu.UID = UID;
-                        iu.ID = Network.GamePackets.ItemUsage.RemoveInventory;
+                        iu.ID = ItemUsage.RemoveInventory;
                         Owner.Send(iu);
                     }
                     return true;
@@ -669,11 +669,11 @@ namespace MTA.Game.ConquerStructures
                 {
                     if (Database.ConquerItemInformation.BaseInformations[item.ID].LowerName == loweredName)
                     {
-                        Database.ItemLog.LogItem(item.UID, Owner.Entity.UID, MTA.Database.ItemLog.ItemLogAction.Remove);
+                        Database.ItemLog.LogItem(item.UID, Owner.Entity.UID, Database.ItemLog.ItemLogAction.Remove);
                         Remove(item, Enums.ItemUse.Remove);
-                        Network.GamePackets.ItemUsage iu = new Network.GamePackets.ItemUsage(true);
+                        ItemUsage iu = new ItemUsage(true);
                         iu.UID = item.UID;
-                        iu.ID = Network.GamePackets.ItemUsage.RemoveInventory;
+                        iu.ID = ItemUsage.RemoveInventory;
                         Owner.Send(iu);
                         return true;
                     }
@@ -801,22 +801,22 @@ namespace MTA.Game.ConquerStructures
                 {
                     if (Count <= 39)
                     {
-                        ConquerItem item = new Network.GamePackets.ConquerItem(true);
+                        ConquerItem item = new ConquerItem(true);
                         item.ID = id;
                         item.Plus = plus;
-                        item.Color = Game.Enums.Color.Red;
+                        item.Color = Enums.Color.Red;
                         item.Durability = item.MaximDurability = infos.BaseInformation.Durability;
                         Add(item, Enums.ItemUse.CreateAndAdd);
-                        client.Inventory.Remove(item, Game.Enums.ItemUse.Move, true);
+                        client.Inventory.Remove(item, Enums.ItemUse.Move, true);
                         Network.PacketHandler.Positions pos = Network.PacketHandler.GetPositionFromID(item.ID);
                         item.Position = (byte)pos;
                         client.Equipment.Add(item);
-                        item.Mode = Game.Enums.ItemMode.Update;
+                        item.Mode = Enums.ItemMode.Update;
                         item.Send(client);
                         client.CalculateStatBonus();
                         client.CalculateHPBonus();
                         client.LoadItemStats();
-                        Network.GamePackets.ClientEquip equips = new Network.GamePackets.ClientEquip();
+                        ClientEquip equips = new ClientEquip();
                         equips.DoEquips(client);
                         client.Send(equips);
                         Database.ConquerItemTable.UpdateLocation(item, client);
@@ -841,7 +841,7 @@ namespace MTA.Game.ConquerStructures
             {
                 if (Count <= 39)
                 {
-                    ConquerItem item = new Network.GamePackets.ConquerItem(true);
+                    ConquerItem item = new ConquerItem(true);
                     item.ID = id;
                     item.Plus = plus;
                     item.SocketOne = (Enums.Gem)soc1;

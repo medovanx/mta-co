@@ -8,8 +8,8 @@ namespace MTA.Network.GamePackets
 
         public Game_ItemSoul()
         {
-            this.mData = new Byte[40 + 8];
-            Writer.WriteUInt16((UInt16)(this.mData.Length - 8), 0, mData);
+            mData = new Byte[40 + 8];
+            Writer.WriteUInt16((UInt16)(mData.Length - 8), 0, mData);
             Writer.WriteUInt16(2077, 2, mData);
         }
 
@@ -58,11 +58,11 @@ namespace MTA.Network.GamePackets
             c.Send(this);
         }
 
-        public Byte[] Serialize { get { return this.mData; } }
+        public Byte[] Serialize { get { return mData; } }
         public void Deserialize(Byte[] d)
         {
-            this.mData = new Byte[d.Length];
-            d.CopyTo(this.mData, 0);
+            mData = new Byte[d.Length];
+            d.CopyTo(mData, 0);
         }
 
         public enum Types : byte

@@ -39,7 +39,7 @@ namespace MTA.Network.GamePackets
         }
         public void Deserialize(byte[] buffer)
         {
-            this.mData = buffer;
+            mData = buffer;
         }
         public byte[] ToArray()
         {

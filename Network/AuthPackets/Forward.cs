@@ -7,8 +7,8 @@
         public Forward()
         {
             Buffer = new byte[52];
-            Network.Writer.WriteUInt16(52, 0, Buffer);
-            Network.Writer.WriteUInt16(1055, 2, Buffer);
+            Writer.WriteUInt16(52, 0, Buffer);
+            Writer.WriteUInt16(1055, 2, Buffer);
         }
         public uint Identifier
         {
@@ -18,7 +18,7 @@
             }
             set
             {
-                Network.Writer.WriteUInt32(value, 4, Buffer);
+                Writer.WriteUInt32(value, 4, Buffer);
             }
         }
         public ForwardType Type
@@ -29,7 +29,7 @@
             }
             set
             {
-                Network.Writer.WriteUInt32((uint)value, 8, Buffer);
+                Writer.WriteUInt32((uint)value, 8, Buffer);
             }
         }
         public string? IP
@@ -40,7 +40,7 @@
             }
             set
             {
-                Network.Writer.WriteString(value, 20, Buffer);
+                Writer.WriteString(value, 20, Buffer);
             }
         }
         public ushort Port
@@ -51,7 +51,7 @@
             }
             set
             {
-                Network.Writer.WriteUInt16(value, 12, Buffer);
+                Writer.WriteUInt16(value, 12, Buffer);
             }
         }
         public void Deserialize(byte[] buffer)

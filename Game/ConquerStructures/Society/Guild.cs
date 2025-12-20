@@ -178,7 +178,7 @@ namespace MTA.Game.ConquerStructures.Society
                         }
                 }
             }
-            public bool Compare(Game.Entity player, Mode mod)
+            public bool Compare(Entity player, Mode mod)
             {
                 if (player.Level < Level)
                     return false;
@@ -537,8 +537,8 @@ namespace MTA.Game.ConquerStructures.Society
         {
             Buffer = new byte[92 + 8];
             LeaderName = leadername;
-            Writer.WriteUInt16(92, 0, Buffer);
-            Writer.WriteUInt16(1106, 2, Buffer);
+            WriteUInt16(92, 0, Buffer);
+            WriteUInt16(1106, 2, Buffer);
             Buffer[48] = 0x2;
             //  Buffer[49] = 0x1;
 
@@ -1073,31 +1073,31 @@ namespace MTA.Game.ConquerStructures.Society
         public uint ID
         {
             get { return BitConverter.ToUInt32(Buffer, 4); }
-            set { Writer.WriteUInt32(value, 4, Buffer); }
+            set { WriteUInt32(value, 4, Buffer); }
         }
 
         public ulong SilverFund
         {
             get { return BitConverter.ToUInt64(Buffer, 12); }
-            set { Writer.WriteUInt64(value, 12, Buffer); }
+            set { WriteUInt64(value, 12, Buffer); }
         }
 
         public uint ConquerPointFund
         {
             get { return BitConverter.ToUInt32(Buffer, 20); }
-            set { Writer.WriteUInt32(value, 20, Buffer); }
+            set { WriteUInt32(value, 20, Buffer); }
         }
 
         public uint MemberCount
         {
             get { return BitConverter.ToUInt32(Buffer, 24); }
-            set { Writer.WriteUInt32(value, 24, Buffer); }
+            set { WriteUInt32(value, 24, Buffer); }
         }
 
         public uint LevelRequirement
         {
             get { return BitConverter.ToUInt32(Buffer, 48); }
-            set { Writer.WriteUInt32(value, 48, Buffer); }
+            set { WriteUInt32(value, 48, Buffer); }
         }
 
         public bool GetMember(string name, out Member
@@ -1117,13 +1117,13 @@ namespace MTA.Game.ConquerStructures.Society
         public uint RebornRequirement
         {
             get { return BitConverter.ToUInt32(Buffer, 52); }
-            set { Writer.WriteUInt32(value, 52, Buffer); }
+            set { WriteUInt32(value, 52, Buffer); }
         }
 
         public uint ClassRequirement
         {
             get { return BitConverter.ToUInt32(Buffer, 56); }
-            set { Writer.WriteUInt32(value, 56, Buffer); }
+            set { WriteUInt32(value, 56, Buffer); }
         }
 
         public bool AllowTrojans
@@ -1270,7 +1270,7 @@ namespace MTA.Game.ConquerStructures.Society
             set
             {
                 leaderName = value;
-                Writer.WriteString(value, 32, Buffer);
+                WriteString(value, 32, Buffer);
             }
         }
         public static Boolean CheckNameExist(String Name)
@@ -1328,7 +1328,7 @@ namespace MTA.Game.ConquerStructures.Society
                 Database.GuildTable.SaveEnroles(this);
             }
             GuildEnrole = Time;
-            Writer.WriteUInt32(Time, 67, Buffer);
+            WriteUInt32(Time, 67, Buffer);
         }
         public uint GetTime(uint year, uint month, uint day)
         {
@@ -1344,7 +1344,7 @@ namespace MTA.Game.ConquerStructures.Society
                     ID = client.Entity.UID,
                     Level = client.Entity.Level,
                     Name = client.Entity.Name,
-                    Rank = MTA.Game.Enums.GuildMemberRank.Member,
+                    Rank = Enums.GuildMemberRank.Member,
                     Mesh = client.Entity.Mesh
                 };
                 if (Nobility.Board.ContainsKey(client.Entity.UID))
@@ -1368,7 +1368,7 @@ namespace MTA.Game.ConquerStructures.Society
                 client.Screen.Reload();
                 SendGuildMessage(new Message(client.AsMember.Name + " has joined our guild.", System.Drawing.Color.Black, Message.Guild));
 
-                Network.GamePackets.GuildMinDonations mindonation = new GuildMinDonations(31);
+                GuildMinDonations mindonation = new GuildMinDonations(31);
                 mindonation.AprendGuild(this);
                 client.Send(mindonation.ToArray());
             }
@@ -1409,7 +1409,7 @@ namespace MTA.Game.ConquerStructures.Society
                 if (count >= minmem && count < maxmem)
                 {
                     wtr.Write((uint)0);
-                    name = System.Text.Encoding.Default.GetBytes(member.Name);
+                    name = Encoding.Default.GetBytes(member.Name);
 
                     for (int j = 0; j < 16; j++)
                     {
@@ -1486,7 +1486,7 @@ namespace MTA.Game.ConquerStructures.Society
                     SendGuildMessage(new Message(member.Name + " have been expelled from our guild.", System.Drawing.Color.Black, Message.Guild));
                 uint uid = member.ID;
                 if (member.Rank == Enums.GuildMemberRank.DeputyLeader)
-                    RanksCounts[(ushort)Game.Enums.GuildMemberRank.DeputyLeader]--;
+                    RanksCounts[(ushort)Enums.GuildMemberRank.DeputyLeader]--;
                 if (member.IsOnline)
                 {
                     GuildCommand command = new GuildCommand(true);
@@ -1577,19 +1577,19 @@ namespace MTA.Game.ConquerStructures.Society
                         SendGuildMessage(stringPacket);
                     }
                     return;*/
-                    if (this.Enemy.ContainsKey(guild.ID))
+                    if (Enemy.ContainsKey(guild.ID))
                     {
-                        this.RemoveEnemy(guild.Name);
+                        RemoveEnemy(guild.Name);
                     }
-                    this.Ally.Add(guild.ID, guild);
+                    Ally.Add(guild.ID, guild);
                     _String message = new _String(true)
                     {
                         UID = guild.ID,
                         Type = 0x15
                     };
                     message.Texts.Add(string.Concat(new object[] { guild.Name, " ", guild.LeaderName, " 0 ", guild.MemberCount }));
-                    this.SendGuildMessage(message);
-                    this.SendGuildMessage(message);
+                    SendGuildMessage(message);
+                    SendGuildMessage(message);
                     Database.GuildTable.AddAlly(this, guild.ID);
                     return;
                 }
@@ -1671,11 +1671,11 @@ namespace MTA.Game.ConquerStructures.Society
                 if (Bulletin == null)
                     Bulletin = "This is a new guild!";
 
-                client.Send(new Network.GamePackets.GuildCommand((uint)Bulletin.Length) { Type = Network.GamePackets.GuildCommand.Bulletin, dwParam = BuletinEnrole, Str_ = Bulletin });
+                client.Send(new GuildCommand((uint)Bulletin.Length) { Type = GuildCommand.Bulletin, dwParam = BuletinEnrole, Str_ = Bulletin });
                 //client.Send(new Message(Bulletin, System.Drawing.Color.White, Message.GuildAnnouncement));
 
-                Writer.WriteUInt32((uint)client.AsMember.SilverDonation, 8, Buffer);
-                Writer.WriteUInt32((ushort)client.AsMember.Rank, 28, Buffer);
+                WriteUInt32((uint)client.AsMember.SilverDonation, 8, Buffer);
+                WriteUInt32((ushort)client.AsMember.Rank, 28, Buffer);
                 client.Send(Buffer);
             }
         }

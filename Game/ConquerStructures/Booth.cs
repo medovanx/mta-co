@@ -9,25 +9,25 @@ namespace MTA.Game.ConquerStructures
         public void Regenerate(BoothItem item, Booth booth)
         {
             booth.ItemList.Remove(item.Item.UID);
-            this.Cost = item.Cost;
-            this.Item = new ConquerItem(true);
-            this.Item.ID = item.Item.ID;
-            this.Item.UID = Program.GetNextItemId();
-            this.Item.Plus = item.Item.Plus;
-            this.Item.Enchant = item.Item.Enchant;
-            this.Item.Bless = item.Item.Bless;
-            this.Item.SocketOne = item.Item.SocketOne;
-            this.Item.SocketTwo = item.Item.SocketTwo;
-            this.Item.StackSize = item.Item.StackSize;
-            this.Item.Bound = false;
+            Cost = item.Cost;
+            Item = new ConquerItem(true);
+            Item.ID = item.Item.ID;
+            Item.UID = Program.GetNextItemId();
+            Item.Plus = item.Item.Plus;
+            Item.Enchant = item.Item.Enchant;
+            Item.Bless = item.Item.Bless;
+            Item.SocketOne = item.Item.SocketOne;
+            Item.SocketTwo = item.Item.SocketTwo;
+            Item.StackSize = item.Item.StackSize;
+            Item.Bound = false;
             Database.ConquerItemBaseInformation CIBI = null;
-            CIBI = Database.ConquerItemInformation.BaseInformations[this.Item.ID];
+            CIBI = Database.ConquerItemInformation.BaseInformations[Item.ID];
             if (CIBI == null)
                 return;
-            this.Item.Durability = CIBI.Durability;
-            this.Item.MaximDurability = CIBI.Durability;
-            this.Cost_Type = item.Cost_Type;
-            booth.ItemList.Add(this.Item.UID, this);
+            Item.Durability = CIBI.Durability;
+            Item.MaximDurability = CIBI.Durability;
+            Cost_Type = item.Cost_Type;
+            booth.ItemList.Add(Item.UID, this);
 
 
         }
@@ -81,7 +81,7 @@ namespace MTA.Game.ConquerStructures
                 Booths.Add(Base.UID, this);
             }
             Base.Mesh = 406;
-            Base.Type = Game.Enums.NpcType.Booth;
+            Base.Type = Enums.NpcType.Booth;
             Base.ShowName = true;
             Base.Name = Name;
             Base.MapID = client.Entity.MapID;
@@ -117,9 +117,9 @@ namespace MTA.Game.ConquerStructures
         }
         public void Remove()
         {
-            Network.GamePackets.Data data = new Network.GamePackets.Data(true);
+            Data data = new Data(true);
             data.UID = Base.UID;
-            data.ID = Network.GamePackets.Data.RemoveEntity;
+            data.ID = Data.RemoveEntity;
             Owner.SendScreen(data);
             lock (SyncRoot) Booths.Remove(Base.UID);
         }

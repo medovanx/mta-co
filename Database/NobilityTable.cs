@@ -23,9 +23,9 @@ namespace MTA.Database
                     nobilityinfo.Donation = reader.ReadUInt64("Donation");
                     nobilityinfo.Gender = reader.ReadByte("Gender");
                     nobilityinfo.Mesh = reader.ReadUInt32("Mesh");
-                    Game.ConquerStructures.Nobility.Board.Add(nobilityinfo.EntityUID, nobilityinfo);
+                    Nobility.Board.Add(nobilityinfo.EntityUID, nobilityinfo);
                 }
-                Game.ConquerStructures.Nobility.Sort(0);
+                Nobility.Sort(0);
             }
             //  Console.WriteLine("Ok!");
         }

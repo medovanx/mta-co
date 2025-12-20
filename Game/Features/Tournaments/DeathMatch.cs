@@ -57,7 +57,7 @@ namespace MTA.Game
                 signup = false;
                 send = true;
                 LastUpdate = now;
-                Kernel.SendWorldMessage(new Network.GamePackets.Message("Kill!!", System.Drawing.Color.Red, Network.GamePackets.Message.Center), Program.Values);
+                Kernel.SendWorldMessage(new Message("Kill!!", System.Drawing.Color.Red, Message.Center), Program.Values);
                 SendTeam();
             }
             if (send)
@@ -173,7 +173,7 @@ namespace MTA.Game
             if (bluewin) name = "ArgentinaTeam";
             if (blackwin) name = "SpainTeam";
             if (whitewin) name = "GermanyTeam";
-            Kernel.SendWorldMessage(new Network.GamePackets.Message(name + " have won TeamMatch! The Winner Team Have Gained " + prize + " ConquerPoints", System.Drawing.Color.Red, MTA.Network.GamePackets.Message.Center), Program.Values);
+            Kernel.SendWorldMessage(new Message(name + " have won TeamMatch! The Winner Team Have Gained " + prize + " ConquerPoints", System.Drawing.Color.Red, Message.Center), Program.Values);
 
             foreach (Client.GameState C in Program.Values)
             {
@@ -254,7 +254,7 @@ namespace MTA.Game
                 signup = false;
                 send = true;
                 LastUpdate = now;
-                Kernel.SendWorldMessage(new Network.GamePackets.Message("Kill!!", System.Drawing.Color.Red, Network.GamePackets.Message.Center), Program.Values);
+                Kernel.SendWorldMessage(new Message("Kill!!", System.Drawing.Color.Red, Message.Center), Program.Values);
                 SendTeam();
             }
             if (send)
@@ -365,13 +365,13 @@ namespace MTA.Game
                 blackwin = true;
             }
             int winKey = array[0].Key;
-            int hits = DeathMatch.Points[winKey];
+            int hits = Points[winKey];
             uint prize = 250 * (uint)hits;
             string name = "RedTeam";
             if (bluewin) name = "BlueTeam";
             if (blackwin) name = "BlackTeam";
             if (whitewin) name = "WhiteTeam";
-            Kernel.SendWorldMessage(new Network.GamePackets.Message(name + " have won TeamDeathMatch! The Winner Team Have Gained " + prize + " ConquerPoints", System.Drawing.Color.Red, MTA.Network.GamePackets.Message.Center), Program.Values);
+            Kernel.SendWorldMessage(new Message(name + " have won TeamDeathMatch! The Winner Team Have Gained " + prize + " ConquerPoints", System.Drawing.Color.Red, Message.Center), Program.Values);
 
             foreach (Client.GameState C in Program.Values)
             {

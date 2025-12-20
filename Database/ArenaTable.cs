@@ -12,7 +12,7 @@ namespace MTA.Database
             {
                 while (reader.Read())
                 {
-                    Network.GamePackets.ArenaStatistic stat = new Network.GamePackets.ArenaStatistic(true);
+                    ArenaStatistic stat = new ArenaStatistic(true);
                     stat.EntityID = reader.ReadUInt32("EntityID");
                     stat.Name = reader.ReadString("EntityName");
                     stat.LastSeasonRank = reader.ReadUInt32("LastSeasonRank");
@@ -64,7 +64,7 @@ namespace MTA.Database
             return 0;
         }
 
-        public static void SaveArenaStatistics(Network.GamePackets.ArenaStatistic stats, MySql.Data.MySqlClient.MySqlConnection conn)
+        public static void SaveArenaStatistics(ArenaStatistic stats, MySql.Data.MySqlClient.MySqlConnection conn)
         {
             if (stats == null) return;
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("arena"))
@@ -78,7 +78,7 @@ namespace MTA.Database
                 .Set("Class", stats.Class).Set("LastSeasonArenaPoints", stats.LastSeasonArenaPoints).Where("EntityID", stats.EntityID)
                 .Execute();
         }
-        public static void SaveArenaStatistics(Network.GamePackets.ArenaStatistic stats)
+        public static void SaveArenaStatistics(ArenaStatistic stats)
         {
             using (var conn = DataHolder.MySqlConnection)
             {
@@ -118,9 +118,9 @@ namespace MTA.Database
             }
             stat.Rank = 0;
             if (client == null)
-                stat.ArenaPoints = Database.ArenaTable.ArenaPointFill(stat.Level);
+                stat.ArenaPoints = ArenaPointFill(stat.Level);
             else
-                client.ArenaPoints = Database.ArenaTable.ArenaPointFill(stat.Level);
+                client.ArenaPoints = ArenaPointFill(stat.Level);
             stat.LastArenaPointFill = DateTime.Now;
         }
     }

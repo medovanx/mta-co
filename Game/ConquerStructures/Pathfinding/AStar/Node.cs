@@ -36,7 +36,7 @@ namespace Pathfinding.AStar
         {
             this.Map = Map;
             this.parentNode = parentNode;
-            this._goalNode = goalNode;
+            _goalNode = goalNode;
             this.gCost = gCost;
             this.x = x;
             this.y = y;
@@ -45,14 +45,14 @@ namespace Pathfinding.AStar
 
         private void InitNode()
         {
-            this.g = (parentNode != null) ? this.parentNode.g + gCost : gCost;
-            this.h = (_goalNode != null) ? (int)Euclidean_H() : 0;
+            g = (parentNode != null) ? parentNode.g + gCost : gCost;
+            h = (_goalNode != null) ? (int)Euclidean_H() : 0;
         }
 
         private double Euclidean_H()
         {
-            double xd = this.x - this._goalNode.x;
-            double yd = this.y - this._goalNode.y;
+            double xd = x - _goalNode.x;
+            double yd = y - _goalNode.y;
             return Math.Sqrt((xd * xd) + (yd * yd));
         }
 
@@ -60,7 +60,7 @@ namespace Pathfinding.AStar
         {
 
             Node n = (Node)obj;
-            int cFactor = this.totalCost - n.totalCost;
+            int cFactor = totalCost - n.totalCost;
             return cFactor;
         }
 
@@ -82,8 +82,8 @@ namespace Pathfinding.AStar
                 {
                     if (Map.Floor[x + xd, y + yd, MTA.Game.MapObjectType.Monster])
                     {
-                        Node n = new Node(this, this._goalNode, 1, (ushort)(x + xd), (ushort)(y + yd), Map);
-                        if (!n.isMatch(this.parentNode) && !n.isMatch(this))
+                        Node n = new Node(this, _goalNode, 1, (ushort)(x + xd), (ushort)(y + yd), Map);
+                        if (!n.isMatch(parentNode) && !n.isMatch(this))
                             successors.Add(n);
                     }
                 }

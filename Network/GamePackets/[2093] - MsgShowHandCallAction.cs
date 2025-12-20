@@ -9,8 +9,8 @@
             if (Create)
             {
                 Buffer = new byte[28 + 8];
-                Writer.Write(Buffer.Length - 8, 0, Buffer);
-                Writer.Write(2093, 2, Buffer);
+                Write(Buffer.Length - 8, 0, Buffer);
+                Write(2093, 2, Buffer);
             }
         }
         public Game.Enums.PokerCallTypes Type

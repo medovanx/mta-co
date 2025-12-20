@@ -20,7 +20,7 @@ namespace MTA
             {
                 case Attack.Melee:
                     {
-                        Damage = MyMath.Generate(Attacker.MinAttack, Attacker.MaxAttack);
+                        Damage = Generate(Attacker.MinAttack, Attacker.MaxAttack);
                         //  Damage += Attacker.getFan(false);
                         //  Damage -= sobnpc.Defence;
                         break;
@@ -36,12 +36,12 @@ namespace MTA
                     }
                 case Attack.Ranged:
                     {
-                        Damage = MyMath.Generate(Attacker.MinAttack, Attacker.MaxAttack);
+                        Damage = Generate(Attacker.MinAttack, Attacker.MaxAttack);
                         //  Damage += Attacker.getFan(false);
                         break;
                     }
             }
-            MTA.Game.Attacking.Calculate.Refinary(Attacker, sobnpc, ref Damage, ref Packet, AtkType == Attack.Melee);
+            Game.Attacking.Calculate.Refinary(Attacker, sobnpc, ref Damage, ref Packet, AtkType == Attack.Melee);
             Damage = Attacker.AdjustAttack((int)Damage) * 14.8;
 
             Damage += Attacker.getFan(AtkType == Attack.Magic);
@@ -80,24 +80,24 @@ namespace MTA
             };
             if (Info.ID == 1115 || spells.Contains(Info.ID) || (Info.WeaponSubtype.Count > 0 && !Info.WeaponSubtype.Contains(500) && !Info.WeaponSubtype.Contains(613)))
             {
-                Damage = MyMath.Generate(Attacker.MinAttack, Attacker.MaxAttack);
+                Damage = Generate(Attacker.MinAttack, Attacker.MaxAttack);
                 //      Damage += Attacker.getFan(false);
                 if (Info.Power > 30000)
                     Damage *= (Double)(Info.Power - 30000) / 100;
                 else
                     Damage += Info.Power;
-                MTA.Game.Attacking.Calculate.Refinary(Attacker, sobnpc, ref Damage, ref Packet, true);
+                Game.Attacking.Calculate.Refinary(Attacker, sobnpc, ref Damage, ref Packet, true);
                 // Damage -= sobnpc.Defence;
             }
             else if (Info.WeaponSubtype.Contains(500) || Info.WeaponSubtype.Contains(613))
             {
-                Damage = MyMath.Generate(Attacker.MinAttack, Attacker.MaxAttack);
+                Damage = Generate(Attacker.MinAttack, Attacker.MaxAttack);
                 //   Damage += Attacker.getFan(false);
                 if (Info.Power > 30000)
                     Damage *= (Double)(Info.Power - 30000) / 100;
                 else
                     Damage += Info.Power;
-                MTA.Game.Attacking.Calculate.Refinary(Attacker, sobnpc, ref Damage, ref Packet, true);
+                Game.Attacking.Calculate.Refinary(Attacker, sobnpc, ref Damage, ref Packet, true);
             }
             else
             {
@@ -107,7 +107,7 @@ namespace MTA
                     Damage *= (Double)(Info.Power - 30000) / 100;
                 else
                     Damage += Info.Power;
-                MTA.Game.Attacking.Calculate.Refinary(Attacker, sobnpc, ref Damage, ref Packet);
+                Game.Attacking.Calculate.Refinary(Attacker, sobnpc, ref Damage, ref Packet);
                 //  Damage *= ((Double)(100 - sobnpc.MagicDefence) / 100);
                 //  Damage -= sobnpc.Block;
             }

@@ -16,22 +16,22 @@ namespace MTA.Game.Attacking
             this.attackerY = attackerY;
             this.attackX = attackX;
             this.attackY = attackY;
-            this.degree = Kernel.GetDegree(attackerX, attackX, attackerY, attackY);
-            this.addextra = false;
+            degree = Kernel.GetDegree(attackerX, attackX, attackerY, attackY);
+            addextra = false;
         }
 
         public void Arrange(int sectorsize, int distance)
         {
             this.distance = Math.Min(distance, 14);
             this.sectorsize = sectorsize;
-            this.leftside = this.degree - (sectorsize / 2);
-            if (this.leftside < 0)
-                this.leftside += angle;
-            this.rightside = this.degree + (sectorsize / 2);
-            if (this.leftside < this.rightside || this.rightside - this.leftside != this.sectorsize)
+            leftside = degree - (sectorsize / 2);
+            if (leftside < 0)
+                leftside += angle;
+            rightside = degree + (sectorsize / 2);
+            if (leftside < rightside || rightside - leftside != this.sectorsize)
             {
-                this.rightside += angle;
-                this.addextra = true;
+                rightside += angle;
+                addextra = true;
             }
         }
 
@@ -41,9 +41,9 @@ namespace MTA.Game.Attacking
             if (Kernel.GetDistance((ushort)X, (ushort)Y, (ushort)attackerX, (ushort)attackerY) <= distance)
             {
                 int degree = Kernel.GetDegree(attackerX, X, attackerY, Y);
-                if (this.addextra)
+                if (addextra)
                     degree += angle;
-                if (degree >= this.leftside && degree <= this.rightside)
+                if (degree >= leftside && degree <= rightside)
                     return true;
             }
             return false;

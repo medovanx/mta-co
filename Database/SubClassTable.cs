@@ -51,7 +51,7 @@ namespace MTA.Database
                     .Insert("id", Entity.UID)
                     .Execute();
         }
-        public static void Update(Game.Entity Entity, Game.SubClass SubClass)
+        public static void Update(Entity Entity, Game.SubClass SubClass)
         {
             MySqlCommand Command = new MySqlCommand(MySqlCommandType.UPDATE);
             Command.Update("subclasses")

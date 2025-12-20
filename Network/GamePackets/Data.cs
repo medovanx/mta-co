@@ -99,7 +99,7 @@ namespace MTA.Network.GamePackets
         public string DailyQuestWord//For Poker  
         {
             get { return System.Text.UnicodeEncoding.UTF8.GetString(Buffer, 43, DailyQuestWordLenght); }
-            set { Writer.Write(value, 43, Buffer); }
+            set { Write(value, 43, Buffer); }
         }
         public class WindowCommands
         {
@@ -184,7 +184,7 @@ namespace MTA.Network.GamePackets
         public static Data Custom(uint customType, uint uid, ushort wParam1 = 0, ushort wParam2 = 0)
         {
             Data data = new Data(true);
-            data.ID = Data.OpenCustom;
+            data.ID = OpenCustom;
             data.UID = uid;
             data.TimeStamp = Time32.Now;
             data.dwParam = customType;
@@ -221,7 +221,7 @@ namespace MTA.Network.GamePackets
         public uint UID
         {
             get { return BitConverter.ToUInt32(Buffer, 8); }
-            set { Writer.WriteUInt32(value, 8, Buffer); }
+            set { WriteUInt32(value, 8, Buffer); }
         }
         #region dwParam
         /// <summary>
@@ -384,7 +384,7 @@ namespace MTA.Network.GamePackets
 
         public void Deserialize(byte[] buffer)
         {
-            this.Buffer = buffer;
+            Buffer = buffer;
         }
         public byte[] ToArray()
         {
@@ -399,11 +399,11 @@ namespace MTA.Network.GamePackets
         {
             get
             {
-                return MTA.BitConverter.ToUInt32(this.Buffer, 32 + 4);
+                return BitConverter.ToUInt32(Buffer, 32 + 4);
             }
             set
             {
-                Writer.WriteUInt32(value, 32 + 4, this.Buffer);
+                WriteUInt32(value, 32 + 4, Buffer);
             }
         }
     }

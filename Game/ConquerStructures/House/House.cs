@@ -100,7 +100,7 @@ namespace MTA.Game.ConquerStructures.House
 			return Base;
 		}
 		///////////////////////////////////////////////////  
-		public static void SaveFurnitures(Client.GameState client)
+		public static void SaveFurnitures(GameState client)
 		{
 			if (!Houses.TryGetValue(client.Entity.UID, out HouseInfo? info))
 				return;
@@ -247,7 +247,7 @@ namespace MTA.Game.ConquerStructures.House
 			Data Data = new(true)
 			{
 				UID = client.Entity.UID,
-				ID = Network.GamePackets.Data.Teleport,
+				ID = Data.Teleport,
 				dwParam = info.maptype,
 				wParam1 = X,
 				wParam2 = Y

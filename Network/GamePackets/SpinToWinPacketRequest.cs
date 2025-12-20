@@ -21,7 +21,7 @@ namespace MTA.Network.GamePackets
 
         public SpinToWinPacketRequest(byte[] buf)
         {
-            this.buffer = buf;
+            buffer = buf;
         }
 
         public SpinToWinRequestType RequestType

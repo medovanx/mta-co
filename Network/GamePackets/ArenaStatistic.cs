@@ -70,7 +70,7 @@ namespace MTA.Network.GamePackets
             set { WriteUInt32(value, 40, Buffer); }
         }
 
-        public void Send(Client.GameState client)
+        public void Send(GameState client)
         {
             client.Send(ToArray());
         }

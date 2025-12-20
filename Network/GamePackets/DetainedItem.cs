@@ -110,9 +110,9 @@ namespace MTA.Network.GamePackets
             set { Buffer[47] = value; }
         }
 
-        public Game.Enums.Color ItemColor
+        public Enums.Color ItemColor
         {
-            get { return (Game.Enums.Color)BitConverter.ToUInt32(Buffer, 52); }
+            get { return (Enums.Color)BitConverter.ToUInt32(Buffer, 52); }
             set { WriteUInt32((uint)value, 52, Buffer); }
         }
         public uint OwnerUID

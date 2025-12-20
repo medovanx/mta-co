@@ -134,7 +134,7 @@ namespace MTA.Game.Events.CpCastle
         /// <summary>
         /// Handle monster death for CP Castle event
         /// </summary>
-        public override void OnMonsterKilled(Database.MonsterInformation monster, Game.Entity killer)
+        public override void OnMonsterKilled(Database.MonsterInformation monster, Entity killer)
         {
             // Only handle Captain monsters in CP Castle maps (3030, 3031, 3032, 3033) during active event
             if (!IsActive)
@@ -162,7 +162,7 @@ namespace MTA.Game.Events.CpCastle
         /// Skip normal drop for Captain in CP Castle map when event is active
         /// Event system handles rewards
         /// </summary>
-        public override bool ShouldSkipNormalDrop(MTA.Database.MonsterInformation monster, ushort mapId)
+        public override bool ShouldSkipNormalDrop(Database.MonsterInformation monster, ushort mapId)
         {
             // Skip normal CP drop for Captain in any CP Castle map when event is active
             if (!IsActive || monster.Owner == null)

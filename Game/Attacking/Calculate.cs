@@ -224,14 +224,14 @@ namespace MTA.Game.Attacking
                     if (attacked.CounterKillSwitch && Kernel.Rate(30) && !attacker.ContainsFlag(Update.Flags.Fly) && Time32.Now > attacked.CounterKillStamp.AddSeconds(15))
                     {
                         attacked.CounterKillStamp = Time32.Now;
-                        Network.GamePackets.Attack attack = new MTA.Network.GamePackets.Attack(true);
+                        Attack attack = new Attack(true);
                         attack.Effect1 = Attack.AttackEffects1.None;
                         uint damage = Melee(attacked, attacker, ref attack);
                         //Database.SpellInformation information = Database.SpellTable.SpellInformations[6003][attacked.Owner.Spells[6003].Level];
                         damage = damage / 3;
                         attack.Attacked = attacker.UID;
                         attack.Attacker = attacked.UID;
-                        attack.AttackType = Network.GamePackets.Attack.Scapegoat;
+                        attack.AttackType = Attack.Scapegoat;
                         attack.Damage = 0;
                         attack.ResponseDamage = damage;
                         attack.X = attacked.X;
@@ -274,10 +274,10 @@ namespace MTA.Game.Attacking
                         if (damage <= 0)
                             damage = 1;
                         if (damage > 10000) damage = 10000;
-                        Network.GamePackets.Attack attack = new MTA.Network.GamePackets.Attack(true);
+                        Attack attack = new Attack(true);
                         attack.Attacked = attacker.UID;
                         attack.Attacker = attacked.UID;
-                        attack.AttackType = Network.GamePackets.Attack.Reflect;
+                        attack.AttackType = Attack.Reflect;
                         attack.Damage = damage;
                         attack.ResponseDamage = damage;
                         attack.X = attacked.X;
@@ -349,15 +349,15 @@ namespace MTA.Game.Attacking
                 BlessEffect.Effect(attacker);
                 GemEffect.Effect(attacker);
             }
-            Calculate.AutoRespone(attacker, attacked, ref Damage);
-            if (attacked.ContainsFlag2(Network.GamePackets.Update.Flags2.AzureShield))
+            AutoRespone(attacker, attacked, ref Damage);
+            if (attacked.ContainsFlag2(Update.Flags2.AzureShield))
             {
 
                 if (Damage > attacked.AzureShieldDefence)
                 {
                     Damage -= attacked.AzureShieldDefence;
                     CreateAzureDMG(attacked.AzureShieldDefence, attacker, attacked);
-                    attacked.RemoveFlag2(Network.GamePackets.Update.Flags2.AzureShield);
+                    attacked.RemoveFlag2(Update.Flags2.AzureShield);
                 }
                 else
                 {
@@ -383,14 +383,14 @@ namespace MTA.Game.Attacking
                 }
             }
             #endregion
-            if (attacked.ContainsFlag(Network.GamePackets.Update.Flags.ShurikenVortex))
+            if (attacked.ContainsFlag(Update.Flags.ShurikenVortex))
                 Damage = 1;
             if (Constants.Damage1Map.Contains(attacked.MapID))
                 Damage = 1;
         }
         public static void CreateAzureDMG(uint dmg, Entity attacker, Entity attacked)
         {
-            Network.GamePackets.Attack attac = new Attack(true);
+            Attack attac = new Attack(true);
             attac.Attacker = attacker.UID;
             attac.Attacked = attacked.UID;
             attac.X = attacked.X;

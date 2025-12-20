@@ -1,6 +1,6 @@
 ﻿namespace System
 {
-    using System.Collections.Generic;
+    using Collections.Generic;
 
     public static class Extensions
     {

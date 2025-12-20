@@ -40,11 +40,11 @@ namespace MTA.Network.GamePackets
         {
             get
             {
-                return BitConverter.ToUInt16(this.Buffer, 10);
+                return BitConverter.ToUInt16(Buffer, 10);
             }
             set
             {
-                WriteUInt16(value, 10, this.Buffer);
+                WriteUInt16(value, 10, Buffer);
             }
         }
 
@@ -52,11 +52,11 @@ namespace MTA.Network.GamePackets
         {
             get
             {
-                return BitConverter.ToUInt16(this.Buffer, 0x12);
+                return BitConverter.ToUInt16(Buffer, 0x12);
             }
             set
             {
-                WriteUInt16(value, 0x12, this.Buffer);
+                WriteUInt16(value, 0x12, Buffer);
             }
         }
         public ushort ID
@@ -79,7 +79,7 @@ namespace MTA.Network.GamePackets
 
         public void Deserialize(byte[] buffer)
         {
-            this.Buffer = buffer;
+            Buffer = buffer;
         }
 
         public byte[] ToArray()
@@ -100,7 +100,7 @@ namespace MTA.Network.GamePackets
         int num = 4;
         public Game_SubClass()
         {
-            this.mData = new Byte[33 + 8];
+            mData = new Byte[33 + 8];
             Writer.WriteUInt16((UInt16)(mData.Length - 8), 0, mData);
             Writer.WriteUInt16(2320, 2, mData);
             Writer.WriteUInt32((uint)Time32.timeGetTime().GetHashCode(), 4, mData);
@@ -123,7 +123,7 @@ namespace MTA.Network.GamePackets
         }
         public void Deserialize(byte[] buffer)
         {
-            this.mData = buffer;
+            mData = buffer;
         }
 
         public byte[] ToArray()
@@ -174,7 +174,7 @@ namespace MTA.Network.GamePackets
 
         public void Deserialize(byte[] buffer)
         {
-            this.Buffer = buffer;
+            Buffer = buffer;
         }
 
         public byte[] ToArray()

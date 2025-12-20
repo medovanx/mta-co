@@ -15,24 +15,24 @@
             add
             {
                 Action action2;
-                Action execute = this.Executes;
+                Action execute = Executes;
                 do
                 {
                     action2 = execute;
                     Action action3 = (Action)Delegate.Combine(action2, value);
-                    execute = Interlocked.CompareExchange<Action>(ref this.Executes, action3, action2);
+                    execute = Interlocked.CompareExchange<Action>(ref Executes, action3, action2);
                 }
                 while (execute != action2);
             }
             remove
             {
                 Action action2;
-                Action execute = this.Executes;
+                Action execute = Executes;
                 do
                 {
                     action2 = execute;
                     Action action3 = (Action)Delegate.Remove(action2, value);
-                    execute = Interlocked.CompareExchange<Action>(ref this.Executes, action3, action2);
+                    execute = Interlocked.CompareExchange<Action>(ref Executes, action3, action2);
                 }
                 while (execute != action2);
             }
@@ -40,24 +40,24 @@
 
         public Thread(int milliseconds)
         {
-            this.Closed = false;
-            this.Milliseconds = milliseconds;
+            Closed = false;
+            Milliseconds = milliseconds;
         }
 
         private void Loop()
         {
-            this.Sleep(0x5dc);
+            Sleep(0x5dc);
             while (true)
             {
-                if (this.Closed)
+                if (Closed)
                 {
                     return;
                 }
                 try
                 {
-                    if (this.Executes != null)
+                    if (Executes != null)
                     {
-                        this.Executes();
+                        Executes();
                     }
                 }
                 catch (Exception exception)
@@ -65,7 +65,7 @@
                     Program.SaveException(exception);
                     MTA.Console.WriteLine(exception);
                 }
-                this.Sleep(this.Milliseconds);
+                Sleep(Milliseconds);
             }
         }
 
@@ -76,8 +76,8 @@
 
         public void Start()
         {
-            this.base_thread = new System.Threading.Thread(new ThreadStart(this.Loop));
-            this.base_thread.Start();
+            base_thread = new System.Threading.Thread(new ThreadStart(Loop));
+            base_thread.Start();
         }
 
         public bool Closed { get; set; }

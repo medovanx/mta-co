@@ -190,7 +190,7 @@ namespace MTA.Game
             player.Entity.BringToLife();
             player.Entity.ConquerPoints -= Wager / 2;
             player.Entity.PrevPKMode = player.Entity.PKMode;
-            player.Entity.PKMode = Game.Enums.PkMode.PK;
+            player.Entity.PKMode = Enums.PkMode.PK;
             player.Send(new Data(true) { UID = player.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)player.Entity.PKMode });
             player.Entity.OnDeath = p =>
             {
@@ -281,13 +281,13 @@ namespace MTA.Game
                 loser.Entity.PKMode = loser.Entity.PrevPKMode;
                 loser.Send(new Data(true) { UID = loser.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)loser.Entity.PKMode });
 
-                var sign = new Game.Arena.ArenaSignup();
+                var sign = new Arena.ArenaSignup();
                 sign.Stats = loser.ArenaStatistic;
-                sign.DialogID = Game.Arena.ArenaSignup.MainIDs.Dialog;
-                sign.OptionID = Game.Arena.ArenaSignup.DialogButton.Win;
+                sign.DialogID = Arena.ArenaSignup.MainIDs.Dialog;
+                sign.OptionID = Arena.ArenaSignup.DialogButton.Win;
                 sign.Stats = winner.ArenaStatistic;
                 winner.Send(sign.BuildPacket());
-                sign.OptionID = Game.Arena.ArenaSignup.DialogButton.Lose;
+                sign.OptionID = Arena.ArenaSignup.DialogButton.Lose;
                 loser.Send(sign.BuildPacket());
 
                 FightLocation.Dispose();
@@ -326,13 +326,13 @@ namespace MTA.Game
                 loser.Entity.PKMode = loser.Entity.PrevPKMode;
                 loser.Send(new Data(true) { UID = loser.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)loser.Entity.PKMode });
 
-                var sign = new Game.Arena.ArenaSignup();
+                var sign = new Arena.ArenaSignup();
                 sign.Stats = loser.ArenaStatistic;
-                sign.DialogID = Game.Arena.ArenaSignup.MainIDs.Dialog;
-                sign.OptionID = Game.Arena.ArenaSignup.DialogButton.Win;
+                sign.DialogID = Arena.ArenaSignup.MainIDs.Dialog;
+                sign.OptionID = Arena.ArenaSignup.DialogButton.Win;
                 sign.Stats = winner.ArenaStatistic;
                 winner.Send(sign.BuildPacket());
-                sign.OptionID = Game.Arena.ArenaSignup.DialogButton.Lose;
+                sign.OptionID = Arena.ArenaSignup.DialogButton.Lose;
                 loser.Send(sign.BuildPacket());
 
                 FightLocation.Dispose();

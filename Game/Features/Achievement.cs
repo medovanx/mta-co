@@ -61,18 +61,18 @@ namespace MTA.Game
             Object.Owner.Send(data);
 
             string Mesajje = "" + Object.Name + " received [Achievement " + FRAG_ID + "]! ";
-            Network.GamePackets.Message mesaj = new Network.GamePackets.Message(Mesajje, Object.Name, global::System.Drawing.Color.Red, Network.GamePackets.Message.System);
+            Network.GamePackets.Message mesaj = new Network.GamePackets.Message(Mesajje, Object.Name, System.Drawing.Color.Red, Network.GamePackets.Message.System);
             Object.Owner.Send(mesaj.ToArray());
 
             if (!Object.Owner.Fake && !Object.Owner.TransferedPlayer)
             {
-                Database.MySqlCommand command = new Database.MySqlCommand(MySqlCommandType.SELECT);
+                MySqlCommand command = new MySqlCommand(MySqlCommandType.SELECT);
                 command.Select("entities").Where("UID", Object.Owner.Entity.UID);
                 MySqlReader reader = new MySqlReader(command);
                 if (reader.Read())
                 {
 
-                    command = new Database.MySqlCommand(MySqlCommandType.UPDATE);
+                    command = new MySqlCommand(MySqlCommandType.UPDATE);
                     command.Update("entities").Set("Achievement", Object.MyAchievement.ToString());
                     command.Where("UID", Object.UID).Execute();
                 }

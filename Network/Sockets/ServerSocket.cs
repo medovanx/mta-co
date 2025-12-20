@@ -22,24 +22,24 @@ namespace MTA.Network.Sockets
         private Thread thread;
         public ServerSocket()
         {
-            this.Connection = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            this.SyncRoot = new object();
+            Connection = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            SyncRoot = new object();
             thread = new Thread(doSyncAccept);
             thread.Start();
         }
 
         public void Enable(ushort port, string ip, bool BigSend = false)
         {
-            this.ipString = ip;
+            ipString = ip;
             this.port = port;
-            this.Connection.Bind(new IPEndPoint(IPAddress.Parse(ipString), this.port));
-            this.Connection.Listen((int)SocketOptionName.MaxConnections);
+            Connection.Bind(new IPEndPoint(IPAddress.Parse(ipString), this.port));
+            Connection.Listen((int)SocketOptionName.MaxConnections);
             if (BigSend)
             {
-                this.Connection.ReceiveBufferSize = ushort.MaxValue;
-                this.Connection.SendBufferSize = ushort.MaxValue;
+                Connection.ReceiveBufferSize = ushort.MaxValue;
+                Connection.SendBufferSize = ushort.MaxValue;
             }
-            this.enabled = true;
+            enabled = true;
             BruteforceProtection = new ConcurrentDictionary<int, int>();
         }
 
@@ -48,11 +48,11 @@ namespace MTA.Network.Sockets
         {
             while (true)
             {
-                if (this.enabled)
+                if (enabled)
                 {
                     try
                     {
-                        ProcessSocket(this.Connection.Accept());
+                        ProcessSocket(Connection.Accept());
                     }
                     catch { }
                 }
@@ -63,9 +63,9 @@ namespace MTA.Network.Sockets
         {
             try
             {
-                Socket socket = this.Connection.EndAccept(res);
+                Socket socket = Connection.EndAccept(res);
                 ProcessSocket(socket);
-                this.Connection.BeginAccept(doAsyncAccept, null);
+                Connection.BeginAccept(doAsyncAccept, null);
             }
             catch
             {
@@ -83,7 +83,7 @@ namespace MTA.Network.Sockets
                 wrapper.Create(socket, this, OnClientReceive);
                 wrapper.Alive = true;
                 wrapper.IP = ip;
-                if (this.OnClientConnect != null) this.OnClientConnect(wrapper);
+                if (OnClientConnect != null) OnClientConnect(wrapper);
             }
             catch
             {
@@ -93,39 +93,39 @@ namespace MTA.Network.Sockets
 
         public void Reset()
         {
-            this.Disable();
-            this.Enable();
+            Disable();
+            Enable();
         }
 
         public void Disable()
         {
-            this.enabled = false;
-            this.Connection.Close(1);
+            enabled = false;
+            Connection.Close(1);
         }
 
         public void Enable()
         {
-            if (!this.enabled)
+            if (!enabled)
             {
-                this.Connection = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                this.Connection.Bind(new IPEndPoint(IPAddress.Parse(ipString), this.port));
-                this.Connection.Listen((int)SocketOptionName.MaxConnections);
-                this.enabled = true;
+                Connection = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                Connection.Bind(new IPEndPoint(IPAddress.Parse(ipString), port));
+                Connection.Listen((int)SocketOptionName.MaxConnections);
+                enabled = true;
                 //this.Connection.BeginAccept(doAsyncAccept, null);
             }
         }
 
         public void InvokeDisconnect(ClientWrapper Client)
         {
-            if (this.OnClientDisconnect != null)
-                this.OnClientDisconnect(Client);
+            if (OnClientDisconnect != null)
+                OnClientDisconnect(Client);
         }
 
         public bool Enabled
         {
             get
             {
-                return this.enabled;
+                return enabled;
             }
         }
     }

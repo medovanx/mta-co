@@ -312,13 +312,13 @@ namespace MTA.Network.GamePackets
         }
         public bool Inscribed
         {
-            get { return (BitConverter.ToUInt16(this.Buffer, 60) == 1); }
-            set { Writer.WriteUInt16(value ? ((byte)1) : ((byte)0), 60, this.Buffer); }
+            get { return (BitConverter.ToUInt16(Buffer, 60) == 1); }
+            set { WriteUInt16(value ? ((byte)1) : ((byte)0), 60, Buffer); }
         }
         public uint TimeLeftInMinutes
         {
             get { return BitConverter.ToUInt32(Buffer, 64); }
-            set { Writer.WriteUInt32(value, 64, Buffer); }
+            set { WriteUInt32(value, 64, Buffer); }
         }
         public ushort StackSize
         {
@@ -344,7 +344,7 @@ namespace MTA.Network.GamePackets
         }
         public override int GetHashCode()
         {
-            return (int)this.UID;
+            return (int)UID;
         }
         public void Fill(Game.ConquerStructures.BoothItem item, uint boothID)
         {

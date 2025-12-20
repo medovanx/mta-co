@@ -121,7 +121,7 @@ namespace MTA.Game.ConquerStructures
                         }
                         catch (Exception e)
                         {
-                            MTA.Console.WriteLine(e); Program.SaveException(e);
+                            Console.WriteLine(e); Program.SaveException(e);
                         }
                         break;
                     }
@@ -282,7 +282,7 @@ namespace MTA.Game.ConquerStructures
 
                                 if (!string.IsNullOrEmpty(message))
                                 {
-                                    Kernel.SendWorldMessage(new Message(message, Color.Red, Network.GamePackets.Message.Center));
+                                    Kernel.SendWorldMessage(new Message(message, Color.Red, Message.Center));
                                 }
                             }
                             else

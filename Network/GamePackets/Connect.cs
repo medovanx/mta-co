@@ -17,7 +17,7 @@ namespace MTA.Network.GamePackets
             }
             set
             {
-                Network.Writer.WriteUInt32((byte)value, 8, Buffer);
+                Writer.WriteUInt32((byte)value, 8, Buffer);
             }
         }
         public string Language
@@ -29,7 +29,7 @@ namespace MTA.Network.GamePackets
         }
         public void Deserialize(byte[] buffer)
         {
-            this.Buffer = buffer;
+            Buffer = buffer;
         }
         public byte[] ToArray()
         {

@@ -1,6 +1,6 @@
 ﻿namespace System
 {
-    using System.Runtime.InteropServices;
+    using Runtime.InteropServices;
 
     public class OSClipboard
     {

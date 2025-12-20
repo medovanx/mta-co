@@ -22,7 +22,7 @@ namespace MTA.Database
                 {
                     string SQL = "INSERT INTO `variablevault` (entityid, data) VALUES (@EntityID, @Data)";
                     byte[] rawData = vars.Serialize();
-                    using (var conn = Database.DataHolder.MySqlConnection)
+                    using (var conn = DataHolder.MySqlConnection)
                     {
                         conn.Open();
                         using (var cmd2 = new MySql.Data.MySqlClient.MySqlCommand(SQL, conn))
@@ -47,7 +47,7 @@ namespace MTA.Database
             vars.Changed = false;
             string SQL = "UPDATE `variablevault` set data=@Data where entityid=@EntityID;";
             byte[] rawData = vars.Serialize();
-            using (var conn = Database.DataHolder.MySqlConnection)
+            using (var conn = DataHolder.MySqlConnection)
             {
                 conn.Open();
                 using (var cmd = new MySql.Data.MySqlClient.MySqlCommand(SQL, conn))

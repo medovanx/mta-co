@@ -94,11 +94,11 @@ namespace MTA.Game.ConquerStructures
             get
             {
                 uint val = 0;
-                foreach (Network.GamePackets.ConquerItem item in Objects)
+                foreach (ConquerItem item in Objects)
                 {
                     if (item == null) continue;
                     if (item.Position > 19 || item.Position == 7 || item.Position == 9 || item.Position == 15 || item.Position == 16 || item.Position == 17) continue;
-                    if (!Network.PacketHandler.IsTwoHand(item.ID))
+                    if (!PacketHandler.IsTwoHand(item.ID))
                     {
                         if (item.Plus == 1) val += 200;
                         if (item.Plus == 2) val += 600;
@@ -137,11 +137,11 @@ namespace MTA.Game.ConquerStructures
             get
             {
                 uint Points = 0;
-                foreach (Network.GamePackets.ConquerItem item in Objects)
+                foreach (ConquerItem item in Objects)
                 {
                     if (item == null) continue;
                     if (item.Position > 19 || item.Position == 7 || item.Position == 9 || item.Position == 15 || item.Position == 16 || item.Position == 17) continue;
-                    if (!Network.PacketHandler.IsTwoHand(item.ID))
+                    if (!PacketHandler.IsTwoHand(item.ID))
                     {
                         if (item.ID % 10 == 9) Points += 500;
                         if (item.ID % 10 == 8) Points += 300;
@@ -166,11 +166,11 @@ namespace MTA.Game.ConquerStructures
             get
             {
                 uint Points = 0;
-                foreach (Network.GamePackets.ConquerItem item in Objects)
+                foreach (ConquerItem item in Objects)
                 {
                     if (item == null || !item.Purification.Available) continue;
                     if (item.Position > 19 || item.Position == 7 || item.Position == 9 || item.Position == 15 || item.Position == 16 || item.Position == 17) continue;
-                    if (!Network.PacketHandler.IsTwoHand(item.ID))
+                    if (!PacketHandler.IsTwoHand(item.ID))
                     {
                         if (item.Purification.PurificationLevel == 1) Points += 100;
                         if (item.Purification.PurificationLevel == 2) Points += 300;
@@ -199,11 +199,11 @@ namespace MTA.Game.ConquerStructures
             get
             {
                 uint val = 0;
-                foreach (Network.GamePackets.ConquerItem item in Objects)
+                foreach (ConquerItem item in Objects)
                 {
                     if (item == null) continue;
                     if (item.Position > 19 || item.Position == 7 || item.Position == 9 || item.Position == 15 || item.Position == 16 || item.Position == 17) continue;
-                    if (!Network.PacketHandler.IsTwoHand(item.ID))
+                    if (!PacketHandler.IsTwoHand(item.ID))
                     {
                         var enc = (uint)(item.Enchant);
                         if (enc != 0)
@@ -243,11 +243,11 @@ namespace MTA.Game.ConquerStructures
             get
             {
                 uint val = 0;
-                foreach (Network.GamePackets.ConquerItem item in Objects)
+                foreach (ConquerItem item in Objects)
                 {
                     if (item == null || !Database.ConquerItemInformation.BaseInformations.ContainsKey(item.ID)) continue;
                     if (item.Position > 19 || item.Position == 7 || item.Position == 9 || item.Position == 15 || item.Position == 16 || item.Position == 17) continue;
-                    if (!Network.PacketHandler.IsTwoHand(item.ID))
+                    if (!PacketHandler.IsTwoHand(item.ID))
                     {
                         var lvl = (uint)Database.ConquerItemInformation.BaseInformations[item.ID].Level;
                         if (lvl <= 120)
@@ -276,11 +276,11 @@ namespace MTA.Game.ConquerStructures
             get
             {
                 uint val = 0;
-                foreach (Network.GamePackets.ConquerItem item in Objects)
+                foreach (ConquerItem item in Objects)
                 {
                     if (item == null) continue;
                     if (item.Position > 19 || item.Position == 7 || item.Position == 9 || item.Position == 15 || item.Position == 16 || item.Position == 17) continue;
-                    if (!Network.PacketHandler.IsTwoHand(item.ID))
+                    if (!PacketHandler.IsTwoHand(item.ID))
                     {
                         if (item.SocketOne != 0)
                         {
@@ -319,7 +319,7 @@ namespace MTA.Game.ConquerStructures
             get
             {
                 uint Points = 0;
-                foreach (Network.GamePackets.ConquerItem item in Objects)
+                foreach (ConquerItem item in Objects)
                 {
                     if (item == null) continue;
                     if (item.Position > 19 || item.Position == 7 || item.Position == 9 || item.Position == 15 || item.Position == 16 || item.Position == 17) continue;
@@ -377,7 +377,7 @@ namespace MTA.Game.ConquerStructures
                     if (item.Perfectionlevel >= 52) Points += 100;
                     if (item.Perfectionlevel >= 53) Points += 100;
                     if (item.Perfectionlevel >= 54) Points += 100;
-                    if (Network.PacketHandler.IsTwoHand(item.ID))
+                    if (PacketHandler.IsTwoHand(item.ID))
                     {
                         if (item.Perfectionlevel >= 1) Points += 180;
                         if (item.Perfectionlevel >= 2) Points += 180;
@@ -443,11 +443,11 @@ namespace MTA.Game.ConquerStructures
             get
             {
                 uint val = 0;
-                foreach (Network.GamePackets.ConquerItem item in Objects)
+                foreach (ConquerItem item in Objects)
                 {
                     if (item == null) continue;
                     if (item.Position > 19 || item.Position == 7 || item.Position == 9 || item.Position == 15 || item.Position == 16 || item.Position == 17) continue;
-                    if (!Network.PacketHandler.IsTwoHand(item.ID))
+                    if (!PacketHandler.IsTwoHand(item.ID))
                     {
                         if (item.SocketOne != 0) val += 1000;
                         if (item.SocketTwo != 0) val += 2500;
@@ -466,11 +466,11 @@ namespace MTA.Game.ConquerStructures
             get
             {
                 uint val = 0;
-                foreach (Network.GamePackets.ConquerItem item in Objects)
+                foreach (ConquerItem item in Objects)
                 {
                     if (item == null) continue;
                     if (item.Position > 19 || item.Position == 7 || item.Position == 9 || item.Position == 15 || item.Position == 16 || item.Position == 17) continue;
-                    if (!Network.PacketHandler.IsTwoHand(item.ID))
+                    if (!PacketHandler.IsTwoHand(item.ID))
                     {
                         val += (uint)(item.Bless * 100);
                     }
@@ -487,11 +487,11 @@ namespace MTA.Game.ConquerStructures
             get
             {
                 uint val = 0;
-                foreach (Network.GamePackets.ConquerItem item in Objects)
+                foreach (ConquerItem item in Objects)
                 {
                     if (item == null || !item.ExtraEffect.Available) continue;
                     if (item.Position > 19 || item.Position == 7 || item.Position == 9 || item.Position == 15 || item.Position == 16 || item.Position == 17) continue;
-                    if (!Network.PacketHandler.IsTwoHand(item.ID))
+                    if (!PacketHandler.IsTwoHand(item.ID))
                     {
                         if (item.ExtraEffect.EffectLevel == 1) val += 100;
                         if (item.ExtraEffect.EffectLevel == 2) val += 400;
@@ -518,11 +518,11 @@ namespace MTA.Game.ConquerStructures
             get
             {
                 ushort Count = 0;
-                foreach (Network.GamePackets.ConquerItem item in Objects)
+                foreach (ConquerItem item in Objects)
                 {
                     if (item == null) continue;
                     if (item.Position > 19 || item.Position == 7 || item.Position == 9 || item.Position == 15 || item.Position == 16 || item.Position == 17) continue;
-                    Count += (ushort)(Network.PacketHandler.IsTwoHand(item.ID) ? item.Perfectionlevel * 2 : item.Perfectionlevel);
+                    Count += (ushort)(PacketHandler.IsTwoHand(item.ID) ? item.Perfectionlevel * 2 : item.Perfectionlevel);
                 }
                 return Count;
             }
@@ -593,65 +593,65 @@ namespace MTA.Game.ConquerStructures
         {
             switch ((ushort)Position)
             {
-                case Network.GamePackets.ConquerItem.Head:
+                case ConquerItem.Head:
                     {
-                        Network.Writer.WriteUInt32(0, HeadSoul, Owner.Entity.SpawnPacket);
-                        Network.Writer.WriteUInt32(0, Head, Owner.Entity.SpawnPacket);
-                        Network.Writer.WriteUInt16(0, HeadColor, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt32(0, HeadSoul, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt32(0, Head, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt16(0, HeadColor, Owner.Entity.SpawnPacket);
                         break;
                     }
-                case Network.GamePackets.ConquerItem.Garment:
+                case ConquerItem.Garment:
                     {
                         if (Owner.Entity.MapID != 1081)
-                            Network.Writer.WriteUInt32(0, Garment, Owner.Entity.SpawnPacket);
+                            Writer.WriteUInt32(0, Garment, Owner.Entity.SpawnPacket);
                         break;
                     }
-                case Network.GamePackets.ConquerItem.Armor:
+                case ConquerItem.Armor:
                     {
-                        Network.Writer.WriteUInt32(0, ArmorSoul, Owner.Entity.SpawnPacket);
-                        Network.Writer.WriteUInt32(0, Armor, Owner.Entity.SpawnPacket);
-                        Network.Writer.WriteUInt16(0, ArmorColor, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt32(0, ArmorSoul, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt32(0, Armor, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt16(0, ArmorColor, Owner.Entity.SpawnPacket);
                         break;
                     }
-                case Network.GamePackets.ConquerItem.RightWeapon:
+                case ConquerItem.RightWeapon:
                     {
-                        Network.Writer.WriteUInt32(0, RightWeaponSoul, Owner.Entity.SpawnPacket);
-                        Network.Writer.WriteUInt32(0, RightWeapon, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt32(0, RightWeaponSoul, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt32(0, RightWeapon, Owner.Entity.SpawnPacket);
                         break;
                     }
-                case Network.GamePackets.ConquerItem.LeftWeapon:
+                case ConquerItem.LeftWeapon:
                     {
-                        Network.Writer.WriteUInt32(0, LeftWeaponSoul, Owner.Entity.SpawnPacket);
-                        Network.Writer.WriteUInt32(0, LeftWeapon, Owner.Entity.SpawnPacket);
-                        Network.Writer.WriteUInt16(0, LeftWeaponColor, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt32(0, LeftWeaponSoul, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt32(0, LeftWeapon, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt16(0, LeftWeaponColor, Owner.Entity.SpawnPacket);
                         break;
                     }
-                case Network.GamePackets.ConquerItem.RightWeaponAccessory:
+                case ConquerItem.RightWeaponAccessory:
                     {
-                        Network.Writer.WriteUInt32(0, RightWeaponAccessory, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt32(0, RightWeaponAccessory, Owner.Entity.SpawnPacket);
                         break;
                     }
-                case Network.GamePackets.ConquerItem.LeftWeaponAccessory:
+                case ConquerItem.LeftWeaponAccessory:
                     {
-                        Network.Writer.WriteUInt32(0, LeftWeaponAccessory, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt32(0, LeftWeaponAccessory, Owner.Entity.SpawnPacket);
                         break;
                     }
-                case Network.GamePackets.ConquerItem.Steed:
+                case ConquerItem.Steed:
                     {
-                        Network.Writer.WriteUInt32(0, Steed, Owner.Entity.SpawnPacket);
-                        Network.Writer.WriteUInt16(0, SteedPlus, Owner.Entity.SpawnPacket);
-                        Network.Writer.WriteUInt32(0, SteedColor, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt32(0, Steed, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt16(0, SteedPlus, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt32(0, SteedColor, Owner.Entity.SpawnPacket);
                         break;
                     }
-                case Network.GamePackets.ConquerItem.SteedArmor:
+                case ConquerItem.SteedArmor:
                     {
-                        Network.Writer.WriteUInt32(0, MountArmor, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt32(0, MountArmor, Owner.Entity.SpawnPacket);
                         break;
                     }
-                case Network.GamePackets.ConquerItem.Wing:
+                case ConquerItem.Wing:
                     {
-                        Network.Writer.Write(0, Wing, Owner.Entity.SpawnPacket);
-                        Network.Writer.Write(0, WingPlus, Owner.Entity.SpawnPacket);
+                        Writer.Write(0, Wing, Owner.Entity.SpawnPacket);
+                        Writer.Write(0, WingPlus, Owner.Entity.SpawnPacket);
                         break;
                     }
             }
@@ -662,83 +662,83 @@ namespace MTA.Game.ConquerStructures
             if (!item.IsWorn) return;
             switch (item.Position)
             {
-                case Network.GamePackets.ConquerItem.AlternateHead:
-                case Network.GamePackets.ConquerItem.Head:
+                case ConquerItem.AlternateHead:
+                case ConquerItem.Head:
                     {
                         if (item.Purification.Available)
-                            Network.Writer.WriteUInt32(item.Purification.PurificationItemID, HeadSoul, Owner.Entity.SpawnPacket);
-                        else Network.Writer.WriteUInt32(0, HeadSoul, Owner.Entity.SpawnPacket);
-                        Network.Writer.WriteUInt32(item.ID, Head, Owner.Entity.SpawnPacket);
-                        Network.Writer.WriteUInt16((byte)item.Color, HeadColor, Owner.Entity.SpawnPacket);
+                            Writer.WriteUInt32(item.Purification.PurificationItemID, HeadSoul, Owner.Entity.SpawnPacket);
+                        else Writer.WriteUInt32(0, HeadSoul, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt32(item.ID, Head, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt16((byte)item.Color, HeadColor, Owner.Entity.SpawnPacket);
                         break;
                     }
-                case Network.GamePackets.ConquerItem.AlternateGarment:
-                case Network.GamePackets.ConquerItem.Garment:
+                case ConquerItem.AlternateGarment:
+                case ConquerItem.Garment:
                     {
-                        Network.Writer.WriteUInt32(item.ID, Garment, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt32(item.ID, Garment, Owner.Entity.SpawnPacket);
                         break;
                     }
-                case Network.GamePackets.ConquerItem.AlternateArmor:
-                case Network.GamePackets.ConquerItem.Armor:
-                    {
-                        if (item.Purification.Available)
-                            Network.Writer.WriteUInt32(item.Purification.PurificationItemID, ArmorSoul, Owner.Entity.SpawnPacket);
-                        else Network.Writer.WriteUInt32(0, ArmorSoul, Owner.Entity.SpawnPacket);
-                        Network.Writer.WriteUInt32(item.ID, Armor, Owner.Entity.SpawnPacket);
-                        Network.Writer.WriteUInt16((byte)item.Color, ArmorColor, Owner.Entity.SpawnPacket);
-                        break;
-                    }
-                case Network.GamePackets.ConquerItem.AlternateRightWeapon:
-                case Network.GamePackets.ConquerItem.RightWeapon:
+                case ConquerItem.AlternateArmor:
+                case ConquerItem.Armor:
                     {
                         if (item.Purification.Available)
-                            Network.Writer.WriteUInt32(item.Purification.PurificationItemID, RightWeaponSoul, Owner.Entity.SpawnPacket);
-                        else Network.Writer.WriteUInt32(0, RightWeaponSoul, Owner.Entity.SpawnPacket);
-                        Network.Writer.WriteUInt32(item.ID, RightWeapon, Owner.Entity.SpawnPacket);
+                            Writer.WriteUInt32(item.Purification.PurificationItemID, ArmorSoul, Owner.Entity.SpawnPacket);
+                        else Writer.WriteUInt32(0, ArmorSoul, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt32(item.ID, Armor, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt16((byte)item.Color, ArmorColor, Owner.Entity.SpawnPacket);
+                        break;
+                    }
+                case ConquerItem.AlternateRightWeapon:
+                case ConquerItem.RightWeapon:
+                    {
+                        if (item.Purification.Available)
+                            Writer.WriteUInt32(item.Purification.PurificationItemID, RightWeaponSoul, Owner.Entity.SpawnPacket);
+                        else Writer.WriteUInt32(0, RightWeaponSoul, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt32(item.ID, RightWeapon, Owner.Entity.SpawnPacket);
                         if (PacketHandler.IsTwoHand(item.ID))
                         {
-                            Network.Writer.WriteUInt32(0, LeftWeaponSoul, Owner.Entity.SpawnPacket);
-                            Network.Writer.WriteUInt32(0, LeftWeapon, Owner.Entity.SpawnPacket);
-                            Network.Writer.WriteUInt16(0, LeftWeaponColor, Owner.Entity.SpawnPacket);
+                            Writer.WriteUInt32(0, LeftWeaponSoul, Owner.Entity.SpawnPacket);
+                            Writer.WriteUInt32(0, LeftWeapon, Owner.Entity.SpawnPacket);
+                            Writer.WriteUInt16(0, LeftWeaponColor, Owner.Entity.SpawnPacket);
                         }
                         break;
                     }
-                case Network.GamePackets.ConquerItem.AlternateLeftWeapon:
-                case Network.GamePackets.ConquerItem.LeftWeapon:
+                case ConquerItem.AlternateLeftWeapon:
+                case ConquerItem.LeftWeapon:
                     {
                         if (item.Purification.Available)
-                            Network.Writer.WriteUInt32(item.Purification.PurificationItemID, LeftWeaponSoul, Owner.Entity.SpawnPacket);
-                        else Network.Writer.WriteUInt32(0, LeftWeaponSoul, Owner.Entity.SpawnPacket);
-                        Network.Writer.WriteUInt32(item.ID, LeftWeapon, Owner.Entity.SpawnPacket);
-                        Network.Writer.WriteUInt16((byte)item.Color, LeftWeaponColor, Owner.Entity.SpawnPacket);
+                            Writer.WriteUInt32(item.Purification.PurificationItemID, LeftWeaponSoul, Owner.Entity.SpawnPacket);
+                        else Writer.WriteUInt32(0, LeftWeaponSoul, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt32(item.ID, LeftWeapon, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt16((byte)item.Color, LeftWeaponColor, Owner.Entity.SpawnPacket);
                         break;
                     }
-                case Network.GamePackets.ConquerItem.RightWeaponAccessory:
+                case ConquerItem.RightWeaponAccessory:
                     {
-                        Network.Writer.WriteUInt32(item.ID, RightWeaponAccessory, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt32(item.ID, RightWeaponAccessory, Owner.Entity.SpawnPacket);
                         break;
                     }
-                case Network.GamePackets.ConquerItem.LeftWeaponAccessory:
+                case ConquerItem.LeftWeaponAccessory:
                     {
-                        Network.Writer.WriteUInt32(item.ID, LeftWeaponAccessory, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt32(item.ID, LeftWeaponAccessory, Owner.Entity.SpawnPacket);
                         break;
                     }
-                case Network.GamePackets.ConquerItem.Steed:
+                case ConquerItem.Steed:
                     {
-                        Network.Writer.WriteUInt32(item.ID, Steed, Owner.Entity.SpawnPacket);
-                        Network.Writer.WriteUInt16(item.Plus, SteedPlus, Owner.Entity.SpawnPacket);
-                        Network.Writer.WriteUInt32(item.SocketProgress, SteedColor, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt32(item.ID, Steed, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt16(item.Plus, SteedPlus, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt32(item.SocketProgress, SteedColor, Owner.Entity.SpawnPacket);
                         break;
                     }
-                case Network.GamePackets.ConquerItem.SteedArmor:
+                case ConquerItem.SteedArmor:
                     {
-                        Network.Writer.WriteUInt32(item.ID, MountArmor, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt32(item.ID, MountArmor, Owner.Entity.SpawnPacket);
                         break;
                     }
-                case Network.GamePackets.ConquerItem.Wing:
+                case ConquerItem.Wing:
                     {
-                        Network.Writer.WriteUInt32(item.ID, Wing, Owner.Entity.SpawnPacket);
-                        Network.Writer.WriteUInt16(item.Plus, WingPlus, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt32(item.ID, Wing, Owner.Entity.SpawnPacket);
+                        Writer.WriteUInt16(item.Plus, WingPlus, Owner.Entity.SpawnPacket);
                         //Network.Writer.WriteUInt32(item.SocketProgress, WingColor, Owner.Entity.SpawnPacket);
                         break;
                     }
@@ -758,13 +758,13 @@ namespace MTA.Game.ConquerStructures
                         //Owner.UnloadItemStats(objects[Position - 1], false);
                         objects[Position - 1].Position = 0;
                         if (Position == 12)
-                            Owner.Entity.RemoveFlag(Network.GamePackets.Update.Flags.Ride);
+                            Owner.Entity.RemoveFlag(Update.Flags.Ride);
                         if (Position == 4)
-                            Owner.Entity.RemoveFlag(Network.GamePackets.Update.Flags.Fly);
-                        Network.GamePackets.ItemUsage iu = new Network.GamePackets.ItemUsage(true);
+                            Owner.Entity.RemoveFlag(Update.Flags.Fly);
+                        ItemUsage iu = new ItemUsage(true);
                         iu.UID = objects[Position - 1].UID;
                         iu.dwParam = Position;
-                        iu.ID = Network.GamePackets.ItemUsage.UnequipItem;
+                        iu.ID = ItemUsage.UnequipItem;
                         Owner.Send(iu);
                         ClearItemview(Position);
                         objects[Position - 1] = null;
@@ -774,7 +774,7 @@ namespace MTA.Game.ConquerStructures
                 }
                 else
                 {
-                    Owner.Send(new Network.GamePackets.Message("Not enough room in your inventory.", System.Drawing.Color.Red, Network.GamePackets.Message.TopLeft));
+                    Owner.Send(new Message("Not enough room in your inventory.", System.Drawing.Color.Red, Message.TopLeft));
                 }
             }
             return false;
@@ -791,19 +791,19 @@ namespace MTA.Game.ConquerStructures
                     objects[Position - 1] = null;
                     return true;
                 }
-                if (!Network.PacketHandler.IsFranko(objects[Position - 1].ID))
+                if (!PacketHandler.IsFranko(objects[Position - 1].ID))
                     return false;
 
                 //Owner.UnloadItemStats(objects[Position - 1], false);
                 objects[Position - 1].IsWorn = false;
                 Database.ConquerItemTable.DeleteItem(objects[Position - 1].UID);
-                Network.GamePackets.ItemUsage iu = new Network.GamePackets.ItemUsage(true);
+                ItemUsage iu = new ItemUsage(true);
                 iu.UID = objects[Position - 1].UID;
                 iu.dwParam = Position;
-                iu.ID = Network.GamePackets.ItemUsage.UnequipItem;
+                iu.ID = ItemUsage.UnequipItem;
                 Owner.Send(iu);
                 iu.dwParam = 0;
-                iu.ID = Network.GamePackets.ItemUsage.RemoveInventory;
+                iu.ID = ItemUsage.RemoveInventory;
                 Owner.Send(iu);
                 ClearItemview(Position);
                 objects[Position - 1].Position = 0;
@@ -823,13 +823,13 @@ namespace MTA.Game.ConquerStructures
                 //Owner.UnloadItemStats(objects[Position - 1], false);
                 objects[Position - 1].Position = 0;
                 Database.ConquerItemTable.RemoveItem(objects[Position - 1].UID);
-                Network.GamePackets.ItemUsage iu = new Network.GamePackets.ItemUsage(true);
+                ItemUsage iu = new ItemUsage(true);
                 iu.UID = objects[Position - 1].UID;
                 iu.dwParam = Position;
-                iu.ID = Network.GamePackets.ItemUsage.UnequipItem;
+                iu.ID = ItemUsage.UnequipItem;
                 Owner.Send(iu);
                 iu.dwParam = 0;
-                iu.ID = Network.GamePackets.ItemUsage.RemoveInventory;
+                iu.ID = ItemUsage.RemoveInventory;
                 Owner.Send(iu);
 
                 ClearItemview(Position);
@@ -905,9 +905,9 @@ namespace MTA.Game.ConquerStructures
                         continue;
                     if (TryGetItem(count) != null)
                     {
-                        if (Network.PacketHandler.IsFranko(TryGetItem(count).ID))
+                        if (PacketHandler.IsFranko(TryGetItem(count).ID))
                             continue;
-                        if (Network.PacketHandler.IsTwoHand(TryGetItem(4).ID))
+                        if (PacketHandler.IsTwoHand(TryGetItem(4).ID))
                             continue;
                         if (TryGetItem(count).ID % 10 != 9)
                             return false;
@@ -917,12 +917,12 @@ namespace MTA.Game.ConquerStructures
                 {
                     if (TryGetItem(count) != null)
                     {
-                        if (count != Network.GamePackets.ConquerItem.Bottle && count != Network.GamePackets.ConquerItem.Garment)
+                        if (count != ConquerItem.Bottle && count != ConquerItem.Garment)
                             if (TryGetItem(count).ID % 10 != 9)
                                 return false;
                     }
                     else
-                        if (count != Network.GamePackets.ConquerItem.Bottle && count != Network.GamePackets.ConquerItem.Garment)
+                        if (count != ConquerItem.Bottle && count != ConquerItem.Garment)
                         return false;
                 }
             }

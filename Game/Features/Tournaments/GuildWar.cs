@@ -58,7 +58,7 @@ namespace MTA.Game
             LeftGate.Mesh = (ushort)(240 + LeftGate.Mesh % 10);
             RightGate.Mesh = (ushort)(270 + LeftGate.Mesh % 10);
             Kernel.SendWorldMessage(new Message("Guild war has began!", System.Drawing.Color.Red, Message.Center), Program.Values);
-            Game.guildtop.Rest();
+            guildtop.Rest();
             FirstRound = true;
             foreach (Guild guild in Kernel.Guilds.Values)
             {
@@ -219,7 +219,7 @@ namespace MTA.Game
 
         private static void UpdatePole(SobNpcSpawn pole)
         {
-            new Database.MySqlCommand(MTA.Database.MySqlCommandType.UPDATE)
+            new Database.MySqlCommand(Database.MySqlCommandType.UPDATE)
             .Update("sobnpcs").Set("name", pole.Name).Set("life", Pole.Hitpoints).Where("id", pole.UID).Execute();
         }
     }

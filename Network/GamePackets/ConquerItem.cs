@@ -56,8 +56,8 @@ namespace MTA.Network.GamePackets
                 Buffer = new byte[136 + 8];
                 WriteUInt16(136, 0, Buffer);
                 WriteUInt16(1008, 2, Buffer);
-                Mode = MTA.Game.Enums.ItemMode.Default;
-                this.Agate_map = new Dictionary<uint, string>(10);
+                Mode = Enums.ItemMode.Default;
+                Agate_map = new Dictionary<uint, string>(10);
                 StatsLoaded = false;
                 //  TimeLeftInMinutes = uint.MaxValue;
             }
@@ -139,12 +139,12 @@ namespace MTA.Network.GamePackets
         public string OwnerName
         {
             get { return System.Text.Encoding.Default.GetString(Buffer, 84, 16); }
-            set { Writer.Write(value, 84, Buffer); }
+            set { Write(value, 84, Buffer); }
         }
         public string Signature
         {
             get { return System.Text.Encoding.Default.GetString(Buffer, 100, 32); }
-            set { Writer.Write(value, 100, Buffer); }
+            set { Write(value, 100, Buffer); }
         }
         public ushort Position
         {
@@ -244,11 +244,11 @@ namespace MTA.Network.GamePackets
         {
             get
             {
-                return (BitConverter.ToUInt16(this.Buffer, 56) == 1);
+                return (BitConverter.ToUInt16(Buffer, 56) == 1);
             }
             set
             {
-                Writer.WriteUInt16(value ? ((byte)1) : ((byte)0), 56, this.Buffer);
+                WriteUInt16(value ? ((byte)1) : ((byte)0), 56, Buffer);
             }
         }
         public uint TimeLeftInMinutes
@@ -409,26 +409,26 @@ namespace MTA.Network.GamePackets
         }
         public void SendAgate(Client.GameState client)
         {
-            byte[] buffer = new byte[(40 + (0x30 * this.Agate_map.Count)) + 0x30];
-            Writer.WriteUInt16((ushort)(buffer.Length - 8), 0, buffer);
-            Writer.WriteUInt16(0x83e, 2, buffer);
-            Writer.WriteUInt32(this.UID, 8, buffer);
-            Writer.WriteUInt32((byte)this.Agate_map.Count, 12, buffer);
-            Writer.WriteUInt32((byte)this.Agate_map.Count, 0x10, buffer);
-            Writer.WriteUInt32(this.Durability, 0x18, buffer);
-            Writer.WriteUInt32((byte)this.Agate_map.Count, 0x1c, buffer);
-            if (this.Agate_map.Count > 0)
+            byte[] buffer = new byte[(40 + (0x30 * Agate_map.Count)) + 0x30];
+            WriteUInt16((ushort)(buffer.Length - 8), 0, buffer);
+            WriteUInt16(0x83e, 2, buffer);
+            WriteUInt32(UID, 8, buffer);
+            WriteUInt32((byte)Agate_map.Count, 12, buffer);
+            WriteUInt32((byte)Agate_map.Count, 0x10, buffer);
+            WriteUInt32(Durability, 0x18, buffer);
+            WriteUInt32((byte)Agate_map.Count, 0x1c, buffer);
+            if (Agate_map.Count > 0)
             {
                 int offset = 0x20;
-                for (uint i = 0; i < this.Agate_map.Count; i++)
+                for (uint i = 0; i < Agate_map.Count; i++)
                 {
-                    Writer.WriteUInt32(i, offset, buffer);
+                    WriteUInt32(i, offset, buffer);
                     offset += 4;
-                    Writer.WriteUInt16(ushort.Parse(this.Agate_map[i].Split(new char[] { '~' })[0].ToString()), offset, buffer);
+                    WriteUInt16(ushort.Parse(Agate_map[i].Split(new char[] { '~' })[0].ToString()), offset, buffer);
                     offset += 4;
-                    Writer.WriteUInt16(ushort.Parse(this.Agate_map[i].Split(new char[] { '~' })[1].ToString()), offset, buffer);
+                    WriteUInt16(ushort.Parse(Agate_map[i].Split(new char[] { '~' })[1].ToString()), offset, buffer);
                     offset += 4;
-                    Writer.WriteUInt16(ushort.Parse(this.Agate_map[i].Split(new char[] { '~' })[2].ToString()), offset, buffer);
+                    WriteUInt16(ushort.Parse(Agate_map[i].Split(new char[] { '~' })[2].ToString()), offset, buffer);
                     offset += 0x24;
                 }
             }
@@ -456,11 +456,11 @@ namespace MTA.Network.GamePackets
 
             if (Days > 0)
             {
-                if (DateTime.Now >= this.DayStamp.AddDays(Days))
+                if (DateTime.Now >= DayStamp.AddDays(Days))
                 {
-                    Database.ConquerItemTable.DeleteItem(this.UID);
-                    Database.ConquerItemTable.RemoveItem(this.UID);
-                    client.Send(new MTA.Network.GamePackets.Message("Your Item Has Expired", System.Drawing.Color.Red, Message.TopLeft));
+                    Database.ConquerItemTable.DeleteItem(UID);
+                    Database.ConquerItemTable.RemoveItem(UID);
+                    client.Send(new Message("Your Item Has Expired", System.Drawing.Color.Red, Message.TopLeft));
                 }
                 TimeSpan Remain = DayStamp.AddDays(Days) - DateTime.Now;
                 TimeLeftInMinutes = (uint)Remain.TotalSeconds;
@@ -522,7 +522,7 @@ namespace MTA.Network.GamePackets
         }
         public override int GetHashCode()
         {
-            return (int)this.UID;
+            return (int)UID;
         }
         public override bool Equals(object obj)
         {
@@ -562,7 +562,7 @@ namespace MTA.Network.GamePackets
         }
         public ItemTypes GetItemType()
         {
-            return (ItemTypes)(this.ID / 1000);
+            return (ItemTypes)(ID / 1000);
         }
         public static void CheckItemExtra(ConquerItem i, Client.GameState c)
         {

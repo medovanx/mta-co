@@ -8,7 +8,7 @@
         {
             this.buffer = buffer;
         }
-        public CurrentLocationPacket(uint heroID, MTA.Game.Enums.CountryID countryID)
+        public CurrentLocationPacket(uint heroID, Game.Enums.CountryID countryID)
         {
             buffer = new byte[18];
             WriteUInt16(10, 0, buffer);
@@ -29,11 +29,11 @@
             }
         }
 
-        public MTA.Game.Enums.CountryID CountryID
+        public Game.Enums.CountryID CountryID
         {
             get
             {
-                return (MTA.Game.Enums.CountryID)BitConverter.ToUInt32(buffer, 8);
+                return (Game.Enums.CountryID)BitConverter.ToUInt32(buffer, 8);
             }
             set
             {

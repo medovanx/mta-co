@@ -19,7 +19,7 @@
                 return Kernel.GamePool.ContainsKey(ID);
             }
         }
-        public MTA.Game.ConquerStructures.NobilityRank NobilityRank
+        public NobilityRank NobilityRank
         {
             get
             {

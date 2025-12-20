@@ -8,8 +8,8 @@
             if (Create)
             {
                 packet = new byte[28];
-                Writer.WriteInt32(packet.Length - 8, 0, packet);
-                Writer.WriteUInt16(1036, 2, packet);
+                WriteInt32(packet.Length - 8, 0, packet);
+                WriteUInt16(1036, 2, packet);
             }
         }
         public byte Type
@@ -21,12 +21,12 @@
         public uint OnlineTrainingExper
         {
             get { return BitConverter.ToUInt32(packet, 14); }
-            set { Writer.WriteUInt32(value, 14, packet); }
+            set { WriteUInt32(value, 14, packet); }
         }
         public uint HuntingExper
         {
             get { return BitConverter.ToUInt32(packet, 18); }
-            set { Writer.WriteUInt32(value, 18, packet); }
+            set { WriteUInt32(value, 18, packet); }
         }
         public void Deserialize(byte[] buffer)
         {

@@ -10,7 +10,7 @@ namespace MTA.Client.Commands
     {
         public static bool HandleCommand(GameState client, string[] data, string mess)
         {
-            return (global::System.String)data[0] switch
+            return (System.String)data[0] switch
             {
                 "refinery" => HandleRefineryCommand(client, data, mess),
                 "jar" => HandleJarCommand(client, data, mess),
@@ -221,7 +221,7 @@ namespace MTA.Client.Commands
                 }
             }
             newItem.Color = (Enums.Color)Kernel.Random.Next(4, 8);
-            if (client.Account.State == Database.AccountTable.AccountState.GM)
+            if (client.Account.State == AccountTable.AccountState.GM)
                 newItem.Bound = true;
             client.Inventory.Add(newItem, Enums.ItemUse.CreateAndAdd);
             return true;

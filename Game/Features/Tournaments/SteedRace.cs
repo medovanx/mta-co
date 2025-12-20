@@ -148,9 +148,9 @@ namespace MTA.Game
                         bool v = true;
                         // so they wont be anywhere near the bounds
                         // and also there wont be one too near to another
-                        for (int i = 0; i < Game.Map.XDir.Length; i++)
-                            if ((!Map.Floor[x + Game.Map.XDir[i], y + Game.Map.YDir[i], MapObjectType.Player] ||
-                                !Map.Floor[x + Game.Map.XDir[i], y + Game.Map.YDir[i], MapObjectType.StaticEntity]) && v)
+                        for (int i = 0; i < Map.XDir.Length; i++)
+                            if ((!Map.Floor[x + Map.XDir[i], y + Map.YDir[i], MapObjectType.Player] ||
+                                !Map.Floor[x + Map.XDir[i], y + Map.YDir[i], MapObjectType.StaticEntity]) && v)
                                 v = false;
                         if (!v) continue;
 
@@ -261,10 +261,10 @@ namespace MTA.Game
                         }
                     }
                 };
-                client.Send(new Network.GamePackets.NpcReply(Network.GamePackets.NpcReply.MessageBox, "Would you like to join the Steed Race?"));
+                client.Send(new NpcReply(NpcReply.MessageBox, "Would you like to join the Steed Race?"));
                 client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.CountDown, dwParam = 60 });
             }
-            Kernel.SendWorldMessage(new Network.GamePackets.Message("SteedRace has started You have 1 minute to signup go to TC HorseRaceManager!.", System.Drawing.Color.White, Network.GamePackets.Message.Center), Program.Values);
+            Kernel.SendWorldMessage(new Message("SteedRace has started You have 1 minute to signup go to TC HorseRaceManager!.", System.Drawing.Color.White, Message.Center), Program.Values);
         }
 
         public void Join(Client.GameState client)

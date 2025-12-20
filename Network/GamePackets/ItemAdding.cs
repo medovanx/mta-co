@@ -48,7 +48,7 @@ namespace MTA.Network.GamePackets
 
         public uint Type
         {
-            get { return MTA.BitConverter.ToUInt32(Buffer, 12); }
+            get { return BitConverter.ToUInt32(Buffer, 12); }
             set { WriteUInt32(value, 12, Buffer); }
         }
 
@@ -123,12 +123,12 @@ namespace MTA.Network.GamePackets
 
         public bool Append2(Purification_ purify)
         {
-            this.UpdateCount++;
-            ushort offset = (ushort)(8 + ((this.UpdateCount - 1) * 32));
-            Writer.WriteUInt32(purify.ItemUID, offset, this.Buffer);
-            Writer.WriteUInt32(Type, offset + 4, this.Buffer);
-            Writer.WriteUInt32(purify.PurificationItemID, offset + 8, this.Buffer);
-            Writer.WriteUInt32(purify.PurificationLevel, offset + 12, this.Buffer);
+            UpdateCount++;
+            ushort offset = (ushort)(8 + ((UpdateCount - 1) * 32));
+            WriteUInt32(purify.ItemUID, offset, Buffer);
+            WriteUInt32(Type, offset + 4, Buffer);
+            WriteUInt32(purify.PurificationItemID, offset + 8, Buffer);
+            WriteUInt32(purify.PurificationLevel, offset + 12, Buffer);
             if (purify.PurificationDuration != 0)
             {
                 TimeSpan span = new TimeSpan(purify.AddedOn.AddSeconds(purify.PurificationDuration).Ticks);
@@ -137,22 +137,22 @@ namespace MTA.Network.GamePackets
                 if (num2 <= 0)
                 {
                     purify.Available = false;
-                    this.UpdateCount--;
+                    UpdateCount--;
                     return false;
                 }
-                Writer.WriteUInt32((uint)num2, offset + 24, this.Buffer);
+                WriteUInt32((uint)num2, offset + 24, Buffer);
             }
             return true;
         }
         public bool Append2(Refinery_ effect)
         {
-            this.UpdateCount++;
-            ushort offset = (ushort)(8 + ((this.UpdateCount - 1) * 32));
-            Writer.WriteUInt32(effect.ItemUID, offset, this.Buffer);
-            Writer.WriteUInt32(Type, offset + 4, this.Buffer);
-            Writer.WriteUInt32(effect.EffectID, offset + 8, this.Buffer);
-            Writer.WriteUInt32(effect.EffectLevel, offset + 12, this.Buffer);
-            Writer.WriteUInt32(effect.EffectPercent, offset + 0x10, this.Buffer);
+            UpdateCount++;
+            ushort offset = (ushort)(8 + ((UpdateCount - 1) * 32));
+            WriteUInt32(effect.ItemUID, offset, Buffer);
+            WriteUInt32(Type, offset + 4, Buffer);
+            WriteUInt32(effect.EffectID, offset + 8, Buffer);
+            WriteUInt32(effect.EffectLevel, offset + 12, Buffer);
+            WriteUInt32(effect.EffectPercent, offset + 0x10, Buffer);
             if (effect.EffectPercent != 0)
             {
                 TimeSpan span = new TimeSpan(effect.AddedOn.AddSeconds(effect.EffectDuration).Ticks);
@@ -161,10 +161,10 @@ namespace MTA.Network.GamePackets
                 if (num2 <= 0 && effect.EffectDuration != 0)
                 {
                     effect.Available = false;
-                    this.UpdateCount--;
+                    UpdateCount--;
                     return false;
                 }
-                Writer.WriteUInt32((uint)num2, offset + 24, this.Buffer);
+                WriteUInt32((uint)num2, offset + 24, Buffer);
             }
             return true;
         }

@@ -11,7 +11,7 @@ namespace MTA.Game.ConquerStructures
     #region PokerPlayer
     public class PokerPlayer
     {
-        public List<Game.Enums.SeatAttributeEnum> SeatAttributes = new List<Game.Enums.SeatAttributeEnum>();
+        public List<Enums.SeatAttributeEnum> SeatAttributes = new List<Enums.SeatAttributeEnum>();
         public Entity Entity
         {
             get
@@ -41,11 +41,11 @@ namespace MTA.Game.ConquerStructures
         public bool Online = true;
         public uint TableUID;
         public uint UID;
-        public List<Game.ConquerStructures.PokerCard> Cards = new List<Game.ConquerStructures.PokerCard>();
+        public List<PokerCard> Cards = new List<PokerCard>();
         public ulong TotalBet;
         public ulong Bet;
         public byte CurrentState = 1;
-        public Game.Enums.PokerCallTypes RoundState = 0;
+        public Enums.PokerCallTypes RoundState = 0;
         public bool IsPlaying;
         public ulong Wins;
         public ulong MyBet;
@@ -56,9 +56,9 @@ namespace MTA.Game.ConquerStructures
             {
                 if (MyTable == null) return 0;
                 if (!Online) return 0;
-                if (MyTable.BetType == Game.Enums.PokerBetType.Money)
+                if (MyTable.BetType == Enums.PokerBetType.Money)
                     return Entity.Money;
-                else if (MyTable.BetType == Game.Enums.PokerBetType.ConquerPoints)
+                else if (MyTable.BetType == Enums.PokerBetType.ConquerPoints)
                     return Entity.ConquerPoints;
                 else
                     return 0;
@@ -68,7 +68,7 @@ namespace MTA.Game.ConquerStructures
         {
             get
             {
-                return RoundState == Game.Enums.PokerCallTypes.AllIn;
+                return RoundState == Enums.PokerCallTypes.AllIn;
             }
         }
         public void Send(Interfaces.IPacket p)
@@ -82,7 +82,7 @@ namespace MTA.Game.ConquerStructures
                 if (Database.PokerTables.Tables.ContainsKey(TableUID))
                 {
                     if (Database.PokerTables.Tables[TableUID].Players.ContainsKey(UID))
-                        Database.PokerTables.Tables[TableUID].Players[UID].RoundState = Game.Enums.PokerCallTypes.Fold;
+                        Database.PokerTables.Tables[TableUID].Players[UID].RoundState = Enums.PokerCallTypes.Fold;
                     return;
                 }
             }
@@ -94,11 +94,11 @@ namespace MTA.Game.ConquerStructures
                 if (Database.PokerTables.Tables.ContainsKey(TableUID))
                 {
                     if (Database.PokerTables.Tables[TableUID].Players.ContainsKey(UID))
-                        Database.PokerTables.Tables[TableUID].Players[UID].RoundState = Game.Enums.PokerCallTypes.Fold;
+                        Database.PokerTables.Tables[TableUID].Players[UID].RoundState = Enums.PokerCallTypes.Fold;
                 }
             }
         }
-        public ushort GetFullPower(List<Game.ConquerStructures.PokerCard> TCards)
+        public ushort GetFullPower(List<PokerCard> TCards)
         {
             ushort P = 0;
             foreach (var C in TCards)
@@ -110,14 +110,14 @@ namespace MTA.Game.ConquerStructures
         }
         public void PlayMoney(ulong Money, ulong RoundMaxBet = 0)
         {
-            if (MyTable.BetType == Game.Enums.PokerBetType.Money)
+            if (MyTable.BetType == Enums.PokerBetType.Money)
             {
                 if (Entity.Money >= Money)
                     Entity.Money -= Money;
                 else
                     Entity.Money = 0;
             }
-            else if (MyTable.BetType == Game.Enums.PokerBetType.ConquerPoints)
+            else if (MyTable.BetType == Enums.PokerBetType.ConquerPoints)
             {
                 if (Entity.ConquerPoints >= Money)
                     Entity.ConquerPoints -= (uint)Money;
@@ -130,7 +130,7 @@ namespace MTA.Game.ConquerStructures
             MyTable.MinimumRaiseAmount = Math.Max(MyTable.MinimumRaiseAmount, Bet);
             if (Bet > MyTable.HigherBet) MyTable.HigherBet = Bet;
 
-            var D = new Network.GamePackets.Data(true);
+            var D = new Data(true);
             D.ID = 234;
             D.UID = MyTable.UID;
             D.dwParam = (uint)MyTable.Pot;
@@ -148,7 +148,7 @@ namespace MTA.Game.ConquerStructures
         public uint UID;
         public byte Number;
         public bool TableType = false;
-        public Game.Enums.PokerBetType BetType;
+        public Enums.PokerBetType BetType;
         public ushort X;
         public ushort Y;
         public uint Mesh;
@@ -177,17 +177,17 @@ namespace MTA.Game.ConquerStructures
         }
         private uint BigBlind;
         private uint SmallBlind;
-        private Stack<Game.ConquerStructures.PokerCard> _ShuffleDeckCards;
-        public List<Game.ConquerStructures.PokerCard> TableCards = new List<Game.ConquerStructures.PokerCard>();
+        private Stack<PokerCard> _ShuffleDeckCards;
+        public List<PokerCard> TableCards = new List<PokerCard>();
         protected readonly List<MoneyPot> m_Pots = new List<MoneyPot>();
         private int m_CurrPotId;
         public List<MoneyPot> Pots
         {
             get { return m_Pots; }
         }
-        private Game.Enums.RoundTypeEnum Round;
-        private Game.Enums.RoundStateEnum m_RoundState;
-        public Game.Enums.GameClientEnum m_State; // L'etat global de la game       
+        private Enums.RoundTypeEnum Round;
+        private Enums.RoundStateEnum m_RoundState;
+        public Enums.GameClientEnum m_State; // L'etat global de la game       
 
 
         /// <summary>
@@ -224,28 +224,28 @@ namespace MTA.Game.ConquerStructures
         {
             get
             {
-                return Players.Values.FirstOrDefault(x => x.SeatAttributes.Contains(Game.Enums.SeatAttributeEnum.CurrentPlayer));
+                return Players.Values.FirstOrDefault(x => x.SeatAttributes.Contains(Enums.SeatAttributeEnum.CurrentPlayer));
             }
         }
         public PokerPlayer DealerPlayer
         {
             get
             {
-                return Players.Values.FirstOrDefault(x => x.SeatAttributes.Contains(Game.Enums.SeatAttributeEnum.Dealer));
+                return Players.Values.FirstOrDefault(x => x.SeatAttributes.Contains(Enums.SeatAttributeEnum.Dealer));
             }
         }
         public PokerPlayer BigBlindPlayer
         {
             get
             {
-                return Players.Values.FirstOrDefault(x => x.SeatAttributes.Contains(Game.Enums.SeatAttributeEnum.BigBlind));
+                return Players.Values.FirstOrDefault(x => x.SeatAttributes.Contains(Enums.SeatAttributeEnum.BigBlind));
             }
         }
         public PokerPlayer SmallBlindPlayer
         {
             get
             {
-                return Players.Values.FirstOrDefault(x => x.SeatAttributes.Contains(Game.Enums.SeatAttributeEnum.SmallBlind));
+                return Players.Values.FirstOrDefault(x => x.SeatAttributes.Contains(Enums.SeatAttributeEnum.SmallBlind));
             }
         }
         public PokerPlayer SeatOfTheFirstPlayer
@@ -254,7 +254,7 @@ namespace MTA.Game.ConquerStructures
             {
                 var seat = GetSeatOfPlayingPlayerNextTo(DealerPlayer);
 
-                if (Round == Game.Enums.RoundTypeEnum.Preflop)
+                if (Round == Enums.RoundTypeEnum.Preflop)
                 {
                     //Ad B : A      A
                     //Ad B C: A     A->B->C->A
@@ -283,9 +283,9 @@ namespace MTA.Game.ConquerStructures
         {
             var oldPlayer = CurrentPlayer;
             if (oldPlayer != null)
-                oldPlayer.SeatAttributes.Remove(Game.Enums.SeatAttributeEnum.CurrentPlayer);
+                oldPlayer.SeatAttributes.Remove(Enums.SeatAttributeEnum.CurrentPlayer);
             if (player != null)
-                player.SeatAttributes.Add(Game.Enums.SeatAttributeEnum.CurrentPlayer);
+                player.SeatAttributes.Add(Enums.SeatAttributeEnum.CurrentPlayer);
 
             return player;
         }
@@ -299,7 +299,7 @@ namespace MTA.Game.ConquerStructures
                 if (Players.ContainsKey(PlayerID))
                 {
                     var Player = Players[PlayerID];
-                    if (Player.RoundState != Game.Enums.PokerCallTypes.Fold && Player.Online)
+                    if (Player.RoundState != Enums.PokerCallTypes.Fold && Player.Online)
                         return Player;
                 }
             }
@@ -318,7 +318,7 @@ namespace MTA.Game.ConquerStructures
                 if (Players.ContainsKey(PlayerID))
                 {
                     var Player = Players[PlayerID];
-                    if (Player.RoundState != Game.Enums.PokerCallTypes.Fold && Player.Online)
+                    if (Player.RoundState != Enums.PokerCallTypes.Fold && Player.Online)
                         return Player;
                 }
             }
@@ -345,7 +345,7 @@ namespace MTA.Game.ConquerStructures
         public void ToLocal(byte[] P)
         {
             var Locals = Kernel.GamePool.Values.ToArray();
-            foreach (Client.GameState client in Locals)
+            foreach (GameState client in Locals)
             {
                 if (client != null)
                 {
@@ -376,7 +376,7 @@ namespace MTA.Game.ConquerStructures
             foreach (var Player in Watchers.Values)
                 Player.Send(P);
         }
-        public void Spawn(Client.GameState client)
+        public void Spawn(GameState client)
         {
             client.Send(Spawn());
         }
@@ -428,7 +428,7 @@ namespace MTA.Game.ConquerStructures
             ulong HighestHandPower = 0;
             foreach (var Pla in Players.Values)
             {
-                if (Pla.RoundState == Game.Enums.PokerCallTypes.Fold || !Pla.Online) continue;
+                if (Pla.RoundState == Enums.PokerCallTypes.Fold || !Pla.Online) continue;
                 ulong HP = GetHandPower(Pla.Cards.ToArray(), Pla);
                 if (HP > HighestHandPower)
                 {
@@ -448,19 +448,19 @@ namespace MTA.Game.ConquerStructures
 
             return WinnerId;
         }
-        public ulong GetHandPower(Game.ConquerStructures.PokerCard[] hand, PokerPlayer Pl)
+        public ulong GetHandPower(PokerCard[] hand, PokerPlayer Pl)
         {
             ulong _hand = 0;
             ulong board = 0;
             foreach (var item in hand)
             {
-                _hand |= HoldemHand.Hand.CardMasksTable[item.ID];
+                _hand |= Hand.CardMasksTable[item.ID];
             }
-            foreach (var item in this.TableCards)
+            foreach (var item in TableCards)
             {
-                board |= HoldemHand.Hand.CardMasksTable[item.ID];
+                board |= Hand.CardMasksTable[item.ID];
             }
-            return HoldemHand.Hand.Evaluate(board | _hand);
+            return Hand.Evaluate(board | _hand);
         }
         public bool SitIn(GameState client, byte Seat, bool Player = true)
         {
@@ -468,7 +468,7 @@ namespace MTA.Game.ConquerStructures
             {
                 Start();
             }
-            if (m_State == Game.Enums.GameClientEnum.Init || m_State == Game.Enums.GameClientEnum.End)
+            if (m_State == Enums.GameClientEnum.Init || m_State == Enums.GameClientEnum.End)
             {
                 client.MessageBox(string.Format("Can't join, bad timing: {0}", m_State));
                 return false;
@@ -485,12 +485,12 @@ namespace MTA.Game.ConquerStructures
                 if (Player)
                 {
                     if (Pot > 0)
-                        Pl.RoundState = Game.Enums.PokerCallTypes.Fold;
+                        Pl.RoundState = Enums.PokerCallTypes.Fold;
                     else
                         Pl.IsPlaying = true;
                     if (!Players.ContainsKey(Pl.UID))
                         Players.Add(Pl.UID, Pl);
-                    ToLocal(this.Spawn());
+                    ToLocal(Spawn());
                 }
                 else
                 {
@@ -565,7 +565,7 @@ namespace MTA.Game.ConquerStructures
                 Players[Id].IsPlaying = false;
                 if (Players[Id].Entity != null)
                     Players[Id].Entity.PokerTableUID = 0;
-                this.folders += Players[Id].TotalBet;
+                folders += Players[Id].TotalBet;
                 Players.Remove(Id);
             }
             else if (Watchers.ContainsKey(Id))
@@ -578,7 +578,7 @@ namespace MTA.Game.ConquerStructures
 
             ToLocal(PokerLeaveTable.ToArray());
 
-            ToLocal(this.Spawn());
+            ToLocal(Spawn());
             if (Players.ContainsKey(Id))
                 Players.Remove(Id);
             if (NbPlayingAndAllIn == 1 || NbPlayed >= NbPlayingAndAllIn)
@@ -622,7 +622,7 @@ namespace MTA.Game.ConquerStructures
             StopMoveCountDown();
             var PokerPlayerMove = new MsgShowHandCallAction(true)
             {
-                Type = Game.Enums.PokerCallTypes.Fold,
+                Type = Enums.PokerCallTypes.Fold,
                 LastBet = 0,
                 Bet = Pot,
                 UID = PlayerId,
@@ -631,7 +631,7 @@ namespace MTA.Game.ConquerStructures
             if (Players.ContainsKey(PlayerId))
             {
                 Players[PlayerId].Cards.Clear();
-                Players[PlayerId].RoundState = Game.Enums.PokerCallTypes.Fold;
+                Players[PlayerId].RoundState = Enums.PokerCallTypes.Fold;
                 Players[PlayerId].IsPlaying = false;
             }
             ContinueBettingRound();
@@ -659,7 +659,7 @@ namespace MTA.Game.ConquerStructures
                         if (Pl.Entity.Money >= T.MinLimit * 10)
                             ContinuePlaying = 0;
                         else ContinuePlaying = 1;
-                    else if (T.BetType == Game.Enums.PokerBetType.ConquerPoints)
+                    else if (T.BetType == Enums.PokerBetType.ConquerPoints)
                         if (Pl.Entity.ConquerPoints >= T.MinLimit * 10)
                             ContinuePlaying = 0;
                         else ContinuePlaying = 1;
@@ -705,9 +705,9 @@ namespace MTA.Game.ConquerStructures
 
             if (Players.ContainsKey(WinnerId))
             {
-                if (BetType == Game.Enums.PokerBetType.Money)
+                if (BetType == Enums.PokerBetType.Money)
                     Players[WinnerId].Entity.Money += (uint)WinsVal;
-                else if (BetType == Game.Enums.PokerBetType.ConquerPoints)
+                else if (BetType == Enums.PokerBetType.ConquerPoints)
                     Players[WinnerId].Entity.ConquerPoints += (uint)WinsVal;
             }
             var PokerRoundResult = new MsgShowHandGameResult(Players.Count)
@@ -750,18 +750,18 @@ namespace MTA.Game.ConquerStructures
 
                     switch (CallType)
                     {
-                        case Game.Enums.PokerCallTypes.Check:
+                        case Enums.PokerCallTypes.Check:
                             {
                                 break;
                             }
-                        case Game.Enums.PokerCallTypes.Fold:
+                        case Enums.PokerCallTypes.Fold:
                             {
                                 MoveCountDownEnded(PlayerId);
                                 Pot -= Player.TotalBet;
                                 QuitPot += Player.TotalBet + Player.Bet;
                                 break;
                             }
-                        case Game.Enums.PokerCallTypes.Bet:
+                        case Enums.PokerCallTypes.Bet:
                             {
                                 if (PlayeMove.LastBet != 0)
                                 {
@@ -778,13 +778,13 @@ namespace MTA.Game.ConquerStructures
                                 Player.PlayMoney(Betting);
                                 break;
                             }
-                        case Game.Enums.PokerCallTypes.Call:
+                        case Enums.PokerCallTypes.Call:
                             {
                                 Betting = _CallAmnt;
                                 Player.PlayMoney(Betting);
                                 break;
                             }
-                        case Game.Enums.PokerCallTypes.Rise:
+                        case Enums.PokerCallTypes.Rise:
                             {
                                 if (PlayeMove.LastBet != 0)
                                 {
@@ -802,7 +802,7 @@ namespace MTA.Game.ConquerStructures
                                 NbPlayed = NbAllIn;
                                 break;
                             }
-                        case Game.Enums.PokerCallTypes.AllIn:
+                        case Enums.PokerCallTypes.AllIn:
                             {
                                 Betting = _MaxRaiseAmnt;
                                 Player.PlayMoney(Betting, HigherBet);
@@ -840,12 +840,12 @@ namespace MTA.Game.ConquerStructures
         }
         public void Start()
         {
-            if (m_State == Game.Enums.GameClientEnum.Init)
+            if (m_State == Enums.GameClientEnum.Init)
                 AdvanceToNextGameState(); //Advancing to WaitForPlayers State
         }
         public void StartANewGame()
         {
-            m_State = Game.Enums.GameClientEnum.WaitForPlayers;
+            m_State = Enums.GameClientEnum.WaitForPlayers;
             NewGame = true;
             TryToBegin();
         }
@@ -853,29 +853,29 @@ namespace MTA.Game.ConquerStructures
         {
             try
             {
-                if (m_State == Game.Enums.GameClientEnum.End)
+                if (m_State == Enums.GameClientEnum.End)
                     return;
 
-                m_State = (Game.Enums.GameClientEnum)(((int)m_State) + 1);
+                m_State = (Enums.GameClientEnum)(((int)m_State) + 1);
 
                 switch (m_State)
                 {
-                    case Game.Enums.GameClientEnum.Init:
+                    case Enums.GameClientEnum.Init:
 
                         break;
-                    case Game.Enums.GameClientEnum.WaitForPlayers:
+                    case Enums.GameClientEnum.WaitForPlayers:
                         TryToBegin();
 
                         break;
-                    case Game.Enums.GameClientEnum.WaitForBlinds:
+                    case Enums.GameClientEnum.WaitForBlinds:
                         HigherBet = 0;
                         AdvanceToNextGameState(); //Advancing to Playing State
 
                         break;
-                    case Game.Enums.GameClientEnum.Playing:
+                    case Enums.GameClientEnum.Playing:
                         if (Players.Count < 1) return;
-                        Round = Game.Enums.RoundTypeEnum.Preflop;
-                        m_RoundState = Game.Enums.RoundStateEnum.Cards;
+                        Round = Enums.RoundTypeEnum.Preflop;
+                        m_RoundState = Enums.RoundStateEnum.Cards;
                         var count = CountDown;
                         if (!NewGame)
                             count = 5;
@@ -887,17 +887,17 @@ namespace MTA.Game.ConquerStructures
                             TimeDown = count
                         });
                         break;
-                    case Game.Enums.GameClientEnum.Showdown:
+                    case Enums.GameClientEnum.Showdown:
                         ShowAllCards();
                         break;
-                    case Game.Enums.GameClientEnum.DecideWinners:
+                    case Enums.GameClientEnum.DecideWinners:
                         DecideWinners();
                         break;
-                    case Game.Enums.GameClientEnum.DistributeMoney:
+                    case Enums.GameClientEnum.DistributeMoney:
                         DistributeMoney();
                         StartANewGame();
                         break;
-                    case Game.Enums.GameClientEnum.End:
+                    case Enums.GameClientEnum.End:
                         RaiseEverythingEnded();
                         break;
                 }
@@ -909,26 +909,26 @@ namespace MTA.Game.ConquerStructures
         }
         private void AdvanceToNextRound()
         {
-            if (m_State != Game.Enums.GameClientEnum.Playing)
+            if (m_State != Enums.GameClientEnum.Playing)
                 return;
 
-            if (Round == Game.Enums.RoundTypeEnum.River)
+            if (Round == Enums.RoundTypeEnum.River)
                 AdvanceToNextGameState(); //Advancing to Showdown State
             else
             {
-                m_RoundState = Game.Enums.RoundStateEnum.Cards;
+                m_RoundState = Enums.RoundStateEnum.Cards;
                 ChangeCurrentPlayerTo(DealerPlayer);
-                Round = (Game.Enums.RoundTypeEnum)(((int)Round) + 1);
+                Round = (Enums.RoundTypeEnum)(((int)Round) + 1);
                 StartRound();
             }
         }
         private void AdvanceToNextRoundState()
         {
-            if (m_State != Game.Enums.GameClientEnum.Playing)
+            if (m_State != Enums.GameClientEnum.Playing)
                 return;
-            if (m_RoundState == Game.Enums.RoundStateEnum.Cumul)
+            if (m_RoundState == Enums.RoundStateEnum.Cumul)
                 return;
-            m_RoundState = (Game.Enums.RoundStateEnum)(((int)m_RoundState) + 1);
+            m_RoundState = (Enums.RoundStateEnum)(((int)m_RoundState) + 1);
             StartRound();
         }
         public void TryToBegin()
@@ -972,7 +972,7 @@ namespace MTA.Game.ConquerStructures
             else
             {
                 if (DealerPlayer != null)
-                    DealerPlayer.SeatAttributes.Remove(Game.Enums.SeatAttributeEnum.Dealer);
+                    DealerPlayer.SeatAttributes.Remove(Enums.SeatAttributeEnum.Dealer);
                 RaiseEverythingEnded();
             }
         }
@@ -981,7 +981,7 @@ namespace MTA.Game.ConquerStructures
             foreach (var p in Players.Values)
             {
                 p.SeatAttributes.Clear();
-                p.RoundState = Game.Enums.PokerCallTypes.Fold;
+                p.RoundState = Enums.PokerCallTypes.Fold;
                 if (p.MoneySafeAmnt > 0)
                     p.IsPlaying = true;
             }
@@ -993,7 +993,7 @@ namespace MTA.Game.ConquerStructures
                 TimeDown = 0
             });
             StopRoundCountDown();
-            var D = new Network.GamePackets.Data(true);
+            var D = new Data(true);
             D.ID = 234;
             D.UID = UID;
             D.dwParam = (uint)Pot;
@@ -1001,30 +1001,30 @@ namespace MTA.Game.ConquerStructures
             ToLocal(Spawn());
 
         }
-        public static List<Game.ConquerStructures.PokerCard> GetSortedDeck(bool crazy, bool showhand)
+        public static List<PokerCard> GetSortedDeck(bool crazy, bool showhand)
         {
-            List<Game.ConquerStructures.PokerCard> list = new List<Game.ConquerStructures.PokerCard>();
-            for (byte i = (byte)Game.Enums.PokerCardsType.Hearts; i < 4; i++)
+            List<PokerCard> list = new List<PokerCard>();
+            for (byte i = (byte)Enums.PokerCardsType.Hearts; i < 4; i++)
             {
                 if (showhand)
                 {
-                    for (byte j = (byte)(showhand ? Game.Enums.PokerCardsValue.Ten : Game.Enums.PokerCardsValue.Two); j < 13; j++)
+                    for (byte j = (byte)(showhand ? Enums.PokerCardsValue.Ten : Enums.PokerCardsValue.Two); j < 13; j++)
                     {
-                        list.Add(new Game.ConquerStructures.PokerCard((Game.Enums.PokerCardsType)i, (Game.Enums.PokerCardsValue)j));
+                        list.Add(new PokerCard((Enums.PokerCardsType)i, (Enums.PokerCardsValue)j));
                     }
                 }
                 else if (crazy)
                 {
-                    for (byte j = (byte)(crazy ? Game.Enums.PokerCardsValue.Eight : Game.Enums.PokerCardsValue.Two); j < 13; j++)
+                    for (byte j = (byte)(crazy ? Enums.PokerCardsValue.Eight : Enums.PokerCardsValue.Two); j < 13; j++)
                     {
-                        list.Add(new Game.ConquerStructures.PokerCard((Game.Enums.PokerCardsType)i, (Game.Enums.PokerCardsValue)j));
+                        list.Add(new PokerCard((Enums.PokerCardsType)i, (Enums.PokerCardsValue)j));
                     }
                 }
                 else
                 {
-                    for (byte j = (byte)(Game.Enums.PokerCardsValue.Four); j < 13; j++)
+                    for (byte j = (byte)(Enums.PokerCardsValue.Four); j < 13; j++)
                     {
-                        list.Add(new Game.ConquerStructures.PokerCard((Game.Enums.PokerCardsType)i, (Game.Enums.PokerCardsValue)j));
+                        list.Add(new PokerCard((Enums.PokerCardsType)i, (Enums.PokerCardsValue)j));
                     }
                 }
 
@@ -1035,10 +1035,10 @@ namespace MTA.Game.ConquerStructures
         {
             return (max > 0) ? Kernel.Random.Next(max + 1) : max;
         }
-        public static Stack<Game.ConquerStructures.PokerCard> GetShuffledDeck(bool crazy, bool showhand)
+        public static Stack<PokerCard> GetShuffledDeck(bool crazy, bool showhand)
         {
-            Stack<Game.ConquerStructures.PokerCard> stack = new Stack<Game.ConquerStructures.PokerCard>();
-            List<Game.ConquerStructures.PokerCard> sortedDeck = GetSortedDeck(crazy, showhand);
+            Stack<PokerCard> stack = new Stack<PokerCard>();
+            List<PokerCard> sortedDeck = GetSortedDeck(crazy, showhand);
             while (sortedDeck.Count > 0)
             {
                 int index = RandomWithMax(sortedDeck.Count - 1);
@@ -1094,13 +1094,13 @@ namespace MTA.Game.ConquerStructures
 
 
             var nextDealerSeat = GetSeatOfPlayingPlayerNextTo(previousDealer);
-            nextDealerSeat.SeatAttributes.Add(Game.Enums.SeatAttributeEnum.Dealer);
+            nextDealerSeat.SeatAttributes.Add(Enums.SeatAttributeEnum.Dealer);
 
             var _bigblind = GetSeatOfPlayingPlayerNextTo(DealerPlayer);
-            _bigblind.SeatAttributes.Add(Game.Enums.SeatAttributeEnum.BigBlind);
+            _bigblind.SeatAttributes.Add(Enums.SeatAttributeEnum.BigBlind);
 
             var _smallblind = GetSeatOfPlayingPlayerNextTo(_bigblind);
-            _smallblind.SeatAttributes.Add(Game.Enums.SeatAttributeEnum.SmallBlind);
+            _smallblind.SeatAttributes.Add(Enums.SeatAttributeEnum.SmallBlind);
         }
         public void StartRound()
         {
@@ -1110,13 +1110,13 @@ namespace MTA.Game.ConquerStructures
                 StopRoundCountDown();
             switch (m_RoundState)
             {
-                case Game.Enums.RoundStateEnum.Cards:
+                case Enums.RoundStateEnum.Cards:
                     StartCardRound();
                     break;
-                case Game.Enums.RoundStateEnum.Betting:
+                case Enums.RoundStateEnum.Betting:
                     StartBettingRound();
                     break;
-                case Game.Enums.RoundStateEnum.Cumul:
+                case Enums.RoundStateEnum.Cumul:
                     StartCumulRound();
                     break;
             }
@@ -1131,17 +1131,17 @@ namespace MTA.Game.ConquerStructures
             }
             switch (Round)
             {
-                case Game.Enums.RoundTypeEnum.Preflop:
+                case Enums.RoundTypeEnum.Preflop:
 
                     DealHole();
                     break;
-                case Game.Enums.RoundTypeEnum.Flop:
+                case Enums.RoundTypeEnum.Flop:
                     DealFlop();
                     break;
-                case Game.Enums.RoundTypeEnum.Turn:
+                case Enums.RoundTypeEnum.Turn:
                     DealTurn();
                     break;
-                case Game.Enums.RoundTypeEnum.River:
+                case Enums.RoundTypeEnum.River:
                     DealRiver();
                     break;
             }
@@ -1271,10 +1271,10 @@ namespace MTA.Game.ConquerStructures
                 SendToAll(MsgShowHandDealtCards);
             }
         }
-        private Game.ConquerStructures.PokerCard[] DealCards(int count)
+        private PokerCard[] DealCards(int count)
         {
 
-            var set = new Game.ConquerStructures.PokerCard[count];
+            var set = new PokerCard[count];
             for (int i = 0; i < count; i++)
             {
                 set[i] = _ShuffleDeckCards.Pop();
@@ -1288,7 +1288,7 @@ namespace MTA.Game.ConquerStructures
             ChangeCurrentPlayerTo(GetSeatOfPlayingPlayerJustBefore(SeatOfTheFirstPlayer));
             NbPlayed = 0;
             MinimumRaiseAmount = MinLimit;
-            if (Round > Game.Enums.RoundTypeEnum.Flop)
+            if (Round > Enums.RoundTypeEnum.Flop)
                 MinimumRaiseAmount *= 2;
             if (NbPlaying <= 1)
                 EndBettingRound();
@@ -1317,7 +1317,7 @@ namespace MTA.Game.ConquerStructures
             //   // PlayMoney(next.Player, 0);
             //}
         }
-        public void MoveGame(PokerPlayer _CurrentPlayer, Game.Enums.PokerCallTypes CallType = Game.Enums.PokerCallTypes.Fold)
+        public void MoveGame(PokerPlayer _CurrentPlayer, Enums.PokerCallTypes CallType = Enums.PokerCallTypes.Fold)
         {
             if (_CurrentPlayer.UID == 0)
             {
@@ -1329,13 +1329,13 @@ namespace MTA.Game.ConquerStructures
             var minx = CallAmnt(_CurrentPlayer);
             var min = MinRaiseAmnt(_CurrentPlayer) + _CurrentPlayer.Bet;
             var max = MaxRaiseAmnt(_CurrentPlayer);
-            CallType = Game.Enums.PokerCallTypes.Call;
+            CallType = Enums.PokerCallTypes.Call;
 
             if (HigherBet <= _CurrentPlayer.Bet)
-                CallType = Game.Enums.PokerCallTypes.Check;
+                CallType = Enums.PokerCallTypes.Check;
             if (_CurrentPlayer.Entity != null)
             {
-                if (BetType == Game.Enums.PokerBetType.Money)
+                if (BetType == Enums.PokerBetType.Money)
                 {
 
                     if (_CurrentPlayer.Entity.Money < HigherBet)
@@ -1345,7 +1345,7 @@ namespace MTA.Game.ConquerStructures
                     if (_CurrentPlayer.Entity.Money >= min)
                         CanRaise = true;
                 }
-                else if (BetType == Game.Enums.PokerBetType.ConquerPoints)
+                else if (BetType == Enums.PokerBetType.ConquerPoints)
                 {
                     if (_CurrentPlayer.Entity.ConquerPoints < HigherBet)
                         JustAllin = true;
@@ -1357,18 +1357,18 @@ namespace MTA.Game.ConquerStructures
             }
             if (CanRaise)
             {
-                var calltype = Game.Enums.PokerCallTypes.Rise;
-                if (_CurrentPlayer.SeatAttributes.Contains(Game.Enums.SeatAttributeEnum.BigBlind))
+                var calltype = Enums.PokerCallTypes.Rise;
+                if (_CurrentPlayer.SeatAttributes.Contains(Enums.SeatAttributeEnum.BigBlind))
                 {
-                    if (Round > Game.Enums.RoundTypeEnum.Preflop)
-                        calltype = Game.Enums.PokerCallTypes.Bet;
+                    if (Round > Enums.RoundTypeEnum.Preflop)
+                        calltype = Enums.PokerCallTypes.Bet;
                 }
                 CallType |= calltype;
             }
-            CallType |= Game.Enums.PokerCallTypes.Fold | Game.Enums.PokerCallTypes.AllIn;
+            CallType |= Enums.PokerCallTypes.Fold | Enums.PokerCallTypes.AllIn;
 
             if (JustAllin)
-                CallType = Game.Enums.PokerCallTypes.AllIn | Game.Enums.PokerCallTypes.Fold;
+                CallType = Enums.PokerCallTypes.AllIn | Enums.PokerCallTypes.Fold;
             byte CountDown = 15;
             SendToAll(new MsgShowHandActivePlayer(true) { Type = CallType, UID = _CurrentPlayer.UID, TimeDown = CountDown, MinRaiseAmount = min, MaxRaiseAmount = max });
             StartMoveCountDown(CountDown, _CurrentPlayer.UID);
@@ -1419,7 +1419,7 @@ namespace MTA.Game.ConquerStructures
             pot.AddAmount(bet);
             p.TotalBet += bet;
             p.MyBet += bet;
-            if (bet >= 0 && (p.RoundState != Game.Enums.PokerCallTypes.Fold || p.IsAllIn))
+            if (bet >= 0 && (p.RoundState != Enums.PokerCallTypes.Fold || p.IsAllIn))
                 pot.AttachPlayer(p);
         }
         #endregion CumulRound
@@ -1531,9 +1531,9 @@ namespace MTA.Game.ConquerStructures
                             if (unwonAmount != 0)
                             {
                                 p.UnWins += unwonAmount;
-                                if (BetType == Game.Enums.PokerBetType.Money)
+                                if (BetType == Enums.PokerBetType.Money)
                                     p.Entity.Money += (uint)unwonAmount;
-                                else if (BetType == Game.Enums.PokerBetType.ConquerPoints)
+                                else if (BetType == Enums.PokerBetType.ConquerPoints)
                                     p.Entity.ConquerPoints += (uint)unwonAmount;
                                 p.TotalBet -= unwonAmount;
                             }
@@ -1548,9 +1548,9 @@ namespace MTA.Game.ConquerStructures
                     winnvalue = winnerplayer.Wins = winner.Value;
                 else
                     winnerplayer.Wins = winnvalue + winnerplayer.TotalBet;
-                if (BetType == Game.Enums.PokerBetType.Money)
+                if (BetType == Enums.PokerBetType.Money)
                     winnerplayer.Entity.Money += winnerplayer.Wins;
-                else if (BetType == Game.Enums.PokerBetType.ConquerPoints)
+                else if (BetType == Enums.PokerBetType.ConquerPoints)
                     winnerplayer.Entity.ConquerPoints += (uint)winnerplayer.Wins;
 
                 winnerplayer.TotalBet -= winnvalue;

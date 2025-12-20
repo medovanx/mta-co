@@ -13,10 +13,10 @@ internal abstract class Class2 : IDisposable
     public Class2()
     {
         int_0++;
-        this.int_1 = int_0;
-        this.bool_0 = true;
-        this.bool_1 = false;
-        this.method_1(0);
+        int_1 = int_0;
+        bool_0 = true;
+        bool_1 = false;
+        method_1(0);
     }
 
     ~Class2()
@@ -26,23 +26,23 @@ internal abstract class Class2 : IDisposable
 
     public override int GetHashCode()
     {
-        return this.int_1;
+        return int_1;
     }
 
     internal bool method_0()
     {
-        return (Time32.Now > this.time32_0);
+        return (Time32.Now > time32_0);
     }
 
     internal void method_1(int int_2)
     {
-        this.time32_0 = Time32.Now.AddMilliseconds(int_2);
+        time32_0 = Time32.Now.AddMilliseconds(int_2);
     }
 
     void IDisposable.Dispose()
     {
-        this.bool_0 = false;
-        this.vmethod_1();
+        bool_0 = false;
+        vmethod_1();
     }
 
     internal abstract void vmethod_0();

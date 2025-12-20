@@ -102,11 +102,11 @@ namespace MTA.WebServer
                 return PacketHandler.ReadString(packet, 24033, packet[24032]);
             }
         }
-        public SafeDictionary<ushort, Interfaces.IProf> Proficiencies = new SafeDictionary<ushort, Interfaces.IProf>();
-        public SafeDictionary<ushort, Interfaces.ISkill> Spells = new SafeDictionary<ushort, Interfaces.ISkill>();
-        public Dictionary<uint, Network.GamePackets.ConquerItem> Items = new Dictionary<uint, Network.GamePackets.ConquerItem>();
+        public SafeDictionary<ushort, IProf> Proficiencies = new SafeDictionary<ushort, IProf>();
+        public SafeDictionary<ushort, ISkill> Spells = new SafeDictionary<ushort, ISkill>();
+        public Dictionary<uint, ConquerItem> Items = new Dictionary<uint, ConquerItem>();
         public List<ChiPowerStructure> ChiPowers = new List<ChiPowerStructure>();
-        public WebServer.Client.TranServer Server;
+        public Client.TranServer Server;
         public void Clone(ref MTA.Client.GameState client)
         {
             var Player = this;
@@ -124,23 +124,23 @@ namespace MTA.WebServer
             if (mainid == 0)
             {
                 client.Socket.OverrideTiming = true;
-                client.Send(new Message("Sorry You Can't Login", "ALLUSERS", System.Drawing.Color.Orange, Network.GamePackets.Message.Dialog));
+                client.Send(new Message("Sorry You Can't Login", "ALLUSERS", System.Drawing.Color.Orange, Message.Dialog));
                 return;
             }
             if (Kernel.DisconnectPool.ContainsKey(mainid))
             {
-                client.Send(new Message("Please try again after a minute!", "ALLUSERS", System.Drawing.Color.Orange, Network.GamePackets.Message.Dialog));
+                client.Send(new Message("Please try again after a minute!", "ALLUSERS", System.Drawing.Color.Orange, Message.Dialog));
                 return;
             }
 
-            client.Entity = new Game.Entity(Game.EntityFlag.Player, false);
+            client.Entity = new Entity(EntityFlag.Player, false);
             client.Entity.Name = Player.Name;
             client.Entity.Spouse = "None";
             client.Entity.UID = Player.UID;
             client.Entity.Money = Player.Money;
-            client.Entity.MyFlowers = new MTA.Game.Features.Flowers.Flowers(client.Entity.UID, client.Entity.Name);
+            client.Entity.MyFlowers = new Game.Features.Flowers.Flowers(client.Entity.UID, client.Entity.Name);
             client.Entity.Owner = client;
-            client.Entity.MyAchievement = new Game.Achievement(client.Entity);
+            client.Entity.MyAchievement = new Achievement(client.Entity);
             client.Entity.Titles = new ConcurrentDictionary<TitlePacket.Titles, DateTime>();
             client.ElitePKStats = new ElitePK.FighterStats(client.Entity.UID, client.Entity.Name, client.Entity.Mesh);
             client.Entity.ConquerPoints = Player.Cpc;
@@ -169,9 +169,9 @@ namespace MTA.WebServer
             client.ChiPowers = new List<ChiPowerStructure>();
             if (ChiPowers != null)
                 client.ChiPowers = ChiPowers;
-            client.ChiData = new MTA.Database.ChiTable.ChiData() { UID = client.Entity.UID, Name = client.Entity.Name, Powers = client.ChiPowers };
+            client.ChiData = new Database.ChiTable.ChiData() { UID = client.Entity.UID, Name = client.Entity.Name, Powers = client.ChiPowers };
 
-            client.NobilityInformation = new MTA.Game.ConquerStructures.NobilityInformation();
+            client.NobilityInformation = new NobilityInformation();
             client.NobilityInformation.EntityUID = client.Entity.UID;
             client.NobilityInformation.Name = client.Entity.Name;
             client.Entity.NobalityDonation = client.NobilityInformation.Donation = NobilityInformation;
@@ -183,24 +183,24 @@ namespace MTA.WebServer
                 client.NobilityInformation.Gender = 0;
 
 
-            client.TeamArenaStatistic = new MTA.Network.GamePackets.TeamArenaStatistic(true);
+            client.TeamArenaStatistic = new TeamArenaStatistic(true);
             client.TeamArenaStatistic.EntityID = client.Entity.UID;
             client.TeamArenaStatistic.Name = client.Entity.Name;
             client.TeamArenaStatistic.Level = client.Entity.Level;
             client.TeamArenaStatistic.Class = client.Entity.Class;
             client.TeamArenaStatistic.Model = client.Entity.Mesh;
-            client.TeamArenaStatistic.Status = Network.GamePackets.TeamArenaStatistic.NotSignedUp;
+            client.TeamArenaStatistic.Status = TeamArenaStatistic.NotSignedUp;
 
-            client.ArenaStatistic = new MTA.Network.GamePackets.ArenaStatistic(true);
+            client.ArenaStatistic = new ArenaStatistic(true);
             client.ArenaStatistic.EntityID = client.Entity.UID;
             client.ArenaStatistic.Name = client.Entity.Name;
             client.ArenaStatistic.Level = client.Entity.Level;
             client.ArenaStatistic.Class = client.Entity.Class;
             client.ArenaStatistic.Model = client.Entity.Mesh;
             client.ArenaStatistic.LastArenaPointFill = DateTime.Now;
-            client.ArenaStatistic.Status = Network.GamePackets.ArenaStatistic.NotSignedUp;
+            client.ArenaStatistic.Status = ArenaStatistic.NotSignedUp;
 
-            client.ChampionStats = new MTA.Network.GamePackets.ChampionStatistic(true);
+            client.ChampionStats = new ChampionStatistic(true);
             client.ChampionStats.UID = client.Entity.UID;
             client.ChampionStats.Name = client.Entity.Name;
             client.ChampionStats.Level = client.Entity.Level;
@@ -219,7 +219,7 @@ namespace MTA.WebServer
                 client.AsMember.ID = client.Entity.UID;
                 client.AsMember.Level = client.Entity.Level;
                 client.AsMember.Spouse = client.Entity.Spouse;
-                client.AsMember.Rank = (Game.Enums.GuildMemberRank)GuildRank;
+                client.AsMember.Rank = (Enums.GuildMemberRank)GuildRank;
 
                 client.Entity.GuildID = (ushort)(GuildID + Server.Key);
                 client.Entity.GuildRank = GuildRank;
@@ -264,7 +264,7 @@ namespace MTA.WebServer
                             if (client.Entity.GuildID != 0 && client.Guild != null && client.Guild.Arsenals[arsenalRealPosition].Unlocked)
                             {
                                 item.Inscribed = true;
-                                item.Mode = Game.Enums.ItemMode.Update;
+                                item.Mode = Enums.ItemMode.Update;
                                 item.Send(client);
                                 var Arsenal = client.Guild.Arsenals[arsenalRealPosition];
                                 Arsenal.AddItem(item, client);
@@ -275,20 +275,20 @@ namespace MTA.WebServer
                     }
                     switch (item.Position)
                     {
-                        case 0: client.Inventory.Add(item, Game.Enums.ItemUse.None); break;
+                        case 0: client.Inventory.Add(item, Enums.ItemUse.None); break;
                         default:
-                            if (item.Position > 40) { client.Inventory.Add(item, Game.Enums.ItemUse.None); break; }
+                            if (item.Position > 40) { client.Inventory.Add(item, Enums.ItemUse.None); break; }
 
                             if (client.Equipment.Free((byte)item.Position))
-                                client.Equipment.Add(item, Game.Enums.ItemUse.None);
+                                client.Equipment.Add(item, Enums.ItemUse.None);
                             else
                             {
                                 if (client.Inventory.Count < 40)
                                 {
                                     item.Position = 0;
-                                    client.Inventory.Add(item, Game.Enums.ItemUse.None);
-                                    if (client.Warehouses[MTA.Game.ConquerStructures.Warehouse.WarehouseID.Market].Count < 20)
-                                        client.Warehouses[MTA.Game.ConquerStructures.Warehouse.WarehouseID.Market].Add(item);
+                                    client.Inventory.Add(item, Enums.ItemUse.None);
+                                    if (client.Warehouses[Game.ConquerStructures.Warehouse.WarehouseID.Market].Count < 20)
+                                        client.Warehouses[Game.ConquerStructures.Warehouse.WarehouseID.Market].Add(item);
 
                                 }
                             }
@@ -331,7 +331,7 @@ namespace MTA.WebServer
             str.Texts.Add(Constants.ServerName);
             client.Send(str);
 
-            client.Send(new Data(true) { UID = client.Entity.UID, ID = Network.GamePackets.Data.ChangePKMode, dwParam = (uint)Enums.PkMode.Team });
+            client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)Enums.PkMode.Team });
 
         }
     }

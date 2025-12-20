@@ -35,7 +35,7 @@ namespace MTA.Database
                 guild.Arsenals[i].Save(writer);
             string SQL = "UPDATE `guildarsenal` SET data=@Data, datalength=@DataLength where ID = " + guild.ID + " ;";
             byte[] rawData = stream.ToArray();
-            using (var conn = Database.DataHolder.MySqlConnection)
+            using (var conn = DataHolder.MySqlConnection)
             {
                 conn.Open();
                 using (var cmd = new MySql.Data.MySqlClient.MySqlCommand())

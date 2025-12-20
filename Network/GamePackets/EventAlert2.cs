@@ -199,29 +199,29 @@ namespace MTA.Network.GamePackets.EventAlert {
         private byte[] mData;
 
         public EventAlert() {
-            this.mData = new byte[20 + 8];
-            Writer.Ushort(20, 0, this.mData);
-            Writer.Ushort(0x466, 2, this.mData);
+            mData = new byte[20 + 8];
+            Writer.Ushort(20, 0, mData);
+            Writer.Ushort(0x466, 2, mData);
         }
 
         public EventAlert(byte[] d) {
-            this.mData = new byte[d.Length];
-            d.CopyTo(this.mData, 0);
+            mData = new byte[d.Length];
+            d.CopyTo(mData, 0);
         }
 
         public uint Countdown {
-            get { return BitConverter.ToUInt32(this.mData, 0x10); }
-            set { Writer.Uint(value, 0x10, this.mData); }
+            get { return BitConverter.ToUInt32(mData, 0x10); }
+            set { Writer.Uint(value, 0x10, mData); }
         }
 
         public uint StrResID {
-            get { return BitConverter.ToUInt32(this.mData, 8); }
-            set { Writer.Uint(value, 8, this.mData); }
+            get { return BitConverter.ToUInt32(mData, 8); }
+            set { Writer.Uint(value, 8, mData); }
         }
 
         public uint UK12 {
-            get { return BitConverter.ToUInt32(this.mData, 12); }
-            set { Writer.Uint(value, 12, this.mData); }
+            get { return BitConverter.ToUInt32(mData, 12); }
+            set { Writer.Uint(value, 12, mData); }
         }
 
         public static implicit operator byte[](EventAlert d) {

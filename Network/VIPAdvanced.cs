@@ -19,16 +19,16 @@
         public uint UID
         {
             get { return BitConverter.ToUInt32(Buffer, 4); }
-            set { Writer.WriteUInt32(value, 4, Buffer); }
+            set { WriteUInt32(value, 4, Buffer); }
         }
         public uint UID2
         {
             get { return BitConverter.ToUInt32(Buffer, 8); }
-            set { Writer.WriteUInt32(value, 8, Buffer); }
+            set { WriteUInt32(value, 8, Buffer); }
         }
         public void Deserialize(byte[] buffer)
         {
-            this.Buffer = buffer;
+            Buffer = buffer;
         }
         public byte[] ToArray()
         {

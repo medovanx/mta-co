@@ -27,7 +27,7 @@ namespace MTA.MaTrix {
 
         public MatrixMob(uint monsterID, uint[] MapID, ushort X, ushort Y, int Minute) {
             this.monsterID = monsterID;
-            this.Maps = MapID;
+            Maps = MapID;
             this.X = X;
             this.Y = Y;
             this.Minute = Minute;

@@ -58,7 +58,7 @@ namespace MTA.Database
             }
             return count;
         }
-        public void WriteRefinery(Network.GamePackets.ItemAdding.Refinery_ refinari, BinaryWriter writer)
+        public void WriteRefinery(ItemAdding.Refinery_ refinari, BinaryWriter writer)
         {
             writer.Write((byte)1);
             writer.Write(refinari.ItemUID);
@@ -68,7 +68,7 @@ namespace MTA.Database
             writer.Write(refinari.EffectDuration);
             writer.Write(refinari.AddedOn.Ticks);
         }
-        public void WritePurification(Network.GamePackets.ItemAdding.Purification_ purification, BinaryWriter writer)
+        public void WritePurification(ItemAdding.Purification_ purification, BinaryWriter writer)
         {
             writer.Write((byte)0);
             writer.Write(purification.ItemUID);

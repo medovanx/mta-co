@@ -90,7 +90,7 @@ namespace MTA.Network.GamePackets
             stringpacket.Deserialize(packet);
             switch (stringpacket.Type)
             {
-                case _String.WhisperDetails:
+                case WhisperDetails:
                     {
                         if (stringpacket.Texts.Count > 0)
                         {

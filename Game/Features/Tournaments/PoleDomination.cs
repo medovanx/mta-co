@@ -10,7 +10,7 @@ namespace MTA.Game
 {
     using Coordinate = Tuple<ushort, ushort, ushort>;
     using System.Drawing;
-    using MTA.Game.ConquerStructures.Society;
+    using ConquerStructures.Society;
     using System.Collections.Concurrent;
     using System.IO;
 
@@ -118,7 +118,7 @@ namespace MTA.Game
                         {
                             string str = "No  " + (Place + 1).ToString() + ": " + entry.Key.Name + "(" + entry.Value + ")";
 
-                            Message msg = new Message(str, System.Drawing.Color.Red, Place == 0 ? Message.FirstRightCorner : Message.ContinueRightCorner);
+                            Message msg = new Message(str, Color.Red, Place == 0 ? Message.FirstRightCorner : Message.ContinueRightCorner);
                             Kernel.SendWorldMessage(msg, Program.Values, currentMap.ID);
                             Place++;
                             if (Place == 4) break;

@@ -1,6 +1,6 @@
 ﻿namespace System
 {
-    using System.Runtime.InteropServices;
+    using Runtime.InteropServices;
 
     [StructLayout(LayoutKind.Sequential)]
     public struct Time32
@@ -10,17 +10,17 @@
         public static readonly Time32 NULL;
         public Time32(int Value)
         {
-            this.int_0 = Value;
+            int_0 = Value;
         }
 
         public Time32(uint Value)
         {
-            this.int_0 = (int)Value;
+            int_0 = (int)Value;
         }
 
         public Time32(long Value)
         {
-            this.int_0 = (int)Value;
+            int_0 = (int)Value;
         }
 
         static Time32()
@@ -40,64 +40,64 @@
         {
             get
             {
-                return this.int_0;
+                return int_0;
             }
         }
         public int Value
         {
             get
             {
-                return this.int_0;
+                return int_0;
             }
         }
         public Time32 AddMilliseconds(int Amount)
         {
-            return new Time32(this.int_0 + Amount);
+            return new Time32(int_0 + Amount);
         }
 
         public int AllMilliseconds()
         {
-            return this.GetHashCode();
+            return GetHashCode();
         }
 
         public Time32 AddSeconds(int Amount)
         {
-            return this.AddMilliseconds(Amount * 0x3e8);
+            return AddMilliseconds(Amount * 0x3e8);
         }
 
         public int AllSeconds()
         {
-            return (this.AllMilliseconds() / 0x3e8);
+            return (AllMilliseconds() / 0x3e8);
         }
 
         public Time32 AddMinutes(int Amount)
         {
-            return this.AddSeconds(Amount * 60);
+            return AddSeconds(Amount * 60);
         }
 
         public int AllMinutes()
         {
-            return (this.AllSeconds() / 60);
+            return (AllSeconds() / 60);
         }
 
         public Time32 AddHours(int Amount)
         {
-            return this.AddMinutes(Amount * 60);
+            return AddMinutes(Amount * 60);
         }
 
         public int AllHours()
         {
-            return (this.AllMinutes() / 60);
+            return (AllMinutes() / 60);
         }
 
         public Time32 AddDays(int Amount)
         {
-            return this.AddHours(Amount * 0x18);
+            return AddHours(Amount * 0x18);
         }
 
         public int AllDays()
         {
-            return (this.AllHours() / 0x18);
+            return (AllHours() / 0x18);
         }
 
         public bool Next(int due = 0, int time = 0)
@@ -106,7 +106,7 @@
             {
                 time = timeGetTime().int_0;
             }
-            return ((this.int_0 + due) <= time);
+            return ((int_0 + due) <= time);
         }
 
         public void Set(int due, int time = 0)
@@ -115,12 +115,12 @@
             {
                 time = timeGetTime().int_0;
             }
-            this.int_0 = time + due;
+            int_0 = time + due;
         }
 
         public void SetSeconds(int due, int time = 0)
         {
-            this.Set(due * 0x3e8, time);
+            Set(due * 0x3e8, time);
         }
 
         public override bool Equals(object obj)
@@ -134,12 +134,12 @@
 
         public override string ToString()
         {
-            return this.int_0.ToString();
+            return int_0.ToString();
         }
 
         public override int GetHashCode()
         {
-            return this.int_0;
+            return int_0;
         }
 
         public static bool operator ==(Time32 t1, Time32 t2)

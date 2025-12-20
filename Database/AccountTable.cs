@@ -29,12 +29,12 @@ namespace MTA.Database
         {
             if (username == null) return;
             this.table = table;
-            this.Username = username;
-            this.Password = "";
-            this.IP = "";
-            this.LastCheck = DateTime.Now;
-            this.State = AccountState.DoesntExist;
-            this.EntityID = 0;
+            Username = username;
+            Password = "";
+            IP = "";
+            LastCheck = DateTime.Now;
+            State = AccountState.DoesntExist;
+            EntityID = 0;
 
             using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select(table).Where("Username", username))
             using (var reader = new MySqlReader(cmd))
@@ -42,12 +42,12 @@ namespace MTA.Database
                 if (reader.Read())
                 {
                     exists = true;
-                    this.Password = reader.ReadString("Password");
-                    this.IP = reader.ReadString("Ip");
-                    this.EntityID = reader.ReadUInt32("EntityID");
-                    this.LastCheck = DateTime.FromBinary(reader.ReadInt64("LastCheck"));
-                    this.State = (AccountState)reader.ReadInt32("State");
-                    this.Email = reader.ReadString("Email");
+                    Password = reader.ReadString("Password");
+                    IP = reader.ReadString("Ip");
+                    EntityID = reader.ReadUInt32("EntityID");
+                    LastCheck = DateTime.FromBinary(reader.ReadInt64("LastCheck"));
+                    State = (AccountState)reader.ReadInt32("State");
+                    Email = reader.ReadString("Email");
                 }
             }
         }

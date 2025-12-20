@@ -1,7 +1,7 @@
 ﻿namespace MTA.Network.GamePackets
 {
-    using MTA.Interfaces;
-    using MTA.Network;
+    using Interfaces;
+    using Network;
     using System;
 
     public class FlowerPacket : Writer, IPacket
@@ -13,23 +13,23 @@
         public const ushort RedRoses = 0;
         public const ushort Tulips = 3;
 
-        public FlowerPacket(MTA.Game.Features.Flowers.Flowers ClientFlowers, Client.GameState client)
+        public FlowerPacket(Game.Features.Flowers.Flowers ClientFlowers, Client.GameState client)
         {
             Buffer = new byte[0x44];
-            Writer.WriteUInt16(60, 0, Buffer);
-            Writer.WriteUInt16(0x47e, 2, Buffer);
-            Writer.WriteUInt32(2, 4, Buffer);
+            WriteUInt16(60, 0, Buffer);
+            WriteUInt16(0x47e, 2, Buffer);
+            WriteUInt32(2, 4, Buffer);
             if (client.Entity.Body == 1003 || client.Entity.Body == 1004 || client.Entity.Body == 2003 || client.Entity.Body == 2004)
             {
                 if (DateTime.Now >= client.Entity.Flowers.LastFlowerSent.AddDays(1))
                 {
-                    Writer.WriteUInt32(30, 16, Buffer);
+                    WriteUInt32(30, 16, Buffer);
                 }
                 else
                 {
-                    Writer.WriteUInt32(0, 4, Buffer);
-                    Writer.WriteUInt32(client.Entity.UID, 8, Buffer);
-                    Writer.WriteUInt32(0, 16, Buffer);
+                    WriteUInt32(0, 4, Buffer);
+                    WriteUInt32(client.Entity.UID, 8, Buffer);
+                    WriteUInt32(0, 16, Buffer);
                 }
 
             }
@@ -38,14 +38,14 @@
 
                 if (ClientFlowers != null)
                 {
-                    Writer.WriteUInt32(ClientFlowers.RedRoses, 16, Buffer);
-                    Writer.WriteUInt32(ClientFlowers.RedRoses2day, 20, Buffer);
-                    Writer.WriteUInt32(ClientFlowers.Lilies, 24, Buffer);
-                    Writer.WriteUInt32(ClientFlowers.Lilies2day, 28, Buffer);
-                    Writer.WriteUInt32(ClientFlowers.Orchads, 32, Buffer);
-                    Writer.WriteUInt32(ClientFlowers.Orchads2day, 36, Buffer);
-                    Writer.WriteUInt32(ClientFlowers.Tulips, 40, Buffer);
-                    Writer.WriteUInt32(ClientFlowers.Tulips2day, 44, Buffer);
+                    WriteUInt32(ClientFlowers.RedRoses, 16, Buffer);
+                    WriteUInt32(ClientFlowers.RedRoses2day, 20, Buffer);
+                    WriteUInt32(ClientFlowers.Lilies, 24, Buffer);
+                    WriteUInt32(ClientFlowers.Lilies2day, 28, Buffer);
+                    WriteUInt32(ClientFlowers.Orchads, 32, Buffer);
+                    WriteUInt32(ClientFlowers.Orchads2day, 36, Buffer);
+                    WriteUInt32(ClientFlowers.Tulips, 40, Buffer);
+                    WriteUInt32(ClientFlowers.Tulips2day, 44, Buffer);
                 }
             }
 
@@ -55,14 +55,14 @@
             if (Create)
             {
                 Buffer = new byte[68];
-                Writer.WriteUInt16(60, 0, Buffer);
-                Writer.WriteUInt16(1150, 2, Buffer);
+                WriteUInt16(60, 0, Buffer);
+                WriteUInt16(1150, 2, Buffer);
             }
         }
 
         public void Deserialize(byte[] buffer)
         {
-            this.Buffer = buffer;
+            Buffer = buffer;
         }
 
         public void Send(Client.GameState Client)
@@ -72,7 +72,7 @@
 
         public byte[] ToArray()
         {
-            return this.Buffer;
+            return Buffer;
         }
         public uint type
         {
@@ -82,7 +82,7 @@
             }
             set
             {
-                Writer.WriteUInt32(value, 4, Buffer);
+                WriteUInt32(value, 4, Buffer);
             }
         }
         public uint f
@@ -93,7 +93,7 @@
             }
             set
             {
-                Writer.WriteUInt32(value, 16, Buffer);
+                WriteUInt32(value, 16, Buffer);
             }
         }
         public uint Amount
@@ -104,15 +104,15 @@
             }
             set
             {
-                Writer.WriteUInt32(value, 20, Buffer);
+                WriteUInt32(value, 20, Buffer);
             }
         }
 
-        public MTA.Game.Features.Flowers.FlowerType FlowerType
+        public Game.Features.Flowers.FlowerType FlowerType
         {
             get
             {
-                return (MTA.Game.Features.Flowers.FlowerType)BitConverter.ToUInt32(Buffer, 0x18);
+                return (Game.Features.Flowers.FlowerType)BitConverter.ToUInt32(Buffer, 0x18);
             }
         }
 
@@ -124,7 +124,7 @@
             }
             set
             {
-                Writer.WriteUInt32(value, 12, Buffer);
+                WriteUInt32(value, 12, Buffer);
             }
         }
 
@@ -136,7 +136,7 @@
             }
             set
             {
-                Writer.WriteString(value, 32, Buffer);
+                WriteString(value, 32, Buffer);
             }
         }
 
@@ -148,7 +148,7 @@
             }
             set
             {
-                Writer.WriteUInt32(value, 48, Buffer);
+                WriteUInt32(value, 48, Buffer);
             }
         }
         public uint remove
@@ -164,19 +164,19 @@
             }
             set
             {
-                Writer.WriteString(value, 16, Buffer);
+                WriteString(value, 16, Buffer);
             }
         }
 
-        public MTA.Game.Features.Flowers.FlowerType SendFlowerType
+        public Game.Features.Flowers.FlowerType SendFlowerType
         {
             get
             {
-                return (MTA.Game.Features.Flowers.FlowerType)BitConverter.ToUInt32(Buffer, 0x34);
+                return (Game.Features.Flowers.FlowerType)BitConverter.ToUInt32(Buffer, 0x34);
             }
             set
             {
-                Writer.WriteUInt32((uint)value, 52, Buffer);
+                WriteUInt32((uint)value, 52, Buffer);
             }
         }
 

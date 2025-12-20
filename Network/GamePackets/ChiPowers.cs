@@ -16,8 +16,8 @@ namespace MTA.Network.GamePackets
             if (Create)
             {
                 Buffer = new byte[8 + 94];
-                Writer.WriteUInt16(94, 0, Buffer);
-                Writer.WriteUInt16(2534, 2, Buffer);
+                WriteUInt16(94, 0, Buffer);
+                WriteUInt16(2534, 2, Buffer);
             }
         }
 

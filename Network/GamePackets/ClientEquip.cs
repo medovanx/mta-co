@@ -9,16 +9,16 @@ namespace MTA.Network.GamePackets
 
         public ClientEquip()
         {
-            this.mData = new Byte[100];
-            Writer.WriteUInt16((UInt16)(this.mData.Length - 8), 0, mData);
+            mData = new Byte[100];
+            Writer.WriteUInt16((UInt16)(mData.Length - 8), 0, mData);
             Writer.WriteUInt16(1009, 2, mData);
             Writer.WriteUInt32((uint)Time32.timeGetTime().GetHashCode(), 4, mData);
             Writer.WriteUInt16(46, 20, mData);
         }
         public ClientEquip(GameState c)
         {
-            this.mData = new Byte[100];
-            Writer.WriteUInt16((UInt16)(this.mData.Length - 8), 0, mData);
+            mData = new Byte[100];
+            Writer.WriteUInt16((UInt16)(mData.Length - 8), 0, mData);
             Writer.WriteUInt16(1009, 2, mData);
             Writer.WriteUInt32((uint)Time32.timeGetTime().GetHashCode(), 4, mData);
             Writer.WriteUInt16(46, 20, mData);
@@ -42,33 +42,33 @@ namespace MTA.Network.GamePackets
                     {
                         #region Equipment
                         case ConquerItem.Head:
-                            this.Helm = Item.UID; break;
+                            Helm = Item.UID; break;
                         case ConquerItem.Wing:
                             Wing = Item.UID;
                             break;
                         case ConquerItem.Necklace:
-                            this.Necklace = Item.UID;
+                            Necklace = Item.UID;
                             break;
                         case ConquerItem.Armor:
-                            this.Armor = Item.UID;
+                            Armor = Item.UID;
                             break;
                         case ConquerItem.RightWeapon:
-                            this.RHand = Item.UID;
+                            RHand = Item.UID;
                             break;
                         case ConquerItem.LeftWeapon:
-                            this.LHand = Item.UID;
+                            LHand = Item.UID;
                             break;
                         case ConquerItem.Ring:
-                            this.Ring = Item.UID;
+                            Ring = Item.UID;
                             break;
                         case ConquerItem.Boots:
-                            this.Boots = Item.UID;
+                            Boots = Item.UID;
                             break;
                         case ConquerItem.Garment:
-                            this.Garment = Item.UID;
+                            Garment = Item.UID;
                             break;
                         case ConquerItem.Bottle:
-                            this.Talisman = Item.UID; break;
+                            Talisman = Item.UID; break;
                         case ConquerItem.RightWeaponAccessory:
                             AccessoryOne = Item.UID;
                             break;
@@ -102,7 +102,7 @@ namespace MTA.Network.GamePackets
                             Talisman = Item.UID;
                             break;
                         case ConquerItem.AlternateGarment:
-                            this.Garment = Item.UID;
+                            Garment = Item.UID;
                             break;
                         case ConquerItem.AlternateLeftWeapon:
                             LHand = Item.UID;
@@ -118,27 +118,27 @@ namespace MTA.Network.GamePackets
             if (client.HeadgearLook > 0) Helm = uint.MaxValue - 2;
         }
 
-        public void Deserialize(byte[] buffer) { this.mData = buffer; }
+        public void Deserialize(byte[] buffer) { mData = buffer; }
         public byte[] ToArray()
         { return mData; }
-        public void Send(Client.GameState client) { client.Send(mData); }
+        public void Send(GameState client) { client.Send(mData); }
 
 
         public bool AlternativeEquipment
         {
-            get { return this.mData[12] == 1 ? true : false; }
-            set { this.mData[12] = value ? (byte)1 : (byte)0; }
+            get { return mData[12] == 1 ? true : false; }
+            set { mData[12] = value ? (byte)1 : (byte)0; }
         }
 
         public UInt32 Helm
         {
-            get { return BitConverter.ToUInt32(this.mData, 35); }
+            get { return BitConverter.ToUInt32(mData, 35); }
             set { Writer.WriteUInt32(value, 35, mData); }
         }
 
         public UInt32 Necklace
         {
-            get { return BitConverter.ToUInt32(this.mData, 39); }
+            get { return BitConverter.ToUInt32(mData, 39); }
             set { Writer.WriteUInt32(value, 39, mData); }
         }
         public UInt32 Wing
@@ -149,43 +149,43 @@ namespace MTA.Network.GamePackets
 
         public UInt32 Armor
         {
-            get { return BitConverter.ToUInt32(this.mData, 43); }
+            get { return BitConverter.ToUInt32(mData, 43); }
             set { Writer.WriteUInt32(value, 43, mData); }
         }
 
         public UInt32 RHand
         {
-            get { return BitConverter.ToUInt32(this.mData, 47); }
+            get { return BitConverter.ToUInt32(mData, 47); }
             set { Writer.WriteUInt32(value, 47, mData); }
         }
 
         public UInt32 LHand
         {
-            get { return BitConverter.ToUInt32(this.mData, 51); }
+            get { return BitConverter.ToUInt32(mData, 51); }
             set { Writer.WriteUInt32(value, 51, mData); }
         }
 
         public UInt32 Ring
         {
-            get { return BitConverter.ToUInt32(this.mData, 55); }
+            get { return BitConverter.ToUInt32(mData, 55); }
             set { Writer.WriteUInt32(value, 55, mData); }
         }
 
         public UInt32 Talisman
         {
-            get { return BitConverter.ToUInt32(this.mData, 59); }
+            get { return BitConverter.ToUInt32(mData, 59); }
             set { Writer.WriteUInt32(value, 59, mData); }
         }
 
         public UInt32 Boots
         {
-            get { return BitConverter.ToUInt32(this.mData, 63); }
+            get { return BitConverter.ToUInt32(mData, 63); }
             set { Writer.WriteUInt32(value, 63, mData); }
         }
 
         public UInt32 Garment
         {
-            get { return BitConverter.ToUInt32(this.mData, 67); }
+            get { return BitConverter.ToUInt32(mData, 67); }
             set { Writer.WriteUInt32(value, 67, mData); }
         }
 
@@ -202,13 +202,13 @@ namespace MTA.Network.GamePackets
         }
         public UInt32 SteedArmor
         {
-            get { return BitConverter.ToUInt32(this.mData, 79); }
+            get { return BitConverter.ToUInt32(mData, 79); }
             set { Writer.WriteUInt32(value, 79, mData); }
         }
 
         public UInt32 SteedTalisman
         {
-            get { return BitConverter.ToUInt32(this.mData, 83); }
+            get { return BitConverter.ToUInt32(mData, 83); }
             set { Writer.WriteUInt32(value, 83, mData); }
         }
     }

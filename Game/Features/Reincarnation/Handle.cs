@@ -32,16 +32,16 @@ namespace MTA.Game.Features.Reincarnation
     public class Reincarnation
     {
         private Client.GameState _client;
-        private SafeDictionary<ushort, MTA.Interfaces.ISkill> RemoveSkill = null;
-        private SafeDictionary<ushort, MTA.Interfaces.ISkill> Addskill = null;
+        private SafeDictionary<ushort, Interfaces.ISkill> RemoveSkill = null;
+        private SafeDictionary<ushort, Interfaces.ISkill> Addskill = null;
 
         public Reincarnation(Client.GameState client, byte new_class)
         {
             if (client.Entity.Level < 130)
                 return;
             _client = client;
-            RemoveSkill = new SafeDictionary<ushort, MTA.Interfaces.ISkill>(500);
-            Addskill = new SafeDictionary<ushort, MTA.Interfaces.ISkill>(500);
+            RemoveSkill = new SafeDictionary<ushort, Interfaces.ISkill>(500);
+            Addskill = new SafeDictionary<ushort, Interfaces.ISkill>(500);
 
             #region Low level items
 
@@ -56,11 +56,11 @@ namespace MTA.Game.Features.Reincarnation
                         {
                             //client.UnloadItemStats(item, false);
                             Database.ConquerItemInformation cii =
-                                new MTA.Database.ConquerItemInformation(item.ID, item.Plus);
+                                new Database.ConquerItemInformation(item.ID, item.Plus);
                             item.ID =
                                 cii.LowestID(
                                     Network.PacketHandler.ItemMinLevel(Network.PacketHandler.ItemPosition(item.ID)));
-                            item.Mode = MTA.Game.Enums.ItemMode.Update;
+                            item.Mode = Enums.ItemMode.Update;
                             item.Send(client);
                             client.LoadItemStats();
                             Database.ConquerItemTable.UpdateItemID(item, client);
@@ -89,48 +89,48 @@ namespace MTA.Game.Features.Reincarnation
                 if (client.Entity.FirstRebornClass == 15 && client.Entity.SecondRebornClass == 15 &&
                     client.Entity.Class == 15)
             {
-                WontAdd(MTA.Game.Enums.SkillIDs.DragonWhirl);
+                WontAdd(Enums.SkillIDs.DragonWhirl);
             }
             if (client.Entity.FirstRebornClass == 85 && client.Entity.SecondRebornClass == 85 &&
                 client.Entity.Class == 85)
             {
-                WontAdd(MTA.Game.Enums.SkillIDs.DragonFury);
+                WontAdd(Enums.SkillIDs.DragonFury);
             }
             if (client.Entity.FirstRebornClass == 25 && client.Entity.SecondRebornClass == 25 &&
                 client.Entity.Class == 25)
             {
-                WontAdd(MTA.Game.Enums.SkillIDs.Perseverance);
+                WontAdd(Enums.SkillIDs.Perseverance);
             }
             if (client.Entity.FirstRebornClass == 45 && client.Entity.SecondRebornClass == 45 &&
                 client.Entity.Class == 45)
             {
-                WontAdd(MTA.Game.Enums.SkillIDs.StarFranko);
+                WontAdd(Enums.SkillIDs.StarFranko);
             }
             if (client.Entity.FirstRebornClass == 55 && client.Entity.SecondRebornClass == 55 &&
                 client.Entity.Class == 55)
             {
-                WontAdd(MTA.Game.Enums.SkillIDs.PoisonStar);
+                WontAdd(Enums.SkillIDs.PoisonStar);
             }
             if (client.Entity.FirstRebornClass == 65 && client.Entity.SecondRebornClass == 65 &&
                 client.Entity.Class == 65)
             {
-                WontAdd(MTA.Game.Enums.SkillIDs.soulshackle);
+                WontAdd(Enums.SkillIDs.soulshackle);
             }
             if (client.Entity.FirstRebornClass == 135 && client.Entity.SecondRebornClass == 135 &&
                 client.Entity.Class == 135)
             {
-                WontAdd(MTA.Game.Enums.SkillIDs.AzureShield);
+                WontAdd(Enums.SkillIDs.AzureShield);
             }
             if (client.Entity.FirstRebornClass == 145 && client.Entity.SecondRebornClass == 145 &&
                 client.Entity.Class == 145)
             {
-                WontAdd(MTA.Game.Enums.SkillIDs.HeavenBlade);
+                WontAdd(Enums.SkillIDs.HeavenBlade);
             }
 
             #endregion
 
             Database.ReincarnationTable.NewReincarnated(client.Entity);
-            Game.Features.Reincarnation.ReincarnateInfo info = new Game.Features.Reincarnation.ReincarnateInfo();
+            ReincarnateInfo info = new ReincarnateInfo();
             info.UID = client.Entity.UID;
             info.Level = client.Entity.Level;
             info.Experience = client.Entity.Experience;
@@ -148,116 +148,116 @@ namespace MTA.Game.Features.Reincarnation
 
 
             client.Spells.Clear();
-            client.Spells = new SafeDictionary<ushort, MTA.Interfaces.ISkill>(100);
+            client.Spells = new SafeDictionary<ushort, Interfaces.ISkill>(100);
             switch (client.Entity.FirstRebornClass)
             {
                 case 15:
                     {
-                        Add(MTA.Game.Enums.SkillIDs.Cyclone);
-                        Add(MTA.Game.Enums.SkillIDs.Hercules);
-                        Add(MTA.Game.Enums.SkillIDs.SpiritHealing);
-                        Add(MTA.Game.Enums.SkillIDs.Robot);
-                        Add(MTA.Game.Enums.SkillIDs.SuperCyclone);
-                        Add(MTA.Game.Enums.SkillIDs.FatalCross);
-                        Add(MTA.Game.Enums.SkillIDs.MortalStrike);
-                        Add(MTA.Game.Enums.SkillIDs.BreathFocus);
+                        Add(Enums.SkillIDs.Cyclone);
+                        Add(Enums.SkillIDs.Hercules);
+                        Add(Enums.SkillIDs.SpiritHealing);
+                        Add(Enums.SkillIDs.Robot);
+                        Add(Enums.SkillIDs.SuperCyclone);
+                        Add(Enums.SkillIDs.FatalCross);
+                        Add(Enums.SkillIDs.MortalStrike);
+                        Add(Enums.SkillIDs.BreathFocus);
                         break;
                     }
                 case 25:
                     {
-                        Add(MTA.Game.Enums.SkillIDs.SuperMan);
-                        Add(MTA.Game.Enums.SkillIDs.Dash);
-                        Add(MTA.Game.Enums.SkillIDs.Shield);
+                        Add(Enums.SkillIDs.SuperMan);
+                        Add(Enums.SkillIDs.Dash);
+                        Add(Enums.SkillIDs.Shield);
                         break;
                     }
                 case 45:
                     {
-                        Add(MTA.Game.Enums.SkillIDs.Intensify);
-                        Add(MTA.Game.Enums.SkillIDs.Scatter);
-                        Add(MTA.Game.Enums.SkillIDs.RapidFire);
-                        Add(MTA.Game.Enums.SkillIDs.XPFly);
-                        Add(MTA.Game.Enums.SkillIDs.AdvancedFly);
+                        Add(Enums.SkillIDs.Intensify);
+                        Add(Enums.SkillIDs.Scatter);
+                        Add(Enums.SkillIDs.RapidFire);
+                        Add(Enums.SkillIDs.XPFly);
+                        Add(Enums.SkillIDs.AdvancedFly);
                         break;
                     }
                 case 55:
                     {
-                        Add(MTA.Game.Enums.SkillIDs.FatalStrike);
-                        Add(MTA.Game.Enums.SkillIDs.ShurikenVortex);
-                        Add(MTA.Game.Enums.SkillIDs.ToxicFog);
-                        Add(MTA.Game.Enums.SkillIDs.TwofoldBlades);
-                        Add(MTA.Game.Enums.SkillIDs.PoisonStar);
-                        Add(MTA.Game.Enums.SkillIDs.TwilightDance);
-                        Add(MTA.Game.Enums.SkillIDs.SuperTwofoldBlade);
-                        Add(MTA.Game.Enums.SkillIDs.FatalSpin);
+                        Add(Enums.SkillIDs.FatalStrike);
+                        Add(Enums.SkillIDs.ShurikenVortex);
+                        Add(Enums.SkillIDs.ToxicFog);
+                        Add(Enums.SkillIDs.TwofoldBlades);
+                        Add(Enums.SkillIDs.PoisonStar);
+                        Add(Enums.SkillIDs.TwilightDance);
+                        Add(Enums.SkillIDs.SuperTwofoldBlade);
+                        Add(Enums.SkillIDs.FatalSpin);
 
                         break;
                     }
                 case 65:
                     {
-                        Add(MTA.Game.Enums.SkillIDs.RadiantPalm);
-                        Add(MTA.Game.Enums.SkillIDs.WhirlWindKick);
-                        Add(MTA.Game.Enums.SkillIDs.TripleAttack);
-                        Add(MTA.Game.Enums.SkillIDs.Oblivion);
-                        Add(MTA.Game.Enums.SkillIDs.Serenity);
-                        Add(MTA.Game.Enums.SkillIDs.Compassion);
-                        Add(MTA.Game.Enums.SkillIDs.TyrantAura);
-                        Add(MTA.Game.Enums.SkillIDs.TyrantAura);
-                        Add(MTA.Game.Enums.SkillIDs.DeflectionAura);
+                        Add(Enums.SkillIDs.RadiantPalm);
+                        Add(Enums.SkillIDs.WhirlWindKick);
+                        Add(Enums.SkillIDs.TripleAttack);
+                        Add(Enums.SkillIDs.Oblivion);
+                        Add(Enums.SkillIDs.Serenity);
+                        Add(Enums.SkillIDs.Compassion);
+                        Add(Enums.SkillIDs.TyrantAura);
+                        Add(Enums.SkillIDs.TyrantAura);
+                        Add(Enums.SkillIDs.DeflectionAura);
                         break;
                     }
                 case 75:
                     {
-                        Add(MTA.Game.Enums.SkillIDs.RadiantPalm);
-                        Add(MTA.Game.Enums.SkillIDs.WhirlWindKick);
-                        Add(MTA.Game.Enums.SkillIDs.TripleAttack);
-                        Add(MTA.Game.Enums.SkillIDs.Oblivion);
-                        Add(MTA.Game.Enums.SkillIDs.Serenity);
-                        Add(MTA.Game.Enums.SkillIDs.Compassion);
-                        Add(MTA.Game.Enums.SkillIDs.TyrantAura);
-                        Add(MTA.Game.Enums.SkillIDs.TyrantAura);
-                        Add(MTA.Game.Enums.SkillIDs.DeflectionAura);
+                        Add(Enums.SkillIDs.RadiantPalm);
+                        Add(Enums.SkillIDs.WhirlWindKick);
+                        Add(Enums.SkillIDs.TripleAttack);
+                        Add(Enums.SkillIDs.Oblivion);
+                        Add(Enums.SkillIDs.Serenity);
+                        Add(Enums.SkillIDs.Compassion);
+                        Add(Enums.SkillIDs.TyrantAura);
+                        Add(Enums.SkillIDs.TyrantAura);
+                        Add(Enums.SkillIDs.DeflectionAura);
                         break;
                     }
                 case 85:
                     {
-                        Add(MTA.Game.Enums.SkillIDs.SpeedKick);
-                        Add(MTA.Game.Enums.SkillIDs.ViolentKick);
-                        Add(MTA.Game.Enums.SkillIDs.StormKick);
-                        Add(MTA.Game.Enums.SkillIDs.CrackingSwip);
-                        Add(MTA.Game.Enums.SkillIDs.SplittingSwipe);
-                        Add(MTA.Game.Enums.SkillIDs.DragonSwing);
-                        Add(MTA.Game.Enums.SkillIDs.DragonPunch);
-                        Add(MTA.Game.Enums.SkillIDs.DragonSlash);
-                        Add(MTA.Game.Enums.SkillIDs.DragonFlow);
-                        Add(MTA.Game.Enums.SkillIDs.DragonRoar);
-                        Add(MTA.Game.Enums.SkillIDs.DragonCyclone);
-                        Add(MTA.Game.Enums.SkillIDs.AirKick);
-                        Add(MTA.Game.Enums.SkillIDs.AirSweep);
-                        Add(MTA.Game.Enums.SkillIDs.AirRaid);
+                        Add(Enums.SkillIDs.SpeedKick);
+                        Add(Enums.SkillIDs.ViolentKick);
+                        Add(Enums.SkillIDs.StormKick);
+                        Add(Enums.SkillIDs.CrackingSwip);
+                        Add(Enums.SkillIDs.SplittingSwipe);
+                        Add(Enums.SkillIDs.DragonSwing);
+                        Add(Enums.SkillIDs.DragonPunch);
+                        Add(Enums.SkillIDs.DragonSlash);
+                        Add(Enums.SkillIDs.DragonFlow);
+                        Add(Enums.SkillIDs.DragonRoar);
+                        Add(Enums.SkillIDs.DragonCyclone);
+                        Add(Enums.SkillIDs.AirKick);
+                        Add(Enums.SkillIDs.AirSweep);
+                        Add(Enums.SkillIDs.AirRaid);
                         break;
                     }
                 case 135:
                     {
-                        Add(MTA.Game.Enums.SkillIDs.Thunder);
-                        Add(MTA.Game.Enums.SkillIDs.WaterElf);
-                        Add(MTA.Game.Enums.SkillIDs.Cure);
-                        Add(MTA.Game.Enums.SkillIDs.Lightning);
-                        Add(MTA.Game.Enums.SkillIDs.Volcano);
-                        Add(MTA.Game.Enums.SkillIDs.Pray);
-                        Add(MTA.Game.Enums.SkillIDs.AdvancedCure);
-                        Add(MTA.Game.Enums.SkillIDs.Meditation);
-                        Add(MTA.Game.Enums.SkillIDs.Stigma);
+                        Add(Enums.SkillIDs.Thunder);
+                        Add(Enums.SkillIDs.WaterElf);
+                        Add(Enums.SkillIDs.Cure);
+                        Add(Enums.SkillIDs.Lightning);
+                        Add(Enums.SkillIDs.Volcano);
+                        Add(Enums.SkillIDs.Pray);
+                        Add(Enums.SkillIDs.AdvancedCure);
+                        Add(Enums.SkillIDs.Meditation);
+                        Add(Enums.SkillIDs.Stigma);
                         break;
                     }
                 case 140:
                     {
-                        Add(MTA.Game.Enums.SkillIDs.Thunder);
-                        Add(MTA.Game.Enums.SkillIDs.Cure);
-                        Add(MTA.Game.Enums.SkillIDs.Lightning);
-                        Add(MTA.Game.Enums.SkillIDs.Tornado);
-                        Add(MTA.Game.Enums.SkillIDs.FireCircle);
-                        Add(MTA.Game.Enums.SkillIDs.FireMeteor);
-                        Add(MTA.Game.Enums.SkillIDs.FireRing);
+                        Add(Enums.SkillIDs.Thunder);
+                        Add(Enums.SkillIDs.Cure);
+                        Add(Enums.SkillIDs.Lightning);
+                        Add(Enums.SkillIDs.Tornado);
+                        Add(Enums.SkillIDs.FireCircle);
+                        Add(Enums.SkillIDs.FireMeteor);
+                        Add(Enums.SkillIDs.FireRing);
                         break;
                     }
             }
@@ -265,7 +265,7 @@ namespace MTA.Game.Features.Reincarnation
             byte PreviousClass = client.Entity.FirstRebornClass;
             byte toClass = (byte)(client.Entity.SecondRebornClass - 4);
 
-            Interfaces.ISkill[] ADD_spells = this.Addskill.Values.ToArray();
+            Interfaces.ISkill[] ADD_spells = Addskill.Values.ToArray();
             foreach (Interfaces.ISkill skill in ADD_spells)
             {
                 skill.Available = true;
@@ -440,16 +440,16 @@ namespace MTA.Game.Features.Reincarnation
                 #endregion
 
                 if (client.Spells.ContainsKey(spell.ID))
-                    if (spell.ID != (ushort)Game.Enums.SkillIDs.Reflect)
+                    if (spell.ID != (ushort)Enums.SkillIDs.Reflect)
                         spell.Send(client);
             }
 
             #endregion
 
-            Add(MTA.Game.Enums.SkillIDs.Bless);
+            Add(Enums.SkillIDs.Bless);
 
             Addskill.Clear();
-            Addskill = new SafeDictionary<ushort, MTA.Interfaces.ISkill>(100);
+            Addskill = new SafeDictionary<ushort, Interfaces.ISkill>(100);
 
             PreviousClass = client.Entity.SecondRebornClass;
             toClass = client.Entity.Class;
@@ -457,117 +457,117 @@ namespace MTA.Game.Features.Reincarnation
             {
                 case 15:
                     {
-                        Add(MTA.Game.Enums.SkillIDs.Robot);
-                        Add(MTA.Game.Enums.SkillIDs.Cyclone);
-                        Add(MTA.Game.Enums.SkillIDs.Hercules);
-                        Add(MTA.Game.Enums.SkillIDs.SpiritHealing);
-                        Add(MTA.Game.Enums.SkillIDs.SuperCyclone);
-                        Add(MTA.Game.Enums.SkillIDs.FatalCross);
-                        Add(MTA.Game.Enums.SkillIDs.MortalStrike);
-                        Add(MTA.Game.Enums.SkillIDs.BreathFocus);
+                        Add(Enums.SkillIDs.Robot);
+                        Add(Enums.SkillIDs.Cyclone);
+                        Add(Enums.SkillIDs.Hercules);
+                        Add(Enums.SkillIDs.SpiritHealing);
+                        Add(Enums.SkillIDs.SuperCyclone);
+                        Add(Enums.SkillIDs.FatalCross);
+                        Add(Enums.SkillIDs.MortalStrike);
+                        Add(Enums.SkillIDs.BreathFocus);
                         break;
                     }
                 case 25:
                     {
-                        Add(MTA.Game.Enums.SkillIDs.SuperMan);
-                        Add(MTA.Game.Enums.SkillIDs.Dash);
-                        Add(MTA.Game.Enums.SkillIDs.Shield);
+                        Add(Enums.SkillIDs.SuperMan);
+                        Add(Enums.SkillIDs.Dash);
+                        Add(Enums.SkillIDs.Shield);
                         break;
                     }
                 case 45:
                     {
-                        Add(MTA.Game.Enums.SkillIDs.Intensify);
-                        Add(MTA.Game.Enums.SkillIDs.Scatter);
-                        Add(MTA.Game.Enums.SkillIDs.RapidFire);
-                        Add(MTA.Game.Enums.SkillIDs.XPFly);
-                        Add(MTA.Game.Enums.SkillIDs.AdvancedFly);
+                        Add(Enums.SkillIDs.Intensify);
+                        Add(Enums.SkillIDs.Scatter);
+                        Add(Enums.SkillIDs.RapidFire);
+                        Add(Enums.SkillIDs.XPFly);
+                        Add(Enums.SkillIDs.AdvancedFly);
                         break;
                     }
                 case 55:
                     {
-                        Add(MTA.Game.Enums.SkillIDs.FatalStrike);
-                        Add(MTA.Game.Enums.SkillIDs.ShurikenVortex);
-                        Add(MTA.Game.Enums.SkillIDs.ToxicFog);
-                        Add(MTA.Game.Enums.SkillIDs.TwofoldBlades);
-                        Add(MTA.Game.Enums.SkillIDs.TwilightDance);
-                        Add(MTA.Game.Enums.SkillIDs.SuperTwofoldBlade);
-                        Add(MTA.Game.Enums.SkillIDs.FatalSpin);
+                        Add(Enums.SkillIDs.FatalStrike);
+                        Add(Enums.SkillIDs.ShurikenVortex);
+                        Add(Enums.SkillIDs.ToxicFog);
+                        Add(Enums.SkillIDs.TwofoldBlades);
+                        Add(Enums.SkillIDs.TwilightDance);
+                        Add(Enums.SkillIDs.SuperTwofoldBlade);
+                        Add(Enums.SkillIDs.FatalSpin);
                         break;
                     }
                 case 65:
                     {
-                        Add(MTA.Game.Enums.SkillIDs.RadiantPalm);
-                        Add(MTA.Game.Enums.SkillIDs.WhirlWindKick);
-                        Add(MTA.Game.Enums.SkillIDs.TripleAttack);
-                        Add(MTA.Game.Enums.SkillIDs.Oblivion);
-                        Add(MTA.Game.Enums.SkillIDs.Serenity);
-                        Add(MTA.Game.Enums.SkillIDs.Compassion);
-                        Add(MTA.Game.Enums.SkillIDs.TyrantAura);
-                        Add(MTA.Game.Enums.SkillIDs.TyrantAura);
-                        Add(MTA.Game.Enums.SkillIDs.DeflectionAura);
+                        Add(Enums.SkillIDs.RadiantPalm);
+                        Add(Enums.SkillIDs.WhirlWindKick);
+                        Add(Enums.SkillIDs.TripleAttack);
+                        Add(Enums.SkillIDs.Oblivion);
+                        Add(Enums.SkillIDs.Serenity);
+                        Add(Enums.SkillIDs.Compassion);
+                        Add(Enums.SkillIDs.TyrantAura);
+                        Add(Enums.SkillIDs.TyrantAura);
+                        Add(Enums.SkillIDs.DeflectionAura);
                         break;
                     }
                 case 75:
                     {
-                        Add(MTA.Game.Enums.SkillIDs.RadiantPalm);
-                        Add(MTA.Game.Enums.SkillIDs.WhirlWindKick);
-                        Add(MTA.Game.Enums.SkillIDs.TripleAttack);
-                        Add(MTA.Game.Enums.SkillIDs.Oblivion);
-                        Add(MTA.Game.Enums.SkillIDs.Serenity);
-                        Add(MTA.Game.Enums.SkillIDs.Compassion);
-                        Add(MTA.Game.Enums.SkillIDs.TyrantAura);
-                        Add(MTA.Game.Enums.SkillIDs.TyrantAura);
-                        Add(MTA.Game.Enums.SkillIDs.DeflectionAura);
+                        Add(Enums.SkillIDs.RadiantPalm);
+                        Add(Enums.SkillIDs.WhirlWindKick);
+                        Add(Enums.SkillIDs.TripleAttack);
+                        Add(Enums.SkillIDs.Oblivion);
+                        Add(Enums.SkillIDs.Serenity);
+                        Add(Enums.SkillIDs.Compassion);
+                        Add(Enums.SkillIDs.TyrantAura);
+                        Add(Enums.SkillIDs.TyrantAura);
+                        Add(Enums.SkillIDs.DeflectionAura);
                         break;
                     }
                 case 85:
                     {
-                        Add(MTA.Game.Enums.SkillIDs.SpeedKick);
-                        Add(MTA.Game.Enums.SkillIDs.ViolentKick);
-                        Add(MTA.Game.Enums.SkillIDs.StormKick);
-                        Add(MTA.Game.Enums.SkillIDs.CrackingSwip);
-                        Add(MTA.Game.Enums.SkillIDs.SplittingSwipe);
-                        Add(MTA.Game.Enums.SkillIDs.DragonSwing);
-                        Add(MTA.Game.Enums.SkillIDs.DragonPunch);
-                        Add(MTA.Game.Enums.SkillIDs.DragonSlash);
-                        Add(MTA.Game.Enums.SkillIDs.DragonFlow);
-                        Add(MTA.Game.Enums.SkillIDs.DragonCyclone);
-                        Add(MTA.Game.Enums.SkillIDs.AirKick);
-                        Add(MTA.Game.Enums.SkillIDs.AirSweep);
-                        Add(MTA.Game.Enums.SkillIDs.AirRaid);
+                        Add(Enums.SkillIDs.SpeedKick);
+                        Add(Enums.SkillIDs.ViolentKick);
+                        Add(Enums.SkillIDs.StormKick);
+                        Add(Enums.SkillIDs.CrackingSwip);
+                        Add(Enums.SkillIDs.SplittingSwipe);
+                        Add(Enums.SkillIDs.DragonSwing);
+                        Add(Enums.SkillIDs.DragonPunch);
+                        Add(Enums.SkillIDs.DragonSlash);
+                        Add(Enums.SkillIDs.DragonFlow);
+                        Add(Enums.SkillIDs.DragonCyclone);
+                        Add(Enums.SkillIDs.AirKick);
+                        Add(Enums.SkillIDs.AirSweep);
+                        Add(Enums.SkillIDs.AirRaid);
                         break;
                     }
                 case 135:
                     {
-                        Add(MTA.Game.Enums.SkillIDs.Thunder);
-                        Add(MTA.Game.Enums.SkillIDs.WaterElf);
-                        Add(MTA.Game.Enums.SkillIDs.Cure);
-                        Add(MTA.Game.Enums.SkillIDs.Lightning);
-                        Add(MTA.Game.Enums.SkillIDs.Volcano);
-                        Add(MTA.Game.Enums.SkillIDs.Pray);
-                        Add(MTA.Game.Enums.SkillIDs.Stigma);
-                        Add(MTA.Game.Enums.SkillIDs.AdvancedCure);
-                        Add(MTA.Game.Enums.SkillIDs.Meditation);
+                        Add(Enums.SkillIDs.Thunder);
+                        Add(Enums.SkillIDs.WaterElf);
+                        Add(Enums.SkillIDs.Cure);
+                        Add(Enums.SkillIDs.Lightning);
+                        Add(Enums.SkillIDs.Volcano);
+                        Add(Enums.SkillIDs.Pray);
+                        Add(Enums.SkillIDs.Stigma);
+                        Add(Enums.SkillIDs.AdvancedCure);
+                        Add(Enums.SkillIDs.Meditation);
                         break;
                     }
                 case 140:
                     {
-                        Add(MTA.Game.Enums.SkillIDs.Thunder);
-                        Add(MTA.Game.Enums.SkillIDs.Cure);
-                        Add(MTA.Game.Enums.SkillIDs.Lightning);
-                        Add(MTA.Game.Enums.SkillIDs.Tornado);
-                        Add(MTA.Game.Enums.SkillIDs.FireCircle);
-                        Add(MTA.Game.Enums.SkillIDs.FireMeteor);
-                        Add(MTA.Game.Enums.SkillIDs.FireRing);
+                        Add(Enums.SkillIDs.Thunder);
+                        Add(Enums.SkillIDs.Cure);
+                        Add(Enums.SkillIDs.Lightning);
+                        Add(Enums.SkillIDs.Tornado);
+                        Add(Enums.SkillIDs.FireCircle);
+                        Add(Enums.SkillIDs.FireMeteor);
+                        Add(Enums.SkillIDs.FireRing);
                         break;
                     }
             }
 
             //PreviousClass = client.Entity.FirstRebornClass;
             //toClass = client.Entity.SecondRebornClass;
-            Add(MTA.Game.Enums.SkillIDs.Bless);
+            Add(Enums.SkillIDs.Bless);
 
-            Interfaces.ISkill[] aADD_spells = this.Addskill.Values.ToArray();
+            Interfaces.ISkill[] aADD_spells = Addskill.Values.ToArray();
             foreach (Interfaces.ISkill skill in aADD_spells)
             {
                 skill.Available = true;
@@ -742,62 +742,62 @@ namespace MTA.Game.Features.Reincarnation
                 #endregion
 
                 if (client.Spells.ContainsKey(aspell.ID))
-                    if (aspell.ID != (ushort)Game.Enums.SkillIDs.Reflect)
+                    if (aspell.ID != (ushort)Enums.SkillIDs.Reflect)
                         aspell.Send(client);
             }
 
             #endregion
 
             Addskill.Clear();
-            Addskill = new SafeDictionary<ushort, MTA.Interfaces.ISkill>(20);
+            Addskill = new SafeDictionary<ushort, Interfaces.ISkill>(20);
 
             #region Add Extra Skill
 
             if (client.Entity.FirstRebornClass == 15 && client.Entity.SecondRebornClass == 15 &&
                 client.Entity.Class == 11)
             {
-                Add(MTA.Game.Enums.SkillIDs.DragonWhirl);
+                Add(Enums.SkillIDs.DragonWhirl);
             }
             if (client.Entity.FirstRebornClass == 85 && client.Entity.SecondRebornClass == 85 &&
                 client.Entity.Class == 81)
             {
-                Add(MTA.Game.Enums.SkillIDs.DragonFury);
+                Add(Enums.SkillIDs.DragonFury);
             }
             if (client.Entity.FirstRebornClass == 25 && client.Entity.SecondRebornClass == 25 &&
                 client.Entity.Class == 21)
             {
-                Add(MTA.Game.Enums.SkillIDs.Perseverance);
+                Add(Enums.SkillIDs.Perseverance);
             }
             if (client.Entity.FirstRebornClass == 45 && client.Entity.SecondRebornClass == 45 &&
                 client.Entity.Class == 41)
             {
-                Add(MTA.Game.Enums.SkillIDs.StarFranko);
+                Add(Enums.SkillIDs.StarFranko);
             }
             if (client.Entity.FirstRebornClass == 55 && client.Entity.SecondRebornClass == 55 &&
                 client.Entity.Class == 55)
             {
-                Add(MTA.Game.Enums.SkillIDs.PoisonStar);
-                Add(MTA.Game.Enums.SkillIDs.CounterKill);
+                Add(Enums.SkillIDs.PoisonStar);
+                Add(Enums.SkillIDs.CounterKill);
             }
             if (client.Entity.FirstRebornClass == 65 && client.Entity.SecondRebornClass == 65 &&
                 client.Entity.Class == 61)
             {
-                Add(MTA.Game.Enums.SkillIDs.soulshackle);
+                Add(Enums.SkillIDs.soulshackle);
             }
             if (client.Entity.FirstRebornClass == 135 && client.Entity.SecondRebornClass == 135 &&
                 client.Entity.Class == 132)
             {
-                Add(MTA.Game.Enums.SkillIDs.AzureShield);
+                Add(Enums.SkillIDs.AzureShield);
             }
             if (client.Entity.FirstRebornClass == 145 && client.Entity.SecondRebornClass == 145 &&
                 client.Entity.Class == 142)
             {
-                Add(MTA.Game.Enums.SkillIDs.HeavenBlade);
+                Add(Enums.SkillIDs.HeavenBlade);
             }
 
             #endregion
 
-            Interfaces.ISkill[] aaADD_spells = this.Addskill.Values.ToArray();
+            Interfaces.ISkill[] aaADD_spells = Addskill.Values.ToArray();
             foreach (Interfaces.ISkill skill in aaADD_spells)
             {
                 skill.Available = true;
@@ -825,9 +825,9 @@ namespace MTA.Game.Features.Reincarnation
             Network.PacketHandler.WorldMessage(client.Entity.Name + " has got Reincarnation! Congratulations!");
         }
 
-        private void Add(MTA.Game.Enums.SkillIDs S)
+        private void Add(Enums.SkillIDs S)
         {
-            Interfaces.ISkill New = new Network.GamePackets.Spell(true);
+            Interfaces.ISkill New = new Spell(true);
             New.ID = (ushort)S;
             New.Level = 0;
             New.Experience = 0;
@@ -836,15 +836,15 @@ namespace MTA.Game.Features.Reincarnation
             Addskill.Add(New.ID, New);
         }
 
-        private void WontAdd(MTA.Game.Enums.SkillIDs S)
+        private void WontAdd(Enums.SkillIDs S)
         {
-            Network.GamePackets.Data data = new Data(true);
+            Data data = new Data(true);
             data.UID = _client.Entity.UID;
             data.dwParam = (byte)S;
             data.ID = 109;
             data.Send(_client);
 
-            Interfaces.ISkill New = new Network.GamePackets.Spell(true);
+            Interfaces.ISkill New = new Spell(true);
             New.ID = (ushort)S;
             New.Level = 0;
             New.Experience = 0;
@@ -857,8 +857,8 @@ namespace MTA.Game.Features.Reincarnation
 
     public class Reincarnate
     {
-        public Game.ConquerStructures.Inventory Inventory;
-        public Game.ConquerStructures.Equipment Equipment;
+        public ConquerStructures.Inventory Inventory;
+        public ConquerStructures.Equipment Equipment;
         public Entity Entity;
         public byte Class;
         public byte First;
@@ -891,7 +891,7 @@ namespace MTA.Game.Features.Reincarnation
             #region Reincarnate
 
             Database.ReincarnationTable.NewReincarnated(Entity);
-            Game.Features.Reincarnation.ReincarnateInfo info = new Game.Features.Reincarnation.ReincarnateInfo();
+            ReincarnateInfo info = new ReincarnateInfo();
             info.UID = Entity.UID;
             info.Level = Entity.Level;
             info.Experience = Entity.Experience;
@@ -917,11 +917,11 @@ namespace MTA.Game.Features.Reincarnation
                         try
                         {
                             Database.ConquerItemInformation cii =
-                                new MTA.Database.ConquerItemInformation(item.ID, item.Plus);
+                                new Database.ConquerItemInformation(item.ID, item.Plus);
                             item.ID =
                                 cii.LowestID(
                                     Network.PacketHandler.ItemMinLevel(Network.PacketHandler.ItemPosition(item.ID)));
-                            item.Mode = MTA.Game.Enums.ItemMode.Update;
+                            item.Mode = Enums.ItemMode.Update;
                             item.Send(Entity.Owner);
                             Database.ConquerItemTable.UpdateItemID(item, Entity.Owner);
                         }
@@ -1244,14 +1244,14 @@ namespace MTA.Game.Features.Reincarnation
             //Samak Database.SkillTable.SaveSpells(Entity.Owner);
             //Samak Database.SkillTable.SaveProficiencies(Entity.Owner);
             Kernel.SendWorldMessage(
-                new MTA.Network.GamePackets.Message(
+                new Message(
                     "Congratulations, " + Entity.Name + " reincarnated!", System.Drawing.Color.White,
-                    Network.GamePackets.Message.TopLeft), Program.Values);
+                    Message.TopLeft), Program.Values);
         }
 
         private void Add(Enums.SkillIDs S)
         {
-            Interfaces.ISkill New = new Network.GamePackets.Spell(true);
+            Interfaces.ISkill New = new Spell(true);
             New.ID = (ushort)S;
             New.Level = 0;
             New.Experience = 0;
@@ -1261,7 +1261,7 @@ namespace MTA.Game.Features.Reincarnation
 
         private void WontAdd(Enums.SkillIDs S)
         {
-            Interfaces.ISkill New = new Network.GamePackets.Spell(true);
+            Interfaces.ISkill New = new Spell(true);
             New.ID = (ushort)S;
             New.Level = 0;
             New.Experience = 0;
@@ -1271,7 +1271,7 @@ namespace MTA.Game.Features.Reincarnation
 
         private void WontAdd2(Enums.SkillIDs S)
         {
-            Interfaces.ISkill New = new Network.GamePackets.Spell(true);
+            Interfaces.ISkill New = new Spell(true);
             New.ID = (ushort)S;
             New.Level = 0;
             New.Experience = 0;

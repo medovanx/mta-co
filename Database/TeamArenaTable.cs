@@ -13,7 +13,7 @@ namespace MTA.Database
             {
                 while (reader.Read())
                 {
-                    Network.GamePackets.TeamArenaStatistic stat = new Network.GamePackets.TeamArenaStatistic(true);
+                    TeamArenaStatistic stat = new TeamArenaStatistic(true);
                     stat.EntityID = reader.ReadUInt32("EntityID");
                     stat.Name = reader.ReadString("EntityName");
                     stat.LastSeasonRank = reader.ReadUInt32("LastSeasonRank");
@@ -47,7 +47,7 @@ namespace MTA.Database
             return 0;
         }
 
-        public static void SaveArenaStatistics(Network.GamePackets.TeamArenaStatistic stats)
+        public static void SaveArenaStatistics(TeamArenaStatistic stats)
         {
             if (stats == null) return;
             using (var conn = DataHolder.MySqlConnection)
@@ -56,7 +56,7 @@ namespace MTA.Database
                 SaveArenaStatistics(stats, conn);
             }
         }
-        public static void SaveArenaStatistics(Network.GamePackets.TeamArenaStatistic stats, MySql.Data.MySqlClient.MySqlConnection conn)
+        public static void SaveArenaStatistics(TeamArenaStatistic stats, MySql.Data.MySqlClient.MySqlConnection conn)
         {
             if (stats == null) return;
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("teamarena"))

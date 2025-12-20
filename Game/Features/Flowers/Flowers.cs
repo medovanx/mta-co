@@ -95,11 +95,11 @@ namespace MTA.Game.Features.Flowers
         {
             get
             {
-                return this._LastFlowerSent;
+                return _LastFlowerSent;
             }
             set
             {
-                this._LastFlowerSent = value;
+                _LastFlowerSent = value;
             }
         }
 

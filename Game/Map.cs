@@ -23,35 +23,35 @@ namespace MTA.Game
             {
                 get
                 {
-                    return this.xCord;
+                    return xCord;
                 }
                 set
                 {
-                    this.xCord = value;
+                    xCord = value;
                 }
             }
             public ushort YCord
             {
                 get
                 {
-                    return this.yCord;
+                    return yCord;
                 }
                 set
                 {
-                    this.yCord = value;
+                    yCord = value;
                 }
             }
         }
         public void PopulatePortals(uint amount)
         {
-            this.portals = new DMapPortal[amount];
+            portals = new DMapPortal[amount];
         }
         public void SetPortal(int Position, DMapPortal portal)
         {
-            this.portals[Position] = portal;
+            portals[Position] = portal;
         }
 
-        public static Counter DynamicIDs = new MTA.Counter(11000)
+        public static Counter DynamicIDs = new Counter(11000)
         {
             Finish =
                 0
@@ -67,9 +67,9 @@ namespace MTA.Game
             Enums.ConquerAngle.SouthEast,
             Enums.ConquerAngle.South };
         public static Floor ArenaBaseFloor = null;
-        public Counter EntityUIDCounter = new MTA.Counter(400000);
-        public Counter EntityUIDCounter2 = new MTA.Counter(100000);
-        public Counter CloneCounter = new MTA.Counter(0);
+        public Counter EntityUIDCounter = new Counter(400000);
+        public Counter EntityUIDCounter2 = new Counter(100000);
+        public Counter CloneCounter = new Counter(0);
         public List<Zoning.Zone> Zones = new List<Zoning.Zone>();
         public ushort ID;
         public ushort BaseID;
@@ -154,12 +154,12 @@ namespace MTA.Game
             //    Floor[entity.X, entity.Y, MapObjectType.Monster, entity] = true;
             //}
         }
-        public void AddFloorItem(Network.GamePackets.FloorItem floorItem)
+        public void AddFloorItem(FloorItem floorItem)
         {
             FloorItems.Add(floorItem.UID, floorItem);
             Floor[floorItem.X, floorItem.Y, MapObjectType.Item, floorItem] = false;
         }
-        public void RemoveFloorItem(Network.GamePackets.FloorItem floorItem)
+        public void RemoveFloorItem(FloorItem floorItem)
         {
             FloorItems.Remove(floorItem.UID);
             Floor[floorItem.X, floorItem.Y, MapObjectType.Item, floorItem] = true;
@@ -306,7 +306,7 @@ namespace MTA.Game
             public string PartFile;
             public Point Offset;
             public int aniInterval;
-            public System.Drawing.Size Size;
+            public Size Size;
             public int Thickness;
             public Point StartPosition;
             public bool[,] NoAccess;
@@ -324,7 +324,7 @@ namespace MTA.Game
             // Companions = new SafeDictionary<uint, Entity>();
             ID = id;
             BaseID = id;
-            if (path == "") path = Database.DMaps.MapPaths[id];
+            if (path == "") path = DMaps.MapPaths[id];
             Path = path;
             #region Loading floor.
             if (File.Exists(Constants.DMapsPath + "\\maps\\" + id.ToString() + ".map"))
@@ -335,9 +335,9 @@ namespace MTA.Game
                 BinaryReader BR = new BinaryReader(FS);
                 int Width = BR.ReadInt32();
                 int Height = BR.ReadInt32();
-                Floor = new Game.Floor(Width, Height, ID);
+                Floor = new Floor(Width, Height, ID);
                 if (id == 700)
-                    ArenaBaseFloor = new Game.Floor(Width, Height, ID);
+                    ArenaBaseFloor = new Floor(Width, Height, ID);
                 for (ushort y = 0; y < Height; y = (ushort)(y + 1))
                 {
                     for (ushort x = 0; x < Width; x = (ushort)(x + 1))
@@ -363,9 +363,9 @@ namespace MTA.Game
                     BR.ReadBytes(268);
                     int Width = BR.ReadInt32();
                     int Height = BR.ReadInt32();
-                    Floor = new Game.Floor(Width, Height, ID);
+                    Floor = new Floor(Width, Height, ID);
                     if (id == 700)
-                        ArenaBaseFloor = new Game.Floor(Width, Height, ID);
+                        ArenaBaseFloor = new Floor(Width, Height, ID);
                     for (ushort y = 0; y < Height; y = (ushort)(y + 1))
                     {
                         for (ushort x = 0; x < Width; x = (ushort)(x + 1))
@@ -420,13 +420,13 @@ namespace MTA.Game
             BaseID = baseid;
             Path = path;
             if (String.IsNullOrEmpty(path))
-                Path = path = Database.DMaps.MapPaths[baseid];
+                Path = path = DMaps.MapPaths[baseid];
             Floor = new Floor(0, 0, id);
 
             #region Loading floor.
             if (id != baseid && baseid == 700 && ArenaBaseFloor != null)
             {
-                Floor = new Game.Floor(ArenaBaseFloor.Bounds.Width, ArenaBaseFloor.Bounds.Height, ID);
+                Floor = new Floor(ArenaBaseFloor.Bounds.Width, ArenaBaseFloor.Bounds.Height, ID);
                 for (ushort y = 0; y < ArenaBaseFloor.Bounds.Height; y = (ushort)(y + 1))
                 {
                     for (ushort x = 0; x < ArenaBaseFloor.Bounds.Width; x = (ushort)(x + 1))
@@ -446,7 +446,7 @@ namespace MTA.Game
                     int Width = BR.ReadInt32();
                     int Height = BR.ReadInt32();
 
-                    Floor = new Game.Floor(Width, Height, ID);
+                    Floor = new Floor(Width, Height, ID);
 
                     for (ushort y = 0; y < Height; y = (ushort)(y + 1))
                     {
@@ -469,7 +469,7 @@ namespace MTA.Game
                         int Width = BR.ReadInt32();
                         int Height = BR.ReadInt32();
 
-                        Floor = new Game.Floor(Width, Height, ID);
+                        Floor = new Floor(Width, Height, ID);
 
                         for (ushort y = 0; y < Height; y = (ushort)(y + 1))
                         {
@@ -510,7 +510,7 @@ namespace MTA.Game
                                     break;
 
                                 case 1:
-                                    list.Add(this.CreateSceneFile(BR));
+                                    list.Add(CreateSceneFile(BR));
                                     break;
 
                                 case 4:
@@ -594,7 +594,7 @@ namespace MTA.Game
                         break;
 
                     case 1:
-                        list.Add(this.CreateSceneFile(Reader));
+                        list.Add(CreateSceneFile(Reader));
                         break;
 
                     case 4:
@@ -606,7 +606,7 @@ namespace MTA.Game
         }
         private void LoadPortals()
         {
-            IniFile file = new MTA.IniFile(Constants.PortalsPath);
+            IniFile file = new IniFile(Constants.PortalsPath);
             ushort portalCount = file.ReadUInt16(BaseID.ToString(), "Count");
 
             for (int i = 0; i < portalCount; i++)
@@ -615,7 +615,7 @@ namespace MTA.Game
                 string _PortalExit = file.ReadString(BaseID.ToString(), "PortalExit" + i.ToString());
                 string[] PortalEnter = _PortalEnter.Split(' ');
                 string[] PortalExit = _PortalExit.Split(' ');
-                Game.Portal portal = new MTA.Game.Portal();
+                Portal portal = new Portal();
                 portal.CurrentMapID = Convert.ToUInt16(PortalEnter[0]);
                 portal.CurrentX = Convert.ToUInt16(PortalEnter[1]);
                 portal.CurrentY = Convert.ToUInt16(PortalEnter[2]);
@@ -629,7 +629,7 @@ namespace MTA.Game
                 Portals.Add(portal);
             }
         }
-        public List<Game.Portal> Portals = new List<Game.Portal>();
+        public List<Portal> Portals = new List<Portal>();
         private IDisposable Timer;
 
         public static sbyte[] XDir = new sbyte[]
@@ -695,14 +695,14 @@ namespace MTA.Game
 
         private void LoadNpcs()
         {
-            using (var command = new Database.MySqlCommand(Database.MySqlCommandType.SELECT))
+            using (var command = new MySqlCommand(MySqlCommandType.SELECT))
             {
                 command.Select("npcs").Where("mapid", ID);
-                using (var reader = new Database.MySqlReader(command))
+                using (var reader = new MySqlReader(command))
                 {
                     while (reader.Read())
                     {
-                        INpc npc = new Network.GamePackets.NpcSpawn();
+                        INpc npc = new NpcSpawn();
                         npc.UID = reader.ReadUInt32("id");
                         npc.Name = reader.ReadString("name");
                         npc.Mesh = reader.ReadUInt16("lookface");
@@ -716,14 +716,14 @@ namespace MTA.Game
                     }
                 }
             }
-            using (var command = new Database.MySqlCommand(Database.MySqlCommandType.SELECT))
+            using (var command = new MySqlCommand(MySqlCommandType.SELECT))
             {
                 command.Select("sobnpcs").Where("mapid", ID);
-                using (var reader = new Database.MySqlReader(command))
+                using (var reader = new MySqlReader(command))
                 {
                     while (reader.Read())
                     {
-                        Network.GamePackets.SobNpcSpawn npc = new Network.GamePackets.SobNpcSpawn();
+                        SobNpcSpawn npc = new SobNpcSpawn();
                         npc.UID = reader.ReadUInt32("id");
                         npc.Mesh = reader.ReadUInt16("lookface");
                         if (ID == 1039)
@@ -740,8 +740,8 @@ namespace MTA.Game
                         npc._isprize = reader.ReadBoolean("prize");
                         if (npc.UID >= 9994 && npc.UID <= 9997)
                         {
-                            Database.GuildCondutors.GuildConductors.Add(npc.UID, new Database.GuildCondutors.Conductor() { npc = npc });
-                            Database.GuildCondutors.MoveNpc(npc.UID, npc.MapID, npc.X, npc.Y);
+                            GuildCondutors.GuildConductors.Add(npc.UID, new GuildCondutors.Conductor() { npc = npc });
+                            GuildCondutors.MoveNpc(npc.UID, npc.MapID, npc.X, npc.Y);
                             AddNpc(npc, true);
                         }
                         else
@@ -756,10 +756,10 @@ namespace MTA.Game
         public void LoadMonsters()
         {
             //Companions = new SafeDictionary<uint, Entity>();
-            using (var command = new Database.MySqlCommand(Database.MySqlCommandType.SELECT))
+            using (var command = new MySqlCommand(MySqlCommandType.SELECT))
             {
                 command.Select("monsterspawns").Where("mapid", ID);
-                using (var reader = new Database.MySqlReader(command))
+                using (var reader = new MySqlReader(command))
                 {
                     int mycount = 0;
                     try
@@ -774,9 +774,9 @@ namespace MTA.Game
                             ushort YPlus = reader.ReadUInt16("bound_cy");
                             ushort Amount = reader.ReadUInt16("max_per_gen");
                             int respawn = reader.ReadInt32("rest_secs");
-                            if (Database.MonsterInformation.MonsterInformations.ContainsKey(monsterID))
+                            if (MonsterInformation.MonsterInformations.ContainsKey(monsterID))
                             {
-                                Database.MonsterInformation mt = Database.MonsterInformation.MonsterInformations[monsterID];
+                                MonsterInformation mt = MonsterInformation.MonsterInformations[monsterID];
                                 mt.RespawnTime = respawn + 5;
                                 mt.BoundX = X;
                                 mt.BoundY = Y;
@@ -977,7 +977,7 @@ namespace MTA.Game
                                 }
                                 MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Warrning " + monster.Name + " has Apeared in [" + monster.MapID.ToString() + "] at " + monster.X + ", " + monster.Y + " Who will Defeat it and get 50 MonsterPoints !", System.Drawing.Color.White, MTA.Network.GamePackets.Message.Center), Program.Values);
                             }*/
-                            foreach (Client.GameState client in Program.Values)
+                            foreach (GameState client in Program.Values)
                             {
                                 if (client.Map.ID == map.ID)
                                 {
@@ -1031,7 +1031,7 @@ namespace MTA.Game
         {
             if (mt == null) return;
             mt.RespawnTime = 36000;
-            MTA.Game.Entity entity = new MTA.Game.Entity(EntityFlag.Monster, false);
+            Entity entity = new Entity(EntityFlag.Monster, false);
             entity.MapObjType = MapObjectType.Monster;
             entity.MonsterInfo = mt.Copy();
             entity.MonsterInfo.Owner = entity;
@@ -1066,18 +1066,18 @@ namespace MTA.Game
             entity.Hitpoints = (entity.MaxHitpoints = mt.Hitpoints);
             entity.Body = mt.Mesh;
             entity.Level = mt.Level;
-            entity.UID = this.EntityUIDCounter.Next;
+            entity.UID = EntityUIDCounter.Next;
             entity.MapID = ID;
             entity.X = x;
             entity.Y = y;
             entity.SendUpdates = true;
-            this.AddEntity(entity);
+            AddEntity(entity);
             entity.SendSpawn(client);
         }
         public Map MakeDynamicMap()
         {
             ushort id = (ushort)DynamicIDs.Next;
-            Map myDynamic = new Map(id, this.ID, this.Path);
+            Map myDynamic = new Map(id, ID, Path);
             return myDynamic;
         }
         bool disposed = false;

@@ -312,7 +312,7 @@ namespace MTA.MaTrix {
                 }
             }
 
-            this.LastBotJump = Time32.Now;
+            LastBotJump = Time32.Now;
             Loaded = true;
         }
 
@@ -378,7 +378,7 @@ namespace MTA.MaTrix {
                 }
             }
 
-            this.LastBotJump = Time32.Now;
+            LastBotJump = Time32.Now;
             Loaded = true;
             Bot.SendScreenSpawn(Bot.Entity, true);
         }

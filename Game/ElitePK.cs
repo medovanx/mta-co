@@ -72,7 +72,7 @@ namespace MTA.Game
                 pState = States.T_Organize;
             }
         }
-        public static bool GetReward(Client.GameState client, out byte rank, out byte elitestage)
+        public static bool GetReward(GameState client, out byte rank, out byte elitestage)
         {
             if (ElitePKTournament.Tournaments != null)
 
@@ -197,9 +197,9 @@ namespace MTA.Game
             public FighterStats Clone()
             {
                 FighterStats stats = new FighterStats(UID, Name, Mesh);
-                stats.Points = this.Points;
-                stats.Flag = this.Flag;
-                stats.Wager = this.Wager;
+                stats.Points = Points;
+                stats.Flag = Flag;
+                stats.Wager = Wager;
                 return stats;
             }
         }
@@ -272,7 +272,7 @@ namespace MTA.Game
                     }
                     if (MatchStats.Length == 3)
                         if (Players[0] != null)
-                            MatchStats[0].Flag = ElitePK.FighterStats.StatusFlag.Waiting;
+                            MatchStats[0].Flag = FighterStats.StatusFlag.Waiting;
                 }
                 Imports = 0;
                 Flag = StatusFlag.AcceptingWagers;
@@ -429,7 +429,7 @@ namespace MTA.Game
                         foreach (var kvp in target.ElitePKStats.Wagers)
                         {
                             double ratio = kvp.Value / totalWager;
-                            Client.GameState pClient;
+                            GameState pClient;
                             if (Kernel.GamePool.TryGetValue(kvp.Key, out pClient))
                             {
                                 uint gain = (uint)(ratio * totalWager * 100000);
@@ -471,7 +471,7 @@ namespace MTA.Game
                 stats.Append(this);
                 return stats;
             }
-            public ElitePK.FighterStats targetOfWin(Game.ConquerStructures.Team team)
+            public FighterStats targetOfWin(Game.ConquerStructures.Team team)
             {
                 var dictionar = MatchStats.Where(p => p.Fighting).ToArray();
                 for (int i = 0; i < dictionar.Length; i++)

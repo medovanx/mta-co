@@ -11,9 +11,9 @@ namespace MTA.Database
         #region Blob
         #region Main
 
-        public Network.GamePackets.ConquerItem ReadItem(System.IO.BinaryReader reader)
+        public ConquerItem ReadItem(System.IO.BinaryReader reader)
         {
-            Network.GamePackets.ConquerItem item = new ConquerItem(true);
+            ConquerItem item = new ConquerItem(true);
             item.ID = reader.ReadUInt32();//4
             item.UID = reader.ReadUInt32();//8
             item.Durability = reader.ReadUInt16();//10
@@ -53,7 +53,7 @@ namespace MTA.Database
 
         #region other
 
-        public void WriteItem(System.IO.BinaryWriter writer, Network.GamePackets.ConquerItem item)
+        public void WriteItem(System.IO.BinaryWriter writer, ConquerItem item)
         {
             writer.Write(item.ID); //= reader.ReadUInt32();
             writer.Write(item.UID);
@@ -148,8 +148,8 @@ namespace MTA.Database
                                         {
                                             item.Position = 0;
                                             client.Inventory.Add(item, Game.Enums.ItemUse.None);
-                                            if (client.Warehouses[MTA.Game.ConquerStructures.Warehouse.WarehouseID.Market].Count < 20)
-                                                client.Warehouses[MTA.Game.ConquerStructures.Warehouse.WarehouseID.Market].Add(item);
+                                            if (client.Warehouses[Game.ConquerStructures.Warehouse.WarehouseID.Market].Count < 20)
+                                                client.Warehouses[Game.ConquerStructures.Warehouse.WarehouseID.Market].Add(item);
                                             UpdatePosition(item);
                                         }
                                     }
@@ -206,7 +206,7 @@ namespace MTA.Database
 
         public static ConquerItem deserialzeItem(MySqlReader reader)
         {
-            ConquerItem item = new Network.GamePackets.ConquerItem(true);
+            ConquerItem item = new ConquerItem(true);
             item.ID = reader.ReadUInt32("Id");
             item.UID = reader.ReadUInt32("Uid");
             item.Durability = reader.ReadUInt16("Durability");

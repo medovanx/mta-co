@@ -74,7 +74,7 @@ namespace MTA.Database
                     client.Mentor.ID = reader.ReadUInt32("MentorID");
                     client.Mentor.Name = reader.ReadString("MentorName");
                     client.Mentor.EnroleDate = reader.ReadUInt32("EnroleDate");
-                    client.AsApprentice = new MTA.Game.ConquerStructures.Society.Apprentice();
+                    client.AsApprentice = new Apprentice();
                     client.AsApprentice.ID = client.Entity.UID;
                     client.AsApprentice.Name = client.Entity.Name;
                     client.AsApprentice.EnroleDate = client.Mentor.EnroleDate;
@@ -103,7 +103,7 @@ namespace MTA.Database
                 }
             }
         }
-        public static void SaveApprenticeInfo(MTA.Game.ConquerStructures.Society.Apprentice app)
+        public static void SaveApprenticeInfo(Apprentice app)
         {
             if (app != null)
             {
@@ -117,7 +117,7 @@ namespace MTA.Database
                     .Set("Total_HeavenBlessing", app.Total_HeavenBlessing.ToString()).Where("ApprenticeID", app.ID).Execute();
             }
         }
-        public static void AddMentor(Mentor mentor, MTA.Game.ConquerStructures.Society.Apprentice appr)
+        public static void AddMentor(Mentor mentor, Apprentice appr)
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.INSERT))
                 cmd.Insert("apprentice").Insert("mentorid", mentor.ID).Insert("apprenticeid", appr.ID)

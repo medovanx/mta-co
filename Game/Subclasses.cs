@@ -153,7 +153,7 @@ namespace MTA.Game
         }
         public void resend(Client.GameState client)
         {
-            foreach (SubClass current in this.Classes.Values)
+            foreach (SubClass current in Classes.Values)
             {
                 SendLearn((ClassID)current.ID, current.Level, client);
             }

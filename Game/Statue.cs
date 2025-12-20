@@ -51,7 +51,7 @@ namespace MTA.Game {
 
             foreach (var client in Kernel.GamePool.Values) {
                 if (Kernel.GetDistance(X, Y, client.Entity.X, client.Entity.Y) < 16 && client.Entity.MapID == 1002) {
-                    client.Send(this.SpawnPacket);
+                    client.Send(SpawnPacket);
                 }
             }
         }

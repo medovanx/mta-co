@@ -19,7 +19,7 @@ namespace MTA.Game.Attacking {
             this.attack = attack;
             this.attacker = attacker;
             this.attacked = attacked;
-            this.Execute();
+            Execute();
         }
 
         public uint damage { get; set; }
@@ -360,16 +360,16 @@ namespace MTA.Game.Attacking {
                             usespell = attacker.MonstersSpells[0];
                         usespell = attacker.MonstersSpells[rand];
 
-                        this.attack = new Attack(true);
-                        this.attack.Effect1 = Attack.AttackEffects1.None;
-                        this.attack = new Attack(true);
-                        this.attack.Attacker = this.attacker.UID;
-                        this.attack.Attacked = this.attacker.MonsterInfo.ID;
-                        this.attack.X = this.attacked.X;
-                        this.attack.Y = this.attacked.Y;
-                        this.attack.AttackType = 52;
-                        this.attack.SkillName = usespell;
-                        this.attacker.MonsterInfo.SendScreen(this.attack);
+                        attack = new Attack(true);
+                        attack.Effect1 = Attack.AttackEffects1.None;
+                        attack = new Attack(true);
+                        attack.Attacker = attacker.UID;
+                        attack.Attacked = attacker.MonsterInfo.ID;
+                        attack.X = attacked.X;
+                        attack.Y = attacked.Y;
+                        attack.AttackType = 52;
+                        attack.SkillName = usespell;
+                        attacker.MonsterInfo.SendScreen(attack);
                         attacker.MonsterInfo.SpellID = usespell;
 
                         switch (usespell) {
@@ -561,16 +561,16 @@ namespace MTA.Game.Attacking {
                         attacked.Owner.SendScreen(suse);
 
 
-                        this.attack = new Attack(true);
-                        this.attack.Effect1 = Attack.AttackEffects1.None;
-                        this.attack = new Attack(true);
-                        this.attack.Attacker = this.attacker.UID;
-                        this.attack.Attacked = this.attacker.MonsterInfo.ID;
-                        this.attack.X = this.attacked.X;
-                        this.attack.Y = this.attacked.Y;
-                        this.attack.AttackType = 52;
-                        this.attack.SkillName = this.attacker.MonsterInfo.SpellID;
-                        this.attacker.MonsterInfo.SendScreen(this.attack);
+                        attack = new Attack(true);
+                        attack.Effect1 = Attack.AttackEffects1.None;
+                        attack = new Attack(true);
+                        attack.Attacker = attacker.UID;
+                        attack.Attacked = attacker.MonsterInfo.ID;
+                        attack.X = attacked.X;
+                        attack.Y = attacked.Y;
+                        attack.AttackType = 52;
+                        attack.SkillName = attacker.MonsterInfo.SpellID;
+                        attacker.MonsterInfo.SendScreen(attack);
                     }
                 }
                 else {
@@ -3562,10 +3562,10 @@ namespace MTA.Game.Attacking {
                                                 attacker.AddFlag(Update.Flags.Ride);
                                                 attacker.Stamina -= 100;
                                                 attacker.Owner.Vigor = attacker.Owner.MaxVigor;
-                                                this.attacker.Vigor = this.attacker.Owner.MaxVigor;
+                                                attacker.Vigor = attacker.Owner.MaxVigor;
                                                 new Vigor(true) {
-                                                    Amount = this.attacker.Owner.Vigor
-                                                }.Send(this.attacker.Owner);
+                                                    Amount = attacker.Owner.Vigor
+                                                }.Send(attacker.Owner);
                                             }
                                         }
 

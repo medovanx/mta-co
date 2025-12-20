@@ -5,7 +5,7 @@ using System.IO;
 
 namespace MTA.Network.GamePackets
 {
-    public class Attacked { public ushort X, Y; public MTA.Game.Enums.ConquerAngle Facing; }
+    public class Attacked { public ushort X, Y; public Game.Enums.ConquerAngle Facing; }
     public class TryTrip : Interfaces.IPacket
     {
         public class DamageClass
@@ -61,7 +61,7 @@ namespace MTA.Network.GamePackets
 
         public void Deserialize(byte[] buffer)
         {
-            this.Buffer = buffer;
+            Buffer = buffer;
         }
         public uint Damage
         {
@@ -103,14 +103,14 @@ namespace MTA.Network.GamePackets
             public Attack.AttackEffects1 Eff1;
             public Attack.AttackEffects2 Eff2;
 
-            public static implicit operator uint(SpellUse.DamageClass dmg)
+            public static implicit operator uint(DamageClass dmg)
             {
                 return dmg.Damage;
             }
 
-            public static implicit operator SpellUse.DamageClass(uint dmg)
+            public static implicit operator DamageClass(uint dmg)
             {
-                return new SpellUse.DamageClass { Damage = dmg, Hit = true };
+                return new DamageClass { Damage = dmg, Hit = true };
             }
         }
         byte[] Buffer;
@@ -199,7 +199,7 @@ namespace MTA.Network.GamePackets
 
         public void Deserialize(byte[] buffer)
         {
-            this.Buffer = buffer;
+            Buffer = buffer;
         }
         const int TargetLimit = 30;
         public byte[] ToArray()

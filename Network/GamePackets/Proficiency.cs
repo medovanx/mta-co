@@ -30,11 +30,11 @@ namespace MTA.Network.GamePackets
         {
             get
             {
-                return (byte)MTA.BitConverter.ToUInt16(this.Buffer, 0x10);
+                return (byte)BitConverter.ToUInt16(Buffer, 0x10);
             }
             set
             {
-                Writer.WriteUInt16(value, 0x10, this.Buffer);
+                WriteUInt16(value, 0x10, Buffer);
             }
         }
 

@@ -7,7 +7,7 @@
         public LazyDelegate(Action<int> action, int dueTime, ThreadPriority priority = (ThreadPriority)2)
             : base(action, dueTime, priority)
         {
-            base.bool_0 = false;
+            bool_0 = false;
         }
     }
 }

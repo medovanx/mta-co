@@ -8,7 +8,7 @@ namespace MTA.Game
         public static void Load()
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("guildtop"))
-            using (var r = new Database.MySqlReader(cmd))
+            using (var r = new MySqlReader(cmd))
                 if (r.Read())
                 {
                     GuildLeader = r.ReadUInt32("GuildLeader");

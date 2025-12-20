@@ -15,8 +15,8 @@
             if (Create)
             {
                 Buffer = new byte[8 + 16];
-                Writer.WriteUInt16(16, 0, Buffer);
-                Writer.WriteUInt16(2533, 2, Buffer);
+                WriteUInt16(16, 0, Buffer);
+                WriteUInt16(2533, 2, Buffer);
             }
         }
 

@@ -17,8 +17,8 @@ namespace MTA.Game.Attacking
 
             public coords(double x, double y)
             {
-                this.X = (int)x;
-                this.Y = (int)y;
+                X = (int)x;
+                Y = (int)y;
             }
         }
         bool Contains(List<coords> Coords, coords Check)

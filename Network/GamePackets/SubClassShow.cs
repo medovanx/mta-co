@@ -24,58 +24,58 @@ namespace MTA.Network.GamePackets {
         private ushort Position = 30;
 
         public SubClassShow(ushort entry = 0) {
-            this.packet = new byte[38 + entry * 3];
-            WriteUInt16((ushort)(this.packet.Length - 8), 0, this.packet);
-            WriteUInt16(2320, 2, this.packet);
-            WriteUInt32((uint)Time32.timeGetTime().GetHashCode(), 4, this.packet);
+            packet = new byte[38 + entry * 3];
+            WriteUInt16((ushort)(packet.Length - 8), 0, packet);
+            WriteUInt16(2320, 2, packet);
+            WriteUInt32((uint)Time32.timeGetTime().GetHashCode(), 4, packet);
             if (entry != 0) {
-                this.Count = entry;
+                Count = entry;
             }
         }
 
         public ushort ID {
-            get { return BitConverter.ToUInt16(this.packet, 8); }
-            set { WriteUInt16(value, 8, this.packet); }
+            get { return BitConverter.ToUInt16(packet, 8); }
+            set { WriteUInt16(value, 8, packet); }
         }
 
         public byte Class {
-            get { return this.packet[10]; }
-            set { WriteByte(value, 10, this.packet); }
+            get { return packet[10]; }
+            set { WriteByte(value, 10, packet); }
         }
 
         public byte Level {
-            get { return this.packet[11]; }
-            set { WriteByte(value, 11, this.packet); }
+            get { return packet[11]; }
+            set { WriteByte(value, 11, packet); }
         }
 
         public ushort Study {
-            get { return BitConverter.ToUInt16(this.packet, 10); }
-            set { WriteUInt16(value, 10, this.packet); }
+            get { return BitConverter.ToUInt16(packet, 10); }
+            set { WriteUInt16(value, 10, packet); }
         }
 
         public ushort StudyReceive {
-            get { return BitConverter.ToUInt16(this.packet, 18); }
-            set { WriteUInt16(value, 18, this.packet); }
+            get { return BitConverter.ToUInt16(packet, 18); }
+            set { WriteUInt16(value, 18, packet); }
         }
 
         public ushort Count {
-            get { return BitConverter.ToUInt16(this.packet, 26); }
-            set { WriteUInt16(value, 26, this.packet); }
+            get { return BitConverter.ToUInt16(packet, 26); }
+            set { WriteUInt16(value, 26, packet); }
         }
 
         public void Apprend(byte ID, byte Pharse, byte Level) {
-            if ((this.packet.Length - 8) >= this.Position + 3) {
-                WriteByte(ID, Position, this.packet);
+            if ((packet.Length - 8) >= Position + 3) {
+                WriteByte(ID, Position, packet);
                 Position++;
-                WriteByte(Pharse, Position, this.packet);
+                WriteByte(Pharse, Position, packet);
                 Position++;
-                WriteByte(Level, Position, this.packet);
+                WriteByte(Level, Position, packet);
                 Position++;
             }
         }
 
         public byte[] ToArray() {
-            return this.packet;
+            return packet;
         }
     }
 }

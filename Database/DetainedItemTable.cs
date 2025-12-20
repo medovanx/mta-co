@@ -5,7 +5,7 @@ namespace MTA.Database
 {
     public class DetainedItemTable
     {
-        public static Counter Counter = new MTA.Counter(1);
+        public static Counter Counter = new Counter(1);
         public static void LoadDetainedItems(Client.GameState client)
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("detaineditems").Where("OwnerUID", client.Entity.UID))
@@ -107,16 +107,16 @@ namespace MTA.Database
                 basic += 50;
             if (item.ID / 100000 == 4 || item.ID / 100000 == 5)
             {
-                if (item.SocketOne != MTA.Game.Enums.Gem.NoSocket)
+                if (item.SocketOne != Game.Enums.Gem.NoSocket)
                     basic += 100;
-                if (item.SocketTwo != MTA.Game.Enums.Gem.NoSocket)
+                if (item.SocketTwo != Game.Enums.Gem.NoSocket)
                     basic += 400;
             }
             else
             {
-                if (item.SocketOne != MTA.Game.Enums.Gem.NoSocket)
+                if (item.SocketOne != Game.Enums.Gem.NoSocket)
                     basic += 400;
-                if (item.SocketTwo != MTA.Game.Enums.Gem.NoSocket)
+                if (item.SocketTwo != Game.Enums.Gem.NoSocket)
                     basic += 1600;
             }
             basic += item.Plus * 100;

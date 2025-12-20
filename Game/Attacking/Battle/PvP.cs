@@ -31,10 +31,10 @@ namespace MTA
                 case Attack.Melee:
                     {
                         if (!Attacker.Transformed)
-                            Damage += MyMath.Generate(Attacker.MinAttack, Attacker.MaxAttack);
+                            Damage += Generate(Attacker.MinAttack, Attacker.MaxAttack);
                         else
-                            Damage = MyMath.Generate(Attacker.TransformationMinAttack, Attacker.TransformationMaxAttack);
-                        MTA.Game.Attacking.Calculate.Refinary(Attacker, Target, ref Damage, ref Packet);
+                            Damage = Generate(Attacker.TransformationMinAttack, Attacker.TransformationMaxAttack);
+                        Game.Attacking.Calculate.Refinary(Attacker, Target, ref Damage, ref Packet);
                         //       Damage += Attacker.getFan(false);
 
                         var bonus = Attacker.Gems[GemTypes.Dragon];
@@ -59,7 +59,7 @@ namespace MTA
 
 
                         Damage = Attacker.MagicAttack;
-                        MTA.Game.Attacking.Calculate.Refinary(Attacker, Target, ref Damage, ref Packet, true);
+                        Game.Attacking.Calculate.Refinary(Attacker, Target, ref Damage, ref Packet, true);
 
                         //Damage *= ((Double)(100 - Target.MagicDefence) / 100);
                         //Damage -= Target.Block;
@@ -78,8 +78,8 @@ namespace MTA
                     }
                 case Attack.Ranged:
                     {
-                        Damage = MyMath.Generate(Attacker.MinAttack, Attacker.MaxAttack);
-                        MTA.Game.Attacking.Calculate.Refinary(Attacker, Target, ref Damage, ref Packet);
+                        Damage = Generate(Attacker.MinAttack, Attacker.MaxAttack);
+                        Game.Attacking.Calculate.Refinary(Attacker, Target, ref Damage, ref Packet);
                         //      Damage += Attacker.getFan(false);
 
                         var bonus = Attacker.Gems[GemTypes.Dragon];
@@ -121,7 +121,7 @@ namespace MTA
                 {
                     double Power = Attacker.Breaktrough - Target.Counteraction;
                     Power = Power / 10;
-                    if (MyMath.Success(Power))
+                    if (Success(Power))
                     {
                         bypass = true;
                         Packet.Effect1 |= Attack.AttackEffects1.Break;
@@ -197,8 +197,8 @@ namespace MTA
             bool magic = false;
             if ((spells.Contains(Info.ID) || (Info.WeaponSubtype.Count > 0)) && !Info.WeaponSubtype.Contains(500) && !Info.WeaponSubtype.Contains(613))
             {
-                Damage = MyMath.Generate(Attacker.MinAttack, Attacker.MaxAttack);
-                MTA.Game.Attacking.Calculate.Refinary(Attacker, Target, ref Damage, ref Packet);
+                Damage = Generate(Attacker.MinAttack, Attacker.MaxAttack);
+                Game.Attacking.Calculate.Refinary(Attacker, Target, ref Damage, ref Packet);
                 //    Damage += Attacker.getFan(false);                
                 double bonus = Attacker.Gems[GemTypes.Dragon];
                 if (bonus > 0)
@@ -225,8 +225,8 @@ namespace MTA
             }
             else if (Info.WeaponSubtype.Contains(500) || Info.WeaponSubtype.Contains(613))
             {
-                Damage = MyMath.Generate(Attacker.MinAttack, Attacker.MaxAttack);
-                MTA.Game.Attacking.Calculate.Refinary(Attacker, Target, ref Damage, ref Packet);
+                Damage = Generate(Attacker.MinAttack, Attacker.MaxAttack);
+                Game.Attacking.Calculate.Refinary(Attacker, Target, ref Damage, ref Packet);
 
                 //    Damage += Attacker.getFan(false);
                 if (Info.Power > 30000)
@@ -254,7 +254,7 @@ namespace MTA
             {
                 magic = true;
                 Damage = Attacker.MagicAttack;
-                MTA.Game.Attacking.Calculate.Refinary(Attacker, Target, ref Damage, ref Packet, true);
+                Game.Attacking.Calculate.Refinary(Attacker, Target, ref Damage, ref Packet, true);
 
                 //        Damage += Attacker.getFan(true);
 
@@ -301,7 +301,7 @@ namespace MTA
                 {
                     double Power = Attacker.Breaktrough - Target.Counteraction;
                     Power = Power / 10;
-                    if (MyMath.Success(Power))
+                    if (Success(Power))
                     {
                         bypass = true;
                         Packet.Effect1 |= Attack.AttackEffects1.Break;

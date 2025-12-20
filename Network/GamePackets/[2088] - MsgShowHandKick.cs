@@ -9,8 +9,8 @@
             if (Create)
             {
                 Buffer = new byte[28 + 8];
-                Writer.Write(Buffer.Length - 8, 0, Buffer);
-                Writer.Write(2088, 2, Buffer);
+                Write(Buffer.Length - 8, 0, Buffer);
+                Write(2088, 2, Buffer);
                 Buffer[4] = 1;
             }
         }

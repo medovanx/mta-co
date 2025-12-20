@@ -51,12 +51,12 @@ namespace MTA.Game.Events
         /// <summary>
         /// Called when a monster is killed (optional - events can implement if they need to handle monster deaths)
         /// </summary>
-        void OnMonsterKilled(MTA.Database.MonsterInformation monster, Game.Entity killer);
+        void OnMonsterKilled(Database.MonsterInformation monster, Entity killer);
 
         /// <summary>
         /// Check if normal monster drop should be skipped for this monster (event handles rewards instead)
         /// </summary>
-        bool ShouldSkipNormalDrop(MTA.Database.MonsterInformation monster, ushort mapId);
+        bool ShouldSkipNormalDrop(Database.MonsterInformation monster, ushort mapId);
     }
 
     /// <summary>

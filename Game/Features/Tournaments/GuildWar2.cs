@@ -220,7 +220,7 @@ namespace MTA.Game
 
         private static void UpdatePole(SobNpcSpawn pole)
         {
-            new MTA.Database.MySqlCommand(MTA.Database.MySqlCommandType.UPDATE)
+            new Database.MySqlCommand(Database.MySqlCommandType.UPDATE)
             .Update("sobnpcs").Set("name", pole.Name).Set("life", Pole.Hitpoints).Where("id", pole.UID).Execute();
         }
     }

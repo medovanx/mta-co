@@ -389,7 +389,7 @@ namespace MTA.Network
             }
             catch (Exception e)
             {
-                MTA.Console.WriteLine(e);
+                Console.WriteLine(e);
             }
         }
         public static void Int(int arg, int offset, byte[] buffer)

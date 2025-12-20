@@ -6,7 +6,7 @@ namespace MTA.Client.Commands
     {
         public static bool HandleCommand(GameState client, string[] data, string mess)
         {
-            return (global::System.String)data[0] switch
+            return (String)data[0] switch
             {
                 "gold" => handleGoldCommand(client, data, mess),
                 "cps" => handleCpsCommand(client, data, mess),
@@ -786,7 +786,7 @@ namespace MTA.Client.Commands
             }
 
             // Apply revive logic to target
-            targetClient.Entity.Action = MTA.Game.Enums.ConquerAction.None;
+            targetClient.Entity.Action = Game.Enums.ConquerAction.None;
             targetClient.ReviveStamp = Time32.Now;
             targetClient.Attackable = false;
 

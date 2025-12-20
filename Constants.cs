@@ -46,7 +46,7 @@ namespace MTA
             return fullPath;
         }
 
-        public static readonly System.Collections.Generic.List<ushort> RideForbiddenMaps = new System.Collections.Generic.List<ushort>()
+        public static readonly List<ushort> RideForbiddenMaps = new List<ushort>()
         {
             1004,
             1511
@@ -76,7 +76,7 @@ namespace MTA
         public static List<ushort> QuestsMaps = new List<ushort> {
            6752
         };
-        public static readonly System.Collections.Generic.List<ulong> ActiveNPC = new System.Collections.Generic.List<ulong>()
+        public static readonly List<ulong> ActiveNPC = new List<ulong>()
         {
             10081,
             10082,
@@ -241,36 +241,36 @@ namespace MTA
 
         public const ushort SocketOneProgress = 100,
             SocketTwoProgress = 300;
-        public static readonly System.Collections.Generic.List<ushort> revnomap = new System.Collections.Generic.List<ushort> {
+        public static readonly List<ushort> revnomap = new List<ushort> {
             1, 2, 3, 0x80c, 0x1b61, 0x80c, 0x79e, 0x3ed, 0x1b5d, 0x1b5e, 0x1b60, 0x1770, 0x1774, 0x1771, 0x1772, 0x1773,
             0x734, 0x1b59, 0x709, 0x5e4, 0x5ee, 0x1e61, 0x22ad, 0xd05, 0x442, 0x4c9, 1860, 700, 3073
          };
-        public static readonly System.Collections.Generic.List<ushort> MemoryAgateNotAllowedMap = new System.Collections.Generic.List<ushort>
+        public static readonly List<ushort> MemoryAgateNotAllowedMap = new List<ushort>
         {
 
         };
 
-        public static readonly System.Collections.Generic.List<ulong> NoVipTele = new System.Collections.Generic.List<ulong> {
+        public static readonly List<ulong> NoVipTele = new List<ulong> {
             1645, 1, 2, 3, 0x80c, 0x1b61, 0x40e, 0x3ed, 0x80c, 0x1770, 0x1774, 0x1771, 0x1772, 0x1773, 0x1b5d, 0x1b5e, 0x1b60,
             0x734, 8892, 1645, 0x1b59, 0x817, 0x709, 0x5e4, 0x5ee, 0x1e61, 0x22ad, 0xd05, 0x442, 0x4c9, 0x5e5, 0x79e, 1860, 700, 3070, 3071, 3691, 3692, 3693, 3694, 1730, 1731, 1732, 1733, 1734, 1735, 3073, 3072
          };
 
-        public static readonly System.Collections.Generic.List<ulong> novip = new System.Collections.Generic.List<ulong>()
+        public static readonly List<ulong> novip = new List<ulong>()
         {
             3090,
             8892,
             1645
         };
-        public static readonly System.Collections.Generic.List<ulong> fbss = new System.Collections.Generic.List<ulong>()
+        public static readonly List<ulong> fbss = new List<ulong>()
         {
             1707,
             1238
         };
-        public static readonly System.Collections.Generic.List<ulong> horsepk = new System.Collections.Generic.List<ulong>()
+        public static readonly List<ulong> horsepk = new List<ulong>()
         {
             3707
         };
-        public static readonly System.Collections.Generic.List<string> NoFog = new System.Collections.Generic.List<string>()
+        public static readonly List<string> NoFog = new List<string>()
         {
             "Clannad",
             "Btooom",
@@ -278,7 +278,7 @@ namespace MTA
             "Hades",
             "Centar",
         };
-        public static readonly System.Collections.Generic.List<ushort> PKForbiddenMaps = new System.Collections.Generic.List<ushort>()
+        public static readonly List<ushort> PKForbiddenMaps = new List<ushort>()
         {
             1036,
             1002,
@@ -335,7 +335,7 @@ namespace MTA
             return false;
         }
 
-        public static readonly System.Collections.Generic.List<ushort> NoHp = new System.Collections.Generic.List<ushort> {
+        public static readonly List<ushort> NoHp = new List<ushort> {
             1707,
             3070,
             1238,
@@ -347,11 +347,11 @@ namespace MTA
             1547,
             1548
          };
-        public static readonly System.Collections.Generic.List<ulong> blackname = new System.Collections.Generic.List<ulong>()
+        public static readonly List<ulong> blackname = new List<ulong>()
         {
             3071
         };
-        public static readonly System.Collections.Generic.List<ulong> FBandSSEvent = new System.Collections.Generic.List<ulong>()
+        public static readonly List<ulong> FBandSSEvent = new List<ulong>()
         {
             1543,
             1544,
@@ -360,7 +360,7 @@ namespace MTA
             1547,
             1548
         };
-        public static readonly System.Collections.Generic.List<ulong> EtaleMaps = new System.Collections.Generic.List<ulong>()
+        public static readonly List<ulong> EtaleMaps = new List<ulong>()
         {
         1543,
         1544,
@@ -369,7 +369,7 @@ namespace MTA
         1547,
         1548,
         };
-        public static readonly System.Collections.Generic.List<ulong> SSFB = new System.Collections.Generic.List<ulong>()
+        public static readonly List<ulong> SSFB = new List<ulong>()
         {
 
         1543,
@@ -379,7 +379,7 @@ namespace MTA
         1547,
         1548
         };
-        public static readonly System.Collections.Generic.List<ushort> PKFreeMaps = new System.Collections.Generic.List<ushort>()
+        public static readonly List<ushort> PKFreeMaps = new List<ushort>()
         {
             3073,
             3691,
@@ -449,11 +449,11 @@ namespace MTA
             1509
         };
 
-        public static readonly System.Collections.Generic.List<int> SoulList = new System.Collections.Generic.List<int>()
+        public static readonly List<int> SoulList = new List<int>()
         {
             80032000
         };
-        public static readonly System.Collections.Generic.List<int> MaxItems = new System.Collections.Generic.List<int>()
+        public static readonly List<int> MaxItems = new List<int>()
         {
             410439,
             420439,
@@ -473,7 +473,7 @@ namespace MTA
             800110,
             800320
         };
-        public static readonly System.Collections.Generic.List<string> monsters = new System.Collections.Generic.List<string>()
+        public static readonly List<string> monsters = new List<string>()
         {
              "CaptainCook",
              "PirateTurner",
@@ -485,7 +485,7 @@ namespace MTA
              "EidArenaking",
              "EidArena"
         };
-        public static readonly System.Collections.Generic.List<ushort> twinskill = new System.Collections.Generic.List<ushort>()
+        public static readonly List<ushort> twinskill = new List<ushort>()
         {
                        8001 ,
            1165 ,
@@ -510,7 +510,7 @@ namespace MTA
             11070,
             11650
         };
-        public static readonly System.Collections.Generic.List<int> AvaibleSpells = new System.Collections.Generic.List<int>()
+        public static readonly List<int> AvaibleSpells = new List<int>()
         {
            1045,
            12020,
@@ -521,7 +521,7 @@ namespace MTA
            1046
 
         };
-        public static readonly System.Collections.Generic.List<ushort> Damage1Map = new System.Collections.Generic.List<ushort>()
+        public static readonly List<ushort> Damage1Map = new List<ushort>()
         {
             12470,
             1844,

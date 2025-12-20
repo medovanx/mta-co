@@ -117,9 +117,9 @@ namespace MTA.Network.GamePackets
             get { return Program.Encoding.GetString(Buffer, 45 + 8, 16); }
             set { WriteString(value, 45 + 8, Buffer); }
         }
-        public MTA.Game.MapObjectType MapObjType
+        public Game.MapObjectType MapObjType
         {
-            get { return MTA.Game.MapObjectType.Item; }
+            get { return Game.MapObjectType.Item; }
             set { }
         }
         public void Send(Client.GameState client)

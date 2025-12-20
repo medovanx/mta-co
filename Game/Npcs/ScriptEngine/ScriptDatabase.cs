@@ -21,7 +21,7 @@ namespace MTA.Game.Npcs.ScriptEngine
         /// </summary>
         public static void LoadSettings()
         {
-            MTA.Console.WriteLine("Loading Script Settings...");
+            Console.WriteLine("Loading Script Settings...");
 
             cssettings = new ScriptSettings();
             cssettings.AddNamespace("System");
@@ -43,7 +43,7 @@ namespace MTA.Game.Npcs.ScriptEngine
             cssettings.Framework = "v4.0";
             cssettings.Language = ScriptLanguage.CSharp;
 
-            MTA.Console.WriteLine(cssettings._namespaces.Count + " Script Settings Loaded...");
+            Console.WriteLine(cssettings._namespaces.Count + " Script Settings Loaded...");
         }
 
         /// <summary>

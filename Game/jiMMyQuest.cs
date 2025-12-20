@@ -37,7 +37,7 @@ namespace MTA.Game
                 npc.Y = (ushort)(Y - 1);
                 npc.MapID = 1002;
 
-                Game.Map Map = Kernel.Maps[1002];
+                Map Map = Kernel.Maps[1002];
                 if (Map.SelectCoordonates(ref X, ref Y))
                 {
                     Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
@@ -45,7 +45,7 @@ namespace MTA.Game
                     floorItem.Value = 50000;
                     floorItem.ItemID = ItemID;
                     floorItem.MapID = 1002;
-                    floorItem.MapObjType = Game.MapObjectType.Item;
+                    floorItem.MapObjType = MapObjectType.Item;
                     floorItem.X = X;
                     floorItem.Y = Y;
                     floorItem.Type = Network.GamePackets.FloorItem.Drop;
@@ -85,7 +85,7 @@ namespace MTA.Game
                 npc.Y = (ushort)(Y - 1);
                 npc.MapID = 1002;
 
-                Game.Map Map = Kernel.Maps[1002];
+                Map Map = Kernel.Maps[1002];
                 if (Map.SelectCoordonates(ref X, ref Y))
                 {
                     Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
@@ -93,7 +93,7 @@ namespace MTA.Game
                     floorItem.Value = 50000;
                     floorItem.ItemID = ItemID;
                     floorItem.MapID = 1002;
-                    floorItem.MapObjType = Game.MapObjectType.Item;
+                    floorItem.MapObjType = MapObjectType.Item;
                     floorItem.X = X;
                     floorItem.Y = Y;
                     floorItem.Type = Network.GamePackets.FloorItem.Drop;
@@ -134,7 +134,7 @@ namespace MTA.Game
                 npc.MapID = 1002;
 
 
-                Game.Map Map = Kernel.Maps[1002];
+                Map Map = Kernel.Maps[1002];
                 if (Map.SelectCoordonates(ref X, ref Y))
                 {
                     Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
@@ -142,7 +142,7 @@ namespace MTA.Game
                     floorItem.Value = 50000;
                     floorItem.ItemID = ItemID;
                     floorItem.MapID = 1002;
-                    floorItem.MapObjType = Game.MapObjectType.Item;
+                    floorItem.MapObjType = MapObjectType.Item;
                     floorItem.X = X;
                     floorItem.Y = Y;
                     floorItem.Type = Network.GamePackets.FloorItem.Drop;
@@ -179,7 +179,7 @@ namespace MTA.Game
                 npc.Y = (ushort)(Y - 1);
                 npc.MapID = 1002;
 
-                Game.Map Map = Kernel.Maps[1002];
+                Map Map = Kernel.Maps[1002];
                 if (Map.SelectCoordonates(ref X, ref Y))
                 {
                     Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
@@ -187,7 +187,7 @@ namespace MTA.Game
                     floorItem.Value = 50000;
                     floorItem.ItemID = ItemID;
                     floorItem.MapID = 1002;
-                    floorItem.MapObjType = Game.MapObjectType.Item;
+                    floorItem.MapObjType = MapObjectType.Item;
                     floorItem.X = X;
                     floorItem.Y = Y;
                     floorItem.Type = Network.GamePackets.FloorItem.Drop;
@@ -225,7 +225,7 @@ namespace MTA.Game
                 npc.Y = (ushort)(Y - 1);
                 npc.MapID = 1002;
 
-                Game.Map Map = Kernel.Maps[1002];
+                Map Map = Kernel.Maps[1002];
                 if (Map.SelectCoordonates(ref X, ref Y))
                 {
                     Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
@@ -233,7 +233,7 @@ namespace MTA.Game
                     floorItem.Value = 50000;
                     floorItem.ItemID = ItemID;
                     floorItem.MapID = 1002;
-                    floorItem.MapObjType = Game.MapObjectType.Item;
+                    floorItem.MapObjType = MapObjectType.Item;
                     floorItem.X = X;
                     floorItem.Y = Y;
                     floorItem.Type = Network.GamePackets.FloorItem.Drop;
@@ -270,7 +270,7 @@ namespace MTA.Game
                 npc.Y = (ushort)(Y - 1);
                 npc.MapID = 1002;
 
-                Game.Map Map = Kernel.Maps[1002];
+                Map Map = Kernel.Maps[1002];
                 if (Map.SelectCoordonates(ref X, ref Y))
                 {
                     Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
@@ -278,7 +278,7 @@ namespace MTA.Game
                     floorItem.Value = 50000;
                     floorItem.ItemID = ItemID;
                     floorItem.MapID = 1002;
-                    floorItem.MapObjType = Game.MapObjectType.Item;
+                    floorItem.MapObjType = MapObjectType.Item;
                     floorItem.X = X;
                     floorItem.Y = Y;
                     floorItem.Type = Network.GamePackets.FloorItem.Drop;
@@ -315,7 +315,7 @@ namespace MTA.Game
                 npc.Y = (ushort)(Y - 1);
                 npc.MapID = 1002;
 
-                Game.Map Map = Kernel.Maps[1002];
+                Map Map = Kernel.Maps[1002];
                 if (Map.SelectCoordonates(ref X, ref Y))
                 {
                     Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
@@ -323,7 +323,7 @@ namespace MTA.Game
                     floorItem.Value = 50000;
                     floorItem.ItemID = ItemID;
                     floorItem.MapID = 1002;
-                    floorItem.MapObjType = Game.MapObjectType.Item;
+                    floorItem.MapObjType = MapObjectType.Item;
                     floorItem.X = X;
                     floorItem.Y = Y;
                     floorItem.Type = Network.GamePackets.FloorItem.Drop;
@@ -362,7 +362,7 @@ namespace MTA.Game
                 npc.Y = (ushort)(Y - 1);
                 npc.MapID = 1002;
 
-                Game.Map Map = Kernel.Maps[1002];
+                Map Map = Kernel.Maps[1002];
                 if (Map.SelectCoordonates(ref X, ref Y))
                 {
                     Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
@@ -370,7 +370,7 @@ namespace MTA.Game
                     floorItem.Value = 50000;
                     floorItem.ItemID = ItemID;
                     floorItem.MapID = 1002;
-                    floorItem.MapObjType = Game.MapObjectType.Item;
+                    floorItem.MapObjType = MapObjectType.Item;
                     floorItem.X = X;
                     floorItem.Y = Y;
                     floorItem.Type = Network.GamePackets.FloorItem.Drop;
@@ -433,7 +433,7 @@ namespace MTA.Game
                 npc.Y = (ushort)(Y - 1);
                 npc.MapID = 1002;
 
-                Game.Map Map = Kernel.Maps[1002];
+                Map Map = Kernel.Maps[1002];
                 if (Map.SelectCoordonates(ref X, ref Y))
                 {
                     Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
@@ -441,7 +441,7 @@ namespace MTA.Game
                     floorItem.Value = 50000;
                     floorItem.ItemID = ItemID;
                     floorItem.MapID = 1002;
-                    floorItem.MapObjType = Game.MapObjectType.Item;
+                    floorItem.MapObjType = MapObjectType.Item;
                     floorItem.X = X;
                     floorItem.Y = Y;
                     floorItem.Type = Network.GamePackets.FloorItem.Drop;
@@ -479,7 +479,7 @@ namespace MTA.Game
                 npc.Y = (ushort)(Y - 1);
                 npc.MapID = 1002;
 
-                Game.Map Map = Kernel.Maps[1002];
+                Map Map = Kernel.Maps[1002];
                 if (Map.SelectCoordonates(ref X, ref Y))
                 {
                     Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
@@ -487,7 +487,7 @@ namespace MTA.Game
                     floorItem.Value = 50000;
                     floorItem.ItemID = ItemID;
                     floorItem.MapID = 1002;
-                    floorItem.MapObjType = Game.MapObjectType.Item;
+                    floorItem.MapObjType = MapObjectType.Item;
                     floorItem.X = X;
                     floorItem.Y = Y;
                     floorItem.Type = Network.GamePackets.FloorItem.Drop;
@@ -525,7 +525,7 @@ namespace MTA.Game
                 npc.Y = (ushort)(Y - 1);
                 npc.MapID = 1002;
 
-                Game.Map Map = Kernel.Maps[1002];
+                Map Map = Kernel.Maps[1002];
                 if (Map.SelectCoordonates(ref X, ref Y))
                 {
                     Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
@@ -533,7 +533,7 @@ namespace MTA.Game
                     floorItem.Value = 50000;
                     floorItem.ItemID = ItemID;
                     floorItem.MapID = 1002;
-                    floorItem.MapObjType = Game.MapObjectType.Item;
+                    floorItem.MapObjType = MapObjectType.Item;
                     floorItem.X = X;
                     floorItem.Y = Y;
                     floorItem.Type = Network.GamePackets.FloorItem.Drop;
@@ -571,7 +571,7 @@ namespace MTA.Game
                 npc.Y = (ushort)(Y - 1);
                 npc.MapID = 1002;
 
-                Game.Map Map = Kernel.Maps[1002];
+                Map Map = Kernel.Maps[1002];
                 if (Map.SelectCoordonates(ref X, ref Y))
                 {
                     Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
@@ -579,7 +579,7 @@ namespace MTA.Game
                     floorItem.Value = 50000;
                     floorItem.ItemID = ItemID;
                     floorItem.MapID = 1002;
-                    floorItem.MapObjType = Game.MapObjectType.Item;
+                    floorItem.MapObjType = MapObjectType.Item;
                     floorItem.X = X;
                     floorItem.Y = Y;
                     floorItem.Type = Network.GamePackets.FloorItem.Drop;
@@ -617,7 +617,7 @@ namespace MTA.Game
                 npc.Y = (ushort)(Y - 1);
                 npc.MapID = 1002;
 
-                Game.Map Map = Kernel.Maps[1002];
+                Map Map = Kernel.Maps[1002];
                 if (Map.SelectCoordonates(ref X, ref Y))
                 {
                     Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
@@ -625,7 +625,7 @@ namespace MTA.Game
                     floorItem.Value = 50000;
                     floorItem.ItemID = ItemID;
                     floorItem.MapID = 1002;
-                    floorItem.MapObjType = Game.MapObjectType.Item;
+                    floorItem.MapObjType = MapObjectType.Item;
                     floorItem.X = X;
                     floorItem.Y = Y;
                     floorItem.Type = Network.GamePackets.FloorItem.Drop;
@@ -663,7 +663,7 @@ namespace MTA.Game
                 npc.Y = (ushort)(Y - 1);
                 npc.MapID = 1002;
 
-                Game.Map Map = Kernel.Maps[1002];
+                Map Map = Kernel.Maps[1002];
                 if (Map.SelectCoordonates(ref X, ref Y))
                 {
                     Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
@@ -671,7 +671,7 @@ namespace MTA.Game
                     floorItem.Value = 50000;
                     floorItem.ItemID = ItemID;
                     floorItem.MapID = 1002;
-                    floorItem.MapObjType = Game.MapObjectType.Item;
+                    floorItem.MapObjType = MapObjectType.Item;
                     floorItem.X = X;
                     floorItem.Y = Y;
                     floorItem.Type = Network.GamePackets.FloorItem.Drop;
@@ -709,7 +709,7 @@ namespace MTA.Game
                 npc.Y = (ushort)(Y - 1);
                 npc.MapID = 1002;
 
-                Game.Map Map = Kernel.Maps[1002];
+                Map Map = Kernel.Maps[1002];
                 if (Map.SelectCoordonates(ref X, ref Y))
                 {
                     Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
@@ -717,7 +717,7 @@ namespace MTA.Game
                     floorItem.Value = 50000;
                     floorItem.ItemID = ItemID;
                     floorItem.MapID = 1002;
-                    floorItem.MapObjType = Game.MapObjectType.Item;
+                    floorItem.MapObjType = MapObjectType.Item;
                     floorItem.X = X;
                     floorItem.Y = Y;
                     floorItem.Type = Network.GamePackets.FloorItem.Drop;

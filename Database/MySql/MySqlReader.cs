@@ -17,7 +17,7 @@ namespace MTA.Database
             {
                 _dataset = new DataSet();
                 _row = 0;
-                using (MySql.Data.MySqlClient.MySqlConnection conn = DataHolder.MySqlConnection)
+                using (MySqlConnection conn = DataHolder.MySqlConnection)
                 {
                     conn.Open();
                     using (var DataAdapter = new MySqlDataAdapter(command.Command, conn))
@@ -141,14 +141,14 @@ namespace MTA.Database
         public uint method_6(string columnName)
         {
             uint num = 0;
-            uint.TryParse(this._datarow[columnName].ToString(), out num);
+            uint.TryParse(_datarow[columnName].ToString(), out num);
             uint num1 = num;
             return num1;
         }
         public long method_7(string columnName)
         {
             long num = 0;
-            long.TryParse(this._datarow[columnName].ToString(), out num);
+            long.TryParse(_datarow[columnName].ToString(), out num);
             long num1 = num;
             return num1;
         }

@@ -26,7 +26,7 @@ namespace MTA.Game
             this.uid = uid;
             this.x = x;
             this.y = y;
-            this.MapID = map;
+            MapID = map;
 
             SpawnPacket = new byte[8 + Entity._Names + 40];
             WriteUInt16((ushort)(Entity._Names + 40), 0, SpawnPacket);
@@ -48,12 +48,12 @@ namespace MTA.Game
         public GameState Owner { get { return null; } }
         public MapObjectType MapObjType { get { return MapObjectType.StaticEntity; } }
 
-        public void SendSpawn(Client.GameState client)
+        public void SendSpawn(GameState client)
         {
             SendSpawn(client, true);
         }
 
-        public void SendSpawn(Client.GameState client, bool checkScreen)
+        public void SendSpawn(GameState client, bool checkScreen)
         {
             if (client.Screen.Add(this) || !checkScreen)
                 client.Send(SpawnPacket);
@@ -108,9 +108,9 @@ namespace MTA.Game
             Viable = true;
 
             var itemData = raceItems[Kernel.Random.Next(raceItems.Length)];
-            this.mesh = itemData.Item1;
-            this.name = itemData.Item2;
-            this.level = itemData.Item3;
+            mesh = itemData.Item1;
+            name = itemData.Item2;
+            level = itemData.Item3;
 
             WriteUInt32(mesh, Entity._Mesh, SpawnPacket);
             WriteUInt16(level, Entity._MonsterLevel, SpawnPacket);
@@ -119,9 +119,9 @@ namespace MTA.Game
         public void DoFlag()
         {
             Viable = true;
-            this.mesh = FlagMesh;
-            this.name = "Flag";
-            this.level = 1;
+            mesh = FlagMesh;
+            name = "Flag";
+            level = 1;
 
             WriteUInt32(mesh, Entity._Mesh, SpawnPacket);
             WriteUInt16(level, Entity._MonsterLevel, SpawnPacket);
@@ -132,9 +132,9 @@ namespace MTA.Game
             SetBy = setter;
             Viable = true;
 
-            this.mesh = 761;
-            this.name = "Frozen Trap";
-            this.level = 1;
+            mesh = 761;
+            name = "Frozen Trap";
+            level = 1;
 
             WriteUInt32(mesh, Entity._Mesh, SpawnPacket);
             WriteUInt16(level, Entity._MonsterLevel, SpawnPacket);

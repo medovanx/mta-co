@@ -39,7 +39,7 @@ namespace MTA.Network.GamePackets
         {
             this.Experience = Experience;
             this.ID = ID;
-            this.IsSkill = 1;
+            IsSkill = 1;
         }
 
         public void AppendProficiency(ushort ID, uint Experience, uint NeedExperience)

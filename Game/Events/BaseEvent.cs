@@ -95,7 +95,7 @@ namespace MTA.Game.Events
             // Override in derived classes for periodic updates
         }
 
-        public virtual void OnMonsterKilled(MTA.Database.MonsterInformation monster, Game.Entity killer)
+        public virtual void OnMonsterKilled(Database.MonsterInformation monster, Entity killer)
         {
             // Override in derived classes if they need to handle monster deaths
         }
@@ -104,7 +104,7 @@ namespace MTA.Game.Events
         /// Check if normal monster drop should be skipped for this monster
         /// Override in derived classes if the event handles rewards for specific monsters
         /// </summary>
-        public virtual bool ShouldSkipNormalDrop(MTA.Database.MonsterInformation monster, ushort mapId)
+        public virtual bool ShouldSkipNormalDrop(Database.MonsterInformation monster, ushort mapId)
         {
             // Default: don't skip normal drops
             return false;

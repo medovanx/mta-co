@@ -17,17 +17,17 @@ namespace MTA.Game
             private byte[] Packet;
             public CTF_Rank(GameState client)
             {
-                this.Packet = new byte[354];
-                Writer.WriteUInt16(346, 0, this.Packet);
-                Writer.WriteUInt16(1063, 2, this.Packet);
-                this.Packet[4] = 9;
-                this.Packet[6] = 1;
-                this.Packet[14] = 8;
-                Writer.WriteUInt32(client.Guild.CTFPoints, 18, this.Packet);
+                Packet = new byte[354];
+                WriteUInt16(346, 0, Packet);
+                WriteUInt16(1063, 2, Packet);
+                Packet[4] = 9;
+                Packet[6] = 1;
+                Packet[14] = 8;
+                WriteUInt32(client.Guild.CTFPoints, 18, Packet);
             }
             public void Send(GameState client)
             {
-                client.Send(this.ToArray());
+                client.Send(ToArray());
             }
             public byte[] ToArray()
             {
@@ -42,20 +42,20 @@ namespace MTA.Game
                     byte b = 0;
                     while (b < array.Length && b != 9)
                     {
-                        Writer.WriteString(array[b].Name, num, this.Packet);
+                        WriteString(array[b].Name, num, Packet);
                         num += 16;
-                        Writer.WriteUInt32(array[b].CTFPoints, num, this.Packet);
+                        WriteUInt32(array[b].CTFPoints, num, Packet);
                         num += 4;
-                        Writer.WriteUInt32(array[b].MemberCount, num, this.Packet);
+                        WriteUInt32(array[b].MemberCount, num, Packet);
                         num += 4;
-                        Writer.WriteUInt64(array[b].CTFdonationSilverold, num, this.Packet);
+                        WriteUInt64(array[b].CTFdonationSilverold, num, Packet);
                         num += 8;
-                        Writer.WriteUInt32(array[b].CTFdonationCPsold, num, this.Packet);
+                        WriteUInt32(array[b].CTFdonationCPsold, num, Packet);
                         num += 4;
                         b += 1;
                     }
                 }
-                return this.Packet;
+                return Packet;
             }
         }
         public class Base
@@ -180,7 +180,7 @@ namespace MTA.Game
             }
         }
 
-        public static bool Attackable(Game.Entity entity)
+        public static bool Attackable(Entity entity)
         {
             return Kernel.GetDistance(entity.X, entity.Y, 482, 367) > 32;
         }
@@ -226,7 +226,7 @@ namespace MTA.Game
             for (int i = 0; i < Math.Min(8, array.Length); i++)
             {
                 array[i].CalculateCTFRANK(true);
-                Database.GuildTable.SaveCTFPoins(array[i]);
+                GuildTable.SaveCTFPoins(array[i]);
 
                 if (i == 0)
                 {
@@ -276,7 +276,7 @@ namespace MTA.Game
                     array[i].ConquerPointFund += 200;
                     array[i].SilverFund += 20000000;
                 }
-                Database.GuildTable.SaveCTFReward(array[i]);
+                GuildTable.SaveCTFReward(array[i]);
                 array[i].CTFdonationCPs = array[i].CTFdonationCPsold;
                 array[i].CTFdonationSilver = array[i].CTFdonationSilverold;
                 array[i].CTFdonationCPsold = 0;

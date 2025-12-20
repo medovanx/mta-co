@@ -12,26 +12,26 @@ namespace MTA.Database
         {
             if (Network.PacketHandler.IsGirl(client.Entity.Body))
             {
-                if (!MTA.Game.Features.Flowers.Flowers.Flowers_Poll.ContainsKey(client.Entity.UID))
+                if (!Game.Features.Flowers.Flowers.Flowers_Poll.ContainsKey(client.Entity.UID))
                 {
                     client.Entity.MyFlowers = new MTA.Game.Features.Flowers.Flowers(client.Entity.UID, client.Entity.Name);
-                    MTA.Game.Features.Flowers.Flowers.Flowers_Poll.TryAdd(client.Entity.UID, client.Entity.MyFlowers);
+                    Game.Features.Flowers.Flowers.Flowers_Poll.TryAdd(client.Entity.UID, client.Entity.MyFlowers);
                     return;
                 }
 
-                client.Entity.MyFlowers = MTA.Game.Features.Flowers.Flowers.Flowers_Poll[client.Entity.UID];
+                client.Entity.MyFlowers = Game.Features.Flowers.Flowers.Flowers_Poll[client.Entity.UID];
                 return;
             }
             else
             {
-                if (!MTA.Game.Features.Flowers.Flowers.BoyFlowers.ContainsKey(client.Entity.UID))
+                if (!Game.Features.Flowers.Flowers.BoyFlowers.ContainsKey(client.Entity.UID))
                 {
                     client.Entity.MyFlowers = new MTA.Game.Features.Flowers.Flowers(client.Entity.UID, client.Entity.Name);
-                    MTA.Game.Features.Flowers.Flowers.BoyFlowers.TryAdd(client.Entity.UID, client.Entity.MyFlowers);
+                    Game.Features.Flowers.Flowers.BoyFlowers.TryAdd(client.Entity.UID, client.Entity.MyFlowers);
                     return;
                 }
 
-                client.Entity.MyFlowers = MTA.Game.Features.Flowers.Flowers.BoyFlowers[client.Entity.UID];
+                client.Entity.MyFlowers = Game.Features.Flowers.Flowers.BoyFlowers[client.Entity.UID];
                 return;
             }
         }
@@ -46,7 +46,7 @@ namespace MTA.Database
                 if (reader.Read())
                 {
                     client.WarehousePW = reader.ReadUInt32("WarehousePW");
-                    client.Entity = new Game.Entity(Game.EntityFlag.Player, false);
+                    client.Entity = new Entity(EntityFlag.Player, false);
                     client.Entity.Name = reader.ReadString("Name");
                     client.Entity.lacb = reader.ReadUInt32("lacb");
                     //    client.Entity.NobalityDonation = reader.ReadUInt64("Donation");
@@ -71,7 +71,7 @@ namespace MTA.Database
                     client.Entity.ClaimedElitePk = reader.ReadBoolean("ClaimedElitePk");
                     client.Entity.TreasuerPoints = reader.ReadUInt32("TreasuerPoints");
                     client.Entity.UID = reader.ReadUInt32("UID");
-                    client.Entity.MyAchievement = new Game.Achievement(client.Entity);
+                    client.Entity.MyAchievement = new Achievement(client.Entity);
                     client.Entity.MyAchievement.Load(reader.ReadString("Achievement"));
                     client.Entity.Hitpoints = reader.ReadUInt32("Hitpoints");
                     client.Entity.QuizPoints = reader.ReadUInt32("QuizPoints");
@@ -108,7 +108,7 @@ namespace MTA.Database
                     client.SpiritBeadQ.CanAccept = !Convert.ToBoolean(reader.ReadUInt32("CanAcceptSpiritBead"));
                     client.SpiritBeadQ.Bead = reader.ReadUInt32("SpiritQuestBead");
                     client.SpiritBeadQ.CollectedSpirits = reader.ReadUInt32("CollectedSpirits");
-                    client.Entity.CountryID = (Game.Enums.CountryID)reader.ReadUInt32("CountryID");
+                    client.Entity.CountryID = (Enums.CountryID)reader.ReadUInt32("CountryID");
                     if (client.VendingDisguise == 0)
                         client.VendingDisguise = 223;
                     client.Entity.X = reader.ReadUInt16("X");
@@ -245,11 +245,11 @@ namespace MTA.Database
                     if (!Game.ConquerStructures.Nobility.Board.TryGetValue(client.Entity.UID,
                             out client.NobilityInformation))
                     {
-                        client.NobilityInformation = new MTA.Game.ConquerStructures.NobilityInformation();
+                        client.NobilityInformation = new Game.ConquerStructures.NobilityInformation();
                         client.NobilityInformation.EntityUID = client.Entity.UID;
                         client.NobilityInformation.Name = client.Entity.Name;
                         client.NobilityInformation.Donation = 0;
-                        client.NobilityInformation.Rank = MTA.Game.ConquerStructures.NobilityRank.Serf;
+                        client.NobilityInformation.Rank = Game.ConquerStructures.NobilityRank.Serf;
                         client.NobilityInformation.Position = -1;
                         client.NobilityInformation.Gender = 1;
                         client.NobilityInformation.Mesh = client.Entity.Mesh;
@@ -266,15 +266,15 @@ namespace MTA.Database
                         if (client.Entity.Level >= 90)
                         {
                             client.Entity.EnlightenPoints = 100;
-                            if (client.Entity.NobilityRank == MTA.Game.ConquerStructures.NobilityRank.Knight ||
-                                client.Entity.NobilityRank == MTA.Game.ConquerStructures.NobilityRank.Baron)
+                            if (client.Entity.NobilityRank == Game.ConquerStructures.NobilityRank.Knight ||
+                                client.Entity.NobilityRank == Game.ConquerStructures.NobilityRank.Baron)
                                 client.Entity.EnlightenPoints += 100;
-                            else if (client.Entity.NobilityRank == MTA.Game.ConquerStructures.NobilityRank.Earl ||
-                                     client.Entity.NobilityRank == MTA.Game.ConquerStructures.NobilityRank.Duke)
+                            else if (client.Entity.NobilityRank == Game.ConquerStructures.NobilityRank.Earl ||
+                                     client.Entity.NobilityRank == Game.ConquerStructures.NobilityRank.Duke)
                                 client.Entity.EnlightenPoints += 200;
-                            else if (client.Entity.NobilityRank == MTA.Game.ConquerStructures.NobilityRank.Prince)
+                            else if (client.Entity.NobilityRank == Game.ConquerStructures.NobilityRank.Prince)
                                 client.Entity.EnlightenPoints += 300;
-                            else if (client.Entity.NobilityRank == MTA.Game.ConquerStructures.NobilityRank.King)
+                            else if (client.Entity.NobilityRank == Game.ConquerStructures.NobilityRank.King)
                                 client.Entity.EnlightenPoints += 400;
                             if (client.Entity.VIPLevel != 0)
                             {
@@ -299,34 +299,34 @@ namespace MTA.Database
 
                     #region Team Arena
 
-                    Game.TeamArena.ArenaStatistics.TryGetValue(client.Entity.UID, out client.TeamArenaStatistic);
+                    TeamArena.ArenaStatistics.TryGetValue(client.Entity.UID, out client.TeamArenaStatistic);
                     if (client.TeamArenaStatistic == null)
                     {
-                        client.TeamArenaStatistic = new MTA.Network.GamePackets.TeamArenaStatistic(true);
+                        client.TeamArenaStatistic = new TeamArenaStatistic(true);
                         client.TeamArenaStatistic.EntityID = client.Entity.UID;
                         client.TeamArenaStatistic.Name = client.Entity.Name;
                         client.TeamArenaStatistic.Level = client.Entity.Level;
                         client.TeamArenaStatistic.Class = client.Entity.Class;
                         client.TeamArenaStatistic.Model = client.Entity.Mesh;
                         TeamArenaTable.InsertArenaStatistic(client);
-                        client.TeamArenaStatistic.Status = Network.GamePackets.TeamArenaStatistic.NotSignedUp;
-                        if (Game.TeamArena.ArenaStatistics.ContainsKey(client.Entity.UID))
-                            Game.TeamArena.ArenaStatistics.Remove(client.Entity.UID);
-                        Game.TeamArena.ArenaStatistics.Add(client.Entity.UID, client.TeamArenaStatistic);
+                        client.TeamArenaStatistic.Status = TeamArenaStatistic.NotSignedUp;
+                        if (TeamArena.ArenaStatistics.ContainsKey(client.Entity.UID))
+                            TeamArena.ArenaStatistics.Remove(client.Entity.UID);
+                        TeamArena.ArenaStatistics.Add(client.Entity.UID, client.TeamArenaStatistic);
                     }
                     else if (client.TeamArenaStatistic.EntityID == 0)
                     {
-                        client.TeamArenaStatistic = new MTA.Network.GamePackets.TeamArenaStatistic(true);
+                        client.TeamArenaStatistic = new TeamArenaStatistic(true);
                         client.TeamArenaStatistic.EntityID = client.Entity.UID;
                         client.TeamArenaStatistic.Name = client.Entity.Name;
                         client.TeamArenaStatistic.Level = client.Entity.Level;
                         client.TeamArenaStatistic.Class = client.Entity.Class;
                         client.TeamArenaStatistic.Model = client.Entity.Mesh;
                         TeamArenaTable.InsertArenaStatistic(client);
-                        client.TeamArenaStatistic.Status = Network.GamePackets.TeamArenaStatistic.NotSignedUp;
-                        if (Game.TeamArena.ArenaStatistics.ContainsKey(client.Entity.UID))
-                            Game.TeamArena.ArenaStatistics.Remove(client.Entity.UID);
-                        Game.TeamArena.ArenaStatistics.Add(client.Entity.UID, client.TeamArenaStatistic);
+                        client.TeamArenaStatistic.Status = TeamArenaStatistic.NotSignedUp;
+                        if (TeamArena.ArenaStatistics.ContainsKey(client.Entity.UID))
+                            TeamArena.ArenaStatistics.Remove(client.Entity.UID);
+                        TeamArena.ArenaStatistics.Add(client.Entity.UID, client.TeamArenaStatistic);
                     }
                     else
                     {
@@ -336,16 +336,16 @@ namespace MTA.Database
                         client.TeamArenaStatistic.Name = client.Entity.Name;
                     }
 
-                    Game.TeamArena.Clear(client);
+                    TeamArena.Clear(client);
 
                     #endregion
 
                     #region Arena
 
-                    Game.Arena.ArenaStatistics.TryGetValue(client.Entity.UID, out client.ArenaStatistic);
+                    Arena.ArenaStatistics.TryGetValue(client.Entity.UID, out client.ArenaStatistic);
                     if (client.ArenaStatistic == null)
                     {
-                        client.ArenaStatistic = new MTA.Network.GamePackets.ArenaStatistic(true);
+                        client.ArenaStatistic = new ArenaStatistic(true);
                         client.ArenaStatistic.EntityID = client.Entity.UID;
                         client.ArenaStatistic.Name = client.Entity.Name;
                         client.ArenaStatistic.Level = client.Entity.Level;
@@ -354,14 +354,14 @@ namespace MTA.Database
                         client.ArenaPoints = ArenaTable.ArenaPointFill(client.Entity.Level);
                         client.ArenaStatistic.LastArenaPointFill = DateTime.Now;
                         ArenaTable.InsertArenaStatistic(client);
-                        client.ArenaStatistic.Status = Network.GamePackets.ArenaStatistic.NotSignedUp;
-                        if (Game.Arena.ArenaStatistics.ContainsKey(client.Entity.UID))
-                            Game.Arena.ArenaStatistics.Remove(client.Entity.UID);
-                        Game.Arena.ArenaStatistics.Add(client.Entity.UID, client.ArenaStatistic);
+                        client.ArenaStatistic.Status = ArenaStatistic.NotSignedUp;
+                        if (Arena.ArenaStatistics.ContainsKey(client.Entity.UID))
+                            Arena.ArenaStatistics.Remove(client.Entity.UID);
+                        Arena.ArenaStatistics.Add(client.Entity.UID, client.ArenaStatistic);
                     }
                     else if (client.ArenaStatistic.EntityID == 0)
                     {
-                        client.ArenaStatistic = new MTA.Network.GamePackets.ArenaStatistic(true);
+                        client.ArenaStatistic = new ArenaStatistic(true);
                         client.ArenaStatistic.EntityID = client.Entity.UID;
                         client.ArenaStatistic.Name = client.Entity.Name;
                         client.ArenaStatistic.Level = client.Entity.Level;
@@ -370,10 +370,10 @@ namespace MTA.Database
                         client.ArenaPoints = ArenaTable.ArenaPointFill(client.Entity.Level);
                         client.ArenaStatistic.LastArenaPointFill = DateTime.Now;
                         ArenaTable.InsertArenaStatistic(client);
-                        client.ArenaStatistic.Status = Network.GamePackets.ArenaStatistic.NotSignedUp;
-                        if (Game.Arena.ArenaStatistics.ContainsKey(client.Entity.UID))
-                            Game.Arena.ArenaStatistics.Remove(client.Entity.UID);
-                        Game.Arena.ArenaStatistics.Add(client.Entity.UID, client.ArenaStatistic);
+                        client.ArenaStatistic.Status = ArenaStatistic.NotSignedUp;
+                        if (Arena.ArenaStatistics.ContainsKey(client.Entity.UID))
+                            Arena.ArenaStatistics.Remove(client.Entity.UID);
+                        Arena.ArenaStatistics.Add(client.Entity.UID, client.ArenaStatistic);
                     }
                     else
                     {
@@ -386,16 +386,16 @@ namespace MTA.Database
                     client.ArenaPoints = client.ArenaStatistic.ArenaPoints;
                     client.CurrentHonor = client.ArenaStatistic.CurrentHonor;
                     client.HistoryHonor = client.ArenaStatistic.HistoryHonor;
-                    Game.Arena.Clear(client);
+                    Arena.Clear(client);
 
                     #endregion
 
                     #region Champion
 
-                    Game.Champion.ChampionStats.TryGetValue(client.Entity.UID, out client.ChampionStats);
+                    Champion.ChampionStats.TryGetValue(client.Entity.UID, out client.ChampionStats);
                     if (client.ChampionStats == null)
                     {
-                        client.ChampionStats = new MTA.Network.GamePackets.ChampionStatistic(true);
+                        client.ChampionStats = new ChampionStatistic(true);
                         client.ChampionStats.UID = client.Entity.UID;
                         client.ChampionStats.Name = client.Entity.Name;
                         client.ChampionStats.Level = client.Entity.Level;
@@ -404,13 +404,13 @@ namespace MTA.Database
                         client.ChampionStats.Points = 0;
                         client.ChampionStats.LastReset = DateTime.Now;
                         ChampionTable.InsertStatistic(client);
-                        if (Game.Champion.ChampionStats.ContainsKey(client.Entity.UID))
-                            Game.Champion.ChampionStats.Remove(client.Entity.UID);
-                        Game.Champion.ChampionStats.Add(client.Entity.UID, client.ChampionStats);
+                        if (Champion.ChampionStats.ContainsKey(client.Entity.UID))
+                            Champion.ChampionStats.Remove(client.Entity.UID);
+                        Champion.ChampionStats.Add(client.Entity.UID, client.ChampionStats);
                     }
                     else if (client.ChampionStats.UID == 0)
                     {
-                        client.ChampionStats = new Network.GamePackets.ChampionStatistic(true);
+                        client.ChampionStats = new ChampionStatistic(true);
                         client.ChampionStats.UID = client.Entity.UID;
                         client.ChampionStats.Name = client.Entity.Name;
                         client.ChampionStats.Level = client.Entity.Level;
@@ -419,10 +419,10 @@ namespace MTA.Database
                         client.ChampionStats.Points = 0;
                         client.ChampionStats.LastReset = DateTime.Now;
                         ArenaTable.InsertArenaStatistic(client);
-                        client.ArenaStatistic.Status = Network.GamePackets.ArenaStatistic.NotSignedUp;
-                        if (Game.Champion.ChampionStats.ContainsKey(client.Entity.UID))
-                            Game.Champion.ChampionStats.Remove(client.Entity.UID);
-                        Game.Champion.ChampionStats.Add(client.Entity.UID, client.ChampionStats);
+                        client.ArenaStatistic.Status = ArenaStatistic.NotSignedUp;
+                        if (Champion.ChampionStats.ContainsKey(client.Entity.UID))
+                            Champion.ChampionStats.Remove(client.Entity.UID);
+                        Champion.ChampionStats.Add(client.Entity.UID, client.ChampionStats);
                     }
                     else
                     {
@@ -434,7 +434,7 @@ namespace MTA.Database
                             ChampionTable.Reset(client.ChampionStats);
                     }
 
-                    Game.Champion.Clear(client);
+                    Champion.Clear(client);
 
                     #endregion
 
@@ -469,7 +469,7 @@ namespace MTA.Database
             }
         }
 
-        public static void UpdateGuildRank(uint UID, MTA.Game.Enums.GuildMemberRank rank)
+        public static void UpdateGuildRank(uint UID, Enums.GuildMemberRank rank)
         {
             UpdateData(UID, "GuildRank", (int)rank);
         }
@@ -597,7 +597,7 @@ namespace MTA.Database
         {
             if (c.Fake) return true;
             if (c.TransferedPlayer) return true;
-            Game.Entity e = c.Entity;
+            Entity e = c.Entity;
             if (e.JustCreated) return true;
 
             #region BlackList
@@ -833,7 +833,7 @@ namespace MTA.Database
         /// <summary>
         /// Creates a new character entity from player character creation request.
         /// </summary>
-        public static bool CreateEntity(Network.GamePackets.EnitityCreate eC, Client.GameState client,
+        public static bool CreateEntity(EnitityCreate eC, Client.GameState client,
             ref string message)
         {
             if (InvalidCharacters(eC.Name))
@@ -852,7 +852,7 @@ namespace MTA.Database
                 }
             }
 
-            client.Entity = new Game.Entity(Game.EntityFlag.Player, false)
+            client.Entity = new Entity(EntityFlag.Player, false)
             {
                 Name = eC.Name
             };

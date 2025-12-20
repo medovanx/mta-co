@@ -28,213 +28,213 @@ namespace MTA.Network.GamePackets
         {
             get
             {
-                return MTA.BitConverter.ToUInt32(this.Buffer, 4);
+                return BitConverter.ToUInt32(Buffer, 4);
             }
             set
             {
-                Writer.WriteUInt32(value, 4, this.Buffer);
+                WriteUInt32(value, 4, Buffer);
             }
         }
         public uint RankingType
         {
             get
             {
-                return MTA.BitConverter.ToUInt32(this.Buffer, 8);
+                return BitConverter.ToUInt32(Buffer, 8);
             }
             set
             {
-                Writer.WriteUInt32(value, 8, this.Buffer);
+                WriteUInt32(value, 8, Buffer);
             }
         }
         public ushort RegisteredCount
         {
             get
             {
-                return MTA.BitConverter.ToUInt16(this.Buffer, 12);
+                return BitConverter.ToUInt16(Buffer, 12);
             }
             set
             {
-                Writer.WriteUInt16(value, 12, this.Buffer);
+                WriteUInt16(value, 12, Buffer);
             }
         }
         public ushort Page
         {
             get
             {
-                return MTA.BitConverter.ToUInt16(this.Buffer, 14);
+                return BitConverter.ToUInt16(Buffer, 14);
             }
             set
             {
-                Writer.WriteUInt16(value, 14, this.Buffer);
+                WriteUInt16(value, 14, Buffer);
             }
         }
         public uint Count
         {
             get
             {
-                return MTA.BitConverter.ToUInt32(this.Buffer, 16);
+                return BitConverter.ToUInt32(Buffer, 16);
             }
             set
             {
-                Writer.WriteUInt32(value, 16, this.Buffer);
+                WriteUInt32(value, 16, Buffer);
             }
         }
         public GenericRanking(bool Create, uint entries = 1u)
         {
             if (Create)
             {
-                this.Buffer = new byte[752];
-                Writer.WriteUInt16(744, 0, this.Buffer);
-                Writer.WriteUInt16(1151, 2, this.Buffer);
+                Buffer = new byte[752];
+                WriteUInt16(744, 0, Buffer);
+                WriteUInt16(1151, 2, Buffer);
             }
         }
         public void Append(uint rank, uint amount, uint uid, string name)
         {
-            int offset = this.current * 72 + 24;
-            if (offset + 72 <= this.Buffer.Length)
+            int offset = current * 72 + 24;
+            if (offset + 72 <= Buffer.Length)
             {
-                this.current++;
-                this.Count = (uint)this.current;
-                Writer.WriteUInt32(rank, offset, this.Buffer);
+                current++;
+                Count = (uint)current;
+                WriteUInt32(rank, offset, Buffer);
                 offset += 8;
-                Writer.WriteUInt32(amount, offset, this.Buffer);
+                WriteUInt32(amount, offset, Buffer);
                 offset += 8;
-                Writer.WriteUInt32(uid, offset, this.Buffer);
+                WriteUInt32(uid, offset, Buffer);
                 offset += 4;
-                Writer.WriteUInt32(uid, offset, this.Buffer);
+                WriteUInt32(uid, offset, Buffer);
                 offset += 4;
-                Writer.WriteString(name, offset, this.Buffer);
+                WriteString(name, offset, Buffer);
                 offset += 16;
-                Writer.WriteString(name, offset, this.Buffer);
+                WriteString(name, offset, Buffer);
             }
         }
         public void Append3(uint rank, uint amount, uint uid, string name, byte level = 0, byte Class = 0, uint mesh = 0u, bool toper = false)
         {
             if (!toper)
             {
-                int offset = this.current * 72 + 96;
-                if (offset + 72 <= this.Buffer.Length)
+                int offset = current * 72 + 96;
+                if (offset + 72 <= Buffer.Length)
                 {
-                    this.current++;
-                    this.Count = (uint)this.current;
-                    Writer.WriteUInt32(rank, offset, this.Buffer);
+                    current++;
+                    Count = (uint)current;
+                    WriteUInt32(rank, offset, Buffer);
                     offset += 8;
-                    Writer.WriteUInt32(amount, offset, this.Buffer);
+                    WriteUInt32(amount, offset, Buffer);
                     offset += 8;
-                    Writer.WriteUInt32(uid, offset, this.Buffer);
+                    WriteUInt32(uid, offset, Buffer);
                     offset += 4;
-                    Writer.WriteUInt32(uid, offset, this.Buffer);
+                    WriteUInt32(uid, offset, Buffer);
                     offset += 4;
-                    Writer.WriteString(name, offset, this.Buffer);
+                    WriteString(name, offset, Buffer);
                     offset += 16;
-                    Writer.WriteString(name, offset, this.Buffer);
+                    WriteString(name, offset, Buffer);
                     offset += 16;
-                    Writer.WriteUInt32(level, offset, this.Buffer);
+                    WriteUInt32(level, offset, Buffer);
                     offset += 4;
-                    Writer.WriteUInt32(Class, offset, this.Buffer);
+                    WriteUInt32(Class, offset, Buffer);
                     offset += 12;
-                    Writer.WriteUInt64(mesh, offset, this.Buffer);
+                    WriteUInt64(mesh, offset, Buffer);
                     offset += 8;
                 }
             }
             else
             {
                 int offset = 24;
-                Writer.WriteUInt32(1u, offset, this.Buffer);
+                WriteUInt32(1u, offset, Buffer);
                 offset += 8;
-                Writer.WriteUInt32(amount, offset, this.Buffer);
+                WriteUInt32(amount, offset, Buffer);
                 offset += 8;
-                Writer.WriteUInt32(80000000u, offset, this.Buffer);
+                WriteUInt32(80000000u, offset, Buffer);
                 offset += 4;
-                Writer.WriteUInt32(uid, offset, this.Buffer);
+                WriteUInt32(uid, offset, Buffer);
                 offset += 4;
-                Writer.WriteString(name, offset, this.Buffer);
+                WriteString(name, offset, Buffer);
                 offset += 16;
-                Writer.WriteString(name, offset, this.Buffer);
+                WriteString(name, offset, Buffer);
                 offset += 16;
-                Writer.WriteUInt32(level, offset, this.Buffer);
+                WriteUInt32(level, offset, Buffer);
                 offset += 4;
-                Writer.WriteUInt32(Class, offset, this.Buffer);
+                WriteUInt32(Class, offset, Buffer);
                 offset += 12;
-                Writer.WriteUInt64(mesh, offset, this.Buffer);
+                WriteUInt64(mesh, offset, Buffer);
                 offset += 8;
             }
         }
         public void Append2(uint rank, uint amount, uint uid, string name, byte level, ushort Class, uint mesh)
         {
-            int offset = this.current * 72 + 24;
-            if (offset + 72 <= this.Buffer.Length)
+            int offset = current * 72 + 24;
+            if (offset + 72 <= Buffer.Length)
             {
-                this.current++;
-                this.Count = (uint)this.current;
-                Writer.WriteUInt32(rank, offset, this.Buffer);
+                current++;
+                Count = (uint)current;
+                WriteUInt32(rank, offset, Buffer);
                 offset += 8;
-                Writer.WriteUInt32(amount, offset, this.Buffer);
+                WriteUInt32(amount, offset, Buffer);
                 offset += 8;
-                Writer.WriteUInt32(uid, offset, this.Buffer);
+                WriteUInt32(uid, offset, Buffer);
                 offset += 4;
-                Writer.WriteUInt32(uid, offset, this.Buffer);
+                WriteUInt32(uid, offset, Buffer);
                 offset += 4;
-                Writer.WriteString(name, offset, this.Buffer);
+                WriteString(name, offset, Buffer);
                 offset += 16;
-                Writer.WriteString(name, offset, this.Buffer);
+                WriteString(name, offset, Buffer);
                 offset += 16;
-                Writer.WriteUInt32(level, offset, this.Buffer);
+                WriteUInt32(level, offset, Buffer);
                 offset += 4;
-                Writer.WriteUInt32(Class, offset, this.Buffer);
+                WriteUInt32(Class, offset, Buffer);
                 offset += 4;
-                Writer.WriteUInt32(mesh, offset, this.Buffer);
+                WriteUInt32(mesh, offset, Buffer);
                 offset += 4;
             }
         }
         public void Reset()
         {
-            this.current = 0;
+            current = 0;
         }
         public void Send(GameState client)
         {
-            client.Send(this.Buffer);
+            client.Send(Buffer);
         }
         public byte[] ToArray()
         {
-            return this.Buffer;
+            return Buffer;
         }
         public void Deserialize(byte[] _buffer)
         {
-            this.Buffer = _buffer;
-            if (this.Count == 0u)
+            Buffer = _buffer;
+            if (Count == 0u)
             {
                 byte[] buffer = new byte[104];
-                this.Buffer.CopyTo(buffer, 0);
-                Writer.WriteUInt16(96, 0, buffer);
-                this.Buffer = buffer;
+                Buffer.CopyTo(buffer, 0);
+                WriteUInt16(96, 0, buffer);
+                Buffer = buffer;
             }
         }
 
         internal void AppendP(uint p, uint p_2, uint p_3, string p_4, byte p_5, byte p_6, uint p_7)
         {
-            int offset = this.current * 72 + 24;
-            if (offset + 72 <= this.Buffer.Length)
+            int offset = current * 72 + 24;
+            if (offset + 72 <= Buffer.Length)
             {
-                this.current++;
-                this.Count = (uint)this.current;
-                Writer.WriteUInt32(p, offset, this.Buffer);
+                current++;
+                Count = (uint)current;
+                WriteUInt32(p, offset, Buffer);
                 offset += 8;
-                Writer.WriteUInt32(p_2, offset, this.Buffer);
+                WriteUInt32(p_2, offset, Buffer);
                 offset += 8;
-                Writer.WriteUInt32(p_3, offset, this.Buffer);
+                WriteUInt32(p_3, offset, Buffer);
                 offset += 4;
-                Writer.WriteUInt32(p_3, offset, this.Buffer);
+                WriteUInt32(p_3, offset, Buffer);
                 offset += 4;
-                Writer.WriteString(p_4, offset, this.Buffer);
+                WriteString(p_4, offset, Buffer);
                 offset += 16;
-                Writer.WriteString(p_4, offset, this.Buffer);
+                WriteString(p_4, offset, Buffer);
                 offset += 16;
-                Writer.WriteUInt32(p_5, offset, this.Buffer);
+                WriteUInt32(p_5, offset, Buffer);
                 offset += 4;
-                Writer.WriteUInt32(p_6, offset, this.Buffer);
+                WriteUInt32(p_6, offset, Buffer);
                 offset += 4;
-                Writer.WriteUInt32(p_7, offset, this.Buffer);
+                WriteUInt32(p_7, offset, Buffer);
                 offset += 4;
             }
         }
@@ -244,49 +244,49 @@ namespace MTA.Network.GamePackets
             if (p_8) // Top player - write at fixed offset 24
             {
                 int offset = 24;
-                Writer.WriteUInt32((uint)p, offset, this.Buffer);
+                WriteUInt32((uint)p, offset, Buffer);
                 offset += 8;
-                Writer.WriteUInt32(p_2, offset, this.Buffer);
+                WriteUInt32(p_2, offset, Buffer);
                 offset += 8;
-                Writer.WriteUInt32(p_3, offset, this.Buffer);
+                WriteUInt32(p_3, offset, Buffer);
                 offset += 4;
-                Writer.WriteUInt32(p_3, offset, this.Buffer);
+                WriteUInt32(p_3, offset, Buffer);
                 offset += 4;
-                Writer.WriteString(p_4, offset, this.Buffer);
+                WriteString(p_4, offset, Buffer);
                 offset += 16;
-                Writer.WriteString(p_4, offset, this.Buffer);
+                WriteString(p_4, offset, Buffer);
                 offset += 16;
-                Writer.WriteUInt32(p_5, offset, this.Buffer);
+                WriteUInt32(p_5, offset, Buffer);
                 offset += 4;
-                Writer.WriteUInt32(p_6, offset, this.Buffer);
+                WriteUInt32(p_6, offset, Buffer);
                 offset += 4;
-                Writer.WriteUInt32(p_7, offset, this.Buffer);
+                WriteUInt32(p_7, offset, Buffer);
                 offset += 4;
             }
             else // Regular list item
             {
-                int offset = this.current * 72 + 24;
-                if (offset + 72 <= this.Buffer.Length)
+                int offset = current * 72 + 24;
+                if (offset + 72 <= Buffer.Length)
                 {
-                    this.current++;
-                    this.Count = (uint)this.current;
-                    Writer.WriteUInt32((uint)p, offset, this.Buffer);
+                    current++;
+                    Count = (uint)current;
+                    WriteUInt32((uint)p, offset, Buffer);
                     offset += 8;
-                    Writer.WriteUInt32(p_2, offset, this.Buffer);
+                    WriteUInt32(p_2, offset, Buffer);
                     offset += 8;
-                    Writer.WriteUInt32(p_3, offset, this.Buffer);
+                    WriteUInt32(p_3, offset, Buffer);
                     offset += 4;
-                    Writer.WriteUInt32(p_3, offset, this.Buffer);
+                    WriteUInt32(p_3, offset, Buffer);
                     offset += 4;
-                    Writer.WriteString(p_4, offset, this.Buffer);
+                    WriteString(p_4, offset, Buffer);
                     offset += 16;
-                    Writer.WriteString(p_4, offset, this.Buffer);
+                    WriteString(p_4, offset, Buffer);
                     offset += 16;
-                    Writer.WriteUInt32(p_5, offset, this.Buffer);
+                    WriteUInt32(p_5, offset, Buffer);
                     offset += 4;
-                    Writer.WriteUInt32(p_6, offset, this.Buffer);
+                    WriteUInt32(p_6, offset, Buffer);
                     offset += 4;
-                    Writer.WriteUInt32(p_7, offset, this.Buffer);
+                    WriteUInt32(p_7, offset, Buffer);
                     offset += 4;
                 }
             }

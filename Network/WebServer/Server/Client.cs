@@ -18,7 +18,7 @@ namespace MTA.WebServer
             public byte ID;
         }
         public static SafeDictionary<string, TranServer> TranServers = new SafeDictionary<string, TranServer>();
-        public static Network.Sockets.ServerSocket WebSocket;
+        public static ServerSocket WebSocket;
         public static object SynRoot = new object();
         public static void Create()
         {
@@ -133,7 +133,7 @@ namespace MTA.WebServer
                                     for (ushort x = 0; x < ItemCount; x++)
                                     {
                                         hreader.BaseStream.Seek(60 * x, SeekOrigin.Begin);
-                                        var item = new Database.ConquerItemTable().ReadItem(hreader);
+                                        var item = new ConquerItemTable().ReadItem(hreader);
                                         if (!player.Items.ContainsKey(item.UID))
                                             player.Items.Add(item.UID, item);
                                     }

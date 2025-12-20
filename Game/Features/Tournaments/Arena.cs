@@ -58,7 +58,7 @@ namespace MTA.Game
         public static class QualifierList
         {
             public static ConcurrentDictionary<uint, QualifierGroup> Groups = new ConcurrentDictionary<uint, QualifierGroup>();
-            public static Counter GroupCounter = new MTA.Counter();
+            public static Counter GroupCounter = new Counter();
 
             public static byte[] BuildPacket(ushort page)
             {
@@ -67,7 +67,7 @@ namespace MTA.Game
                 wtr.Write((ushort)0);
                 wtr.Write((ushort)2206);
                 wtr.Write((uint)page);
-                wtr.Write((uint)Game.Enums.ArenaIDs.QualifierList);
+                wtr.Write((uint)Enums.ArenaIDs.QualifierList);
                 wtr.Write((uint)Groups.Count);
                 wtr.Write((uint)PlayerList.Count);
                 wtr.Write((uint)0);
@@ -148,7 +148,7 @@ namespace MTA.Game
             public class QualifierGroup
             {
                 #region Watchers
-                public byte[] BuildWatcherList(List<Client.GameState> list, ushort id)
+                public byte[] BuildWatcherList(List<GameState> list, ushort id)
                 {
                     MemoryStream strm = new MemoryStream();
                     BinaryWriter wtr = new BinaryWriter(strm);
@@ -159,7 +159,7 @@ namespace MTA.Game
                     wtr.Write((uint)list.Count);
                     wtr.Write(Player1Cheers);
                     wtr.Write(Player2Cheers);
-                    foreach (Client.GameState client in list)
+                    foreach (GameState client in list)
                     {
                         wtr.Write(client.Entity.Mesh);
                         for (int i = 0; i < 16; i++)
@@ -188,16 +188,16 @@ namespace MTA.Game
                     strm.Close();
                     return buf;
                 }
-                public void BeginWatching(Client.GameState client)
+                public void BeginWatching(GameState client)
                 {
                     if (!client.Entity.Dead && client.WatchingGroup == null && client.QualifierGroup == null)
                     {
                         client.Send(BuildWatcherList(new List<GameState>(), 0));
-                        client.Send(this.match.BuildPacket());
+                        client.Send(match.BuildPacket());
 
                         Watchers.Add(client);
                         byte[] packet = BuildWatcherList(Watchers, 2);
-                        foreach (Client.GameState client2 in Watchers)
+                        foreach (GameState client2 in Watchers)
                             client2.Send(packet);
                         Player1.Send(packet);
                         Player2.Send(packet);
@@ -205,7 +205,7 @@ namespace MTA.Game
                         client.Entity.Teleport(1005, dynamicMap.ID, (ushort)Kernel.Random.Next(35, 70), (ushort)Kernel.Random.Next(35, 70));
                     }
                 }
-                public List<Client.GameState> Watchers = new List<GameState>();
+                public List<GameState> Watchers = new List<GameState>();
                 #endregion
 
                 public Time32 CreateTime;
@@ -218,18 +218,18 @@ namespace MTA.Game
 
                 public bool Done;
 
-                private Game.Enums.PkMode P1Mode, P2Mode;
+                private Enums.PkMode P1Mode, P2Mode;
 
                 public uint ID;
 
                 public GroupMatch match = new GroupMatch();
 
-                public Client.GameState Winner, Loser;
-                public Client.GameState Player1, Player2;
+                public GameState Winner, Loser;
+                public GameState Player1, Player2;
 
                 private Map dynamicMap;
                 public Time32 ImportTime;
-                public QualifierGroup(Client.GameState player1, Client.GameState player2)
+                public QualifierGroup(GameState player1, GameState player2)
                 {
                     Player1 = player1;
                     Player2 = player2;
@@ -279,13 +279,13 @@ namespace MTA.Game
                         Player2.Send(match.BuildPacket());
                         Player1.Entity.BringToLife();
                         Player2.Entity.BringToLife();
-                        Player1.Entity.RemoveFlag(Network.GamePackets.Update.Flags.Ride);
-                        Player2.Entity.RemoveFlag(Network.GamePackets.Update.Flags.Ride);
+                        Player1.Entity.RemoveFlag(Update.Flags.Ride);
+                        Player2.Entity.RemoveFlag(Update.Flags.Ride);
                         P1Mode = Player1.Entity.PKMode;
-                        Player1.Entity.PKMode = MTA.Game.Enums.PkMode.PK;
+                        Player1.Entity.PKMode = Enums.PkMode.PK;
                         Player1.Send(new Data(true) { UID = Player1.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)Player1.Entity.PKMode });
                         P2Mode = Player2.Entity.PKMode;
-                        Player2.Entity.PKMode = MTA.Game.Enums.PkMode.PK;
+                        Player2.Entity.PKMode = Enums.PkMode.PK;
                         Player2.Send(new Data(true) { UID = Player2.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)Player2.Entity.PKMode });
                     }
                     else
@@ -300,7 +300,7 @@ namespace MTA.Game
                         dynamicMap.Dispose();
 
                     var arr = Watchers.ToArray();
-                    foreach (Client.GameState client in arr)
+                    foreach (GameState client in arr)
                         QualifyEngine.DoLeave(client);
                     arr = null;
 
@@ -397,12 +397,12 @@ namespace MTA.Game
 
         public class QualifyEngine
         {
-            public static void RequestGroupList(Client.GameState client, ushort page)
+            public static void RequestGroupList(GameState client, ushort page)
             {
                 client.Send(QualifierList.BuildPacket(page));
             }
 
-            public static void DoQuit(Client.GameState client)
+            public static void DoQuit(GameState client)
             {
                 PlayerList.Remove(client.Account.EntityID);
                 RequestGroupList(client, 1);
@@ -418,7 +418,7 @@ namespace MTA.Game
                     sign.DialogID = ArenaSignup.MainIDs.OpponentGaveUp;
                     if (client.ArenaStatistic.PlayWith != null)
                     {
-                        Client.GameState other = client.ArenaStatistic.PlayWith;
+                        GameState other = client.ArenaStatistic.PlayWith;
                         other.Send(sign.BuildPacket());
                         Win(other, client);
                     }
@@ -426,7 +426,7 @@ namespace MTA.Game
                 }
             }
 
-            public static void DoSignup(Client.GameState client)
+            public static void DoSignup(GameState client)
             {
                 if (client.ArenaStatistic.Status != ArenaStatistic.NotSignedUp || client.TeamArenaStatistic.Status != TeamArenaStatistic.NotSignedUp)
                 {
@@ -453,12 +453,12 @@ namespace MTA.Game
                         return;
                 }
                 PlayerList.Add(client.Account.EntityID, client);
-                client.ArenaStatistic.Status = Network.GamePackets.ArenaStatistic.WaitingForOpponent;
+                client.ArenaStatistic.Status = ArenaStatistic.WaitingForOpponent;
                 client.ArenaState = FindMatch;
                 client.Send(client.ArenaStatistic);
                 RequestGroupList(client, 1);
             }
-            public static void DoGiveUp(Client.GameState client)
+            public static void DoGiveUp(GameState client)
             {
                 if (client.ArenaState == WaitForBox)
                 {
@@ -467,7 +467,7 @@ namespace MTA.Game
                 }
                 else
                 {
-                    client.ArenaStatistic.Status = Network.GamePackets.ArenaStatistic.WaitingInactive;
+                    client.ArenaStatistic.Status = ArenaStatistic.WaitingInactive;
                     client.Send(client.ArenaStatistic);
                     RequestGroupList(client, 1);
                     ArenaSignup sign = new ArenaSignup();
@@ -477,8 +477,8 @@ namespace MTA.Game
                     {
                         client.ArenaStatistic.PlayWith.Send(sign.BuildPacket());
 
-                        client.ArenaStatistic.PlayWith.ArenaStatistic.Status = Network.GamePackets.ArenaStatistic.NotSignedUp;
-                        client.ArenaStatistic.Status = Network.GamePackets.ArenaStatistic.NotSignedUp;
+                        client.ArenaStatistic.PlayWith.ArenaStatistic.Status = ArenaStatistic.NotSignedUp;
+                        client.ArenaStatistic.Status = ArenaStatistic.NotSignedUp;
                         client.ArenaStatistic.PlayWith.Send(client.ArenaStatistic.PlayWith.ArenaStatistic);
                         client.Send(client.ArenaStatistic);
 
@@ -506,7 +506,7 @@ namespace MTA.Game
                 }
             }
 
-            public static void DoAccept(Client.GameState client)
+            public static void DoAccept(GameState client)
             {
                 if (client.ArenaState == WaitForBox)
                 {
@@ -515,16 +515,16 @@ namespace MTA.Game
                 }
             }
 
-            public static void DoLeave(Client.GameState client)
+            public static void DoLeave(GameState client)
             {
                 if (client.WatchingGroup != null)
                 {
                     client.WatchingGroup.Watchers.Remove(client);
                     client.Send(client.WatchingGroup.BuildWatcherList(client.WatchingGroup.Watchers, 3));
                     byte[] packet = client.WatchingGroup.BuildWatcherList(client.WatchingGroup.Watchers, 2);
-                    foreach (Client.GameState client2 in client.WatchingGroup.Watchers)
+                    foreach (GameState client2 in client.WatchingGroup.Watchers)
                         client2.Send(packet);
-                    byte[] p2 = client.WatchingGroup.BuildWatcherList(new List<Client.GameState>(), 3);
+                    byte[] p2 = client.WatchingGroup.BuildWatcherList(new List<GameState>(), 3);
                     client.Send(p2);
                     client.WatchingGroup.Player1.Send(packet);
                     client.WatchingGroup.Player2.Send(packet);
@@ -533,7 +533,7 @@ namespace MTA.Game
                 }
             }
 
-            public static void DoCheer(Client.GameState client, uint uid)
+            public static void DoCheer(GameState client, uint uid)
             {
                 if (client.WatchingGroup != null && !client.WatchingGroup.Cheerers.Contains(client.Entity.UID))
                 {
@@ -543,7 +543,7 @@ namespace MTA.Game
                     else
                         client.WatchingGroup.Player2Cheers++;
                     byte[] packet = client.WatchingGroup.BuildWatcherList(client.WatchingGroup.Watchers, 2);
-                    foreach (Client.GameState client2 in client.WatchingGroup.Watchers)
+                    foreach (GameState client2 in client.WatchingGroup.Watchers)
                         client2.Send(packet);
                     client.WatchingGroup.Player1.Send(packet);
                     client.WatchingGroup.Player2.Send(packet);
@@ -553,14 +553,14 @@ namespace MTA.Game
 
         public class Statistics
         {
-            public static void ShowWiners(Client.GameState client)
+            public static void ShowWiners(GameState client)
             {
                 MemoryStream strm = new MemoryStream();
                 BinaryWriter wtr = new BinaryWriter(strm);
                 int MyCount = 0;
                 wtr.Write((ushort)0);
                 wtr.Write((ushort)2208);
-                wtr.Write((uint)Game.Enums.ArenaIDs.ShowPlayerRankList);
+                wtr.Write((uint)Enums.ArenaIDs.ShowPlayerRankList);
                 foreach (ArenaStatistic entry in YesterdayArenaStatisticsList)
                 {
                     MyCount++;
@@ -597,10 +597,10 @@ namespace MTA.Game
                 client.Send(buf);
             }
 
-            public static void ShowRankingPage(ushort thisSeason, int pageIndex, Client.GameState client)
+            public static void ShowRankingPage(ushort thisSeason, int pageIndex, GameState client)
             {
                 ArenaList list = new ArenaList(pageIndex);
-                list.ID = Game.Enums.ArenaIDs.ShowPlayerRankList;
+                list.ID = Enums.ArenaIDs.ShowPlayerRankList;
                 list.PageNumber = (ushort)pageIndex;
                 list.Subtype = thisSeason;
                 if (list.Subtype == 0)
@@ -649,7 +649,7 @@ namespace MTA.Game
             public ushort Type;
             public ushort Subtype;
             public ushort PageNumber;
-            public Game.Enums.ArenaIDs ID;
+            public Enums.ArenaIDs ID;
             public List<ArenaStatistic> Players = new List<ArenaStatistic>();
             public ArenaList(int PageIndex, ushort type = 2207)
             {
@@ -829,7 +829,7 @@ namespace MTA.Game
 
         }
 
-        public static void Win(Client.GameState winner, Client.GameState loser)
+        public static void Win(GameState winner, GameState loser)
         {
             if (winner.ArenaStatistic.PlayWith != null && loser.ArenaStatistic.PlayWith != null)
             {
@@ -841,11 +841,11 @@ namespace MTA.Game
                 WaitingPlayerList.Remove(loser.Account.EntityID);
                 WaitingPlayerList.Remove(winner.Account.EntityID);
 
-                winner.ArenaStatistic.Status = Network.GamePackets.ArenaStatistic.NotSignedUp;
+                winner.ArenaStatistic.Status = ArenaStatistic.NotSignedUp;
                 winner.Send(winner.ArenaStatistic);
                 winner.ArenaState = FindMatch;
                 winner.QualifierGroup = null;
-                loser.ArenaStatistic.Status = Network.GamePackets.ArenaStatistic.NotSignedUp;
+                loser.ArenaStatistic.Status = ArenaStatistic.NotSignedUp;
                 loser.Send(winner.ArenaStatistic);
                 loser.ArenaState = FindMatch;
                 loser.QualifierGroup = null;
@@ -870,11 +870,11 @@ namespace MTA.Game
                 {
                     winner.Entity.ChampionPointsToday += 100;
                     winner.Entity.ChampionPoints += 100;
-                    winner.Send(new Message("" + winner.Entity.Name + " you have won 100 Champion Points !", System.Drawing.Color.Red, Message.Talk));
+                    winner.Send(new Message("" + winner.Entity.Name + " you have won 100 Champion Points !", Color.Red, Message.Talk));
                 }
                 else
                 {
-                    winner.Send(new Message("" + winner.Entity.Name + " Sorry you have won 650 champion points of today !", System.Drawing.Color.Red, Message.Talk));
+                    winner.Send(new Message("" + winner.Entity.Name + " Sorry you have won 650 champion points of today !", Color.Red, Message.Talk));
                 }
                 #endregion
                 #region loserChampion Points
@@ -882,11 +882,11 @@ namespace MTA.Game
                 {
                     loser.Entity.ChampionPointsToday += 100;
                     loser.Entity.ChampionPoints += 100;
-                    loser.Send(new Message("" + loser.Entity.Name + " you have won 100 Champion Points !", System.Drawing.Color.Red, Message.Talk));
+                    loser.Send(new Message("" + loser.Entity.Name + " you have won 100 Champion Points !", Color.Red, Message.Talk));
                 }
                 else
                 {
-                    loser.Send(new Message("" + loser.Entity.Name + " Sorry you have won 650 champion points of today !", System.Drawing.Color.Red, Message.Talk));
+                    loser.Send(new Message("" + loser.Entity.Name + " Sorry you have won 650 champion points of today !", Color.Red, Message.Talk));
                 }
                 #endregion
                 #region Winner Prize
@@ -973,7 +973,7 @@ namespace MTA.Game
 
                 builder.Append(".");
 
-                Kernel.SendWorldMessage(new Message(builder.ToString(), System.Drawing.Color.Red, Message.ArenaQualifier), Program.Values);
+                Kernel.SendWorldMessage(new Message(builder.ToString(), Color.Red, Message.ArenaQualifier), Program.Values);
 
                 winner.QualifierGroup = null;
                 loser.QualifierGroup = null;
@@ -996,7 +996,7 @@ namespace MTA.Game
 
         private static DateTime YesterdaySorted = DateTime.Now;
 
-        public static void Clear(Client.GameState client)
+        public static void Clear(GameState client)
         {
             var arena_stat = client.ArenaStatistic;
             arena_stat.AcceptBox = false;
@@ -1004,11 +1004,11 @@ namespace MTA.Game
             arena_stat.PlayWith = null;
             arena_stat.Status = ArenaStatistic.NotSignedUp;
             client.Send(arena_stat);
-            client.ArenaState = Arena.None;
+            client.ArenaState = None;
             client.QualifierGroup = null;
             client.TeamQualifierGroup = null;
-            Arena.WaitingPlayerList.Remove(arena_stat.EntityID);
-            Arena.PlayerList.Remove(arena_stat.EntityID);
+            WaitingPlayerList.Remove(arena_stat.EntityID);
+            PlayerList.Remove(arena_stat.EntityID);
         }
 
         public const int
@@ -1047,8 +1047,8 @@ namespace MTA.Game
                             {
                                 Challanger.ArenaState = Challanged.ArenaState = WaitForBox;
                                 Challanged.ArenaStatistic.AcceptBoxShow = Challanger.ArenaStatistic.AcceptBoxShow = Time32.Now;
-                                Challanged.ArenaStatistic.Status = Network.GamePackets.ArenaStatistic.WaitingInactive;
-                                Challanger.ArenaStatistic.Status = Network.GamePackets.ArenaStatistic.WaitingInactive;
+                                Challanged.ArenaStatistic.Status = ArenaStatistic.WaitingInactive;
+                                Challanger.ArenaStatistic.Status = ArenaStatistic.WaitingInactive;
                                 Challanged.Send(Challanged.ArenaStatistic);
                                 Challanger.Send(Challanger.ArenaStatistic);
                                 Challanged.ArenaStatistic.PlayWith = Challanger;
@@ -1083,7 +1083,7 @@ namespace MTA.Game
                     }
                     if (Challanger.ArenaStatistic.PlayWith != null)
                     {
-                        Client.GameState Challanged = Challanger.ArenaStatistic.PlayWith;
+                        GameState Challanged = Challanger.ArenaStatistic.PlayWith;
                         if (Challanger.ArenaState == WaitForBox || Challanged.ArenaState == WaitForBox)
                         {
                             if (Time32.Now > Challanger.ArenaStatistic.AcceptBoxShow.AddSeconds(60))
@@ -1124,12 +1124,12 @@ namespace MTA.Game
                             {
                                 if (Challanged.Entity.MapID == 1081 || Challanged.Entity.ContainsFlag2(Update.Flags2.SoulShackle))
                                 {
-                                    Arena.QualifyEngine.DoQuit(Challanged);
+                                    QualifyEngine.DoQuit(Challanged);
                                     continue;
                                 }
                                 if (Challanger.Entity.MapID == 1081 || Challanger.Entity.ContainsFlag2(Update.Flags2.SoulShackle))
                                 {
-                                    Arena.QualifyEngine.DoQuit(Challanger);
+                                    QualifyEngine.DoQuit(Challanger);
                                     continue;
                                 }
                                 Challanger.ArenaState = Challanged.ArenaState = Fight;
@@ -1186,7 +1186,7 @@ namespace MTA.Game
                         {
                             if (Kernel.GamePool.ContainsKey(stat.EntityID))
                             {
-                                Client.GameState client = Kernel.GamePool[stat.EntityID];
+                                GameState client = Kernel.GamePool[stat.EntityID];
                                 Database.ArenaTable.Reset(client, stat);
                                 client.Send(stat);
                             }
@@ -1210,7 +1210,7 @@ namespace MTA.Game
             }
         }
 
-        private static bool CanJoin(Client.GameState client, Time32 now)
+        private static bool CanJoin(GameState client, Time32 now)
         {
             if (client != null)
             {
@@ -1242,7 +1242,7 @@ namespace MTA.Game
                         if (client.Entity.MapID >= 1505 && client.Entity.MapID <= 1509) return false;
                         if (client.Entity.ContainsFlag2(Update.Flags2.SoulShackle)) return false;
                         if (client.Map.ID == 1002 || client.Map.ID == 1005 || !Constants.PKFreeMaps.Contains(client.Map.ID))
-                            if (client.ArenaStatistic.Status == Network.GamePackets.ArenaStatistic.WaitingForOpponent)
+                            if (client.ArenaStatistic.Status == ArenaStatistic.WaitingForOpponent)
                                 return true;
                     }
                 }

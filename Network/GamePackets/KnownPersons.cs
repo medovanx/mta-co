@@ -46,11 +46,11 @@
             get { return Buffer[16] == 1; }
             set { Buffer[16] = value ? (byte)1 : (byte)2; }
         }
-        public MTA.Game.ConquerStructures.NobilityRank NobilityRank
+        public Game.ConquerStructures.NobilityRank NobilityRank
         {
             get
             {
-                return (MTA.Game.ConquerStructures.NobilityRank)Buffer[12];
+                return (Game.ConquerStructures.NobilityRank)Buffer[12];
             }
             set
             {

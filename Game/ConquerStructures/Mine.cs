@@ -70,8 +70,8 @@ namespace MTA.Game.ConquerStructures
 
                     if (Database.ConquerItemInformation.BaseInformations.ContainsKey(Ore1))
                     {
-                        var Item = new Network.GamePackets.ConquerItem(true);
-                        Item.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
+                        var Item = new ConquerItem(true);
+                        Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                         Item.ID = Ore1;
                         Item.MaximDurability = 1;
                         Item.Durability = 1;
@@ -86,8 +86,8 @@ namespace MTA.Game.ConquerStructures
 
                     if (Database.ConquerItemInformation.BaseInformations.ContainsKey(Ore2))
                     {
-                        var Item = new Network.GamePackets.ConquerItem(true);
-                        Item.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
+                        var Item = new ConquerItem(true);
+                        Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                         Item.ID = Ore2;
                         Item.MaximDurability = 1;
                         Item.Durability = 1;
@@ -102,8 +102,8 @@ namespace MTA.Game.ConquerStructures
 
                     if (Database.ConquerItemInformation.BaseInformations.ContainsKey(Ore3))
                     {
-                        var Item = new Network.GamePackets.ConquerItem(true);
-                        Item.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
+                        var Item = new ConquerItem(true);
+                        Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                         Item.ID = Ore3;
                         Item.MaximDurability = 1;
                         Item.Durability = 1;
@@ -118,8 +118,8 @@ namespace MTA.Game.ConquerStructures
 
                     if (Database.ConquerItemInformation.BaseInformations.ContainsKey(Ore4))
                     {
-                        var Item = new Network.GamePackets.ConquerItem(true);
-                        Item.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
+                        var Item = new ConquerItem(true);
+                        Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                         Item.ID = Ore3;
                         Item.MaximDurability = 1;
                         Item.Durability = 1;
@@ -136,8 +136,8 @@ namespace MTA.Game.ConquerStructures
                         GemID4 += 2;
                     if (Database.ConquerItemInformation.BaseInformations.ContainsKey(GemID))
                     {
-                        var Item = new Network.GamePackets.ConquerItem(true);
-                        Item.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
+                        var Item = new ConquerItem(true);
+                        Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                         Item.ID = GemID;
                         Item.MaximDurability = 1;
                         Item.Durability = 1;
@@ -154,8 +154,8 @@ namespace MTA.Game.ConquerStructures
                         GemID4 += 2;
                     if (Database.ConquerItemInformation.BaseInformations.ContainsKey(GemID2))
                     {
-                        var Item = new Network.GamePackets.ConquerItem(true);
-                        Item.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
+                        var Item = new ConquerItem(true);
+                        Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                         Item.ID = GemID2;
                         Item.MaximDurability = 1;
                         Item.Durability = 1;
@@ -172,8 +172,8 @@ namespace MTA.Game.ConquerStructures
                         GemID4 += 2;
                     if (Database.ConquerItemInformation.BaseInformations.ContainsKey(GemID3))
                     {
-                        var Item = new Network.GamePackets.ConquerItem(true);
-                        Item.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
+                        var Item = new ConquerItem(true);
+                        Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                         Item.ID = GemID3;
                         Item.MaximDurability = 1;
                         Item.Durability = 1;
@@ -190,8 +190,8 @@ namespace MTA.Game.ConquerStructures
                         GemID4 += 2;
                     if (Database.ConquerItemInformation.BaseInformations.ContainsKey(GemID4))
                     {
-                        var Item = new Network.GamePackets.ConquerItem(true);
-                        Item.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
+                        var Item = new ConquerItem(true);
+                        Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                         Item.ID = GemID4;
                         Item.MaximDurability = 1;
                         Item.Durability = 1;

@@ -8,23 +8,23 @@ internal sealed class Class4 : Class2
 
     public Class4(TimerRule timerRule_1)
     {
-        this.timerRule_0 = timerRule_1;
+        timerRule_0 = timerRule_1;
     }
 
     internal override void vmethod_0()
     {
-        if (this.timerRule_0 != null)
+        if (timerRule_0 != null)
         {
-            this.timerRule_0.action_0(MTA.TTime.Now.Value);
-            if (this.timerRule_0 != null)
+            timerRule_0.action_0(MTA.TTime.Now.Value);
+            if (timerRule_0 != null)
             {
-                if (!this.timerRule_0.bool_0)
+                if (!timerRule_0.bool_0)
                 {
                     ((IDisposable)this).Dispose();
                 }
                 else
                 {
-                    base.method_1(this.timerRule_0.int_0);
+                    method_1(timerRule_0.int_0);
                 }
             }
         }
@@ -32,17 +32,17 @@ internal sealed class Class4 : Class2
 
     internal override void vmethod_1()
     {
-        this.timerRule_0 = null;
+        timerRule_0 = null;
     }
 
     internal override MethodInfo vmethod_2()
     {
-        return this.timerRule_0.action_0.Method;
+        return timerRule_0.action_0.Method;
     }
 
     internal override ThreadPriority vmethod_3()
     {
-        return this.timerRule_0.threadPriority_0;
+        return timerRule_0.threadPriority_0;
     }
 }
 

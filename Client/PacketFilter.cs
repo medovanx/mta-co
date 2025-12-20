@@ -50,7 +50,7 @@ namespace MTA
                     });
                     return false;
                 }
-                if (time - filter.Time > PacketFilter.Timelimit)
+                if (time - filter.Time > Timelimit)
                 {
                     filter.Time = time;
                     filter.Count = 0;

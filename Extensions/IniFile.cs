@@ -18,8 +18,8 @@ namespace MTA
         {
             // Normalize path separators to backslashes for Windows API
             string normalizedPath = _FileName.Replace('/', '\\');
-            this.FileName = Path.Combine(Environment.CurrentDirectory, normalizedPath);
-            this.FileSection = section;
+            FileName = Path.Combine(Environment.CurrentDirectory, normalizedPath);
+            FileSection = section;
         }
 
         [DllImport("kernel32.dll", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
@@ -44,65 +44,65 @@ namespace MTA
         public byte ReadByte(string Section, string Key, byte _Default)
         {
             byte buf = _Default;
-            byte.TryParse(this.ReadString(Section, Key, _Default.ToString(), 6), out buf);
+            byte.TryParse(ReadString(Section, Key, _Default.ToString(), 6), out buf);
             return buf;
         }
 
         public short ReadInt16(string Section, string Key, short _Default)
         {
             short buf = _Default;
-            short.TryParse(this.ReadString(Section, Key, _Default.ToString(), 9), out buf);
+            short.TryParse(ReadString(Section, Key, _Default.ToString(), 9), out buf);
             return buf;
         }
 
         public int ReadInt32(string Section, string Key, int _Default)
         {
             int buf = _Default;
-            int.TryParse(this.ReadString(Section, Key, _Default.ToString(), 15), out buf);
+            int.TryParse(ReadString(Section, Key, _Default.ToString(), 15), out buf);
             return buf;
         }
 
         public sbyte ReadSByte(string Section, string Key, byte _Default)
         {
             sbyte buf = (sbyte)_Default;
-            sbyte.TryParse(this.ReadString(Section, Key, _Default.ToString(), 6), out buf);
+            sbyte.TryParse(ReadString(Section, Key, _Default.ToString(), 6), out buf);
             return buf;
         }
 
         public string ReadString(string Section, string Key)
         {
-            return this.ReadString(Section, Key, "");
+            return ReadString(Section, Key, "");
         }
 
         public string ReadString(string Section, string Key, string _Default, int BufSize = 400)
         {
             StringBuilder Buffer = new StringBuilder(BufSize);
-            GetPrivateProfileStringA(Section, Key, _Default, Buffer, BufSize, this.FileName);
+            GetPrivateProfileStringA(Section, Key, _Default, Buffer, BufSize, FileName);
             return Buffer.ToString();
         }
 
         public ushort ReadUInt16(string Section, string Key)
         {
             ushort buf = 0;
-            ushort.TryParse(this.ReadString(Section, Key, 0.ToString(), 9), out buf);
+            ushort.TryParse(ReadString(Section, Key, 0.ToString(), 9), out buf);
             return buf;
         }
 
         public uint ReadUInt32(string Section, string Key)
         {
             uint buf = 0;
-            uint.TryParse(this.ReadString(Section, Key, 0.ToString(), 15), out buf);
+            uint.TryParse(ReadString(Section, Key, 0.ToString(), 15), out buf);
             return buf;
         }
 
         public void Write(string Section, string Key, object Value)
         {
-            WritePrivateProfileStringA(Section, Key, Value.ToString(), this.FileName);
+            WritePrivateProfileStringA(Section, Key, Value.ToString(), FileName);
         }
 
         public void Write(string Section, string Key, string Value)
         {
-            WritePrivateProfileStringA(Section, Key, Value, this.FileName);
+            WritePrivateProfileStringA(Section, Key, Value, FileName);
         }
 
     }

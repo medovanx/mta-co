@@ -19,7 +19,7 @@ namespace MTA.TransferServer
             public int port;
         }
         public static SafeDictionary<string, TranServer> TranServers = new SafeDictionary<string, TranServer>();
-        public static Network.Sockets.ServerSocket WebSocket;
+        public static ServerSocket WebSocket;
         public static object SynRoot = new object();
         public static void Create()
         {
@@ -119,7 +119,7 @@ namespace MTA.TransferServer
                                         fClient.FakeLoad(uid, false);
                                         fClient.Account = account;
                                     }
-                                    byte[] CreateTransfer = new MTA.TransferServer.Transfer(fClient, Constants.ServerName).GetArray();
+                                    byte[] CreateTransfer = new Transfer(fClient, Constants.ServerName).GetArray();
                                     Send(CreateTransfer, server);
                                 }
                             }
@@ -193,7 +193,7 @@ namespace MTA.TransferServer
                                     for (ushort x = 0; x < ItemCount; x++)
                                     {
                                         hreader.BaseStream.Seek(60 * x, SeekOrigin.Begin);
-                                        var item = new Database.ConquerItemTable().ReadItem(hreader);
+                                        var item = new ConquerItemTable().ReadItem(hreader);
                                         if (!player.Items.ContainsKey(item.UID))
                                             player.Items.Add(item.UID, item);
                                     }
@@ -396,7 +396,7 @@ namespace MTA.TransferServer
 
                                 Client.Account.Save();
 
-                                byte[] DoneTransfer = new MTA.TransferServer.DoneUser(player.UID, player.username).GetArray();
+                                byte[] DoneTransfer = new DoneUser(player.UID, player.username).GetArray();
                                 Send(DoneTransfer, server);
                                 Console.WriteLine("Saving UID : " + account.EntityID + " Done.");
                             }
@@ -467,7 +467,7 @@ namespace MTA.TransferServer
             TranServer server;
             if (TranServers.TryGetValue(servername, out server))
             {
-                byte[] Check = new TransferServer.CheckUser(uid, user).GetArray();
+                byte[] Check = new CheckUser(uid, user).GetArray();
                 try
                 {
                     System.Net.Sockets.Socket socket = new System.Net.Sockets.Socket(System.Net.Sockets.AddressFamily.InterNetwork, System.Net.Sockets.SocketType.Stream, System.Net.Sockets.ProtocolType.Tcp);

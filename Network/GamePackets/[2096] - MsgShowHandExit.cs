@@ -1,6 +1,6 @@
 ﻿namespace MTA.Network.GamePackets
 {
-    public class MsgShowHandExit : Network.Writer
+    public class MsgShowHandExit : Writer
     {
         byte[] Buffer;
 
@@ -9,8 +9,8 @@
             if (Create)
             {
                 Buffer = new byte[16 + 8];
-                Writer.Write(Buffer.Length - 8, 0, Buffer);
-                Writer.Write(2096, 2, Buffer);
+                Write(Buffer.Length - 8, 0, Buffer);
+                Write(2096, 2, Buffer);
             }
         }
         public uint Type

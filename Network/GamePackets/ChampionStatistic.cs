@@ -103,7 +103,7 @@ namespace MTA.Network.GamePackets
             }
         }
 
-        public void Send(Client.GameState client)
+        public void Send(GameState client)
         {
             client.Send(ToArray());
         }

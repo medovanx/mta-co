@@ -73,7 +73,7 @@ namespace MTA.Game.ConquerStructures
             {
                 item.Warehouse = (uint)_ID;
                 item.Position = 0;
-                Owner.Inventory.Remove(item, Game.Enums.ItemUse.Move);
+                Owner.Inventory.Remove(item, Enums.ItemUse.Move);
                 items.Add(item.UID, item);
                 objects = items.Values.ToArray();
                 return true;
@@ -124,7 +124,7 @@ namespace MTA.Game.ConquerStructures
             {
                 item.Warehouse = (uint)_ID;
                 item.Position = 0;
-                client?.Inventory.Remove(item, Game.Enums.ItemUse.Move);
+                client?.Inventory.Remove(item, Enums.ItemUse.Move);
                 items.Add(item.UID, item);
                 objects = [.. items.Values];
                 return true;

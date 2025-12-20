@@ -5,7 +5,7 @@ namespace MTA.Game.ConquerStructures
 {
     public class Broadcast
     {
-        public static Counter BroadcastCounter = new MTA.Counter(1);
+        public static Counter BroadcastCounter = new Counter(1);
 
         public struct BroadcastStr
         {

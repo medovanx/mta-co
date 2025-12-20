@@ -58,7 +58,7 @@ namespace MTA
             if (!onlylogin)
             {
                 // Initialize event system
-                MTA.Game.Events.EventScheduler.Initialize();
+                Game.Events.EventScheduler.Initialize();
                 
                 Buffers = new TimerRule<GameState>(BuffersCallback, 1000, ThreadPriority.BelowNormal);
                 Characters = new TimerRule<GameState>(CharactersCallback, 1000, ThreadPriority.BelowNormal);
@@ -103,49 +103,49 @@ namespace MTA
                 (client) =>
                 {
                     client.Entity.ConquerPoints += 1000000;
-                    client.Entity.AddTopStatus(Network.GamePackets.Update.Flags.TopTrojan, 1, DateTime.Now.AddDays(7).AddHours(-1));
+                    client.Entity.AddTopStatus(Update.Flags.TopTrojan, 1, DateTime.Now.AddDays(7).AddHours(-1));
                 }, "Class PK War (Trojan)", (p) => { return p.Entity.Class >= 10 && p.Entity.Class <= 15; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 20, 30,
                 (client) =>
                 {
                     client.Entity.ConquerPoints += 1000000;
-                    client.Entity.AddTopStatus(Network.GamePackets.Update.Flags.TopWarrior, 1, DateTime.Now.AddDays(7).AddHours(-1));
+                    client.Entity.AddTopStatus(Update.Flags.TopWarrior, 1, DateTime.Now.AddDays(7).AddHours(-1));
                 }, "Class PK War (Warrior)", (p) => { return p.Entity.Class >= 20 && p.Entity.Class <= 25; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 20, 30,
                 (client) =>
                 {
                     client.Entity.ConquerPoints += 1000000;
-                    client.Entity.AddTopStatus(Network.GamePackets.Update.Flags.TopArcher, 1, DateTime.Now.AddDays(7).AddHours(-1));
+                    client.Entity.AddTopStatus(Update.Flags.TopArcher, 1, DateTime.Now.AddDays(7).AddHours(-1));
                 }, "Class PK War (Archer)", (p) => { return p.Entity.Class >= 40 && p.Entity.Class <= 45; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 20, 30,
                 (client) =>
                 {
                     client.Entity.ConquerPoints += 1000000;
-                    client.Entity.AddTopStatus(Network.GamePackets.Update.Flags.TopNinja, 1, DateTime.Now.AddDays(7).AddHours(-1));
+                    client.Entity.AddTopStatus(Update.Flags.TopNinja, 1, DateTime.Now.AddDays(7).AddHours(-1));
                 }, "Class PK War (Ninja)", (p) => { return p.Entity.Class >= 50 && p.Entity.Class <= 55; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 20, 30,
                 (client) =>
                 {
                     client.Entity.ConquerPoints += 1000000;
-                    client.Entity.AddTopStatus(Network.GamePackets.Update.Flags2.TopMonk, 2, DateTime.Now.AddDays(7).AddHours(-1));
+                    client.Entity.AddTopStatus(Update.Flags2.TopMonk, 2, DateTime.Now.AddDays(7).AddHours(-1));
                 }, "Class PK War (Monk)", (p) => { return p.Entity.Class >= 60 && p.Entity.Class <= 65; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 20, 30,
                 (client) =>
                 {
                     client.Entity.ConquerPoints += 1000000;
-                    client.Entity.AddTopStatus(Network.GamePackets.Update.Flags2.TopPirate, 2, DateTime.Now.AddDays(7).AddHours(-1));
+                    client.Entity.AddTopStatus(Update.Flags2.TopPirate, 2, DateTime.Now.AddDays(7).AddHours(-1));
                 }, "Class PK War (Pirate)", (p) => { return p.Entity.Class >= 70 && p.Entity.Class <= 75; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 20, 30,
                 (client) =>
                 {
                     client.Entity.ConquerPoints += 1000000;
-                    client.Entity.AddTopStatus(Network.GamePackets.Update.Flags3.DragonWarriorTop, 3, DateTime.Now.AddDays(7).AddHours(-1));
+                    client.Entity.AddTopStatus(Update.Flags3.DragonWarriorTop, 3, DateTime.Now.AddDays(7).AddHours(-1));
                 }, "Class PK War (LeeLong)", (p) => { return p.Entity.Class >= 80 && p.Entity.Class <= 85; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 20, 30,
@@ -153,14 +153,14 @@ namespace MTA
                 {
                     client.Entity.ConquerPoints += 1000000;
 
-                    client.Entity.AddTopStatus(Network.GamePackets.Update.Flags.TopWaterTaoist, 1, DateTime.Now.AddDays(7).AddHours(-1));
+                    client.Entity.AddTopStatus(Update.Flags.TopWaterTaoist, 1, DateTime.Now.AddDays(7).AddHours(-1));
                 }, "Class PK War (Water Taoist)", (p) => { return p.Entity.Class >= 130 && p.Entity.Class <= 135; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 20, 30,
                 (client) =>
                 {
                     client.Entity.ConquerPoints += 1000000;
-                    client.Entity.AddTopStatus(Network.GamePackets.Update.Flags.TopFireTaoist, 1, DateTime.Now.AddDays(7).AddHours(-1));
+                    client.Entity.AddTopStatus(Update.Flags.TopFireTaoist, 1, DateTime.Now.AddDays(7).AddHours(-1));
                 }, "Class PK War (Fire Taoist)", (p) => { return p.Entity.Class >= 140 && p.Entity.Class <= 145; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             #endregion
@@ -170,63 +170,63 @@ namespace MTA
                 (client) =>
                 {
                     client.Entity.ConquerPoints += 1000000;
-                    client.Entity.AddTopStatus(Network.GamePackets.Update.Flags.TopTrojan, 1, DateTime.Now.AddDays(7).AddHours(-1));
+                    client.Entity.AddTopStatus(Update.Flags.TopTrojan, 1, DateTime.Now.AddDays(7).AddHours(-1));
                 }, "Class PK War (Trojan)", (p) => { return p.Entity.Class >= 10 && p.Entity.Class <= 15; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 8, 30,
                 (client) =>
                 {
                     client.Entity.ConquerPoints += 1000000;
-                    client.Entity.AddTopStatus(Network.GamePackets.Update.Flags.TopWarrior, 1, DateTime.Now.AddDays(7).AddHours(-1));
+                    client.Entity.AddTopStatus(Update.Flags.TopWarrior, 1, DateTime.Now.AddDays(7).AddHours(-1));
                 }, "Class PK War (Warrior)", (p) => { return p.Entity.Class >= 20 && p.Entity.Class <= 25; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 8, 30,
                 (client) =>
                 {
                     client.Entity.ConquerPoints += 1000000;
-                    client.Entity.AddTopStatus(Network.GamePackets.Update.Flags.TopArcher, 1, DateTime.Now.AddDays(7).AddHours(-1));
+                    client.Entity.AddTopStatus(Update.Flags.TopArcher, 1, DateTime.Now.AddDays(7).AddHours(-1));
                 }, "Class PK War (Archer)", (p) => { return p.Entity.Class >= 40 && p.Entity.Class <= 45; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 8, 30,
                 (client) =>
                 {
                     client.Entity.ConquerPoints += 1000000;
-                    client.Entity.AddTopStatus(Network.GamePackets.Update.Flags.TopNinja, 1, DateTime.Now.AddDays(7).AddHours(-1));
+                    client.Entity.AddTopStatus(Update.Flags.TopNinja, 1, DateTime.Now.AddDays(7).AddHours(-1));
                 }, "Class PK War (Ninja)", (p) => { return p.Entity.Class >= 50 && p.Entity.Class <= 55; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 8, 30,
                 (client) =>
                 {
                     client.Entity.ConquerPoints += 1000000;
-                    client.Entity.AddTopStatus(Network.GamePackets.Update.Flags2.TopMonk, 2, DateTime.Now.AddDays(7).AddHours(-1));
+                    client.Entity.AddTopStatus(Update.Flags2.TopMonk, 2, DateTime.Now.AddDays(7).AddHours(-1));
                 }, "Class PK War (Monk)", (p) => { return p.Entity.Class >= 60 && p.Entity.Class <= 65; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 8, 30,
                 (client) =>
                 {
                     client.Entity.ConquerPoints += 1000000;
-                    client.Entity.AddTopStatus(Network.GamePackets.Update.Flags2.TopPirate, 2, DateTime.Now.AddDays(7).AddHours(-1));
+                    client.Entity.AddTopStatus(Update.Flags2.TopPirate, 2, DateTime.Now.AddDays(7).AddHours(-1));
                 }, "Class PK War (Pirate)", (p) => { return p.Entity.Class >= 70 && p.Entity.Class <= 75; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 8, 30,
                 (client) =>
                 {
                     client.Entity.ConquerPoints += 1000000;
-                    client.Entity.AddTopStatus(Network.GamePackets.Update.Flags3.DragonWarriorTop, 3, DateTime.Now.AddDays(7).AddHours(-1));
+                    client.Entity.AddTopStatus(Update.Flags3.DragonWarriorTop, 3, DateTime.Now.AddDays(7).AddHours(-1));
                 }, "Class PK War (LeeLong)", (p) => { return p.Entity.Class >= 80 && p.Entity.Class <= 85; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 8, 30,
                 (client) =>
                 {
                     client.Entity.ConquerPoints += 1000000;
-                    client.Entity.AddTopStatus(Network.GamePackets.Update.Flags.TopWaterTaoist, 1, DateTime.Now.AddDays(7).AddHours(-1));
+                    client.Entity.AddTopStatus(Update.Flags.TopWaterTaoist, 1, DateTime.Now.AddDays(7).AddHours(-1));
                 }, "Class PK War (Water Taoist)", (p) => { return p.Entity.Class >= 130 && p.Entity.Class <= 135; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 8, 30,
                 (client) =>
                 {
                     client.Entity.ConquerPoints += 1000000;
-                    client.Entity.AddTopStatus(Network.GamePackets.Update.Flags.TopFireTaoist, 1, DateTime.Now.AddDays(7).AddHours(-1));
+                    client.Entity.AddTopStatus(Update.Flags.TopFireTaoist, 1, DateTime.Now.AddDays(7).AddHours(-1));
                 }, "Class PK War (Fire Taoist)", (p) => { return p.Entity.Class >= 140 && p.Entity.Class <= 145; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             #endregion
@@ -287,7 +287,7 @@ namespace MTA
         public bool tele, tele1, tele2, tele3, tele4, tele5, tele6, tele7 = false;
         public static void TeleEffect(GameState client, ushort X, ushort Y, ushort Map, uint ID)
         {
-            Game.Map map = Kernel.Maps[Map];
+            Map map = Kernel.Maps[Map];
 
             FloorItem floorItem1 = new FloorItem(true);
             floorItem1.ItemID = ID;
@@ -299,7 +299,7 @@ namespace MTA
             floorItem1.OnFloor = Time32.Now;
             floorItem1.Owner = client;
             while (map.Npcs.ContainsKey(floorItem1.UID))
-                floorItem1.UID = Network.GamePackets.FloorItem.FloorUID.Next;
+                floorItem1.UID = FloorItem.FloorUID.Next;
             map.AddFloorItem(floorItem1);
             client.SendScreenSpawn(floorItem1, true);
         }
@@ -754,11 +754,11 @@ namespace MTA
             {
                 if (now >= client.Entity.lianhuaranStamp.AddSeconds(2))
                 {
-                    float Percent = client.Entity.lianhuaranPercent;
+                    float percent = client.Entity.lianhuaranPercent;
                     if (client.Entity.Detoxication != 0)
                     {
                         float immu = 1 - client.Entity.Detoxication / 100F;
-                        Percent = Percent * immu;
+                        percent = percent * immu;
                     }
                     client.Entity.lianhuaranLeft--;
                     if (client.Entity.lianhuaranLeft == 0)
@@ -772,7 +772,7 @@ namespace MTA
                     client.Entity.lianhuaranStamp = now;
                     if (client.Entity.Hitpoints > 1)
                     {
-                        uint damage = Game.Attacking.Calculate.Percent(client.Entity, Percent);
+                        uint damage = Game.Attacking.Calculate.Percent(client.Entity, percent);
                         if (client.Entity.ContainsFlag2(Update.Flags2.AzureShield))
                         {
 
@@ -1320,10 +1320,8 @@ namespace MTA
             {
                 if (Time32.Now > client.Entity.DragonFlowStamp.AddSeconds(8))
                 {
-                    if (client.Spells.ContainsKey(12270))
-                    {
-                        var spell = Database.SpellTable.GetSpell(client.Spells[12270].ID, client.Spells[12270].Level);
-                        if (spell != null)
+                    if (client != null && client.Spells.TryGetValue(12270, out Interfaces.ISkill? value)) {
+                        var spell = Database.SpellTable.GetSpell(value.ID, value.Level);
                         {
                             int stamina = 100;
                             if (client.Entity.HeavenBlessing > 0)
@@ -1517,11 +1515,11 @@ namespace MTA
                 {
                     if (DateTime.Now >= client.matrixtime.AddHours(1.0))
                     {
-                        SafeDictionary<uint, Game.ConquerStructures.NobilityInformation> Board = new SafeDictionary<uint, Game.ConquerStructures.NobilityInformation>(10000);
+                        SafeDictionary<uint, NobilityInformation> Board = new SafeDictionary<uint, NobilityInformation>(10000);
                         client.NobilityInformation.Donation -= client.Donationx;
                         Board.Add(client.Entity.UID, client.NobilityInformation);
                         Database.NobilityTable.UpdateNobilityInformation(client.NobilityInformation);
-                        Game.ConquerStructures.Nobility.Sort(client.Entity.UID);
+                        Nobility.Sort(client.Entity.UID);
                         client.OnDonation = false;
                     }
                 }
@@ -1596,7 +1594,7 @@ namespace MTA
                             client.IncreaseExperience(client.ExpBall / 100, false);
                         }
                         client.LastTrainingPointsUp = Now32;
-                        client.Entity.Update(Network.GamePackets.Update.OnlineTraining, client.OnlineTrainingPoints, false);
+                        client.Entity.Update(Update.OnlineTraining, client.OnlineTrainingPoints, false);
                     }
                 }
                 #endregion
@@ -1616,7 +1614,7 @@ namespace MTA
                     if (Now32 >= client.MiningStamp.AddSeconds(2))
                     {
                         client.MiningStamp = Now32;
-                        Game.ConquerStructures.Mining.Mine(client);
+                        Mining.Mine(client);
                     }
                 }
                 #endregion
@@ -1781,8 +1779,8 @@ namespace MTA
                 {
                     if (client.Entity.MapID == 1543)
                     {
-                        client.Entity.RemoveFlag(Network.GamePackets.Update.Flags.ShurikenVortex);
-                        client.Entity.RemoveFlag(Network.GamePackets.Update.Flags.ReflectMelee);
+                        client.Entity.RemoveFlag(Update.Flags.ShurikenVortex);
+                        client.Entity.RemoveFlag(Update.Flags.ReflectMelee);
                     }
                 }
                 #endregion
@@ -1791,8 +1789,8 @@ namespace MTA
                 {
                     if (client.Entity.MapID == 1544)
                     {
-                        client.Entity.RemoveFlag(Network.GamePackets.Update.Flags.ShurikenVortex);
-                        client.Entity.RemoveFlag(Network.GamePackets.Update.Flags.ReflectMelee);
+                        client.Entity.RemoveFlag(Update.Flags.ShurikenVortex);
+                        client.Entity.RemoveFlag(Update.Flags.ReflectMelee);
                     }
                 }
                 #endregion
@@ -1801,8 +1799,8 @@ namespace MTA
                 {
                     if (client.Entity.MapID == 1545)
                     {
-                        client.Entity.RemoveFlag(Network.GamePackets.Update.Flags.ShurikenVortex);
-                        client.Entity.RemoveFlag(Network.GamePackets.Update.Flags.ReflectMelee);
+                        client.Entity.RemoveFlag(Update.Flags.ShurikenVortex);
+                        client.Entity.RemoveFlag(Update.Flags.ReflectMelee);
                     }
                 }
                 #endregion
@@ -1811,8 +1809,8 @@ namespace MTA
                 {
                     if (client.Entity.MapID == 1546)
                     {
-                        client.Entity.RemoveFlag(Network.GamePackets.Update.Flags.ShurikenVortex);
-                        client.Entity.RemoveFlag(Network.GamePackets.Update.Flags.ReflectMelee);
+                        client.Entity.RemoveFlag(Update.Flags.ShurikenVortex);
+                        client.Entity.RemoveFlag(Update.Flags.ReflectMelee);
                     }
                 }
                 #endregion
@@ -1821,8 +1819,8 @@ namespace MTA
                 {
                     if (client.Entity.MapID == 1547)
                     {
-                        client.Entity.RemoveFlag(Network.GamePackets.Update.Flags.ShurikenVortex);
-                        client.Entity.RemoveFlag(Network.GamePackets.Update.Flags.ReflectMelee);
+                        client.Entity.RemoveFlag(Update.Flags.ShurikenVortex);
+                        client.Entity.RemoveFlag(Update.Flags.ReflectMelee);
                     }
                 }
                 #endregion
@@ -1831,19 +1829,19 @@ namespace MTA
                 {
                     if (client.Entity.MapID == 1548)
                     {
-                        client.Entity.RemoveFlag(Network.GamePackets.Update.Flags.ShurikenVortex);
-                        client.Entity.RemoveFlag(Network.GamePackets.Update.Flags.ReflectMelee);
+                        client.Entity.RemoveFlag(Update.Flags.ShurikenVortex);
+                        client.Entity.RemoveFlag(Update.Flags.ReflectMelee);
                     }
                 }
                 #endregion
                 #endregion
 
                 #region Die Delay
-                if (client.Entity.Hitpoints == 0 && client.Entity.ContainsFlag(Network.GamePackets.Update.Flags.Dead) && !client.Entity.ContainsFlag(Network.GamePackets.Update.Flags.Ghost))
+                if (client.Entity.Hitpoints == 0 && client.Entity.ContainsFlag(Update.Flags.Dead) && !client.Entity.ContainsFlag(Update.Flags.Ghost))
                 {
                     if (Now32 > client.Entity.DeathStamp.AddSeconds(2))
                     {
-                        client.Entity.AddFlag(Network.GamePackets.Update.Flags.Ghost);
+                        client.Entity.AddFlag(Update.Flags.Ghost);
                         if (client.Entity.Body % 10 < 3)
                             client.Entity.TransformationID = 99;
                         else
@@ -1874,15 +1872,15 @@ namespace MTA
                 }
                 if (Now32 >= client.Entity.BlackbeardsRageStamp.AddSeconds(60))
                 {
-                    client.Entity.RemoveFlag2(MTA.Network.GamePackets.Update.Flags2.BlackbeardsRage);
+                    client.Entity.RemoveFlag2(Update.Flags2.BlackbeardsRage);
                 }
                 if (Now32 >= client.Entity.CannonBarrageStamp.AddSeconds(60))
                 {
-                    client.Entity.RemoveFlag2(MTA.Network.GamePackets.Update.Flags2.CannonBarrage);
+                    client.Entity.RemoveFlag2(Update.Flags2.CannonBarrage);
                 }
                 if (Now32 >= client.Entity.FatigueStamp.AddSeconds(client.Entity.FatigueSecs))
                 {
-                    client.Entity.RemoveFlag2(MTA.Network.GamePackets.Update.Flags2.Fatigue);
+                    client.Entity.RemoveFlag2(Update.Flags2.Fatigue);
                     client.Entity.IsDefensiveStance = false;
                 }
                 if (Now32 > client.Entity.GuildRequest.AddSeconds(30))
@@ -1899,12 +1897,12 @@ namespace MTA
                         client.Effect = true;
                         if (client.Entity.MapID == 1036)
                         {
-                            Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
+                            FloorItem floorItem = new FloorItem(true);
                             floorItem.ItemID = 812;
                             floorItem.MapID = 1036;
                             floorItem.X = 184;
                             floorItem.Y = 205;
-                            floorItem.Type = Network.GamePackets.FloorItem.Effect;
+                            floorItem.Type = FloorItem.Effect;
                             client.Send(floorItem);
                         }
                     }
@@ -1939,7 +1937,7 @@ namespace MTA
                     {
                         Random disco = new Random();
                         uint discocolor = (uint)disco.Next(50000, 999999999);
-                        Network.GamePackets.Data datas = new Network.GamePackets.Data(true);
+                        Data datas = new Data(true);
                         datas.UID = client.Entity.UID;
                         datas.ID = 104;
                         datas.dwParam = discocolor;
@@ -1949,7 +1947,7 @@ namespace MTA
                     {
                         if (DateTime.Now.Minute >= 40 && DateTime.Now.Minute <= 45)
                         {
-                            Network.GamePackets.Data datas = new Network.GamePackets.Data(true);
+                            Data datas = new Data(true);
                             datas.UID = client.Entity.UID;
                             datas.ID = 104;
                             datas.dwParam = 5855577;
@@ -1957,7 +1955,7 @@ namespace MTA
                         }
                         else
                         {
-                            Network.GamePackets.Data datas = new Network.GamePackets.Data(true);
+                            Data datas = new Data(true);
                             datas.UID = client.Entity.UID;
                             datas.ID = 104;
                             datas.dwParam = 0;
@@ -1977,7 +1975,7 @@ namespace MTA
             {
                 try
                 {
-                    if (client.Entity.ContainsFlag(Network.GamePackets.Update.Flags.ShurikenVortex))
+                    if (client.Entity.ContainsFlag(Update.Flags.ShurikenVortex))
                     {
                         if (client.Entity.VortexPacket != null && client.Entity.VortexPacket.ToArray() != null)
                         {
@@ -1995,9 +1993,9 @@ namespace MTA
                         if (AttackPacket != null && AttackPacket.ToArray() != null)
                         {
                             uint AttackType = AttackPacket.AttackType;
-                            if (AttackType == Network.GamePackets.Attack.Magic || AttackType == Network.GamePackets.Attack.Melee || AttackType == Network.GamePackets.Attack.Ranged)
+                            if (AttackType == Attack.Magic || AttackType == Attack.Melee || AttackType == Attack.Ranged)
                             {
-                                if (AttackType == Network.GamePackets.Attack.Magic)
+                                if (AttackType == Attack.Magic)
                                 {
                                     if (Now > client.Entity.AttackStamp.AddSeconds(1))
                                     {
@@ -2024,7 +2022,7 @@ namespace MTA
                                         decrease = 700;
                                     if (client.Entity.OnSuperman())
                                         decrease = 200;
-                                    if (Now > client.Entity.AttackStamp.AddMilliseconds((1000 - client.Entity.Agility - decrease) * (AttackType == Network.GamePackets.Attack.Ranged ? 1 : 1)))
+                                    if (Now > client.Entity.AttackStamp.AddMilliseconds((1000 - client.Entity.Agility - decrease) * (AttackType == Attack.Ranged ? 1 : 1)))
                                     {
                                         new Game.Attacking.Handle(AttackPacket, client.Entity, null);
                                     }
@@ -2050,20 +2048,20 @@ namespace MTA
             if (client.Entity.Reborn > 1)
                 return;
 
-            if (!client.Entity.ContainsFlag(Network.GamePackets.Update.Flags.Praying))
+            if (!client.Entity.ContainsFlag(Update.Flags.Praying))
             {
                 foreach (Interfaces.IMapObject ClientObj in client.Screen.Objects)
                 {
                     if (ClientObj != null)
                     {
-                        if (ClientObj.MapObjType == Game.MapObjectType.Player)
+                        if (ClientObj.MapObjType == MapObjectType.Player)
                         {
                             var Client = ClientObj.Owner;
-                            if (Client.Entity.ContainsFlag(Network.GamePackets.Update.Flags.CastPray))
+                            if (Client.Entity.ContainsFlag(Update.Flags.CastPray))
                             {
                                 if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, ClientObj.X, ClientObj.Y) <= 3)
                                 {
-                                    client.Entity.AddFlag(Network.GamePackets.Update.Flags.Praying);
+                                    client.Entity.AddFlag(Update.Flags.Praying);
                                     client.PrayLead = Client;
                                     client.Entity.Action = Client.Entity.Action;
                                     Client.Prayers.Add(client);
@@ -2080,7 +2078,7 @@ namespace MTA
                 {
                     if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, client.PrayLead.Entity.X, client.PrayLead.Entity.Y) > 4)
                     {
-                        client.Entity.RemoveFlag(Network.GamePackets.Update.Flags.Praying);
+                        client.Entity.RemoveFlag(Update.Flags.Praying);
                         client.PrayLead.Prayers.Remove(client);
                         client.PrayLead = null;
                     }
@@ -2094,17 +2092,17 @@ namespace MTA
             DateTime Now64 = DateTime.Now;
             #region Event System
             // Update all scheduled events
-            MTA.Game.Events.EventScheduler.Update(DateTime.Now);
+            Game.Events.EventScheduler.Update(DateTime.Now);
             
             // Send pre-event warnings for CP Castle
-            MTA.Game.Events.CpCastle.CpCastleEvent.SendPreEventWarnings(DateTime.Now);
+            Game.Events.CpCastle.CpCastleEvent.SendPreEventWarnings(DateTime.Now);
             #endregion
 
             HeroOFGame.CheakUp();
             if (MatrixTimes.Start.SkillTeam && !Game.Features.Tournaments.TeamElitePk.SkillTeamTournament.Opened)
             {
                 Game.Features.Tournaments.TeamElitePk.SkillTeamTournament.Open();
-                foreach (Client.GameState client in Kernel.GamePool.Values)
+                foreach (GameState client in Kernel.GamePool.Values)
                 {
                     client.ClaimedSkillTeam = 0;
                     if (client.Map.BaseID != 6001 && client.Map.BaseID != 6000 && !client.Entity.Dead)
@@ -2124,7 +2122,7 @@ namespace MTA
             if (MatrixTimes.Start.TeamPk && !Game.Features.Tournaments.TeamElitePk.TeamTournament.Opened)
             {
                 Game.Features.Tournaments.TeamElitePk.TeamTournament.Open();
-                foreach (Client.GameState client in Kernel.GamePool.Values)
+                foreach (GameState client in Kernel.GamePool.Values)
                 {
                     client.ClaimedTeampk = 0;
                     if (client.Map.BaseID != 6001 && client.Map.BaseID != 6000 && !client.Entity.Dead)
@@ -2144,7 +2142,7 @@ namespace MTA
             #region Couples PK War
             if (DateTime.Now.DayOfWeek == DayOfWeek.Friday && DateTime.Now.Hour == 19 && DateTime.Now.Minute == 30 && DateTime.Now.Second == 1)
             {
-                Kernel.SendWorldMessage(new Network.GamePackets.Message("Couples PkWar has started! You have 5 minute to signup go to TC CouplesPkGuide in TwinCity!", System.Drawing.Color.White, Network.GamePackets.Message.Center), Program.Values);
+                Kernel.SendWorldMessage(new Message("Couples PkWar has started! You have 5 minute to signup go to TC CouplesPkGuide in TwinCity!", Color.White, Message.Center), Program.Values);
                 foreach (var client in Program.Values)
                     if (client.Entity.Spouse != "None")
                         client.MessageBox("CouplesPk War has started! Would you like to join? [Prize: " + 5000000 + " CPs]",
@@ -2154,20 +2152,20 @@ namespace MTA
             #region cycolne race
             if (DateTime.Now.Minute == 57 && DateTime.Now.Second == 1)
             {
-                World.cycolne3 = true;
-                Game.Entity.Speed = 0;
+                cycolne3 = true;
+                Entity.Speed = 0;
                 foreach (var client in Program.Values)
                     client.MessageBox("Cycolne Race Start U Like To Join And Get " + 100000 + " CPS ",
                              p => { p.Entity.Teleport(1002, 308, 235); });
             }
             if (DateTime.Now.Minute == 58 && DateTime.Now.Second == 1)
             {
-                World.cycolne1 = true;
+                cycolne1 = true;
             }
             if (DateTime.Now.Minute == 59 && cycolne3)
             {
                 cycolne3 = false;
-                World.cycolne1 = false;
+                cycolne1 = false;
 
             }
             #endregion
@@ -2178,37 +2176,37 @@ namespace MTA
                 foreach (var client in Program.Values)
                     if (client.Entity.MapID == 6000 || client.Entity.MapID == 6001 || client.Entity.MapID == 6002 || client.Entity.MapID == 6003 || client.Entity.MapID == 6004)
                         return;
-                if (!Game.EliteGuildWar.IsWar)
+                if (!EliteGuildWar.IsWar)
                 {
                     if (Now64.Minute == 15 && Now64.Second == 01)
                     {
-                        Game.EliteGuildWar.Start();
+                        EliteGuildWar.Start();
                         foreach (var client in Program.Values)
                             if (client.Entity.GuildID != 0)
                                 client.MessageBox("Elite GuildWar has begun! Would you like to join?",
                                     p => { p.Entity.Teleport(1002, 286, 158); });
                     }
                 }
-                if (Game.EliteGuildWar.IsWar)
+                if (EliteGuildWar.IsWar)
                 {
-                    if (Time32.Now > Game.EliteGuildWar.ScoreSendStamp.AddSeconds(3))
+                    if (Time32.Now > EliteGuildWar.ScoreSendStamp.AddSeconds(3))
                     {
-                        Game.EliteGuildWar.ScoreSendStamp = Time32.Now;
-                        Game.EliteGuildWar.SendScores();
+                        EliteGuildWar.ScoreSendStamp = Time32.Now;
+                        EliteGuildWar.SendScores();
                     }
                     if (Now64.Minute == 25 && Now64.Second <= 02)
                     {
-                        Kernel.SendWorldMessage(new Network.GamePackets.Message("5 Minutes left till Elite GuildWar End Hurry kick other Guild's Ass!.", System.Drawing.Color.White, Network.GamePackets.Message.Center), Program.Values);
+                        Kernel.SendWorldMessage(new Message("5 Minutes left till Elite GuildWar End Hurry kick other Guild's Ass!.", Color.White, Message.Center), Program.Values);
                     }
                 }
 
-                if (Game.EliteGuildWar.IsWar)
+                if (EliteGuildWar.IsWar)
                 {
                     if (Now64.Minute == 29 && Now64.Second == 58)
                     {
-                        Game.EliteGuildWar.End();
+                        EliteGuildWar.End();
                         {
-                            Kernel.SendWorldMessage(new Network.GamePackets.Message("Elite Guild War Ended Thanks To MTA.", System.Drawing.Color.White, Network.GamePackets.Message.Center), Program.Values);
+                            Kernel.SendWorldMessage(new Message("Elite Guild War Ended Thanks To MTA.", Color.White, Message.Center), Program.Values);
                         }
                     }
                 }
@@ -2217,7 +2215,7 @@ namespace MTA
             #region Clan War
             if ((Now64.Hour == 21 || Now64.Hour == 16) && Now64.Minute == 00 && Now64.Second == 05 && !ClanWar.IsWar)
             {
-                Game.ClanWar.Start();
+                ClanWar.Start();
                 ClanWarAI = false;
                 if (Now64.Hour != 16)
                 {
@@ -2238,14 +2236,14 @@ namespace MTA
             }
             if ((Now64.Hour == 22 || Now64.Hour == 17) && Now64.Minute == 00 && ClanWar.IsWar)
             {
-                Game.ClanWar.End();
+                ClanWar.End();
             }
-            if (Game.ClanWar.IsWar)
+            if (ClanWar.IsWar)
             {
-                if (Time32.Now > Game.ClanWar.ScoreSendStamp.AddSeconds(3))
+                if (Time32.Now > ClanWar.ScoreSendStamp.AddSeconds(3))
                 {
-                    Game.ClanWar.ScoreSendStamp = Time32.Now;
-                    Game.ClanWar.SendScores();
+                    ClanWar.ScoreSendStamp = Time32.Now;
+                    ClanWar.SendScores();
                 }
 
             }
@@ -2255,7 +2253,7 @@ namespace MTA
             {
                 if ((Now64.Hour == 12 || Now64.Hour == 19) && Now64.Minute == 05 && Now64.Second == 2)
                 {
-                    Kernel.SendWorldMessage(new Network.GamePackets.Message("DisCity signup has been closed. Please try next time!", System.Drawing.Color.White, Network.GamePackets.Message.Center), Program.Values);
+                    Kernel.SendWorldMessage(new Message("DisCity signup has been closed. Please try next time!", Color.White, Message.Center), Program.Values);
 
                     Game.Features.DisCity.Signup = false;
                 }
@@ -2280,7 +2278,7 @@ namespace MTA
                 if (Now64.Hour == 22 && Now64.Minute == 00 && Now64.Second <= 2)
                 {
                     MonthlyPKWar = true;
-                    foreach (Client.GameState client in Kernel.GamePool.Values)
+                    foreach (GameState client in Kernel.GamePool.Values)
                     {
                         if (client.Map.BaseID != 6001 && client.Map.BaseID != 6000 && !client.Entity.Dead)
                         {
@@ -2337,11 +2335,11 @@ namespace MTA
             //////////////////////
             #region PoleIslanD
 
-            if (!Game.PoleIslanD.IsWar)
+            if (!PoleIslanD.IsWar)
             {
                 if (Now64.Hour == 16 && Now64.Minute == 00 && Now64.Second == 35)
                 {
-                    Game.PoleIslanD.Start();
+                    PoleIslanD.Start();
 
                     foreach (var client in Program.Values)
                         if (client.Entity.MapID == 6000 || client.Entity.MapID == 6001 || client.Entity.MapID == 6002 || client.Entity.MapID == 6003 || client.Entity.MapID == 6004)
@@ -2352,24 +2350,24 @@ namespace MTA
                                 p => { p.Entity.Teleport(1002, 298, 230); });
                 }
             }
-            if (Game.PoleIslanD.IsWar)
+            if (PoleIslanD.IsWar)
             {
-                if (Time32.Now > Game.PoleIslanD.ScoreSendStamp.AddSeconds(3))
+                if (Time32.Now > PoleIslanD.ScoreSendStamp.AddSeconds(3))
                 {
-                    Game.PoleIslanD.ScoreSendStamp = Time32.Now;
-                    Game.PoleIslanD.SendScores();
+                    PoleIslanD.ScoreSendStamp = Time32.Now;
+                    PoleIslanD.SendScores();
                 }
                 if (Now64.Hour == 16 && Now64.Minute == 50 && Now64.Second <= 2)
                 {
-                    Kernel.SendWorldMessage(new Network.GamePackets.Message("10 Minutes left till PoleIslanD End Hurry kick other Guild's Ass!.", System.Drawing.Color.White, Network.GamePackets.Message.Center), Program.Values);
+                    Kernel.SendWorldMessage(new Message("10 Minutes left till PoleIslanD End Hurry kick other Guild's Ass!.", Color.White, Message.Center), Program.Values);
                 }
             }
 
-            if (Game.PoleIslanD.IsWar)
+            if (PoleIslanD.IsWar)
             {
                 if (Now64.Hour == 17 && Now64.Minute == 00 && Now64.Second == 04)
                 {
-                    Game.PoleIslanD.End();
+                    PoleIslanD.End();
                     {
 
                     }
@@ -2378,11 +2376,11 @@ namespace MTA
             #endregion
             #region PoleRakion
 
-            if (!Game.PoleRakion.IsWar)
+            if (!PoleRakion.IsWar)
             {
                 if (Now64.Hour == 22 && Now64.Minute == 00 && Now64.Second == 35)
                 {
-                    Game.PoleRakion.Start();
+                    PoleRakion.Start();
 
                     foreach (var client in Program.Values)
                         if (client.Entity.MapID == 6000 || client.Entity.MapID == 6001 || client.Entity.MapID == 6002 || client.Entity.MapID == 6003 || client.Entity.MapID == 6004)
@@ -2393,24 +2391,24 @@ namespace MTA
                                 p => { p.Entity.Teleport(1002, 249, 215); });
                 }
             }
-            if (Game.PoleRakion.IsWar)
+            if (PoleRakion.IsWar)
             {
-                if (Time32.Now > Game.PoleRakion.ScoreSendStamp.AddSeconds(3))
+                if (Time32.Now > PoleRakion.ScoreSendStamp.AddSeconds(3))
                 {
-                    Game.PoleRakion.ScoreSendStamp = Time32.Now;
-                    Game.PoleRakion.SendScores();
+                    PoleRakion.ScoreSendStamp = Time32.Now;
+                    PoleRakion.SendScores();
                 }
                 if (Now64.Hour == 22 && Now64.Minute == 50 && Now64.Second <= 2)
                 {
-                    Kernel.SendWorldMessage(new Network.GamePackets.Message("10 Minutes left till PoleRakion End Hurry kick other Guild's Ass!.", System.Drawing.Color.White, Network.GamePackets.Message.Center), Program.Values);
+                    Kernel.SendWorldMessage(new Message("10 Minutes left till PoleRakion End Hurry kick other Guild's Ass!.", Color.White, Message.Center), Program.Values);
                 }
             }
 
-            if (Game.PoleRakion.IsWar)
+            if (PoleRakion.IsWar)
             {
                 if (Now64.Hour == 23 && Now64.Minute == 00 && Now64.Second == 04)
                 {
-                    Game.PoleRakion.End();
+                    PoleRakion.End();
                     {
 
                     }
@@ -2597,7 +2595,7 @@ namespace MTA
                 if (!GuildWar.IsWar)
                 {
                     GuildWar.Start();
-                    foreach (Client.GameState client in Kernel.GamePool.Values)
+                    foreach (GameState client in Kernel.GamePool.Values)
                     {
                         client.Entity.DeputyLeader = 0;
                         if (client.Map.BaseID != 6001 && client.Map.BaseID != 6000 && !client.Entity.Dead)
@@ -2664,7 +2662,7 @@ namespace MTA
                 {
                     client.ClaimedElitePk = 0;
                     client.Send(brackets);
-                    foreach (Client.GameState Client in Kernel.GamePool.Values)
+                    foreach (GameState Client in Kernel.GamePool.Values)
                     {
                         if (client.Map.BaseID != 6001 && client.Map.BaseID != 6000 && !client.Entity.Dead)
                         {
@@ -2679,13 +2677,13 @@ namespace MTA
                         }
                     }
                     #region RemoveTopElite
-                    var EliteChampion = Network.GamePackets.TitlePacket.Titles.ElitePKChamption_High;
-                    var EliteSecond = Network.GamePackets.TitlePacket.Titles.ElitePK2ndPlace_High;
-                    var EliteThird = Network.GamePackets.TitlePacket.Titles.ElitePK3ndPlace_High;
-                    var EliteEightChampion = Network.GamePackets.TitlePacket.Titles.ElitePKChamption_Low;
-                    var EliteEightSecond = Network.GamePackets.TitlePacket.Titles.ElitePK2ndPlace_Low;
-                    var EliteEightThird = Network.GamePackets.TitlePacket.Titles.ElitePK3ndPlace_Low;
-                    var EliteEight = Network.GamePackets.TitlePacket.Titles.ElitePKTopEight_Low;
+                    var EliteChampion = TitlePacket.Titles.ElitePKChamption_High;
+                    var EliteSecond = TitlePacket.Titles.ElitePK2ndPlace_High;
+                    var EliteThird = TitlePacket.Titles.ElitePK3ndPlace_High;
+                    var EliteEightChampion = TitlePacket.Titles.ElitePKChamption_Low;
+                    var EliteEightSecond = TitlePacket.Titles.ElitePK2ndPlace_Low;
+                    var EliteEightThird = TitlePacket.Titles.ElitePK3ndPlace_Low;
+                    var EliteEight = TitlePacket.Titles.ElitePKTopEight_Low;
                     if (client.Entity.Titles.ContainsKey(EliteChampion))
                         client.Entity.RemoveTopStatus((ulong)EliteChampion);
                     if (client.Entity.Titles.ContainsKey(EliteSecond))
@@ -2732,14 +2730,14 @@ namespace MTA
                 new PerfectionRank().UpdateRanking();
             }
             #region New weather
-            MTA.Network.GamePackets.Weather weather;
+            Network.GamePackets.Weather weather;
             #region Rain System
             if (DateTime.Now.Minute == 10 && DateTime.Now.Second == 0 || DateTime.Now.Minute == 00 && DateTime.Now.Second == 00)
             {
                 foreach (GameState state in Kernel.GamePool.Values)
                 {
-                    Program.WeatherType = MTA.Network.GamePackets.Weather.Snow;
-                    weather = new MTA.Network.GamePackets.Weather(true)
+                    Program.WeatherType = Network.GamePackets.Weather.Snow;
+                    weather = new Network.GamePackets.Weather(true)
                     {
                         WeatherType = (uint)Program.WeatherType,
                         Intensity = 255,
@@ -2755,8 +2753,8 @@ namespace MTA
             {
                 foreach (GameState state in Kernel.GamePool.Values)
                 {
-                    Program.WeatherType = MTA.Network.GamePackets.Weather.Snow;
-                    weather = new MTA.Network.GamePackets.Weather(true)
+                    Program.WeatherType = Network.GamePackets.Weather.Snow;
+                    weather = new Network.GamePackets.Weather(true)
                     {
                         WeatherType = (uint)Program.WeatherType,
                         Intensity = 255,
@@ -2772,8 +2770,8 @@ namespace MTA
             {
                 foreach (GameState state in Kernel.GamePool.Values)
                 {
-                    Program.WeatherType = MTA.Network.GamePackets.Weather.Snow;
-                    weather = new MTA.Network.GamePackets.Weather(true)
+                    Program.WeatherType = Network.GamePackets.Weather.Snow;
+                    weather = new Network.GamePackets.Weather(true)
                     {
                         WeatherType = (uint)Program.WeatherType,
                         Intensity = 255,
@@ -2789,8 +2787,8 @@ namespace MTA
             {
                 foreach (GameState state in Kernel.GamePool.Values)
                 {
-                    Program.WeatherType = MTA.Network.GamePackets.Weather.Snow;
-                    weather = new MTA.Network.GamePackets.Weather(true)
+                    Program.WeatherType = Network.GamePackets.Weather.Snow;
+                    weather = new Network.GamePackets.Weather(true)
                     {
                         WeatherType = (uint)Program.WeatherType,
                         Intensity = 255,
@@ -2806,8 +2804,8 @@ namespace MTA
             {
                 foreach (GameState state in Kernel.GamePool.Values)
                 {
-                    Program.WeatherType = MTA.Network.GamePackets.Weather.Snow;
-                    weather = new MTA.Network.GamePackets.Weather(true)
+                    Program.WeatherType = Network.GamePackets.Weather.Snow;
+                    weather = new Network.GamePackets.Weather(true)
                     {
                         WeatherType = (uint)Program.WeatherType,
                         Intensity = 255,
@@ -2868,7 +2866,7 @@ namespace MTA
                     Game.ConquerStructures.Broadcast.CurrentBroadcast = Game.ConquerStructures.Broadcast.Broadcasts[0];
                     Game.ConquerStructures.Broadcast.Broadcasts.Remove(Game.ConquerStructures.Broadcast.CurrentBroadcast);
                     Game.ConquerStructures.Broadcast.LastBroadcast = Now;
-                    Kernel.SendWorldMessage(new Network.GamePackets.Message(Game.ConquerStructures.Broadcast.CurrentBroadcast.Message, "ALLUSERS", Game.ConquerStructures.Broadcast.CurrentBroadcast.EntityName, System.Drawing.Color.Red, Network.GamePackets.Message.BroadcastMessage), Program.Values);
+                    Kernel.SendWorldMessage(new Message(Game.ConquerStructures.Broadcast.CurrentBroadcast.Message, "ALLUSERS", Game.ConquerStructures.Broadcast.CurrentBroadcast.EntityName, Color.Red, Message.BroadcastMessage), Program.Values);
                 }
                 else
                     Game.ConquerStructures.Broadcast.CurrentBroadcast.EntityID = 1;
@@ -2884,25 +2882,25 @@ namespace MTA
         }
         private void ArenaFunctions(int time)
         {
-            Game.Arena.EngagePlayers();
-            Game.Arena.CheckGroups();
-            Game.Arena.VerifyAwaitingPeople();
-            Game.Arena.Reset();
+            Arena.EngagePlayers();
+            Arena.CheckGroups();
+            Arena.VerifyAwaitingPeople();
+            Arena.Reset();
         }
         private void TeamArenaFunctions(int time)
         {
-            Game.TeamArena.PickUpTeams();
-            Game.TeamArena.EngagePlayers();
-            Game.TeamArena.CheckGroups();
-            Game.TeamArena.VerifyAwaitingPeople();
-            Game.TeamArena.Reset();
+            TeamArena.PickUpTeams();
+            TeamArena.EngagePlayers();
+            TeamArena.CheckGroups();
+            TeamArena.VerifyAwaitingPeople();
+            TeamArena.Reset();
         }
         private void ChampionFunctions(int time)
         {
-            Game.Champion.EngagePlayers();
-            Game.Champion.CheckGroups();
-            Game.Champion.VerifyAwaitingPeople();
-            Game.Champion.Reset();
+            Champion.EngagePlayers();
+            Champion.CheckGroups();
+            Champion.VerifyAwaitingPeople();
+            Champion.Reset();
         }
 
         #region Funcs
@@ -2938,7 +2936,7 @@ namespace MTA
 
         internal void SendServerMessaj(string p)
         {
-            Kernel.SendWorldMessage(new Message(p, System.Drawing.Color.Red, Message.TopLeft), Program.Values);
+            Kernel.SendWorldMessage(new Message(p, Color.Red, Message.TopLeft), Program.Values);
         }
     }
 }

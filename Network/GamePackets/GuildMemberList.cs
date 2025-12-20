@@ -33,7 +33,7 @@ namespace MTA.Network.GamePackets
             Writer.Write((ushort)0);
             Writer.Write((ushort)g.Members.Count);//count
             Writer.Write((ushort)0);
-            foreach (MTA.Game.ConquerStructures.Society.Guild.Member m in g.Members.Values)
+            foreach (Guild.Member m in g.Members.Values)
             {
                 for (int i = 0; i < 16; i++)//16 offsets
                 {

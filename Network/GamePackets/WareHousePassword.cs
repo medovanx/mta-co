@@ -39,7 +39,7 @@ namespace MTA.Network.GamePackets {
         }
 
         public void Deserialize(byte[] buffer) {
-            this.Buffer = buffer;
+            Buffer = buffer;
         }
 
         public void Send(GameState client) {

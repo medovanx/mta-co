@@ -12,7 +12,7 @@ namespace MTA.Database
             {
                 while (reader.Read())
                 {
-                    Network.GamePackets.ChampionStatistic stat = new Network.GamePackets.ChampionStatistic(true);
+                    ChampionStatistic stat = new ChampionStatistic(true);
                     stat.UID = reader.ReadUInt32("EntityID");
                     stat.Name = reader.ReadString("EntityName");
                     stat.YesterdayRank = reader.ReadUInt32("YesterdayRank");
@@ -39,7 +39,7 @@ namespace MTA.Database
             Console.WriteLine("Champion information loaded.");
         }
 
-        public static void SaveStatistics(Network.GamePackets.ChampionStatistic stats, MySql.Data.MySqlClient.MySqlConnection conn)
+        public static void SaveStatistics(ChampionStatistic stats, MySql.Data.MySqlClient.MySqlConnection conn)
         {
             if (stats == null) return;
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("championarena"))
@@ -52,7 +52,7 @@ namespace MTA.Database
                 .Set("Class", stats.Class).Where("EntityID", stats.UID)
                 .Execute(conn);
         }
-        public static void SaveStats(Network.GamePackets.ChampionStatistic stats)
+        public static void SaveStats(ChampionStatistic stats)
         {
             using (var conn = DataHolder.MySqlConnection)
             {

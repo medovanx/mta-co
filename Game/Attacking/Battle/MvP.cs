@@ -25,7 +25,7 @@ namespace MTA
             {
                 case Attack.Melee:
                     {
-                        Damage = MyMath.Generate((int)Monster.MinAttack, (int)Monster.MaxAttack);
+                        Damage = Generate((int)Monster.MinAttack, (int)Monster.MaxAttack);
                         Damage = AdjustDamageMonster2Entity(Damage, Monster, Target);
 
                         Damage -= Target.Defence;
@@ -95,7 +95,7 @@ namespace MTA
 
             if (Info.ID == 1115 || (Info.WeaponSubtype.Count >= 0 && !Info.WeaponSubtype.Contains(500)))
             {
-                Damage = MyMath.Generate((int)Monster.MinAttack, (int)Monster.MaxAttack);
+                Damage = Generate((int)Monster.MinAttack, (int)Monster.MaxAttack);
                 if (Info.Power > 30000)
                     Damage *= (Double)(Info.Power - 30000) / 100;
                 else
@@ -107,7 +107,7 @@ namespace MTA
             }
             else if (Info.WeaponSubtype.Contains(500))
             {
-                Damage = MyMath.Generate((int)Monster.MinAttack, (int)Monster.MaxAttack);
+                Damage = Generate((int)Monster.MinAttack, (int)Monster.MaxAttack);
                 if (Info.Power > 30000)
                     Damage *= (Double)(Info.Power - 30000) / 100;
                 else

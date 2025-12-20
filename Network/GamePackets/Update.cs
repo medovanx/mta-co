@@ -427,18 +427,18 @@ namespace MTA.Network.GamePackets
         }
         public void Append(byte type, byte value)
         {
-            this.UpdateCount++;
+            UpdateCount++;
             ushort offset = (ushort)(16 + ((UpdateCount - 1) * 32));
-            Writer.WriteUInt32(type, offset, Buffer);
-            Writer.WriteUInt64(value, offset + 4, Buffer);
-            Writer.WriteUInt64(value, offset + 8, Buffer);
+            WriteUInt32(type, offset, Buffer);
+            WriteUInt64(value, offset + 4, Buffer);
+            WriteUInt64(value, offset + 8, Buffer);
         }
         public void Append(byte type, double value)
         {
             UpdateCount = UpdateCount + 1;
             ushort offset = (ushort)(16 + ((UpdateCount - 1) * 32));
-            Writer.WriteUInt32(type, offset, Buffer);
-            Writer.WriteUInt64((ulong)(value * 100), offset + 4, Buffer);
+            WriteUInt32(type, offset, Buffer);
+            WriteUInt64((ulong)(value * 100), offset + 4, Buffer);
 
         }
         public void Append(byte type, ushort value)
@@ -451,13 +451,13 @@ namespace MTA.Network.GamePackets
         public static void MsgUpdateActivenessTask(Client.GameState client, byte Task, byte value)
         {
             byte[] Buffer = new byte[12 + 8];
-            Writer.WriteByte(12, 0, Buffer);
-            Writer.WriteUInt16(2820, 2, Buffer);//Length 
-            Writer.WriteByte(3, 4, Buffer);//Unknown 
-            Writer.WriteByte(1, 5, Buffer);//AmountTasksWillUpdate 
-            Writer.WriteByte(Task, 6, Buffer);//type 
-            Writer.WriteByte(0, 10, Buffer);//Completed 
-            Writer.WriteByte(value, 11, Buffer);//value 
+            WriteByte(12, 0, Buffer);
+            WriteUInt16(2820, 2, Buffer);//Length 
+            WriteByte(3, 4, Buffer);//Unknown 
+            WriteByte(1, 5, Buffer);//AmountTasksWillUpdate 
+            WriteByte(Task, 6, Buffer);//type 
+            WriteByte(0, 10, Buffer);//Completed 
+            WriteByte(value, 11, Buffer);//value 
             client.Send(Buffer);
         }
         public void AppendFull(byte type, ulong val1, ulong val2, ulong val3, ulong val4)
@@ -639,181 +639,181 @@ namespace MTA.Network.GamePackets
         public byte[] PStrike(Entity attacker)
         {
             byte[] buffer = new byte[96];
-            Writer.WriteUInt16(88, 0, buffer);
-            Writer.WriteUInt16(10017, 2, buffer);
-            Writer.WriteUInt32(attacker.UID, 8, buffer);
-            Writer.WriteUInt32(2, 12, buffer);
-            Writer.WriteInt32(25, 16, buffer);
-            Writer.WriteInt32(2, 37, buffer);
-            Writer.WriteInt32(59, 40, buffer);
-            Writer.WriteInt32(137, 44, buffer);
-            Writer.WriteInt32(80, 48, buffer);
-            Writer.WriteInt32(150, 52, buffer);
+            WriteUInt16(88, 0, buffer);
+            WriteUInt16(10017, 2, buffer);
+            WriteUInt32(attacker.UID, 8, buffer);
+            WriteUInt32(2, 12, buffer);
+            WriteInt32(25, 16, buffer);
+            WriteInt32(2, 37, buffer);
+            WriteInt32(59, 40, buffer);
+            WriteInt32(137, 44, buffer);
+            WriteInt32(80, 48, buffer);
+            WriteInt32(150, 52, buffer);
             return buffer;
         }
         public byte[] MStrike(Entity attacker)
         {
             byte[] buffer = new byte[96];
-            Writer.WriteUInt16(88, 0, buffer);
-            Writer.WriteUInt16(10017, 2, buffer);
-            Writer.WriteUInt32(attacker.UID, 8, buffer);
-            Writer.WriteUInt32(2, 12, buffer);
-            Writer.WriteInt32(25, 16, buffer);
-            Writer.WriteInt32(2, 37, buffer);
-            Writer.WriteInt32(60, 40, buffer);
-            Writer.WriteInt32(137, 44, buffer);
-            Writer.WriteInt32(80, 48, buffer);
-            Writer.WriteInt32(150, 52, buffer);
+            WriteUInt16(88, 0, buffer);
+            WriteUInt16(10017, 2, buffer);
+            WriteUInt32(attacker.UID, 8, buffer);
+            WriteUInt32(2, 12, buffer);
+            WriteInt32(25, 16, buffer);
+            WriteInt32(2, 37, buffer);
+            WriteInt32(60, 40, buffer);
+            WriteInt32(137, 44, buffer);
+            WriteInt32(80, 48, buffer);
+            WriteInt32(150, 52, buffer);
             return buffer;
         }
         public byte[] Immunity(Entity attacker)
         {
             byte[] buffer = new byte[96];
-            Writer.WriteUInt16(88, 0, buffer);
-            Writer.WriteUInt16(10017, 2, buffer);
-            Writer.WriteUInt32(attacker.UID, 8, buffer);
-            Writer.WriteUInt32(2, 12, buffer);
-            Writer.WriteInt32(25, 16, buffer);
-            Writer.WriteInt32(2, 37, buffer);
-            Writer.WriteInt32(61, 40, buffer);
-            Writer.WriteInt32(137, 44, buffer);
-            Writer.WriteInt32(80, 48, buffer);
-            Writer.WriteInt32(150, 52, buffer);
+            WriteUInt16(88, 0, buffer);
+            WriteUInt16(10017, 2, buffer);
+            WriteUInt32(attacker.UID, 8, buffer);
+            WriteUInt32(2, 12, buffer);
+            WriteInt32(25, 16, buffer);
+            WriteInt32(2, 37, buffer);
+            WriteInt32(61, 40, buffer);
+            WriteInt32(137, 44, buffer);
+            WriteInt32(80, 48, buffer);
+            WriteInt32(150, 52, buffer);
             return buffer;
         }
         public byte[] Break(Entity attacker)
         {
             byte[] buffer = new byte[96];
-            Writer.WriteUInt16(88, 0, buffer);
-            Writer.WriteUInt16(10017, 2, buffer);
-            Writer.WriteUInt32(attacker.UID, 8, buffer);
-            Writer.WriteUInt32(2, 12, buffer);
-            Writer.WriteInt32(25, 16, buffer);
-            Writer.WriteInt32(2, 37, buffer);
-            Writer.WriteInt32(62, 40, buffer);
-            Writer.WriteInt32(137, 44, buffer);
-            Writer.WriteInt32(80, 48, buffer);
-            Writer.WriteInt32(150, 52, buffer);
+            WriteUInt16(88, 0, buffer);
+            WriteUInt16(10017, 2, buffer);
+            WriteUInt32(attacker.UID, 8, buffer);
+            WriteUInt32(2, 12, buffer);
+            WriteInt32(25, 16, buffer);
+            WriteInt32(2, 37, buffer);
+            WriteInt32(62, 40, buffer);
+            WriteInt32(137, 44, buffer);
+            WriteInt32(80, 48, buffer);
+            WriteInt32(150, 52, buffer);
             return buffer;
         }
         public byte[] Antibreak(Entity attacker)
         {
             byte[] buffer = new byte[96];
-            Writer.WriteUInt16(88, 0, buffer);
-            Writer.WriteUInt16(10017, 2, buffer);
-            Writer.WriteUInt32(attacker.UID, 8, buffer);
-            Writer.WriteUInt32(2, 12, buffer);
-            Writer.WriteInt32(25, 16, buffer);
-            Writer.WriteInt32(2, 37, buffer);
-            Writer.WriteInt32(63, 40, buffer);
-            Writer.WriteInt32(137, 44, buffer);
-            Writer.WriteInt32(80, 48, buffer);
-            Writer.WriteInt32(150, 52, buffer);
+            WriteUInt16(88, 0, buffer);
+            WriteUInt16(10017, 2, buffer);
+            WriteUInt32(attacker.UID, 8, buffer);
+            WriteUInt32(2, 12, buffer);
+            WriteInt32(25, 16, buffer);
+            WriteInt32(2, 37, buffer);
+            WriteInt32(63, 40, buffer);
+            WriteInt32(137, 44, buffer);
+            WriteInt32(80, 48, buffer);
+            WriteInt32(150, 52, buffer);
             return buffer;
         }
         public byte[] MaxHP(Entity attacker)
         {
             byte[] buffer = new byte[96];
-            Writer.WriteUInt16(88, 0, buffer);
-            Writer.WriteUInt16(10017, 2, buffer);
-            Writer.WriteUInt32(attacker.UID, 8, buffer);
-            Writer.WriteUInt32(2, 12, buffer);
-            Writer.WriteInt32(25, 16, buffer);
-            Writer.WriteInt32(2, 37, buffer);
-            Writer.WriteInt32(64, 40, buffer);
-            Writer.WriteInt32(137, 44, buffer);
-            Writer.WriteInt32(80, 48, buffer);
-            Writer.WriteInt32(3000, 52, buffer);
+            WriteUInt16(88, 0, buffer);
+            WriteUInt16(10017, 2, buffer);
+            WriteUInt32(attacker.UID, 8, buffer);
+            WriteUInt32(2, 12, buffer);
+            WriteInt32(25, 16, buffer);
+            WriteInt32(2, 37, buffer);
+            WriteInt32(64, 40, buffer);
+            WriteInt32(137, 44, buffer);
+            WriteInt32(80, 48, buffer);
+            WriteInt32(3000, 52, buffer);
             return buffer;
         }
         public byte[] immunizecontrol(Entity attacker)
         {
             byte[] buffer = new byte[96];
-            Writer.WriteUInt16(88, 0, buffer);
-            Writer.WriteUInt16(10017, 2, buffer);
-            Writer.WriteUInt32(attacker.UID, 8, buffer);
-            Writer.WriteUInt32(2, 12, buffer);
-            Writer.WriteInt32(25, 16, buffer);
-            Writer.WriteInt32(2, 37, buffer);
-            Writer.WriteInt32(65, 40, buffer);
-            Writer.WriteInt32(137, 44, buffer);
-            Writer.WriteInt32(80, 48, buffer);
-            Writer.WriteInt32(3000, 52, buffer);
+            WriteUInt16(88, 0, buffer);
+            WriteUInt16(10017, 2, buffer);
+            WriteUInt32(attacker.UID, 8, buffer);
+            WriteUInt32(2, 12, buffer);
+            WriteInt32(25, 16, buffer);
+            WriteInt32(2, 37, buffer);
+            WriteInt32(65, 40, buffer);
+            WriteInt32(137, 44, buffer);
+            WriteInt32(80, 48, buffer);
+            WriteInt32(3000, 52, buffer);
             return buffer;
         }
         public byte[] immunizeall(Entity attacker)
         {
             byte[] buffer = new byte[96];
-            Writer.WriteUInt16(88, 0, buffer);
-            Writer.WriteUInt16(10017, 2, buffer);
-            Writer.WriteUInt32(attacker.UID, 8, buffer);
-            Writer.WriteUInt32(2, 12, buffer);
-            Writer.WriteInt32(25, 16, buffer);
-            Writer.WriteInt32(2, 37, buffer);
-            Writer.WriteInt32(66, 40, buffer);
-            Writer.WriteInt32(137, 44, buffer);
-            Writer.WriteInt32(80, 48, buffer);
-            Writer.WriteInt32(3000, 52, buffer);
+            WriteUInt16(88, 0, buffer);
+            WriteUInt16(10017, 2, buffer);
+            WriteUInt32(attacker.UID, 8, buffer);
+            WriteUInt32(2, 12, buffer);
+            WriteInt32(25, 16, buffer);
+            WriteInt32(2, 37, buffer);
+            WriteInt32(66, 40, buffer);
+            WriteInt32(137, 44, buffer);
+            WriteInt32(80, 48, buffer);
+            WriteInt32(3000, 52, buffer);
             return buffer;
         }
         public byte[] FinalPDamage(Entity attacker)
         {
             byte[] buffer = new byte[96];
-            Writer.WriteUInt16(88, 0, buffer);
-            Writer.WriteUInt16(10017, 2, buffer);
-            Writer.WriteUInt32(attacker.UID, 8, buffer);
-            Writer.WriteUInt32(2, 12, buffer);
-            Writer.WriteInt32(25, 16, buffer);
-            Writer.WriteInt32(2, 37, buffer);
-            Writer.WriteInt32(67, 40, buffer);
-            Writer.WriteInt32(137, 44, buffer);
-            Writer.WriteInt32(80, 48, buffer);
-            Writer.WriteInt32(3000, 52, buffer);
+            WriteUInt16(88, 0, buffer);
+            WriteUInt16(10017, 2, buffer);
+            WriteUInt32(attacker.UID, 8, buffer);
+            WriteUInt32(2, 12, buffer);
+            WriteInt32(25, 16, buffer);
+            WriteInt32(2, 37, buffer);
+            WriteInt32(67, 40, buffer);
+            WriteInt32(137, 44, buffer);
+            WriteInt32(80, 48, buffer);
+            WriteInt32(3000, 52, buffer);
             return buffer;
         }
         public byte[] FinalMDamage(Entity attacker)
         {
             byte[] buffer = new byte[96];
-            Writer.WriteUInt16(88, 0, buffer);
-            Writer.WriteUInt16(10017, 2, buffer);
-            Writer.WriteUInt32(attacker.UID, 8, buffer);
-            Writer.WriteUInt32(2, 12, buffer);
-            Writer.WriteInt32(25, 16, buffer);
-            Writer.WriteInt32(2, 37, buffer);
-            Writer.WriteInt32(68, 40, buffer);
-            Writer.WriteInt32(137, 44, buffer);
-            Writer.WriteInt32(80, 48, buffer);
-            Writer.WriteInt32(3000, 52, buffer);
+            WriteUInt16(88, 0, buffer);
+            WriteUInt16(10017, 2, buffer);
+            WriteUInt32(attacker.UID, 8, buffer);
+            WriteUInt32(2, 12, buffer);
+            WriteInt32(25, 16, buffer);
+            WriteInt32(2, 37, buffer);
+            WriteInt32(68, 40, buffer);
+            WriteInt32(137, 44, buffer);
+            WriteInt32(80, 48, buffer);
+            WriteInt32(3000, 52, buffer);
             return buffer;
         }
         public byte[] FinalPAttack(Entity attacker)
         {
             byte[] buffer = new byte[96];
-            Writer.WriteUInt16(88, 0, buffer);
-            Writer.WriteUInt16(10017, 2, buffer);
-            Writer.WriteUInt32(attacker.UID, 8, buffer);
-            Writer.WriteUInt32(2, 12, buffer);
-            Writer.WriteInt32(25, 16, buffer);
-            Writer.WriteInt32(2, 37, buffer);
-            Writer.WriteInt32(69, 40, buffer);
-            Writer.WriteInt32(137, 44, buffer);
-            Writer.WriteInt32(80, 48, buffer);
-            Writer.WriteInt32(3000, 52, buffer);
+            WriteUInt16(88, 0, buffer);
+            WriteUInt16(10017, 2, buffer);
+            WriteUInt32(attacker.UID, 8, buffer);
+            WriteUInt32(2, 12, buffer);
+            WriteInt32(25, 16, buffer);
+            WriteInt32(2, 37, buffer);
+            WriteInt32(69, 40, buffer);
+            WriteInt32(137, 44, buffer);
+            WriteInt32(80, 48, buffer);
+            WriteInt32(3000, 52, buffer);
             return buffer;
         }
         public byte[] FinalMAttack(Entity attacker)
         {
             byte[] buffer = new byte[96];
-            Writer.WriteUInt16(88, 0, buffer);
-            Writer.WriteUInt16(10017, 2, buffer);
-            Writer.WriteUInt32(attacker.UID, 8, buffer);
-            Writer.WriteUInt32(2, 12, buffer);
-            Writer.WriteInt32(25, 16, buffer);
-            Writer.WriteInt32(2, 37, buffer);
-            Writer.WriteInt32(70, 40, buffer);
-            Writer.WriteInt32(137, 44, buffer);
-            Writer.WriteInt32(80, 48, buffer);
-            Writer.WriteInt32(3000, 52, buffer);
+            WriteUInt16(88, 0, buffer);
+            WriteUInt16(10017, 2, buffer);
+            WriteUInt32(attacker.UID, 8, buffer);
+            WriteUInt32(2, 12, buffer);
+            WriteInt32(25, 16, buffer);
+            WriteInt32(2, 37, buffer);
+            WriteInt32(70, 40, buffer);
+            WriteInt32(137, 44, buffer);
+            WriteInt32(80, 48, buffer);
+            WriteInt32(3000, 52, buffer);
             return buffer;
         }
         public void Append(byte type, uint Flag, uint Time, uint Dmg, uint Level)
@@ -851,17 +851,17 @@ namespace MTA.Network.GamePackets
         public void xSoulShackle(Entity Entity, int Dmg, byte SpellLevel, byte Time_)
         {
             byte[] buffer = new byte[84 + 4 + 8];
-            Writer.WriteUInt16(84 + 4, 0, buffer);
-            Writer.WriteUInt16(10017, 2, buffer);
-            Writer.WriteUInt32(Entity.UID, 4 + 4, buffer);
-            Writer.WriteUInt32(2, 8 + 4, buffer);
-            Writer.WriteInt32(25, 12 + 4, buffer);
-            Writer.WriteUInt64(Entity.StatusFlag, 16 + 4, buffer);
-            Writer.WriteUInt64(Entity.StatusFlag2, 16 + 4 + 8, buffer);
-            Writer.WriteUInt32(0x80, 29 + 4, buffer);
-            Writer.WriteUInt32(54, 36 + 4, buffer);
-            Writer.WriteUInt32(111, 40 + 4, buffer);
-            Writer.WriteInt32(Time_, 44 + 4, buffer);
+            WriteUInt16(84 + 4, 0, buffer);
+            WriteUInt16(10017, 2, buffer);
+            WriteUInt32(Entity.UID, 4 + 4, buffer);
+            WriteUInt32(2, 8 + 4, buffer);
+            WriteInt32(25, 12 + 4, buffer);
+            WriteUInt64(Entity.StatusFlag, 16 + 4, buffer);
+            WriteUInt64(Entity.StatusFlag2, 16 + 4 + 8, buffer);
+            WriteUInt32(0x80, 29 + 4, buffer);
+            WriteUInt32(54, 36 + 4, buffer);
+            WriteUInt32(111, 40 + 4, buffer);
+            WriteInt32(Time_, 44 + 4, buffer);
             if (Kernel.GamePool.ContainsKey(Entity.UID))
             {
                 Kernel.GamePool[Entity.UID].Send(buffer);
@@ -895,14 +895,14 @@ namespace MTA.Network.GamePackets
             //Entity.Owner.Send(update);
 
             byte[] buffer = new byte[40];
-            Writer.WriteUInt16(32, 0, buffer);
-            Writer.WriteUInt16(2410, 2, buffer);
-            Writer.WriteUInt32((uint)state, 8, buffer);
-            Writer.WriteUInt32(Entity.UID, 12, buffer);
-            Writer.WriteUInt32((uint)AuraType, 16, buffer);
-            Writer.WriteUInt32(Level, 20, buffer);
-            Writer.WriteUInt32(Power, 24, buffer);
-            Writer.WriteUInt32(Power, 28, buffer);
+            WriteUInt16(32, 0, buffer);
+            WriteUInt16(2410, 2, buffer);
+            WriteUInt32((uint)state, 8, buffer);
+            WriteUInt32(Entity.UID, 12, buffer);
+            WriteUInt32((uint)AuraType, 16, buffer);
+            WriteUInt32(Level, 20, buffer);
+            WriteUInt32(Power, 24, buffer);
+            WriteUInt32(Power, 28, buffer);
 
             if (Kernel.GamePool.ContainsKey(Entity.UID))
             {

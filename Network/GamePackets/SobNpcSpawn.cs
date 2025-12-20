@@ -284,7 +284,7 @@ namespace MTA.Network.GamePackets
                     Attack attack = new Attack(true);
                     attack.Attacker = killer.UID;
                     attack.Attacked = UID;
-                    attack.AttackType = Network.GamePackets.Attack.Kill;
+                    attack.AttackType = Attack.Kill;
                     attack.X = X;
                     attack.Y = Y;
                     killer.Owner.Send(attack);
@@ -296,7 +296,7 @@ namespace MTA.Network.GamePackets
                 Attack attack = new Attack(true);
                 attack.Attacker = killer.UID;
                 attack.Attacked = UID;
-                attack.AttackType = Network.GamePackets.Attack.Kill;
+                attack.AttackType = Attack.Kill;
                 attack.X = X;
                 attack.Y = Y;
                 killer.Owner.Send(attack);
@@ -326,7 +326,7 @@ namespace MTA.Network.GamePackets
                     Attack attack = new Attack(true);
                     attack.Attacker = killer.UID;
                     attack.Attacked = UID;
-                    attack.AttackType = Network.GamePackets.Attack.Kill;
+                    attack.AttackType = Attack.Kill;
                     attack.X = X;
                     attack.Y = Y;
                     killer.Owner.Send(attack);
@@ -338,7 +338,7 @@ namespace MTA.Network.GamePackets
                 Attack attack = new Attack(true);
                 attack.Attacker = killer.UID;
                 attack.Attacked = UID;
-                attack.AttackType = Network.GamePackets.Attack.Kill;
+                attack.AttackType = Attack.Kill;
                 attack.X = X;
                 attack.Y = Y;
                 killer.Owner.Send(attack);
@@ -368,7 +368,7 @@ namespace MTA.Network.GamePackets
                     Attack attack = new Attack(true);
                     attack.Attacker = killer.UID;
                     attack.Attacked = UID;
-                    attack.AttackType = Network.GamePackets.Attack.Kill;
+                    attack.AttackType = Attack.Kill;
                     attack.X = X;
                     attack.Y = Y;
                     killer.Owner.Send(attack);
@@ -403,7 +403,7 @@ namespace MTA.Network.GamePackets
                     Attack attack = new Attack(true);
                     attack.Attacker = killer.UID;
                     attack.Attacked = UID;
-                    attack.AttackType = Network.GamePackets.Attack.Kill;
+                    attack.AttackType = Attack.Kill;
                     attack.X = X;
                     attack.Y = Y;
                     killer.Owner.Send(attack);
@@ -416,7 +416,7 @@ namespace MTA.Network.GamePackets
                 Attack attack = new Attack(true);
                 attack.Attacker = killer.UID;
                 attack.Attacked = UID;
-                attack.AttackType = Network.GamePackets.Attack.Kill;
+                attack.AttackType = Attack.Kill;
                 attack.X = X;
                 attack.Y = Y;
                 killer.Owner.Send(attack);
@@ -461,7 +461,7 @@ namespace MTA.Network.GamePackets
                     Attack attack = new Attack(true);
                     attack.Attacker = killer.UID;
                     attack.Attacked = UID;
-                    attack.AttackType = Network.GamePackets.Attack.Kill;
+                    attack.AttackType = Attack.Kill;
                     attack.X = X;
                     attack.Y = Y;
                     killer.Owner.Send(attack);
@@ -488,7 +488,7 @@ namespace MTA.Network.GamePackets
                     Attack attack = new Attack(true);
                     attack.Attacker = killer.UID;
                     attack.Attacked = UID;
-                    attack.AttackType = Network.GamePackets.Attack.Kill;
+                    attack.AttackType = Attack.Kill;
                     attack.X = X;
                     attack.Y = Y;
                     killer.Owner.Send(attack);
@@ -515,7 +515,7 @@ namespace MTA.Network.GamePackets
                     Attack attack = new Attack(true);
                     attack.Attacker = killer.UID;
                     attack.Attacked = UID;
-                    attack.AttackType = Network.GamePackets.Attack.Kill;
+                    attack.AttackType = Attack.Kill;
                     attack.X = X;
                     attack.Y = Y;
                     killer.Owner.Send(attack);
@@ -542,7 +542,7 @@ namespace MTA.Network.GamePackets
                     Attack attack = new Attack(true);
                     attack.Attacker = killer.UID;
                     attack.Attacked = UID;
-                    attack.AttackType = Network.GamePackets.Attack.Kill;
+                    attack.AttackType = Attack.Kill;
                     attack.X = X;
                     attack.Y = Y;
                     killer.Owner.Send(attack);
@@ -569,7 +569,7 @@ namespace MTA.Network.GamePackets
                     Attack attack = new Attack(true);
                     attack.Attacker = killer.UID;
                     attack.Attacked = UID;
-                    attack.AttackType = Network.GamePackets.Attack.Kill;
+                    attack.AttackType = Attack.Kill;
                     attack.X = X;
                     attack.Y = Y;
                     killer.Owner.Send(attack);
@@ -597,7 +597,7 @@ namespace MTA.Network.GamePackets
                     Attack attack = new Attack(true);
                     attack.Attacker = killer.UID;
                     attack.Attacked = UID;
-                    attack.AttackType = Network.GamePackets.Attack.Kill;
+                    attack.AttackType = Attack.Kill;
                     attack.X = X;
                     attack.Y = Y;
                     killer.Owner.Send(attack);
@@ -624,7 +624,7 @@ namespace MTA.Network.GamePackets
                     Attack attack = new Attack(true);
                     attack.Attacker = killer.UID;
                     attack.Attacked = UID;
-                    attack.AttackType = Network.GamePackets.Attack.Kill;
+                    attack.AttackType = Attack.Kill;
                     attack.X = X;
                     attack.Y = Y;
                     killer.Owner.Send(attack);
@@ -636,7 +636,7 @@ namespace MTA.Network.GamePackets
                 Attack attack = new Attack(true);
                 attack.Attacker = killer.UID;
                 attack.Attacked = UID;
-                attack.AttackType = Network.GamePackets.Attack.Kill;
+                attack.AttackType = Attack.Kill;
                 attack.X = X;
                 attack.Y = Y;
                 killer.Owner.Send(attack);

@@ -1,8 +1,8 @@
 ﻿namespace MTA.Database
 {
-    using MTA.Client;
-    using MTA.Interfaces;
-    using MTA.Network.GamePackets;
+    using Client;
+    using Interfaces;
+    using Network.GamePackets;
     using System;
     using System.Collections.Generic;
 
@@ -11,29 +11,29 @@
         #region Blob
 
         #region Main
-        public void GetProf(System.IO.BinaryReader reader, out List<Network.GamePackets.Proficiency> profscolletion)
+        public void GetProf(System.IO.BinaryReader reader, out List<Proficiency> profscolletion)
         {
-            profscolletion = new List<Network.GamePackets.Proficiency>();
+            profscolletion = new List<Proficiency>();
             uint count = reader.ReadUInt32();
             for (uint x = 0; x < count; x++)
             {
-                Network.GamePackets.Proficiency proficiency = new Network.GamePackets.Proficiency(true);
+                Proficiency proficiency = new Proficiency(true);
                 proficiency.ID = reader.ReadUInt16();
                 proficiency.Level = reader.ReadByte();
                 proficiency.PreviousLevel = reader.ReadByte();
                 proficiency.Experience = reader.ReadUInt32();
-                proficiency.NeededExperience = Database.DataHolder.ProficiencyLevelExperience(proficiency.Level);
+                proficiency.NeededExperience = DataHolder.ProficiencyLevelExperience(proficiency.Level);
                 proficiency.Available = true;
                 profscolletion.Add(proficiency);
             }
         }
-        public void GetSkill(System.IO.BinaryReader reader, out List<Interfaces.ISkill> spellscollection)
+        public void GetSkill(System.IO.BinaryReader reader, out List<ISkill> spellscollection)
         {
-            spellscollection = new List<Interfaces.ISkill>();
+            spellscollection = new List<ISkill>();
             uint count = reader.ReadUInt32();
             for (uint x = 0; x < count; x++)
             {
-                Interfaces.ISkill spell = new Network.GamePackets.Spell(true);
+                ISkill spell = new Spell(true);
                 spell.ID = reader.ReadUInt16();
                 spell.Level = reader.ReadByte();
                 spell.PreviousLevel = reader.ReadByte();
@@ -47,7 +47,7 @@
         #endregion
 
         #region other
-        public static void WriteProf(System.IO.BinaryWriter writer, Interfaces.IProf proficiency)
+        public static void WriteProf(System.IO.BinaryWriter writer, IProf proficiency)
         {
             writer.Write(proficiency.ID);
             writer.Write(proficiency.Level);
@@ -55,7 +55,7 @@
             writer.Write(proficiency.Experience);
 
         }
-        public static byte[] GetArrayProfs(Client.GameState client)
+        public static byte[] GetArrayProfs(GameState client)
         {
             uint count = (uint)client.Proficiencies.Count;
             System.IO.MemoryStream stream = new System.IO.MemoryStream();
@@ -68,7 +68,7 @@
             }
             return stream.ToArray();
         }
-        public static byte[] GetSpellsArray(Client.GameState client)
+        public static byte[] GetSpellsArray(GameState client)
         {
             uint count = (uint)client.Spells.Count;
             System.IO.MemoryStream stream = new System.IO.MemoryStream();
@@ -78,7 +78,7 @@
                 WriteSkill(writer, skill);
             return stream.ToArray();
         }
-        public static void WriteSkill(System.IO.BinaryWriter writer, Interfaces.ISkill skill)
+        public static void WriteSkill(System.IO.BinaryWriter writer, ISkill skill)
         {
             writer.Write(skill.ID);
             writer.Write(skill.Level);
@@ -90,7 +90,7 @@
         #endregion
 
         #endregion
-        public static void removeAllSkills(Client.GameState client)
+        public static void removeAllSkills(GameState client)
         {
             using (var conn = DataHolder.MySqlConnection)
             {
@@ -101,7 +101,7 @@
                 }
             }
         }
-        public static void removeAllProfs(Client.GameState client)
+        public static void removeAllProfs(GameState client)
         {
             using (var conn = DataHolder.MySqlConnection)
             {
@@ -115,7 +115,7 @@
 
         public static void DeleteSpell(GameState client, ushort ID)
         {
-            MTA.Database.MySqlCommand command = new MTA.Database.MySqlCommand(MySqlCommandType.DELETE);
+            MySqlCommand command = new MySqlCommand(MySqlCommandType.DELETE);
             command.Delete("skills", "ID", ID).And("EntityID", client.Entity.UID).Execute();
         }
 
@@ -126,7 +126,7 @@
             if (client.Entity != null)
             {
                 client.Proficiencies = new SafeDictionary<ushort, IProf>(100);
-                MySqlReader reader = new MySqlReader(new MTA.Database.MySqlCommand(MySqlCommandType.SELECT).Select("profs").Where("EntityID", client.Entity.UID));
+                MySqlReader reader = new MySqlReader(new MySqlCommand(MySqlCommandType.SELECT).Select("profs").Where("EntityID", client.Entity.UID));
                 while (reader.Read())
                 {
                     IProf prof = new Proficiency(true)
@@ -152,7 +152,7 @@
             if (client.Entity != null)
             {
                 client.Spells = new SafeDictionary<ushort, ISkill>(100);
-                MySqlReader reader = new MySqlReader(new MTA.Database.MySqlCommand(MySqlCommandType.SELECT).Select("skills").Where("EntityID", client.Entity.UID));
+                MySqlReader reader = new MySqlReader(new MySqlCommand(MySqlCommandType.SELECT).Select("skills").Where("EntityID", client.Entity.UID));
                 while (reader.Read())
                 {
                     ISkill skill = new Spell(true)
@@ -193,11 +193,11 @@
                             exists = reader.Read();
                         }
 
-                        MTA.Database.MySqlCommand command;
+                        MySqlCommand command;
                         if (exists || prof.Available)
                         {
                             // UPDATE existing proficiency
-                            command = new MTA.Database.MySqlCommand(MySqlCommandType.UPDATE);
+                            command = new MySqlCommand(MySqlCommandType.UPDATE);
                             command.Update("profs")
                                 .Set("Level", prof.Level)
                                 .Set("PreviousLevel", prof.PreviousLevel)
@@ -210,7 +210,7 @@
                         else
                         {
                             // INSERT new proficiency
-                            command = new MTA.Database.MySqlCommand(MySqlCommandType.INSERT);
+                            command = new MySqlCommand(MySqlCommandType.INSERT);
                             command.Insert("profs")
                                 .Insert("ID", prof.ID)
                                 .Insert("EntityID", client.Entity.UID)
@@ -249,11 +249,11 @@
                             exists = reader.Read();
                         }
 
-                        Database.MySqlCommand command;
+                        MySqlCommand command;
                         if (exists || skill.Available)
                         {
                             // UPDATE existing skill
-                            command = new Database.MySqlCommand(MySqlCommandType.UPDATE);
+                            command = new MySqlCommand(MySqlCommandType.UPDATE);
                             command.Update("skills")
                                 .Set("Level", skill.Level)
                                 .Set("PreviousLevel", skill.PreviousLevel)
@@ -268,7 +268,7 @@
                         else
                         {
                             // INSERT new skill
-                            command = new Database.MySqlCommand(MySqlCommandType.INSERT);
+                            command = new MySqlCommand(MySqlCommandType.INSERT);
                             command.Insert("skills")
                                 .Insert("EntityID", client.Entity.UID)
                                 .Insert("ID", skill.ID)

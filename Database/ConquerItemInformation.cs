@@ -394,7 +394,7 @@ namespace MTA.Database
         }
         public uint CalculateUplevel()
         {
-            var item = BaseInformations.Values.Where(x => x.Level > this.BaseInformation.Level && (x.ID / 1000) == (this.BaseInformation.ID / 1000) && (x.ID % 10) == (this.BaseInformation.ID % 10)).OrderBy(y => y.Level).FirstOrDefault();
+            var item = BaseInformations.Values.Where(x => x.Level > BaseInformation.Level && (x.ID / 1000) == (BaseInformation.ID / 1000) && (x.ID % 10) == (BaseInformation.ID % 10)).OrderBy(y => y.Level).FirstOrDefault();
             if (item == null)
                 return BaseInformation.ID;
             else
@@ -406,7 +406,7 @@ namespace MTA.Database
             {
                 return 616010 + BaseInformation.ID % 10;
             }
-            var grades = GradeInformations[this.BaseInformation.Description];
+            var grades = GradeInformations[BaseInformation.Description];
             if (grades == null) return BaseInformation.ID;
             if (grades[BaseInformation.GradeKey - 1] == null)
                 return BaseInformation.ID;
@@ -419,7 +419,7 @@ namespace MTA.Database
             {
                 return 616010 + BaseInformation.ID % 10;
             }
-            var grades = GradeInformations[this.BaseInformation.Description];
+            var grades = GradeInformations[BaseInformation.Description];
 
             if (grades == null) return BaseInformation.ID;
             for (byte gr = 0; gr < grades.Count; gr++)

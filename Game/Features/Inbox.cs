@@ -41,7 +41,7 @@ namespace MTA.MaTrix {
         }
 
         public void Send(GameState client) {
-            client.Send(this.ToArray());
+            client.Send(ToArray());
         }
 
         public void Deserialize(byte[] Data) {

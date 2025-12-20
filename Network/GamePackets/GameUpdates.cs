@@ -13,7 +13,7 @@ namespace MTA.Network.GamePackets
 
         public GameUpdates(byte _Type, string _String)
         {
-            this.Buffer = new byte[29 + _String.Length];
+            Buffer = new byte[29 + _String.Length];
             WriteUInt16((ushort)(Buffer.Length - 8), 0, Buffer);
             WriteUInt16(2032, 2, Buffer);
             WriteUInt32((uint)Time32.timeGetTime().GetHashCode(), 4, Buffer);
@@ -40,7 +40,7 @@ namespace MTA.Network.GamePackets
         }
         public void Deserialize(byte[] buffer)
         {
-            this.Buffer = buffer;
+            Buffer = buffer;
         }
 
         public byte[] ToArray()

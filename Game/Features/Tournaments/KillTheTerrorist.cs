@@ -41,7 +41,7 @@ namespace MTA.Game
                 teleend = false;
                 signup = true;
                 IsOn = true;
-                MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("KillTheTerrorist have started. Sign Up in TwinCity! You have one minute", System.Drawing.Color.Red, MTA.Network.GamePackets.Message.Center), Program.Values);
+                Kernel.SendWorldMessage(new Message("KillTheTerrorist have started. Sign Up in TwinCity! You have one minute", System.Drawing.Color.Red, Message.Center), Program.Values);
             }
         }
         public static void Send()
@@ -50,7 +50,7 @@ namespace MTA.Game
             {
                 send = true;
                 Terrorist = false;
-                MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Kill The Terrorist! <!His Flashy!> ", System.Drawing.Color.Red, MTA.Network.GamePackets.Message.Center), Program.Values);
+                Kernel.SendWorldMessage(new Message("Kill The Terrorist! <!His Flashy!> ", System.Drawing.Color.Red, Message.Center), Program.Values);
                 foreach (Client.GameState client in Program.Values)
                 {
                     if (client.Entity.Tournament_Signed && !client.Entity.KillTheTerrorist_IsTerrorist)
@@ -79,7 +79,7 @@ namespace MTA.Game
                     if (client.Entity.KillTheTerrorist_IsTerrorist)
                     {
                         client.Entity.ConquerPoints += 150;
-                        MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message(":" + client.Entity.Name + " was the terrorist in the end and have won 150 cps ", System.Drawing.Color.Red, MTA.Network.GamePackets.Message.Center), Program.Values);
+                        Kernel.SendWorldMessage(new Message(":" + client.Entity.Name + " was the terrorist in the end and have won 150 cps ", System.Drawing.Color.Red, Message.Center), Program.Values);
                     }
                     if (client.Entity.MapID == 1801)
                     {
@@ -106,7 +106,7 @@ namespace MTA.Game
                     if (client.Entity.KillTheTerrorist_IsTerrorist)
                     {
                         client.Entity.ConquerPoints += 100;
-                        MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message(":" + client.Entity.Name + " was the terrorist in the end and have won 100 cps", System.Drawing.Color.Red, MTA.Network.GamePackets.Message.Center), Program.Values);
+                        Kernel.SendWorldMessage(new Message(":" + client.Entity.Name + " was the terrorist in the end and have won 100 cps", System.Drawing.Color.Red, Message.Center), Program.Values);
                     }
                     client.Entity.RemoveFlag(Update.Flags.Flashy);
                     client.Entity.KillTheTerrorist_IsTerrorist = false;

@@ -180,7 +180,7 @@ namespace MTA.Game
             if (MatrixTimes.Start.ClanWarArena && Now64.Second <= 0)
             {
 
-                ClanWarArena.Start();
+                Start();
                 var name = new object[] { "ClanWar has begun! Go to every map to ClanWar npc to join !?" };
                 Kernel.SendWorldMessage(new Message(string.Concat(name), "ALLUSERS", "[ClanWar", System.Drawing.Color.Red, 2500), Program.Values);
             }
@@ -298,7 +298,7 @@ namespace MTA.Game
             {
                 var clients_on_MAP = Kernel.GamePool.Values.Where(p => p.Entity.MapID == GetMap(Map) && !p.Entity.Dead).ToArray();
                 int count_clans = ClansOnMap(clients_on_MAP);
-                byte[] Messaje = new Network.GamePackets.Message("Alive Clans In " + Map.ToString() + " : " + count_clans + "", System.Drawing.Color.Yellow, Network.GamePackets.Message.FirstRightCorner).ToArray();
+                byte[] Messaje = new Message("Alive Clans In " + Map.ToString() + " : " + count_clans + "", System.Drawing.Color.Yellow, Message.FirstRightCorner).ToArray();
                 foreach (var obj in clients_on_MAP)
                     obj.Send(Messaje);
                 if (DateTime.Now > StartTimer.AddMinutes(MinuteTimes))
@@ -340,13 +340,13 @@ namespace MTA.Game
                 if (obj.Entity.ClanRank == Clan.Ranks.ClanLeader)
                 {
                     obj.Entity.ConquerPoints += Reward;
-                    obj.Send(new Network.GamePackets.Message("You win " + Reward + " ConquerPoints for domination " + Map.ToString() + "", System.Drawing.Color.Red, Network.GamePackets.Message.System).ToArray());
+                    obj.Send(new Message("You win " + Reward + " ConquerPoints for domination " + Map.ToString() + "", System.Drawing.Color.Red, Message.System).ToArray());
                 }
                 else
                 {
                     Reward /= 3;
                     obj.Entity.ConquerPoints += Reward;
-                    obj.Send(new Network.GamePackets.Message("You win " + Reward + " ConquerPoints for domination " + Map.ToString() + "", System.Drawing.Color.Red, Network.GamePackets.Message.System).ToArray());
+                    obj.Send(new Message("You win " + Reward + " ConquerPoints for domination " + Map.ToString() + "", System.Drawing.Color.Red, Message.System).ToArray());
                 }
                 obj.Entity.GetClan.CalnWar = false;
                 obj.Entity.Teleport(1002, 301, 279);

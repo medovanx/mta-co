@@ -129,14 +129,14 @@ namespace MTA.Game.Events
         public static void Initialize()
         {
             // Register all events here
-            RegisterEvent(new MTA.Game.Events.CpCastle.CpCastleEvent());
+            RegisterEvent(new CpCastle.CpCastleEvent());
             // Add more events as they are created...
         }
 
         /// <summary>
         /// Notify all events of a monster death
         /// </summary>
-        public static void OnMonsterKilled(MTA.Database.MonsterInformation monster, Game.Entity killer)
+        public static void OnMonsterKilled(Database.MonsterInformation monster, Entity killer)
         {
             foreach (var gameEvent in _events)
             {
@@ -147,7 +147,7 @@ namespace MTA.Game.Events
         /// <summary>
         /// Check if any active event wants to skip normal drop for this monster
         /// </summary>
-        public static bool ShouldSkipNormalDrop(MTA.Database.MonsterInformation monster, ushort mapId)
+        public static bool ShouldSkipNormalDrop(Database.MonsterInformation monster, ushort mapId)
         {
             foreach (var gameEvent in _events)
             {

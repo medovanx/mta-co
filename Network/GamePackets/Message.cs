@@ -49,53 +49,53 @@ namespace MTA.Network.GamePackets
 
         public Message(string _Message, uint _ChatType, Game.Languages Language = Game.Languages.English)
         {
-            this.Mesh = 0;
-            this.__Message = _Message;
-            this._To = "ALL";
-            this._From = "SYSTEM";
-            this.Color = Color.Red;
-            this.ChatType = _ChatType;
+            Mesh = 0;
+            __Message = _Message;
+            _To = "ALL";
+            _From = "SYSTEM";
+            Color = Color.Red;
+            ChatType = _ChatType;
         }
         public Message(string _Message, Color _Color, uint _ChatType, Game.Languages Language = Game.Languages.English)
         {
-            this.Mesh = 0;
-            this.__Message = _Message;
-            this._To = "ALL";
-            this._From = "SYSTEM";
-            this.Color = _Color;
-            this.ChatType = _ChatType;
+            Mesh = 0;
+            __Message = _Message;
+            _To = "ALL";
+            _From = "SYSTEM";
+            Color = _Color;
+            ChatType = _ChatType;
         }
         public Message(string _Message, string __To, Color _Color, uint _ChatType, Game.Languages Language = Game.Languages.English)
         {
-            this.Mesh = 0;
-            this.__Message = _Message;
-            this._To = __To;
-            this._From = "SYSTEM";
-            this.Color = _Color;
-            this.ChatType = _ChatType;
+            Mesh = 0;
+            __Message = _Message;
+            _To = __To;
+            _From = "SYSTEM";
+            Color = _Color;
+            ChatType = _ChatType;
         }
         public Message(string _Message, Client.GameState Client, Color _Color, uint _ChatType, Game.Languages Language = Game.Languages.English)
         {
-            this.Mesh = 0;
-            this.__Message = _Message;
-            this._To = Client.Entity.Name;
-            this.MessageUID1 = Client.Entity.UID;
-            this._From = "SYSTEM";
-            this.Color = _Color;
-            this.ChatType = _ChatType;
+            Mesh = 0;
+            __Message = _Message;
+            _To = Client.Entity.Name;
+            MessageUID1 = Client.Entity.UID;
+            _From = "SYSTEM";
+            Color = _Color;
+            ChatType = _ChatType;
         }
         public Message(string _Message, string __To, string __From, Color _Color, uint _ChatType, Game.Languages Language = Game.Languages.English)
         {
-            this.Mesh = 0;
-            this.__Message = _Message;
-            this._To = __To;
-            this._From = __From;
-            this.Color = _Color;
-            this.ChatType = _ChatType;
+            Mesh = 0;
+            __Message = _Message;
+            _To = __To;
+            _From = __From;
+            Color = _Color;
+            ChatType = _ChatType;
         }
         public Message()
         {
-            this.Mesh = 0;
+            Mesh = 0;
         }
 
         public Game.Languages Language = Game.Languages.English;

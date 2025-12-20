@@ -11,15 +11,15 @@
 
         public TimerRule(Action<int> action, int period, ThreadPriority priority = (ThreadPriority)2)
         {
-            this.action_0 = action;
-            this.int_0 = period;
-            this.bool_0 = true;
-            this.threadPriority_0 = priority;
+            action_0 = action;
+            int_0 = period;
+            bool_0 = true;
+            threadPriority_0 = priority;
         }
 
         ~TimerRule()
         {
-            this.action_0 = null;
+            action_0 = null;
         }
     }
 }

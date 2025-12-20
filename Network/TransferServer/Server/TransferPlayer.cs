@@ -102,9 +102,9 @@ namespace MTA.TransferServer
                 return PacketHandler.ReadString(packet, 24033, packet[24032]);
             }
         }
-        public SafeDictionary<ushort, Interfaces.IProf> Proficiencies = new SafeDictionary<ushort, Interfaces.IProf>();
-        public SafeDictionary<ushort, Interfaces.ISkill> Spells = new SafeDictionary<ushort, Interfaces.ISkill>();
-        public Dictionary<uint, Network.GamePackets.ConquerItem> Items = new Dictionary<uint, Network.GamePackets.ConquerItem>();
+        public SafeDictionary<ushort, IProf> Proficiencies = new SafeDictionary<ushort, IProf>();
+        public SafeDictionary<ushort, ISkill> Spells = new SafeDictionary<ushort, ISkill>();
+        public Dictionary<uint, ConquerItem> Items = new Dictionary<uint, ConquerItem>();
         public List<ChiPowerStructure> ChiPowers = new List<ChiPowerStructure>();
         public void Clone(ref MTA.Client.GameState client)
         {
@@ -117,14 +117,14 @@ namespace MTA.TransferServer
             client.Account.IP = ip;
             client.Account.EntityID = Player.UID;
 
-            client.Entity = new Game.Entity(Game.EntityFlag.Player, false);
+            client.Entity = new Entity(EntityFlag.Player, false);
             client.Entity.Name = Player.Name;
             client.Entity.Spouse = "None";
             client.Entity.UID = Player.UID;
             client.Entity.Money = Player.Money;
-            client.Entity.MyFlowers = new MTA.Game.Features.Flowers.Flowers(client.Entity.UID, client.Entity.Name);
+            client.Entity.MyFlowers = new Game.Features.Flowers.Flowers(client.Entity.UID, client.Entity.Name);
             client.Entity.Owner = client;
-            client.Entity.MyAchievement = new Game.Achievement(client.Entity);
+            client.Entity.MyAchievement = new Achievement(client.Entity);
             client.Entity.Titles = new ConcurrentDictionary<TitlePacket.Titles, DateTime>();
             client.ElitePKStats = new ElitePK.FighterStats(client.Entity.UID, client.Entity.Name, client.Entity.Mesh);
             client.Entity.ConquerPoints = Player.Cpc;
@@ -153,9 +153,9 @@ namespace MTA.TransferServer
             client.ChiPowers = new List<ChiPowerStructure>();
             if (ChiPowers != null)
                 client.ChiPowers = ChiPowers;
-            client.ChiData = new MTA.Database.ChiTable.ChiData() { UID = client.Entity.UID, Name = client.Entity.Name, Powers = client.ChiPowers };
+            client.ChiData = new Database.ChiTable.ChiData() { UID = client.Entity.UID, Name = client.Entity.Name, Powers = client.ChiPowers };
 
-            client.NobilityInformation = new MTA.Game.ConquerStructures.NobilityInformation();
+            client.NobilityInformation = new NobilityInformation();
             client.NobilityInformation.EntityUID = client.Entity.UID;
             client.NobilityInformation.Name = client.Entity.Name;
             client.Entity.NobalityDonation = client.NobilityInformation.Donation = NobilityInformation;
@@ -167,24 +167,24 @@ namespace MTA.TransferServer
                 client.NobilityInformation.Gender = 0;
 
 
-            client.TeamArenaStatistic = new MTA.Network.GamePackets.TeamArenaStatistic(true);
+            client.TeamArenaStatistic = new TeamArenaStatistic(true);
             client.TeamArenaStatistic.EntityID = client.Entity.UID;
             client.TeamArenaStatistic.Name = client.Entity.Name;
             client.TeamArenaStatistic.Level = client.Entity.Level;
             client.TeamArenaStatistic.Class = client.Entity.Class;
             client.TeamArenaStatistic.Model = client.Entity.Mesh;
-            client.TeamArenaStatistic.Status = Network.GamePackets.TeamArenaStatistic.NotSignedUp;
+            client.TeamArenaStatistic.Status = TeamArenaStatistic.NotSignedUp;
 
-            client.ArenaStatistic = new MTA.Network.GamePackets.ArenaStatistic(true);
+            client.ArenaStatistic = new ArenaStatistic(true);
             client.ArenaStatistic.EntityID = client.Entity.UID;
             client.ArenaStatistic.Name = client.Entity.Name;
             client.ArenaStatistic.Level = client.Entity.Level;
             client.ArenaStatistic.Class = client.Entity.Class;
             client.ArenaStatistic.Model = client.Entity.Mesh;
             client.ArenaStatistic.LastArenaPointFill = DateTime.Now;
-            client.ArenaStatistic.Status = Network.GamePackets.ArenaStatistic.NotSignedUp;
+            client.ArenaStatistic.Status = ArenaStatistic.NotSignedUp;
 
-            client.ChampionStats = new MTA.Network.GamePackets.ChampionStatistic(true);
+            client.ChampionStats = new ChampionStatistic(true);
             client.ChampionStats.UID = client.Entity.UID;
             client.ChampionStats.Name = client.Entity.Name;
             client.ChampionStats.Level = client.Entity.Level;
@@ -226,20 +226,20 @@ namespace MTA.TransferServer
                     }
                     switch (item.Position)
                     {
-                        case 0: client.Inventory.Add(item, Game.Enums.ItemUse.None); break;
+                        case 0: client.Inventory.Add(item, Enums.ItemUse.None); break;
                         default:
-                            if (item.Position > 40) { client.Inventory.Add(item, Game.Enums.ItemUse.None); break; }
+                            if (item.Position > 40) { client.Inventory.Add(item, Enums.ItemUse.None); break; }
 
                             if (client.Equipment.Free((byte)item.Position))
-                                client.Equipment.Add(item, Game.Enums.ItemUse.None);
+                                client.Equipment.Add(item, Enums.ItemUse.None);
                             else
                             {
                                 if (client.Inventory.Count < 40)
                                 {
                                     item.Position = 0;
-                                    client.Inventory.Add(item, Game.Enums.ItemUse.None);
-                                    if (client.Warehouses[MTA.Game.ConquerStructures.Warehouse.WarehouseID.Market].Count < 20)
-                                        client.Warehouses[MTA.Game.ConquerStructures.Warehouse.WarehouseID.Market].Add(item);
+                                    client.Inventory.Add(item, Enums.ItemUse.None);
+                                    if (client.Warehouses[Game.ConquerStructures.Warehouse.WarehouseID.Market].Count < 20)
+                                        client.Warehouses[Game.ConquerStructures.Warehouse.WarehouseID.Market].Add(item);
 
                                 }
                             }

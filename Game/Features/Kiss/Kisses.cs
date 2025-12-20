@@ -56,11 +56,11 @@ namespace MTA.Game.Features.Kisses
         {
             get
             {
-                return this._LastKissesSent;
+                return _LastKissesSent;
             }
             set
             {
-                this._LastKissesSent = value;
+                _LastKissesSent = value;
             }
         }
         private string _name;
@@ -81,11 +81,11 @@ namespace MTA.Game.Features.Kisses
         {
             get
             {
-                return this._Letters;
+                return _Letters;
             }
             set
             {
-                this._Letters = value;
+                _Letters = value;
             }
         }
 
@@ -93,11 +93,11 @@ namespace MTA.Game.Features.Kisses
         {
             get
             {
-                return this._Letters2day;
+                return _Letters2day;
             }
             set
             {
-                this._Letters2day = value;
+                _Letters2day = value;
             }
         }
 
@@ -105,11 +105,11 @@ namespace MTA.Game.Features.Kisses
         {
             get
             {
-                return this._Wine;
+                return _Wine;
             }
             set
             {
-                this._Wine = value;
+                _Wine = value;
             }
         }
 
@@ -117,11 +117,11 @@ namespace MTA.Game.Features.Kisses
         {
             get
             {
-                return this._Wine2day;
+                return _Wine2day;
             }
             set
             {
-                this._Wine2day = value;
+                _Wine2day = value;
             }
         }
 
@@ -129,11 +129,11 @@ namespace MTA.Game.Features.Kisses
         {
             get
             {
-                return this._Kisses;
+                return _Kisses;
             }
             set
             {
-                this._Kisses = value;
+                _Kisses = value;
             }
         }
 
@@ -141,11 +141,11 @@ namespace MTA.Game.Features.Kisses
         {
             get
             {
-                return this._Kisses2day;
+                return _Kisses2day;
             }
             set
             {
-                this._Kisses2day = value;
+                _Kisses2day = value;
             }
         }
 
@@ -153,11 +153,11 @@ namespace MTA.Game.Features.Kisses
         {
             get
             {
-                return this._Jades;
+                return _Jades;
             }
             set
             {
-                this._Jades = value;
+                _Jades = value;
             }
         }
 
@@ -165,11 +165,11 @@ namespace MTA.Game.Features.Kisses
         {
             get
             {
-                return this._Jades2day;
+                return _Jades2day;
             }
             set
             {
-                this._Jades2day = value;
+                _Jades2day = value;
             }
         }
     }

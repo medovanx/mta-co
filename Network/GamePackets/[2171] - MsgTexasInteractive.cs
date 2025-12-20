@@ -11,8 +11,8 @@
                 if (count == 0)
                     Buffer = new byte[20 + 8];
                 else Buffer = new byte[52 + (count * 6)];
-                Writer.Write(Buffer.Length - 8, 0, Buffer);
-                Writer.Write(2171, 2, Buffer);
+                Write(Buffer.Length - 8, 0, Buffer);
+                Write(2171, 2, Buffer);
             }
         }
         public byte Type

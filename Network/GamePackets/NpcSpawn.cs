@@ -42,9 +42,9 @@ namespace MTA.Network.GamePackets
             set { WriteUInt16(value, 20, Buffer); }
         }
 
-        public MTA.Game.Enums.NpcType Type
+        public Game.Enums.NpcType Type
         {
-            get { return (MTA.Game.Enums.NpcType)Buffer[22]; }
+            get { return (Game.Enums.NpcType)Buffer[22]; }
             set { Buffer[22] = (byte)value; }
         }
 
@@ -71,7 +71,7 @@ namespace MTA.Network.GamePackets
 
         public ushort MapID { get { return _MapID; } set { _MapID = value; } }
 
-        public MTA.Game.MapObjectType MapObjType { get { return MTA.Game.MapObjectType.Npc; } }
+        public Game.MapObjectType MapObjType { get { return Game.MapObjectType.Npc; } }
 
         public Client.GameState Owner { get { return null; } }
 

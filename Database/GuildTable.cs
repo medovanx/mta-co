@@ -3,8 +3,8 @@
 namespace MTA.Database
 {
     using Member = Game.ConquerStructures.Society.Guild.Member;
-    using MTA.Game.ConquerStructures.Society;
-    using MTA.Network.GamePackets;
+    using Game.ConquerStructures.Society;
+    using Network.GamePackets;
 
     public class GuildTable
     {
@@ -118,10 +118,10 @@ namespace MTA.Database
             {
                 guild.CreateMembersRank();
                 if (guild.AdvertiseRecruit.WasLoad)
-                    Game.ConquerStructures.Society.Guild.Advertise.Add(guild);
+                    Guild.Advertise.Add(guild);
                 guild.CalculateCTFRANK();
             }
-            Game.ConquerStructures.Society.Guild.Advertise.FixedRank();
+            Guild.Advertise.FixedRank();
             //create leader spouse
             foreach (var guild in Kernel.Guilds.Values)
             {
@@ -291,13 +291,13 @@ namespace MTA.Database
                 .Insert("guildID", guild.ID).Insert("allyID", ally))
                 cmd.Execute();
         }
-        public static void RemoveEnemy(Game.ConquerStructures.Society.Guild guild, uint enemy)
+        public static void RemoveEnemy(Guild guild, uint enemy)
         {
             using (var command = new MySqlCommand(MySqlCommandType.DELETE))
                 command.Delete("guildenemy", "GuildID", guild.ID).And("EnemyID", enemy)
                     .Execute();
         }
-        public static void RemoveAlly(Game.ConquerStructures.Society.Guild guild, uint ally)
+        public static void RemoveAlly(Guild guild, uint ally)
         {
             using (var command = new MySqlCommand(MySqlCommandType.DELETE))
                 command.Delete("guildally", "GuildID", guild.ID).And("AllyID", ally)
