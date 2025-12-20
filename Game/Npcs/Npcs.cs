@@ -24095,7 +24095,7 @@ namespace MTA {
                         }
                         case 1: {
                             var Now64 = DateTime.Now;
-                            if (Program.World.MonthlyPKWar && Now64.Minute < 5) {
+                            if (Program.World.MonthlyPkWar && Now64.Minute < 5) {
                                 Random R = new Random();
                                 int Nr = R.Next(1, 10);
                                 if (Nr == 1) client.Entity.Teleport(1518, 114, 078);

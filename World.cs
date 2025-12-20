@@ -49,12 +49,12 @@ namespace MTA {
         //public SteedRace SteedRace;
         public CaptureTheFlag Ctf;
         private bool _clanWarAi;
-        public bool PureLand, MonthlyPKWar;
-        public HeroOfGame HeroOFGame;
+        public bool PureLand, MonthlyPkWar;
+        public HeroOfGame HeroOfGame;
         public Franko.DelayedTask DelayedTask;
 
         public World(HeroOfGame heroOfGame) {
-            HeroOFGame = heroOfGame;
+            HeroOfGame = heroOfGame;
             GenericThreadPool = new StaticPool().Run();
             ReceivePool = new StaticPool(128).Run();
             SendPool = new StaticPool().Run();
@@ -249,34 +249,14 @@ namespace MTA {
             _ = new MaTrix.Lobby();
             _ = new MaTrix.GuildPoleWar();
             //SteedRace = new SteedRace();
-            HeroOFGame = new HeroOfGame();
+            HeroOfGame = new HeroOfGame();
             ElitePKTournament.Create();
 
             Ctf = new CaptureTheFlag();
 
             DelayedTask = new Franko.DelayedTask();
         }
-
-        public DateTime MonthlyPKDate {
-            get {
-                DateTime now = DateTime.Now;
-                DateTime month = new DateTime(now.Year, now.Month, 1);
-                while (month.DayOfWeek != DayOfWeek.Sunday)
-                    month = month.AddDays(1);
-                return month;
-            }
-        }
-
-        public DateTime NextMonthlyPKDate {
-            get {
-                DateTime now = DateTime.Now;
-                DateTime month = new DateTime(now.Year, now.Month, 1).AddMonths(1);
-                while (month.DayOfWeek != DayOfWeek.Sunday)
-                    month = month.AddDays(1);
-                return month;
-            }
-        }
-
+        
         private void connectionReview(ClientWrapper wrapper, int time) {
             ClientWrapper.TryReview(wrapper);
         }
@@ -1822,7 +1802,8 @@ namespace MTA {
                 #region OverHP
 
                 if (client.Entity.FullyLoaded) {
-                    if (client.Entity.Hitpoints > client.Entity.MaxHitpoints && client.Entity is { MaxHitpoints: > 1, Transformed: false }) {
+                    if (client.Entity.Hitpoints > client.Entity.MaxHitpoints && client.Entity is
+                            { MaxHitpoints: > 1, Transformed: false }) {
                         client.Entity.Hitpoints = client.Entity.MaxHitpoints;
                     }
                 }
@@ -2133,7 +2114,7 @@ namespace MTA {
 
             #endregion
 
-            HeroOFGame.CheakUp();
+            HeroOfGame.CheakUp();
             if (MatrixTimes.Start.SkillTeam && !TeamElitePk.SkillTeamTournament.Opened) {
                 TeamElitePk.SkillTeamTournament.Open();
                 foreach (GameState client in Kernel.GamePool.Values) {
@@ -2319,7 +2300,7 @@ namespace MTA {
                 }
 
                 if (now64 is { Hour: 22, Minute: 00, Second: <= 2 }) {
-                    MonthlyPKWar = true;
+                    MonthlyPkWar = true;
                     foreach (GameState client in Kernel.GamePool.Values) {
                         if (client.Map.BaseID != 6001 && client.Map.BaseID != 6000 && !client.Entity.Dead) {
                             EventAlert alert = new EventAlert {
@@ -2333,8 +2314,8 @@ namespace MTA {
                     }
                 }
 
-                if (now64 is { Hour: 22, Minute: >= 15 } && MonthlyPKWar) {
-                    MonthlyPKWar = false;
+                if (now64 is { Hour: 22, Minute: >= 15 } && MonthlyPkWar) {
+                    MonthlyPkWar = false;
                     Kernel.SendWorldMessage(new Message("MonthelyPk Ended!", Color.Red, Message.Center));
                 }
             }
