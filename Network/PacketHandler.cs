@@ -6378,7 +6378,7 @@ namespace MTA.Network {
                                 Writer.WriteByte((byte)getClan7.LeaderName.Length, num64, packet);
                                 num64 += 1;
                                 Writer.WriteString(getClan7.LeaderName, num64, packet);
-                                gameClient14.Send(packet.ToArray<byte>());
+                                gameClient14.Send(packet.ToArray());
                                 return;
                             }
 

@@ -2925,7 +2925,7 @@ namespace MTA
         }
         public static void Execute<T>(Action<T, int> action, T param, int timeOut = 0, ThreadPriority priority = ThreadPriority.Normal)
         {
-            GenericThreadPool.Subscribe<T>(new LazyDelegate<T>(action, timeOut, priority), param);
+            GenericThreadPool.Subscribe(new LazyDelegate<T>(action, timeOut, priority), param);
         }
         public static IDisposable Subscribe(Action<int> action, int period = 1, ThreadPriority priority = ThreadPriority.Normal)
         {
@@ -2933,19 +2933,19 @@ namespace MTA
         }
         public static IDisposable Subscribe<T>(Action<T, int> action, T param, int timeOut = 0, ThreadPriority priority = ThreadPriority.Normal)
         {
-            return GenericThreadPool.Subscribe<T>(new TimerRule<T>(action, timeOut, priority), param);
+            return GenericThreadPool.Subscribe(new TimerRule<T>(action, timeOut, priority), param);
         }
         public static IDisposable Subscribe<T>(TimerRule<T> rule, T param, StandalonePool pool)
         {
-            return pool.Subscribe<T>(rule, param);
+            return pool.Subscribe(rule, param);
         }
         public static IDisposable Subscribe<T>(TimerRule<T> rule, T param, StaticPool pool)
         {
-            return pool.Subscribe<T>(rule, param);
+            return pool.Subscribe(rule, param);
         }
         public static IDisposable Subscribe<T>(TimerRule<T> rule, T param)
         {
-            return GenericThreadPool.Subscribe<T>(rule, param);
+            return GenericThreadPool.Subscribe(rule, param);
         }
         #endregion
 
