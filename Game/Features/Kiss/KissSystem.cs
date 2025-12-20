@@ -25,7 +25,7 @@ namespace MTA.Game.Features.Kiss {
                         SendKissesType = KissType.Kisses,
                         remove = 1
                     };
-                    GamePool[packet.UID1].SendScreen(newPacket, true);
+                    GamePool[packet.UID1].SendScreen(newPacket);
                     GamePool[packet.UID1].Entity.Kisses.Kisses2++;
                     GamePool[packet.UID1].Entity.Kisses.Kisses2day++;
                     KissSystemTable.SaveKissTable(GamePool[packet.UID1]);
@@ -74,7 +74,7 @@ namespace MTA.Game.Features.Kiss {
                     SendKissesType = kisses
                 };
                 KissSystemTable.SaveKissTable(GamePool[packet.UID1]);
-                GamePool[packet.UID1].SendScreen(newPacket, true);
+                GamePool[packet.UID1].SendScreen(newPacket);
                 caller.Inventory.Remove(item, Enums.ItemUse.Remove);
                 ConquerItemTable.RemoveItem(item.UID);
             }
