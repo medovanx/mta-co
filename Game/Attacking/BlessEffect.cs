@@ -41,7 +41,7 @@ namespace MTA.Game.Attacking
                         str.TextsCount = 1;
                         str.Type = _String.Effect;
                         str.Texts.Add("Aegis4");
-                        client.Owner.SendScreen(str, true);
+                        client.Owner.SendScreen(str);
 
                     }
                 }
@@ -59,7 +59,7 @@ namespace MTA.Game.Attacking
                         str.TextsCount = 1;
                         str.Type = _String.Effect;
                         str.Texts.Add("Aegis3");
-                        client.Owner.SendScreen(str, true);
+                        client.Owner.SendScreen(str);
 
                     }
                 }
@@ -78,7 +78,7 @@ namespace MTA.Game.Attacking
                         str.TextsCount = 1;
                         str.Type = _String.Effect;
                         str.Texts.Add("Aegis2");
-                        client.Owner.SendScreen(str, true);
+                        client.Owner.SendScreen(str);
 
                     }
                 }
@@ -97,7 +97,7 @@ namespace MTA.Game.Attacking
                         str.TextsCount = 1;
                         str.Type = _String.Effect;
                         str.Texts.Add("Aegis1");
-                        client.Owner.SendScreen(str, true);
+                        client.Owner.SendScreen(str);
 
                     }
                 }

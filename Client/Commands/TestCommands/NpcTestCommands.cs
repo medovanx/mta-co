@@ -155,7 +155,7 @@ namespace MTA.Client.Commands.TestCommands
                         Name = ((startMeshIndex + created) * meshesPerNpc).ToString()
                     };
 
-                    targetMap.AddNpc(npc, false);
+                    targetMap.AddNpc(npc);
                     createdNpcs.Add(npc.UID);
                     created++;
                 }

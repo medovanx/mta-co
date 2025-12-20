@@ -85,7 +85,7 @@ namespace MTA.Game.Attacking
             else
                 Damage = MyMath.GetDamageEntity2Entity(attacker, attacked, spell.ID, spell.Level, ref attack);
 
-            CheckDamage(attacker, attacked, ref Damage, ref attack, false);
+            CheckDamage(attacker, attacked, ref Damage, ref attack);
             return (uint)Damage;
         }
         internal static uint MonsterDamage(Entity attacker, Entity attacked, ref Attack attack, bool p)
@@ -102,7 +102,7 @@ namespace MTA.Game.Attacking
             int Damage = 0;
             Damage = MyMath.GetDamageMonster2Entity(attacker, attacked, spellid, 0);
             Attack a = new Attack(true);
-            CheckDamage(attacker, attacked, ref Damage, ref a, false);
+            CheckDamage(attacker, attacked, ref Damage, ref a);
             return (uint)Damage;
         }
 
@@ -115,7 +115,7 @@ namespace MTA.Game.Attacking
             else
                 Damage = MyMath.GetDamageEntity2Entity(attacker, attacked, Attack.Ranged, ref attack);
 
-            CheckDamage(attacker, attacked, ref Damage, ref attack, false);
+            CheckDamage(attacker, attacked, ref Damage, ref attack);
             return (uint)Damage;
         }
 
@@ -128,7 +128,7 @@ namespace MTA.Game.Attacking
             else
                 Damage = MyMath.GetDamageEntity2Entity(attacker, attacked, Attack.Melee, ref attack);
 
-            CheckDamage(attacker, attacked, ref Damage, ref attack, false);
+            CheckDamage(attacker, attacked, ref Damage, ref attack);
             return (uint)Damage;
         }
 
@@ -141,7 +141,7 @@ namespace MTA.Game.Attacking
             else
                 Damage = MyMath.GetDamageEntity2Entity(attacker, attacked, Attack.Magic, ref attack);
 
-            CheckDamage(attacker, attacked, ref Damage, ref attack, false);
+            CheckDamage(attacker, attacked, ref Damage, ref attack);
             return (uint)Damage;
         }
 
@@ -163,7 +163,7 @@ namespace MTA.Game.Attacking
             else
                 Damage = MyMath.GetDamageEntity2Entity(attacker, attacked, spell.ID, spell.Level, ref attack);
 
-            CheckDamage(attacker, attacked, ref Damage, ref attack, false);
+            CheckDamage(attacker, attacked, ref Damage, ref attack);
             return (uint)Damage;
         }
 
@@ -216,7 +216,7 @@ namespace MTA.Game.Attacking
                                 ssuse.AddTarget(attacked.Owner.Entity, new SpellUse.DamageClass().Damage = 11030, null);
                                 if (attacked.EntityFlag == EntityFlag.Player)
                                 {
-                                    attacked.Owner.SendScreen(ssuse, true);
+                                    attacked.Owner.SendScreen(ssuse);
                                 }
                             }
                         }
@@ -243,7 +243,7 @@ namespace MTA.Game.Attacking
                             {
                                 attacker.Owner.UpdateQualifier(attacker.Owner, attacked.Owner, attacked.Hitpoints);
 
-                                attacker.Owner.SendScreen(attack, true);
+                                attacker.Owner.SendScreen(attack);
                                 attacked.AttackPacket = null;
                             }
                             else
@@ -259,7 +259,7 @@ namespace MTA.Game.Attacking
                             {
                                 attacked.Owner.UpdateQualifier(attacked.Owner, attacker.Owner, damage);
 
-                                attacker.Owner.SendScreen(attack, true);
+                                attacker.Owner.SendScreen(attack);
                             }
                             else
                             {
@@ -289,7 +289,7 @@ namespace MTA.Game.Attacking
                             {
                                 attacker.Owner.UpdateQualifier(attacker.Owner, attacked.Owner, attacked.Hitpoints);
 
-                                attacker.Owner.SendScreen(attack, true);
+                                attacker.Owner.SendScreen(attack);
                                 attacked.AttackPacket = null;
                             }
                             else
@@ -304,7 +304,7 @@ namespace MTA.Game.Attacking
                             if (attacker.EntityFlag == EntityFlag.Player)
                             {
                                 attacker.Owner.UpdateQualifier(attacker.Owner, attacked.Owner, attacked.Hitpoints); ;
-                                attacker.Owner.SendScreen(attack, true);
+                                attacker.Owner.SendScreen(attack);
                             }
                             else
                             {
@@ -378,7 +378,7 @@ namespace MTA.Game.Attacking
                     str.Type = _String.Effect;
                     str.Texts.Add("poisonmiss");
                     if (attacked.EntityFlag == EntityFlag.Player)
-                        attacked.Owner.SendScreen(str, true);
+                        attacked.Owner.SendScreen(str);
                     Damage = 0;
                 }
             }
@@ -397,7 +397,7 @@ namespace MTA.Game.Attacking
             attac.Y = attacked.Y;
             attac.AttackType = 55;
             attac.Damage = dmg;
-            attacked.Owner.SendScreen(attac, true);
+            attacked.Owner.SendScreen(attac);
         }
         public static void Immu(Entity Attacked)
         {
@@ -409,7 +409,7 @@ namespace MTA.Game.Attacking
                 str.Type = _String.Effect;
                 str.Texts.Add("bossimmunity");
 
-                Attacked.Owner.SendScreen(str, true);
+                Attacked.Owner.SendScreen(str);
             }
 
         }

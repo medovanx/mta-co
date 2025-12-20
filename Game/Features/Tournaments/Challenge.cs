@@ -348,7 +348,7 @@ namespace MTA.Game
                 return;
             PlayerTwo.MessageBox(PlayerOne.Entity.Name + " has challenged you to a 1vs1 fight! The wager is: " + Wager + " ConquerPoints! Winner gets it all. Do you accept!",
                 p => { p.Challenge.VerifyPasswords(); },
-                p => { p.Challenge.PlayerOne.Send("The challanged has refused.", Message.Talk); }, 60);
+                p => { p.Challenge.PlayerOne.Send("The challanged has refused."); }, 60);
         }
     }
 }

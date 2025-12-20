@@ -34,7 +34,7 @@ namespace MTA
                             Damage += MyMath.Generate(Attacker.MinAttack, Attacker.MaxAttack);
                         else
                             Damage = MyMath.Generate(Attacker.TransformationMinAttack, Attacker.TransformationMaxAttack);
-                        MTA.Game.Attacking.Calculate.Refinary(Attacker, Target, ref Damage, ref Packet, false);
+                        MTA.Game.Attacking.Calculate.Refinary(Attacker, Target, ref Damage, ref Packet);
                         //       Damage += Attacker.getFan(false);
 
                         var bonus = Attacker.Gems[GemTypes.Dragon];
@@ -79,7 +79,7 @@ namespace MTA
                 case Attack.Ranged:
                     {
                         Damage = MyMath.Generate(Attacker.MinAttack, Attacker.MaxAttack);
-                        MTA.Game.Attacking.Calculate.Refinary(Attacker, Target, ref Damage, ref Packet, false);
+                        MTA.Game.Attacking.Calculate.Refinary(Attacker, Target, ref Damage, ref Packet);
                         //      Damage += Attacker.getFan(false);
 
                         var bonus = Attacker.Gems[GemTypes.Dragon];
@@ -198,7 +198,7 @@ namespace MTA
             if ((spells.Contains(Info.ID) || (Info.WeaponSubtype.Count > 0)) && !Info.WeaponSubtype.Contains(500) && !Info.WeaponSubtype.Contains(613))
             {
                 Damage = MyMath.Generate(Attacker.MinAttack, Attacker.MaxAttack);
-                MTA.Game.Attacking.Calculate.Refinary(Attacker, Target, ref Damage, ref Packet, false);
+                MTA.Game.Attacking.Calculate.Refinary(Attacker, Target, ref Damage, ref Packet);
                 //    Damage += Attacker.getFan(false);                
                 double bonus = Attacker.Gems[GemTypes.Dragon];
                 if (bonus > 0)
@@ -226,7 +226,7 @@ namespace MTA
             else if (Info.WeaponSubtype.Contains(500) || Info.WeaponSubtype.Contains(613))
             {
                 Damage = MyMath.Generate(Attacker.MinAttack, Attacker.MaxAttack);
-                MTA.Game.Attacking.Calculate.Refinary(Attacker, Target, ref Damage, ref Packet, false);
+                MTA.Game.Attacking.Calculate.Refinary(Attacker, Target, ref Damage, ref Packet);
 
                 //    Damage += Attacker.getFan(false);
                 if (Info.Power > 30000)

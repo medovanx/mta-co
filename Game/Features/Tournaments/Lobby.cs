@@ -570,7 +570,7 @@ namespace MTA.MaTrix {
                                                 X = Bot.Entity.X,
                                                 Y = Bot.Entity.Y
                                             };
-                                            Bot.SendScreen(use, true);
+                                            Bot.SendScreen(use);
                                             Bot.SendScreenSpawn(Bot.Entity, true);
                                             Bot.SendScreen(
                                                 new Message("Reviving!", Target.Name, Bot.Entity.Name, Color.White,

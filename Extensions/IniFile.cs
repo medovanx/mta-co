@@ -71,7 +71,7 @@ namespace MTA
 
         public string ReadString(string Section, string Key)
         {
-            return this.ReadString(Section, Key, "", 400);
+            return this.ReadString(Section, Key, "");
         }
 
         public string ReadString(string Section, string Key, string _Default, int BufSize = 400)

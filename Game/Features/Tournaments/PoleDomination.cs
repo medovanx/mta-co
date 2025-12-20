@@ -184,7 +184,7 @@ namespace MTA.Game
             int times = 1000;
             while (times-- > 0)
             {
-                if (!currentMap.Floor[Pole.X + x, Pole.Y + y, MapObjectType.Player, null])
+                if (!currentMap.Floor[Pole.X + x, Pole.Y + y, MapObjectType.Player])
                 {
                     x = Kernel.Random.Next(36) - 18;
                     y = Kernel.Random.Next(36) - 18;

@@ -1330,7 +1330,7 @@ namespace MTA {
 
                                                 Clan.CreateClan(client, _name);
                                                 client.Screen.FullWipe();
-                                                client.Screen.Reload(null);
+                                                client.Screen.Reload();
                                                 dialog.Text("Congratulation You Have Created your clan!");
                                                 dialog.Option("Alright,", 255);
                                             }
@@ -6056,7 +6056,7 @@ namespace MTA {
                                             Update upd = new Update(true);
                                             upd.UID = GuildWar.LeftGate.UID;
                                             upd.Append(Update.Mesh, GuildWar.LeftGate.Mesh);
-                                            client.SendScreen(upd, true);
+                                            client.SendScreen(upd);
                                             break;
                                         }
                                         case 2: {
@@ -6067,7 +6067,7 @@ namespace MTA {
                                             upd.UID = GuildWar.LeftGate.UID;
                                             upd.Append(Update.Mesh, GuildWar.LeftGate.Mesh);
                                             upd.Append(Update.Hitpoints, GuildWar.LeftGate.Hitpoints);
-                                            client.SendScreen(upd, true);
+                                            client.SendScreen(upd);
                                             break;
                                         }
                                         case 22: {
@@ -6078,7 +6078,7 @@ namespace MTA {
                                             upd.UID = GuildWar.LeftGate.UID;
                                             upd.Append(Update.Mesh, GuildWar.LeftGate.Mesh);
                                             upd.Append(Update.Hitpoints, GuildWar.LeftGate.Hitpoints);
-                                            client.SendScreen(upd, true);
+                                            client.SendScreen(upd);
                                             break;
                                         }
                                         case 3: {
@@ -6116,7 +6116,7 @@ namespace MTA {
                                             Update upd = new Update(true);
                                             upd.UID = GuildWar.RightGate.UID;
                                             upd.Append(Update.Mesh, GuildWar.RightGate.Mesh);
-                                            client.SendScreen(upd, true);
+                                            client.SendScreen(upd);
                                             break;
                                         }
                                         case 2: {
@@ -6127,7 +6127,7 @@ namespace MTA {
                                             upd.UID = GuildWar.RightGate.UID;
                                             upd.Append(Update.Mesh, GuildWar.RightGate.Mesh);
                                             upd.Append(Update.Hitpoints, GuildWar.RightGate.Hitpoints);
-                                            client.SendScreen(upd, true);
+                                            client.SendScreen(upd);
                                             break;
                                         }
                                         case 22: {
@@ -6138,7 +6138,7 @@ namespace MTA {
                                             upd.UID = GuildWar.RightGate.UID;
                                             upd.Append(Update.Mesh, GuildWar.RightGate.Mesh);
                                             upd.Append(Update.Hitpoints, GuildWar.RightGate.Hitpoints);
-                                            client.SendScreen(upd, true);
+                                            client.SendScreen(upd);
                                             break;
                                         }
                                         case 3: {
@@ -6316,7 +6316,7 @@ namespace MTA {
                                             Update upd = new Update(true);
                                             upd.UID = SuperGuildWar.LeftGate.UID;
                                             upd.Append(Update.Mesh, SuperGuildWar.LeftGate.Mesh);
-                                            client.SendScreen(upd, true);
+                                            client.SendScreen(upd);
                                             break;
                                         }
                                         case 2: {
@@ -6328,7 +6328,7 @@ namespace MTA {
                                             upd.UID = SuperGuildWar.LeftGate.UID;
                                             upd.Append(Update.Mesh, SuperGuildWar.LeftGate.Mesh);
                                             upd.Append(Update.Hitpoints, SuperGuildWar.LeftGate.Hitpoints);
-                                            client.SendScreen(upd, true);
+                                            client.SendScreen(upd);
                                             break;
                                         }
                                         case 22: {
@@ -6340,7 +6340,7 @@ namespace MTA {
                                             upd.UID = SuperGuildWar.LeftGate.UID;
                                             upd.Append(Update.Mesh, SuperGuildWar.LeftGate.Mesh);
                                             upd.Append(Update.Hitpoints, SuperGuildWar.LeftGate.Hitpoints);
-                                            client.SendScreen(upd, true);
+                                            client.SendScreen(upd);
                                             break;
                                         }
                                         case 3: {
@@ -6379,7 +6379,7 @@ namespace MTA {
                                             Update upd = new Update(true);
                                             upd.UID = SuperGuildWar.RightGate.UID;
                                             upd.Append(Update.Mesh, SuperGuildWar.RightGate.Mesh);
-                                            client.SendScreen(upd, true);
+                                            client.SendScreen(upd);
                                             break;
                                         }
                                         case 2: {
@@ -6391,7 +6391,7 @@ namespace MTA {
                                             upd.UID = SuperGuildWar.RightGate.UID;
                                             upd.Append(Update.Mesh, SuperGuildWar.RightGate.Mesh);
                                             upd.Append(Update.Hitpoints, SuperGuildWar.RightGate.Hitpoints);
-                                            client.SendScreen(upd, true);
+                                            client.SendScreen(upd);
                                             break;
                                         }
                                         case 22: {
@@ -6404,7 +6404,7 @@ namespace MTA {
                                             upd.UID = SuperGuildWar.RightGate.UID;
                                             upd.Append(Update.Mesh, SuperGuildWar.RightGate.Mesh);
                                             upd.Append(Update.Hitpoints, SuperGuildWar.RightGate.Hitpoints);
-                                            client.SendScreen(upd, true);
+                                            client.SendScreen(upd);
                                             break;
                                         }
                                         case 3: {
@@ -10777,19 +10777,19 @@ namespace MTA {
                                 int r = randoms.Next(1, 4);
                                 if (r == 1) {
                                     client.Inventory.Add(3004247, 0, 1);
-                                    client.MessageBox("You received a P7 Weapon Soul Pack.", null, null, 0);
+                                    client.MessageBox("You received a P7 Weapon Soul Pack.");
                                 }
                                 else if (r == 2) {
                                     client.Inventory.Add(3004248, 0, 1);
-                                    client.MessageBox("You received a P7 Equipment Soul Pack.", null, null, 0);
+                                    client.MessageBox("You received a P7 Equipment Soul Pack.");
                                 }
                                 else if (r == 3) {
                                     client.Inventory.Add(3004248, 0, 1);
-                                    client.MessageBox("You received a P7 Equipment Soul Pack.", null, null, 0);
+                                    client.MessageBox("You received a P7 Equipment Soul Pack.");
                                 }
                                 else if (r == 4) {
                                     client.Inventory.Add(3004248, 0, 1);
-                                    client.MessageBox("You received a P7 Equipment Soul Pack.", null, null, 0);
+                                    client.MessageBox("You received a P7 Equipment Soul Pack.");
                                 }
 
                                 break;
@@ -10825,7 +10825,7 @@ namespace MTA {
                             if (client.Entity.ConquerPoints > 37) {
                                 client.Entity.ConquerPoints -= 37;
                                 client.Inventory.Add(3004249, 0, 1);
-                                client.MessageBox("You received a SacredRefineryPack.", null, null, 0);
+                                client.MessageBox("You received a SacredRefineryPack.");
                                 break;
                             }
                             else
@@ -10841,19 +10841,19 @@ namespace MTA {
                                 int r = randoms.Next(1, 4);
                                 if (r == 1) {
                                     client.Inventory.Add(3004247, 0, 1);
-                                    client.MessageBox("You received a P7 Weapon Soul Pack.", null, null, 0);
+                                    client.MessageBox("You received a P7 Weapon Soul Pack.");
                                 }
                                 else if (r == 2) {
                                     client.Inventory.Add(3004248, 0, 1);
-                                    client.MessageBox("You received a P7 Equipment Soul Pack.", null, null, 0);
+                                    client.MessageBox("You received a P7 Equipment Soul Pack.");
                                 }
                                 else if (r == 3) {
                                     client.Inventory.Add(3004248, 0, 1);
-                                    client.MessageBox("You received a P7 Equipment Soul Pack.", null, null, 0);
+                                    client.MessageBox("You received a P7 Equipment Soul Pack.");
                                 }
                                 else if (r == 4) {
                                     client.Inventory.Add(3004248, 0, 1);
-                                    client.MessageBox("You received a P7 Equipment Soul Pack.", null, null, 0);
+                                    client.MessageBox("You received a P7 Equipment Soul Pack.");
                                 }
 
                                 break;
@@ -14733,37 +14733,37 @@ namespace MTA {
                                     cpsprice = 1;
                                     if (elitestage == 3)
                                         client.Entity.AddTopStatus((ulong)Titles.ElitePKChamption_High, 0,
-                                            DateTime.Now.AddDays(1), true);
+                                            DateTime.Now.AddDays(1));
                                     else
                                         client.Entity.AddTopStatus((ulong)Titles.ElitePKChamption_Low, 0,
-                                            DateTime.Now.AddDays(1), true);
+                                            DateTime.Now.AddDays(1));
                                 }
                                 else if (rank == 2) {
                                     cpsprice = 1;
                                     if (elitestage == 3)
                                         client.Entity.AddTopStatus((ulong)Titles.ElitePK2ndPlace_High, 0,
-                                            DateTime.Now.AddDays(1), true);
+                                            DateTime.Now.AddDays(1));
                                     else
                                         client.Entity.AddTopStatus((ulong)Titles.ElitePK2ndPlace_Low, 0,
-                                            DateTime.Now.AddDays(1), true);
+                                            DateTime.Now.AddDays(1));
                                 }
                                 else if (rank == 3) {
                                     cpsprice = 1;
                                     if (elitestage == 3)
                                         client.Entity.AddTopStatus((ulong)Titles.ElitePK3ndPlace_High, 0,
-                                            DateTime.Now.AddDays(1), true);
+                                            DateTime.Now.AddDays(1));
                                     else
                                         client.Entity.AddTopStatus((ulong)Titles.ElitePK3ndPlace_Low, 0,
-                                            DateTime.Now.AddDays(1), true);
+                                            DateTime.Now.AddDays(1));
                                 }
                                 else {
                                     cpsprice = 1;
                                     if (elitestage == 3)
                                         client.Entity.AddTopStatus((ulong)Titles.ElitePKTopEight_High, 0,
-                                            DateTime.Now.AddDays(1), true);
+                                            DateTime.Now.AddDays(1));
                                     else
                                         client.Entity.AddTopStatus((ulong)Titles.ElitePKTopEight_Low, 0,
-                                            DateTime.Now.AddDays(1), true);
+                                            DateTime.Now.AddDays(1));
                                 }
 
                                 client.Entity.ConquerPoints += cpsprice;
@@ -18401,7 +18401,7 @@ namespace MTA {
                                         client.SendScreen(new Data(true) {
                                             UID = client.ActiveNpc,
                                             ID = Data.RemoveEntity
-                                        }, true);
+                                        });
                                         Map.RemoveNpc(Map.Npcs[client.ActiveNpc]); //999
                                     }
                                 }
@@ -24291,12 +24291,12 @@ namespace MTA {
                                                     Task.Factory.StartNew(() => arena.import());
                                                     t.Entity.ConquerPoints -= client.Entity.ClanArenaCps;
                                                     client.Entity.ConquerPoints -= client.Entity.ClanArenaCps;
-                                                }, null);
+                                                });
                                         }
                                         else
                                             client.MessageBox(
                                                 "Sorry But " + NameOfDead + " Does't Have " +
-                                                client.Entity.ClanArenaCps + "", null, null);
+                                                client.Entity.ClanArenaCps + "");
                                     }
                                 }
                             }
@@ -24383,12 +24383,12 @@ namespace MTA {
                                                     Task.Factory.StartNew(() => arena.import());
                                                     t.Entity.ConquerPoints -= client.Entity.GuildArenaCps;
                                                     client.Entity.ConquerPoints -= client.Entity.GuildArenaCps;
-                                                }, null);
+                                                });
                                         }
                                         else
                                             client.MessageBox(
                                                 "Sorry But " + NameOfDead + " Does't Have " +
-                                                client.Entity.GuildArenaCps + "", null, null);
+                                                client.Entity.GuildArenaCps + "");
                                     }
                                 }
                             }
@@ -25379,7 +25379,7 @@ namespace MTA {
                                     str.TextsCount = 1;
                                     str.Type = _String.Effect;
                                     str.Texts.Add("end_task");
-                                    client.SendScreen(str, true);
+                                    client.SendScreen(str);
 
                                     #endregion
                                 }
@@ -25411,7 +25411,7 @@ namespace MTA {
                                     str.TextsCount = 1;
                                     str.Type = _String.Effect;
                                     str.Texts.Add("end_task");
-                                    client.SendScreen(str, true);
+                                    client.SendScreen(str);
 
                                     #endregion
                                 }
@@ -25444,7 +25444,7 @@ namespace MTA {
                                     str.TextsCount = 1;
                                     str.Type = _String.Effect;
                                     str.Texts.Add("end_task");
-                                    client.SendScreen(str, true);
+                                    client.SendScreen(str);
 
                                     #endregion
                                 }
@@ -25477,7 +25477,7 @@ namespace MTA {
                                     str.TextsCount = 1;
                                     str.Type = _String.Effect;
                                     str.Texts.Add("end_task");
-                                    client.SendScreen(str, true);
+                                    client.SendScreen(str);
 
                                     #endregion
                                 }
@@ -25957,7 +25957,7 @@ namespace MTA {
                                     str.TextsCount = 1;
                                     str.Type = _String.Effect;
                                     str.Texts.Add("end_task");
-                                    client.SendScreen(str, true);
+                                    client.SendScreen(str);
 
                                     #endregion
                                 }
@@ -25993,7 +25993,7 @@ namespace MTA {
                                     str.TextsCount = 1;
                                     str.Type = _String.Effect;
                                     str.Texts.Add("end_task");
-                                    client.SendScreen(str, true);
+                                    client.SendScreen(str);
 
                                     #endregion
                                 }
@@ -26031,7 +26031,7 @@ namespace MTA {
                                     str.TextsCount = 1;
                                     str.Type = _String.Effect;
                                     str.Texts.Add("end_task");
-                                    client.SendScreen(str, true);
+                                    client.SendScreen(str);
 
                                     #endregion
                                 }
@@ -26069,7 +26069,7 @@ namespace MTA {
                                     str.TextsCount = 1;
                                     str.Type = _String.Effect;
                                     str.Texts.Add("end_task");
-                                    client.SendScreen(str, true);
+                                    client.SendScreen(str);
 
                                     #endregion
                                 }
@@ -27928,7 +27928,7 @@ namespace MTA {
                                 }
                             }
                             else {
-                                var quest = client.Quests.Accept(QuestID.Eth_has_price, 0);
+                                var quest = client.Quests.Accept(QuestID.Eth_has_price);
                                 client.Inventory.Add(729087, 0, 1);
                                 int rand = Kernel.Random.Next(1, 4);
                                 switch (rand) {
@@ -27998,7 +27998,7 @@ namespace MTA {
                                     };
                                     str.Texts.Add("zf2-e300");
                                     str.Texts.Add("end_task");
-                                    client.SendScreen(str.ToArray(), true);
+                                    client.SendScreen(str.ToArray());
                                     client.Quests.FinishQuest(QuestID.Eth_has_price);
                                 }
                                 else {
@@ -28176,7 +28176,7 @@ namespace MTA {
                                     UID = client.Entity.UID
                                 };
                                 str.Texts.Add("eidolon");
-                                client.SendScreen(str.ToArray(), true);
+                                client.SendScreen(str.ToArray());
                                 dialog.Text("Here you are , this is you prize");
                                 dialog.Option("Thanks You", 255);
                                 dialog.Send();
@@ -28209,7 +28209,7 @@ namespace MTA {
                                     UID = client.Entity.UID
                                 };
                                 str.Texts.Add("eidolon");
-                                client.SendScreen(str.ToArray(), true);
+                                client.SendScreen(str.ToArray());
                             }
                             else {
                                 dialog.Text("Sorry, but you don`t have 3 ExorcismTokens.");
@@ -28229,7 +28229,7 @@ namespace MTA {
                                     UID = client.Entity.UID
                                 };
                                 str.Texts.Add("eidolon");
-                                client.SendScreen(str.ToArray(), true);
+                                client.SendScreen(str.ToArray());
                             }
                             else {
                                 dialog.Text("Sorry, but you don`t have 9 ExorcismTokens.");
@@ -28315,7 +28315,7 @@ namespace MTA {
                                         map.AddNpc(npc);
                                     }
 
-                                    client.Screen.Reload(null);
+                                    client.Screen.Reload();
                                 }
                             }
                             else {
@@ -28407,7 +28407,7 @@ namespace MTA {
                             break;
                         }
                         case 1: {
-                            var quest = client.Quests.Accept(QuestID.Magnolias, 0);
+                            var quest = client.Quests.Accept(QuestID.Magnolias);
                             if (Kernel.Rate(5))
                                 quest.Mob = "Super";
                             else if (Kernel.Rate(10))
@@ -28609,7 +28609,7 @@ namespace MTA {
                                         p.Entity.SubClasses.StudyPoints += 50;
                                         p.Inventory.Add(729304, 0, 1);
                                         p.Quests.FinishQuest(QuestID.WorshipLeaders);
-                                    }, "Done", 5);
+                                    });
                                 }
                                 else {
                                     dialog.Text(" You must stand infront of the Ancestor to Honor Him!");
@@ -28687,7 +28687,7 @@ namespace MTA {
                                 UID = client.Entity.UID
                             };
                             str.Texts.Add("end_task");
-                            client.SendScreen(str.ToArray(), true);
+                            client.SendScreen(str.ToArray());
 
                             client.Inventory.Add(729304, 0, 1);
                             NpcReply npc3 = new NpcReply(6,
@@ -28724,7 +28724,7 @@ namespace MTA {
                             }
 
                             if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, npc5.X, npc5.Y) > 3) {
-                                client.MessageBox("You Are To far Away from Solider's Remains", null, null, 0u);
+                                client.MessageBox("You Are To far Away from Solider's Remains");
                                 return;
                             }
 
@@ -28737,18 +28737,18 @@ namespace MTA {
                                     p.Map.Npcs[npcs.UID].X = X;
                                     p.Map.Npcs[npcs.UID].Y = Y;
                                     p.Screen.FullWipe();
-                                    p.Screen.Reload(null);
+                                    p.Screen.Reload();
                                     _String str = new _String(true);
                                     str.Type = 10;
                                     str.UID = npcs.UID;
                                     str.Texts.Add("cantask");
-                                    p.SendScreen(str.ToArray(), true);
+                                    p.SendScreen(str.ToArray());
                                 }
                                 else {
                                     p.MessageBox(
                                         "You`ve released the souls of 8 soldiers in the Desert! Go spwak with the Desert Guardian!");
                                 }
-                            }, "Saved", 5);
+                            }, "Saved");
                             break;
                         }
                     }
@@ -28832,19 +28832,19 @@ namespace MTA {
                                 int r = randoms.Next(1, 4);
                                 if (r == 1) {
                                     client.Inventory.Add(3004247, 0, 1);
-                                    client.MessageBox("You received a P7 Weapon Soul Pack.", null, null, 0);
+                                    client.MessageBox("You received a P7 Weapon Soul Pack.");
                                 }
                                 else if (r == 2) {
                                     client.Inventory.Add(3004248, 0, 1);
-                                    client.MessageBox("You received a P7 Equipment Soul Pack.", null, null, 0);
+                                    client.MessageBox("You received a P7 Equipment Soul Pack.");
                                 }
                                 else if (r == 3) {
                                     client.Inventory.Add(3004248, 0, 1);
-                                    client.MessageBox("You received a P7 Equipment Soul Pack.", null, null, 0);
+                                    client.MessageBox("You received a P7 Equipment Soul Pack.");
                                 }
                                 else if (r == 4) {
                                     client.Inventory.Add(3004248, 0, 1);
-                                    client.MessageBox("You received a P7 Equipment Soul Pack.", null, null, 0);
+                                    client.MessageBox("You received a P7 Equipment Soul Pack.");
                                 }
 
                                 break;
@@ -28880,7 +28880,7 @@ namespace MTA {
                             if (client.Entity.ConquerPoints > 37) {
                                 client.Entity.ConquerPoints -= 37;
                                 client.Inventory.Add(3004249, 0, 1);
-                                client.MessageBox("You received a SacredRefineryPack.", null, null, 0);
+                                client.MessageBox("You received a SacredRefineryPack.");
                                 break;
                             }
                             else
@@ -28896,19 +28896,19 @@ namespace MTA {
                                 int r = randoms.Next(1, 4);
                                 if (r == 1) {
                                     client.Inventory.Add(3004247, 0, 1);
-                                    client.MessageBox("You received a P7 Weapon Soul Pack.", null, null, 0);
+                                    client.MessageBox("You received a P7 Weapon Soul Pack.");
                                 }
                                 else if (r == 2) {
                                     client.Inventory.Add(3004248, 0, 1);
-                                    client.MessageBox("You received a P7 Equipment Soul Pack.", null, null, 0);
+                                    client.MessageBox("You received a P7 Equipment Soul Pack.");
                                 }
                                 else if (r == 3) {
                                     client.Inventory.Add(3004248, 0, 1);
-                                    client.MessageBox("You received a P7 Equipment Soul Pack.", null, null, 0);
+                                    client.MessageBox("You received a P7 Equipment Soul Pack.");
                                 }
                                 else if (r == 4) {
                                     client.Inventory.Add(3004248, 0, 1);
-                                    client.MessageBox("You received a P7 Equipment Soul Pack.", null, null, 0);
+                                    client.MessageBox("You received a P7 Equipment Soul Pack.");
                                 }
 
                                 break;
@@ -31442,7 +31442,7 @@ namespace MTA {
                     #endregion
 
                     if (client.ActiveNpc >= 101002 && client.Entity.MapID == 10002) {
-                        client.SendScreen(new Data(true) { UID = client.ActiveNpc, ID = Data.RemoveEntity }, true);
+                        client.SendScreen(new Data(true) { UID = client.ActiveNpc, ID = Data.RemoveEntity });
                         client.Map.RemoveNpc(client.Map.Npcs[client.ActiveNpc]);
                         // MTA.Game.TreasureBox.Reward(client);
                     }

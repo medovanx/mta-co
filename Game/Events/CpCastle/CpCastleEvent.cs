@@ -30,8 +30,8 @@ namespace MTA.Game.Events.CpCastle
         public override IEnumerable<EventSchedule> GetSchedules()
         {
             // Event start times
-            yield return new EventSchedule(EVENT_START_HOUR_1, 0, 0);
-            yield return new EventSchedule(EVENT_START_HOUR_2, 0, 0);
+            yield return new EventSchedule(EVENT_START_HOUR_1, 0);
+            yield return new EventSchedule(EVENT_START_HOUR_2, 0);
         }
 
         public override bool ShouldTrigger(DateTime now)
@@ -80,7 +80,7 @@ namespace MTA.Game.Events.CpCastle
         {
             base.OnEnd();
 
-            BroadcastMessage("The CP Castle Event has ended. See you next time!", Color.White, Message.System);
+            BroadcastMessage("The CP Castle Event has ended. See you next time!", Color.White);
 
             // Teleport all players out of castle maps
             TeleportPlayersFromMaps(CASTLE_MAPS, MapConstants.TWIN_CITY, TWIN_CITY_X, TWIN_CITY_Y);
@@ -104,12 +104,12 @@ namespace MTA.Game.Events.CpCastle
             // Warning messages (only show once per event)
             if (remainingMinutes <= WARNING_TIME_10_MIN && _lastWarning10Min != EventStartTime)
             {
-                BroadcastMessage("The CP Castle Event will end in 10 minutes. Hurry to get your rewards!", Color.White, Message.System);
+                BroadcastMessage("The CP Castle Event will end in 10 minutes. Hurry to get your rewards!", Color.White);
                 _lastWarning10Min = EventStartTime;
             }
             else if (remainingMinutes <= WARNING_TIME_5_MIN && _lastWarning5Min != EventStartTime)
             {
-                BroadcastMessage("The CP Castle Event will end in 5 minutes. Hurry to get your rewards!", Color.White, Message.System);
+                BroadcastMessage("The CP Castle Event will end in 5 minutes. Hurry to get your rewards!", Color.White);
                 _lastWarning5Min = EventStartTime;
             }
         }

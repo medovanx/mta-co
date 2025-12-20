@@ -120,7 +120,7 @@ namespace MTA.Game.ConquerStructures
             Network.GamePackets.Data data = new Network.GamePackets.Data(true);
             data.UID = Base.UID;
             data.ID = Network.GamePackets.Data.RemoveEntity;
-            Owner.SendScreen(data, true);
+            Owner.SendScreen(data);
             lock (SyncRoot) Booths.Remove(Base.UID);
         }
     }

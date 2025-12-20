@@ -287,7 +287,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
             // Check if attribute type already exists
             foreach (var attr in attributes) {
                 if (attr.Type == attributeType) {
-                    client.MessageBox("Sorry, you can't have duplicate attribute types.", null, null);
+                    client.MessageBox("Sorry, you can't have duplicate attribute types.");
                     return;
                 }
             }

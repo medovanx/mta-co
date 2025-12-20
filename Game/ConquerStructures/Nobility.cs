@@ -298,7 +298,7 @@ namespace MTA.Game.ConquerStructures
                                 update.Type = NobilityInfo.Icon;
                                 update.dwParam = entry.EntityUID;
                                 update.UpdateString(entry);
-                                client.SendScreen(update, true);
+                                client.SendScreen(update);
                                 client.Entity.NobilityRank = entry.Rank;
                             }
                         }

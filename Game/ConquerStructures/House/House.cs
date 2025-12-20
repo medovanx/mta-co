@@ -473,7 +473,7 @@ namespace MTA.Game.ConquerStructures.House
 					NpcTyp = sobnpc.Type
 				};
 				p.Send(req2);
-			}, null);
+			});
 		}
 	}
 }

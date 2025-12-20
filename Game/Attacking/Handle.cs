@@ -220,7 +220,7 @@ namespace MTA.Game.Attacking {
                     data.ID = 434;
                     data.wParam1 = attacker.X;
                     data.wParam2 = attacker.Y;
-                    attacker.Owner.SendScreen(data, true);
+                    attacker.Owner.SendScreen(data);
 
                     foreach (IMapObject _obj in attacker.Owner.Screen.Objects) {
                         bool hit = false;
@@ -264,7 +264,7 @@ namespace MTA.Game.Attacking {
                     }
 
                     if (suse.Targets.Count > 0)
-                        attacker.Owner.SendScreen(suse, true);
+                        attacker.Owner.SendScreen(suse);
                     suse.Targets.Clear();
                 }
 
@@ -381,7 +381,7 @@ namespace MTA.Game.Attacking {
                                 var upd1 = new GameCharacterUpdates(true);
                                 upd1.UID = attacked.UID;
                                 upd1.Add(GameCharacterUpdates.SoulShacle, 0, 5);
-                                attacked.Owner.SendScreen(upd1, true);
+                                attacked.Owner.SendScreen(upd1);
                                 break;
                             case 20:
                                 attacker.MonsterInfo.SpellID = 10360;
@@ -391,7 +391,7 @@ namespace MTA.Game.Attacking {
                                 var upd = new GameCharacterUpdates(true);
                                 upd.UID = attacked.UID;
                                 upd.Add(GameCharacterUpdates.Dizzy, 0, 5);
-                                attacked.Owner.SendScreen(upd, true);
+                                attacked.Owner.SendScreen(upd);
                                 break;
                             case 21:
                                 attacker.MonsterInfo.SpellID = 10361;
@@ -401,7 +401,7 @@ namespace MTA.Game.Attacking {
                                 upd1 = new GameCharacterUpdates(true);
                                 upd1.UID = attacked.UID;
                                 upd1.Add(GameCharacterUpdates.Dizzy, 0, 5);
-                                attacked.Owner.SendScreen(upd1, true);
+                                attacked.Owner.SendScreen(upd1);
                                 break;
                             //bamsher
                             case 10372:
@@ -465,7 +465,7 @@ namespace MTA.Game.Attacking {
                                                 upd = new GameCharacterUpdates(true);
                                                 upd.UID = attackedd.UID;
                                                 upd.Add(GameCharacterUpdates.Flustered, 0, 5);
-                                                attackedd.Owner.SendScreen(upd, true);
+                                                attackedd.Owner.SendScreen(upd);
                                                 attackedd.Owner.Entity.AddFlag(Update.Flags.ChaosCycle);
                                             }
 
@@ -479,7 +479,7 @@ namespace MTA.Game.Attacking {
                                                 GameCharacterUpdates update = new GameCharacterUpdates(true);
                                                 update.UID = attackedd.UID;
                                                 update.Add(GameCharacterUpdates.Freeze, 0, 5);
-                                                attackedd.Owner.SendScreen(update, true);
+                                                attackedd.Owner.SendScreen(update);
                                                 attackedd.AddFlag(Update.Flags.Freeze);
                                             }
 
@@ -493,7 +493,7 @@ namespace MTA.Game.Attacking {
                                                 upd = new GameCharacterUpdates(true);
                                                 upd.UID = attackedd.UID;
                                                 upd.Add(GameCharacterUpdates.Dizzy, 0, 5);
-                                                attackedd.Owner.SendScreen(upd, true);
+                                                attackedd.Owner.SendScreen(upd);
                                                 attackedd.Owner.Entity.AddFlag(Update.Flags.FreezeSmall);
                                             }
 
@@ -505,7 +505,7 @@ namespace MTA.Game.Attacking {
                                         suse.AddTarget(attk.Entity, damage, attack);
                                     }
 
-                                    attacked.Owner.SendScreen(suse, true);
+                                    attacked.Owner.SendScreen(suse);
                                 }
                                 break;
                             }
@@ -528,12 +528,12 @@ namespace MTA.Game.Attacking {
                         attack.Y = attacked.Y;
 
                         if (attacked.Hitpoints <= damage) {
-                            attacked.Owner.SendScreen(attack, true);
+                            attacked.Owner.SendScreen(attack);
                             attacked.Die(attacker.UID);
                         }
                         else {
                             attacked.Hitpoints -= damage;
-                            attacked.Owner.SendScreen(attack, true);
+                            attacked.Owner.SendScreen(attack);
                         }
                     }
                     else {
@@ -558,7 +558,7 @@ namespace MTA.Game.Attacking {
                         suse.X = attacked.X;
                         suse.Y = attacked.Y;
                         suse.AddTarget(attacked, damage, attack);
-                        attacked.Owner.SendScreen(suse, true);
+                        attacked.Owner.SendScreen(suse);
 
 
                         this.attack = new Attack(true);
@@ -1032,7 +1032,7 @@ namespace MTA.Game.Attacking {
                                     }
                                 }
 
-                                attacker.Owner.SendScreen(suse, true);
+                                attacker.Owner.SendScreen(suse);
                                 attacker.AttackPacket = null;
                                 attack = null;
                                 return;
@@ -1512,7 +1512,7 @@ namespace MTA.Game.Attacking {
                                             }
                                         }
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                         return;
                                     }
                                 }
@@ -1634,7 +1634,7 @@ namespace MTA.Game.Attacking {
                                                 }
                                             }
 
-                                            attacker.Owner.SendScreen(suse, true);
+                                            attacker.Owner.SendScreen(suse);
                                             return;
                                         }
                                     }
@@ -1911,7 +1911,7 @@ namespace MTA.Game.Attacking {
                                                     attacker.Owner.Entity.IsEagleEyeShooted = true;
 
                                                     if (attacked.EntityFlag == EntityFlag.Player)
-                                                        attacked.Owner.SendScreen(suse, true);
+                                                        attacked.Owner.SendScreen(suse);
                                                     else
                                                         attacked.MonsterInfo.SendScreen(suse);
 
@@ -1932,7 +1932,7 @@ namespace MTA.Game.Attacking {
                                                                 ssuse.AddTarget(attacker.Owner.Entity,
                                                                     new SpellUse.DamageClass().Damage = 11030, attack);
                                                                 if (attacker.EntityFlag == EntityFlag.Player) {
-                                                                    attacker.Owner.SendScreen(ssuse, true);
+                                                                    attacker.Owner.SendScreen(ssuse);
                                                                 }
                                                             }
                                                         }
@@ -1964,7 +1964,7 @@ namespace MTA.Game.Attacking {
 
                                                     suse.AddTarget(attackedsob, damage, attack);
 
-                                                    attacker.Owner.SendScreen(suse, true);
+                                                    attacker.Owner.SendScreen(suse);
                                                 }
                                             }
                                         }
@@ -2006,7 +2006,7 @@ namespace MTA.Game.Attacking {
 
                                         suse.AddTarget(attacker, spell.Power, attack);
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -2041,7 +2041,7 @@ namespace MTA.Game.Attacking {
                                                 Experience += damage;
                                                 suse.AddTarget(attackedsob, damage, attack);
 
-                                                attacker.Owner.SendScreen(suse, true);
+                                                attacker.Owner.SendScreen(suse);
                                             }
                                         }
                                         else {
@@ -2071,7 +2071,7 @@ namespace MTA.Game.Attacking {
                                                     }
 
                                                     if (attacked.EntityFlag == EntityFlag.Player)
-                                                        attacked.Owner.SendScreen(suse, true);
+                                                        attacked.Owner.SendScreen(suse);
                                                     else
                                                         attacked.MonsterInfo.SendScreen(suse);
                                                 }
@@ -2096,7 +2096,7 @@ namespace MTA.Game.Attacking {
                                                         }
 
                                                         if (attacked.EntityFlag == EntityFlag.Player)
-                                                            attacked.Owner.SendScreen(suse, true);
+                                                            attacked.Owner.SendScreen(suse);
                                                         else
                                                             attacked.MonsterInfo.SendScreen(suse);
                                                     }
@@ -2126,7 +2126,7 @@ namespace MTA.Game.Attacking {
                                                     }
 
                                                     if (attacked.EntityFlag == EntityFlag.Player)
-                                                        attacked.Owner.SendScreen(suse, true);
+                                                        attacked.Owner.SendScreen(suse);
                                                     else
                                                         attacked.MonsterInfo.SendScreen(suse);
                                                 }
@@ -2180,7 +2180,7 @@ namespace MTA.Game.Attacking {
 
                                             attacked.Ressurect();
 
-                                            attacked.Owner.SendScreen(suse, true);
+                                            attacked.Owner.SendScreen(suse);
 
                                             /*
 
@@ -2254,7 +2254,7 @@ namespace MTA.Game.Attacking {
                                             }
                                         }
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -2348,7 +2348,7 @@ namespace MTA.Game.Attacking {
                                             }
                                         }
 
-                                        attacked.Owner.SendScreen(suse, true);
+                                        attacked.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -2390,7 +2390,7 @@ namespace MTA.Game.Attacking {
                                             npacket.Y = Y;
                                             Writer.WriteUInt16(spell.ID, 28, npacket.ToArray());
                                             Writer.WriteByte(spell.Level, 30, npacket.ToArray());
-                                            attacker.Owner.SendScreen(npacket, true);
+                                            attacker.Owner.SendScreen(npacket);
                                             attacker.X = X;
                                             attacker.Y = Y;
                                             attacker.SendSpawn(attacker.Owner);
@@ -2542,7 +2542,7 @@ namespace MTA.Game.Attacking {
                                             }
                                         }
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                         Calculations.IsBreaking(attacker.Owner, ox, oy);
                                     }
 
@@ -2573,7 +2573,7 @@ namespace MTA.Game.Attacking {
 
                                             suse.AddTarget(attackedsob, 0, null);
 
-                                            attacker.Owner.SendScreen(suse, true);
+                                            attacker.Owner.SendScreen(suse);
                                         }
                                     }
                                     else {
@@ -2710,7 +2710,7 @@ namespace MTA.Game.Attacking {
                                                 }
 
                                                 if (attacked.EntityFlag == EntityFlag.Player)
-                                                    attacked.Owner.SendScreen(suse, true);
+                                                    attacked.Owner.SendScreen(suse);
                                                 else
                                                     attacked.MonsterInfo.SendScreen(suse);
                                             }
@@ -2743,7 +2743,7 @@ namespace MTA.Game.Attacking {
 
                                                     suse.AddTarget(attackedsob, damage, attack);
 
-                                                    attacker.Owner.SendScreen(suse, true);
+                                                    attacker.Owner.SendScreen(suse);
                                                 }
                                             }
                                         }
@@ -2771,7 +2771,7 @@ namespace MTA.Game.Attacking {
                                                     suse.AddTarget(attacked, damage, attack);
 
                                                     if (attacked.EntityFlag == EntityFlag.Player)
-                                                        attacked.Owner.SendScreen(suse, true);
+                                                        attacked.Owner.SendScreen(suse);
                                                     else
                                                         attacked.MonsterInfo.SendScreen(suse);
                                                 }
@@ -2807,7 +2807,7 @@ namespace MTA.Game.Attacking {
                                             }
                                         }
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -2888,7 +2888,7 @@ namespace MTA.Game.Attacking {
                                             attacker.AttackPacket = null;
                                         }
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -2969,7 +2969,7 @@ namespace MTA.Game.Attacking {
                                             attacker.AttackPacket = null;
                                         }
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
 
                                     //  attacker.AttackPacket = null;
@@ -3028,7 +3028,7 @@ namespace MTA.Game.Attacking {
                                             attacker.AttackPacket = null;
                                         }
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
 
                                     attacker.AttackPacket = null;
@@ -3099,7 +3099,7 @@ namespace MTA.Game.Attacking {
                                             attacker.AttackPacket = null;
                                         }
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -3130,7 +3130,7 @@ namespace MTA.Game.Attacking {
 
                                         attacker.AddFlag(Update.Flags.Fly);
                                         attacker.RemoveFlag(Update.Flags.Ride);
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -3157,7 +3157,7 @@ namespace MTA.Game.Attacking {
                                         attacker.ShurikenVortexStamp = Time32.Now;
                                         attacker.ShurikenVortexTime = 20;
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
 
                                         attacker.VortexPacket = new Attack(true);
                                         attacker.VortexPacket.Decoded = true;
@@ -3219,7 +3219,7 @@ namespace MTA.Game.Attacking {
                                         }
                                     }
 
-                                    attacker.Owner.SendScreen(suse, true);
+                                    attacker.Owner.SendScreen(suse);
                                     break;
                                 }
                                 case 6001: {
@@ -3270,7 +3270,7 @@ namespace MTA.Game.Attacking {
                                             attacker.AttackPacket = null;
                                         }
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -3336,7 +3336,7 @@ namespace MTA.Game.Attacking {
                                                                         attack);
                                                                     ReceiveAttack(attacker, attacked, attack,
                                                                         ref damage, spellz);
-                                                                    attacker.Owner.SendScreen(ssuse, true);
+                                                                    attacker.Owner.SendScreen(ssuse);
                                                                 }
                                                             }
                                                         }
@@ -3356,7 +3356,7 @@ namespace MTA.Game.Attacking {
                                                 }
 
                                                 if (send)
-                                                    attacker.Owner.SendScreen(suse, true);
+                                                    attacker.Owner.SendScreen(suse);
                                                 attacker.SpellStamp = Time32.Now;
                                             }
                                             else {
@@ -3406,7 +3406,7 @@ namespace MTA.Game.Attacking {
                                                     suse.Targets[attacked.UID].Damage = spell.ID;
                                                 }
 
-                                                attacked.Owner.SendScreen(suse, true);
+                                                attacked.Owner.SendScreen(suse);
                                             }
                                         }
                                     }
@@ -3448,7 +3448,7 @@ namespace MTA.Game.Attacking {
                                                     suse.Targets[attacked.UID].Hit = false;
                                                 }
 
-                                                attacked.Owner.SendScreen(suse, true);
+                                                attacked.Owner.SendScreen(suse);
                                             }
                                         }
                                     }
@@ -3490,7 +3490,7 @@ namespace MTA.Game.Attacking {
                                                 }
 
                                                 if (attacker.EntityFlag == EntityFlag.Player)
-                                                    attacker.Owner.SendScreen(suse, true);
+                                                    attacker.Owner.SendScreen(suse);
                                             }
                                         }
                                     }
@@ -3528,7 +3528,7 @@ namespace MTA.Game.Attacking {
                                         }
 
                                         if (attacker.EntityFlag == EntityFlag.Player)
-                                            attacker.Owner.SendScreen(suse, true);
+                                            attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -3570,7 +3570,7 @@ namespace MTA.Game.Attacking {
                                         }
 
                                         suse.AddTarget(attacker, 0, attack);
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -3598,7 +3598,7 @@ namespace MTA.Game.Attacking {
                                                     attacked.RemoveFlag(Update.Flags.Ride);
                                                 else
                                                     suse.Targets[attacked.UID].Hit = false;
-                                                attacker.Owner.SendScreen(suse, true);
+                                                attacker.Owner.SendScreen(suse);
                                             }
                                         }
                                     }
@@ -3644,7 +3644,7 @@ namespace MTA.Game.Attacking {
                                         }
                                     }
 
-                                    attacker.Owner.SendScreen(suse, true);
+                                    attacker.Owner.SendScreen(suse);
                                     break;
                                 }
 
@@ -3674,7 +3674,7 @@ namespace MTA.Game.Attacking {
 
                                                 ReceiveAttack(attacker, attacked, attack, ref damage, spell);
 
-                                                attacker.Owner.SendScreen(attack, true);
+                                                attacker.Owner.SendScreen(attack);
                                             }
                                         }
                                     }
@@ -3704,7 +3704,7 @@ namespace MTA.Game.Attacking {
                                                 suse.AddTarget(attackedsob, damage, attack);
 
                                                 ReceiveAttack(attacker, attackedsob, attack, damage, spell);
-                                                attacker.Owner.SendScreen(suse, true);
+                                                attacker.Owner.SendScreen(suse);
                                             }
                                         }
                                     }
@@ -3726,7 +3726,7 @@ namespace MTA.Game.Attacking {
 
                                                     ReceiveAttack(attacker, attacked, attack, ref damage, spell);
 
-                                                    attacker.Owner.SendScreen(suse, true);
+                                                    attacker.Owner.SendScreen(suse);
                                                 }
                                             }
                                         }
@@ -3805,7 +3805,7 @@ namespace MTA.Game.Attacking {
                                             }
                                         }
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -3869,7 +3869,7 @@ namespace MTA.Game.Attacking {
                                             }
                                         }
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -3931,7 +3931,7 @@ namespace MTA.Game.Attacking {
                                             }
                                         }
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -4285,7 +4285,7 @@ namespace MTA.Game.Attacking {
                                         spellUse.X = X;
                                         spellUse.Y = Y;
                                         spellUse.AddTarget(attacker, (uint)0, attack);
-                                        attacker.Owner.SendScreen(spellUse, true);
+                                        attacker.Owner.SendScreen(spellUse);
                                         attacker.TransformationStamp = Time32.Now;
                                         attacker.TransformationMaxHP = 3000;
                                         if (spell.ID == 1270)
@@ -4322,7 +4322,7 @@ namespace MTA.Game.Attacking {
                                         spellUse.X = X;
                                         spellUse.Y = Y;
                                         spellUse.AddTarget(attacker, 0, attack);
-                                        attacker.Owner.SendScreen(spellUse, true);
+                                        attacker.Owner.SendScreen(spellUse);
                                     }
 
                                     break;
@@ -4353,7 +4353,7 @@ namespace MTA.Game.Attacking {
                                         spellUse.X = X;
                                         spellUse.Y = Y;
                                         spellUse.AddTarget(attacker, 0, attack);
-                                        attacker.Owner.SendScreen(spellUse, true);
+                                        attacker.Owner.SendScreen(spellUse);
                                         MonsterInformation information5 = null;
                                         if (MonsterInformation.MonsterInformations.TryGetValue(spell.Power,
                                                 out information5))
@@ -4405,7 +4405,7 @@ namespace MTA.Game.Attacking {
                                                 }
                                             }
 
-                                            attacker.Owner.SendScreen(suse, true);
+                                            attacker.Owner.SendScreen(suse);
                                         }
                                         else {
                                             PrepareSpell(spell, attacker.Owner);
@@ -4415,9 +4415,9 @@ namespace MTA.Game.Attacking {
                                             suse.AddTarget(attacker, 0, attack);
 
                                             if (attacked.EntityFlag == EntityFlag.Player)
-                                                attacked.Owner.SendScreen(suse, true);
+                                                attacked.Owner.SendScreen(suse);
                                             else
-                                                attacker.Owner.SendScreen(suse, true);
+                                                attacker.Owner.SendScreen(suse);
                                         }
                                     }
 
@@ -4445,7 +4445,7 @@ namespace MTA.Game.Attacking {
                                         attacked.lianhuaranLeft = 0;
                                         //                                            attacked.Owner.Send(new GameCharacterUpdates(true) { UID = attacked.UID, }
                                         //                                                        .Remove(GameCharacterUpdates.SoulShacle));
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -4486,9 +4486,9 @@ namespace MTA.Game.Attacking {
 
                                         attacked.NoDrugsTime = 0;
                                         if (attacked.EntityFlag == EntityFlag.Player)
-                                            attacked.Owner.SendScreen(suse, true);
+                                            attacked.Owner.SendScreen(suse);
                                         else
-                                            attacker.Owner.SendScreen(suse, true);
+                                            attacker.Owner.SendScreen(suse);
                                         if (attacker.Owner.Team != null) {
                                             if (attacker.Owner.Spells.ContainsKey(12560)) {
                                                 if (attacker.EpicMonk()) {
@@ -4557,7 +4557,7 @@ namespace MTA.Game.Attacking {
                                                 return;
                                             }
 
-                                            attacker.Owner.SendScreen(suse, true);
+                                            attacker.Owner.SendScreen(suse);
                                             attacker.SpellStamp = Time32.Now;
                                             suse.Targets = new SafeDictionary<uint, SpellUse.DamageClass>();
                                             attacker.AttackPacket = null;
@@ -4656,7 +4656,7 @@ namespace MTA.Game.Attacking {
                                         }
 
                                         if (attacker.EntityFlag == EntityFlag.Player)
-                                            attacker.Owner.SendScreen(suse, true);
+                                            attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -4696,7 +4696,7 @@ namespace MTA.Game.Attacking {
 
                                         suse.X = X;
                                         suse.Y = Y;
-                                        if (!attacker.Owner.Map.Floor[X, Y, MapObjectType.Player, null])
+                                        if (!attacker.Owner.Map.Floor[X, Y, MapObjectType.Player])
                                             return;
                                         double disth = 1.5;
                                         if (attacker.MapID == DeathMatch.MAPID) disth = 1;
@@ -4747,7 +4747,7 @@ namespace MTA.Game.Attacking {
                                         attacker.PY = attacker.Y;
                                         attacker.X = X;
                                         attacker.Y = Y;
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                         attacker.Owner.Screen.Reload(suse);
                                     }
 
@@ -4808,7 +4808,7 @@ namespace MTA.Game.Attacking {
                                         }
 
                                         if (attacker.EntityFlag == EntityFlag.Player)
-                                            attacker.Owner.SendScreen(suse, true);
+                                            attacker.Owner.SendScreen(suse);
 
                                         foreach (var h in Program.Values) {
                                             foreach (var t in suse.Targets.Keys) {
@@ -4902,7 +4902,7 @@ namespace MTA.Game.Attacking {
                                         }
 
                                         if (attacker.EntityFlag == EntityFlag.Player)
-                                            attacker.Owner.SendScreen(suse, true);
+                                            attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -4949,7 +4949,7 @@ namespace MTA.Game.Attacking {
                                     }
 
                                     if (attacker.EntityFlag == EntityFlag.Player)
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
 
                                     break;
                                 }
@@ -5013,7 +5013,7 @@ namespace MTA.Game.Attacking {
                                     }
 
                                     if (attacker.EntityFlag == EntityFlag.Player)
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
 
                                     break;
                                 }
@@ -5065,7 +5065,7 @@ namespace MTA.Game.Attacking {
                                             attacker.Owner.Entity.MagicDefenderStamp = Time32.Now;
                                         }
 
-                                        attacker.Owner.SendScreen(spellUse, true);
+                                        attacker.Owner.SendScreen(spellUse);
                                     }
 
                                     break;
@@ -5085,7 +5085,7 @@ namespace MTA.Game.Attacking {
                                             spellUse.SpellLevel = spell.Level;
                                             spellUse.X = X;
                                             spellUse.Y = Y;
-                                            attacker.Owner.SendScreen(spellUse, true);
+                                            attacker.Owner.SendScreen(spellUse);
                                             if (attacker.IsDefensiveStance) {
                                                 attacker.RemoveFlag2(Update.Flags2.Fatigue);
                                                 attacker.IsDefensiveStance = false;
@@ -5126,7 +5126,7 @@ namespace MTA.Game.Attacking {
                                             spellUse.SpellLevel = spell.Level;
                                             spellUse.X = X;
                                             spellUse.Y = Y;
-                                            attacker.Owner.SendScreen(spellUse, true);
+                                            attacker.Owner.SendScreen(spellUse);
                                             if (attacker.IsShieldBlock) {
                                                 Update aupgrade = new Update(true);
                                                 aupgrade.UID = attacker.UID;
@@ -5173,7 +5173,7 @@ namespace MTA.Game.Attacking {
                                     spellUse.SpellLevel = spell.Level;
                                     spellUse.X = X;
                                     spellUse.Y = Y;
-                                    attacker.Owner.SendScreen(spellUse, true);
+                                    attacker.Owner.SendScreen(spellUse);
                                     attacker.EquipmentColor = (uint)attacker.BattlePower;
                                     if (attacker.ContainsFlag3(Update.Flags3.Assassin)) {
                                         attacker.RemoveFlag3(Update.Flags3.Assassin);
@@ -5247,7 +5247,7 @@ namespace MTA.Game.Attacking {
                                         }
                                     }
 
-                                    attacker.Owner.SendScreen(suse, true);
+                                    attacker.Owner.SendScreen(suse);
                                     break;
                                 }
 
@@ -5277,7 +5277,7 @@ namespace MTA.Game.Attacking {
                                                     suse.Effect1 = attack.Effect1;
                                                     ReceiveAttack(attacker, attacked, attack, ref damage, spell);
                                                     suse.AddTarget(attacked, damage, attack);
-                                                    attacker.Owner.SendScreen(suse, true);
+                                                    attacker.Owner.SendScreen(suse);
                                                 }
                                             }
                                             else {
@@ -5289,7 +5289,7 @@ namespace MTA.Game.Attacking {
 
                                                     ReceiveAttack(attacker, attackedsob, attack, damage, spell);
                                                     suse.AddTarget(attackedsob, damage, attack);
-                                                    attacker.Owner.SendScreen(suse, true);
+                                                    attacker.Owner.SendScreen(suse);
                                                 }
                                             }
                                         }
@@ -5371,7 +5371,7 @@ namespace MTA.Game.Attacking {
                                             }
                                         }
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -5398,7 +5398,7 @@ namespace MTA.Game.Attacking {
                                         attack.Y = attacker.Y;
                                         attack.Damage = spell.ID;
                                         attack.KOCount = spell.Level;
-                                        attacker.Owner.SendScreen(attack, true);
+                                        attacker.Owner.SendScreen(attack);
 
                                         attacker.IntensifyPercent = spell.PowerPercent;
                                         attacker.IntensifyStamp = Time32.Now;
@@ -5421,7 +5421,7 @@ namespace MTA.Game.Attacking {
                                     spellUse.SpellLevel = spell.Level;
                                     spellUse.X = X;
                                     spellUse.Y = Y;
-                                    attacker.Owner.SendScreen(spellUse, true);
+                                    attacker.Owner.SendScreen(spellUse);
 
                                     if (attacker.ContainsFlag3(Update.Flags3.KineticSpark))
                                         attacker.RemoveFlag3(Update.Flags3.KineticSpark);
@@ -5440,7 +5440,7 @@ namespace MTA.Game.Attacking {
                                             return;
 
                                         var map = attacker.Owner.Map;
-                                        if (!map.Floor[X, Y, MapObjectType.Item, null]) return;
+                                        if (!map.Floor[X, Y, MapObjectType.Item]) return;
                                         PrepareSpell(spell, attacker.Owner);
 
                                         SpellUse suse = new SpellUse(true);
@@ -5449,7 +5449,7 @@ namespace MTA.Game.Attacking {
                                         suse.SpellID = spell.ID;
                                         suse.SpellLevel = spell.Level;
                                         suse.AddTarget(attacker, 0, null);
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
 
                                         FloorItem floorItem = new FloorItem(true);
                                         if (attacker.Owner.Spells[spellID].LevelHu2 == 1)
@@ -5539,7 +5539,7 @@ namespace MTA.Game.Attacking {
                                             }
 
                                             if (suse.Targets.Count == 0) return;
-                                            attacker.Owner.SendScreen(suse, true);
+                                            attacker.Owner.SendScreen(suse);
                                         }
                                         else {
                                             if (CanUseSpell(spell, attacker.Owner)) {
@@ -5610,7 +5610,7 @@ namespace MTA.Game.Attacking {
                                             }
                                         }
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -5690,7 +5690,7 @@ namespace MTA.Game.Attacking {
                                             }
 
                                             if (send)
-                                                attacker.Owner.SendScreen(suse, true);
+                                                attacker.Owner.SendScreen(suse);
                                         }
                                         else {
                                             attacker.AttackPacket = null;
@@ -5865,7 +5865,7 @@ namespace MTA.Game.Attacking {
                                             npacket.Y = Y;
                                             Writer.WriteUInt16(spell.ID, 28, npacket.ToArray());
                                             Writer.WriteByte(spell.Level, 30, npacket.ToArray());
-                                            attacker.Owner.SendScreen(npacket, true);
+                                            attacker.Owner.SendScreen(npacket);
                                             attacker.X = X;
                                             attacker.Y = Y;
                                             attacker.SendSpawn(attacker.Owner);
@@ -6003,7 +6003,7 @@ namespace MTA.Game.Attacking {
                                             }
                                         }
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                         Calculations.IsBreaking(attacker.Owner, ox, oy);
                                     }
 
@@ -6014,7 +6014,7 @@ namespace MTA.Game.Attacking {
 
                                 case 11190: {
                                     if (CanUseSpell(spell, attacker.Owner)) {
-                                        if (attacker.Owner.Map.Floor[X, Y, MapObjectType.InvalidCast, null])
+                                        if (attacker.Owner.Map.Floor[X, Y, MapObjectType.InvalidCast])
                                             break;
                                         spell.UseStamina = 20;
                                         PrepareSpell(spell, attacker.Owner);
@@ -6033,7 +6033,7 @@ namespace MTA.Game.Attacking {
                                         attack.AttackType = 53;
                                         attack.X = X;
                                         attack.Y = Y;
-                                        attacker.Owner.SendScreen(attack, true);
+                                        attacker.Owner.SendScreen(attack);
                                         attacker.X = X;
                                         attacker.Y = Y;
                                         if (Kernel.GetDistance(attacker.X, attacker.Y, X, Y) <= spell.Range) {
@@ -6074,7 +6074,7 @@ namespace MTA.Game.Attacking {
                                         }
 
                                         Calculations.IsBreaking(attacker.Owner, ox, oy);
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                         attacker.Owner.Screen.Reload(suse);
                                     }
 
@@ -6113,7 +6113,7 @@ namespace MTA.Game.Attacking {
                                                         suse.AddTarget(attacked, damage, attack);
                                                     }
 
-                                                    attacker.Owner.SendScreen(suse, true);
+                                                    attacker.Owner.SendScreen(suse);
                                                 }
                                             }
                                             else {
@@ -6145,7 +6145,7 @@ namespace MTA.Game.Attacking {
                                                             suse.AddTarget(attackedsob, damage, attack);
                                                         }
 
-                                                        attacker.Owner.SendScreen(suse, true);
+                                                        attacker.Owner.SendScreen(suse);
                                                     }
                                                 }
                                             }
@@ -6179,7 +6179,7 @@ namespace MTA.Game.Attacking {
                                         attacker.RemoveFlag(Update.Flags.XPList);
                                     }
 
-                                    attacker.Owner.SendScreen(suse, true);
+                                    attacker.Owner.SendScreen(suse);
                                     break;
                                 }
 
@@ -6269,7 +6269,7 @@ namespace MTA.Game.Attacking {
                                                 }
                                             }
 
-                                            attacker.Owner.SendScreen(suse, true);
+                                            attacker.Owner.SendScreen(suse);
                                         }
                                     }
 
@@ -6287,7 +6287,7 @@ namespace MTA.Game.Attacking {
                                     suse.X = attacker.X;
                                     suse.Y = attacker.Y;
                                     suse.Targets.Add(attacker.UID, 1);
-                                    attacker.Owner.SendScreen(suse, true);
+                                    attacker.Owner.SendScreen(suse);
                                     //     attacker.Stamina += (byte)spell.Power;
                                     //     attacker.Owner.Send(new Message("Your Stamina has increased by " + spell.Power, Message.TopLeft));
                                     break;
@@ -6351,7 +6351,7 @@ namespace MTA.Game.Attacking {
                                             attacker.AttackPacket = null;
                                         }
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -6376,7 +6376,7 @@ namespace MTA.Game.Attacking {
 
                                         TwilightAction(attacker, suse, spell, X, Y);
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                         attacker.AttackPacket = null;
                                     }
 
@@ -6443,7 +6443,7 @@ namespace MTA.Game.Attacking {
                                                                     (uint)Calculate.CalculateExpBonus(attacker.Level,
                                                                         attacked.Level,
                                                                         Math.Min(damage, attacked.Hitpoints)), 11230);
-                                                                attacker.Owner.SendScreen(ssuse, true);
+                                                                attacker.Owner.SendScreen(ssuse);
                                                             }
                                                         }
                                                     }
@@ -6462,7 +6462,7 @@ namespace MTA.Game.Attacking {
                                             }
 
                                             if (send)
-                                                attacker.Owner.SendScreen(suse, true);
+                                                attacker.Owner.SendScreen(suse);
                                             attacker.SpellStamp = Time32.Now;
                                         }
                                     }
@@ -6507,7 +6507,7 @@ namespace MTA.Game.Attacking {
                                             foreach (var item in attacker.MyClones.Values)
                                                 spellUse.AddTarget(item, 0, attack);
 
-                                            attacker.Owner.SendScreen(spellUse, true);
+                                            attacker.Owner.SendScreen(spellUse);
                                         }
                                     }
 
@@ -6570,7 +6570,7 @@ namespace MTA.Game.Attacking {
                                             }
                                         }
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -6593,7 +6593,7 @@ namespace MTA.Game.Attacking {
                                     spellUse.X = X;
                                     spellUse.Y = Y;
                                     spellUse.AddTarget(attacker, 1, attack);
-                                    attacker.Owner.SendScreen(spellUse, true);
+                                    attacker.Owner.SendScreen(spellUse);
                                     if (attacker.ContainsFlag3((uint)Update.Flags3.DragonFlow))
                                         attacker.RemoveFlag3((uint)Update.Flags3.DragonFlow);
                                     else
@@ -6627,7 +6627,7 @@ namespace MTA.Game.Attacking {
                                             }
                                         }
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -6648,7 +6648,7 @@ namespace MTA.Game.Attacking {
                                         attacker.RemoveFlag(Update.Flags.XPList);
                                         attacker.AddFlag3(Update.Flags3.DragonCyclone);
                                         attacker.DragonCycloneStamp = Time32.Now;
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
                                     else {
                                         ushort _X = attacker.X, _Y = attacker.Y;
@@ -6674,7 +6674,7 @@ namespace MTA.Game.Attacking {
 
                                         suse.X = X;
                                         suse.Y = Y;
-                                        if (!attacker.Owner.Map.Floor[X, Y, MapObjectType.Player, null])
+                                        if (!attacker.Owner.Map.Floor[X, Y, MapObjectType.Player])
                                             return;
                                         double disth = 1.5;
                                         if (attacker.MapID == DeathMatch.MAPID) disth = 1;
@@ -6723,7 +6723,7 @@ namespace MTA.Game.Attacking {
                                         attacker.PY = attacker.Y;
                                         attacker.X = X;
                                         attacker.Y = Y;
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                         attacker.Owner.Screen.Reload(suse);
                                     }
 
@@ -6787,7 +6787,7 @@ namespace MTA.Game.Attacking {
                                             }
                                         }
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -6828,7 +6828,7 @@ namespace MTA.Game.Attacking {
 
                                         suse.X = X;
                                         suse.Y = Y;
-                                        if (!attacker.Owner.Map.Floor[X, Y, MapObjectType.Player, null])
+                                        if (!attacker.Owner.Map.Floor[X, Y, MapObjectType.Player])
                                             return;
                                         double disth = 1.5;
                                         if (attacker.MapID == DeathMatch.MAPID) disth = 1;
@@ -6868,7 +6868,7 @@ namespace MTA.Game.Attacking {
                                         attacker.PY = attacker.Y;
                                         attacker.X = X;
                                         attacker.Y = Y;
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                         attacker.Owner.Screen.Reload(suse);
                                     }
 
@@ -6936,7 +6936,7 @@ namespace MTA.Game.Attacking {
                                             attacker.AttackPacket = null;
                                         }
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -6979,7 +6979,7 @@ namespace MTA.Game.Attacking {
 
                                         suse.X = X;
                                         suse.Y = Y;
-                                        if (!attacker.Owner.Map.Floor[X, Y, MapObjectType.Player, null])
+                                        if (!attacker.Owner.Map.Floor[X, Y, MapObjectType.Player])
                                             return;
                                         double disth = 1.5;
                                         if (attacker.MapID == DeathMatch.MAPID) disth = 1;
@@ -7020,7 +7020,7 @@ namespace MTA.Game.Attacking {
                                         attacker.PY = attacker.Y;
                                         attacker.X = X;
                                         attacker.Y = Y;
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                         attacker.Owner.Screen.Reload(suse);
                                     }
 
@@ -7086,7 +7086,7 @@ namespace MTA.Game.Attacking {
                                             attacker.AttackPacket = null;
                                         }
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -7149,7 +7149,7 @@ namespace MTA.Game.Attacking {
                                             }
                                         }
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -7187,7 +7187,7 @@ namespace MTA.Game.Attacking {
                                                     attacker.Owner.Entity.IsEagleEyeShooted = true;
 
                                                     if (attacked.EntityFlag == EntityFlag.Player)
-                                                        attacked.Owner.SendScreen(suse, true);
+                                                        attacked.Owner.SendScreen(suse);
                                                     else
                                                         attacked.MonsterInfo.SendScreen(suse);
                                                     if (attacked.EntityFlag == EntityFlag.Player) {
@@ -7233,7 +7233,7 @@ namespace MTA.Game.Attacking {
                                         spellUse.SpellLevel = spell.Level;
                                         spellUse.X = X;
                                         spellUse.Y = Y;
-                                        attacker.Owner.SendScreen(spellUse, true);
+                                        attacker.Owner.SendScreen(spellUse);
                                         if (attacker.OnDragonSwing) {
                                             attacker.OnDragonSwing = false;
                                             attacker.RemoveFlag3(Update.Flags3.DragonSwing);
@@ -7272,7 +7272,7 @@ namespace MTA.Game.Attacking {
                                             return;
 
                                         var map = attacker.Owner.Map;
-                                        if (!map.Floor[X, Y, MapObjectType.Item, null]) return;
+                                        if (!map.Floor[X, Y, MapObjectType.Item]) return;
                                         PrepareSpell(spell, attacker.Owner);
 
                                         SpellUse suse = new SpellUse(true);
@@ -7281,7 +7281,7 @@ namespace MTA.Game.Attacking {
                                         suse.SpellID = spell.ID;
                                         suse.SpellLevel = spell.Level;
                                         suse.AddTarget(attacker, 0, null);
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
 
                                         FloorItem floorItem = new FloorItem(true);
                                         floorItem.ItemID = FloorItem.AuroraLotus;
@@ -7308,7 +7308,7 @@ namespace MTA.Game.Attacking {
                                         attacker.Owner.SendScreenSpawn(floorItem, true);
 
                                         attacker.AuroraLotusEnergy = 0;
-                                        attacker.Lotus(attacker.AuroraLotusEnergy, Update.AuroraLotus);
+                                        attacker.Lotus(attacker.AuroraLotusEnergy);
 
                                         attacker.AttackPacket = null;
                                     }
@@ -7326,7 +7326,7 @@ namespace MTA.Game.Attacking {
                                             return;
 
                                         var map = attacker.Owner.Map;
-                                        if (!map.Floor[X, Y, MapObjectType.Item, null]) return;
+                                        if (!map.Floor[X, Y, MapObjectType.Item]) return;
                                         PrepareSpell(spell, attacker.Owner);
 
                                         SpellUse suse = new SpellUse(true);
@@ -7335,7 +7335,7 @@ namespace MTA.Game.Attacking {
                                         suse.SpellID = spell.ID;
                                         suse.SpellLevel = spell.Level;
                                         suse.AddTarget(attacker, 0, null);
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
 
                                         FloorItem floorItem = new FloorItem(true);
                                         floorItem.ItemID = FloorItem.FlameLotus;
@@ -7405,7 +7405,7 @@ namespace MTA.Game.Attacking {
                                         }
 
                                         attacker.Owner.IncreaseSpellExperience(10, 12560);
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                         attacker.AttackPacket = null;
                                     }
 
@@ -7459,7 +7459,7 @@ namespace MTA.Game.Attacking {
                                             }
                                         }
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -7472,7 +7472,7 @@ namespace MTA.Game.Attacking {
                                 case 12550: {
                                     if (CanUseSpell(spell, attacker.Owner)) {
                                         var map = attacker.Owner.Map;
-                                        if (!map.Floor[X, Y, MapObjectType.Item, null]) return;
+                                        if (!map.Floor[X, Y, MapObjectType.Item]) return;
                                         PrepareSpell(spell, attacker.Owner);
                                         SpellUse suse = new SpellUse(true);
                                         suse.Attacker = attacker.UID;
@@ -7483,7 +7483,7 @@ namespace MTA.Game.Attacking {
                                         suse.Y = Y;
                                         suse.SpellEffect = 0;
                                         suse.AddTarget(attacker, 0, null);
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
 
                                         Random R = new Random();
                                         int Nr = R.Next(1, 3);
@@ -7735,7 +7735,7 @@ namespace MTA.Game.Attacking {
 
                                         suse.X = X;
                                         suse.Y = Y;
-                                        if (!attacker.Owner.Map.Floor[X, Y, MapObjectType.Player, null])
+                                        if (!attacker.Owner.Map.Floor[X, Y, MapObjectType.Player])
                                             return;
                                         double disth = 1.5;
 
@@ -7783,7 +7783,7 @@ namespace MTA.Game.Attacking {
 
                                         attacker.X = X;
                                         attacker.Y = Y;
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                         attacker.Owner.Screen.Reload(suse);
                                     }
 
@@ -7853,7 +7853,7 @@ namespace MTA.Game.Attacking {
                                             attacker.AttackPacket = null;
                                         }
 
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -7876,7 +7876,7 @@ namespace MTA.Game.Attacking {
                                         attacker.AddFlag3(1UL << 53);
                                         attacker.ManiacDance = Time32.Now;
                                         attacker.RemoveFlag(Update.Flags.Ride);
-                                        attacker.Owner.SendScreen(suse, true);
+                                        attacker.Owner.SendScreen(suse);
                                     }
 
                                     break;
@@ -7895,7 +7895,7 @@ namespace MTA.Game.Attacking {
                                     spellUse.X = X;
                                     spellUse.Y = Y;
                                     spellUse.AddTarget(attacker, 1, attack);
-                                    attacker.Owner.SendScreen(spellUse, true);
+                                    attacker.Owner.SendScreen(spellUse);
                                     if (attacker.ContainsFlag3(1UL << 51))
                                         attacker.RemoveFlag3(1UL << 51);
                                     else
@@ -8101,7 +8101,7 @@ namespace MTA.Game.Attacking {
                 suse.Y = attacker.Y;
 
                 suse.AddTarget(attacker, 0, null);
-                attacker.Owner.SendScreen(suse, true);
+                attacker.Owner.SendScreen(suse);
                 attacker.AddFlag2(statusFlag);
                 attacker.AddFlag2(statusFlag2);
                 attacker.Aura_isActive = true;
@@ -8211,8 +8211,8 @@ namespace MTA.Game.Attacking {
                             Writer.Ushort(12, 0, tets);
                             Writer.Ushort(2710, 2, tets);
                             Writer.Uint(spell.ID, 4, tets);
-                            attacked.Owner.SendScreen(tets, true);
-                            attacker.Owner.SendScreen(tets, true);
+                            attacked.Owner.SendScreen(tets);
+                            attacker.Owner.SendScreen(tets);
                         }
                     }
 
@@ -8272,7 +8272,7 @@ namespace MTA.Game.Attacking {
                 if (attacked.Hitpoints <= damage) {
                     if (attacked.EntityFlag == EntityFlag.Player) {
                         attacker.Owner.UpdateQualifier(attacker.Owner, attacked.Owner, attacked.Hitpoints);
-                        attacked.Owner.SendScreen(attack, true);
+                        attacked.Owner.SendScreen(attack);
                         attacker.AttackPacket = null;
                     }
                     else {
@@ -8323,7 +8323,7 @@ namespace MTA.Game.Attacking {
                     attacked.Hitpoints -= damage;
                     if (attacked.EntityFlag == EntityFlag.Player) {
                         attacker.Owner.UpdateQualifier(attacker.Owner, attacked.Owner, attacked.Hitpoints);
-                        attacked.Owner.SendScreen(attack, true);
+                        attacked.Owner.SendScreen(attack);
                     }
                     else
                         attacked.MonsterInfo.SendScreen(attack);
@@ -8547,7 +8547,7 @@ namespace MTA.Game.Attacking {
                 }
             }
             else {
-                attacker.Owner.SendScreen(attack, true);
+                attacker.Owner.SendScreen(attack);
                 if (attacked.Hitpoints <= damage) {
                     attacked.Die(attacker);
                 }
@@ -9252,7 +9252,7 @@ namespace MTA.Game.Attacking {
                                     spellUse.AddTarget(client.Entity, 300, null);
                                     uint damage = Math.Min(300, client.Entity.MaxHitpoints - client.Entity.Hitpoints);
                                     client.Entity.Hitpoints += damage;
-                                    client.SendScreen(spellUse, true);
+                                    client.SendScreen(spellUse);
                                     break;
                                 }
                                 case Enums.ItemEffect.MP: {
@@ -9265,7 +9265,7 @@ namespace MTA.Game.Attacking {
                                     spellUse.AddTarget(client.Entity, 300, null);
                                     ushort damage = (ushort)Math.Min(300, client.Entity.MaxMana - client.Entity.Mana);
                                     client.Entity.Mana += damage;
-                                    client.SendScreen(spellUse, true);
+                                    client.SendScreen(spellUse);
                                     break;
                                 }
                                 case Enums.ItemEffect.Shield: {
@@ -9289,7 +9289,7 @@ namespace MTA.Game.Attacking {
                                     client.Entity.MagicShieldTime = 120;
                                     if (client.Entity.EntityFlag == EntityFlag.Player)
                                         client.Send(Constants.Shield(2, 120));
-                                    client.SendScreen(spellUse, true);
+                                    client.SendScreen(spellUse);
                                     break;
                                 }
                                 case Enums.ItemEffect.Poison: {
@@ -9313,7 +9313,7 @@ namespace MTA.Game.Attacking {
                                         attacked.ToxicFogStamp = Time32.Now;
                                         attacked.ToxicFogLeft = 10;
                                         attacked.ToxicFogPercent = 0.05F;
-                                        client.SendScreen(spellUse, true);
+                                        client.SendScreen(spellUse);
                                     }
 
                                     break;
@@ -9344,7 +9344,7 @@ namespace MTA.Game.Attacking {
                                     spellUse.AddTarget(client.Entity, 300, null);
                                     uint damage = Math.Min(300, client.Entity.MaxHitpoints - client.Entity.Hitpoints);
                                     client.Entity.Hitpoints += damage;
-                                    client.SendScreen(spellUse, true);
+                                    client.SendScreen(spellUse);
                                     break;
                                 }
                                 case Enums.ItemEffect.MP: {
@@ -9357,7 +9357,7 @@ namespace MTA.Game.Attacking {
                                     spellUse.AddTarget(client.Entity, 300, null);
                                     ushort damage = (ushort)Math.Min(300, client.Entity.MaxMana - client.Entity.Mana);
                                     client.Entity.Mana += damage;
-                                    client.SendScreen(spellUse, true);
+                                    client.SendScreen(spellUse);
                                     break;
                                 }
                                 case Enums.ItemEffect.Shield: {
@@ -9381,7 +9381,7 @@ namespace MTA.Game.Attacking {
                                     client.Entity.MagicShieldTime = 120;
                                     if (client.Entity.EntityFlag == EntityFlag.Player)
                                         client.Send(Constants.Shield(2, 120));
-                                    client.SendScreen(spellUse, true);
+                                    client.SendScreen(spellUse);
                                     break;
                                 }
                                 case Enums.ItemEffect.Poison: {
@@ -9405,7 +9405,7 @@ namespace MTA.Game.Attacking {
                                         attacked.ToxicFogStamp = Time32.Now;
                                         attacked.ToxicFogLeft = 10;
                                         attacked.ToxicFogPercent = 0.05F;
-                                        client.SendScreen(spellUse, true);
+                                        client.SendScreen(spellUse);
                                     }
 
                                     break;
@@ -9433,7 +9433,7 @@ namespace MTA.Game.Attacking {
                                     str.TextsCount = 1;
                                     str.Type = _String.Effect;
                                     str.Texts.Add("phoenix");
-                                    attacker.Owner.SendScreen(str, true);
+                                    attacker.Owner.SendScreen(str);
                                 }
                             }
 
@@ -9445,7 +9445,7 @@ namespace MTA.Game.Attacking {
                                     str.TextsCount = 1;
                                     str.Type = _String.Effect;
                                     str.Texts.Add("dragon");
-                                    attacker.Owner.SendScreen(str, true);
+                                    attacker.Owner.SendScreen(str);
                                 }
                             }
                         }
@@ -9509,11 +9509,11 @@ namespace MTA.Game.Attacking {
 
                         attack.Attacker = client.Entity.UID;
                         attack.Attacked = clienttarget.Entity.UID;
-                        client.SendScreen(attack, true);
+                        client.SendScreen(attack);
 
                         attack.Attacker = clienttarget.Entity.UID;
                         attack.Attacked = client.Entity.UID;
-                        client.SendScreen(attack, true);
+                        client.SendScreen(attack);
                     }
                 }
             }
@@ -9562,10 +9562,10 @@ namespace MTA.Game.Attacking {
                             attack.AttackType = 49;
                             attack.Attacker = client.Entity.UID;
                             attack.Attacked = clienttarget.Entity.UID;
-                            client.SendScreen(attack, true);
+                            client.SendScreen(attack);
                             attack.Attacker = clienttarget.Entity.UID;
                             attack.Attacked = client.Entity.UID;
-                            client.SendScreen(attack, true);
+                            client.SendScreen(attack);
                         }
                     }
                     else {
@@ -9592,10 +9592,10 @@ namespace MTA.Game.Attacking {
                             attack.ResponseDamage = clienttarget.InteractionEffect;
                             clienttarget.Send(attack);
                             attack.AttackType = 49;
-                            client.SendScreen(attack, true);
+                            client.SendScreen(attack);
                             attack.Attacker = client.Entity.UID;
                             attack.Attacked = clienttarget.Entity.UID;
-                            client.SendScreen(attack, true);
+                            client.SendScreen(attack);
                         }
                     }
                 }
@@ -9614,11 +9614,11 @@ namespace MTA.Game.Attacking {
                     attack.X = client.Entity.X;
                     attack.Y = client.Entity.Y;
                     attack.AttackType = 50;
-                    client.SendScreen(attack, true);
+                    client.SendScreen(attack);
                     attack.Attacker = clienttarget.Entity.UID;
                     ;
                     attack.Attacked = client.Entity.UID;
-                    clienttarget.SendScreen(attack, true);
+                    clienttarget.SendScreen(attack);
                     client.Entity.Teleport(client.Entity.MapID, client.Entity.X, client.Entity.Y);
                     clienttarget.Entity.Teleport(clienttarget.Entity.MapID, clienttarget.Entity.X,
                         clienttarget.Entity.Y);

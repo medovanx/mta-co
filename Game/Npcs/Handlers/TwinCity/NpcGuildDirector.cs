@@ -39,7 +39,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                             client.Guild.SendGuild(member.Client);
                             member.Client.Entity.GuildRank = (ushort)member.Rank;
                             member.Client.Screen.FullWipe();
-                            member.Client.Screen.Reload(null);
+                            member.Client.Screen.Reload();
                         }
 
                         dialog.Text("You have promoted " + member.Name + " to be a Deputy Leader.");
@@ -79,7 +79,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                                 client.Guild.SendGuild(client);
                                 client.Guild.SendName(client);
                                 client.Screen.FullWipe();
-                                client.Screen.Reload(null);
+                                client.Screen.Reload();
                             }
                             else {
                                 dialog.Text("Sorry, there is already a guild with this name.");
@@ -158,13 +158,13 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                                         member.Client.Entity.GuildBattlePower = 0;
                                         memberClient.Entity.GuildRank = (ushort)member.Rank;
                                         memberClient.Screen.FullWipe();
-                                        memberClient.Screen.Reload(null);
+                                        memberClient.Screen.Reload();
                                         memberClient.Guild.SendGuild(memberClient);
                                     }
 
                                     client.Entity.GuildRank = (ushort)client.AsMember.Rank;
                                     client.Screen.FullWipe();
-                                    client.Screen.Reload(null);
+                                    client.Screen.Reload();
                                     client.Guild.SendGuild(client);
                                     client.Guild.GetMaxSharedBattlepower(true);
                                 }
@@ -199,7 +199,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                                         client.Guild.SendGuild(member.Client);
                                         member.Client.Entity.GuildRank = (ushort)member.Rank;
                                         member.Client.Screen.FullWipe();
-                                        member.Client.Screen.Reload(null);
+                                        member.Client.Screen.Reload();
                                         member.Client.Entity.GuildBattlePower =
                                             member.Guild.GetSharedBattlepower(member.Rank);
                                     }
@@ -271,7 +271,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                                 guild.SendName(client);
                                 GuildArsenalTable.Insert(guild.ID);
                                 client.Screen.FullWipe();
-                                client.Screen.Reload(null);
+                                client.Screen.Reload();
                             }
                             else {
                                 dialog.Text(

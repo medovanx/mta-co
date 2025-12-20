@@ -113,12 +113,12 @@ namespace MTA.Network.GamePackets {
                         var garments = new uint[] { 193445, 193525, 188915, 189065 }.ToList();
                         var mounts = new uint[] { 200449, 200517, 200531, 200540, 200482, 200482 }.ToList();
                         if (garments.Contains(myItem.ID)) {
-                            new TitleStorage().AddTitle(client, 2005, 6, false);
-                            new TitleStorage().AddTitle(client, 6003, 22, false);
+                            new TitleStorage().AddTitle(client, 2005, 6);
+                            new TitleStorage().AddTitle(client, 6003, 22);
                         }
                         else if (mounts.Contains(myItem.ID)) {
-                            new TitleStorage().AddTitle(client, 2006, 7, false);
-                            new TitleStorage().AddTitle(client, 6004, 23, false);
+                            new TitleStorage().AddTitle(client, 2006, 7);
+                            new TitleStorage().AddTitle(client, 6004, 23);
                         }
                     }
 
@@ -265,14 +265,14 @@ namespace MTA.Network.GamePackets {
             foreach (var i in client.Entity.StorageItems.Values) {
                 foreach (var garment in garments)
                     if (i.ID == garment) {
-                        new TitleStorage().AddTitle(client, 2005, 6, false);
-                        new TitleStorage().AddTitle(client, 6003, 22, false);
+                        new TitleStorage().AddTitle(client, 2005, 6);
+                        new TitleStorage().AddTitle(client, 6003, 22);
                     }
 
                 foreach (var mount in mounts)
                     if (i.ID == mount) {
-                        new TitleStorage().AddTitle(client, 2006, 7, false);
-                        new TitleStorage().AddTitle(client, 6004, 23, false);
+                        new TitleStorage().AddTitle(client, 2006, 7);
+                        new TitleStorage().AddTitle(client, 6004, 23);
                     }
             }
         }

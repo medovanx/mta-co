@@ -44,7 +44,7 @@ namespace MTA.Database {
         }
 
         public static Boolean MapAllowThatLocation(Map mapbase, ushort x, ushort y) {
-            if (!mapbase.Floor[x, y, MapObjectType.InvalidCast, null])
+            if (!mapbase.Floor[x, y, MapObjectType.InvalidCast])
                 return true;
 
             return false;
@@ -58,7 +58,7 @@ namespace MTA.Database {
 
             for (ushort ay = ystart; ay <= limy; ay++) {
                 for (ushort ax = xstart; ax <= limx; ax++) {
-                    if (!map.Floor[ax, ay, MapObjectType.InvalidCast, null]) {
+                    if (!map.Floor[ax, ay, MapObjectType.InvalidCast]) {
                         x = ax;
                         y = ay;
                         return true;

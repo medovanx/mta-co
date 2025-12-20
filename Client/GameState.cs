@@ -134,7 +134,7 @@ namespace MTA.Client {
         public Timer Timer;
 
         public DateTime timerattack = new DateTime();
-        public IDisposable[] TimerSubscriptions;
+        public IDisposable[]? TimerSubscriptions;
         public object TimerSyncRoot, ItemSyncRoot;
         public int TopDlClaim = 0;
         public int TopGlClaim = 0;
@@ -433,7 +433,7 @@ namespace MTA.Client {
                         }
                     }
 
-                    client.SendScreen(suse, true);
+                    client.SendScreen(suse);
 
                     Entity.RemoveFlag3(Update.Flags3.lianhuaran01);
                     Entity.RemoveFlag3(Update.Flags3.lianhuaran02);
@@ -1974,7 +1974,7 @@ namespace MTA.Client {
                     #endregion
 
                     if (Team != null) {
-                        Team.Remove(this, true);
+                        Team.Remove(this);
                     }
 
                     foreach (var item in Entity.StorageItems.Values) {
@@ -2739,7 +2739,7 @@ namespace MTA.Client {
                         GameCharacterUpdates update = new GameCharacterUpdates(true);
                         update.UID = Entity.UID;
                         update.Add(GameCharacterUpdates.Freeze, 0, 4);
-                        SendScreen(update, true);
+                        SendScreen(update);
                         Entity.AddFlag(Update.Flags.Freeze);
                     }
 
@@ -2762,7 +2762,7 @@ namespace MTA.Client {
                         var upd = new GameCharacterUpdates(true);
                         upd.UID = Entity.UID;
                         upd.Remove(GameCharacterUpdates.Decelerated);
-                        SendScreen(upd, true);
+                        SendScreen(upd);
                     }
 
                     RaceExcitementStamp = Time32.Now;
@@ -2771,7 +2771,7 @@ namespace MTA.Client {
                         var upd = new GameCharacterUpdates(true);
                         upd.UID = Entity.UID;
                         upd.Add(GameCharacterUpdates.Accelerated, 50, 15, 25);
-                        SendScreen(upd, true);
+                        SendScreen(upd);
                         SpeedChange = upd;
                     }
                     RaceExcitementAmount = 50;
@@ -2785,7 +2785,7 @@ namespace MTA.Client {
                         var upd = new GameCharacterUpdates(true);
                         upd.UID = Entity.UID;
                         upd.Remove(GameCharacterUpdates.Decelerated);
-                        SendScreen(upd, true);
+                        SendScreen(upd);
                     }
 
                     RaceExcitementAmount = 200;
@@ -2796,7 +2796,7 @@ namespace MTA.Client {
                         var upd = new GameCharacterUpdates(true);
                         upd.UID = Entity.UID;
                         upd.Add(GameCharacterUpdates.Accelerated, 200, 15, 100);
-                        SendScreen(upd, true);
+                        SendScreen(upd);
                         SpeedChange = upd;
                     }
                     Entity.AddFlag(Update.Flags.OrangeSparkles);
@@ -2811,7 +2811,7 @@ namespace MTA.Client {
                     var upd = new GameCharacterUpdates(true);
                     upd.UID = Entity.UID;
                     upd.Add(GameCharacterUpdates.DivineShield, 0, 10);
-                    SendScreen(upd, true);
+                    SendScreen(upd);
                     break;
                 }
                 case Enums.RaceItemType.DizzyHammer: {
@@ -2827,7 +2827,7 @@ namespace MTA.Client {
                                     var upd = new GameCharacterUpdates(true);
                                     upd.UID = Entity.UID;
                                     upd.Add(GameCharacterUpdates.Dizzy, 0, 5);
-                                    Owner.SendScreen(upd, true);
+                                    Owner.SendScreen(upd);
                                 }
                             }
                         }
@@ -2842,7 +2842,7 @@ namespace MTA.Client {
                         SpellLevel = 0,
                         X = Entity.X,
                         Y = Entity.Y
-                    }.AddTarget(Entity, 0, null), true);
+                    }.AddTarget(Entity, 0, null));
                     foreach (var obj in Screen.SelectWhere<Entity>(MapObjectType.Player,
                                  (o) => Kernel.GetDistance(o.X, o.Y, Entity.X, Entity.Y) <= 10)) {
                         var Owner = obj.Owner;
@@ -2854,7 +2854,7 @@ namespace MTA.Client {
                                 var upd = new GameCharacterUpdates(true);
                                 upd.UID = Owner.Entity.UID;
                                 upd.Add(GameCharacterUpdates.Flustered, 0, 20);
-                                Owner.SendScreen(upd, true);
+                                Owner.SendScreen(upd);
                             }
                         }
                     }
@@ -2873,7 +2873,7 @@ namespace MTA.Client {
                         SpellLevel = 0,
                         X = Entity.X,
                         Y = Entity.Y
-                    }.AddTarget(Entity, 0, null), true);
+                    }.AddTarget(Entity, 0, null));
                     foreach (var obj in this.Screen.SelectWhere<Entity>(MapObjectType.Player,
                                  (o) => Kernel.GetDistance(o.X, o.Y, Entity.X, Entity.Y) <= 10)) {
                         var Owner = obj.Owner;
@@ -2886,7 +2886,7 @@ namespace MTA.Client {
                                 var upd = new GameCharacterUpdates(true);
                                 upd.UID = Owner.Entity.UID;
                                 upd.Add(GameCharacterUpdates.Flustered, 0, 15);
-                                Owner.SendScreen(upd, true);
+                                Owner.SendScreen(upd);
                             }
                         }
                     }
@@ -2900,7 +2900,7 @@ namespace MTA.Client {
                         SpellLevel = 0,
                         X = Entity.X,
                         Y = Entity.Y
-                    }.AddTarget(Entity, 0, null), true);
+                    }.AddTarget(Entity, 0, null));
                     foreach (var obj in this.Screen.SelectWhere<Entity>(MapObjectType.Player,
                                  o => Kernel.GetDistance(o.X, o.Y, Entity.X, Entity.Y) <= 10)) {
                         var Owner = obj.Owner;
@@ -2913,7 +2913,7 @@ namespace MTA.Client {
                                 var upd = new GameCharacterUpdates(true);
                                 upd.UID = Owner.Entity.UID;
                                 upd.Remove(GameCharacterUpdates.Accelerated);
-                                Owner.SendScreen(upd, true);
+                                Owner.SendScreen(upd);
                             }
 
                             Owner.Entity.AddFlag(Update.Flags.PurpleSparkles);
@@ -2924,7 +2924,7 @@ namespace MTA.Client {
                                     upd.Add(GameCharacterUpdates.Decelerated, 50, 10, (uint)(0 - 25));
                                 }
 
-                                Owner.SendScreen(upd, true);
+                                Owner.SendScreen(upd);
                                 Owner.SpeedChange = upd;
                             }
                         }
@@ -6060,7 +6060,7 @@ namespace MTA.Client {
                     str.PositionY = (ushort)p.Y;
                     str.Type = _String.MapEffect;
                     str.Texts.Add(circle_Effect);
-                    SendScreen(str, true);
+                    SendScreen(str);
 
 
                     var spell = SpellTable.GetSpell(11600, this);

@@ -368,7 +368,7 @@ namespace MTA.MaTrix {
                                                 suse.X = attackedSobNpc.X;
                                                 suse.Y = attackedSobNpc.Y;
                                                 suse.AddTarget(attackedSobNpc, damage, attack);
-                                                pet.Entity.Owner.SendScreen(suse, true);
+                                                pet.Entity.Owner.SendScreen(suse);
                                             }
                                         }
                                     }

@@ -136,7 +136,7 @@ namespace MTA.Network.GamePackets
                         Update upd = new Update(true);
                         upd.UID = UID;
                         upd.Append(Update.Mesh, Mesh);
-                        killer.Owner.SendScreen(upd, true);
+                        killer.Owner.SendScreen(upd);
                         Hitpoints = 0;
                     }
                     Attack attack = new(true)
@@ -168,7 +168,7 @@ namespace MTA.Network.GamePackets
                     UID = UID
                 };
                 upd.Append(Update.Hitpoints, MaxHitpoints);
-                killer.Owner.SendScreen(upd, true);
+                killer.Owner.SendScreen(upd);
             }
             if (MapID == 2077)
             {
@@ -186,7 +186,7 @@ namespace MTA.Network.GamePackets
                             UID = UID
                         };
                         upd.Append(Update.Mesh, Mesh);
-                        killer.Owner.SendScreen(upd, true);
+                        killer.Owner.SendScreen(upd);
                         Hitpoints = 0;
                     }
                     Attack attack = new(true)
@@ -218,7 +218,7 @@ namespace MTA.Network.GamePackets
                     UID = UID
                 };
                 upd.Append(Update.Hitpoints, MaxHitpoints);
-                killer.Owner.SendScreen(upd, true);
+                killer.Owner.SendScreen(upd);
             }
             if (MapID == 2076)
             {
@@ -234,7 +234,7 @@ namespace MTA.Network.GamePackets
                         Update upd = new Update(true);
                         upd.UID = UID;
                         upd.Append(Update.Mesh, Mesh);
-                        killer.Owner.SendScreen(upd, true);
+                        killer.Owner.SendScreen(upd);
                         Hitpoints = 0;
                     }
                     Attack attack = new(true)
@@ -262,7 +262,7 @@ namespace MTA.Network.GamePackets
                 Update upd = new Update(true);
                 upd.UID = UID;
                 upd.Append(Update.Hitpoints, MaxHitpoints);
-                killer.Owner.SendScreen(upd, true);
+                killer.Owner.SendScreen(upd);
             }
             if (MapID == 2075)
             {
@@ -278,7 +278,7 @@ namespace MTA.Network.GamePackets
                         Update upd = new Update(true);
                         upd.UID = UID;
                         upd.Append(Update.Mesh, Mesh);
-                        killer.Owner.SendScreen(upd, true);
+                        killer.Owner.SendScreen(upd);
                         Hitpoints = 0;
                     }
                     Attack attack = new Attack(true);
@@ -304,7 +304,7 @@ namespace MTA.Network.GamePackets
                 Update upd = new Update(true);
                 upd.UID = UID;
                 upd.Append(Update.Hitpoints, MaxHitpoints);
-                killer.Owner.SendScreen(upd, true);
+                killer.Owner.SendScreen(upd);
             }
             if (MapID == 2072)
             {
@@ -320,7 +320,7 @@ namespace MTA.Network.GamePackets
                         Update upd = new Update(true);
                         upd.UID = UID;
                         upd.Append(Update.Mesh, Mesh);
-                        killer.Owner.SendScreen(upd, true);
+                        killer.Owner.SendScreen(upd);
                         Hitpoints = 0;
                     }
                     Attack attack = new Attack(true);
@@ -346,7 +346,7 @@ namespace MTA.Network.GamePackets
                 Update upd = new Update(true);
                 upd.UID = UID;
                 upd.Append(Update.Hitpoints, MaxHitpoints);
-                killer.Owner.SendScreen(upd, true);
+                killer.Owner.SendScreen(upd);
             }
             if (MapID == 1038 || MapID == 2071)
             {
@@ -362,7 +362,7 @@ namespace MTA.Network.GamePackets
                         Update upd = new Update(true);
                         upd.UID = UID;
                         upd.Append(Update.Mesh, Mesh);
-                        killer.Owner.SendScreen(upd, true);
+                        killer.Owner.SendScreen(upd);
                         Hitpoints = 0;
                     }
                     Attack attack = new Attack(true);
@@ -397,7 +397,7 @@ namespace MTA.Network.GamePackets
                         Update upd = new Update(true);
                         upd.UID = UID;
                         upd.Append(Update.Mesh, Mesh);
-                        killer.Owner.SendScreen(upd, true);
+                        killer.Owner.SendScreen(upd);
                         Hitpoints = 0;
                     }
                     Attack attack = new Attack(true);
@@ -424,7 +424,7 @@ namespace MTA.Network.GamePackets
                 Update upd = new Update(true);
                 upd.UID = UID;
                 upd.Append(Update.Hitpoints, MaxHitpoints);
-                killer.Owner.SendScreen(upd, true);
+                killer.Owner.SendScreen(upd);
             }
             if (UID == 123456)
             {
@@ -455,7 +455,7 @@ namespace MTA.Network.GamePackets
                         Update upd = new Update(true);
                         upd.UID = UID;
                         upd.Append(Update.Mesh, Mesh);
-                        killer.Owner.SendScreen(upd, true);
+                        killer.Owner.SendScreen(upd);
                         Hitpoints = 0;
                     }
                     Attack attack = new Attack(true);
@@ -482,7 +482,7 @@ namespace MTA.Network.GamePackets
                         Update upd = new Update(true);
                         upd.UID = UID;
                         upd.Append(Update.Mesh, Mesh);
-                        killer.Owner.SendScreen(upd, true);
+                        killer.Owner.SendScreen(upd);
                         Hitpoints = 0;
                     }
                     Attack attack = new Attack(true);
@@ -509,7 +509,7 @@ namespace MTA.Network.GamePackets
                         Update upd = new Update(true);
                         upd.UID = UID;
                         upd.Append(Update.Mesh, Mesh);
-                        killer.Owner.SendScreen(upd, true);
+                        killer.Owner.SendScreen(upd);
                         Hitpoints = 0;
                     }
                     Attack attack = new Attack(true);
@@ -536,7 +536,7 @@ namespace MTA.Network.GamePackets
                         Update upd = new Update(true);
                         upd.UID = UID;
                         upd.Append(Update.Mesh, Mesh);
-                        killer.Owner.SendScreen(upd, true);
+                        killer.Owner.SendScreen(upd);
                         Hitpoints = 0;
                     }
                     Attack attack = new Attack(true);
@@ -563,7 +563,7 @@ namespace MTA.Network.GamePackets
                         Update upd = new Update(true);
                         upd.UID = UID;
                         upd.Append(Update.Mesh, Mesh);
-                        killer.Owner.SendScreen(upd, true);
+                        killer.Owner.SendScreen(upd);
                         Hitpoints = 0;
                     }
                     Attack attack = new Attack(true);
@@ -591,7 +591,7 @@ namespace MTA.Network.GamePackets
                         Update upd = new Update(true);
                         upd.UID = UID;
                         upd.Append(Update.Mesh, Mesh);
-                        killer.Owner.SendScreen(upd, true);
+                        killer.Owner.SendScreen(upd);
                         Hitpoints = 0;
                     }
                     Attack attack = new Attack(true);
@@ -618,7 +618,7 @@ namespace MTA.Network.GamePackets
                         Update upd = new Update(true);
                         upd.UID = UID;
                         upd.Append(Update.Mesh, Mesh);
-                        killer.Owner.SendScreen(upd, true);
+                        killer.Owner.SendScreen(upd);
                         Hitpoints = 0;
                     }
                     Attack attack = new Attack(true);
@@ -644,7 +644,7 @@ namespace MTA.Network.GamePackets
                 Update upd = new Update(true);
                 upd.UID = UID;
                 upd.Append(Update.Hitpoints, MaxHitpoints);
-                killer.Owner.SendScreen(upd, true);
+                killer.Owner.SendScreen(upd);
             }
             if (Kernel.Maps[1038].Statues.ContainsKey(UID))
             {
@@ -697,7 +697,7 @@ namespace MTA.Network.GamePackets
                         TextsCount = 22,
                         Type = 10,
                         Texts = { effect }
-                    }, true);
+                    });
                 }
             }
         }
@@ -717,7 +717,7 @@ namespace MTA.Network.GamePackets
                     TextsCount = 22,
                     Type = 10,
                     Texts = { effect }
-                }, true);
+                });
             }
         }
 

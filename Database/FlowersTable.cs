@@ -31,7 +31,7 @@ namespace MTA.Database {
 
         public static void LoadFlowers() {
             using (Read read = new Read(Constants.FlowersPath)) {
-                if (read.Reader(true)) {
+                if (read.Reader()) {
                     int count = read.Count;
                     uint num = 0u;
                     while (num < (ulong)count) {
@@ -58,7 +58,7 @@ namespace MTA.Database {
             }
 
             using (Read read2 = new Read(Constants.BoyFlowersPath)) {
-                if (read2.Reader(true)) {
+                if (read2.Reader()) {
                     int count2 = read2.Count;
                     uint num2 = 0u;
                     while (num2 < (ulong)count2) {

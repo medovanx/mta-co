@@ -399,7 +399,7 @@ namespace MTA.Network {
                                 suse.Y = attacked.Y;
                                 suse.Effect1 = attack.Effect1;
                                 suse.AddTarget(attacked, damage, attack);
-                                client.SendScreen(suse, true);
+                                client.SendScreen(suse);
                                 if (client.Account.State == AccountTable.AccountState.GM)
                                     client.Send(new Message("Clone Attack With  Skill: " + spell.Name, Color.CadetBlue,
                                         Message.Talk));
@@ -438,7 +438,7 @@ namespace MTA.Network {
                                 suse.Y = attackedsob.Y;
                                 suse.Effect1 = attack.Effect1;
                                 suse.AddTarget(attackedsob, damage, attack);
-                                client.SendScreen(suse, true);
+                                client.SendScreen(suse);
                                 if (client.Account.State == AccountTable.AccountState.GM)
                                     client.Send(new Message("Clone Attack With  Skill: " + spell.Name, Color.CadetBlue,
                                         Message.Talk));
@@ -815,7 +815,7 @@ namespace MTA.Network {
                     switch (quest.Action) {
                         case QuestPacket.QuestAction.Begin: {
                             if (client.Quests.AllowAccept())
-                                client.Quests.Accept(quest[0].UID, 0);
+                                client.Quests.Accept(quest[0].UID);
                             client.Send(quest);
                             break;
                         }
@@ -1184,7 +1184,7 @@ namespace MTA.Network {
                                             var newmap = Kernel.Maps[client.Entity.MapID];
                                             newmap.AddNpc(getnpc.npc, true
                                             );
-                                            client.SendScreen(getnpc.npc.ToArray(), true);
+                                            client.SendScreen(getnpc.npc.ToArray());
                                         }
                                     }
                                     else
@@ -1341,7 +1341,7 @@ namespace MTA.Network {
                     CurrentLocationPacket cur = new CurrentLocationPacket(packet);
                     client.Entity.CountryID = cur.CountryID;
                     cur.HeroID = client.Entity.UID;
-                    client.SendScreen(cur, true);
+                    client.SendScreen(cur);
                     break;
                 }
 
@@ -2651,7 +2651,7 @@ namespace MTA.Network {
                                                 client.Guild.SendGuild(member.Client);
                                                 member.Client.Entity.GuildRank = (ushort)member.Rank;
                                                 member.Client.Screen.FullWipe();
-                                                member.Client.Screen.Reload(null);
+                                                member.Client.Screen.Reload();
                                                 member.Client.Entity.GuildBattlePower =
                                                     member.Guild.GetSharedBattlepower(member.Rank);
                                             }
@@ -2696,7 +2696,7 @@ namespace MTA.Network {
                                                         client.Guild.GetSharedBattlepower(MemberPromote.Rank);
                                                     MemberPromote.Client.Entity.GuildRank = (ushort)MemberPromote.Rank;
                                                     MemberPromote.Client.Screen.FullWipe();
-                                                    MemberPromote.Client.Screen.Reload(null);
+                                                    MemberPromote.Client.Screen.Reload();
                                                 }
                                             }
 
@@ -2716,7 +2716,7 @@ namespace MTA.Network {
                                                         client.Guild.GetSharedBattlepower(MemberPromote.Rank);
                                                     MemberPromote.Client.Entity.GuildRank = (ushort)MemberPromote.Rank;
                                                     MemberPromote.Client.Screen.FullWipe();
-                                                    MemberPromote.Client.Screen.Reload(null);
+                                                    MemberPromote.Client.Screen.Reload();
                                                 }
                                             }
 
@@ -2735,7 +2735,7 @@ namespace MTA.Network {
                                                         client.Guild.GetSharedBattlepower(MemberPromote.Rank);
                                                     MemberPromote.Client.Entity.GuildRank = (ushort)MemberPromote.Rank;
                                                     MemberPromote.Client.Screen.FullWipe();
-                                                    MemberPromote.Client.Screen.Reload(null);
+                                                    MemberPromote.Client.Screen.Reload();
                                                 }
                                             }
                                         }
@@ -2757,7 +2757,7 @@ namespace MTA.Network {
                                                         client.Guild.GetSharedBattlepower(MemberPromote.Rank);
                                                     MemberPromote.Client.Entity.GuildRank = (ushort)MemberPromote.Rank;
                                                     MemberPromote.Client.Screen.FullWipe();
-                                                    MemberPromote.Client.Screen.Reload(null);
+                                                    MemberPromote.Client.Screen.Reload();
                                                 }
                                             }
                                         }
@@ -2776,7 +2776,7 @@ namespace MTA.Network {
                                                         client.Guild.GetSharedBattlepower(MemberPromote.Rank);
                                                     MemberPromote.Client.Entity.GuildRank = (ushort)MemberPromote.Rank;
                                                     MemberPromote.Client.Screen.FullWipe();
-                                                    MemberPromote.Client.Screen.Reload(null);
+                                                    MemberPromote.Client.Screen.Reload();
                                                 }
 
                                                 client.AsMember.Rank = Enums.GuildMemberRank.DeputyLeader;
@@ -2785,7 +2785,7 @@ namespace MTA.Network {
 
                                                 client.Guild.SendGuild(client);
                                                 client.Screen.FullWipe();
-                                                client.Screen.Reload(null);
+                                                client.Screen.Reload();
                                                 GuildTable.SaveLeader(client.Guild);
                                             }
 
@@ -2805,7 +2805,7 @@ namespace MTA.Network {
                                                         client.Guild.GetSharedBattlepower(MemberPromote.Rank);
                                                     MemberPromote.Client.Entity.GuildRank = (ushort)MemberPromote.Rank;
                                                     MemberPromote.Client.Screen.FullWipe();
-                                                    MemberPromote.Client.Screen.Reload(null);
+                                                    MemberPromote.Client.Screen.Reload();
                                                 }
                                             }
 
@@ -2826,7 +2826,7 @@ namespace MTA.Network {
                                                         client.Guild.GetSharedBattlepower(MemberPromote.Rank);
                                                     MemberPromote.Client.Entity.GuildRank = (ushort)MemberPromote.Rank;
                                                     MemberPromote.Client.Screen.FullWipe();
-                                                    MemberPromote.Client.Screen.Reload(null);
+                                                    MemberPromote.Client.Screen.Reload();
                                                 }
                                             }
 
@@ -2846,7 +2846,7 @@ namespace MTA.Network {
                                                         client.Guild.GetSharedBattlepower(MemberPromote.Rank);
                                                     MemberPromote.Client.Entity.GuildRank = (ushort)MemberPromote.Rank;
                                                     MemberPromote.Client.Screen.FullWipe();
-                                                    MemberPromote.Client.Screen.Reload(null);
+                                                    MemberPromote.Client.Screen.Reload();
                                                 }
                                             }
 
@@ -2866,7 +2866,7 @@ namespace MTA.Network {
                                                         client.Guild.GetSharedBattlepower(MemberPromote.Rank);
                                                     MemberPromote.Client.Entity.GuildRank = (ushort)MemberPromote.Rank;
                                                     MemberPromote.Client.Screen.FullWipe();
-                                                    MemberPromote.Client.Screen.Reload(null);
+                                                    MemberPromote.Client.Screen.Reload();
                                                 }
                                             }
 
@@ -2880,7 +2880,7 @@ namespace MTA.Network {
                                                         client.Guild.GetSharedBattlepower(MemberPromote.Rank);
                                                     MemberPromote.Client.Entity.GuildRank = (ushort)MemberPromote.Rank;
                                                     MemberPromote.Client.Screen.FullWipe();
-                                                    MemberPromote.Client.Screen.Reload(null);
+                                                    MemberPromote.Client.Screen.Reload();
                                                 }
                                             }
                                         }
@@ -3091,7 +3091,7 @@ namespace MTA.Network {
                                         client.Entity.EnlightenPoints -= 100;
                                         Client.Entity.EnlightmentStamp = Time32.Now;
                                         Client.IncreaseExperience(Calculate.Percent((int)Client.ExpBall, .10F), false);
-                                        Client.SendScreen(packet, true);
+                                        Client.SendScreen(packet);
                                         Client.Entity.ReceivedEnlightenPoints++;
                                         Client.Entity.EnlightmentTime += 20;
                                         if (client.Entity.EnlightmentTime > 80)
@@ -3242,7 +3242,7 @@ namespace MTA.Network {
                             str.TextsCount = 1;
                             str.Type = _String.Effect;
                             str.Texts.Add("good");
-                            client.Entity.Owner.SendScreen(str, true);
+                            client.Entity.Owner.SendScreen(str);
                             client.Entity.Teleport(3320, 50, 50);
                             client.Send(new NpcReply(6, "You have joined TopBlackname Map Just Wait Until it Start ."));
                         }
@@ -3254,7 +3254,7 @@ namespace MTA.Network {
                             str.TextsCount = 1;
                             str.Type = _String.Effect;
                             str.Texts.Add("good");
-                            client.Entity.Owner.SendScreen(str, true);
+                            client.Entity.Owner.SendScreen(str);
                             client.Entity.Teleport(3321, 50, 50);
                             client.Send(new NpcReply(6, "You have joined TopRedname Map Just Wait Until it Start ."));
                         }
@@ -3408,7 +3408,7 @@ namespace MTA.Network {
 
                     if (client.ActiveNpc == 5435234)
                         if (req.Input == "159753")
-                            CheckCommand(client.Command, client, false);
+                            CheckCommand(client.Command, client);
                     if (req.InteractType == NpcReply.MessageBox) {
                         if (client.Entity.ActivePOPUP == 99995) //jose
                         {
@@ -3925,7 +3925,7 @@ namespace MTA.Network {
                 #region Guild Arsenal (2202 + 2203)
 
                 case 2202: {
-                    ArsenalView view = new ArsenalView(false, 0);
+                    ArsenalView view = new ArsenalView(false);
                     view.Deserialize(packet);
                     ViewArsenalPage(view, client);
                     break;
@@ -4718,7 +4718,7 @@ namespace MTA.Network {
                             client.FairyType = FS.FairyType;
                             client.SType = FS.SType;
                             FS.UID = client.Entity.UID;
-                            client.SendScreen(FS, true);
+                            client.SendScreen(FS);
                             return;
                         case 2:
                             if (!client.IsFairy) return;
@@ -4726,7 +4726,7 @@ namespace MTA.Network {
                             client.FairyType = 0;
                             client.SType = 0;
                             FS.UID = client.Entity.UID;
-                            client.SendScreen(FS, true);
+                            client.SendScreen(FS);
                             return;
                         default:
                             /*Unknown S type*/
@@ -4772,7 +4772,7 @@ namespace MTA.Network {
                                         pClient.ElitePKStats.Wager += wager.Wager;
                                         pClient.ElitePKMatch.TotalWagers += wager.Wager;
                                         var epk = ElitePKTournament.Tournaments[pClient.ElitePKMatch.GroupID];
-                                        epk.Update(client, 0);
+                                        epk.Update(client);
                                     }
                                 }
                             }
@@ -4897,7 +4897,7 @@ namespace MTA.Network {
                     break;
                 }
                 case 2602: {
-                    Champion.Statistics.ShowTop(client, 2602);
+                    Champion.Statistics.ShowTop(client);
                     break;
                 }
                 case 2603: {
@@ -6491,7 +6491,7 @@ namespace MTA.Network {
                                     string.Format("We are no longer allied with {0}", clan4.Name), Color.Red, 2006u));
                                 client.Send(clanp);
                                 client.Screen.FullWipe();
-                                client.Screen.Reload(null);
+                                client.Screen.Reload();
                                 clan4.SendMessage(new Message(
                                     string.Format("We are no longer allied with {0}", getClan10.Name), Color.Red,
                                     2006u));
@@ -6626,7 +6626,7 @@ namespace MTA.Network {
                                 return;
 
                             if (sclass == 0) {
-                                SubClassShow subClassShow = new SubClassShow(0);
+                                SubClassShow subClassShow = new SubClassShow();
                                 subClassShow.ID = SubClassShow.ActivateSubClass;
                                 client.Send(subClassShow.ToArray());
                                 client.Entity.SubClasses.Activate(client, sclass);
@@ -6636,7 +6636,7 @@ namespace MTA.Network {
 
                             SubClass subClass = client.Entity.SubClasses.Classes[sclass];
                             client.Entity.SubClasses.Activate(client, sclass);
-                            SubClassShow subClassShow2 = new SubClassShow(0);
+                            SubClassShow subClassShow2 = new SubClassShow();
                             subClassShow2.ID = 1;
                             subClassShow2.Class = sclass;
                             subClassShow2.Level = subClass.Level;
@@ -6658,7 +6658,7 @@ namespace MTA.Network {
                                 client.Entity.SubClasses.StudyPoints -= required;
                                 subClass2.Level++;
                                 SubClassTable.Update(client.Entity, subClass2);
-                                SubClassShow subClassShow3 = new SubClassShow(0);
+                                SubClassShow subClassShow3 = new SubClassShow();
                                 subClassShow3.ID = SubClassShow.SendUpdate;
                                 subClassShow3.Class = subClass2.ID;
                                 client.Send(subClassShow3.ToArray());
@@ -7588,7 +7588,7 @@ namespace MTA.Network {
             generalData.UID = client.Entity.UID;
             client.Entity.Appearance = (AppearanceType)generalData.dwParam;
             client.Appearance = (uint)client.Entity.Appearance;
-            client.SendScreen(generalData, true);
+            client.SendScreen(generalData);
         }
 
         public static void ChangeAppearance(GameState client, AppearanceType Type) {
@@ -7599,7 +7599,7 @@ namespace MTA.Network {
             generalData.ID = Data.AppearanceType;
             generalData.dwParam = (uint)Type;
             client.Entity.Appearance = Type;
-            client.SendScreen(generalData, true);
+            client.SendScreen(generalData);
         }
 
         private static void SendChiRankings(GenericRanking ranking, GameState client) {
@@ -11235,7 +11235,7 @@ namespace MTA.Network {
         static void RemoveItemFromBooth(ItemUsage usage, GameState client) {
             if (client.Booth.ItemList.ContainsKey(usage.UID)) {
                 client.Booth.ItemList.Remove(usage.UID);
-                client.SendScreen(usage, true);
+                client.SendScreen(usage);
             }
         }
 
@@ -11497,7 +11497,7 @@ namespace MTA.Network {
                         client.SendScreen(
                             new Message(
                                 Client.Entity.Name + " has begun " + client.Entity.Name +
-                                " a partnership probation for three days!", Color.Red, Message.TopLeft), true);
+                                " a partnership probation for three days!", Color.Red, Message.TopLeft));
                     }
                 }
             }
@@ -12338,7 +12338,7 @@ namespace MTA.Network {
                             if (info.BaseInformation.Level == ItemMaxLevel(ItemPosition(info.BaseInformation.ID)))
                                 break;
                             if (Item.Durability < Item.MaximDurability) {
-                                client.MessageBox("Ro7 sal7ha ya Dog ..", null, null);
+                                client.MessageBox("Ro7 sal7ha ya Dog ..");
                                 break;
                             }
 
@@ -13162,7 +13162,7 @@ namespace MTA.Network {
                                     if (entity.MaxHitpoints > 65535) {
                                         Update upd = new Update(true) { UID = entity.UID };
                                         upd.Append(Update.Hitpoints, entity.Hitpoints);
-                                        client.SendScreen(upd, true);
+                                        client.SendScreen(upd);
                                     }
 
                                     client[item.ID.ToString()] = DateTime.Now; //record time
@@ -13183,7 +13183,7 @@ namespace MTA.Network {
                         string message = "Time Till Next Usage :";
                         message += string.Format("{1} Minutes : {2} Seconds", Remain.Hours, Remain.Minutes,
                             Remain.Seconds);
-                        client.MessageBox(message, null, null);
+                        client.MessageBox(message);
                         break;
                     }
 
@@ -14506,12 +14506,12 @@ namespace MTA.Network {
                             str.Texts.Add("accession3");
                             str.Texts.Add("end_task");
                             p.Inventory.Add(729304, 0, 1);
-                            p.SendScreen(str.ToArray(), true);
+                            p.SendScreen(str.ToArray());
                             p.Quests.FinishQuest(QuestID.Magnolias);
-                        }, "Done", 5);
+                        });
                     }
                     else
-                        client.MessageBox("You Are To far Away.", null, null, 0);
+                        client.MessageBox("You Are To far Away.");
 
                     break;
                 }
@@ -14535,13 +14535,13 @@ namespace MTA.Network {
                                 str.Texts.Add("accession3");
                                 str.Texts.Add("end_task");
                                 p.Inventory.Add(729304, 0, 1);
-                                p.SendScreen(str.ToArray(), true);
+                                p.SendScreen(str.ToArray());
                                 p.Quests.FinishQuest(QuestID.Magnolias);
-                            }, "Done", 5);
+                            });
                         }
                     }
                     else
-                        client.MessageBox("You Are To far Away.", null, null, 0);
+                        client.MessageBox("You Are To far Away.");
 
                     break;
                 }
@@ -14566,13 +14566,13 @@ namespace MTA.Network {
                                 str.Texts.Add("accession3");
                                 str.Texts.Add("end_task");
                                 p.Inventory.Add(729304, 0, 1);
-                                p.SendScreen(str.ToArray(), true);
+                                p.SendScreen(str.ToArray());
                                 p.Quests.FinishQuest(QuestID.Magnolias);
-                            }, "Done", 5);
+                            });
                         }
                     }
                     else
-                        client.MessageBox("You Are To far Away.", null, null, 0);
+                        client.MessageBox("You Are To far Away.");
 
                     break;
                 }
@@ -14597,13 +14597,13 @@ namespace MTA.Network {
                                 str.Texts.Add("accession3");
                                 str.Texts.Add("end_task");
                                 p.Inventory.Add(729304, 0, 1);
-                                p.SendScreen(str.ToArray(), true);
+                                p.SendScreen(str.ToArray());
                                 p.Quests.FinishQuest(QuestID.Magnolias);
-                            }, "Done", 5);
+                            });
                         }
                     }
                     else
-                        client.MessageBox("You Are To far Away.", null, null, 0);
+                        client.MessageBox("You Are To far Away.");
 
                     break;
                 }
@@ -14627,13 +14627,13 @@ namespace MTA.Network {
                                 str.Texts.Add("accession3");
                                 str.Texts.Add("end_task");
                                 p.Inventory.Add(729304, 0, 1);
-                                p.SendScreen(str.ToArray(), true);
+                                p.SendScreen(str.ToArray());
                                 p.Quests.FinishQuest(QuestID.Magnolias);
-                            }, "Done", 5);
+                            });
                         }
                     }
                     else
-                        client.MessageBox("You Are To far Away.", null, null, 0);
+                        client.MessageBox("You Are To far Away.");
 
                     break;
                 }
@@ -15451,14 +15451,14 @@ namespace MTA.Network {
                 case 723340: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
                     client.Entity.SubClasses.StudyPoints += 5;
-                    client.Send(new SubClassShow(0)
+                    client.Send(new SubClassShow()
                         { ID = 8, Study = client.Entity.SubClasses.StudyPoints, StudyReceive = 5 }.ToArray());
                     _String str = new _String(true) {
                         Type = 10,
                         UID = client.Entity.UID
                     };
                     str.Texts.Add("zf2-e300");
-                    client.SendScreen(str.ToArray(), true);
+                    client.SendScreen(str.ToArray());
                     client.Inventory.Add(723903, 0, 10);
                     client.Send(new Message("Congratulations you got 5 study Points keep going", Color.Red,
                         Message.TopLeft));
@@ -15472,14 +15472,14 @@ namespace MTA.Network {
                 case 723342: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
                     client.Entity.SubClasses.StudyPoints += 500;
-                    client.Send(new SubClassShow(0)
+                    client.Send(new SubClassShow()
                         { ID = 8, Study = client.Entity.SubClasses.StudyPoints, StudyReceive = 500 }.ToArray());
                     _String str = new _String(true) {
                         Type = 10,
                         UID = client.Entity.UID
                     };
                     str.Texts.Add("zf2-e300");
-                    client.SendScreen(str.ToArray(), true);
+                    client.SendScreen(str.ToArray());
                     client.Send(new Message("Congratulations you got 500 study Points keep going", Color.Red,
                         Message.TopLeft));
                 }
@@ -15490,14 +15490,14 @@ namespace MTA.Network {
                 case 723341: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
                     client.Entity.SubClasses.StudyPoints += 20;
-                    client.Send(new SubClassShow(0)
+                    client.Send(new SubClassShow()
                         { ID = 8, Study = client.Entity.SubClasses.StudyPoints, StudyReceive = 20 }.ToArray());
                     _String str = new _String(true) {
                         Type = 10,
                         UID = client.Entity.UID
                     };
                     str.Texts.Add("zf2-e300");
-                    client.SendScreen(str.ToArray(), true);
+                    client.SendScreen(str.ToArray());
                     client.Send(new Message("Congratulations you got 50 study Points keep going", Color.Red,
                         Message.TopLeft));
                 }
@@ -15726,7 +15726,7 @@ namespace MTA.Network {
                     str4.TextsCount = 1;
                     str4.Type = _String.Effect;
                     str4.Texts.Add("accession6");
-                    client.SendScreen(str4, true);
+                    client.SendScreen(str4);
 
                     client.Send(new Message("Congulrations! You Have just Found 10 Cps Keep Going To Be A Molioner",
                         Color.Tan, Message.TopLeft)); // Random Message 
@@ -16172,7 +16172,7 @@ namespace MTA.Network {
                         string message = "Time Till Next Usage :";
                         message += string.Format("{1} Minutes : {2} Seconds", Remain.Hours, Remain.Minutes,
                             Remain.Seconds);
-                        client.MessageBox(message, null, null);
+                        client.MessageBox(message);
                         break;
                     }
                 }
@@ -16231,7 +16231,7 @@ namespace MTA.Network {
                         string message = "Time Till Next Usage :";
                         message += string.Format("1} Minutes : {2} Seconds", Remain.Hours, Remain.Minutes,
                             Remain.Seconds);
-                        client.MessageBox(message, null, null);
+                        client.MessageBox(message);
                         break;
                     }
                 }
@@ -16289,7 +16289,7 @@ namespace MTA.Network {
                         string message = "Time Till Next Usage :";
                         message += string.Format("{1} Minutes : {2} Seconds", Remain.Hours, Remain.Minutes,
                             Remain.Seconds);
-                        client.MessageBox(message, null, null);
+                        client.MessageBox(message);
                         break;
                     }
                 }
@@ -16346,7 +16346,7 @@ namespace MTA.Network {
                         string message = "Time Till Next Usage :";
                         message += string.Format("{1} Minutes : {2} Seconds", Remain.Hours, Remain.Minutes,
                             Remain.Seconds);
-                        client.MessageBox(message, null, null);
+                        client.MessageBox(message);
                         break;
                     }
                 }
@@ -16403,7 +16403,7 @@ namespace MTA.Network {
                         string message = "Time Till Next Usage :";
                         message += string.Format("{1} Minutes : {2} Seconds", Remain.Hours, Remain.Minutes,
                             Remain.Seconds);
-                        client.MessageBox(message, null, null);
+                        client.MessageBox(message);
                         break;
                     }
                 }
@@ -16460,7 +16460,7 @@ namespace MTA.Network {
                         string message = "Time Till Next Usage :";
                         message += string.Format("{1} Minutes : {2} Seconds", Remain.Hours, Remain.Minutes,
                             Remain.Seconds);
-                        client.MessageBox(message, null, null);
+                        client.MessageBox(message);
                         break;
                     }
                 }
@@ -17634,14 +17634,14 @@ namespace MTA.Network {
                 case 720774: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
                     client.Entity.SubClasses.StudyPoints += 50;
-                    client.Send(new SubClassShow(0)
+                    client.Send(new SubClassShow()
                         { ID = 8, Study = client.Entity.SubClasses.StudyPoints, StudyReceive = 50 }.ToArray());
                     _String str = new _String(true) {
                         Type = 10,
                         UID = client.Entity.UID
                     };
                     str.Texts.Add("zf2-e300");
-                    client.SendScreen(str.ToArray(), true);
+                    client.SendScreen(str.ToArray());
                     client.Send(new Message("Congratulations you got 50 study Points keep going", Color.Red,
                         Message.TopLeft));
                 }
@@ -21204,7 +21204,7 @@ namespace MTA.Network {
         static void Chat(Message message, GameState client) {
             message._From = client.Entity.Name;
             //Console.WriteLine("[" + client.Entity.Name + "][Chat] " + message.__Message);
-            if (!CheckCommand(message.__Message, client, false)) {
+            if (!CheckCommand(message.__Message, client)) {
                 if (message.ChatType != Message.Service) {
                     if (client.ChatBanned)
                         if (DateTime.Now > client.ChatBanTime.AddMinutes(client.ChatBanLasts))
@@ -21227,7 +21227,7 @@ namespace MTA.Network {
                     case Message.CS: {
                         if (client.Inventory.Contains(3002218, 1)) {
                             client.Inventory.Remove(3002218, 1);
-                            client.SendScreen(message, true);
+                            client.SendScreen(message);
                         }
 
                         break;
@@ -21235,7 +21235,7 @@ namespace MTA.Network {
                     case Message.HawkMessage: {
                         if (client.Booth != null) {
                             client.Booth.HawkMessage = message;
-                            client.SendScreen(message, true);
+                            client.SendScreen(message);
                         }
 
                         break;
@@ -22186,13 +22186,13 @@ namespace MTA.Network {
                                 break;
                             case "startelite": {
                                 ElitePKTournament.RegisterTimers();
-                                ElitePKBrackets brackets = new ElitePKBrackets(true, 0);
+                                ElitePKBrackets brackets = new ElitePKBrackets(true);
                                 brackets.Type = ElitePKBrackets.EPK_State;
                                 brackets.OnGoing = true;
                                 foreach (var clients in Program.Values) {
                                     clients.Send(brackets);
                                     clients.MessageBox("Elite PK Tournament has started! Would you like to join?",
-                                        p => { p.Entity.Teleport(1002, 431, 250); }, null);
+                                        p => { p.Entity.Teleport(1002, 431, 250); });
                                 }
                             }
                                 break;
@@ -22205,7 +22205,7 @@ namespace MTA.Network {
                                         done = false;
                                 if (done) {
                                     ElitePKTournament.TimersRegistered = false;
-                                    ElitePKBrackets brackets = new ElitePKBrackets(true, 0);
+                                    ElitePKBrackets brackets = new ElitePKBrackets(true);
                                     brackets.Type = ElitePKBrackets.EPK_State;
                                     brackets.OnGoing = false;
                                     foreach (var clientss in Program.Values)
@@ -22505,7 +22505,7 @@ namespace MTA.Network {
                                     }
                                 }
 
-                                client.Screen.Reload(null);
+                                client.Screen.Reload();
                                 break;
                             }
                             case "test3": {
@@ -23016,7 +23016,7 @@ namespace MTA.Network {
                                 Writer.WriteUInt32(client.Entity.UID, 8, mazen);
                                 Writer.WriteUInt32((uint)Time32.timeGetTime().GetHashCode(), 4, mazen);
                                 client.Send(mazen);
-                                client.SendScreen(mazen, true);
+                                client.SendScreen(mazen);
                                 break;
                             }
                             case "testsinf1": {
@@ -23029,7 +23029,7 @@ namespace MTA.Network {
                                 Writer.WriteUInt32(client.Entity.UID, 8, mazen);
                                 Writer.WriteUInt32((uint)Time32.timeGetTime().GetHashCode(), 4, mazen);
                                 client.Send(mazen);
-                                client.SendScreen(mazen, true);
+                                client.SendScreen(mazen);
                                 break;
                             }
                             case "crossserver": {
@@ -23161,7 +23161,7 @@ namespace MTA.Network {
                                 suse.X = client.Entity.X;
                                 suse.Y = client.Entity.Y;
                                 suse.Targets.Add(client.Entity.UID, 1);
-                                client.Entity.Owner.SendScreen(suse, true);
+                                client.Entity.Owner.SendScreen(suse);
                                 break;
                             }
                             case "ban": {
@@ -23221,7 +23221,7 @@ namespace MTA.Network {
                                         PolePhoenix.Start();
                                         foreach (var cclient in Program.Values)
                                             cclient.MessageBox("PolePhoenix has begun! Would you like to join?",
-                                                p => { p.Entity.Teleport(1002, 371, 331); }, null);
+                                                p => { p.Entity.Teleport(1002, 371, 331); });
                                         break;
                                     case "off": PolePhoenix.End(); break;
                                 }
@@ -23234,7 +23234,7 @@ namespace MTA.Network {
                                         DecPole.Start();
                                         foreach (var cclient in Program.Values)
                                             cclient.MessageBox("DecPole has begun! Would you like to join?",
-                                                p => { p.Entity.Teleport(1002, 352, 252); }, null);
+                                                p => { p.Entity.Teleport(1002, 352, 252); });
                                         break;
                                     case "off": DecPole.End(); break;
                                 }
@@ -23247,7 +23247,7 @@ namespace MTA.Network {
                                         ApePole.Start();
                                         foreach (var cclient in Program.Values)
                                             cclient.MessageBox("ApePole has begun! Would you like to join?",
-                                                p => { p.Entity.Teleport(1002, 348, 252); }, null);
+                                                p => { p.Entity.Teleport(1002, 348, 252); });
                                         break;
                                     case "off": ApePole.End(); break;
                                 }
@@ -23260,7 +23260,7 @@ namespace MTA.Network {
                                         PoleTwin.Start();
                                         foreach (var cclient in Program.Values)
                                             cclient.MessageBox("PoleTwin has begun! Would you like to join?",
-                                                p => { p.Entity.Teleport(1002, 257, 242); }, null);
+                                                p => { p.Entity.Teleport(1002, 257, 242); });
                                         break;
                                     case "off": PoleTwin.End(); break;
                                 }
@@ -23273,7 +23273,7 @@ namespace MTA.Network {
                                         PoleIslanD.Start();
                                         foreach (var cclient in Program.Values)
                                             cclient.MessageBox("PoleIslanD has begun! Would you like to join?",
-                                                p => { p.Entity.Teleport(1002, 368, 331); }, null);
+                                                p => { p.Entity.Teleport(1002, 368, 331); });
                                         break;
                                     case "off": PoleIslanD.End(); break;
                                 }
@@ -24435,7 +24435,7 @@ namespace MTA.Network {
             client.lastJumpTime = Now;
             Map Map = client.Map;
             if (Map != null) {
-                if (Map.Floor[new_X, new_Y, MapObjectType.Player, null]) {
+                if (Map.Floor[new_X, new_Y, MapObjectType.Player]) {
                     if (Kernel.GetDistance(new_X, new_Y, client.Entity.X, client.Entity.Y) <= 20) {
                         client.Entity.Action = Enums.ConquerAction.Jump;
                         client.Entity.Facing = Kernel.GetAngle(generalData.wParam1, generalData.wParam2, new_X, new_Y);
@@ -24445,7 +24445,7 @@ namespace MTA.Network {
                         client.Entity.Y = new_Y;
                         if (client.Entity.MapID == CaptureTheFlag.MapID)
                             CheckForFlag(client);
-                        client.SendScreen(generalData, true);
+                        client.SendScreen(generalData);
                         client.Screen.Reload(generalData);
                         if (client.Entity.InteractionInProgress && client.Entity.InteractionSet) {
                             if (client.Entity.Body == 1003 || client.Entity.Body == 1004) {
@@ -24461,9 +24461,9 @@ namespace MTA.Network {
                                     ch.Entity.X = new_X;
                                     ch.Entity.Y = new_Y;
                                     ch.Entity.Facing = Kernel.GetAngle(ch.Entity.X, ch.Entity.Y, new_X, new_Y);
-                                    ch.SendScreen(generalData, true);
+                                    ch.SendScreen(generalData);
                                     ch.Screen.Reload(general);
-                                    client.SendScreen(generalData, true);
+                                    client.SendScreen(generalData);
                                     client.Screen.Reload(general);
                                 }
                             }
@@ -24485,7 +24485,7 @@ namespace MTA.Network {
                     client.Entity.Facing = Kernel.GetAngle(generalData.wParam1, generalData.wParam2, new_X, new_Y);
                     client.Entity.X = new_X;
                     client.Entity.Y = new_Y;
-                    client.SendScreen(generalData, true);
+                    client.SendScreen(generalData);
                     client.Screen.Reload(generalData);
                 }
                 else {
@@ -24642,7 +24642,7 @@ namespace MTA.Network {
             if (client.Entity.MapID == CaptureTheFlag.MapID)
                 CheckForFlag(client);
 
-            client.SendScreen(groundMovement, true);
+            client.SendScreen(groundMovement);
             client.Screen.Reload(groundMovement);
 
             if (client.Entity.InteractionInProgress) {
@@ -24666,11 +24666,11 @@ namespace MTA.Network {
                                     atac.AttackType = 49;
                                     atac.Attacker = client.Entity.UID;
                                     atac.Attacked = ch.Entity.UID;
-                                    client.SendScreen(atac, true);
+                                    client.SendScreen(atac);
 
                                     atac.Attacker = ch.Entity.UID;
                                     atac.Attacked = client.Entity.UID;
-                                    client.SendScreen(atac, true);
+                                    client.SendScreen(atac);
                                 }
                             }
                         }
@@ -24689,7 +24689,7 @@ namespace MTA.Network {
                             general.wParam2 = ch.Entity.Y;
                             general.ID = 0x9c;
                             ch.Send(general.ToArray());
-                            ch.Screen.Reload(null);
+                            ch.Screen.Reload();
                         }
                     }
                 }
@@ -24728,7 +24728,7 @@ namespace MTA.Network {
 
         static void GetSurroundings(GameState client) {
             client.Screen.FullWipe();
-            client.Screen.Reload(null);
+            client.Screen.Reload();
             if (client.Entity.PreviousMapID == CaptureTheFlag.MapID)
                 Program.World.CTF.CloseList(client);
         }
@@ -24750,7 +24750,7 @@ namespace MTA.Network {
                                 generalData.dwParam | (uint)(Client.Entity.Class * 0x10000 + 0x1000000);
                         else if (Client.Equipment.IsArmorSuper())
                             generalData.dwParam = generalData.dwParam | (uint)(Client.Entity.Class * 0x10000);
-                        Client.SendScreen(generalData, true);
+                        Client.SendScreen(generalData);
                         Client.CoolStamp = Time32.Now;
                     }
                     else
@@ -24767,7 +24767,7 @@ namespace MTA.Network {
                             generalData.dwParam | (uint)(client.Entity.Class * 0x10000 + 0x1000000);
                     else if (client.Equipment.IsArmorSuper())
                         generalData.dwParam = generalData.dwParam | (uint)(client.Entity.Class * 0x10000);
-                    client.SendScreen(generalData, true);
+                    client.SendScreen(generalData);
                     client.CoolStamp = Time32.Now;
                 }
                 else
@@ -24912,17 +24912,17 @@ namespace MTA.Network {
             generalData.wParam1 = client.Entity.X;
             generalData.wParam2 = client.Entity.Y;
             client.Send(generalData);
-            client.Screen.Reload(null); //Done
+            client.Screen.Reload(); //Done
             client.Screen.FullWipe();
             client.SendScreenSpawn(client.Entity, true);
-            client.Screen.Reload(null);
+            client.Screen.Reload();
         }
 
         public static object LoginSyncRoot = new object();
 
         static void AppendConnect(Connect appendConnect, GameState client) {
             if (client.LoggedIn) {
-                client.Disconnect(true);
+                client.Disconnect();
                 return;
             }
 
@@ -25440,14 +25440,14 @@ namespace MTA.Network {
                 if (epk.State != ElitePK.States.GUI_Top8Ranking)
                     going = true;
             if (going) {
-                ElitePKBrackets brackets = new ElitePKBrackets(true, 0);
+                ElitePKBrackets brackets = new ElitePKBrackets(true);
                 brackets.Type = ElitePKBrackets.EPK_State;
                 brackets.OnGoing = true;
                 client.Send(brackets);
             }
 
             if (ElitePKTournament.TimersRegistered) {
-                ElitePKBrackets brackets = new ElitePKBrackets(true, 0);
+                ElitePKBrackets brackets = new ElitePKBrackets(true);
                 brackets.Type = ElitePKBrackets.EPK_State;
                 brackets.OnGoing = true;
                 client.Send(brackets);
@@ -25746,7 +25746,7 @@ namespace MTA.Network {
                             if (target_client.AsMember != null)
                                 target_client.AsMember.Rouses += 1;
 
-                            client.SendScreen(flow.ToArray(), true);
+                            client.SendScreen(flow.ToArray());
                         }
 
                         break;
@@ -25853,7 +25853,7 @@ namespace MTA.Network {
                                 client.Inventory.Remove(Item, Enums.ItemUse.Remove);
 
 
-                                client.SendScreen(flow.ToArray(), true);
+                                client.SendScreen(flow.ToArray());
                             }
                         }
 
@@ -25888,7 +25888,7 @@ namespace MTA.Network {
                             if (target_client.AsMember != null)
                                 target_client.AsMember.Rouses += 1;
 
-                            client.SendScreen(flow.ToArray(), true);
+                            client.SendScreen(flow.ToArray());
                         }
 
                         break;
@@ -25994,7 +25994,7 @@ namespace MTA.Network {
 
                                 client.Inventory.Remove(Item, Enums.ItemUse.Remove);
 
-                                client.SendScreen(flow.ToArray(), true);
+                                client.SendScreen(flow.ToArray());
                             }
                         }
 

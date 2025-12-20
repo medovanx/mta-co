@@ -107,7 +107,7 @@ namespace MTA
                     Damage *= (Double)(Info.Power - 30000) / 100;
                 else
                     Damage += Info.Power;
-                MTA.Game.Attacking.Calculate.Refinary(Attacker, sobnpc, ref Damage, ref Packet, false);
+                MTA.Game.Attacking.Calculate.Refinary(Attacker, sobnpc, ref Damage, ref Packet);
                 //  Damage *= ((Double)(100 - sobnpc.MagicDefence) / 100);
                 //  Damage -= sobnpc.Block;
             }

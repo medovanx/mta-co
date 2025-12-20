@@ -41,7 +41,7 @@ namespace MTA.Game {
                                 p.Entity.Teleport(p.Entity.GuildArenaBattle.dynamicMap.ID,
                                     (ushort)Kernel.Random.Next(35, 70), (ushort)Kernel.Random.Next(35, 70));
                                 p.Entity.GuildArenaBattleFight = this;
-                            }, null);
+                            });
                     }
                 }
             }
@@ -60,7 +60,7 @@ namespace MTA.Game {
                                 p.Entity.Teleport(p.Entity.GuildArenaBattle.dynamicMap.ID,
                                     (ushort)Kernel.Random.Next(35, 70), (ushort)Kernel.Random.Next(35, 70));
                                 p.Entity.GuildArenaBattleFight = this;
-                            }, null);
+                            });
                     }
                 }
             }

@@ -25,7 +25,7 @@ namespace MTA
                         else
                             Damage = MyMath.Generate(Attacker.TransformationMinAttack, Attacker.TransformationMaxAttack);
 
-                        MTA.Game.Attacking.Calculate.Refinary(Attacker, Monster, ref Damage, ref Packet, false);
+                        MTA.Game.Attacking.Calculate.Refinary(Attacker, Monster, ref Damage, ref Packet);
 
                         //      Damage += Attacker.getFan(false);
                         Damage = Attacker.AdjustAttack((int)Damage);
@@ -60,7 +60,7 @@ namespace MTA
                 case Attack.Ranged:
                     {
                         Damage = MyMath.Generate((int)Attacker.MinAttack, (int)Attacker.MaxAttack);
-                        MTA.Game.Attacking.Calculate.Refinary(Attacker, Monster, ref Damage, ref Packet, false);
+                        MTA.Game.Attacking.Calculate.Refinary(Attacker, Monster, ref Damage, ref Packet);
 
                         //      Damage += Attacker.getFan(false);
                         Damage = AdjustDamageEntity2Monster(Damage, Attacker, Monster);
@@ -121,7 +121,7 @@ namespace MTA
             if (Info.ID == 1115 || spells.Contains(Info.ID) || (Info.WeaponSubtype.Count > 0 && !Info.WeaponSubtype.Contains(500) && !Info.WeaponSubtype.Contains(613)))
             {
                 Damage = MyMath.Generate((int)Attacker.MinAttack, (int)Attacker.MaxAttack);
-                MTA.Game.Attacking.Calculate.Refinary(Attacker, Monster, ref Damage, ref Packet, false);
+                MTA.Game.Attacking.Calculate.Refinary(Attacker, Monster, ref Damage, ref Packet);
 
                 if (Info.Power > 30000)
                     Damage *= (Double)(Info.Power - 30000) / 100;
@@ -146,7 +146,7 @@ namespace MTA
             else if (Info.WeaponSubtype.Contains(500) || Info.WeaponSubtype.Contains(613))
             {
                 Damage = MyMath.Generate((int)Attacker.MinAttack, (int)Attacker.MaxAttack);
-                MTA.Game.Attacking.Calculate.Refinary(Attacker, Monster, ref Damage, ref Packet, false);
+                MTA.Game.Attacking.Calculate.Refinary(Attacker, Monster, ref Damage, ref Packet);
                 //  Damage += Attacker.getFan(false);
 
                 if (Info.Power > 30000)

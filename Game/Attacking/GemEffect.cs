@@ -64,7 +64,7 @@ namespace MTA.Game.Attacking
             str.TextsCount = 1;
             str.Type = _String.Effect;
             str.Texts.Add(strEffect);
-            client.Owner.SendScreen(str, true);
+            client.Owner.SendScreen(str);
         }
     }
 }

@@ -280,7 +280,7 @@ namespace MTA.Network.GamePackets {
                 datapacket.wParam1 = x;
                 datapacket.wParam2 = y;
                 p.Send(datapacket);
-            }, null, 0);
+            });
         }
 
         public void SendFullGUI() {

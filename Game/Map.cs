@@ -99,7 +99,7 @@ namespace MTA.Game
         public void RemovePole(INpc npc)
         {
             Npcs.Remove(npc.UID);
-            Floor[npc.X, npc.Y, MapObjectType.InvalidCast, null] = true;
+            Floor[npc.X, npc.Y, MapObjectType.InvalidCast] = true;
         }
         public void AddNpc(INpc npc, bool addquery = false)
         {
@@ -116,7 +116,7 @@ namespace MTA.Game
                     {
                         ushort xX = X, yY = Y;
                         UpdateCoordonatesForAngle(ref xX, ref yY, angle);
-                        Floor[xX, yY, MapObjectType.InvalidCast, null] = false;
+                        Floor[xX, yY, MapObjectType.InvalidCast] = false;
                     }
                 }
                 #endregion
@@ -167,7 +167,7 @@ namespace MTA.Game
 
         public bool SelectCoordonates(ref ushort X, ref ushort Y)
         {
-            if (Floor[X, Y, MapObjectType.Item, null])
+            if (Floor[X, Y, MapObjectType.Item])
             {
                 bool can = true;
                 if (Zones.Count != 0)
@@ -189,7 +189,7 @@ namespace MTA.Game
             {
                 ushort xX = X, yY = Y;
                 UpdateCoordonatesForAngle(ref xX, ref yY, angle);
-                if (Floor[xX, yY, MapObjectType.Item, null])
+                if (Floor[xX, yY, MapObjectType.Item])
                 {
                     if (Zones.Count != 0)
                     {
@@ -343,9 +343,9 @@ namespace MTA.Game
                     for (ushort x = 0; x < Width; x = (ushort)(x + 1))
                     {
                         bool walkable = !(BR.ReadByte() == 1 ? true : false);
-                        Floor[x, y, MapObjectType.InvalidCast, null] = walkable;
+                        Floor[x, y, MapObjectType.InvalidCast] = walkable;
                         if (id == 700)
-                            ArenaBaseFloor[x, y, MapObjectType.InvalidCast, null] = walkable;
+                            ArenaBaseFloor[x, y, MapObjectType.InvalidCast] = walkable;
                     }
                 }
 
@@ -371,9 +371,9 @@ namespace MTA.Game
                         for (ushort x = 0; x < Width; x = (ushort)(x + 1))
                         {
                             bool walkable = !Convert.ToBoolean(BR.ReadUInt16());
-                            Floor[x, y, MapObjectType.InvalidCast, null] = walkable;
+                            Floor[x, y, MapObjectType.InvalidCast] = walkable;
                             if (id == 700)
-                                ArenaBaseFloor[x, y, MapObjectType.InvalidCast, null] = walkable;
+                                ArenaBaseFloor[x, y, MapObjectType.InvalidCast] = walkable;
                             BR.BaseStream.Seek(4L, SeekOrigin.Current);
                         }
                         BR.BaseStream.Seek(4L, SeekOrigin.Current);
@@ -431,7 +431,7 @@ namespace MTA.Game
                 {
                     for (ushort x = 0; x < ArenaBaseFloor.Bounds.Width; x = (ushort)(x + 1))
                     {
-                        Floor[x, y, MapObjectType.InvalidCast, null] = !ArenaBaseFloor[x, y, MapObjectType.InvalidCast, null];
+                        Floor[x, y, MapObjectType.InvalidCast] = !ArenaBaseFloor[x, y, MapObjectType.InvalidCast];
                     }
                 }
             }
@@ -452,7 +452,7 @@ namespace MTA.Game
                     {
                         for (ushort x = 0; x < Width; x = (ushort)(x + 1))
                         {
-                            Floor[x, y, MapObjectType.InvalidCast, null] = !(BR.ReadByte() == 1 ? true : false);
+                            Floor[x, y, MapObjectType.InvalidCast] = !(BR.ReadByte() == 1 ? true : false);
                         }
                     }
                     BR.Close();
@@ -475,7 +475,7 @@ namespace MTA.Game
                         {
                             for (ushort x = 0; x < Width; x = (ushort)(x + 1))
                             {
-                                Floor[x, y, MapObjectType.InvalidCast, null] = !Convert.ToBoolean(BR.ReadUInt16());
+                                Floor[x, y, MapObjectType.InvalidCast] = !Convert.ToBoolean(BR.ReadUInt16());
 
                                 BR.BaseStream.Seek(4L, SeekOrigin.Current);
                             }
@@ -531,7 +531,7 @@ namespace MTA.Game
                                         Point point = new Point();
                                         point.X = ((Scenes[i].Location.X + part.StartPosition.X) + j) - part.Size.Width;
                                         point.Y = ((Scenes[i].Location.Y + part.StartPosition.Y) + k) - part.Size.Height;
-                                        Floor[(ushort)point.X, (ushort)point.Y, MapObjectType.InvalidCast, null] = part.NoAccess[j, k];
+                                        Floor[(ushort)point.X, (ushort)point.Y, MapObjectType.InvalidCast] = part.NoAccess[j, k];
                                     }
                                 }
                             }
@@ -649,12 +649,12 @@ namespace MTA.Game
         public SafeConcurrentDictionary<uint, StaticEntity> StaticEntities = new SafeConcurrentDictionary<uint, StaticEntity>();
         public void AddStaticEntity(StaticEntity item)
         {
-            Floor[item.X, item.Y, MapObjectType.StaticEntity, null] = false;
+            Floor[item.X, item.Y, MapObjectType.StaticEntity] = false;
             StaticEntities[item.UID] = item;
         }
         public void RemoveStaticItem(StaticEntity item)
         {
-            Floor[item.X, item.Y, MapObjectType.StaticEntity, null] = true;
+            Floor[item.X, item.Y, MapObjectType.StaticEntity] = true;
             StaticEntities.Remove(item.UID);
         }
         private void SaveMap()
@@ -669,7 +669,7 @@ namespace MTA.Game
                 {
                     for (int x = 0; x < Floor.Bounds.Width; x++)
                     {
-                        writer.Write((byte)(Floor[x, y, MapObjectType.InvalidCast, null] == true ? 1 : 0));
+                        writer.Write((byte)(Floor[x, y, MapObjectType.InvalidCast] == true ? 1 : 0));
                     }
                 }
                 writer.Close();
@@ -852,7 +852,7 @@ namespace MTA.Game
                                     entity.Y = (ushort)(Y + Kernel.Random.Next(0, YPlus));
                                     for (int count2 = 0; count2 < 50; count2++)
                                     {
-                                        if (!Floor[entity.X, entity.Y, MapObjectType.Monster, null])
+                                        if (!Floor[entity.X, entity.Y, MapObjectType.Monster])
                                         {
                                             entity.X = (ushort)(X + Kernel.Random.Next(0, XPlus));
                                             entity.Y = (ushort)(Y + Kernel.Random.Next(0, YPlus));
@@ -864,7 +864,7 @@ namespace MTA.Game
                                     }
                                     if (more)
                                     {
-                                        if (Floor[entity.X, entity.Y, MapObjectType.Monster, null])
+                                        if (Floor[entity.X, entity.Y, MapObjectType.Monster])
                                         {
                                             mycount++;
                                             AddEntity(entity);
@@ -888,7 +888,7 @@ namespace MTA.Game
             int x = Kernel.Random.Next(Floor.Bounds.Width), y = Kernel.Random.Next(Floor.Bounds.Height);
             while (times-- > 0)
             {
-                if (!Floor[x, y, MapObjectType.Player, null])
+                if (!Floor[x, y, MapObjectType.Player])
                 {
                     x = Kernel.Random.Next(Floor.Bounds.Width);
                     y = Kernel.Random.Next(Floor.Bounds.Height);
@@ -904,7 +904,7 @@ namespace MTA.Game
                 y = _y + Kernel.Random.Sign() * Kernel.Random.Next(radius);
             while (times-- > 0)
             {
-                if (!Floor[x, y, MapObjectType.Player, null])
+                if (!Floor[x, y, MapObjectType.Player])
                 {
                     x = _x + Kernel.Random.Sign() * Kernel.Random.Next(radius);
                     y = _y + Kernel.Random.Sign() * Kernel.Random.Next(radius);

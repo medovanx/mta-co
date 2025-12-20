@@ -326,7 +326,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
         /// Adds a soul item with standard parameters
         /// </summary>
         private static void AddSoulItem(GameState client, uint itemId, uint soulId) {
-            client.Inventory.AddSoul(itemId, soulId, SOUL_TYPE, SOUL_LEVEL, SOUL_EXP, SOUL_QUALITY, true, false);
+            client.Inventory.AddSoul(itemId, soulId, SOUL_TYPE, SOUL_LEVEL, SOUL_EXP, SOUL_QUALITY, true);
         }
 
         /// <summary>

@@ -123,7 +123,7 @@ namespace MTA.MaTrix {
                             client.MessageBox(entity.Name + " has apeared , Who will Defeat it. !",
                                 p => {
                                     p.Entity.Teleport(entity.MapID, (ushort)(entity.X + 3), (ushort)(entity.Y + 3));
-                                }, null);
+                                });
                 }
             }
         }

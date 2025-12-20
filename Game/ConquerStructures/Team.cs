@@ -342,7 +342,7 @@ namespace MTA.Game.ConquerStructures
                     foreach (var remover_members in pMembers)
                     {
                         if (remover_members.entry.Entity.UID != mem.entry.Entity.UID)
-                            Remove(remover_members.entry, true);
+                            Remove(remover_members.entry);
                     }
 
                     foreach (var add_members in pMembers)

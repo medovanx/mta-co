@@ -55,7 +55,7 @@ namespace MTA.Game.Npcs.ScriptEngine
 
             ScriptSettings x = cssettings.DeepClone();
 
-            World.ScriptEngine = new ScriptEngine(x, 10000); // scripts updates every 10 sec.
+            World.ScriptEngine = new ScriptEngine(x); // scripts updates every 10 sec.
             World.ScriptEngine.Check_Updates();
 
             Console.WriteLine(World.ScriptEngine.scriptCollection.scripts.Count + "  NPC Scripts Loaded...");

@@ -2290,7 +2290,7 @@ namespace MTA.Game
                     update.Data24_Uint = value;
                     if (Owner != null)
                     {
-                        (Owner as Client.GameState).SendScreen(update, true);
+                        (Owner as Client.GameState).SendScreen(update);
                         Owner.ArenaStatistic.Level = value;
                         Owner.ArenaStatistic.ArenaPoints = 1000;
                     }
@@ -3725,7 +3725,7 @@ namespace MTA.Game
                 if (ContainsFlag3(Network.GamePackets.Update.Flags3.AuroraLotus))
                 {
                     AuroraLotusEnergy = 0;
-                    Lotus(AuroraLotusEnergy, Network.GamePackets.Update.AuroraLotus);
+                    Lotus(AuroraLotusEnergy);
                 }
 
                 if (ContainsFlag3(Network.GamePackets.Update.Flags3.FlameLotus))
@@ -3741,7 +3741,7 @@ namespace MTA.Game
                 attack.Attacked = UID;
                 attack.Attacker = killer;
                 attack.Damage = 0;
-                Owner.SendScreen(attack, true);
+                Owner.SendScreen(attack);
 
                 //  if (Body % 10 < 3)
                 //     TransformationID = 99;
@@ -4276,7 +4276,7 @@ namespace MTA.Game
                 if (ContainsFlag3(Network.GamePackets.Update.Flags3.AuroraLotus))
                 {
                     AuroraLotusEnergy = 0;
-                    Lotus(AuroraLotusEnergy, Network.GamePackets.Update.AuroraLotus);
+                    Lotus(AuroraLotusEnergy);
                 }
 
                 if (ContainsFlag3(Network.GamePackets.Update.Flags3.FlameLotus))
@@ -4285,7 +4285,7 @@ namespace MTA.Game
                     Lotus(FlameLotusEnergy, Network.GamePackets.Update.FlameLotus);
                 }
 
-                Owner.SendScreen(attack, true);
+                Owner.SendScreen(attack);
                 Owner.Send(new MapStatus()
                 {
                     BaseID = Owner.Map.BaseID,
@@ -4440,7 +4440,7 @@ namespace MTA.Game
             if (!screen)
                 update.Send(Owner);
             else
-                Owner.SendScreen(update, true);
+                Owner.SendScreen(update);
         }
 
         public void Update(byte type, uint value, uint secondvalue)
@@ -4465,7 +4465,7 @@ namespace MTA.Game
             if (!screen)
                 update.Send(Owner);
             else
-                Owner.SendScreen(update, true);
+                Owner.SendScreen(update);
         }
 
         public void Update(byte type, ushort value, bool screen)
@@ -4478,7 +4478,7 @@ namespace MTA.Game
             if (!screen)
                 update.Send(Owner as Client.GameState);
             else
-                (Owner as Client.GameState).SendScreen(update, true);
+                (Owner as Client.GameState).SendScreen(update);
         }
 
         public void Update(byte type, uint value, bool screen)
@@ -4491,7 +4491,7 @@ namespace MTA.Game
             if (!screen)
                 update.Send(Owner as Client.GameState);
             else
-                (Owner as Client.GameState).SendScreen(update, true);
+                (Owner as Client.GameState).SendScreen(update);
         }
 
         public void Update(byte type, ulong value, bool screen)
@@ -4506,7 +4506,7 @@ namespace MTA.Game
                 if (!screen)
                     update.Send(Owner as Client.GameState);
                 else
-                    (Owner as Client.GameState).SendScreen(update, true);
+                    (Owner as Client.GameState).SendScreen(update);
             }
             else
             {
@@ -4524,7 +4524,7 @@ namespace MTA.Game
             if (!screen)
                 update.Send(Owner as Client.GameState);
             else
-                (Owner as Client.GameState).SendScreen(update, true);
+                (Owner as Client.GameState).SendScreen(update);
         }
 
         public void UpdateEffects(bool screen)
@@ -4539,7 +4539,7 @@ namespace MTA.Game
                 if (!screen)
                     update.Send(Owner as Client.GameState);
                 else
-                    (Owner as Client.GameState).SendScreen(update, true);
+                    (Owner as Client.GameState).SendScreen(update);
             }
             else
             {
@@ -4559,7 +4559,7 @@ namespace MTA.Game
                 if (!screen)
                     update.Send(Owner as Client.GameState);
                 else
-                    (Owner as Client.GameState).SendScreen(update, true);
+                    (Owner as Client.GameState).SendScreen(update);
             }
             else
             {
@@ -4581,7 +4581,7 @@ namespace MTA.Game
                 if (!screen)
                     update.Send(Owner as Client.GameState);
                 else
-                    (Owner as Client.GameState).SendScreen(update, true);
+                    (Owner as Client.GameState).SendScreen(update);
             }
             else
             {
@@ -4777,7 +4777,7 @@ namespace MTA.Game
                         generalData.UID = client.Entity.UID;
                         generalData.ID = Data.AppearanceType;
                         generalData.dwParam = (uint)client.Entity.Appearance;
-                        client.SendScreen(generalData, true);
+                        client.SendScreen(generalData);
                         client.Send(SpawnPacket);
                     }
                     else
@@ -4859,7 +4859,7 @@ namespace MTA.Game
                     if (!screen)
                         update.Send(Owner as Client.GameState);
                     else
-                        (Owner as Client.GameState).SendScreen(update, true);
+                        (Owner as Client.GameState).SendScreen(update);
                 }
                 else
                 {
@@ -4967,7 +4967,7 @@ namespace MTA.Game
 
             if (EntityFlag == EntityFlag.Player)
             {
-                Owner.SendScreen(shift, true);
+                Owner.SendScreen(shift);
                 Owner.Screen.Reload(shift);
             }
         }
@@ -4986,8 +4986,8 @@ namespace MTA.Game
                 Data.dwParam = MapID;
                 Data.wParam1 = X;
                 Data.wParam2 = Y;
-                Owner.SendScreen(Data, true);
-                Owner.Screen.Reload(null);
+                Owner.SendScreen(Data);
+                Owner.Screen.Reload();
             }
         }
 
@@ -5029,7 +5029,7 @@ namespace MTA.Game
             _Y = (ushort)(_Y + yi);
             if (EntityFlag == Game.EntityFlag.Player)
             {
-                if (Owner.Map.Floor[_X, _Y, MapObjType, null])
+                if (Owner.Map.Floor[_X, _Y, MapObjType])
                     return true;
                 else
                     return false;
@@ -5039,7 +5039,7 @@ namespace MTA.Game
                 Game.Map Map = null;
                 if (Kernel.Maps.TryGetValue(MapID, out Map))
                 {
-                    if (Map.Floor[_X, _Y, MapObjType, null])
+                    if (Map.Floor[_X, _Y, MapObjType])
                         return true;
                     else
                         return false;
@@ -5076,7 +5076,7 @@ namespace MTA.Game
                 Data.wParam2 = Y;
                 Owner.Send(Data);
                 Owner.Screen.FullWipe();
-                Owner.Screen.Reload(null);
+                Owner.Screen.Reload();
                 Owner.Send(new MapStatus()
                 {
                     BaseID = Owner.Map.BaseID,
@@ -5226,7 +5226,7 @@ namespace MTA.Game
                 Owner.Send(Data);
                 Owner.Screen.Reload(Data);
                 Owner.Screen.FullWipe();
-                Owner.Screen.Reload(null);
+                Owner.Screen.Reload();
                 Owner.Send(new MapStatus()
                 {
                     BaseID = Owner.Map.BaseID,

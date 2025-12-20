@@ -845,7 +845,7 @@ namespace MTA.Game
                                 pState = States.T_Wait;
                                 SentNoWagers = false;
                                 MatchArray = Matches.Values.OrderByDescending(p => p.Players.Length).ToArray();
-                                var brackets = CreateBrackets(MatchArray, 0);
+                                var brackets = CreateBrackets(MatchArray);
                                 Kernel.SendWorldMessage(brackets);
                                 Kernel.SendWorldMessage(new ElitePKBrackets(true) { Group = (ushort)GroupID, Type = 6, OnGoing = true });
                             }
@@ -1022,7 +1022,7 @@ namespace MTA.Game
                                             if (!match.Completed)
                                             {
                                                 foreach (var stats in match.MatchStats)
-                                                    stats.Reset(false);
+                                                    stats.Reset();
                                                 match.Inside = false;
                                                 match.Done = false;
                                                 match.Exported = false;

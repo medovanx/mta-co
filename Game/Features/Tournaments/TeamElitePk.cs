@@ -503,7 +503,7 @@ namespace MTA.Game.Features.Tournaments {
                                 MatchArray = (from match in Matches.Values
                                     orderby match.MatchStats.Length descending
                                     select match).ToArray();
-                                var brackets = CreateBrackets(MatchArray, 0);
+                                var brackets = CreateBrackets(MatchArray);
                                 foreach (var packet in brackets) {
                                     Kernel.SendWorldMessage(packet.ToArray());
                                 }

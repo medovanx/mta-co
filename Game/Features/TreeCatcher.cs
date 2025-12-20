@@ -110,7 +110,7 @@ namespace MTA.MaTrix.New_Quests {
                 new Message("Player " + client.Entity.Name + " Have Catched the Tree and claimed 50k cps", Color.Red,
                     Message.TopLeft), Program.Values);
             client.Screen.FullWipe();
-            client.Screen.Reload(null);
+            client.Screen.Reload();
         }
 
         public static void ReSpwan() {

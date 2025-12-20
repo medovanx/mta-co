@@ -97,7 +97,7 @@ namespace MTA.Game
             RaceRecord = info.RaceRecord;
             Map = Kernel.Maps[MAPID];
             foreach (var item in Map.StaticEntities.Values)
-                Map.Floor[item.X, item.Y, MapObjectType.StaticEntity, null] = true;
+                Map.Floor[item.X, item.Y, MapObjectType.StaticEntity] = true;
             Map.StaticEntities.Clear();
             Map.Npcs.Clear();
             Map.Entities.Clear();
@@ -143,14 +143,14 @@ namespace MTA.Game
                     valid |= (Kernel.GetDistance(x, y, range.Item1, range.Item2) < range.Item3);
                 if (valid)
                 {
-                    if (Map.Floor[x, y, MapObjectType.StaticEntity, null] && Map.Floor[x, y, MapObjectType.Player, null])
+                    if (Map.Floor[x, y, MapObjectType.StaticEntity] && Map.Floor[x, y, MapObjectType.Player])
                     {
                         bool v = true;
                         // so they wont be anywhere near the bounds
                         // and also there wont be one too near to another
                         for (int i = 0; i < Game.Map.XDir.Length; i++)
-                            if ((!Map.Floor[x + Game.Map.XDir[i], y + Game.Map.YDir[i], MapObjectType.Player, null] ||
-                                !Map.Floor[x + Game.Map.XDir[i], y + Game.Map.YDir[i], MapObjectType.StaticEntity, null]) && v)
+                            if ((!Map.Floor[x + Game.Map.XDir[i], y + Game.Map.YDir[i], MapObjectType.Player] ||
+                                !Map.Floor[x + Game.Map.XDir[i], y + Game.Map.YDir[i], MapObjectType.StaticEntity]) && v)
                                 v = false;
                         if (!v) continue;
 

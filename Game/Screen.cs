@@ -132,7 +132,7 @@ namespace MTA.Game {
                     if (client.Entity.ContainsFlag3(Update.Flags3.AuroraLotus)) {
                         if (client.Entity.AuroraLotusEnergy < 220)
                             client.Entity.AuroraLotusEnergy = Math.Min(220, client.Entity.AuroraLotusEnergy + 2);
-                        client.Entity.Lotus(client.Entity.AuroraLotusEnergy, Update.AuroraLotus);
+                        client.Entity.Lotus(client.Entity.AuroraLotusEnergy);
                     }
 
                     if (client.Entity.ContainsFlag3(Update.Flags3.FlameLotus)) {
@@ -283,7 +283,7 @@ namespace MTA.Game {
                                         jump.EntityCount = 1;
                                         jump.FirstEntity = monster.UID;
                                         jump.MovementType = TwoMovements.Jump;
-                                        client.SendScreen(jump, true);
+                                        client.SendScreen(jump);
                                     }
 
                                     if (client.Entity.ContainsFlag(Update.Flags.FlashingName))
@@ -312,7 +312,7 @@ namespace MTA.Game {
                                                             jump.EntityCount = 1;
                                                             jump.FirstEntity = monster.UID;
                                                             jump.MovementType = TwoMovements.Jump;
-                                                            client.SendScreen(jump, true);
+                                                            client.SendScreen(jump);
                                                         }
                                                     }
                                                 }
@@ -922,7 +922,7 @@ namespace MTA.Game {
                                         }
                                     }
 
-                                    item.Owner.SendScreen(suse, true);
+                                    item.Owner.SendScreen(suse);
                                     item.Type = FloorItem.Effect;
                                     client.Map.RemoveFloorItem(item);
 
@@ -1009,7 +1009,7 @@ namespace MTA.Game {
                                         jump.EntityCount = 1;
                                         jump.FirstEntity = monster.UID;
                                         jump.MovementType = TwoMovements.Jump;
-                                        client.SendScreen(jump, true);
+                                        client.SendScreen(jump);
                                     }
                                     // if (client.Entity.ContainsFlag(Update.Flags.FlashingName))
                                     //    monster.MonsterInfo.InSight = client.Entity.UID;
@@ -1041,7 +1041,7 @@ namespace MTA.Game {
                                                             jump.EntityCount = 1;
                                                             jump.FirstEntity = monster.UID;
                                                             jump.MovementType = TwoMovements.Jump;
-                                                            client.SendScreen(jump, true);
+                                                            client.SendScreen(jump);
                                                         }
                                                     }
                                                 }

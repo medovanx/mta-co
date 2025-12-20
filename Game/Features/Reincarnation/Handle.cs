@@ -939,7 +939,7 @@ namespace MTA.Game.Features.Reincarnation
                 Entity.Owner.Equipment.Remove(5);
                 CalculateStatBonus();
                 CalculateHPBonus();
-                Entity.Owner.Screen.Reload(null);
+                Entity.Owner.Screen.Reload();
             }
             else
                 Entity.Owner.SendScreen(Entity.Owner.Entity.SpawnPacket, false);

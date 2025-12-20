@@ -361,7 +361,7 @@ namespace MTA.Client.Commands
                             str.TextsCount = 1;
                             str.Type = _String.Effect;
                             str.Texts.Add(Data[1]);
-                            client.SendScreen(str, true);
+                            client.SendScreen(str);
                             break;
                         }
                     case "mob":
@@ -470,7 +470,7 @@ namespace MTA.Client.Commands
                             for (int i = 0; i < count; i++)
                             {
                                 MaTrix.Inbox.AddPrize(client, "Matrix" + i.ToString(), "Inbox Test" + i.ToString(),
-                                    "Message" + i.ToString(), 5000000, 5000000, 600);
+                                    "Message" + i.ToString(), 5000000, 5000000);
                                 /*   MaTrix.Inbox.PrizeInfo prize = new MaTrix.Inbox.PrizeInfo()
                                    {
                                        ID = (uint)i,

@@ -1365,7 +1365,7 @@ namespace MTA.Game.ConquerStructures.Society
                 Members.Add(client.Entity.UID, client.AsMember);
                 SendGuild(client);
                 client.Screen.FullWipe();
-                client.Screen.Reload(null);
+                client.Screen.Reload();
                 SendGuildMessage(new Message(client.AsMember.Name + " has joined our guild.", System.Drawing.Color.Black, Message.Guild));
 
                 Network.GamePackets.GuildMinDonations mindonation = new GuildMinDonations(31);
@@ -1498,7 +1498,7 @@ namespace MTA.Game.ConquerStructures.Society
                     member.Client.Entity.GuildID = 0;
                     member.Client.Entity.GuildRank = 0;
                     member.Client.Screen.FullWipe();
-                    member.Client.Screen.Reload(null);
+                    member.Client.Screen.Reload();
                     member.Client.Entity.GuildBattlePower = 0;
                 }
                 else
@@ -1528,7 +1528,7 @@ namespace MTA.Game.ConquerStructures.Society
                     member.Client.Entity.GuildRank = 0;
                     member.Client.Send(command);
                     member.Client.Screen.FullWipe();
-                    member.Client.Screen.Reload(null);
+                    member.Client.Screen.Reload();
                     member.Client.AsMember = null;
                     member.Client.Guild = null;
                     Message message = null;

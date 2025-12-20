@@ -201,7 +201,7 @@ namespace MTA.Network.GamePackets
                         if (client.Entity.MapID == 16414) return;
                         if (client.Team != null)
                         {
-                            client.Team.Remove(client, true);
+                            client.Team.Remove(client);
                         }
                         break;
                     }

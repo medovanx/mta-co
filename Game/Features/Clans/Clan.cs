@@ -377,7 +377,7 @@ namespace MTA
                 c.Send(new ClanRelations(clan, ClanRelations.RelationTypes.Enemies));
             }
             c.Screen.FullWipe();
-            c.Screen.Reload(null);
+            c.Screen.Reload();
         }
         public static void LoadClans()
         {

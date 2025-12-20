@@ -91,7 +91,7 @@ namespace MTA.Network.GamePackets
                         TextsCount = 22,
                         Type = 10,
                         Texts = { effect }
-                    }, true);
+                    });
                 }
             }
         }
@@ -106,7 +106,7 @@ namespace MTA.Network.GamePackets
                     TextsCount = 22,
                     Type = 10,
                     Texts = { effect }
-                }, true);
+                });
             }
         }
 

@@ -16,7 +16,7 @@ namespace MTA.Game.ConquerStructures
             Data data = new Data(true);
             data.ID = Data.SwingPickaxe;
             data.UID = client.Entity.UID;
-            client.SendScreen(data, true);
+            client.SendScreen(data);
             if (info == null)
             {
                 client.Mining = false;
