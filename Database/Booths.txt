@@ -47,12 +47,12 @@ Item10=380056@@1000@@0@@0@0@0@0
 
 [booth12]
 ID=700305
-Name=Garmanets
+Name=Garments
 Mesh=402
 Map=1036
 Type=16
 X=232
-Y=189
+Y=209
 ItemAmount=158
 188495
 Item158=188495@@675@@0@@0@0@0@0
@@ -217,8 +217,8 @@ Name=Mounts
 Mesh=402
 Map=1036
 Type=16
-X=232
-Y=201
+X=239
+Y=213
 ItemAmount=111
 Item98=200538@@1250@@0@@0@0@0@0
 Item99=200539@@1250@@0@@0@0@0@0
@@ -475,8 +475,8 @@ Name=Materials
 Mesh=402
 Map=1036
 Type=16
-X=232
-Y=197
+X=239
+Y=209
 ItemAmount=65
 Item4=3006170@@2500@@0@@0@0@0@0
 Item5=3004140@@2500@@0@@0@0@0@0
