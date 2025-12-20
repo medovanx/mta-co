@@ -82,11 +82,11 @@ namespace MTA.Database {
             public byte LuckyNumber = 1;
             public Random Rand;
             public ConcurrentDictionary<uint, Member> RegistredPlayers;
-            private bool Reset = false;
+            private bool Reset;
             public MsgRouletteTable SpawnPacket;
-            public Time32 StampRound = new Time32();
+            public Time32 StampRound;
 
-            public ushort TimerStamp = 0;
+            public ushort TimerStamp;
 
             public RouletteTable() {
                 Rand = new Random();
@@ -507,7 +507,7 @@ namespace MTA.Database {
             }
 
             public class Member {
-                public uint Betting = 0;
+                public uint Betting;
                 public MsgRouletteOpenGui.Color Color;
 
                 public ConcurrentDictionary<byte, MsgRouletteCheck.Item> MyLuckExtra =
@@ -517,7 +517,7 @@ namespace MTA.Database {
                     new ConcurrentDictionary<byte, MsgRouletteCheck.Item>();
 
                 public GameState Owner;
-                public uint Winning = 0;
+                public uint Winning;
 
                 public uint MyCost {
                     get {

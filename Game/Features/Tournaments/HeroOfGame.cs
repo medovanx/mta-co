@@ -5,10 +5,10 @@ using MTA.Network.GamePackets;
 
 namespace MTA.Game.Features.Tournaments {
     public class HeroOfGame {
-        bool open = false;
+        bool open;
 
-        uint Secounds = 0;
-        bool SendInvitation = false;
+        uint Secounds;
+        bool SendInvitation;
         private IDisposable Subscribe;
 
         public HeroOfGame() {

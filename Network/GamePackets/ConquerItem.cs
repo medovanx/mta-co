@@ -42,11 +42,11 @@ namespace MTA.Network.GamePackets
         public bool InWardrobe;
         public static Counter ItemUID = new Counter(0);
 
-        private UInt32 mRefineItem = 0;
+        private UInt32 mRefineItem;
         private DateTime mRefineryTime;
-        private ulong suspiciousStart = 0, unlockEnd = 0;
-        private bool unlocking = false;
-        private uint warehouse = 0;
+        private ulong suspiciousStart, unlockEnd;
+        private bool unlocking;
+        private uint warehouse;
         public Dictionary<uint, string> Agate_map { get; set; }
         public DateTime RefineryStarted { get; set; }
         public ConquerItem(bool Create)

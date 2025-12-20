@@ -99,7 +99,7 @@ namespace MTA.Network.GamePackets
         }
 
         public Game.Languages Language = Game.Languages.English;
-        public uint MessageUID1 = 0;
+        public uint MessageUID1;
         public uint MessageUID2 = 0;
 
         public void Deserialize(byte[] buffer)

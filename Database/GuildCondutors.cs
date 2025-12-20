@@ -72,9 +72,9 @@ namespace MTA.Database {
 
         public class Conductor {
             public SobNpcSpawn npc;
-            public ushort Teleport_MapId = 0;
-            public ushort Teleport_X = 0;
-            public ushort Teleport_Y = 0;
+            public ushort Teleport_MapId;
+            public ushort Teleport_X;
+            public ushort Teleport_Y;
         }
     }
 }

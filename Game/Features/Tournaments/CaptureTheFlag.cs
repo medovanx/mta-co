@@ -152,7 +152,7 @@ namespace MTA.Game
                             client.Entity.RemoveFlag2(Update.Flags2.CarryingFlag);
                             // client.Entity.nRemoveFlag(91);
                             client.Guild.CTFPoints += 15;
-                            Program.World.CTF.SendUpdates();
+                            Program.World.Ctf.SendUpdates();
                             client.Send(generatePacket(7, client.Entity.UID));
                             client.AsMember.Exploits += (ushort)(client.Entity.Level / 2);
                         }
@@ -168,8 +168,8 @@ namespace MTA.Game
                             {
                                 client.Entity.FlagStamp = Time32.Now;
 
-                                client.Send(Program.World.CTF.generateTimer(60));
-                                client.Send(Program.World.CTF.generateEffect(client));
+                                client.Send(Program.World.Ctf.generateTimer(60));
+                                client.Send(Program.World.Ctf.generateEffect(client));
                                 client.Guild.CTFPoints += 3;
                                 client.Map.RemoveStaticItem(item);
                                 client.RemoveScreenSpawn(item, true);
@@ -190,7 +190,7 @@ namespace MTA.Game
             if (Bases.ContainsKey(attacked.UID))
             {
                 {
-                    var _base = Program.World.CTF.Bases[attacked.UID];
+                    var _base = Program.World.Ctf.Bases[attacked.UID];
                     if (!_base.Scores.ContainsKey(guild.ID))
                         _base.Scores.Add(guild.ID, damage);
                     else

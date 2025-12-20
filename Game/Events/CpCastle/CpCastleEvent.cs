@@ -24,8 +24,8 @@ namespace MTA.Game.Events.CpCastle
         private const ushort TWIN_CITY_X = 300;
         private const ushort TWIN_CITY_Y = 280;
 
-        private DateTime? _lastWarning10Min = null;
-        private DateTime? _lastWarning5Min = null;
+        private DateTime? _lastWarning10Min;
+        private DateTime? _lastWarning5Min;
 
         public override IEnumerable<EventSchedule> GetSchedules()
         {

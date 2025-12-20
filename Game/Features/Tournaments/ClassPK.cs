@@ -5,12 +5,12 @@ namespace MTA.Game
 {
     public class ClassPk
     {
-        public static bool ClassPks = false;
+        public static bool ClassPks;
         public static ushort Map = 7001;
-        public static bool signup = false;
-        public static int howmanyinmap = 0;
-        public static int TopDlClaim = 0;
-        public static int TopGlClaim = 0;
+        public static bool signup;
+        public static int howmanyinmap;
+        public static int TopDlClaim;
+        public static int TopGlClaim;
         public static int ClanClaim = 0;
         public static void AddDl()
         {

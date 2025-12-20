@@ -5042,7 +5042,7 @@ namespace MTA.Network {
                 }
                 case 2224: {
                     if (packet[4] == 7) //2
-                        client.Send(Program.World.CTF.generateCTFRanking());
+                        client.Send(Program.World.Ctf.generateCTFRanking());
 
                     if (CaptureTheFlag.IsWar) {
                         byte[] p773 = [
@@ -24531,8 +24531,8 @@ namespace MTA.Network {
                     if (Kernel.GetDistance(item.X, item.Y, client.Entity.X, client.Entity.Y) == 0) {
                         client.Entity.FlagStamp = Time32.Now;
 
-                        client.Send(Program.World.CTF.generateTimer(60));
-                        client.Send(Program.World.CTF.generateEffect(client));
+                        client.Send(Program.World.Ctf.generateTimer(60));
+                        client.Send(Program.World.Ctf.generateEffect(client));
                         client.Guild.CTFPoints += 3;
                         client.Entity.AddFlag2(Update.Flags2.CarryingFlag);
                         client.Entity.nAddFlag(118);
@@ -24542,7 +24542,7 @@ namespace MTA.Network {
                 }
             }
             else {
-                Program.World.CTF.AroundBase(client);
+                Program.World.Ctf.AroundBase(client);
             }
         }
 
@@ -24730,7 +24730,7 @@ namespace MTA.Network {
             client.Screen.FullWipe();
             client.Screen.Reload();
             if (client.Entity.PreviousMapID == CaptureTheFlag.MapID)
-                Program.World.CTF.CloseList(client);
+                Program.World.Ctf.CloseList(client);
         }
 
         static void ChangeAction(Data generalData, GameState client) {

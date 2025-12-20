@@ -147,7 +147,7 @@ namespace MTA.Game.ConquerStructures
         public Dictionary<uint, PokerPlayer> Watchers = new Dictionary<uint, PokerPlayer>(10);
         public uint UID;
         public byte Number;
-        public bool TableType = false;
+        public bool TableType;
         public Enums.PokerBetType BetType;
         public ushort X;
         public ushort Y;
@@ -155,12 +155,12 @@ namespace MTA.Game.ConquerStructures
         public bool Unlimited;
         public uint MinLimit;
         public ushort Map;
-        public ulong Pot = 0;
-        public ulong QuitPot = 0;
+        public ulong Pot;
+        public ulong QuitPot;
         private byte State = 1;
         public ulong HigherBet;
-        public bool Crazy = false;
-        public bool ShowHand = false;
+        public bool Crazy;
+        public bool ShowHand;
         public ushort CountDown = 15;
         public uint MoveCountDown;
         public uint RoundCountDown;
@@ -1481,7 +1481,7 @@ namespace MTA.Game.ConquerStructures
         }
 
         #endregion
-        public uint EndLast = 0;
+        public uint EndLast;
         public void DistributeMoney()
         {
             if (Players.Count < 1) return;

@@ -14,13 +14,13 @@ namespace MTA.Game
 
         public static SafeDictionary<uint, Guild> Scores = new SafeDictionary<uint, Guild>(100);
 
-        public static bool IsWar = false, FirstRound = false;
+        public static bool IsWar, FirstRound;
 
         public static Time32 ScoreSendStamp, LastWin;
 
         public static Guild PoleKeeper, CurrentTopLeader;
 
-        private static bool changed = false;
+        private static bool changed;
 
         private static string[] scoreMessages;
 

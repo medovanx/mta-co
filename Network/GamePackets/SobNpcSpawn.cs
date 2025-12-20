@@ -377,9 +377,9 @@ namespace MTA.Network.GamePackets
             }
             if (MapID == CaptureTheFlag.MapID)
             {
-                if (Program.World.CTF.Bases.ContainsKey(UID))
+                if (Program.World.Ctf.Bases.ContainsKey(UID))
                 {
-                    var _base = Program.World.CTF.Bases[UID];
+                    var _base = Program.World.Ctf.Bases[UID];
                     _base.Capture();
                 }
             }
@@ -434,9 +434,9 @@ namespace MTA.Network.GamePackets
             }
             if (MapID == CaptureTheFlag.MapID)
             {
-                if (Program.World.CTF.Bases.ContainsKey(UID))
+                if (Program.World.Ctf.Bases.ContainsKey(UID))
                 {
-                    var _base = Program.World.CTF.Bases[UID];
+                    var _base = Program.World.Ctf.Bases[UID];
                     _base.Capture();
                 }
             }
@@ -654,7 +654,7 @@ namespace MTA.Network.GamePackets
                 killer.Owner.Screen.Reload();
             }
         }
-        private Client.GameState? owner_null = null;
+        private Client.GameState? owner_null;
         public bool _isprize;
         public Client.GameState Owner
         {

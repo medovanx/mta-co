@@ -14,7 +14,7 @@ namespace MTA.Network.Cryptography
             {
                 m_Counter = with;
             }
-            UInt16 m_Counter = 0;
+            UInt16 m_Counter;
 
             public byte Key2
             {
@@ -38,7 +38,7 @@ namespace MTA.Network.Cryptography
         private static byte[] _cryptKey2;
         private static byte[] _cryptKey3;
         private static byte[] _cryptKey4;
-        private static bool Decrypt2 = false;
+        private static bool Decrypt2;
 
         public static void PrepareAuthCryptography()
         {

@@ -11,7 +11,7 @@ namespace MTA.Game {
         public static SobNpcSpawn Pole;
         public static DateTime WarStart;
         public static Map Map;
-        public static bool IsWar = false;
+        public static bool IsWar;
         public static uint Winner;
         private IDisposable Subscriber;
 

@@ -5,7 +5,7 @@ namespace MTA.Game
 {
     public class NightDay
     {
-        public static bool IsNight = false;
+        public static bool IsNight;
         public static void SendTimer()
         {
 #if NIGHT

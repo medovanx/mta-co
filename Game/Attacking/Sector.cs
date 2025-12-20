@@ -51,11 +51,11 @@ namespace MTA.Game.Attacking
     }
     public class Fan
     {
-        private ushort UserX, UserY = 0;
-        private ushort SourceX, SourceY = 0;
+        private ushort UserX, UserY;
+        private ushort SourceX, SourceY;
 
-        private int Range = 0;
-        private int Width = 0;
+        private int Range;
+        private int Width;
 
         public Fan(ushort x, ushort y, ushort x2, ushort y2, int nRange, int nWidth)
         {

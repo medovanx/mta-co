@@ -3,8 +3,8 @@
 namespace MTA.Network {
     public class PacketBuilder {
         protected byte[] _buffer = new byte[1024];
-        protected int Len = 0;
-        protected int Position = 0;
+        protected int Len;
+        protected int Position;
         protected byte[] TQ_SERVER = Program.Encoding.GetBytes("TQServer");
 
         public PacketBuilder(int T, int L) {

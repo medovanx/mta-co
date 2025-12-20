@@ -5,8 +5,8 @@ namespace MTA.Game
 {
     public class KillTheTerrorist
     {
-        public static bool IsOn = false;
-        public static bool Terrorist = false;
+        public static bool IsOn;
+        public static bool Terrorist;
         public static ushort Map = 1801;
         public static void SendTimer()
         {
@@ -27,10 +27,10 @@ namespace MTA.Game
             TimerD.Start();
             TimerD.Elapsed += delegate { TeleEnd(); };
         }
-        public static bool signup = false;
-        public static bool send = false;
-        public static bool end = false;
-        public static bool teleend = false;
+        public static bool signup;
+        public static bool send;
+        public static bool end;
+        public static bool teleend;
 
         public static void SignUp()
         {

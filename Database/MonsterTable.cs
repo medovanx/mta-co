@@ -35,7 +35,7 @@ namespace MTA.Database {
         public uint InSight;
         public bool ISLava = false;
         public bool IsRespawnAble = true;
-        private bool LabirinthDrop = false;
+        private bool LabirinthDrop;
         public Time32 LastMove;
         public byte Level;
         public ulong MaxMoneyDropAmount;

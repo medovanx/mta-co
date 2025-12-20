@@ -6,7 +6,7 @@ namespace MTA.Network
     {
         const int capacity = 8191;
         private byte[] queue = new byte[capacity + 1];
-        private int enqueuePointer = 0, dequeuePointer = 0, enqueuedData = 0,
+        private int enqueuePointer, dequeuePointer, enqueuedData,
                     currentPacketSize = -1, tqPadding;
         private object syncRoot;
 

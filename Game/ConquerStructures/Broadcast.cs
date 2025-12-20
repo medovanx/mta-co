@@ -7,7 +7,7 @@ namespace MTA.Game.ConquerStructures
     {
         public static Counter BroadcastCounter = new Counter(1);
 
-        public struct BroadcastStr
+        public record struct BroadcastStr
         {
             public uint ID;
             public uint EntityID;

@@ -28,7 +28,7 @@ namespace MTA.Game
         public static List<ChampionStatistic>[] ChampionStatsList;
         public static List<ChampionStatistic> YesterdayChampionList;
 
-        public static int InArenaCount = 0, HistoryArenaCount = 0;
+        public static int InArenaCount, HistoryArenaCount;
 
         public static void Sort()
         {
@@ -798,7 +798,7 @@ namespace MTA.Game
             }
         }
 
-        private static bool DayPassed = false;
+        private static bool DayPassed;
         private static DateTime StartDateTime = DateTime.Now;
         public static void Reset()
         {

@@ -14,16 +14,16 @@ namespace MTA.Game
             ArgentinaTeam = 1,
             BrazilTeam = 2,
             GermanyTeam = 3;
-        public static bool IsOn = false;
+        public static bool IsOn;
         public static bool CouplesWar = false;
         public static IDisposable TimerA, TimerB, TimerC;
         public static void SendTimer()
         {
             TimerA = World.Subscribe(SignUp, 1000);
         }
-        public static bool signup = false;
-        public static bool send = false;
-        public static bool end = false;
+        public static bool signup;
+        public static bool send;
+        public static bool end;
 
         public static void SignUp(int ttime)
         {
@@ -140,10 +140,10 @@ namespace MTA.Game
             }
         }
 
-        public static bool redwin = false;
-        public static bool blackwin = false;
-        public static bool bluewin = false;
-        public static bool whitewin = false;
+        public static bool redwin;
+        public static bool blackwin;
+        public static bool bluewin;
+        public static bool whitewin;
 
         public static void Reward()
         {
@@ -211,16 +211,16 @@ namespace MTA.Game
             BlueTeam = 1,
             RedTeam = 2,
             WhiteTeam = 3;
-        public static bool IsOn = false;
+        public static bool IsOn;
         public static bool CouplesWar = false;
         public static IDisposable TimerA, TimerB, TimerC;
         public static void SendTimer()
         {
             TimerA = World.Subscribe(SignUp, 1000);
         }
-        public static bool signup = false;
-        public static bool send = false;
-        public static bool end = false;
+        public static bool signup;
+        public static bool send;
+        public static bool end;
 
         public static void SignUp(int ttime)
         {
@@ -338,10 +338,10 @@ namespace MTA.Game
             }
         }
 
-        public static bool redwin = false;
-        public static bool blackwin = false;
-        public static bool bluewin = false;
-        public static bool whitewin = false;
+        public static bool redwin;
+        public static bool blackwin;
+        public static bool bluewin;
+        public static bool whitewin;
 
         public static void Reward()
         {

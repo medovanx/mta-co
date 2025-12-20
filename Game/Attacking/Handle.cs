@@ -15,7 +15,7 @@ namespace MTA.Game.Attacking {
         private Attack attack;
         private Entity attacker, attacked;
 
-        public Handle(Attack attack, Entity attacker, Entity attacked) {
+        public Handle(Attack attack, Entity attacker, Entity? attacked) {
             this.attack = attack;
             this.attacker = attacker;
             this.attacked = attacked;
@@ -8432,8 +8432,8 @@ namespace MTA.Game.Attacking {
             }
 
             if (attacker.MapID == CaptureTheFlag.MapID)
-                if (attacker.GuildID != 0 && Program.World.CTF.Bases[attacked.UID].CapturerID != attacker.GuildID) {
-                    Program.World.CTF.AddScore(damage, attacker.Owner.Guild, attacked);
+                if (attacker.GuildID != 0 && Program.World.Ctf.Bases[attacked.UID].CapturerID != attacker.GuildID) {
+                    Program.World.Ctf.AddScore(damage, attacker.Owner.Guild, attacked);
                 }
 
             ////////////////////////////////////////////////
@@ -8633,8 +8633,8 @@ namespace MTA.Game.Attacking {
                 if (GuildCondutors.GuildConductors.ContainsKey(attacked.UID))
                     return false;
             if (attacker.MapID == CaptureTheFlag.MapID) {
-                if (Program.World.CTF.Bases.ContainsKey(attacked.UID)) {
-                    var _base = Program.World.CTF.Bases[attacked.UID];
+                if (Program.World.Ctf.Bases.ContainsKey(attacked.UID)) {
+                    var _base = Program.World.Ctf.Bases[attacked.UID];
                     if (_base.CapturerID == attacker.GuildID)
                         return false;
                 }

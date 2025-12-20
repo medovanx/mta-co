@@ -3,7 +3,7 @@ using MTA.Database;
 
 namespace MTA.Network.GamePackets.Roulette {
     public unsafe class MsgRouletteRecord : Writer {
-        private byte[] Packet = null;
+        private byte[] Packet;
 
         public void ApplayUser(Roulettes.RouletteTable.Member[] members, byte WinnerNumber) {
             Packet = new byte[24 * members.Length + 6 + 8];

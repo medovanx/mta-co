@@ -62,10 +62,10 @@ namespace MTA {
 
         #endregion SkillSoul_Allowed
 
-        public static IniFile AvatarLinker = null;
+        public static IniFile AvatarLinker;
         public GameState Client;
         public List<NpcReply> Replies;
-        private bool Sent = false;
+        private bool Sent;
 
         public Npcs(GameState client) {
             Client = client;
@@ -953,7 +953,7 @@ namespace MTA {
                                 }
                                 case 2: {
                                     if (CaptureTheFlag.IsWar) {
-                                        Program.World.CTF.SignUp(client);
+                                        Program.World.Ctf.SignUp(client);
                                     }
                                     else {
                                         dialog.Text(
@@ -987,7 +987,7 @@ namespace MTA {
                                 case 2: {
                                     if (client.Entity.Level >= 1)
                                         if (CaptureTheFlag.IsWar) {
-                                            Program.World.CTF.SignUp(client);
+                                            Program.World.Ctf.SignUp(client);
                                         }
                                         else {
                                             dialog.Text(
@@ -15242,7 +15242,7 @@ namespace MTA {
                 case 705: {
                     switch (npcRequest.OptionID) {
                         case 0: {
-                            var tournament = KillTournament.Select(client, World.ClassPKMapBase);
+                            var tournament = KillTournament.Select(client, World.ClassPkMapBase);
                             if (tournament != null) {
                                 dialog.Text(
                                     "Hello there! I am the keeper of the Class PK tournament. Would you like to join, while it is still on going? You might aswell read the rules!");
@@ -15260,7 +15260,7 @@ namespace MTA {
                             break;
                         }
                         case 1: {
-                            var tournament = KillTournament.Select(client, World.ClassPKMapBase);
+                            var tournament = KillTournament.Select(client, World.ClassPkMapBase);
                             if (tournament != null) tournament.Join(client);
                             else {
                                 dialog.Text(
@@ -18998,7 +18998,7 @@ namespace MTA {
                             break;
                         }
                         case 1:
-                            if (World.cycolne3 && Entity.Speed == 0) {
+                            if (World.Cycolne3 && Entity.Speed == 0) {
                                 //client.Entity.killerpoints += 50;
                                 client.Entity.race = 0;
                                 Entity.Speed++;
@@ -19012,7 +19012,7 @@ namespace MTA {
                                         " ConquerPoints AnD Soon Fast Won  Top in Server", Color.Red, Message.Center),
                                     Program.Values);
                                 client.Entity.RemoveFlag(Update.Flags.Cyclone);
-                                World.cycolne3 = false;
+                                World.Cycolne3 = false;
                             }
                             else {
                                 dialog.Text("Speed Finesh  " + client.Entity.Name + "U Most Not Be here");
@@ -19037,7 +19037,7 @@ namespace MTA {
                             break;
                         }
                         case 1:
-                            if (World.cycolne3) {
+                            if (World.Cycolne3) {
                                 client.Entity.race = 1;
                                 dialog.Text("You Have Signed Up Wait 1 min ");
                                 dialog.Send();

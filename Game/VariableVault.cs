@@ -7,7 +7,7 @@ namespace MTA.Game
     public class VariableVault
     {
         private ConcurrentDictionary<ulong, DynamicVariable> values;
-        public bool Changed = false;
+        public bool Changed;
         public VariableVault()
         {
             values = new ConcurrentDictionary<ulong, DynamicVariable>();
@@ -78,9 +78,9 @@ namespace MTA.Game
     {
         private byte type;
         public byte Type { get { return type; } }
-        private bool boolValue = false;
-        private ulong ulongValue = 0;
-        private double doubleValue = 0.0;
+        private bool boolValue;
+        private ulong ulongValue;
+        private double doubleValue;
         private string stringValue = "";
         private DateTime dateValue = DateTime.Now.AddDays(-1);
         private byte[] byteData;

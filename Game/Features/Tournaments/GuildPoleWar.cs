@@ -23,7 +23,7 @@ namespace MTA.MaTrix {
 
         public static DateTime WarStart;
         public static Map Map;
-        public static bool IsWar = false;
+        public static bool IsWar;
         private IDisposable Subscriber;
 
         public GuildPoleWar() {
@@ -163,7 +163,7 @@ namespace MTA.MaTrix {
 
         #region Score
 
-        public static bool FirstRound = false;
+        public static bool FirstRound;
         public static Time32 ScoreSendStamp, LastWin;
 
         public static void Start() {

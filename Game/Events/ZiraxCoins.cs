@@ -4,7 +4,7 @@ using MTA.Database;
 
 namespace MTA.Game {
     public class ZiraxCoins {
-        public static bool Running = false;
+        public static bool Running;
         public static GameState client;
 
         public static void Start() {

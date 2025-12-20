@@ -19,7 +19,7 @@ namespace MTA.Game
 
         public bool Viable { get; set; }
         public Time32 NotViableStamp;
-        public uint SetBy = 0;
+        public uint SetBy;
 
         public StaticEntity(uint uid, ushort x, ushort y, ushort map)
         {

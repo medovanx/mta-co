@@ -22,8 +22,8 @@ namespace MTA.Game {
 
         public static DateTime WarStart;
         public static Map Map;
-        public static bool IsWar = false;
-        public static bool AllPole = false;
+        public static bool IsWar;
+        public static bool AllPole;
         private IDisposable Subscriber;
 
         public NobiltyPoleWar() {
@@ -194,7 +194,7 @@ namespace MTA.Game {
 
         #region Score
 
-        public static bool FirstRound = false;
+        public static bool FirstRound;
         public static Time32 ScoreSendStamp, LastWin;
 
         public static void Start() {

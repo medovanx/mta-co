@@ -12,7 +12,7 @@ namespace MTA.Franko {
         internal uint actionID;
         internal DateTime allowedTime;
         internal int repeat;
-        internal int repeated = 0;
+        internal int repeated;
         internal ThreadAction threadAction;
     }
 
@@ -20,7 +20,7 @@ namespace MTA.Franko {
     /// This class is used to handle delayed tasks.
     /// </summary>
     public class DelayedTask {
-        static uint TaskID = 0;
+        static uint TaskID;
 
         /// <summary>
         /// The synchronization root.

@@ -9,9 +9,9 @@ namespace MTA.Game.ConquerStructures
 {
     public unsafe class Nobility : Network.Writer
     {
-        public static ulong MaxDonation = 0;
-        public static ulong MaxDonation1 = 0;
-        public static ulong MaxDonation2 = 0;
+        public static ulong MaxDonation;
+        public static ulong MaxDonation1;
+        public static ulong MaxDonation2;
         public static SafeDictionary<uint, NobilityInformation> Board = new SafeDictionary<uint, NobilityInformation>(10000);
         public static List<NobilityInformation> BoardList = new List<NobilityInformation>(10000);
         public static void Handle(NobilityInfo information, Client.GameState client)

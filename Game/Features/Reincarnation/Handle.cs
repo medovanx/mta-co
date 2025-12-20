@@ -32,8 +32,8 @@ namespace MTA.Game.Features.Reincarnation
     public class Reincarnation
     {
         private Client.GameState _client;
-        private SafeDictionary<ushort, Interfaces.ISkill> RemoveSkill = null;
-        private SafeDictionary<ushort, Interfaces.ISkill> Addskill = null;
+        private SafeDictionary<ushort, Interfaces.ISkill> RemoveSkill;
+        private SafeDictionary<ushort, Interfaces.ISkill> Addskill;
 
         public Reincarnation(Client.GameState client, byte new_class)
         {
@@ -865,8 +865,8 @@ namespace MTA.Game.Features.Reincarnation
         public byte Second;
         private Interfaces.ISkill[] Skills;
         private Interfaces.IProf[] Profs;
-        private Dictionary<ushort, Interfaces.ISkill> Learn = null;
-        private Dictionary<ushort, Interfaces.ISkill> WontLearn = null;
+        private Dictionary<ushort, Interfaces.ISkill> Learn;
+        private Dictionary<ushort, Interfaces.ISkill> WontLearn;
         //Client.GameState[] States;
 
         public Reincarnate(Entity _Entity, byte _class)

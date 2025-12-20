@@ -137,10 +137,10 @@ namespace MTA.Game.ConquerStructures.Society
             public bool AutoJoin = true;
             public string Buletin = "Nothing";
             public int NotAllowFlag;
-            public byte Level = 0;
-            public byte Reborn = 0;
-            public byte Grade = 0;
-            public ulong Donations = 0;
+            public byte Level;
+            public byte Reborn;
+            public byte Grade;
+            public ulong Donations;
 
             public bool ContainFlag(int val)
             {
@@ -212,7 +212,7 @@ namespace MTA.Game.ConquerStructures.Society
                     + (byte)(AutoJoin ? 1 : 0) + "^" + Buletin + "^0" + "^0");
                 return build.ToString();
             }
-            public bool WasLoad = false;
+            public bool WasLoad;
             public void Load(string line)
             {
                 if (line == null)
@@ -415,7 +415,7 @@ namespace MTA.Game.ConquerStructures.Society
             {
                 this.GuildID = GuildID;
             }
-            public uint ExploitsRank = 0;
+            public uint ExploitsRank;
             public uint Exploits = 0;
             public uint ID
             {
@@ -487,7 +487,7 @@ namespace MTA.Game.ConquerStructures.Society
                 get;
                 set;
             }
-            public uint Mesh = 0;
+            public uint Mesh;
 
             public byte Class;
             public uint VirtutePointes;
@@ -500,8 +500,8 @@ namespace MTA.Game.ConquerStructures.Society
             public uint PkDonation;
             public uint TotalDonation { get { return (uint)(Lilies + Orchids + Tulips + Rouses + ConquerPointDonation + VirtutePointes + (uint)SilverDonation + ArsenalDonation + PkDonation); } }
 
-            public uint CTFSilverReward = 0;
-            public uint CTFCpsReward = 0;
+            public uint CTFSilverReward;
+            public uint CTFCpsReward;
             public uint WarScore;
 
         }
@@ -1306,8 +1306,8 @@ namespace MTA.Game.ConquerStructures.Society
             }
             return false;
         }
-        public uint GuildEnrole = 0;
-        public uint BuletinEnrole = 0;
+        public uint GuildEnrole;
+        public uint BuletinEnrole;
 
         public void CreateBuletinTime(uint Time = 0)
         {

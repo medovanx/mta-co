@@ -79,14 +79,14 @@ namespace MTA.Game
                 build.Append(clases.ToString() + "/");
             return build.ToString();
         }
-        public ushort Critical = 0;
-        public ushort SCritical = 0;
-        public ushort Imunity = 0;
-        public ushort Penetration = 0;
-        public ushort Detoxication = 0;
-        public ushort PhsicalAttack = 0;
-        public ushort MagiAttack = 0;
-        public ushort HitPoints = 0;
+        public ushort Critical;
+        public ushort SCritical;
+        public ushort Imunity;
+        public ushort Penetration;
+        public ushort Detoxication;
+        public ushort PhsicalAttack;
+        public ushort MagiAttack;
+        public ushort HitPoints;
         public void UpgradeStatus(Client.GameState client, bool removeold)
         {
             if (removeold)

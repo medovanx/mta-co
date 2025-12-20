@@ -8,7 +8,7 @@ namespace MTA.Database
 
         private string location = "";
         private StreamReader SR;
-        public int Count = 0;
+        public int Count;
 
         private string[] items;
         private Int32 curent_count = -1;

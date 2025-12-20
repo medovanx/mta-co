@@ -59,7 +59,7 @@ namespace MTA.Network.GamePackets
             set { WriteUInt32(value, 22, Buffer); }
         }
 
-        private int index = 0;
+        private int index;
 
         public void Append(string name)
         {

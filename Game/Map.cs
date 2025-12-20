@@ -67,7 +67,7 @@ namespace MTA.Game
             Enums.ConquerAngle.SouthEast,
             Enums.ConquerAngle.South
         ];
-        public static Floor ArenaBaseFloor = null;
+        public static Floor ArenaBaseFloor;
         public Counter EntityUIDCounter = new Counter(400000);
         public Counter EntityUIDCounter2 = new Counter(100000);
         public Counter CloneCounter = new Counter(0);
@@ -1079,7 +1079,7 @@ namespace MTA.Game
             Map myDynamic = new Map(id, ID, Path);
             return myDynamic;
         }
-        bool disposed = false;
+        bool disposed;
         public void Dispose()
         {
             if (!disposed)

@@ -10,10 +10,10 @@ namespace MTA.Game
     {
         public static SobNpcSpawn Poles;
         public static SafeDictionary<uint, Guild> Scores = new SafeDictionary<uint, Guild>(100);
-        public static bool IsWar = false, Flame10th = false, FirstRound = false;
+        public static bool IsWar, Flame10th = false, FirstRound;
         public static Time32 ScoreSendStamp, LastWin;
         public static Guild PoleKeeper, CurrentTopLeader;
-        private static bool changed = false;
+        private static bool changed;
         private static string[] scoreMessages;
         public static DateTime StartTime;
         public static bool Claim

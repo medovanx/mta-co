@@ -4,7 +4,7 @@ namespace MTA.Network.GamePackets {
     public class TeamElitePkTop : Writer {
         public const byte Top3 = 2, Top8 = 0;
 
-        private int Index = 0;
+        private int Index;
         byte[] packet;
 
         public TeamElitePkTop(TeamElitePk.GamePackets ID) {

@@ -10,7 +10,7 @@ using Pathfinding.AStar;
 
 namespace MTA.MaTrix.New_Quests {
     public class TreeCatcher {
-        public static bool IsON = false;
+        public static bool IsON;
         public static Map Map;
         public static INpc Npc;
 

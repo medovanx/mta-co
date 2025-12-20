@@ -23,7 +23,7 @@ namespace MTA.Database
         public uint EntityID;
         public int RandomKey;
         public string table = "accounts";
-        public bool exists = false;
+        public bool exists;
 
         public AccountTable(string username, string table = "accounts")
         {

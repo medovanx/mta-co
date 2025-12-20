@@ -115,8 +115,8 @@ namespace MTA.Client {
         public ProgressBar ProgressBar;
         public string QAnswer;
         public Action<GameState> QCorrect;
-        public int quarantineDeath = 0;
-        public int quarantineKill = 0;
+        public int quarantineDeath;
+        public int quarantineKill;
         public Quests Quests;
         public ConcurrentPacketQueue Queue;
         public QuizShow.QuizClient Quiz;
@@ -136,8 +136,8 @@ namespace MTA.Client {
         public DateTime timerattack = new DateTime();
         public IDisposable[]? TimerSubscriptions;
         public object TimerSyncRoot, ItemSyncRoot;
-        public int TopDlClaim = 0;
-        public int TopGlClaim = 0;
+        public int TopDlClaim;
+        public int TopGlClaim;
         public Trade TradePacket;
         public bool TransferedPlayer;
         public uint uniquepoints = 0;
@@ -2038,7 +2038,7 @@ namespace MTA.Client {
 
         #region Colo
 
-        public static uint ScreenColor = 0;
+        public static uint ScreenColor;
 
         #region Night Color
 
@@ -2232,7 +2232,7 @@ namespace MTA.Client {
         // public Game.Entity Companion;
 
         public List<GameState> Prayers;
-        public GameState PrayLead;
+        public GameState? PrayLead;
 
         public DateTime ChatBanTime;
         public uint ChatBanLasts;
@@ -2719,7 +2719,7 @@ namespace MTA.Client {
         public bool RaceExcitement, RaceDecelerated, RaceGuard, RaceDizzy, RaceFrightened;
         public Time32 RaceExcitementStamp, GuardStamp, DizzyStamp, FrightenStamp, ExtraVigorStamp, DecelerateStamp;
         public uint RaceExcitementAmount, RaceExtraVigor;
-        public GameCharacterUpdates SpeedChange;
+        public GameCharacterUpdates? SpeedChange;
 
         public void ApplyRacePotion(Enums.RaceItemType type, uint target) {
             switch (type) {
@@ -3125,7 +3125,7 @@ namespace MTA.Client {
         public static ushort NpcTestType = 0;
         public byte TinterItemSelect = 0;
         public DateTime LastDragonBallUse, LastResetTime;
-        public byte Action = 0;
+        public byte Action;
         public bool CheerSent = false;
         public Arena.QualifierList.QualifierGroup WatchingGroup;
         public Arena.QualifierList.QualifierGroup QualifierGroup;
@@ -3166,7 +3166,7 @@ namespace MTA.Client {
         public Game.ConquerStructures.Trade Trade;
         public byte ExpBalls = 0;
         public ulong MoneySave = 0;
-        public uint ActiveNpc = 0;
+        public uint ActiveNpc;
         public string WarehousePW1, TempPassword;
         public uint WarehousePW;
         public bool WarehouseOpen;

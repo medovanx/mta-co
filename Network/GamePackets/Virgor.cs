@@ -4,7 +4,7 @@ namespace MTA.Network.GamePackets
 {
     public class Vigor : Writer, Interfaces.IPacket
     {
-        byte[] Buffer = null;
+        byte[] Buffer;
 
         public Vigor(bool Create)
         {

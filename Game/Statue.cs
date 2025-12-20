@@ -9,7 +9,7 @@ namespace MTA.Game {
 
         ushort _x, _y;
 
-        public byte[] SpawnPacket = null;
+        public byte[] SpawnPacket;
 
         public uint UID;
 

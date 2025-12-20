@@ -166,7 +166,7 @@ namespace MTA.Network.GamePackets
         ShowSubClasses = 7,
         MartialPromoted = 5,
         LearnSubClass = 4;
-        Game.Entity Owner = null;
+        Game.Entity Owner;
 
         byte[] Buffer;
         byte Type;

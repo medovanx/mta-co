@@ -12,11 +12,11 @@ namespace MTA.Game.ConquerStructures
         public class QuizClient
         {
             public ulong Points = 0;
-            public ushort Timer = 0;
+            public ushort Timer;
             public int Rank;
 
-            public bool Answered = false;
-            public uint UID = 0;
+            public bool Answered;
+            public uint UID;
             public string Name = "";
 
             public GameState Client;
@@ -35,7 +35,7 @@ namespace MTA.Game.ConquerStructures
             public string[] All = new string[5];
 
             public byte AnswerRight = 0;
-            public bool Used = false;
+            public bool Used;
         }
 
         public QuizShow()
@@ -47,14 +47,14 @@ namespace MTA.Game.ConquerStructures
 
         public List<Question> Questions;
         public ConcurrentDictionary<uint, QuizClient> RegisteredUsers;
-        public bool Open = false;
+        public bool Open;
         public Time32 LastQuestion;
         public int AllQuestions = 0;
-        public Question CurrentQuestion = null;
-        public uint NewQuestionTime = 0;
+        public Question CurrentQuestion;
+        public uint NewQuestionTime;
         private IDisposable Subscriber;
-        private bool sendStart = false;
-        public ushort NoQuestion = 0;
+        private bool sendStart;
+        public ushort NoQuestion;
 
         public readonly ushort QuestionCount = 20;
         public readonly ushort TimeLimit = 30;
@@ -124,7 +124,7 @@ namespace MTA.Game.ConquerStructures
             Subscriber.Dispose();
         }
 
-        public bool FirstQuestion = false;
+        public bool FirstQuestion;
 
         public void QuizTimerCallback(int time)
         {

@@ -48,7 +48,7 @@ namespace MTA.Network.GamePackets
             set { WriteUInt32(value, 20, buffer); }
         }
 
-        private int Index = 0;
+        private int Index;
         public void Append(ElitePK.FighterStats stats, int rank)
         {
             int offset = 36 + Index * 44; Index++;

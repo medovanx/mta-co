@@ -20,7 +20,7 @@ namespace MTA
         private Byte mLevel, mBPTower;
         public GameState client;
         public UInt32 WarScore = 0;
-        public bool PoleKeeper = false;
+        public bool PoleKeeper;
 
         private Dictionary<UInt32, ClanMember> mMembers;
         private Dictionary<UInt32, Clan> mAllies, mEnemies;

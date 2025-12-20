@@ -2,7 +2,7 @@
 {
     public class Counter
     {
-        uint Start = 0;
+        uint Start;
         uint finish = uint.MaxValue;
 
         public uint Finish

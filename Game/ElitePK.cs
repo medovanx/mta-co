@@ -40,7 +40,7 @@ namespace MTA.Game
         private Match[] ExtendedMatchArray;
         private Counter MatchCounter;
         private ushort MatchIndex;
-        public bool Alive = false;
+        public bool Alive;
         public DateTime ConstructTop8 = DateTime.Now;
         public Map WaitingArea;
         public int State;

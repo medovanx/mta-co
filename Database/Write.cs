@@ -13,7 +13,7 @@ namespace MTA.Database
     {
         private string location = "";
         private string[] Items;
-        private int Count = 0;
+        private int Count;
 
         private StreamWriter SW;
 

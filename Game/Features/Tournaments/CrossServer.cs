@@ -8,21 +8,21 @@ using MTA.Network.GamePackets;
 
 namespace MTA.Game {
     class Countrys {
-        public uint id = 0;
+        public uint id;
         public string Name = "";
-        public uint playres = 0;
-        public ulong Score = 0;
-        public uint wins = 0;
+        public uint playres;
+        public ulong Score;
+        public uint wins;
     }
 
     class CrossServer {
         public static SobNpcSpawn Pole;
-        public static bool IsWar = false;
+        public static bool IsWar;
         public static Dictionary<uint, Countrys> Countrys = new Dictionary<uint, Countrys>(1000);
         public static Time32 ScoreSendStamp;
         public static Countrys PoleKeeper, Current;
         private static string[] scoreMessages;
-        private static bool changed = false;
+        private static bool changed;
         public static DateTime StartTime;
         public static uint KeeperID;
         public static ushort mapid = 2578;

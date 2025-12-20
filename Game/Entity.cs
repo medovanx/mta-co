@@ -44,7 +44,7 @@ namespace MTA.Game
         }
 
         public int MyAllin { get; set; }
-        public uint PokerTableUID = 0;
+        public uint PokerTableUID;
 
         public ConquerStructures.PokerTable PokerTable
         {
@@ -83,7 +83,7 @@ namespace MTA.Game
         public List<string> BlackList;
         public WardrobeTitles WTitles;
         public Dictionary<uint, ConquerItem> StorageItems;
-        private ulong _Stateff4 = 0;
+        private ulong _Stateff4;
 
         public ulong StatusFlag4
         {
@@ -161,7 +161,7 @@ namespace MTA.Game
             }
         }
 
-        public uint totalperfectionscore_ = 0;
+        public uint totalperfectionscore_;
 
         public uint TotalPerfectionScore
         {
@@ -941,7 +941,7 @@ namespace MTA.Game
 
         #region TopDonation
 
-        public int _TopBlackname = 0, _TopRedname = 0, _TopWhitename = 0;
+        public int _TopBlackname, _TopRedname, _TopWhitename;
 
         public int TopBlackname
         {
@@ -1000,7 +1000,7 @@ namespace MTA.Game
         public MTA.Game.Features.Flowers.Flowers Flowers;
         public Features.Kisses.Kisses Kisses;
 
-        public int KillCount = 0, KillCount2 = 0;
+        public int KillCount, KillCount2;
         public uint LastXLocation, LastYLocation;
         public bool InSteedRace, Invisable, IsBlackSpotted, IsEagleEyeShooted = false;
         public MonsterInformation MonsterInfo;
@@ -1057,9 +1057,9 @@ namespace MTA.Game
 
         public bool IsDropped = false;
         public bool IsWatching = false;
-        public bool HasMagicDefender = false;
+        public bool HasMagicDefender;
         public bool IsDefensiveStance = false;
-        public bool MagicDefenderOwner = false;
+        public bool MagicDefenderOwner;
         public bool KillTheTerrorist_IsTerrorist = false;
         public bool Tournament_Signed = false;
         public bool SpawnProtection = false;
@@ -1475,8 +1475,8 @@ namespace MTA.Game
             }
         }
 
-        public short CycloneTime = 0,
-            SupermanTime = 0,
+        public short CycloneTime,
+            SupermanTime,
             NoDrugsTime = 0,
             FatalStrikeTime = 0,
             ShurikenVortexTime = 0,
@@ -1533,7 +1533,7 @@ namespace MTA.Game
         private uint _MinAttack, _MaxAttack, _MagicAttack;
         public uint BaseMinAttack, BaseMaxAttack, BaseMagicAttack, BaseMagicDefence;
         private uint _TransMinAttack, _TransMaxAttack, _TransDodge, _TransPhysicalDefence, _TransMagicDefence;
-        public bool Killed = false;
+        public bool Killed;
 
         public bool Transformed
         {
@@ -1598,7 +1598,7 @@ namespace MTA.Game
         }
 
         public byte FirstRebornLevel, SecondRebornLevel;
-        public bool FullyLoaded = false, SendUpdates = false, HandleTiming = false;
+        public bool FullyLoaded = false, SendUpdates, HandleTiming = false;
         private Update update;
 
         #endregion
@@ -2370,7 +2370,7 @@ namespace MTA.Game
             }
         }
 
-        public bool awayTeleported = false;
+        public bool awayTeleported;
 
         public void SetAway(bool isAway)
         {
@@ -3049,7 +3049,7 @@ namespace MTA.Game
             }
         }
 
-        private ulong _Stateff2 = 0;
+        private ulong _Stateff2;
 
         public ulong StatusFlag2
         {
@@ -3068,7 +3068,7 @@ namespace MTA.Game
             }
         }
 
-        private ulong _Stateff3 = 0;
+        private ulong _Stateff3;
 
         public ulong StatusFlag3
         {
@@ -4016,15 +4016,15 @@ namespace MTA.Game
                         entity.DoFlag();
                         Owner.Map.AddStaticEntity(entity);
                         RemoveFlag2(Network.GamePackets.Update.Flags2.CarryingFlag);
-                        Owner.Send(Program.World.CTF.generateTimer(0));
-                        Owner.Send(Program.World.CTF.generateEffect(Owner));
+                        Owner.Send(Program.World.Ctf.generateTimer(0));
+                        Owner.Send(Program.World.Ctf.generateEffect(Owner));
                         if (killer.GuildID != GuildID)
                         {
                             Killer.AddFlag2(Network.GamePackets.Update.Flags2.CarryingFlag);
                             Time32 end = FlagStamp.AddSeconds(60) - Time32.Now;
                             killer.FlagStamp = end;
-                            killer.Owner.Send(Program.World.CTF.generateTimer((uint)end.Value));
-                            killer.Owner.Send(Program.World.CTF.generateEffect(killer.Owner));
+                            killer.Owner.Send(Program.World.Ctf.generateTimer((uint)end.Value));
+                            killer.Owner.Send(Program.World.Ctf.generateEffect(killer.Owner));
                             killer.Owner.Guild.CTFPoints += 3;
                         }
                     }
@@ -5455,7 +5455,7 @@ namespace MTA.Game
             set { WriteUInt32(value, _EquipmentColor, SpawnPacket); }
         }
 
-        private uint guildBP = 0;
+        private uint guildBP;
 
         public bool Archer()
         {

@@ -118,9 +118,9 @@ namespace MTA.Game.Features.Tournaments {
 
         public static List<AI> Ais = [];
 
-        public bool Alive = false;
-        private bool AllowJoin = false;
-        public DateTime ConstructTop8 = new DateTime();
+        public bool Alive;
+        private bool AllowJoin;
+        public DateTime ConstructTop8;
         private Match[] ExtendedMatchArray;
         public int GroupID;
         public GamePackets ID;
@@ -132,7 +132,7 @@ namespace MTA.Game.Features.Tournaments {
         private Time32 pStamp;
         private int pState = States.T_Organize;
 
-        DateTime StarTimer = new DateTime();
+        DateTime StarTimer;
         public int State;
         private IDisposable Subscriber;
 
@@ -1261,7 +1261,7 @@ namespace MTA.Game.Features.Tournaments {
         public class TeamTournament {
             public static uint WaitingAreaID = 2068;
             public static TeamElitePk[] Tournaments;
-            public static bool Opened = false;
+            public static bool Opened;
 
             public static void Create() {
                 try {
@@ -1335,7 +1335,7 @@ namespace MTA.Game.Features.Tournaments {
         public class SkillTeamTournament {
             public static uint WaitingAreaID = 2068;
             public static TeamElitePk[] Tournaments;
-            public static bool Opened = false;
+            public static bool Opened;
 
             public static bool GetReward(GameState client, out byte rank, out byte elitestage) {
                 if (Tournaments != null)
@@ -1472,7 +1472,7 @@ namespace MTA.Game.Features.Tournaments {
 
             public string Name;
 
-            public bool OnNextMatch = false;
+            public bool OnNextMatch;
             public uint Points;
             public byte Rank;
 

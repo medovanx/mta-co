@@ -42,7 +42,7 @@ namespace MTA.Game.Features.Flowers
         public uint UID;
 
         public uint aFlower = 1;
-        public uint SendDay = 0;
+        public uint SendDay;
 
         public string Name = "";
 
@@ -76,10 +76,10 @@ namespace MTA.Game.Features.Flowers
             return ret;
         }
 
-        public int RankRoses = 0;
-        public int RankLilies = 0;//max 10 start with -1.
-        public int RankOrchids = 0;//max 10 start with -1.
-        public int RankTuilps = 0;//max 10 start with -1.
+        public int RankRoses;
+        public int RankLilies;//max 10 start with -1.
+        public int RankOrchids;//max 10 start with -1.
+        public int RankTuilps;//max 10 start with -1.
 
         public uint RedRoses;//kiss
         public uint RedRoses2day;

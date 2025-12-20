@@ -258,7 +258,7 @@ namespace MTA.Game
                     client.Entity.Teleport(GetMap(Map), mapcoord.Item1, mapcoord.Item2);
                 }
             }
-            public bool Open = false;
+            public bool Open;
             public void Start()
             {
                 if (!Open)

@@ -5,8 +5,8 @@ using MTA.Network.GamePackets;
 namespace MTA.Game.Events {
     public class DizzyLand {
         private static string War = "DizzyLand";
-        public static bool IsWar = false;
-        public static byte Alive = 0;
+        public static bool IsWar;
+        public static byte Alive;
         public static ushort Map = 5528;
 
         public static void Start() {

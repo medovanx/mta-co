@@ -41,15 +41,15 @@ namespace MTA.MaTrix {
             MatrixAI
         }
 
-        private int Accuracy = 0;
+        private int Accuracy;
         public GameState Bot;
         private bool Disguisefun;
-        private int JumpSpeed = 0;
+        private int JumpSpeed;
         private Time32 LastBotJump;
         private Time32 LastTalk;
         private bool Loaded;
         private Func<GameState, bool> selectFunc;
-        private int ShootChance = 0;
+        private int ShootChance;
         private BotSkill Skill;
         private Entity Target;
         private BotType Type;

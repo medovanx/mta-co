@@ -11,7 +11,7 @@ namespace MTA.Game.ConquerStructures
         public class Member : IDisposable
         {
             public Client.GameState entry;
-            public bool Lider = false;
+            public bool Lider;
             public byte[] Create()
             {
                 Network.GamePackets.AddToTeam temate = new Network.GamePackets.AddToTeam();
@@ -86,7 +86,7 @@ namespace MTA.Game.ConquerStructures
         public bool PickupMoney = true;
         public bool PickupItems = false;
         public bool AutoInvite = false;
-        public bool TeamLeader = false;
+        public bool TeamLeader;
         public uint UID;
 
         public Client.GameState Leader;
