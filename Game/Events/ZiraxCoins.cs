@@ -14,7 +14,7 @@ namespace MTA.Game {
         }
 
         public static void CheckRunning() {
-            if (Running == false) {
+            if (!Running) {
                 if (client.Entity.MapID == cMap && client.Account.State != AccountTable.AccountState.GM) {
                     client.Entity.Teleport(1002, 429, 378);
                     client.Send("ZiraxCoins has Ended and You have teleported to tc");

@@ -103,7 +103,7 @@ namespace MTA.Game
         }
         public void AddNpc(INpc npc, bool addquery = false)
         {
-            if (Npcs.ContainsKey(npc.UID) == false || addquery)
+            if (!Npcs.ContainsKey(npc.UID) || addquery)
             {
                 if (!addquery)
                     Npcs.Add(npc.UID, npc);
@@ -126,7 +126,7 @@ namespace MTA.Game
         {
             if (entity.UID < 800000 || entity.Body == 1003)
             {
-                if (Entities.ContainsKey(entity.UID) == false)
+                if (!Entities.ContainsKey(entity.UID))
                 {
                     Entities.Add(entity.UID, entity);
                     Floor[entity.X, entity.Y, MapObjectType.Monster, entity] = false;
@@ -143,7 +143,7 @@ namespace MTA.Game
         }
         public void RemoveEntity(Entity entity)
         {
-            if (Entities.ContainsKey(entity.UID) == true)
+            if (Entities.ContainsKey(entity.UID))
             {
                 Entities.Remove(entity.UID);
                 Floor[entity.X, entity.Y, MapObjectType.Monster, entity] = true;
@@ -669,7 +669,7 @@ namespace MTA.Game
                 {
                     for (int x = 0; x < Floor.Bounds.Width; x++)
                     {
-                        writer.Write((byte)(Floor[x, y, MapObjectType.InvalidCast] == true ? 1 : 0));
+                        writer.Write((byte)(Floor[x, y, MapObjectType.InvalidCast] ? 1 : 0));
                     }
                 }
                 writer.Close();

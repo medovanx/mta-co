@@ -864,7 +864,7 @@ namespace MTA.MaTrix {
         }
 
         public static void EngagePlayers() {
-            var Players = Program.Values.Where(c => c.LobbySignup == true && c.Entity.MapID == Map.ID).ToArray();
+            var Players = Program.Values.Where(c => c.LobbySignup && c.Entity.MapID == Map.ID).ToArray();
             if (Players.Length < 2)
                 return;
             int i, j;
@@ -898,10 +898,10 @@ namespace MTA.MaTrix {
             for (; i != iEnd; i += iPlus) {
                 var Challanger = Players[i];
 
-                if (Challanger.Entity.MapID == Map.ID && Challanger.LobbySignup == true) {
+                if (Challanger.Entity.MapID == Map.ID && Challanger.LobbySignup) {
                     for (; j != jEnd; j += jPlus) {
                         var Challanged = Players[j];
-                        if (Challanged.Entity.MapID == Map.ID && Challanged.LobbySignup == true) {
+                        if (Challanged.Entity.MapID == Map.ID && Challanged.LobbySignup) {
                             if (Challanger.MatchType == Challanged.MatchType) {
                                 if (Challanger.MatchType == MatchType.FBSS) {
                                     var weapons = Challanger.Weapons;

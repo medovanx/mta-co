@@ -1135,7 +1135,7 @@ namespace MTA.Game.Attacking {
                                     ushort wep1spellid = 0, wep2spellid = 0;
                                     SpellInformation wep1spell = null, wep2spell = null;
                                     if (wep1subyte == 622) {
-                                        if (attacker.WrathoftheEmperor == true) {
+                                        if (attacker.WrathoftheEmperor) {
                                             if (attacker.WrathoftheEmperorStamp <= DateTime.Now.AddMilliseconds(1500)) {
                                                 wep1spellid = 12570;
                                             }
@@ -1172,7 +1172,7 @@ namespace MTA.Game.Attacking {
                                             }
 
                                             if (wep1subyte == 622) {
-                                                if (attacker.WrathoftheEmperor == true) {
+                                                if (attacker.WrathoftheEmperor) {
                                                     if (attacker.WrathoftheEmperorStamp <=
                                                         DateTime.Now.AddMilliseconds(1500)) {
                                                         wep1spellid = 12570;
@@ -1293,7 +1293,7 @@ namespace MTA.Game.Attacking {
                                         ushort wep1spellid = 0, wep2spellid = 0;
                                         SpellInformation wep1spell = null, wep2spell = null;
                                         if (wep1subyte == 622) {
-                                            if (attacker.WrathoftheEmperor == true) {
+                                            if (attacker.WrathoftheEmperor) {
                                                 if (attacker.WrathoftheEmperorStamp <=
                                                     DateTime.Now.AddMilliseconds(1500)) {
                                                     wep1spellid = 12570;
@@ -1328,7 +1328,7 @@ namespace MTA.Game.Attacking {
                                                 }
 
                                                 if (wep1subyte == 622) {
-                                                    if (attacker.WrathoftheEmperor == true) {
+                                                    if (attacker.WrathoftheEmperor) {
                                                         if (attacker.WrathoftheEmperorStamp <=
                                                             DateTime.Now.AddMilliseconds(1500)) {
                                                             wep1spellid = 12570;

@@ -35,7 +35,7 @@
         public bool Online
         {
             get { return Buffer[9] == 1; }
-            set { Buffer[9] = value == true ? (byte)1 : (byte)0; }
+            set { Buffer[9] = value ? (byte)1 : (byte)0; }
         }
 
         public int HoursLeft

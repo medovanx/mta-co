@@ -280,7 +280,7 @@ namespace MTA.Database {
                 Time32 TimerNow = new Time32(timer);
                 if (RegistredPlayers.Count > 0) {
                     if (TimerStamp == 0) {
-                        if (TimerNow > StampRound && Reset == true) {
+                        if (TimerNow > StampRound && Reset) {
                             ResetRoulette();
                         }
                         else if (!Reset) {

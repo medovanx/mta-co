@@ -39,7 +39,7 @@ namespace MTA.Database
 
                         var Grades = GradeInformations[CIBI.Description];
                         BaseInformations.Add(CIBI.ID, CIBI);
-                        if (GradeInformations.ContainsKey(CIBI.Description) == false)
+                        if (!GradeInformations.ContainsKey(CIBI.Description))
                         {
                             GradeInformations2.Add(CIBI.Description, new SafeDictionary<uint, int>(1000));
                             GradeInformations2[CIBI.Description].Add(CIBI.ID / 10, 0);

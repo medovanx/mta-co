@@ -132,7 +132,7 @@ namespace MTA.Network
                 return;
             if (offset > buffer.Length - 1)
                 return;
-            WriteByte(arg == true ? (byte)1 : (byte)0, offset, buffer);
+            WriteByte(arg ? (byte)1 : (byte)0, offset, buffer);
         }
         public static void WriteUInt16(ushort arg, int offset, byte[] buffer)
         {
@@ -327,7 +327,7 @@ namespace MTA.Network
                 return;
             if (offset > buffer.Length - 1)
                 return;
-            WriteByte(arg == true ? (byte)1 : (byte)0, offset, buffer);
+            WriteByte(arg ? (byte)1 : (byte)0, offset, buffer);
         }
         public static void Ushort(ushort arg, int offset, byte[] buffer)
         {
@@ -546,7 +546,7 @@ namespace MTA.Network
                 return;
             if (offset > buffer.Length - 1)
                 return;
-            WriteByte(arg == true ? (byte)1 : (byte)0, offset, buffer);
+            WriteByte(arg ? (byte)1 : (byte)0, offset, buffer);
         }
         public static void Write(ushort arg, int offset, byte[] buffer)
         {

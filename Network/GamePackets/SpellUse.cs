@@ -307,7 +307,7 @@ namespace MTA.Network.GamePackets
              Targets.Add(uid, cls);
              return this;
          }*/
-        internal SpellUse AddTarget(Interfaces.IMapObject obj, DamageClass damage, Attack attack)
+        internal SpellUse AddTarget(Interfaces.IMapObject obj, DamageClass damage, Attack? attack)
         {
             if (attack != null)
             {

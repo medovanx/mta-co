@@ -66,15 +66,15 @@ namespace MTA.Network.GamePackets
             WriteByte((byte)item.SocketTwo, 38, buffer);
             WriteByte(item.Plus, 45, buffer);
             WriteByte(item.Bless, 46, buffer);
-            WriteByte((byte)(item.Bound == true ? 1 : 0), 47, buffer);
+            WriteByte((byte)(item.Bound ? 1 : 0), 47, buffer);
             WriteUInt16(item.Enchant, 48, buffer);
             WriteUInt16((ushort)item.Effect, 50, buffer);
-            WriteByte((byte)(item.Suspicious == true ? 1 : 0), 52, buffer);
+            WriteByte((byte)(item.Suspicious ? 1 : 0), 52, buffer);
             WriteByte(item.Lock, 54, buffer);
             WriteByte((byte)item.Color, 55, buffer);
             WriteUInt32(item.SocketProgress, 56, buffer);
             WriteUInt32(item.PlusProgress, 60, buffer);
-            WriteByte((byte)(item.Inscribed == true ? 1 : 0), 64, buffer);
+            WriteByte((byte)(item.Inscribed ? 1 : 0), 64, buffer);
             WriteUInt16((ushort)item.Mode, 76, buffer);
             WriteUInt16(item.Durability, 78, buffer);
             WriteUInt16(item.MaximDurability, 80, buffer);

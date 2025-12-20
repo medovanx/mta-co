@@ -43,7 +43,7 @@
         public bool IsRunning
         {
             get { return BitConverter.ToUInt16(Buffer, 8) == 1; }
-            set { WriteUInt16(value == true ? (ushort)1 : (ushort)0, 8, Buffer); }
+            set { WriteUInt16(value ? (ushort)1 : (ushort)0, 8, Buffer); }
         }
 
         public ushort Y

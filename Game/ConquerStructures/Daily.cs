@@ -455,7 +455,7 @@ namespace MTA.Game.ConquerStructures
         public static void SignUp()
         {
             foreach (Client.GameState client in Program.Values)
-                if (DateTime.Now.Minute == 00 && signup == false && client.Entity.Class >= 10 && client.Entity.Class <= 15)
+                if (DateTime.Now.Minute == 00 && !signup && client.Entity.Class >= 10 && client.Entity.Class <= 15)
                 {
                     signup = true;
                     DailyPks = true;

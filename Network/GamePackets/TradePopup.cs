@@ -35,42 +35,42 @@
         public bool Spouse
         {
             get { return Buffer[20] == 1; }
-            set { Buffer[20] = value == true ? (byte)1 : (byte)0; }
+            set { Buffer[20] = value ? (byte)1 : (byte)0; }
         }
         public bool Friend
         {
             get { return Buffer[21] == 1; }
-            set { Buffer[21] = value == true ? (byte)1 : (byte)0; }
+            set { Buffer[21] = value ? (byte)1 : (byte)0; }
         }
         public bool TradePartner
         {
             get { return Buffer[22] == 1; }
-            set { Buffer[22] = value == true ? (byte)1 : (byte)0; }
+            set { Buffer[22] = value ? (byte)1 : (byte)0; }
         }
         public bool Mentor
         {
             get { return Buffer[23] == 1; }
-            set { Buffer[23] = value == true ? (byte)1 : (byte)0; }
+            set { Buffer[23] = value ? (byte)1 : (byte)0; }
         }
         public bool Apprentice
         {
             get { return Buffer[24] == 1; }
-            set { Buffer[24] = value == true ? (byte)1 : (byte)0; }
+            set { Buffer[24] = value ? (byte)1 : (byte)0; }
         }
         public bool Teammate
         {
             get { return Buffer[25] == 1; }
-            set { Buffer[25] = value == true ? (byte)1 : (byte)0; }
+            set { Buffer[25] = value ? (byte)1 : (byte)0; }
         }
         public bool GuildMember
         {
             get { return Buffer[26] == 1; }
-            set { Buffer[26] = value == true ? (byte)1 : (byte)0; }
+            set { Buffer[26] = value ? (byte)1 : (byte)0; }
         }
         public bool Enemy
         {
             get { return Buffer[27] == 1; }
-            set { Buffer[27] = value == true ? (byte)1 : (byte)0; }
+            set { Buffer[27] = value ? (byte)1 : (byte)0; }
         }
 
         public uint Test2

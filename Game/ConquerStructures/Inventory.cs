@@ -57,7 +57,7 @@ namespace MTA.Game.ConquerStructures
                         item.SocketOne = Game.Enums.Gem.SuperDragonGem;
                         item.SocketTwo = Game.Enums.Gem.SuperDragonGem;
                         Add(item, Enums.ItemUse.CreateAndAdd);
-                        if (purfystabliz == false)
+                        if (!purfystabliz)
                         {
                             #region purfy with out stablize
                             ItemAdding.Purification_ purify = new ItemAdding.Purification_();

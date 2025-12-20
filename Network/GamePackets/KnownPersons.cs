@@ -38,13 +38,13 @@
         public bool Online
         {
             get { return Buffer[9] == 1; }
-            set { Buffer[9] = value == true ? (byte)1 : (byte)0; }
+            set { Buffer[9] = value ? (byte)1 : (byte)0; }
         }
 
         public bool IsBoy
         {
             get { return Buffer[16] == 1; }
-            set { Buffer[16] = value == true ? (byte)1 : (byte)2; }
+            set { Buffer[16] = value ? (byte)1 : (byte)2; }
         }
         public MTA.Game.ConquerStructures.NobilityRank NobilityRank
         {

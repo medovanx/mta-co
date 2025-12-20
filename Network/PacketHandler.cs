@@ -750,13 +750,13 @@ namespace MTA.Network {
                                 Writer.WriteString(obj.DominationMap, 56, packet);
 
                                 if (client.Entity.ClanRank == Clan.Ranks.ClanLeader) {
-                                    if (client.Entity.GetClan.CalnWar == false) {
+                                    if (!client.Entity.GetClan.CalnWar) {
                                         packet[16] = 5; //Apply
                                     }
                                 }
 
                                 if (client.Entity.ClanRank == Clan.Ranks.ClanLeader) {
-                                    if (client.Entity.GetClan.CalnWar == true) {
+                                    if (client.Entity.GetClan.CalnWar) {
                                         packet[16] = 3; //Cancel
                                     }
                                 }
@@ -785,7 +785,7 @@ namespace MTA.Network {
                                 client.Entity.SendSysMesage("Sorry You Not Have Clan To Join!");
                                 break;
                             }
-                            else if (client.Entity.GetClan.CalnWar == false) {
+                            else if (!client.Entity.GetClan.CalnWar) {
                                 client.Entity.SendSysMesage("Sorry Your Clan Not Apply To Join!");
                                 break;
                             }
@@ -5063,7 +5063,7 @@ namespace MTA.Network {
                 #region AutoHunting (1070)
 
                 case 1070: {
-                    if (client.Entity.Auto == false && client.Entity.VIPLevel < 1) {
+                    if (!client.Entity.Auto && client.Entity.VIPLevel < 1) {
                         client.Send(new NpcReply(6, "Sorry You Should Have Vip 1 To Run Auto Hunting & get Level's !"));
                         return;
                     }
@@ -11884,7 +11884,7 @@ namespace MTA.Network {
             ConquerItem Item = null;
             if (client.Inventory.TryGetItem(stabilizate.ItemUID, out Item) ||
                 (client.Equipment.TryGetItem(stabilizate.ItemUID) != null)) {
-                if (Item == null && client.Inventory.TryGetItem(stabilizate.ItemUID, out Item) == false &&
+                if (Item == null && !client.Inventory.TryGetItem(stabilizate.ItemUID, out Item) &&
                     (client.Equipment.TryGetItem(stabilizate.ItemUID) != null))
                     Item = client.Equipment.TryGetItem(stabilizate.ItemUID);
 
@@ -11933,7 +11933,7 @@ namespace MTA.Network {
             ConquerItem Item = null;
             if (client.Inventory.TryGetItem(stabilizate.ItemUID, out Item) ||
                 (client.Equipment.TryGetItem(stabilizate.ItemUID) != null)) {
-                if (Item == null && client.Inventory.TryGetItem(stabilizate.ItemUID, out Item) == false &&
+                if (Item == null && !client.Inventory.TryGetItem(stabilizate.ItemUID, out Item) &&
                     (client.Equipment.TryGetItem(stabilizate.ItemUID) != null))
                     Item = client.Equipment.TryGetItem(stabilizate.ItemUID);
 
@@ -12225,7 +12225,7 @@ namespace MTA.Network {
             ConquerItem[] Minors = null;
             if (client.Inventory.TryGetItem(compose[0], out Item) ||
                 (client.Equipment.TryGetItem(compose[0]) != null) || (compose.Mode == Compose.QuickCompose)) {
-                if (Item == null && client.Inventory.TryGetItem(compose[0], out Item) == false &&
+                if (Item == null && !client.Inventory.TryGetItem(compose[0], out Item) &&
                     (client.Equipment.TryGetItem(compose[0]) != null))
                     Item = client.Equipment.TryGetItem(compose[0]);
 
@@ -12718,7 +12718,7 @@ namespace MTA.Network {
             ConquerItem Gem = null;
             if (client.Inventory.TryGetItem(socket.ItemUID, out Item) ||
                 (client.Equipment.TryGetItem(socket.ItemUID) != null)) {
-                if (Item == null && client.Inventory.TryGetItem(socket.ItemUID, out Item) == false &&
+                if (Item == null && !client.Inventory.TryGetItem(socket.ItemUID, out Item) &&
                     (client.Equipment.TryGetItem(socket.ItemUID) != null))
                     Item = client.Equipment.TryGetItem(socket.ItemUID);
                 ushort sock = ItemPosition(Item.ID);
@@ -12904,7 +12904,7 @@ namespace MTA.Network {
                         return;
                     if (item.ID / 1000 == talisman.ID / 1000)
                         return;
-                    if (item.Bound == true)
+                    if (item.Bound)
                         return;
                     if (talisman.SocketTwo != Enums.Gem.NoSocket)
                         return;
@@ -21465,7 +21465,7 @@ namespace MTA.Network {
         }
 
         public static bool CheckCommand(string message, GameState client, bool Ask = false) {
-            if (Ask == true) {
+            if (Ask) {
                 Npcs dialog = new Npcs(client);
                 client.ActiveNpc = 5435234;
                 dialog.Text("Input the password.");
@@ -24117,19 +24117,19 @@ namespace MTA.Network {
                     client.Entity.Teleport(7777, 150, 164);
                 }
                 else if (client.Entity.MapID == 8883) {
-                    if (client.Entity.TeamDeathMatch_BlackTeam == true) {
+                    if (client.Entity.TeamDeathMatch_BlackTeam) {
                         client.Entity.Teleport(8883, 042, 051);
                     }
 
-                    if (client.Entity.TeamDeathMatch_BlueTeam == true) {
+                    if (client.Entity.TeamDeathMatch_BlueTeam) {
                         client.Entity.Teleport(8883, 060, 042);
                     }
 
-                    if (client.Entity.TeamDeathMatch_WhiteTeam == true) {
+                    if (client.Entity.TeamDeathMatch_WhiteTeam) {
                         client.Entity.Teleport(8883, 066, 064);
                     }
 
-                    if (client.Entity.TeamDeathMatch_RedTeam == true) {
+                    if (client.Entity.TeamDeathMatch_RedTeam) {
                         client.Entity.Teleport(8883, 039, 036);
                     }
                 }

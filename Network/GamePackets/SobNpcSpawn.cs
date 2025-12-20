@@ -85,7 +85,7 @@ namespace MTA.Network.GamePackets
         public bool ShowName
         {
             get { return Buffer[40] == 1; }
-            set { Buffer[40] = value == true ? (byte)1 : (byte)0; }
+            set { Buffer[40] = value ? (byte)1 : (byte)0; }
         }
 
         public string LoweredName;

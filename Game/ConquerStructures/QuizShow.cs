@@ -184,7 +184,7 @@ namespace MTA.Game.ConquerStructures
                         foreach (QuizClient quizClient in RegisteredUsers.Values)
                         {
 
-                            if (quizClient.Answered == false)
+                            if (!quizClient.Answered)
                                 quizClient.Timer += TimeLimit;
 
                             quizRank.MyPoints = (ushort)quizClient.Points;
@@ -214,7 +214,7 @@ namespace MTA.Game.ConquerStructures
                     foreach (QuizClient quizClient in RegisteredUsers.Values)
                     {
                         if (NoQuestion > 1)
-                            if (quizClient.Answered == false)
+                            if (!quizClient.Answered)
                                 quizClient.Timer += 30;
                         quizClient.Answered = false;
                         quizQuestion.Right = quizClient.RightQuestion;

@@ -1287,7 +1287,7 @@ namespace MTA.Game
                                     }
                                     else if (Time32.Now > Challanger.TeamArenaStatistic.AcceptBoxShow.AddSeconds(59))
                                     {
-                                        if (Challanger.TeamArenaStatistic.AcceptBox == true)
+                                        if (Challanger.TeamArenaStatistic.AcceptBox)
                                         {
                                             Win(Challanger, Challanged);
                                         }

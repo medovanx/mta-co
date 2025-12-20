@@ -175,7 +175,7 @@ namespace MTA.MaTrix {
             Uint(prize.Time, offset, Buffer); //Time
             offset += 4;
 
-            Uint(prize.MessageOrGift == true ? (byte)1 : (byte)0, offset, Buffer); // image
+            Uint(prize.MessageOrGift ? (byte)1 : (byte)0, offset, Buffer); // image
             offset += 4;
 
             Uint(1 /*prize.itemprize != null ? (byte)1 : (byte)0*/, offset, Buffer); //attachment

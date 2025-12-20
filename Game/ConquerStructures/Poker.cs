@@ -1006,16 +1006,16 @@ namespace MTA.Game.ConquerStructures
             List<Game.ConquerStructures.PokerCard> list = new List<Game.ConquerStructures.PokerCard>();
             for (byte i = (byte)Game.Enums.PokerCardsType.Hearts; i < 4; i++)
             {
-                if (showhand == true)
+                if (showhand)
                 {
-                    for (byte j = (byte)(showhand == true ? Game.Enums.PokerCardsValue.Ten : Game.Enums.PokerCardsValue.Two); j < 13; j++)
+                    for (byte j = (byte)(showhand ? Game.Enums.PokerCardsValue.Ten : Game.Enums.PokerCardsValue.Two); j < 13; j++)
                     {
                         list.Add(new Game.ConquerStructures.PokerCard((Game.Enums.PokerCardsType)i, (Game.Enums.PokerCardsValue)j));
                     }
                 }
-                else if (crazy == true)
+                else if (crazy)
                 {
-                    for (byte j = (byte)(crazy == true ? Game.Enums.PokerCardsValue.Eight : Game.Enums.PokerCardsValue.Two); j < 13; j++)
+                    for (byte j = (byte)(crazy ? Game.Enums.PokerCardsValue.Eight : Game.Enums.PokerCardsValue.Two); j < 13; j++)
                     {
                         list.Add(new Game.ConquerStructures.PokerCard((Game.Enums.PokerCardsType)i, (Game.Enums.PokerCardsValue)j));
                     }

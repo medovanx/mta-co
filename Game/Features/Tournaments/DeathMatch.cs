@@ -28,7 +28,7 @@ namespace MTA.Game
         public static void SignUp(int ttime)
         {
             var time = DateTime.Now;
-            if ((time.Minute == 10) && signup == false)
+            if ((time.Minute == 10) && !signup)
             {
                 TimerA.Dispose();
                 TimerB = World.Subscribe(Send, 1000);
@@ -51,7 +51,7 @@ namespace MTA.Game
             Time32 now = new Time32(ttime);
 
             var time = DateTime.Now;
-            if ((time.Minute == 11) && send == false)
+            if ((time.Minute == 11) && !send)
             {
                 TimerC = World.Subscribe(End, 1000);
                 signup = false;
@@ -87,24 +87,24 @@ namespace MTA.Game
         {
             foreach (Client.GameState C in Program.Values)
             {
-                if (C.Entity.Tournament_Signed == true)
+                if (C.Entity.Tournament_Signed)
                 {
                     C.Entity.TeamDeathMatch_Hits2 = 0;
                     C.Entity.AppearanceBkp = C.Entity.Appearance;
                     Network.PacketHandler.ChangeAppearance(new Data(true) { ID = Data.AppearanceType, UID = C.Entity.UID, dwParam = (byte)AppearanceType.Garment }, C);
-                    if (C.Entity.TeamDeathMatch_BlackTeam2 == true)
+                    if (C.Entity.TeamDeathMatch_BlackTeam2)
                     {
                         C.Entity.Teleport(MAPID, 042, 051);
                     }
-                    if (C.Entity.TeamDeathMatch_BlueTeam2 == true)
+                    if (C.Entity.TeamDeathMatch_BlueTeam2)
                     {
                         C.Entity.Teleport(MAPID, 060, 042);
                     }
-                    if (C.Entity.TeamDeathMatch_WhiteTeam2 == true)
+                    if (C.Entity.TeamDeathMatch_WhiteTeam2)
                     {
                         C.Entity.Teleport(MAPID, 066, 064);
                     }
-                    if (C.Entity.TeamDeathMatch_RedTeam2 == true)
+                    if (C.Entity.TeamDeathMatch_RedTeam2)
                     {
                         C.Entity.Teleport(MAPID, 039, 036);
                     }
@@ -114,7 +114,7 @@ namespace MTA.Game
         public static void End(int ttime)
         {
             var time = DateTime.Now;
-            if ((time.Minute == 16) && end == false)
+            if ((time.Minute == 16) && !end)
             {
                 signup = false;
                 end = true;
@@ -225,7 +225,7 @@ namespace MTA.Game
         public static void SignUp(int ttime)
         {
             var time = DateTime.Now;
-            if (time.DayOfWeek == DayOfWeek.Tuesday && (time.Hour == 15 || time.Hour == 23) && time.Minute == 00 && signup == false)
+            if (time.DayOfWeek == DayOfWeek.Tuesday && (time.Hour == 15 || time.Hour == 23) && time.Minute == 00 && !signup)
             {
                 TimerA.Dispose();
                 TimerB = World.Subscribe(Send, 1000);
@@ -248,7 +248,7 @@ namespace MTA.Game
             Time32 now = new Time32(ttime);
 
             var time = DateTime.Now;
-            if (time.DayOfWeek == DayOfWeek.Tuesday && (time.Hour == 15 || time.Hour == 23) && time.Minute == 1 && send == false)
+            if (time.DayOfWeek == DayOfWeek.Tuesday && (time.Hour == 15 || time.Hour == 23) && time.Minute == 1 && !send)
             {
                 TimerC = World.Subscribe(End, 1000);
                 signup = false;
@@ -284,25 +284,25 @@ namespace MTA.Game
         {
             foreach (Client.GameState C in Program.Values)
             {
-                if (C.Entity.Tournament_Signed == true)
+                if (C.Entity.Tournament_Signed)
                 {
                     C.Entity.SpawnProtection = true;
                     C.Entity.TeamDeathMatch_Hits = 0;
                     C.Entity.AppearanceBkp = C.Entity.Appearance;
                     Network.PacketHandler.ChangeAppearance(new Data(true) { ID = Data.AppearanceType, UID = C.Entity.UID, dwParam = (byte)AppearanceType.Garment }, C);
-                    if (C.Entity.TeamDeathMatch_BlackTeam == true)
+                    if (C.Entity.TeamDeathMatch_BlackTeam)
                     {
                         C.Entity.Teleport(8883, 042, 051);
                     }
-                    if (C.Entity.TeamDeathMatch_BlueTeam == true)
+                    if (C.Entity.TeamDeathMatch_BlueTeam)
                     {
                         C.Entity.Teleport(8883, 060, 042);
                     }
-                    if (C.Entity.TeamDeathMatch_WhiteTeam == true)
+                    if (C.Entity.TeamDeathMatch_WhiteTeam)
                     {
                         C.Entity.Teleport(8883, 066, 064);
                     }
-                    if (C.Entity.TeamDeathMatch_RedTeam == true)
+                    if (C.Entity.TeamDeathMatch_RedTeam)
                     {
                         C.Entity.Teleport(8883, 039, 036);
                     }
@@ -312,7 +312,7 @@ namespace MTA.Game
         public static void End(int ttime)
         {
             var time = DateTime.Now;
-            if (time.DayOfWeek == DayOfWeek.Tuesday && (time.Hour == 15 || time.Hour == 23) && time.Minute == 6 && end == false)
+            if (time.DayOfWeek == DayOfWeek.Tuesday && (time.Hour == 15 || time.Hour == 23) && time.Minute == 6 && !end)
             {
                 signup = false;
                 end = true;

@@ -3075,7 +3075,7 @@ namespace MTA.Client {
 
         public void KillTerrorist() {
             foreach (GameState Terrorist in Program.Values) {
-                if (Terrorist.Entity.KillTheTerrorist_IsTerrorist == true && Terrorist.Entity.MapID == 1801)
+                if (Terrorist.Entity.KillTheTerrorist_IsTerrorist && Terrorist.Entity.MapID == 1801)
                     Kernel.SendWorldMessage(
                         new Message("Terrorist: " + Terrorist.Entity.Name + " ",
                             Color.Black, Message.FirstRightCorner),
@@ -3322,11 +3322,11 @@ namespace MTA.Client {
             else
                 _experience += experience;
 
-            if (Entity.Level < 140 && Entity.Auto == true) {
+            if (Entity.Level < 140 && Entity.Auto) {
                 Entity.autohuntxp += (_experience / 16);
                 return;
             }
-            else if (Entity.Level == 140 && Entity.Auto == true) {
+            else if (Entity.Level == 140 && Entity.Auto) {
                 Entity.autohuntxp = 0;
                 return;
             }

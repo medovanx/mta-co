@@ -155,7 +155,7 @@ namespace MTA.Game
         {
             if (PlayerOne.Entity.ConquerPoints >= Wager && PlayerTwo.Entity.ConquerPoints >= Wager)
             {
-                if ((PlayerOne.Online && PlayerTwo.Online) && (PlayerOne.Challenge.Inside == false && PlayerTwo.Challenge.Inside == false))
+                if ((PlayerOne.Online && PlayerTwo.Online) && (!PlayerOne.Challenge.Inside && !PlayerTwo.Challenge.Inside))
                 {
                     injectPlayer(PlayerOne);
                     injectPlayer(PlayerTwo);

@@ -71,7 +71,7 @@
         public bool Enemy
         {
             get { return Buffer[42] == 1; }
-            set { Buffer[42] = value == true ? (byte)1 : (byte)0; }
+            set { Buffer[42] = value ? (byte)1 : (byte)0; }
         }
 
         public void Deserialize(byte[] buffer)

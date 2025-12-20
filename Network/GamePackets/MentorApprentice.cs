@@ -57,7 +57,7 @@
         public bool Online
         {
             get { return Buffer[20] == 1; }
-            set { Buffer[20] = value == true ? (byte)1 : (byte)0; }
+            set { Buffer[20] = value ? (byte)1 : (byte)0; }
         }
 
         public string Name

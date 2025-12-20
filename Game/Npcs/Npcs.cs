@@ -527,7 +527,7 @@ namespace MTA {
                                         dialog.Send();
                                     }
 
-                                    if (player.Challenge != null || player.InArenaMatch == true ||
+                                    if (player.Challenge != null || player.InArenaMatch ||
                                         player.Trade != null) {
                                         dialog.Text("This person can't play ATM");
                                         dialog.Option("Let me try again!", 1);
@@ -11896,8 +11896,8 @@ namespace MTA {
                             }
                         }
                         case 1: {
-                            if (client.Entity.StartedEpicQuest == false && client.Entity.FinishedFirstStage == false &&
-                                client.Entity.DidntPassFirstStage == false) {
+                            if (!client.Entity.StartedEpicQuest && !client.Entity.FinishedFirstStage &&
+                                !client.Entity.DidntPassFirstStage) {
                                 if (Kernel.Rate(70, 100)) {
                                     client.Inventory.Add(3004462, 0, 1);
                                     client.Entity.Teleport(3850, 29, 39);
@@ -11945,10 +11945,10 @@ namespace MTA {
                             break;
                         }
                         case 1: {
-                            if (client.Inventory.Contains(3004462, 1) && client.Entity.StartedEpicQuest == true &&
-                                client.Entity.FinishedFirstStage == true &&
-                                client.Entity.FinishedSecondStage == false &&
-                                client.Entity.DidntPassSecondStage == false) {
+                            if (client.Inventory.Contains(3004462, 1) && client.Entity.StartedEpicQuest &&
+                                client.Entity.FinishedFirstStage &&
+                                !client.Entity.FinishedSecondStage &&
+                                !client.Entity.DidntPassSecondStage) {
                                 if (Kernel.Rate(40, 100)) {
                                     client.Entity.Teleport(3851, 35, 35);
                                     client.Inventory.Add(3004463, 0, 1);
@@ -11998,9 +11998,9 @@ namespace MTA {
                             break;
                         }
                         case 1: {
-                            if (client.Inventory.Contains(3004463, 1) && client.Entity.StartedEpicQuest == true &&
-                                client.Entity.FinishedSecondStage == true &&
-                                client.Entity.DidntPassThirdStage == false) {
+                            if (client.Inventory.Contains(3004463, 1) && client.Entity.StartedEpicQuest &&
+                                client.Entity.FinishedSecondStage &&
+                                !client.Entity.DidntPassThirdStage) {
                                 if (Kernel.Rate(10, 100)) {
                                     client.Inventory.Add(3004464, 0, 1);
                                     client.Inventory.Remove(3004463, 1);
@@ -14930,7 +14930,7 @@ namespace MTA {
                         dialog.Send();
                     }
                     else if (npcRequest.OptionID == 2) {
-                        if (DisCity.Signup == true) {
+                        if (DisCity.Signup) {
                             if (client.Entity.Level >= 110) {
                                 Random Rand = new Random();
                                 int dis = Rand.Next(1, 10);
@@ -15358,7 +15358,7 @@ namespace MTA {
                 case 54239: {
                     switch (npcRequest.OptionID) {
                         case 0: {
-                            if (client.Entity.Tournament_Signed == false) {
+                            if (!client.Entity.Tournament_Signed) {
                                 var time = DateTime.Now;
                                 if ((time.Hour % 12) == 4 && time.Minute == 15) {
                                     dialog.Text("The TeamDeathMatch tournament has now started!");
@@ -15393,7 +15393,7 @@ namespace MTA {
                             //181615 RedElegance
                             //181815 BlueElegance
                             //181315 WhiteElegence
-                            if (client.Entity.Tournament_Signed == false) {
+                            if (!client.Entity.Tournament_Signed) {
                                 var time = DateTime.Now;
                                 if ((time.Hour % 12) == 4 && time.Minute == 15) {
                                     Random r = new Random();
@@ -15480,7 +15480,7 @@ namespace MTA {
                 case 54237: {
                     switch (npcRequest.OptionID) {
                         case 0: {
-                            if (KillTheTerrorist.IsOn == true) {
+                            if (KillTheTerrorist.IsOn) {
                                 dialog.Text("The KillTheTerrorist tournament has now started!");
                                 dialog.Text("You need to kill the Terrorist and stay the Terrorist till the end ");
                                 dialog.Option("Let me join!", 1);
@@ -15496,7 +15496,7 @@ namespace MTA {
                         }
                         case 1: {
                             if (DateTime.Now.Minute == 30) {
-                                if (KillTheTerrorist.Terrorist == false) {
+                                if (!KillTheTerrorist.Terrorist) {
                                     KillTheTerrorist.Terrorist = true;
                                     client.Entity.KillTheTerrorist_IsTerrorist = true;
                                     client.Entity.Tournament_Signed = true;
@@ -18386,7 +18386,7 @@ namespace MTA {
                         }
                         case 1: {
                             if (DateTime.Now.Minute >= 52 && DateTime.Now.Minute <= 55) {
-                                if (Kernel.Spawn1 == false &&
+                                if (!Kernel.Spawn1 &&
                                     !Kernel.Maps[1765].TempNpcs.ContainsKey(client.ActiveNpc)) {
                                     if (client.Entity.MapID == 1765) {
                                         Kernel.Spawn1 = true;
@@ -18998,7 +18998,7 @@ namespace MTA {
                             break;
                         }
                         case 1:
-                            if (World.cycolne3 == true && Entity.Speed == 0) {
+                            if (World.cycolne3 && Entity.Speed == 0) {
                                 //client.Entity.killerpoints += 50;
                                 client.Entity.race = 0;
                                 Entity.Speed++;
@@ -25838,7 +25838,7 @@ namespace MTA {
                         }
                         case 1: {
                             //  if (DateTime.Now.Hour == 17 && DateTime.Now.Minute >= 24 && DateTime.Now.Minute <= 29)
-                            if (Program.UniquePk == true) {
+                            if (Program.UniquePk) {
                                 Random R = new Random();
                                 int Nr = R.Next(1, 5);
                                 if (Nr == 1) client.Entity.Teleport(2014, 150, 162);
@@ -27027,7 +27027,7 @@ namespace MTA {
                             break;
                         }
                         case 120: {
-                            if (Program.UniquePk == true) {
+                            if (Program.UniquePk) {
                                 Random R = new Random();
                                 int Nr = R.Next(1, 5);
                                 if (Nr == 1) client.Entity.Teleport(2014, 150, 162);
@@ -27620,7 +27620,7 @@ namespace MTA {
                             //192665 SpainJersey
                             //192675 ArgentinaJersey
                             //192685 Brazil
-                            if (client.Entity.Tournament_Signed == false) {
+                            if (!client.Entity.Tournament_Signed) {
                                 {
                                     Random r = new Random();
                                     int Team = r.Next(1, 8);
@@ -29113,7 +29113,7 @@ namespace MTA {
                                 dialog.Avatar(35);
                                 dialog.Send();
                             }
-                            else if (Program.Room1 == true) {
+                            else if (Program.Room1) {
                                 dialog.Text("Sorry This Room is Full! ");
                                 dialog.Option("Allright, Thanks", 255);
                                 dialog.Avatar(35);
@@ -29134,7 +29134,7 @@ namespace MTA {
                             uint getInt = uint.Parse(npcRequest.Input);
                             if (npcRequest.Input != null) {
                                 if (getInt >= 5000) {
-                                    if (Program.Room1 == false) {
+                                    if (!Program.Room1) {
                                         if (Program.Room1Price == 0) {
                                             if (client.Entity.ConquerPoints >= getInt) {
                                                 Program.Room1Price = getInt;
@@ -29187,7 +29187,7 @@ namespace MTA {
                             break;
                         }
                         case 71: {
-                            if (Program.Room1 == false) {
+                            if (!Program.Room1) {
                                 if (client.Entity.ConquerPoints >= Program.Room1Price) {
                                     client.Entity.ConquerPoints -= Program.Room1Price;
                                     client.Entity.WaitingTimeFB = Time32.Now;
@@ -29228,7 +29228,7 @@ namespace MTA {
                                 dialog.Avatar(35);
                                 dialog.Send();
                             }
-                            else if (Program.Room2 == true) {
+                            else if (Program.Room2) {
                                 dialog.Text("Sorry This Room is Full! ");
                                 dialog.Option("Allright, Thanks", 255);
                                 dialog.Avatar(35);
@@ -29249,7 +29249,7 @@ namespace MTA {
                             uint getInt = uint.Parse(npcRequest.Input);
                             if (npcRequest.Input != null) {
                                 if (getInt >= 5000) {
-                                    if (Program.Room2 == false) {
+                                    if (!Program.Room2) {
                                         if (Program.Room2Price == 0) {
                                             if (client.Entity.ConquerPoints >= getInt) {
                                                 Program.Room2Price = getInt;
@@ -29302,7 +29302,7 @@ namespace MTA {
                             break;
                         }
                         case 72: {
-                            if (Program.Room2 == false) {
+                            if (!Program.Room2) {
                                 if (client.Entity.ConquerPoints >= Program.Room2Price) {
                                     client.Entity.ConquerPoints -= Program.Room2Price;
                                     client.Entity.WaitingTimeFB = Time32.Now;
@@ -29343,7 +29343,7 @@ namespace MTA {
                                 dialog.Avatar(35);
                                 dialog.Send();
                             }
-                            else if (Program.Room3 == true) {
+                            else if (Program.Room3) {
                                 dialog.Text("Sorry This Room is Full! ");
                                 dialog.Option("Allright, Thanks", 255);
                                 dialog.Avatar(35);
@@ -29364,7 +29364,7 @@ namespace MTA {
                             uint getInt = uint.Parse(npcRequest.Input);
                             if (npcRequest.Input != null) {
                                 if (getInt >= 5000) {
-                                    if (Program.Room3 == false) {
+                                    if (!Program.Room3) {
                                         if (Program.Room3Price == 0) {
                                             if (client.Entity.ConquerPoints >= getInt) {
                                                 Program.Room3Price = getInt;
@@ -29417,7 +29417,7 @@ namespace MTA {
                             break;
                         }
                         case 73: {
-                            if (Program.Room3 == false) {
+                            if (!Program.Room3) {
                                 if (client.Entity.ConquerPoints >= Program.Room3Price) {
                                     client.Entity.ConquerPoints -= Program.Room3Price;
                                     client.Entity.WaitingTimeFB = Time32.Now;
@@ -29458,7 +29458,7 @@ namespace MTA {
                                 dialog.Avatar(35);
                                 dialog.Send();
                             }
-                            else if (Program.Room4 == true) {
+                            else if (Program.Room4) {
                                 dialog.Text("Sorry This Room is Full! ");
                                 dialog.Option("Allright, Thanks", 255);
                                 dialog.Avatar(35);
@@ -29479,7 +29479,7 @@ namespace MTA {
                             uint getInt = uint.Parse(npcRequest.Input);
                             if (npcRequest.Input != null) {
                                 if (getInt >= 5000) {
-                                    if (Program.Room4 == false) {
+                                    if (!Program.Room4) {
                                         if (Program.Room4Price == 0) {
                                             if (client.Entity.ConquerPoints >= getInt) {
                                                 Program.Room4Price = getInt;
@@ -29532,7 +29532,7 @@ namespace MTA {
                             break;
                         }
                         case 74: {
-                            if (Program.Room4 == false) {
+                            if (!Program.Room4) {
                                 if (client.Entity.ConquerPoints >= Program.Room4Price) {
                                     client.Entity.ConquerPoints -= Program.Room4Price;
                                     client.Entity.WaitingTimeFB = Time32.Now;
@@ -29573,7 +29573,7 @@ namespace MTA {
                                 dialog.Avatar(35);
                                 dialog.Send();
                             }
-                            else if (Program.Room5 == true) {
+                            else if (Program.Room5) {
                                 dialog.Text("Sorry This Room is Full! ");
                                 dialog.Option("Allright, Thanks", 255);
                                 dialog.Avatar(35);
@@ -29594,7 +29594,7 @@ namespace MTA {
                             uint getInt = uint.Parse(npcRequest.Input);
                             if (npcRequest.Input != null) {
                                 if (getInt >= 5000) {
-                                    if (Program.Room5 == false) {
+                                    if (!Program.Room5) {
                                         if (Program.Room5Price == 0) {
                                             if (client.Entity.ConquerPoints >= getInt) {
                                                 Program.Room5Price = getInt;
@@ -29647,7 +29647,7 @@ namespace MTA {
                             break;
                         }
                         case 75: {
-                            if (Program.Room5 == false) {
+                            if (!Program.Room5) {
                                 if (client.Entity.ConquerPoints >= Program.Room5Price) {
                                     client.Entity.ConquerPoints -= Program.Room5Price;
                                     client.Entity.WaitingTimeFB = Time32.Now;
@@ -29688,7 +29688,7 @@ namespace MTA {
                                 dialog.Avatar(35);
                                 dialog.Send();
                             }
-                            else if (Program.Room6 == true) {
+                            else if (Program.Room6) {
                                 dialog.Text("Sorry This Room is Full! ");
                                 dialog.Option("Allright, Thanks", 255);
                                 dialog.Avatar(35);
@@ -29709,7 +29709,7 @@ namespace MTA {
                             uint getInt = uint.Parse(npcRequest.Input);
                             if (npcRequest.Input != null) {
                                 if (getInt >= 5000) {
-                                    if (Program.Room6 == false) {
+                                    if (!Program.Room6) {
                                         if (Program.Room6Price == 0) {
                                             if (client.Entity.ConquerPoints >= getInt) {
                                                 Program.Room6Price = getInt;
@@ -29762,7 +29762,7 @@ namespace MTA {
                             break;
                         }
                         case 76: {
-                            if (Program.Room6 == false) {
+                            if (!Program.Room6) {
                                 if (client.Entity.ConquerPoints >= Program.Room6Price) {
                                     client.Entity.ConquerPoints -= Program.Room6Price;
                                     client.Entity.WaitingTimeFB = Time32.Now;
@@ -31301,7 +31301,7 @@ namespace MTA {
                                             }
                                     }
 
-                                    var PlayerList = Program.Values.Where(c => c.LobbySignup == true).ToArray();
+                                    var PlayerList = Program.Values.Where(c => c.LobbySignup).ToArray();
                                     if (PlayerList != null) {
                                         var sslist = PlayerList.Where(c => c.MatchType == Lobby.MatchType.FBSS)
                                             .ToArray();

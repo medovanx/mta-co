@@ -869,7 +869,7 @@ namespace MTA
                 TeleEffect(client, 38, 60, 2222, 24);
                 if (client.Entity.X == 38 && client.Entity.Y == 40)
                 {
-                    if (tele == false)
+                    if (!tele)
                     {
                         client.Entity.Teleport(1002, 428, 379);
                         tele = true;
@@ -878,7 +878,7 @@ namespace MTA
                 }
                 else if (client.Entity.X == 38 && client.Entity.Y == 45)
                 {
-                    if (tele1 == false)
+                    if (!tele1)
                     {
                         client.Entity.Teleport(2323, 50, 50);
                         tele1 = true;
@@ -887,7 +887,7 @@ namespace MTA
                 }
                 else if (client.Entity.X == 38 && client.Entity.Y == 50)
                 {
-                    if (tele2 == false)
+                    if (!tele2)
                     {
 
                         client.Entity.Teleport(1002, 428, 379);
@@ -897,7 +897,7 @@ namespace MTA
                 }
                 else if (client.Entity.X == 38 && client.Entity.Y == 55)
                 {
-                    if (tele3 == false)
+                    if (!tele3)
                     {
                         client.Entity.Teleport(2323, 50, 50);
 
@@ -907,7 +907,7 @@ namespace MTA
                 }
                 else if (client.Entity.X == 38 && client.Entity.Y == 60)
                 {
-                    if (tele4 == false)
+                    if (!tele4)
                     {
 
                         client.Entity.Teleport(1002, 428, 379);
@@ -925,7 +925,7 @@ namespace MTA
                 TeleEffect(client, 38, 60, 2323, 24);
                 if (client.Entity.X == 38 && client.Entity.Y == 40)
                 {
-                    if (tele5 == false)
+                    if (!tele5)
                     {
                         client.Entity.Teleport(1002, 428, 379);
                         tele5 = true;
@@ -934,7 +934,7 @@ namespace MTA
                 }
                 else if (client.Entity.X == 38 && client.Entity.Y == 50)
                 {
-                    if (tele6 == false)
+                    if (!tele6)
                     {
                         client.Entity.Teleport(2121, 50, 50);
                         tele6 = true;
@@ -943,7 +943,7 @@ namespace MTA
                 }
                 else if (client.Entity.X == 38 && client.Entity.Y == 60)
                 {
-                    if (tele7 == false)
+                    if (!tele7)
                     {
                         client.Entity.Teleport(1002, 428, 379);
                         tele7 = true;
@@ -1370,7 +1370,7 @@ namespace MTA
                 }
             }
             #endregion
-            if (client.Entity.race == 1 && cycolne1 == true)
+            if (client.Entity.race == 1 && cycolne1)
             {
                 client.Entity.RemoveFlag(Update.Flags.Ride);
 
@@ -1458,7 +1458,7 @@ namespace MTA
             {
                 if (!Valid(client)) return;
                 #region Winners for FB and SS
-                if (client.Entity.aWinner == true)
+                if (client.Entity.aWinner)
                 {
                     if (Time32.Now > client.Entity.WinnerWaiting.AddSeconds(1))
                     {
@@ -1526,7 +1526,7 @@ namespace MTA
                     }
                 }
 
-                if ((client.Entity.attributes9 == true) && (DateTime.Now > client.Entity.attributestime9.AddSeconds(80.0)) && client.Entity.StartTimer)
+                if (client.Entity.attributes9 && (DateTime.Now > client.Entity.attributestime9.AddSeconds(80.0)) && client.Entity.StartTimer)
                 {
                     client.Entity.MaxAttack -= 3000;
                     client.Entity.MinAttack -= 3000;
@@ -1535,47 +1535,47 @@ namespace MTA
                     client.Entity.MagicAttack -= 3000;
                     client.Entity.attributes9 = false;
                 }
-                if ((client.Entity.attributes8 == true) && (DateTime.Now > client.Entity.attributestime8.AddSeconds(80.0)) && client.Entity.StartTimer)
+                if (client.Entity.attributes8 && (DateTime.Now > client.Entity.attributestime8.AddSeconds(80.0)) && client.Entity.StartTimer)
                 {
                     client.Entity.attributes8 = false;
                 }
-                if ((client.Entity.attributes7 == true) && (DateTime.Now > client.Entity.attributestime7.AddSeconds(80.0)) && client.Entity.StartTimer)
+                if (client.Entity.attributes7 && (DateTime.Now > client.Entity.attributestime7.AddSeconds(80.0)) && client.Entity.StartTimer)
                 {
                     client.Entity.Breaktrough -= 1500;
                     client.Entity.attributes7 = false;
                 }
-                if ((client.Entity.attributes6 == true) && (DateTime.Now > client.Entity.attributestime6.AddSeconds(80.0)) && client.Entity.StartTimer)
+                if (client.Entity.attributes6 && (DateTime.Now > client.Entity.attributestime6.AddSeconds(80.0)) && client.Entity.StartTimer)
                 {
                     client.Entity.CriticalStrike -= 15000;
                     client.Entity.SkillCStrike -= 15000;
                     client.Entity.attributes6 = false;
                 }
-                if ((client.Entity.attributes5 == true) && (DateTime.Now > client.Entity.attributestime5.AddSeconds(80.0)) && client.Entity.StartTimer)
+                if (client.Entity.attributes5 && (DateTime.Now > client.Entity.attributestime5.AddSeconds(80.0)) && client.Entity.StartTimer)
                 {
                     client.Entity.Counteraction -= 1500;
                     client.Entity.attributes5 = false;
                 }
-                if ((client.Entity.attributes4 == true) && (DateTime.Now > client.Entity.attributestime4.AddSeconds(80.0)) && client.Entity.StartTimer)
+                if (client.Entity.attributes4 && (DateTime.Now > client.Entity.attributestime4.AddSeconds(80.0)) && client.Entity.StartTimer)
                 {
                     client.Entity.Immunity -= 15000;
                     client.Entity.attributes4 = false;
                 }
-                if ((client.Entity.attributes3 == true) && (DateTime.Now > client.Entity.attributestime3.AddSeconds(80.0)) && client.Entity.StartTimer)
+                if (client.Entity.attributes3 && (DateTime.Now > client.Entity.attributestime3.AddSeconds(80.0)) && client.Entity.StartTimer)
                 {
                     client.Entity.PhysicalDamageIncrease -= 3000;
                     client.Entity.attributes3 = false;
                 }
-                if ((client.Entity.attributes2 == true) && (DateTime.Now > client.Entity.attributestime2.AddSeconds(80.0)) && client.Entity.StartTimer)
+                if (client.Entity.attributes2 && (DateTime.Now > client.Entity.attributestime2.AddSeconds(80.0)) && client.Entity.StartTimer)
                 {
                     client.Entity.MagicDamageIncrease -= 3000;
                     client.Entity.attributes2 = false;
                 }
-                if ((client.Entity.attributes1 == true) && (DateTime.Now > client.Entity.attributestime1.AddSeconds(80.0)) && client.Entity.StartTimer)
+                if (client.Entity.attributes1 && (DateTime.Now > client.Entity.attributestime1.AddSeconds(80.0)) && client.Entity.StartTimer)
                 {
                     client.Entity.PhysicalDamageDecrease -= 3000;
                     client.Entity.attributes1 = false;
                 }
-                if ((client.Entity.attributes == true) && (DateTime.Now > client.Entity.attributestime.AddSeconds(80.0)) && client.Entity.StartTimer)
+                if (client.Entity.attributes && (DateTime.Now > client.Entity.attributestime.AddSeconds(80.0)) && client.Entity.StartTimer)
                 {
                     client.Entity.MagicDamageDecrease -= 3000;
                     client.Entity.attributes = false;
