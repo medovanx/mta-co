@@ -278,7 +278,7 @@ namespace MTA.MaTrix {
                                 client.Entity.AddFlag(Update.Flags.Stigma);
                                 client.Entity.StigmaStamp = Time32.Now;
                                 client.Entity.StigmaIncrease = 50;
-                                client.Entity.StigmaTime = (byte)60;
+                                client.Entity.StigmaTime = 60;
                                 if (client.Entity.EntityFlag == EntityFlag.Player)
                                     client.Entity.Owner.Send(Constants.Stigma(50, 60));
                             }
@@ -303,7 +303,7 @@ namespace MTA.MaTrix {
                                 client.Entity.AddFlag(Update.Flags.MagicShield);
                                 client.Entity.ShieldStamp = Time32.Now;
                                 client.Entity.ShieldIncrease = 1.1f;
-                                client.Entity.ShieldTime = (byte)60;
+                                client.Entity.ShieldTime = 60;
                                 if (client.Entity.EntityFlag == EntityFlag.Player)
                                     client.Entity.Owner.Send(Constants.Shield(50, 60));
                             }

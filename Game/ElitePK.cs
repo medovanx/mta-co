@@ -65,7 +65,7 @@ namespace MTA.Game
 
                 LoadTop8();
 
-                WaitingArea = Kernel.Maps[(ushort)ElitePKTournament.WaitingAreaID].MakeDynamicMap();
+                WaitingArea = Kernel.Maps[ElitePKTournament.WaitingAreaID].MakeDynamicMap();
                 Constants.PKForbiddenMaps.Add(WaitingArea.ID);
 
                 State = States.GUI_Top8Ranking;
@@ -224,7 +224,7 @@ namespace MTA.Game
             {
                 get
                 {
-                    int val = (int)((ImportTime.AddMinutes(3).TotalMilliseconds - Time32.Now.TotalMilliseconds) / 1000);
+                    int val = (ImportTime.AddMinutes(3).TotalMilliseconds - Time32.Now.TotalMilliseconds) / 1000;
                     if (val < 0) val = 0;
                     return (uint)val;
                 }
@@ -428,7 +428,7 @@ namespace MTA.Game
                         double totalWager = target.ElitePKStats.Wager;
                         foreach (var kvp in target.ElitePKStats.Wagers)
                         {
-                            double ratio = (double)kvp.Value / totalWager;
+                            double ratio = kvp.Value / totalWager;
                             Client.GameState pClient;
                             if (Kernel.GamePool.TryGetValue(kvp.Key, out pClient))
                             {
@@ -1388,7 +1388,7 @@ namespace MTA.Game
         {
             get
             {
-                int value = (int)((pStamp.TotalMilliseconds - Time32.Now.TotalMilliseconds) / 1000);
+                int value = (pStamp.TotalMilliseconds - Time32.Now.TotalMilliseconds) / 1000;
                 if (value < 0) return 0;
                 return (ushort)value;
             }

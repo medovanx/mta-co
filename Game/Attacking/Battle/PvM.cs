@@ -222,7 +222,7 @@ namespace MTA
         private static Int32 AdjustMinDamageEntity2Monster(Double Damage, Entity Attacker, Entity Monster)
         {
             Int32 MinDmg = 1;
-            MinDmg += (Int32)(Attacker.Level / 10);
+            MinDmg += Attacker.Level / 10;
 
             var Item = Attacker.Owner.Equipment.TryGetItem(4);
             if (Item != null)

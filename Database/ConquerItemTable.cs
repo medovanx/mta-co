@@ -173,11 +173,11 @@ namespace MTA.Database
                                     }
                                     else
                                     {
-                                        using (var cmdx = new MySqlCommand(MySqlCommandType.SELECT).Select("items").Where("Uid", (uint)item.Warehouse))
+                                        using (var cmdx = new MySqlCommand(MySqlCommandType.SELECT).Select("items").Where("Uid", item.Warehouse))
                                         using (var readerx = new MySqlReader(cmdx))
                                             if (readerx.Read())
                                             {
-                                                client.Warehouses.Add((MTA.Game.ConquerStructures.Warehouse.WarehouseID)(uint)item.Warehouse, new MTA.Game.ConquerStructures.Warehouse(client, (MTA.Game.ConquerStructures.Warehouse.WarehouseID)(uint)item.Warehouse));
+                                                client.Warehouses.Add((MTA.Game.ConquerStructures.Warehouse.WarehouseID)item.Warehouse, new MTA.Game.ConquerStructures.Warehouse(client, (MTA.Game.ConquerStructures.Warehouse.WarehouseID)item.Warehouse));
                                                 client.Warehouses[(MTA.Game.ConquerStructures.Warehouse.WarehouseID)(uint)whID].Add(item);
                                             }
                                     }
@@ -270,7 +270,7 @@ namespace MTA.Database
             if (Item != null)
             {
                 using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE))
-                    cmd.Update("items").Set("Durability", (long)Item.Durability).Where("UID", (long)Item.UID).And("ID", (long)ItemID).Execute();
+                    cmd.Update("items").Set("Durability", Item.Durability).Where("UID", Item.UID).And("ID", ItemID).Execute();
             }
         }
 
@@ -280,7 +280,7 @@ namespace MTA.Database
             {
                 connection.Open();
                 using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE))
-                    cmd.Update("items").Set("Durability", (long)0L).Where("UID", (long)Item.UID).Execute(connection);
+                    cmd.Update("items").Set("Durability", 0L).Where("UID", Item.UID).Execute(connection);
                 connection.Close();
             }
         }
@@ -436,7 +436,7 @@ namespace MTA.Database
             {
                 using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE))
                     cmd.Update("items").Set("EntityID", client.Entity.UID)
-                        .Set("Position", Item.Position).Set("Warehouse", (uint)Item.Warehouse)
+                        .Set("Position", Item.Position).Set("Warehouse", Item.Warehouse)
                         .Where("UID", Item.UID).Execute();
             }
             else
@@ -532,7 +532,7 @@ namespace MTA.Database
         public static bool IsThere(uint uid)
         {
             MySqlCommand command = new MySqlCommand(MySqlCommandType.SELECT);
-            command.Select("items").Where("UID", (long)uid);
+            command.Select("items").Where("UID", uid);
             MySqlReader reader = new MySqlReader(command);
             if (reader.Read())
             {

@@ -119,7 +119,7 @@ namespace MTA.Game
                             string str = "No  " + (Place + 1).ToString() + ": " + entry.Key.Name + "(" + entry.Value + ")";
 
                             Message msg = new Message(str, System.Drawing.Color.Red, Place == 0 ? Message.FirstRightCorner : Message.ContinueRightCorner);
-                            Kernel.SendWorldMessage(msg, Program.Values, (ushort)currentMap.ID);
+                            Kernel.SendWorldMessage(msg, Program.Values, currentMap.ID);
                             Place++;
                             if (Place == 4) break;
                         }

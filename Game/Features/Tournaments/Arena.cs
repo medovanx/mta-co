@@ -81,9 +81,9 @@ namespace MTA.Game
 
                     QualifierGroup entry = GroupsList[count];
 
-                    wtr.Write((uint)entry.Player1.ArenaStatistic.EntityID);
+                    wtr.Write(entry.Player1.ArenaStatistic.EntityID);
                     wtr.Write((uint)0);
-                    wtr.Write((uint)entry.Player1.ArenaStatistic.Model);
+                    wtr.Write(entry.Player1.ArenaStatistic.Model);
                     byte[] array = Encoding.Default.GetBytes(entry.Player1.ArenaStatistic.Name);
                     for (int i = 0; i < 16; i++)
                     {
@@ -98,17 +98,17 @@ namespace MTA.Game
                     wtr.Write((uint)entry.Player1.ArenaStatistic.Level);
                     wtr.Write((uint)entry.Player1.ArenaStatistic.Class);
                     wtr.Write((uint)0);
-                    wtr.Write((uint)entry.Player1.ArenaStatistic.Rank);
-                    wtr.Write((uint)entry.Player1.ArenaPoints);
-                    wtr.Write((uint)entry.Player1.ArenaStatistic.TodayWin);
-                    wtr.Write((uint)(entry.Player1.ArenaStatistic.TodayBattles - entry.Player1.ArenaStatistic.TodayWin));
-                    wtr.Write((uint)entry.Player1.CurrentHonor);
-                    wtr.Write((uint)entry.Player1.HistoryHonor);
+                    wtr.Write(entry.Player1.ArenaStatistic.Rank);
+                    wtr.Write(entry.Player1.ArenaPoints);
+                    wtr.Write(entry.Player1.ArenaStatistic.TodayWin);
+                    wtr.Write(entry.Player1.ArenaStatistic.TodayBattles - entry.Player1.ArenaStatistic.TodayWin);
+                    wtr.Write(entry.Player1.CurrentHonor);
+                    wtr.Write(entry.Player1.HistoryHonor);
 
 
-                    wtr.Write((uint)entry.Player2.ArenaStatistic.EntityID);
+                    wtr.Write(entry.Player2.ArenaStatistic.EntityID);
                     wtr.Write((uint)0);
-                    wtr.Write((uint)entry.Player2.ArenaStatistic.Model);
+                    wtr.Write(entry.Player2.ArenaStatistic.Model);
 
                     byte[] array2 = Encoding.Default.GetBytes(entry.Player2.ArenaStatistic.Name);
                     for (int i = 0; i < 16; i++)
@@ -124,12 +124,12 @@ namespace MTA.Game
                     wtr.Write((uint)entry.Player2.ArenaStatistic.Level);
                     wtr.Write((uint)entry.Player2.ArenaStatistic.Class);
                     wtr.Write((uint)0);
-                    wtr.Write((uint)entry.Player2.ArenaStatistic.Rank);
-                    wtr.Write((uint)entry.Player2.ArenaPoints);
-                    wtr.Write((uint)entry.Player2.ArenaStatistic.TodayWin);
-                    wtr.Write((uint)(entry.Player2.ArenaStatistic.TodayBattles - entry.Player2.ArenaStatistic.TodayWin));
-                    wtr.Write((uint)entry.Player2.CurrentHonor);
-                    wtr.Write((uint)entry.Player2.HistoryHonor);
+                    wtr.Write(entry.Player2.ArenaStatistic.Rank);
+                    wtr.Write(entry.Player2.ArenaPoints);
+                    wtr.Write(entry.Player2.ArenaStatistic.TodayWin);
+                    wtr.Write(entry.Player2.ArenaStatistic.TodayBattles - entry.Player2.ArenaStatistic.TodayWin);
+                    wtr.Write(entry.Player2.CurrentHonor);
+                    wtr.Write(entry.Player2.HistoryHonor);
                 }
                 GroupsList = null;
                 int packetlength = (int)strm.Length;
@@ -154,14 +154,14 @@ namespace MTA.Game
                     BinaryWriter wtr = new BinaryWriter(strm);
                     wtr.Write((ushort)38);
                     wtr.Write((ushort)2211);
-                    wtr.Write((ushort)id);
+                    wtr.Write(id);
                     wtr.Write((ulong)0);
                     wtr.Write((uint)list.Count);
-                    wtr.Write((uint)Player1Cheers);
-                    wtr.Write((uint)Player2Cheers);
+                    wtr.Write(Player1Cheers);
+                    wtr.Write(Player2Cheers);
                     foreach (Client.GameState client in list)
                     {
-                        wtr.Write((uint)client.Entity.Mesh);
+                        wtr.Write(client.Entity.Mesh);
                         for (int i = 0; i < 16; i++)
                         {
                             if (i < client.ArenaStatistic.Name.Length)
@@ -171,10 +171,10 @@ namespace MTA.Game
                             else
                                 wtr.Write((byte)0);
                         }
-                        wtr.Write((uint)client.Entity.UID);
+                        wtr.Write(client.Entity.UID);
                         wtr.Write((uint)client.ArenaStatistic.Level);
                         wtr.Write((uint)client.ArenaStatistic.Class);
-                        wtr.Write((uint)client.ArenaStatistic.Rank);
+                        wtr.Write(client.ArenaStatistic.Rank);
                     }
                     int packetlength = (int)strm.Length;
                     strm.Position = 0;
@@ -564,7 +564,7 @@ namespace MTA.Game
                 foreach (ArenaStatistic entry in YesterdayArenaStatisticsList)
                 {
                     MyCount++;
-                    wtr.Write((uint)entry.EntityID);
+                    wtr.Write(entry.EntityID);
                     byte[] array = Program.Encoding.GetBytes(entry.Name);
                     for (int i = 0; i < 16; i++)
                     {
@@ -573,14 +573,14 @@ namespace MTA.Game
                         else
                             wtr.Write((byte)0);
                     }
-                    wtr.Write((uint)entry.Model);
+                    wtr.Write(entry.Model);
                     wtr.Write((uint)entry.Level);
                     wtr.Write((uint)entry.Class);
-                    wtr.Write((uint)entry.LastSeasonRank);
-                    wtr.Write((uint)entry.LastSeasonRank);
-                    wtr.Write((uint)entry.LastSeasonArenaPoints);
-                    wtr.Write((uint)entry.LastSeasonWin);
-                    wtr.Write((uint)entry.LastSeasonLose);
+                    wtr.Write(entry.LastSeasonRank);
+                    wtr.Write(entry.LastSeasonRank);
+                    wtr.Write(entry.LastSeasonArenaPoints);
+                    wtr.Write(entry.LastSeasonWin);
+                    wtr.Write(entry.LastSeasonLose);
                     if (MyCount == 11)
                         break;
                 }
@@ -670,7 +670,7 @@ namespace MTA.Game
             }
             public byte[] BuildPacket()
             {
-                byte[] buff = new byte[(int)(16 + Players.Count * 36 + 8)];
+                byte[] buff = new byte[16 + Players.Count * 36 + 8];
                 Network.Writer.WriteUInt16((ushort)(buff.Length - 8), 0, buff);
                 Network.Writer.WriteUInt16(Type, 2, buff);
                 Network.Writer.WriteUInt16(Subtype, 4, buff);
@@ -693,17 +693,17 @@ namespace MTA.Game
                     offset += 18;
 
                     if (Subtype == 1)
-                        Network.Writer.WriteUInt32((uint)entry.CurrentHonor, offset, buff);
+                        Network.Writer.WriteUInt32(entry.CurrentHonor, offset, buff);
                     else
-                        Network.Writer.WriteUInt32((uint)entry.ArenaPoints, offset, buff);
+                        Network.Writer.WriteUInt32(entry.ArenaPoints, offset, buff);
                     offset += 4;
 
-                    Network.Writer.WriteUInt32((uint)entry.Class, offset, buff);
+                    Network.Writer.WriteUInt32(entry.Class, offset, buff);
                     offset += 4;
-                    Network.Writer.WriteUInt32((uint)entry.Level, offset, buff);
+                    Network.Writer.WriteUInt32(entry.Level, offset, buff);
                     offset += 4;
 
-                    Network.Writer.WriteUInt32((uint)0, offset, buff);
+                    Network.Writer.WriteUInt32(0, offset, buff);
                     offset += 4;
                 }
                 return buff;
@@ -747,10 +747,10 @@ namespace MTA.Game
                     Stats.Name = "";
                 }
                 wtr.Write((ushort)0);
-                wtr.Write((ushort)Type);
-                wtr.Write((uint)DialogID);
-                wtr.Write((uint)OptionID);
-                wtr.Write((uint)Stats.EntityID);
+                wtr.Write(Type);
+                wtr.Write(DialogID);
+                wtr.Write(OptionID);
+                wtr.Write(Stats.EntityID);
                 wtr.Write((uint)0);
                 byte[] array = Encoding.Default.GetBytes(Stats.Name);
                 for (int i = 0; i < 20; i++)
@@ -763,8 +763,8 @@ namespace MTA.Game
                         wtr.Write((byte)0);
                 }
                 wtr.Write((uint)Stats.Class);
-                wtr.Write((uint)Stats.Rank);
-                wtr.Write((uint)Stats.ArenaPoints);
+                wtr.Write(Stats.Rank);
+                wtr.Write(Stats.ArenaPoints);
                 wtr.Write((uint)Stats.Level);
                 int packetlength = (int)strm.Length;
                 strm.Position = 0;
@@ -791,8 +791,8 @@ namespace MTA.Game
                 BinaryWriter wtr = new BinaryWriter(strm);
 
                 wtr.Write((ushort)60);
-                wtr.Write((ushort)Type);
-                wtr.Write((uint)Group.Player1.ArenaStatistic.EntityID);
+                wtr.Write(Type);
+                wtr.Write(Group.Player1.ArenaStatistic.EntityID);
                 wtr.Write((uint)0);
                 byte[] array = Encoding.Default.GetBytes(Group.Player1.ArenaStatistic.Name);
                 for (int i = 0; i < 16; i++)
@@ -804,8 +804,8 @@ namespace MTA.Game
                     else
                         wtr.Write((byte)0);
                 }
-                wtr.Write((uint)Group.Player1Damage);
-                wtr.Write((uint)Group.Player2.ArenaStatistic.EntityID);
+                wtr.Write(Group.Player1Damage);
+                wtr.Write(Group.Player2.ArenaStatistic.EntityID);
                 wtr.Write((uint)0);
                 byte[] array2 = Encoding.Default.GetBytes(Group.Player2.ArenaStatistic.Name);
                 for (int i = 0; i < 16; i++)
@@ -817,7 +817,7 @@ namespace MTA.Game
                     else
                         wtr.Write((byte)0);
                 }
-                wtr.Write((uint)Group.Player2Damage);
+                wtr.Write(Group.Player2Damage);
                 wtr.Write(Encoding.Default.GetBytes("TQServer"));
                 strm.Position = 0;
                 byte[] buf = new byte[strm.Length];

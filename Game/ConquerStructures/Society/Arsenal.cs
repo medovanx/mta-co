@@ -220,7 +220,7 @@ namespace MTA.Game.ConquerStructures.Society
                     client.ArsenalDonations[Position] += aItem.DonationWorth;
                     Donation += aItem.DonationWorth;
                     using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE))
-                        cmd.Update("entities").Set("GuildArsenalDonation", (uint)Donation).Where("UID", client.Entity.UID)
+                        cmd.Update("entities").Set("GuildArsenalDonation", Donation).Where("UID", client.Entity.UID)
                             .Execute();
                 }
             }
@@ -235,7 +235,7 @@ namespace MTA.Game.ConquerStructures.Society
                 client.ArsenalDonations[Position] -= item.DonationWorth;
                 Donation -= item.DonationWorth;
                 using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE))
-                    cmd.Update("entities").Set("GuildArsenalDonation", (uint)Donation).Where("UID", client.Entity.UID)
+                    cmd.Update("entities").Set("GuildArsenalDonation", Donation).Where("UID", client.Entity.UID)
                         .Execute();
             }
             OrderList();

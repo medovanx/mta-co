@@ -100,7 +100,7 @@ namespace MTA.Network.GamePackets
             offset += 4;
             WriteUInt16((ushort)match.Players.Length, offset, Buffer);
             offset += 2;
-            WriteUInt16((ushort)match.Index, offset, Buffer);
+            WriteUInt16(match.Index, offset, Buffer);
             offset += 2;
             if (match.Players.Length == 1)
                 WriteUInt16((ushort)ElitePK.Match.StatusFlag.OK, offset, Buffer);

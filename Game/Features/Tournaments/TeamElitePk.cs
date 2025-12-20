@@ -160,7 +160,7 @@ namespace MTA.Game.Features.Tournaments {
 
                 MatchCounter = new Counter((uint)(GroupID * 100000 + 100000));
 
-                WaitingArea = Kernel.Maps[(ushort)ElitePKTournament.WaitingAreaID].MakeDynamicMap();
+                WaitingArea = Kernel.Maps[ElitePKTournament.WaitingAreaID].MakeDynamicMap();
                 Constants.PKForbiddenMaps.Add(WaitingArea.ID);
 
                 State = States.GUI_Top8Ranking;
@@ -170,7 +170,7 @@ namespace MTA.Game.Features.Tournaments {
 
         public ushort TimeLeft {
             get {
-                int value = (int)((pStamp.TotalMilliseconds - Time32.Now.TotalMilliseconds) / 1000);
+                int value = (pStamp.TotalMilliseconds - Time32.Now.TotalMilliseconds) / 1000;
                 if (value < 0) return 0;
                 return (ushort)value;
             }
@@ -1148,10 +1148,10 @@ namespace MTA.Game.Features.Tournaments {
                     if (matches.Length > ccount) {
                         ushort towcount = (ushort)(matches.Length - ccount);
                         TeamElitePkBrackets twobrackets =
-                            new TeamElitePkBrackets(ID, (int)towcount);
+                            new TeamElitePkBrackets(ID, towcount);
                         twobrackets.Group = (ushort)GroupID;
                         twobrackets.GUIType = (ushort)State;
-                        twobrackets.TotalMatchesOnRoom = (ushort)towcount;
+                        twobrackets.TotalMatchesOnRoom = towcount;
                         twobrackets.Page = (byte)page;
                         twobrackets.TimeLeft = TimeLeft;
                         twobrackets.ListCount = 1;
@@ -1201,7 +1201,7 @@ namespace MTA.Game.Features.Tournaments {
                             Twoqbrackets.Group = (ushort)GroupID;
                             Twoqbrackets.GUIType = (ushort)State;
                             Twoqbrackets.TotalMatchesOnRoom = (ushort)count;
-                            Twoqbrackets.Page = (byte)1;
+                            Twoqbrackets.Page = 1;
                             Twoqbrackets.TimeLeft = TimeLeft;
                             Twoqbrackets.MatchCount = (byte)((Top4MatchArray.Length + ExtendedMatchArray.Length) * 2);
                             Twoqbrackets.Type = type;
@@ -1223,7 +1223,7 @@ namespace MTA.Game.Features.Tournaments {
                             Twoqbrackets.GUIType = (ushort)State;
                             // Twoqbrackets.ListCount = 1;
                             Twoqbrackets.TotalMatchesOnRoom = (ushort)count;
-                            Twoqbrackets.Page = (byte)1;
+                            Twoqbrackets.Page = 1;
                             Twoqbrackets.TimeLeft = TimeLeft;
                             Twoqbrackets.MatchCount = (byte)MatchArray.Length;
                             Twoqbrackets.Type = type;
@@ -1638,7 +1638,7 @@ namespace MTA.Game.Features.Tournaments {
                     if (MatchStats.Length == 1)
                         val = 0;
                     else
-                        val = (int)((ImportTime.AddMinutes(4).TotalMilliseconds - Time32.Now.TotalMilliseconds) / 1000);
+                        val = (ImportTime.AddMinutes(4).TotalMilliseconds - Time32.Now.TotalMilliseconds) / 1000;
                     if (val < 0)
                         val = 0;
                     return (uint)val;

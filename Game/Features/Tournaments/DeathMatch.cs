@@ -77,7 +77,7 @@ namespace MTA.Game
                     foreach (var str in array)
                     {
                         Message msg = new Message(str, System.Drawing.Color.Red, Place == 0 ? Message.FirstRightCorner : Message.ContinueRightCorner);
-                        Kernel.SendWorldMessage(msg, Program.Values, (ushort)MAPID);
+                        Kernel.SendWorldMessage(msg, Program.Values, MAPID);
                         Place++;
                     }
                 }
@@ -274,7 +274,7 @@ namespace MTA.Game
                     foreach (var str in array)
                     {
                         Message msg = new Message(str, System.Drawing.Color.Red, Place == 0 ? Message.FirstRightCorner : Message.ContinueRightCorner);
-                        Kernel.SendWorldMessage(msg, Program.Values, (ushort)MAPID);
+                        Kernel.SendWorldMessage(msg, Program.Values, MAPID);
                         Place++;
                     }
                 }

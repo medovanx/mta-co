@@ -445,7 +445,7 @@ namespace MTA.Network.GamePackets {
                     case 5: {
                         ConquerItem Item;
                         if (C.Equipment.TryGetItem(Info.ItemUID, out Item)) {
-                            double percent = (double)Item.PerfectionProgress / (double)GetProgress(Item);
+                            double percent = Item.PerfectionProgress / (double)GetProgress(Item);
                             if (Kernel.Rate(percent)) {
                                 Item.PerfectionProgress = 0;
                                 Item.Perfectionlevel++;
@@ -621,7 +621,7 @@ namespace MTA.Network.GamePackets {
             if (Type == 16) Score = CalculateSubClassPoints(client);
             if (Type == 17) Score = PerfectionTable.PerfectionPoints(client, true);
             if (Type == 18) Score = PerfectionTable.PerfectionPoints(client, false);
-            if (Type == 19) Score = (uint)((uint)client.Entity.NobilityRank * 1000);
+            if (Type == 19) Score = (uint)client.Entity.NobilityRank * 1000;
             if (Type == 20) Score = client.Equipment.GetFullEquipmentLevelPoints;
             return Score;
         }
@@ -812,26 +812,26 @@ namespace MTA.Network.GamePackets {
             #region Gem
 
             if (!PacketHandler.IsTwoHand(item.ID)) {
-                if (item.SocketOne != (Enums.Gem)0) {
+                if (item.SocketOne != 0) {
                     if (item.SocketOne2 % 10 == 1) Points += 200;
                     if (item.SocketOne2 % 10 == 2) Points += 500;
                     if (item.SocketOne2 % 10 == 3) Points += 800;
                 }
 
-                if (item.SocketTwo != (Enums.Gem)0) {
+                if (item.SocketTwo != 0) {
                     if (item.SocketTwo2 % 10 == 1) Points += 200;
                     if (item.SocketTwo2 % 10 == 2) Points += 500;
                     if (item.SocketTwo2 % 10 == 3) Points += 800;
                 }
             }
             else {
-                if (item.SocketOne != (Enums.Gem)0) {
+                if (item.SocketOne != 0) {
                     if (item.SocketOne2 % 10 == 1) Points += 400;
                     if (item.SocketOne2 % 10 == 2) Points += 1000;
                     if (item.SocketOne2 % 10 == 3) Points += 1600;
                 }
 
-                if (item.SocketTwo != (Enums.Gem)0) {
+                if (item.SocketTwo != 0) {
                     if (item.SocketTwo2 % 10 == 1) Points += 400;
                     if (item.SocketTwo2 % 10 == 2) Points += 1000;
                     if (item.SocketTwo2 % 10 == 3) Points += 1600;
@@ -958,12 +958,12 @@ namespace MTA.Network.GamePackets {
             #region Socket
 
             if (!PacketHandler.IsTwoHand(item.ID)) {
-                if (item.SocketOne != (Enums.Gem)0) Points += 1000;
-                if (item.SocketTwo != (Enums.Gem)0) Points += 2500;
+                if (item.SocketOne != 0) Points += 1000;
+                if (item.SocketTwo != 0) Points += 2500;
             }
             else {
-                if (item.SocketOne != (Enums.Gem)0) Points += 2000;
-                if (item.SocketTwo != (Enums.Gem)0) Points += 5000;
+                if (item.SocketOne != 0) Points += 2000;
+                if (item.SocketTwo != 0) Points += 5000;
             }
 
             #endregion
@@ -1488,7 +1488,7 @@ namespace MTA.Network.GamePackets {
                         var pkt = new byte[8 + MS.Length];
                         MS.ToArray().CopyTo(pkt, 0);
                         Writer.WriteUshort((ushort)MS.Length, 0, pkt);
-                        Writer.WriteUshort((ushort)3257, 2, pkt);
+                        Writer.WriteUshort(3257, 2, pkt);
                         S = pkt;
                     }
                 }

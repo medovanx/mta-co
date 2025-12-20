@@ -15,7 +15,7 @@ namespace MTA.Network.GamePackets
             if (mode != 0)
             {
                 Buffer = new byte[28];
-                WriteUInt16((ushort)20, 0, Buffer);
+                WriteUInt16(20, 0, Buffer);
                 WriteUInt16(2031, 2, Buffer);
                 WriteUInt32((uint)Time32.timeGetTime().GetHashCode(), 4, Buffer);
                 Mode = mode;// for apprend mouse npc

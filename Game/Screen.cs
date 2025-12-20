@@ -94,7 +94,7 @@ namespace MTA.Game {
                         if (client.Spells.ContainsKey(12560)) {
                             var spell = client.Spells[12560];
                             var skill = SpellTable.SpellInformations[12560][spell.Level];
-                            limit += (int)skill.Power;
+                            limit += skill.Power;
                         }
                     }
 
@@ -131,13 +131,13 @@ namespace MTA.Game {
                 if (client.Entity.LotusEnergyStamp.Next(1000, time: time)) {
                     if (client.Entity.ContainsFlag3(Update.Flags3.AuroraLotus)) {
                         if (client.Entity.AuroraLotusEnergy < 220)
-                            client.Entity.AuroraLotusEnergy = (uint)Math.Min(220, client.Entity.AuroraLotusEnergy + 2);
+                            client.Entity.AuroraLotusEnergy = Math.Min(220, client.Entity.AuroraLotusEnergy + 2);
                         client.Entity.Lotus(client.Entity.AuroraLotusEnergy, Update.AuroraLotus);
                     }
 
                     if (client.Entity.ContainsFlag3(Update.Flags3.FlameLotus)) {
                         if (client.Entity.FlameLotusEnergy < 330)
-                            client.Entity.FlameLotusEnergy = (uint)Math.Min(330, client.Entity.FlameLotusEnergy + 3);
+                            client.Entity.FlameLotusEnergy = Math.Min(330, client.Entity.FlameLotusEnergy + 3);
                         client.Entity.Lotus(client.Entity.FlameLotusEnergy, Update.FlameLotus);
                     }
 
@@ -417,7 +417,7 @@ namespace MTA.Game {
                                         use.AddTarget(client.Entity, 0, null);
                                         Kernel.SendWorldMessage(use, Program.Values, monster.MapID);
 
-                                        client.Entity.AzureShieldDefence = (ushort)(3000 * 4);
+                                        client.Entity.AzureShieldDefence = 3000 * 4;
                                         client.Entity.AzureShieldLevel = 4;
                                         client.Entity.MagicShieldStamp = Time32.Now;
 
@@ -440,7 +440,7 @@ namespace MTA.Game {
 
                                         client.Entity.AddFlag2(Update.Flags2.EffectBall);
                                         client.Entity.NoDrugsStamp = Time32.Now;
-                                        client.Entity.NoDrugsTime = (short)60;
+                                        client.Entity.NoDrugsTime = 60;
                                         if (client.Entity.EntityFlag == EntityFlag.Player)
                                             client.Send(Constants.NoDrugs(60));
                                     }
@@ -678,7 +678,7 @@ namespace MTA.Game {
                                         }
                                         else {
                                             if (distance <= monster.MonsterInfo.AttackRange) {
-                                                if (client.Entity.ContainsFlag3((ulong)1UL << 53)) {
+                                                if (client.Entity.ContainsFlag3(1UL << 53)) {
                                                     var attack = new Attack(true);
                                                     attack.Attacker = client.Entity.UID;
                                                     attack.AttackType = Attack.Melee;

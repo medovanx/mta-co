@@ -93,7 +93,7 @@ namespace MTA.Network.GamePackets {
                 offset += 4;
                 WriteUshort((ushort)match.MatchStats.Length, offset, Buffer);
                 offset += 2;
-                WriteUshort((ushort)match.Index, offset, Buffer);
+                WriteUshort(match.Index, offset, Buffer);
                 offset += 2;
                 if (match.MatchStats.Length == 1)
                     WriteUshort((ushort)TeamElitePk.Match.StatusFlag.OK, offset, Buffer);

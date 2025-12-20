@@ -36,7 +36,7 @@ namespace MTA
 
             mData = new byte[141 + (Byte)(clanname.Length + leadername.Length) + 8];
             WriteUInt16((UInt16)(mData.Length - 8), 0, mData);
-            WriteUInt16((UInt16)1312, 2, mData);
+            WriteUInt16(1312, 2, mData);
 
             ID = clanid;
             Name = clanname;
@@ -45,7 +45,7 @@ namespace MTA
         {
             mData = new byte[141 + 8];
             WriteUInt16((UInt16)(mData.Length - 8), 0, mData);
-            WriteUInt16((UInt16)1312, 2, mData);
+            WriteUInt16(1312, 2, mData);
         }
         public UInt32 LeaderId
         {
@@ -60,7 +60,7 @@ namespace MTA
         public UInt32 ID
         {
             get { return BitConverter.ToUInt32(mData, 8); }
-            set { WriteUInt32((UInt32)value, 8, mData); }
+            set { WriteUInt32(value, 8, mData); }
         }
         public Byte Offset16
         {

@@ -207,7 +207,7 @@ namespace MTA.Network.GamePackets
         {
             byte[] Buffer = new byte[8 + 32];
             WriteUInt16((ushort)(Buffer.Length - 8), 0, Buffer);
-            WriteUInt16((ushort)10010, 2, Buffer);
+            WriteUInt16(10010, 2, Buffer);
             WriteUInt32((uint)Time32.timeGetTime().GetHashCode(), 4, Buffer);
             WriteInt32((int)Identifier, 8, Buffer);
             WriteInt32((int)Value1, 12, Buffer);

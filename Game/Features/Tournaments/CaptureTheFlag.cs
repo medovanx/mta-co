@@ -40,17 +40,17 @@ namespace MTA.Game
                 if (array != null)
                 {
                     byte b = 0;
-                    while ((int)b < array.Length && b != 9)
+                    while (b < array.Length && b != 9)
                     {
-                        Writer.WriteString(array[(int)b].Name, (int)num, this.Packet);
+                        Writer.WriteString(array[b].Name, num, this.Packet);
                         num += 16;
-                        Writer.WriteUInt32(array[(int)b].CTFPoints, (int)num, this.Packet);
+                        Writer.WriteUInt32(array[b].CTFPoints, num, this.Packet);
                         num += 4;
-                        Writer.WriteUInt32(array[(int)b].MemberCount, (int)num, this.Packet);
+                        Writer.WriteUInt32(array[b].MemberCount, num, this.Packet);
                         num += 4;
-                        Writer.WriteUInt64((ulong)array[(int)b].CTFdonationSilverold, (int)num, this.Packet);
+                        Writer.WriteUInt64(array[b].CTFdonationSilverold, num, this.Packet);
                         num += 8;
-                        Writer.WriteUInt32(array[(int)b].CTFdonationCPsold, (int)num, this.Packet);
+                        Writer.WriteUInt32(array[b].CTFdonationCPsold, num, this.Packet);
                         num += 4;
                         b += 1;
                     }
@@ -450,7 +450,7 @@ namespace MTA.Game
             Writer.WriteUInt32((uint)(array.Length), 14, buffer);
 
             Writer.WriteUInt32(client.Guild.CTFdonationCPsold, 18, buffer);
-            Writer.WriteUInt64((ulong)client.Guild.CTFdonationSilverold, 22, buffer);
+            Writer.WriteUInt64(client.Guild.CTFdonationSilverold, 22, buffer);
 
             int offset = 30;
             for (ushort x = (ushort)(page * maxcount - maxcount); x < page * maxcount; x++)
@@ -459,7 +459,7 @@ namespace MTA.Game
                 var guild = array[x];
                 Writer.WriteUInt32(guild.CTFdonationCPs, offset, buffer);
                 offset += 4;
-                Writer.WriteUInt64((ulong)guild.CTFdonationSilver, offset, buffer);
+                Writer.WriteUInt64(guild.CTFdonationSilver, offset, buffer);
                 offset += 8;
                 Writer.WriteString(guild.Name, offset, buffer);
                 offset += 0x24;
@@ -487,7 +487,7 @@ namespace MTA.Game
             Writer.WriteUInt32((uint)guild_array.Length, 14, buffer2);
             client.Guild = client.AsMember.Guild;
             Writer.WriteUInt32(client.Guild.CTFdonationCPsold, 0x12, buffer2);
-            Writer.WriteUInt64((ulong)client.Guild.CTFdonationSilverold, 0x16, buffer2);
+            Writer.WriteUInt64(client.Guild.CTFdonationSilverold, 0x16, buffer2);
             ushort offset = 30;
 
             for (ushort x = (ushort)(page * maxcount - maxcount); x < page * maxcount; x++)
@@ -496,7 +496,7 @@ namespace MTA.Game
                 var guild = guild_array[x];
                 Writer.WriteUInt32(guild.CTFdonationCPsold, offset, buffer2);
                 offset += 4;
-                Writer.WriteUInt64((ulong)guild.CTFdonationSilverold, offset, buffer2);
+                Writer.WriteUInt64(guild.CTFdonationSilverold, offset, buffer2);
                 offset += 8;
                 Writer.WriteString(guild.Name, offset, buffer2);
                 offset += 0x24;
@@ -586,7 +586,7 @@ namespace MTA.Game
             Writer.WriteUInt32((uint)array.Length, 10, buffer);
             Writer.WriteUInt32(5, 14, buffer);
             Writer.WriteUInt32(client.Guild.CTFdonationCPsold, 0x12, buffer);
-            Writer.WriteUInt64((ulong)client.Guild.CTFdonationSilverold, 0x16, buffer);
+            Writer.WriteUInt64(client.Guild.CTFdonationSilverold, 0x16, buffer);
 
             Writer.WriteUInt32((ushort)array.Length, 30, buffer);
 

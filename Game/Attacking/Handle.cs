@@ -277,19 +277,19 @@ namespace MTA.Game.Attacking {
 
             if (attack != null) {
                 switch (attack.AttackType) {
-                    case (uint)Attack.InteractionRequest:
+                    case Attack.InteractionRequest:
                         new InteractionRequest(attack, attacker);
                         return;
-                    case (uint)Attack.InteractionEffect:
+                    case Attack.InteractionEffect:
                         new InteractionEffect(attack, attacker);
                         return;
-                    case (uint)Attack.InteractionAccept:
+                    case Attack.InteractionAccept:
                         new InteractionAccept(attack, attacker);
                         return;
-                    case (uint)Attack.InteractionRefuse:
+                    case Attack.InteractionRefuse:
                         new InteractionRefuse(attack, attacker);
                         return;
-                    case (uint)Attack.InteractionStopEffect:
+                    case Attack.InteractionStopEffect:
                         new InteractionStopEffect(attack, attacker);
                         return;
                 }
@@ -375,7 +375,7 @@ namespace MTA.Game.Attacking {
                         switch (usespell) {
                             case 7:
                                 attacker.MonsterInfo.SpellID = 10361;
-                                attacked.AddFlag((ulong)Update.Flags.Stun);
+                                attacked.AddFlag(Update.Flags.Stun);
                                 attacked.ShockStamp = Time32.Now;
                                 attacked.Shock = 5;
                                 var upd1 = new GameCharacterUpdates(true);
@@ -385,7 +385,7 @@ namespace MTA.Game.Attacking {
                                 break;
                             case 20:
                                 attacker.MonsterInfo.SpellID = 10360;
-                                attacked.AddFlag((ulong)Update.Flags.Stun);
+                                attacked.AddFlag(Update.Flags.Stun);
                                 attacked.ShockStamp = Time32.Now;
                                 attacked.Shock = 5;
                                 var upd = new GameCharacterUpdates(true);
@@ -395,7 +395,7 @@ namespace MTA.Game.Attacking {
                                 break;
                             case 21:
                                 attacker.MonsterInfo.SpellID = 10361;
-                                attacked.AddFlag((ulong)Update.Flags.Stun);
+                                attacked.AddFlag(Update.Flags.Stun);
                                 attacked.ShockStamp = Time32.Now;
                                 attacked.Shock = 5;
                                 upd1 = new GameCharacterUpdates(true);
@@ -466,7 +466,7 @@ namespace MTA.Game.Attacking {
                                                 upd.UID = attackedd.UID;
                                                 upd.Add(GameCharacterUpdates.Flustered, 0, 5);
                                                 attackedd.Owner.SendScreen(upd, true);
-                                                attackedd.Owner.Entity.AddFlag((ulong)Update.Flags.ChaosCycle);
+                                                attackedd.Owner.Entity.AddFlag(Update.Flags.ChaosCycle);
                                             }
 
                                             #endregion
@@ -494,7 +494,7 @@ namespace MTA.Game.Attacking {
                                                 upd.UID = attackedd.UID;
                                                 upd.Add(GameCharacterUpdates.Dizzy, 0, 5);
                                                 attackedd.Owner.SendScreen(upd, true);
-                                                attackedd.Owner.Entity.AddFlag((ulong)Update.Flags.FreezeSmall);
+                                                attackedd.Owner.Entity.AddFlag(Update.Flags.FreezeSmall);
                                             }
 
                                             #endregion
@@ -799,7 +799,7 @@ namespace MTA.Game.Attacking {
 
                             SpellID = Convert.ToUInt16(((long)attack.ToArray()[28] & 0xFF) |
                                                        (((long)attack.ToArray()[29] & 0xFF) << 8));
-                            SpellID ^= (ushort)0x915d;
+                            SpellID ^= 0x915d;
                             SpellID ^= (ushort)attacker.UID;
                             SpellID = (ushort)(SpellID << 0x3 | SpellID >> 0xd);
                             SpellID -= 0xeb42;
@@ -809,12 +809,12 @@ namespace MTA.Game.Attacking {
                             #region GetCoords
 
                             X = (ushort)((attack.ToArray()[20] & 0xFF) | ((attack.ToArray()[21] & 0xFF) << 8));
-                            X = (ushort)(X ^ (uint)(attacker.UID & 0xffff) ^ 0x2ed6);
+                            X = (ushort)(X ^ attacker.UID & 0xffff ^ 0x2ed6);
                             X = (ushort)(((X << 1) | ((X & 0x8000) >> 15)) & 0xffff);
                             X = (ushort)((X | 0xffff0000) - 0xffff22ee);
 
                             Y = (ushort)((attack.ToArray()[22] & 0xFF) | ((attack.ToArray()[23] & 0xFF) << 8));
-                            Y = (ushort)(Y ^ (uint)(attacker.UID & 0xffff) ^ 0xb99b);
+                            Y = (ushort)(Y ^ attacker.UID & 0xffff ^ 0xb99b);
                             Y = (ushort)(((Y << 5) | ((Y & 0xF800) >> 11)) & 0xffff);
                             Y = (ushort)((Y | 0xffff0000) - 0xffff8922);
 
@@ -1902,7 +1902,7 @@ namespace MTA.Game.Attacking {
                                                         if (attacked.EntityFlag == EntityFlag.Player)
                                                             attacked.Owner.BreakTouch(attacker.Owner);
 
-                                                        attacker.FlameLotusEnergy = (uint)Math.Min(330,
+                                                        attacker.FlameLotusEnergy = Math.Min(330,
                                                             attacker.FlameLotusEnergy + 1);
                                                         attacker.Lotus(attacker.FlameLotusEnergy, Update.FlameLotus);
                                                     }
@@ -2502,7 +2502,7 @@ namespace MTA.Game.Attacking {
                                                                         if (attacked.EntityFlag == EntityFlag.Player)
                                                                             attacked.Owner.BreakTouch(attacker.Owner);
 
-                                                                        attacker.FlameLotusEnergy = (uint)Math.Min(330,
+                                                                        attacker.FlameLotusEnergy = Math.Min(330,
                                                                             attacker.FlameLotusEnergy + 1);
                                                                         attacker.Lotus(attacker.FlameLotusEnergy,
                                                                             Update.FlameLotus);
@@ -3554,7 +3554,7 @@ namespace MTA.Game.Attacking {
                                         }
                                         else {
                                             if (attacker.Owner.Map.ID == 1036 &&
-                                                attacker.Owner.Equipment.TryGetItem((byte)12).Plus < 6)
+                                                attacker.Owner.Equipment.TryGetItem(12).Plus < 6)
                                                 break;
                                             if (attacker.Owner.Map.ID == 1038)
                                                 return;
@@ -3562,9 +3562,9 @@ namespace MTA.Game.Attacking {
                                                 attacker.AddFlag(Update.Flags.Ride);
                                                 attacker.Stamina -= 100;
                                                 attacker.Owner.Vigor = attacker.Owner.MaxVigor;
-                                                this.attacker.Vigor = (ushort)(this.attacker.Owner.MaxVigor);
+                                                this.attacker.Vigor = this.attacker.Owner.MaxVigor;
                                                 new Vigor(true) {
-                                                    Amount = (uint)this.attacker.Owner.Vigor
+                                                    Amount = this.attacker.Owner.Vigor
                                                 }.Send(this.attacker.Owner);
                                             }
                                         }
@@ -3780,7 +3780,7 @@ namespace MTA.Game.Attacking {
                                                             if (attacked.EntityFlag == EntityFlag.Player)
                                                                 attacked.Owner.BreakTouch(attacker.Owner);
 
-                                                            attacker.FlameLotusEnergy = (uint)Math.Min(330,
+                                                            attacker.FlameLotusEnergy = Math.Min(330,
                                                                 attacker.FlameLotusEnergy + 1);
                                                             attacker.Lotus(attacker.FlameLotusEnergy,
                                                                 Update.FlameLotus);
@@ -5132,7 +5132,7 @@ namespace MTA.Game.Attacking {
                                                 aupgrade.UID = attacker.UID;
                                                 aupgrade.Append(49
                                                     , 113
-                                                    , (uint)0, 0, 0);
+                                                    , 0, 0, 0);
                                                 attacker.Send(aupgrade);
                                                 attacker.IsShieldBlock = false;
                                             }
@@ -5525,7 +5525,7 @@ namespace MTA.Game.Attacking {
 
                                                             var damage2 = Calculate.Magic(attacker, attacked, spell,
                                                                 ref attack);
-                                                            damage2 = (uint)(damage2 / 2);
+                                                            damage2 = damage2 / 2;
                                                             ReceiveAttack(attacker, attacked, attack, ref damage2,
                                                                 spell);
 
@@ -6997,7 +6997,7 @@ namespace MTA.Game.Attacking {
                                                             attack.AttackType == Attack.Melee)) {
                                                         var damage = Calculate.Melee(attacker, attacked, spell,
                                                             ref attack);
-                                                        damage = (uint)(damage * 1);
+                                                        damage = damage * 1;
                                                         ReceiveAttack(attacker, attacked, attack, ref damage, spell);
 
                                                         suse.AddTarget(attacked, damage, attack);
@@ -7395,10 +7395,10 @@ namespace MTA.Game.Attacking {
                                                         attacked.Y) <= 12) {
                                                     int R = Kernel.Random.Next(1, 10);
                                                     if (R != 4) continue;
-                                                    if (attacked.ContainsFlag2((ulong)Update.Flags2.SoulShackle)) {
+                                                    if (attacked.ContainsFlag2(Update.Flags2.SoulShackle)) {
                                                         suse.AddTarget(attacked, 0, attack);
 
-                                                        attacked.RemoveFlag2((ulong)Update.Flags2.SoulShackle);
+                                                        attacked.RemoveFlag2(Update.Flags2.SoulShackle);
                                                     }
                                                 }
                                             }
@@ -7508,7 +7508,7 @@ namespace MTA.Game.Attacking {
                                                     var distance = Kernel.Random.Next(spell.Range, spell.Distance);
                                                     var x2 = (ushort)(X + (distance * Math.Cos(r)));
                                                     var y2 = (ushort)(Y + (distance * Math.Sin(r)));
-                                                    Point point = new Point((int)x2, (int)y2);
+                                                    Point point = new Point(x2, y2);
                                                     if (!Area.Contains(point)) {
                                                         Area.Add(point);
                                                     }
@@ -7607,7 +7607,7 @@ namespace MTA.Game.Attacking {
                                                     var distance = Kernel.Random.Next(spell.Range, spell.Distance);
                                                     var x2 = (ushort)(X + (distance * Math.Cos(r)));
                                                     var y2 = (ushort)(Y + (distance * Math.Sin(r)));
-                                                    Point point = new Point((int)x2, (int)y2);
+                                                    Point point = new Point(x2, y2);
                                                     if (!Area.Contains(point)) {
                                                         Area.Add(point);
                                                     }
@@ -7822,7 +7822,7 @@ namespace MTA.Game.Attacking {
                                                                 ref attack) / 2;
                                                             damage = damage - (uint)(damage * .06);
                                                             suse.Effect1 = attack.Effect1;
-                                                            double dmg = (double)damage * .99;
+                                                            double dmg = damage * .99;
                                                             damage = (uint)dmg;
                                                             ReceiveAttack(attacker, attacked, attack, ref damage,
                                                                 spell);
@@ -7873,7 +7873,7 @@ namespace MTA.Game.Attacking {
                                         suse.SpellLevel = spell.Level;
                                         suse.X = X;
                                         suse.Y = Y;
-                                        attacker.AddFlag3((ulong)1UL << 53);
+                                        attacker.AddFlag3(1UL << 53);
                                         attacker.ManiacDance = Time32.Now;
                                         attacker.RemoveFlag(Update.Flags.Ride);
                                         attacker.Owner.SendScreen(suse, true);
@@ -7896,10 +7896,10 @@ namespace MTA.Game.Attacking {
                                     spellUse.Y = Y;
                                     spellUse.AddTarget(attacker, 1, attack);
                                     attacker.Owner.SendScreen(spellUse, true);
-                                    if (attacker.ContainsFlag3((ulong)1UL << 51))
-                                        attacker.RemoveFlag3((ulong)1UL << 51);
+                                    if (attacker.ContainsFlag3(1UL << 51))
+                                        attacker.RemoveFlag3(1UL << 51);
                                     else
-                                        attacker.AddFlag3((ulong)1UL << 51);
+                                        attacker.AddFlag3(1UL << 51);
                                     attacker.BackfireStamp = Time32.Now;
                                     break;
                                 }
@@ -8968,7 +8968,7 @@ namespace MTA.Game.Attacking {
             }
 
             if (attacker.EntityFlag == EntityFlag.Player) {
-                if (attacker.Owner.Map.BaseID == (ushort)ElitePKTournament.WaitingAreaID) {
+                if (attacker.Owner.Map.BaseID == ElitePKTournament.WaitingAreaID) {
                     if (attacker.Owner.Team != null)
                         if (attacker.Owner.Team.EliteFighterStats != null)
                             return false;

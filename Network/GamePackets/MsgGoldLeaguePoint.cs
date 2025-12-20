@@ -14,7 +14,7 @@ namespace MTA.Network.GamePackets
         {
             Buffer = new byte[10 + 8];
             WriteUInt32(10, 0, Buffer);
-            WriteUInt32((ushort)2600, 2, Buffer);
+            WriteUInt32(2600, 2, Buffer);
         }
         public byte[] ToArray()
         {

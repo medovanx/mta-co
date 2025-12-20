@@ -14,9 +14,9 @@ namespace MTA.Game.ConquerStructures.Society
             wtr.Write((ushort)0);
             wtr.Write((ushort)1151);
             wtr.Write((uint)1);
-            wtr.Write((uint)uid);
+            wtr.Write(uid);
             wtr.Write((ushort)0);
-            wtr.Write((ushort)pagenumber);
+            wtr.Write(pagenumber);
             if (uid == 0x1c9c382)
                 wtr.Write((uint)(Math.Min(MTA.Game.Features.Flowers.Flowers.Redrosse.Count, 10)));
             if (uid == 0x1c9c3e6)
@@ -96,7 +96,7 @@ namespace MTA.Game.ConquerStructures.Society
                     }
                     wtr.Write((uint)MTA.Game.Features.Flowers.Flowers.Redrosse[b].rank);
                     wtr.Write((uint)0);
-                    wtr.Write((uint)MTA.Game.Features.Flowers.Flowers.Redrosse[b].redrosse);
+                    wtr.Write(MTA.Game.Features.Flowers.Flowers.Redrosse[b].redrosse);
                     wtr.Write((uint)0);
                     wtr.Write((uint)2301694);
                     for (int s = 0; s < 16; s++)
@@ -190,7 +190,7 @@ namespace MTA.Game.ConquerStructures.Society
                     }
                     wtr.Write((uint)MTA.Game.Features.Flowers.Flowers.Lilise[b].rank);
                     wtr.Write((uint)0);
-                    wtr.Write((uint)MTA.Game.Features.Flowers.Flowers.Lilise[b].lilise);
+                    wtr.Write(MTA.Game.Features.Flowers.Flowers.Lilise[b].lilise);
                     wtr.Write((uint)0);
                     wtr.Write((uint)2301694);
                     for (int s = 0; s < 16; s++)
@@ -284,7 +284,7 @@ namespace MTA.Game.ConquerStructures.Society
                     }
                     wtr.Write((uint)MTA.Game.Features.Flowers.Flowers.Orchides[b].rank);
                     wtr.Write((uint)0);
-                    wtr.Write((uint)MTA.Game.Features.Flowers.Flowers.Orchides[b].orchides);
+                    wtr.Write(MTA.Game.Features.Flowers.Flowers.Orchides[b].orchides);
                     wtr.Write((uint)0);
                     wtr.Write((uint)2301694);
                     for (int s = 0; s < 16; s++)
@@ -378,7 +378,7 @@ namespace MTA.Game.ConquerStructures.Society
                     }
                     wtr.Write((uint)MTA.Game.Features.Flowers.Flowers.Tuplise[b].rank);
                     wtr.Write((uint)0);
-                    wtr.Write((uint)MTA.Game.Features.Flowers.Flowers.Tuplise[b].tuplise);
+                    wtr.Write(MTA.Game.Features.Flowers.Flowers.Tuplise[b].tuplise);
                     wtr.Write((uint)0);
                     wtr.Write((uint)2301694);
                     for (int s = 0; s < 16; s++)

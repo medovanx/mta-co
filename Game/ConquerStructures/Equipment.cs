@@ -50,9 +50,9 @@ namespace MTA.Game.ConquerStructures
                         objects[Position - 1].IsWorn = false;
                         objects[Position - 1].Position = 0;
                         if (Position == 12)
-                            Owner.Entity.RemoveFlag((ulong)Update.Flags.Ride);
+                            Owner.Entity.RemoveFlag(Update.Flags.Ride);
                         if (Position == 4)
-                            Owner.Entity.RemoveFlag((ulong)Update.Flags.Fly);
+                            Owner.Entity.RemoveFlag(Update.Flags.Fly);
                         ItemUsage iu = new ItemUsage(true);
                         iu.UID = objects[Position - 1].UID;
                         iu.dwParam = Position;
@@ -282,13 +282,13 @@ namespace MTA.Game.ConquerStructures
                     if (item.Position > 19 || item.Position == 7 || item.Position == 9 || item.Position == 15 || item.Position == 16 || item.Position == 17) continue;
                     if (!Network.PacketHandler.IsTwoHand(item.ID))
                     {
-                        if (item.SocketOne != (Game.Enums.Gem)0)
+                        if (item.SocketOne != 0)
                         {
                             if (item.SocketOne2 % 10 == 1) val += 200;
                             if (item.SocketOne2 % 10 == 2) val += 500;
                             if (item.SocketOne2 % 10 == 3) val += 800;
                         }
-                        if (item.SocketTwo != (Game.Enums.Gem)0)
+                        if (item.SocketTwo != 0)
                         {
                             if (item.SocketTwo2 % 10 == 1) val += 200;
                             if (item.SocketTwo2 % 10 == 2) val += 500;
@@ -297,13 +297,13 @@ namespace MTA.Game.ConquerStructures
                     }
                     else
                     {
-                        if (item.SocketOne != (Game.Enums.Gem)0)
+                        if (item.SocketOne != 0)
                         {
                             if (item.SocketOne2 % 10 == 1) val += 400;
                             if (item.SocketOne2 % 10 == 2) val += 1000;
                             if (item.SocketOne2 % 10 == 3) val += 1600;
                         }
-                        if (item.SocketTwo != (Game.Enums.Gem)0)
+                        if (item.SocketTwo != 0)
                         {
                             if (item.SocketTwo2 % 10 == 1) val += 400;
                             if (item.SocketTwo2 % 10 == 2) val += 1000;
@@ -449,13 +449,13 @@ namespace MTA.Game.ConquerStructures
                     if (item.Position > 19 || item.Position == 7 || item.Position == 9 || item.Position == 15 || item.Position == 16 || item.Position == 17) continue;
                     if (!Network.PacketHandler.IsTwoHand(item.ID))
                     {
-                        if (item.SocketOne != (Game.Enums.Gem)0) val += 1000;
-                        if (item.SocketTwo != (Game.Enums.Gem)0) val += 2500;
+                        if (item.SocketOne != 0) val += 1000;
+                        if (item.SocketTwo != 0) val += 2500;
                     }
                     else
                     {
-                        if (item.SocketOne != (Game.Enums.Gem)0) val += 2000;
-                        if (item.SocketTwo != (Game.Enums.Gem)0) val += 5000;
+                        if (item.SocketOne != 0) val += 2000;
+                        if (item.SocketTwo != 0) val += 5000;
                     }
                 }
                 return val;
@@ -660,7 +660,7 @@ namespace MTA.Game.ConquerStructures
         {
             if (item == null) return;
             if (!item.IsWorn) return;
-            switch ((ushort)item.Position)
+            switch (item.Position)
             {
                 case Network.GamePackets.ConquerItem.AlternateHead:
                 case Network.GamePackets.ConquerItem.Head:
@@ -726,7 +726,7 @@ namespace MTA.Game.ConquerStructures
                 case Network.GamePackets.ConquerItem.Steed:
                     {
                         Network.Writer.WriteUInt32(item.ID, Steed, Owner.Entity.SpawnPacket);
-                        Network.Writer.WriteUInt16((byte)item.Plus, SteedPlus, Owner.Entity.SpawnPacket);
+                        Network.Writer.WriteUInt16(item.Plus, SteedPlus, Owner.Entity.SpawnPacket);
                         Network.Writer.WriteUInt32(item.SocketProgress, SteedColor, Owner.Entity.SpawnPacket);
                         break;
                     }
@@ -738,7 +738,7 @@ namespace MTA.Game.ConquerStructures
                 case Network.GamePackets.ConquerItem.Wing:
                     {
                         Network.Writer.WriteUInt32(item.ID, Wing, Owner.Entity.SpawnPacket);
-                        Network.Writer.WriteUInt16((byte)item.Plus, WingPlus, Owner.Entity.SpawnPacket);
+                        Network.Writer.WriteUInt16(item.Plus, WingPlus, Owner.Entity.SpawnPacket);
                         //Network.Writer.WriteUInt32(item.SocketProgress, WingColor, Owner.Entity.SpawnPacket);
                         break;
                     }

@@ -10,7 +10,7 @@ namespace MTA.Network.GamePackets
         {
             this.mData = new Byte[40 + 8];
             Writer.WriteUInt16((UInt16)(this.mData.Length - 8), 0, mData);
-            Writer.WriteUInt16((UInt16)2077, 2, mData);
+            Writer.WriteUInt16(2077, 2, mData);
         }
 
         public UInt32 Type

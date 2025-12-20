@@ -10,7 +10,7 @@ namespace MTA.Database {
                 uint count = (uint)Game.Features.Flowers.Flowers.Flowers_Poll.Count;
                 string[] array2 = new string[count];
                 for (uint num = 0u; num < count; num += 1u) {
-                    array2[(int)((UIntPtr)num)] = array[(int)((UIntPtr)num)].ToString();
+                    array2[(int)num] = array[(int)num].ToString();
                 }
 
                 write.Add(array2, array2.Length).Execute(Mode.Open);
@@ -22,7 +22,7 @@ namespace MTA.Database {
                 uint count2 = (uint)Game.Features.Flowers.Flowers.BoyFlowers.Count;
                 string[] array4 = new string[count2];
                 for (uint num2 = 0u; num2 < count2; num2 += 1u) {
-                    array4[(int)((UIntPtr)num2)] = array3[(int)((UIntPtr)num2)].ToString();
+                    array4[(int)num2] = array3[(int)num2].ToString();
                 }
 
                 write2.Add(array4, array4.Length).Execute(Mode.Open);
@@ -34,7 +34,7 @@ namespace MTA.Database {
                 if (read.Reader(true)) {
                     int count = read.Count;
                     uint num = 0u;
-                    while ((ulong)num < (ulong)((long)count)) {
+                    while (num < (ulong)count) {
                         string text = read.ReadString("");
                         if (text != null) {
                             Game.Features.Flowers.Flowers flowers = new Game.Features.Flowers.Flowers();
@@ -61,7 +61,7 @@ namespace MTA.Database {
                 if (read2.Reader(true)) {
                     int count2 = read2.Count;
                     uint num2 = 0u;
-                    while ((ulong)num2 < (ulong)((long)count2)) {
+                    while (num2 < (ulong)count2) {
                         string text2 = read2.ReadString("");
                         if (text2 != null) {
                             Game.Features.Flowers.Flowers flowers2 = new Game.Features.Flowers.Flowers();

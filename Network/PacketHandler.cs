@@ -374,7 +374,7 @@ namespace MTA.Network {
                                     if (Handle.CanAttack(client.Entity, attacked, spell, true)) {
                                         damage = Calculate.Melee(client.Entity, attacked, spell, ref attack);
                                         double power = (0.5);
-                                        damage = (uint)((double)damage * power / 8);
+                                        damage = (uint)(damage * power / 8);
                                         Handle.ReceiveAttack(Clone, attacked, attack, ref damage, spell);
                                         attack.Damage = damage;
                                         client.SendScreen(attack);
@@ -384,7 +384,7 @@ namespace MTA.Network {
                                     if (Handle.CanAttack(client.Entity, attacked, spell, false)) {
                                         damage = Calculate.Magic(client.Entity, attacked, spell, ref attack);
                                         double power = (0.5);
-                                        damage = (uint)((double)damage * power / 8);
+                                        damage = (uint)(damage * power / 8);
                                         Handle.ReceiveAttack(Clone, attacked, attack, ref damage, spell);
                                         attack.Damage = damage;
                                         client.SendScreen(attack);
@@ -413,7 +413,7 @@ namespace MTA.Network {
                                     if (Handle.CanAttack(client.Entity, attackedsob, null)) {
                                         damage = Calculate.Melee(client.Entity, attackedsob, ref attack);
                                         double power = ((MySpell.Power / 100.0) / 100.0);
-                                        damage = (uint)((double)damage * power);
+                                        damage = (uint)(damage * power);
                                         Handle.ReceiveAttack(Clone, attackedsob, attack, damage, null);
                                         attack.Damage = damage;
                                         client.SendScreen(attack);
@@ -423,7 +423,7 @@ namespace MTA.Network {
                                     if (Handle.CanAttack(client.Entity, attackedsob, spell)) {
                                         damage = Calculate.Magic(client.Entity, attackedsob, spell, ref attack);
                                         double power = ((MySpell.Power / 100.0) / 100.0);
-                                        damage = (uint)((double)damage * power);
+                                        damage = (uint)(damage * power);
                                         Handle.ReceiveAttack(Clone, attackedsob, attack, damage, spell);
                                         attack.Damage = damage;
                                         client.SendScreen(attack);
@@ -815,7 +815,7 @@ namespace MTA.Network {
                     switch (quest.Action) {
                         case QuestPacket.QuestAction.Begin: {
                             if (client.Quests.AllowAccept())
-                                client.Quests.Accept((QuestID)quest[0].UID, 0);
+                                client.Quests.Accept(quest[0].UID, 0);
                             client.Send(quest);
                             break;
                         }
@@ -1278,7 +1278,7 @@ namespace MTA.Network {
 
                         case 5: //Remove
                         {
-                            Spell.Soul_Level remove = Spell.SkillSoul_values[(int)packet[20]];
+                            Spell.Soul_Level remove = Spell.SkillSoul_values[packet[20]];
                             if (client.Spells[spell.ID].ContainsFlag(remove)) {
                                 client.Spells[spell.ID].RemoveFlag(remove);
                                 Data data = new Data(true);
@@ -1540,9 +1540,9 @@ namespace MTA.Network {
 
                                     if (iteminfo.BaseInformation.ConquerPointsWorth > obtined_points) {
                                         uint add_cps = 0;
-                                        add_cps = (uint)(iteminfo.BaseInformation.ConquerPointsWorth - obtined_points);
+                                        add_cps = iteminfo.BaseInformation.ConquerPointsWorth - obtined_points;
                                         if (add_cps < client.Entity.ConquerPoints) {
-                                            client.Entity.ConquerPoints -= (uint)add_cps;
+                                            client.Entity.ConquerPoints -= add_cps;
                                             foreach (uint key in amount.Keys) {
                                                 if (client.Inventory.ContainsUID(key))
                                                     client.Inventory.Remove(key, Enums.ItemUse.Remove, true);
@@ -2469,7 +2469,7 @@ namespace MTA.Network {
                                     Writer.Uint((uint)array.Length, 12, Buffer);
                                     int offset = 16;
                                     for (int i = 0; i < array.Length; i++) {
-                                        Writer.Uint((uint)array[i].Level, offset, Buffer); //level
+                                        Writer.Uint(array[i].Level, offset, Buffer); //level
                                         offset += 4;
                                         Writer.Uint((uint)(array[i].IsOnline ? 1 : 0), offset, Buffer); //online
                                         offset += 4;
@@ -3661,7 +3661,7 @@ namespace MTA.Network {
                                     item.Plus = 6;
                                     item.Durability = item.MaximDurability =
                                         ConquerItemInformation.BaseInformations[item.ID].Durability;
-                                    item.SocketProgress = (uint)(B | (G << 8) | (R << 16));
+                                    item.SocketProgress = B | (G << 8) | (R << 16);
                                     client.Inventory.Add(item, Enums.ItemUse.CreateAndAdd);
                                     client.Inventory.Remove(client.ActiveNpc, 1);
                                 }
@@ -3676,7 +3676,7 @@ namespace MTA.Network {
                                     item.Plus = 6;
                                     item.Durability = item.MaximDurability =
                                         ConquerItemInformation.BaseInformations[item.ID].Durability;
-                                    item.SocketProgress = (uint)(B | (G << 8) | (R << 16));
+                                    item.SocketProgress = B | (G << 8) | (R << 16);
                                     client.Inventory.Add(item, Enums.ItemUse.CreateAndAdd);
                                     client.Inventory.Remove(client.ActiveNpc, 1);
                                 }
@@ -3691,7 +3691,7 @@ namespace MTA.Network {
                                     item.Plus = 6;
                                     item.Durability = item.MaximDurability =
                                         ConquerItemInformation.BaseInformations[item.ID].Durability;
-                                    item.SocketProgress = (uint)(B | (G << 8) | (R << 16));
+                                    item.SocketProgress = B | (G << 8) | (R << 16);
                                     client.Inventory.Add(item, Enums.ItemUse.CreateAndAdd);
                                     client.Inventory.Remove(client.ActiveNpc, 1);
                                 }
@@ -3706,7 +3706,7 @@ namespace MTA.Network {
                                     item.Plus = 6;
                                     item.Durability = item.MaximDurability =
                                         ConquerItemInformation.BaseInformations[item.ID].Durability;
-                                    item.SocketProgress = (uint)(B | (G << 8) | (R << 16));
+                                    item.SocketProgress = B | (G << 8) | (R << 16);
                                     client.Inventory.Add(item, Enums.ItemUse.CreateAndAdd);
                                     client.Inventory.Remove(client.ActiveNpc, 1);
                                 }
@@ -3721,7 +3721,7 @@ namespace MTA.Network {
                                     item.Plus = 6;
                                     item.Durability = item.MaximDurability =
                                         ConquerItemInformation.BaseInformations[item.ID].Durability;
-                                    item.SocketProgress = (uint)(B | (G << 8) | (R << 16));
+                                    item.SocketProgress = B | (G << 8) | (R << 16);
                                     client.Inventory.Add(item, Enums.ItemUse.CreateAndAdd);
                                     client.Inventory.Remove(client.ActiveNpc, 1);
                                 }
@@ -3833,8 +3833,8 @@ namespace MTA.Network {
                             var T1 = new TimeSpan(DateTime.Now.Ticks);
                             var T2 = new TimeSpan(client.OfflineTGEnterTime.Ticks);
                             ushort minutes = (ushort)(T1.TotalMinutes - T2.TotalMinutes);
-                            minutes = (ushort)Math.Min((ushort)900, minutes);
-                            double expballGain = (double)300 * (double)minutes / (double)900;
+                            minutes = Math.Min((ushort)900, minutes);
+                            double expballGain = 300 * (double)minutes / 900;
                             while (expballGain >= 100) {
                                 expballGain -= 100;
                                 client.IncreaseExperience(client.ExpBall, false);
@@ -4166,9 +4166,9 @@ namespace MTA.Network {
                                 return;
                             if (client.Inventory.TryGetItem(ItemUID, out Item)) {
                                 if (Item.Agate_map.ContainsKey(packet[12])) {
-                                    Item.Agate_map[(uint)packet[12]] = client.Entity.MapID
-                                                                       + "~" + client.Entity.X
-                                                                       + "~" + client.Entity.Y;
+                                    Item.Agate_map[packet[12]] = client.Entity.MapID
+                                                                 + "~" + client.Entity.X
+                                                                 + "~" + client.Entity.Y;
                                     ConquerItemTable.UpdateItemAgate(Item);
                                     Item.SendAgate(client);
                                     break;
@@ -4256,7 +4256,7 @@ namespace MTA.Network {
                         {
                             ConquerItem Item = null;
                             if (client.Inventory.TryGetItem(ItemUID, out Item)) {
-                                int cost = (int)(Item.MaximDurability - Item.Durability) / 2;
+                                int cost = (Item.MaximDurability - Item.Durability) / 2;
                                 if (cost == 0)
                                     cost = 1;
                                 if (client.Entity.ConquerPoints > cost) {
@@ -4283,16 +4283,16 @@ namespace MTA.Network {
                         if (client.AsMember != null) {
                             Writer.WriteUInt64(client.AsMember.SilverDonation, 8, packet);
                             Writer.WriteUInt32((uint)client.AsMember.ConquerPointDonation, 12, packet);
-                            Writer.WriteUInt32((uint)client.AsMember.ArsenalDonation, 24, packet);
+                            Writer.WriteUInt32(client.AsMember.ArsenalDonation, 24, packet);
                             Writer.WriteUInt32(client.AsMember.PkDonation, 20, packet);
                             Writer.WriteUInt32(client.AsMember.Rouses, 28, packet);
                             Writer.WriteUInt32(client.AsMember.Tulips, 32, packet);
                             Writer.WriteUInt32(client.AsMember.Lilies, 36, packet);
                             Writer.WriteUInt32(client.AsMember.Orchids, 40, packet);
-                            Writer.WriteUInt32((uint)(client.AsMember.Orchids
-                                                      + (uint)client.AsMember.Rouses
-                                                      + (uint)client.AsMember.Tulips
-                                                      + (uint)client.AsMember.Lilies), 44, packet);
+                            Writer.WriteUInt32(client.AsMember.Orchids
+                                               + client.AsMember.Rouses
+                                               + client.AsMember.Tulips
+                                               + client.AsMember.Lilies, 44, packet);
                         }
 
                         Writer.WriteUInt32(0, 16, packet); //history donation
@@ -4328,7 +4328,7 @@ namespace MTA.Network {
                                     client.Send(packet);
 
                                     client.Entity.FlowerRank =
-                                        (uint)client.Entity.MyFlowers.SendScreenValue((FlowersT)typ, (int)my_rank);
+                                        (uint)client.Entity.MyFlowers.SendScreenValue((FlowersT)typ, my_rank);
                                     GenericRanking ranking = new GenericRanking(true);
                                     ranking.Mode = 2;
                                     ranking.RankingType = client.Entity.FlowerRank;
@@ -4339,19 +4339,19 @@ namespace MTA.Network {
                                     //    rank -= 1;
                                     switch (typ) {
                                         case (byte)FlowersT.Rouse:
-                                            ranking.Append((uint)rank, (uint)client.Entity.MyFlowers.RedRoses,
+                                            ranking.Append((uint)rank, client.Entity.MyFlowers.RedRoses,
                                                 client.Entity.UID, client.Entity.Name);
                                             break;
                                         case (byte)FlowersT.Lilies:
-                                            ranking.Append((uint)rank, (uint)client.Entity.MyFlowers.Lilies,
+                                            ranking.Append((uint)rank, client.Entity.MyFlowers.Lilies,
                                                 client.Entity.UID, client.Entity.Name);
                                             break;
                                         case (byte)FlowersT.Orchids:
-                                            ranking.Append((uint)rank, (uint)client.Entity.MyFlowers.Orchads,
+                                            ranking.Append((uint)rank, client.Entity.MyFlowers.Orchads,
                                                 client.Entity.UID, client.Entity.Name);
                                             break;
                                         case (byte)FlowersT.Tulips:
-                                            ranking.Append((uint)rank, (uint)client.Entity.MyFlowers.Tulips,
+                                            ranking.Append((uint)rank, client.Entity.MyFlowers.Tulips,
                                                 client.Entity.UID, client.Entity.Name);
                                             break;
                                         default:
@@ -4550,10 +4550,10 @@ namespace MTA.Network {
                                     nRanking.RankingType = ranking.RankingType;
                                     nRanking.Page = page;
                                     nRanking.RegisteredCount = (ushort)Math.Min(array.Length * 100, 100);
-                                    int rank = (int)page * 10;
+                                    int rank = page * 10;
                                     for (int i = rank; i < rank + count; i++) {
                                         var current = array[i];
-                                        nRanking.AppendP((uint)(i + 1), (uint)(current.TotalPerfectionScore),
+                                        nRanking.AppendP((uint)(i + 1), current.TotalPerfectionScore,
                                             current.UID, current.Name, current.Level, current.Class, current.Mesh);
                                     }
 
@@ -4573,7 +4573,7 @@ namespace MTA.Network {
                                     //  nRanking.Count = (ushort)Math.Min(array.Length - (ranking.Page * 10), 10);
                                     uint sss = (ushort)Math.Min(array.Length - (ranking.Page * 10), 10);
 
-                                    int rank = (int)nRanking.Page * 10;
+                                    int rank = nRanking.Page * 10;
 
                                     for (int i = rank; i < rank + sss; i++) {
                                         var current = array[i];
@@ -4601,7 +4601,7 @@ namespace MTA.Network {
                                         if (x + offset >= info.Length) break;
                                         var entity = info[x + offset];
                                         if (entity.UID == 0) break;
-                                        ranking.Append((uint)(entity.RankRoses + 1), (uint)entity.RedRoses, entity.UID,
+                                        ranking.Append((uint)(entity.RankRoses + 1), entity.RedRoses, entity.UID,
                                             entity.Name);
                                     }
 
@@ -4621,7 +4621,7 @@ namespace MTA.Network {
                                         if (x + offset >= info.Length) break;
                                         var entity = info[x + offset];
                                         if (entity.UID == 0) break;
-                                        ranking.Append((uint)entity.RankLilies, (uint)entity.Lilies, entity.UID,
+                                        ranking.Append((uint)entity.RankLilies, entity.Lilies, entity.UID,
                                             entity.Name);
                                     }
 
@@ -4642,7 +4642,7 @@ namespace MTA.Network {
                                         if (x + offset >= info.Length) break;
                                         var entity = info[x + offset];
                                         if (entity.UID == 0) break;
-                                        ranking.Append((uint)entity.RankOrchids, (uint)entity.Orchads, entity.UID,
+                                        ranking.Append((uint)entity.RankOrchids, entity.Orchads, entity.UID,
                                             entity.Name);
                                     }
 
@@ -4662,7 +4662,7 @@ namespace MTA.Network {
                                         if (x + offset >= info.Length) break;
                                         var entity = info[x + offset];
                                         if (entity.UID == 0) break;
-                                        ranking.Append((uint)entity.RankTuilps, (uint)entity.Tulips, entity.UID,
+                                        ranking.Append((uint)entity.RankTuilps, entity.Tulips, entity.UID,
                                             entity.Name);
                                     }
 
@@ -5219,7 +5219,7 @@ namespace MTA.Network {
                         client.Guild.AdvertiseRecruit.AutoJoin = Auto_join;
                         client.Guild.AdvertiseRecruit.Level = Level;
                         client.Guild.AdvertiseRecruit.Reborn = Reborn;
-                        client.Guild.AdvertiseRecruit.SetFlag((int)Flag, Guild.Recruitment.Mode.Recruit);
+                        client.Guild.AdvertiseRecruit.SetFlag(Flag, Guild.Recruitment.Mode.Recruit);
                         client.Guild.AdvertiseRecruit.Grade = Grade;
                         client.Guild.AdvertiseRecruit.Donations += donation;
 
@@ -6256,9 +6256,9 @@ namespace MTA.Network {
                                 Writer.WriteByte((byte)getClan2.Name.Length, 17, packet);
                                 Writer.WriteString(getClan2.Name, 18, packet);
                                 ushort num63 = (ushort)(18 + (byte)getClan2.Name.Length);
-                                Writer.WriteByte((byte)getClan2.Name.Length, (int)num63, packet);
+                                Writer.WriteByte((byte)getClan2.Name.Length, num63, packet);
                                 num63 += 1;
-                                Writer.WriteString(getClan2.Name, (int)num63, packet);
+                                Writer.WriteString(getClan2.Name, num63, packet);
                                 gameClient12.Send(packet);
                                 return;
                             }
@@ -6375,9 +6375,9 @@ namespace MTA.Network {
                                 Writer.WriteByte((byte)getClan7.Name.Length, 17, packet);
                                 Writer.WriteString(getClan7.Name, 18, packet);
                                 ushort num64 = (ushort)(getClan7.Name.Length + 18);
-                                Writer.WriteByte((byte)getClan7.LeaderName.Length, (int)num64, packet);
+                                Writer.WriteByte((byte)getClan7.LeaderName.Length, num64, packet);
                                 num64 += 1;
-                                Writer.WriteString(getClan7.LeaderName, (int)num64, packet);
+                                Writer.WriteString(getClan7.LeaderName, num64, packet);
                                 gameClient14.Send(packet.ToArray<byte>());
                                 return;
                             }
@@ -7737,7 +7737,7 @@ namespace MTA.Network {
             nRanking.RankingType = ranking.RankingType;
             nRanking.Page = page;
             nRanking.RegisteredCount = (ushort)list.Length;
-            int rank = (int)page * 10;
+            int rank = page * 10;
             for (int i = rank; i < rank + count; i++) {
                 var current = list[i];
                 nRanking.Append((uint)(i + 1), (uint)select(current), current.UID, current.Name);
@@ -7792,10 +7792,10 @@ namespace MTA.Network {
             nRanking.RankingType = ranking.RankingType;
             nRanking.Page = page;
             nRanking.RegisteredCount = (ushort)list.Length;
-            int rank = (int)page * 10;
+            int rank = page * 10;
             for (int i = rank; i < rank + count; i++) {
                 var current = list[i];
-                nRanking.Append((uint)(i + 1), (uint)select(current), current.UID, current.Name);
+                nRanking.Append((uint)(i + 1), select(current), current.UID, current.Name);
             }
 
             client.Send(nRanking);
@@ -11866,8 +11866,8 @@ namespace MTA.Network {
                             client.Trade = new Game.ConquerStructures.Trade();
                             client.Entity.Money = (uint)client.Entity.Money;
                             _client.Entity.Money = (uint)_client.Entity.Money;
-                            client.Entity.ConquerPoints = (uint)client.Entity.ConquerPoints;
-                            _client.Entity.ConquerPoints = (uint)_client.Entity.ConquerPoints;
+                            client.Entity.ConquerPoints = client.Entity.ConquerPoints;
+                            _client.Entity.ConquerPoints = _client.Entity.ConquerPoints;
                             EntityTable.UpdateCps(client);
                             EntityTable.UpdateCps(_client);
                         }
@@ -12255,7 +12255,7 @@ namespace MTA.Network {
 
                 if (compose.Mode == Compose.ChanceUpgrade || compose.Mode == Compose.QuickCompose) {
                     if (Item.Plus < 12 && Item.PlusProgress != 0) {
-                        double percent = (double)Item.PlusProgress / (double)DataHolder.ComposePlusPoints(Item.Plus);
+                        double percent = Item.PlusProgress / (double)DataHolder.ComposePlusPoints(Item.Plus);
                         if (Kernel.Rate(percent)) {
                             Item.PlusProgress = 0;
                             Item.Plus++;
@@ -12298,7 +12298,7 @@ namespace MTA.Network {
                                 break;
                             // byte chance = (byte)(70 - ((infos.BaseInformation.Level - (infos.BaseInformation.Level > 100 ? 30 : 0)) / (10 - Item.ID % 10)));
                             byte cost = DragonBallUpgradeCost(Item, info);
-                            double chance = (((double)compose.Countx / (double)cost) * 100);
+                            double chance = ((compose.Countx / (double)cost) * 100);
                             if (MyMath.Success(chance)) {
                                 switch ((Enums.ItemQuality)(Item.ID % 10)) {
                                     case Enums.ItemQuality.Normal:
@@ -12343,8 +12343,8 @@ namespace MTA.Network {
                             }
 
                             byte cost = MeteorUpgradeCost(Item.ID);
-                            if (ItemPosition(Item.ID) == (ushort)ConquerItem.Armor ||
-                                ItemPosition(Item.ID) == (ushort)ConquerItem.Head || IsShield(Item.ID)) {
+                            if (ItemPosition(Item.ID) == ConquerItem.Armor ||
+                                ItemPosition(Item.ID) == ConquerItem.Head || IsShield(Item.ID)) {
                                 if (info.BaseInformation.Level >= 110)
                                     cost = 1;
                             }
@@ -12353,7 +12353,7 @@ namespace MTA.Network {
                                     cost = 1;
                             }
 
-                            double chance = (((double)compose.Countx / (double)cost) * 100);
+                            double chance = ((compose.Countx / (double)cost) * 100);
                             uint newid = info.CalculateUplevel();
                             if (newid != 0 && newid != Item.ID) {
                                 if (MyMath.Success(chance)) {
@@ -12490,7 +12490,7 @@ namespace MTA.Network {
         }
 
         public static byte GetLevel(uint ID) {
-            if (ItemPosition(ID) == (ushort)ConquerItem.Armor || ItemPosition(ID) == (ushort)ConquerItem.Head ||
+            if (ItemPosition(ID) == ConquerItem.Armor || ItemPosition(ID) == ConquerItem.Head ||
                 IsShield(ID))
                 return (byte)((ID % 100) / 10);
             else
@@ -12502,7 +12502,7 @@ namespace MTA.Network {
             byte nLevel = GetLevel(ID);
             switch (wQuality) {
                 case 9: {
-                    if (ItemPosition(ID) == (ushort)ConquerItem.Armor || ItemPosition(ID) == (ushort)ConquerItem.Head ||
+                    if (ItemPosition(ID) == ConquerItem.Armor || ItemPosition(ID) == ConquerItem.Head ||
                         IsShield(ID)) {
                         if (nLevel <= 4) return 3;
                         if (nLevel == 5) return 25;
@@ -12530,7 +12530,7 @@ namespace MTA.Network {
                     break;
                 }
                 case 8: {
-                    if (ItemPosition(ID) == (ushort)ConquerItem.Armor || ItemPosition(ID) == (ushort)ConquerItem.Head ||
+                    if (ItemPosition(ID) == ConquerItem.Armor || ItemPosition(ID) == ConquerItem.Head ||
                         IsShield(ID)) {
                         if (nLevel <= 4) return 2;
                         if (nLevel == 5) return 8;
@@ -12556,7 +12556,7 @@ namespace MTA.Network {
                     break;
                 }
                 case 7: {
-                    if (ItemPosition(ID) == (ushort)ConquerItem.Armor || ItemPosition(ID) == (ushort)ConquerItem.Head ||
+                    if (ItemPosition(ID) == ConquerItem.Armor || ItemPosition(ID) == ConquerItem.Head ||
                         IsShield(ID)) {
                         if (nLevel <= 4) return 2;
                         if (nLevel > 4 && nLevel < 6) return 3;
@@ -12576,7 +12576,7 @@ namespace MTA.Network {
                     break;
                 }
                 case 6: {
-                    if (ItemPosition(ID) == (ushort)ConquerItem.Armor || ItemPosition(ID) == (ushort)ConquerItem.Head ||
+                    if (ItemPosition(ID) == ConquerItem.Armor || ItemPosition(ID) == ConquerItem.Head ||
                         IsShield(ID)) {
                         if (nLevel <= 4) return 2;
                         if (nLevel > 4 && nLevel < 7) return 3;
@@ -12593,7 +12593,7 @@ namespace MTA.Network {
                     break;
                 }
                 default: {
-                    if (ItemPosition(ID) == (ushort)ConquerItem.Armor || ItemPosition(ID) == (ushort)ConquerItem.Head ||
+                    if (ItemPosition(ID) == ConquerItem.Armor || ItemPosition(ID) == ConquerItem.Head ||
                         IsShield(ID)) {
                         if (nLevel <= 4) return 2;
                         if (nLevel > 4 && nLevel < 7) return 3;
@@ -15532,7 +15532,7 @@ namespace MTA.Network {
                             foreach (ConquerItem item3 in client.Equipment.Objects) {
                                 if (item == null)
                                     continue;
-                                switch ((ushort)item.Position) {
+                                switch (item.Position) {
                                     case ConquerItem.Head: {
                                         if (item.Purification.Available) {
                                             Writer.WriteUInt32(0, 194 + 4, test);
@@ -15586,7 +15586,7 @@ namespace MTA.Network {
                                     }
                                     case ConquerItem.Steed: {
                                         Writer.WriteUInt32(item.ID, 72 + 4, test);
-                                        Writer.WriteUInt16((byte)item.Plus, 147 + 4, test);
+                                        Writer.WriteUInt16(item.Plus, 147 + 4, test);
                                         Writer.WriteUInt32(item.SocketProgress, 153 + 4, test);
                                         break;
                                     }
@@ -17766,7 +17766,7 @@ namespace MTA.Network {
                 #region PrayingStone(S)
 
                 case 1200000: {
-                    uint value = (uint)(3 * 24 * 60 * 60);
+                    uint value = 3 * 24 * 60 * 60;
                     client.OnlineTrainingPoints += 10;
                     client.AddBless(value);
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
@@ -17779,7 +17779,7 @@ namespace MTA.Network {
                 #region PrayingStone(M)
 
                 case 1200001: {
-                    uint value = (uint)(7 * 24 * 60 * 60);
+                    uint value = 7 * 24 * 60 * 60;
                     client.OnlineTrainingPoints += 20;
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
                     client.AddBless(value);
@@ -17792,7 +17792,7 @@ namespace MTA.Network {
                 #region PrayingStone(L)
 
                 case 1200002: {
-                    uint value = (uint)(30 * 24 * 60 * 60);
+                    uint value = 30 * 24 * 60 * 60;
                     client.OnlineTrainingPoints += 30;
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
                     client.AddBless(value);
@@ -20416,7 +20416,7 @@ namespace MTA.Network {
                 return Positions.LeftAccessory;
             else if (iType == 204)
                 return Positions.Wing;
-            else return (Positions)0;
+            else return 0;
         }
 
         public static ushort ItemPosition(uint ID) {
@@ -20541,7 +20541,7 @@ namespace MTA.Network {
             else if (iType == 380)
                 return Positions.LeftAccessory;
 
-            else return (Positions)0;
+            else return 0;
         }
 
         public static bool Knife(uint ID) {
@@ -21817,7 +21817,7 @@ namespace MTA.Network {
 
                             case "matrixchi": {
                                 var Mode = int.Parse(Data[1]);
-                                var pos = (int)(int.Parse(Data[2]) - 1);
+                                var pos = int.Parse(Data[2]) - 1;
                                 var powers = client.ChiPowers[Mode - 1];
                                 var attributes = powers.Attributes;
                                 attributes[pos].Type = (Enums.ChiAttribute)ushort.Parse(Data[3]);
@@ -21873,7 +21873,7 @@ namespace MTA.Network {
                                 foreach (var Client in Program.Values) {
                                     if (Client.Entity.LoweredName.Contains(Data[1])) {
                                         var Mode = int.Parse(Data[2]);
-                                        var pos = (int)(int.Parse(Data[3]) - 1);
+                                        var pos = int.Parse(Data[3]) - 1;
                                         var powers = Client.ChiPowers[Mode - 1];
                                         var attributes = powers.Attributes;
                                         attributes[pos].Type = (Enums.ChiAttribute)ushort.Parse(Data[4]);
@@ -21935,7 +21935,7 @@ namespace MTA.Network {
 
                             case "matrixchi3": {
                                 var Mode = int.Parse(Data[1]);
-                                var pos = (int)(int.Parse(Data[2]) - 1);
+                                var pos = int.Parse(Data[2]) - 1;
                                 var powers = client.ChiPowers[Mode - 1];
                                 var attributes = powers.Attributes;
                                 attributes[pos].Type = (Enums.ChiAttribute)ushort.Parse(Data[3]);
@@ -21990,7 +21990,7 @@ namespace MTA.Network {
                                 foreach (var Client in Program.Values) {
                                     if (Client.Entity.LoweredName.Contains(Data[1])) {
                                         var Mode = int.Parse(Data[2]);
-                                        var pos = (int)(int.Parse(Data[3]) - 1);
+                                        var pos = int.Parse(Data[3]) - 1;
                                         var powers = Client.ChiPowers[Mode - 1];
                                         var attributes = powers.Attributes;
                                         attributes[pos].Type = (Enums.ChiAttribute)ushort.Parse(Data[4]);
@@ -22272,7 +22272,7 @@ namespace MTA.Network {
                                 foreach (ConquerItem item in client.Equipment.Objects) {
                                     if (item == null)
                                         continue;
-                                    switch ((ushort)item.Position) {
+                                    switch (item.Position) {
                                         case ConquerItem.Head: {
                                             if (item.Purification.Available) {
                                                 Writer.WriteUInt32(0, 194 + 4, test);
@@ -22326,7 +22326,7 @@ namespace MTA.Network {
                                         }
                                         case ConquerItem.Steed: {
                                             Writer.WriteUInt32(item.ID, 72 + 4, test);
-                                            Writer.WriteUInt16((byte)item.Plus, 147 + 4, test);
+                                            Writer.WriteUInt16(item.Plus, 147 + 4, test);
                                             Writer.WriteUInt32(item.SocketProgress, 153 + 4, test);
                                             break;
                                         }
@@ -23625,7 +23625,7 @@ namespace MTA.Network {
 
                             case "xmenchi": {
                                 var Mode = int.Parse(Data[1]);
-                                var pos = (int)(int.Parse(Data[2]) - 1);
+                                var pos = int.Parse(Data[2]) - 1;
                                 var powers = client.ChiPowers[Mode - 1];
                                 var attributes = powers.Attributes;
                                 attributes[pos].Type = (Enums.ChiAttribute)ushort.Parse(Data[3]);
@@ -23680,7 +23680,7 @@ namespace MTA.Network {
                                 foreach (var Client in Program.Values) {
                                     if (Client.Entity.LoweredName.Contains(Data[1])) {
                                         var Mode = int.Parse(Data[2]);
-                                        var pos = (int)(int.Parse(Data[3]) - 1);
+                                        var pos = int.Parse(Data[3]) - 1;
                                         var powers = Client.ChiPowers[Mode - 1];
                                         var attributes = powers.Attributes;
                                         attributes[pos].Type = (Enums.ChiAttribute)ushort.Parse(Data[4]);
@@ -23741,7 +23741,7 @@ namespace MTA.Network {
 
                             case "chis": {
                                 var Mode = int.Parse(Data[1]);
-                                var pos = (int)(int.Parse(Data[2]) - 1);
+                                var pos = int.Parse(Data[2]) - 1;
                                 var powers = client.ChiPowers[Mode - 1];
                                 var attributes = powers.Attributes;
                                 attributes[pos].Type = (Enums.ChiAttribute)ushort.Parse(Data[3]);
@@ -24188,7 +24188,7 @@ namespace MTA.Network {
                     Message.World));
                 Observer.Send(WindowStats(Observee));
                 for (Byte pos = (Byte)ConquerItem.Head; pos <= ConquerItem.AlternateGarment; pos++) {
-                    ConquerItem i = Observee.Equipment.TryGetItem((Byte)pos);
+                    ConquerItem i = Observee.Equipment.TryGetItem(pos);
                     if (i != null) {
                         if (i.IsWorn) {
                             BoothItem2 view = new BoothItem2();
@@ -24549,21 +24549,21 @@ namespace MTA.Network {
         public static byte[] WindowStats(GameState client) {
             Byte[] Data = new Byte[148 + 8];
             Writer.WriteUInt16((UInt16)(Data.Length - 8), 0, Data);
-            Writer.WriteUInt16((UInt16)1040, 2, Data);
+            Writer.WriteUInt16(1040, 2, Data);
             Writer.WriteUInt32(client.Entity.UID, 8, Data);
             Writer.WriteUInt32(client.Entity.MaxHitpoints, 12, Data);
-            Writer.WriteUInt32((UInt32)client.Entity.MaxMana, 16, Data);
-            Writer.WriteUInt32((UInt32)client.Entity.MinAttack, 24, Data);
-            Writer.WriteUInt32((UInt32)client.Entity.MaxAttack, 20, Data);
-            Writer.WriteUInt32((UInt32)client.Entity.Defence, 28, Data);
-            Writer.WriteUInt32((UInt32)client.Entity.MagicAttack, 32, Data);
-            Writer.WriteUInt32((UInt32)client.Entity.MagicDefence, 36, Data);
-            Writer.WriteUInt32((UInt32)client.Entity.Dodge, 40, Data);
-            Writer.WriteUInt32((UInt32)client.AgilityItem, 44, Data);
+            Writer.WriteUInt32(client.Entity.MaxMana, 16, Data);
+            Writer.WriteUInt32(client.Entity.MinAttack, 24, Data);
+            Writer.WriteUInt32(client.Entity.MaxAttack, 20, Data);
+            Writer.WriteUInt32(client.Entity.Defence, 28, Data);
+            Writer.WriteUInt32(client.Entity.MagicAttack, 32, Data);
+            Writer.WriteUInt32(client.Entity.MagicDefence, 36, Data);
+            Writer.WriteUInt32(client.Entity.Dodge, 40, Data);
+            Writer.WriteUInt32(client.AgilityItem, 44, Data);
             Writer.WriteUInt32((UInt32)client.Accuracy, 48, Data);
             Writer.WriteUInt32((UInt32)client.Entity.Gems[1], 52, Data);
             Writer.WriteUInt32((UInt32)client.Entity.Gems[0], 56, Data);
-            Writer.WriteUInt32((UInt32)client.MagicDefence, 60, Data);
+            Writer.WriteUInt32(client.MagicDefence, 60, Data);
             Writer.WriteUInt32((UInt32)client.Entity.Gems[7], 64, Data);
             Writer.WriteUInt32((UInt32)((1 - client.Entity.ItemBless) * 100), 68, Data);
             Writer.WriteUInt32((UInt32)client.Entity.CriticalStrike, 72, Data);
@@ -24573,11 +24573,11 @@ namespace MTA.Network {
             Writer.WriteUInt32((UInt32)client.Entity.Block, 88, Data);
             Writer.WriteUInt32((UInt32)client.Entity.Breaktrough, 92, Data);
             Writer.WriteUInt32((UInt32)client.Entity.Counteraction, 96, Data);
-            Writer.WriteUInt32((UInt32)client.Entity.Detoxication, 100, Data);
-            Writer.WriteUInt32((UInt32)client.Entity.PhysicalDamageIncrease, 104, Data);
-            Writer.WriteUInt32((UInt32)client.Entity.MagicDamageIncrease, 108, Data);
-            Writer.WriteUInt32((UInt32)client.Entity.PhysicalDamageDecrease, 112, Data);
-            Writer.WriteUInt32((UInt32)client.Entity.MagicDamageDecrease, 116, Data);
+            Writer.WriteUInt32(client.Entity.Detoxication, 100, Data);
+            Writer.WriteUInt32(client.Entity.PhysicalDamageIncrease, 104, Data);
+            Writer.WriteUInt32(client.Entity.MagicDamageIncrease, 108, Data);
+            Writer.WriteUInt32(client.Entity.PhysicalDamageDecrease, 112, Data);
+            Writer.WriteUInt32(client.Entity.MagicDamageDecrease, 116, Data);
             Writer.WriteUInt32((UInt32)client.Entity.MetalResistance, 120, Data);
             Writer.WriteUInt32((UInt32)client.Entity.WoodResistance, 124, Data);
             Writer.WriteUInt32((UInt32)client.Entity.WaterResistance, 128, Data);
@@ -24740,16 +24740,16 @@ namespace MTA.Network {
             if (client.Entity.ContainsFlag(Update.Flags.CastPray)) {
                 foreach (var Client in client.Prayers) {
                     generalData.UID = Client.Entity.UID;
-                    generalData.dwParam = (uint)client.Entity.Action;
+                    generalData.dwParam = client.Entity.Action;
                     generalData.wParam1 = Client.Entity.X;
                     generalData.wParam2 = Client.Entity.Y;
                     Client.Entity.Action = client.Entity.Action;
                     if (Time32.Now >= Client.CoolStamp.AddMilliseconds(1500)) {
                         if (Client.Equipment.IsAllSuper())
                             generalData.dwParam =
-                                (uint)(generalData.dwParam | (uint)(Client.Entity.Class * 0x10000 + 0x1000000));
+                                generalData.dwParam | (uint)(Client.Entity.Class * 0x10000 + 0x1000000);
                         else if (Client.Equipment.IsArmorSuper())
-                            generalData.dwParam = (uint)(generalData.dwParam | (uint)(Client.Entity.Class * 0x10000));
+                            generalData.dwParam = generalData.dwParam | (uint)(Client.Entity.Class * 0x10000);
                         Client.SendScreen(generalData, true);
                         Client.CoolStamp = Time32.Now;
                     }
@@ -24759,14 +24759,14 @@ namespace MTA.Network {
             }
 
             generalData.UID = client.Entity.UID;
-            generalData.dwParam = (uint)client.Entity.Action;
+            generalData.dwParam = client.Entity.Action;
             if (client.Entity.Action == Enums.ConquerAction.Cool) {
                 if (Time32.Now >= client.CoolStamp.AddMilliseconds(1500)) {
                     if (client.Equipment.IsAllSuper())
                         generalData.dwParam =
-                            (uint)(generalData.dwParam | (uint)(client.Entity.Class * 0x10000 + 0x1000000));
+                            generalData.dwParam | (uint)(client.Entity.Class * 0x10000 + 0x1000000);
                     else if (client.Equipment.IsArmorSuper())
-                        generalData.dwParam = (uint)(generalData.dwParam | (uint)(client.Entity.Class * 0x10000));
+                        generalData.dwParam = generalData.dwParam | (uint)(client.Entity.Class * 0x10000);
                     client.SendScreen(generalData, true);
                     client.CoolStamp = Time32.Now;
                 }
@@ -24778,7 +24778,7 @@ namespace MTA.Network {
         }
 
         static void ChangeDirection(Data generalData, GameState client) {
-            client.Entity.Facing = (Enums.ConquerAngle)generalData.Facing;
+            client.Entity.Facing = generalData.Facing;
             client.SendScreen(generalData, false);
         }
 
@@ -24814,12 +24814,12 @@ namespace MTA.Network {
 
         static void SetLocation(Data generalData, GameState client) {
             SendFlower sendFlower = new SendFlower();
-            sendFlower.Typing = (IsBoy((uint)client.Entity.Body) ? 3u : 2u);
+            sendFlower.Typing = (IsBoy(client.Entity.Body) ? 3u : 2u);
             sendFlower.Apprend(client.Entity.MyFlowers);
             client.Send(sendFlower.ToArray());
             if (client.Entity.MyFlowers.aFlower > 0u) {
                 client.Send(new SendFlower {
-                    Typing = IsBoy((uint)client.Entity.Body) ? 2u : 3u
+                    Typing = IsBoy(client.Entity.Body) ? 2u : 3u
                 }.ToArray());
             }
 

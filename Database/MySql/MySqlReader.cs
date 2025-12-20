@@ -147,7 +147,7 @@ namespace MTA.Database
         }
         public long method_7(string columnName)
         {
-            long num = (long)0;
+            long num = 0;
             long.TryParse(this._datarow[columnName].ToString(), out num);
             long num1 = num;
             return num1;

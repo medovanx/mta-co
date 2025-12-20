@@ -123,8 +123,8 @@ namespace MTA.Game
             if (obj.type == 2)
             {
                 if ((long)obj.ulongValue < 0)
-                    return (float)((long)obj.ulongValue);
-                return (float)obj.ulongValue;
+                    return (long)obj.ulongValue;
+                return obj.ulongValue;
             }
             return (float)obj.doubleValue;
         }
@@ -133,8 +133,8 @@ namespace MTA.Game
             if (obj.type == 2)
             {
                 if ((long)obj.ulongValue < 0)
-                    return (double)((long)obj.ulongValue);
-                return (double)obj.ulongValue;
+                    return (long)obj.ulongValue;
+                return obj.ulongValue;
             }
             return obj.doubleValue;
         }

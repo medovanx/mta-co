@@ -28,7 +28,7 @@ namespace MTA.Game
 
         public void CreateFlaID(int id)
         {
-            int flagid = (int)((id / 100) % 100 - 1) * 32 + (int)(id % 100 - 1);
+            int flagid = ((id / 100) % 100 - 1) * 32 + (id % 100 - 1);
             AddFlag(flagid);
         }
 
@@ -50,7 +50,7 @@ namespace MTA.Game
         }
         private void ShowScreen(int flag)
         {
-            uint FRAG_ID = (uint)(10100 + (uint)(100 * (byte)(flag / 32)) + (byte)(flag % 32) + 1);
+            uint FRAG_ID = 10100 + (uint)(100 * (byte)(flag / 32)) + (byte)(flag % 32) + 1;
 
             byte[] data = new byte[28];
             WriteUInt16(20, 0, data);
@@ -67,14 +67,14 @@ namespace MTA.Game
             if (!Object.Owner.Fake && !Object.Owner.TransferedPlayer)
             {
                 Database.MySqlCommand command = new Database.MySqlCommand(MySqlCommandType.SELECT);
-                command.Select("entities").Where("UID", (long)Object.Owner.Entity.UID);
+                command.Select("entities").Where("UID", Object.Owner.Entity.UID);
                 MySqlReader reader = new MySqlReader(command);
                 if (reader.Read())
                 {
 
                     command = new Database.MySqlCommand(MySqlCommandType.UPDATE);
                     command.Update("entities").Set("Achievement", Object.MyAchievement.ToString());
-                    command.Where("UID", (long)Object.UID).Execute();
+                    command.Where("UID", Object.UID).Execute();
                 }
             }
 

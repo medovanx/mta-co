@@ -336,7 +336,7 @@ namespace MTA.MaTrix {
                                now.Day * 10000 +
                                now.Hour * 100 +
                                now.Minute);
-            Uint((uint)secs, Offset, Buffer);
+            Uint(secs, Offset, Buffer);
             Offset += 4;
             var attributes = power.Attributes;
             foreach (var attribute in attributes) {

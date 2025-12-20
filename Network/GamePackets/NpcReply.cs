@@ -17,7 +17,7 @@ namespace MTA.Network.GamePackets
         public NpcReply()
         {
             Buffer = new byte[28];
-            WriteUInt16((ushort)20, 0, Buffer);
+            WriteUInt16(20, 0, Buffer);
             WriteUInt16(2032, 2, Buffer);
             WriteUInt32((uint)Time32.timeGetTime().GetHashCode(), 4, Buffer);
         }

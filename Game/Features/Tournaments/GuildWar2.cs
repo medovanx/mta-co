@@ -67,12 +67,12 @@ namespace MTA.Game
             upd.UID = LeftGate.UID;
             upd.Append(Update.Mesh, LeftGate.Mesh);
             upd.Append(Update.Hitpoints, LeftGate.Hitpoints);
-            Kernel.SendWorldMessage(upd, Program.Values, (ushort)4542);
+            Kernel.SendWorldMessage(upd, Program.Values, 4542);
             upd.Clear();
             upd.UID = RightGate.UID;
             upd.Append(Update.Mesh, RightGate.Mesh);
             upd.Append(Update.Hitpoints, RightGate.Hitpoints);
-            Kernel.SendWorldMessage(upd, Program.Values, (ushort)4542);
+            Kernel.SendWorldMessage(upd, Program.Values, 4542);
             Claim = false;
             IsWar = true;
         }
@@ -92,12 +92,12 @@ namespace MTA.Game
             upd.UID = LeftGate.UID;
             upd.Append(Update.Mesh, LeftGate.Mesh);
             upd.Append(Update.Hitpoints, LeftGate.Hitpoints);
-            Kernel.SendWorldMessage(upd, Program.Values, (ushort)4542);
+            Kernel.SendWorldMessage(upd, Program.Values, 4542);
             upd.Clear();
             upd.UID = RightGate.UID;
             upd.Append(Update.Mesh, RightGate.Mesh);
             upd.Append(Update.Hitpoints, RightGate.Hitpoints);
-            Kernel.SendWorldMessage(upd, Program.Values, (ushort)4542);
+            Kernel.SendWorldMessage(upd, Program.Values, 4542);
 
             foreach (Guild guild in Kernel.Guilds.Values)
             {
@@ -125,7 +125,7 @@ namespace MTA.Game
             {
                 KeeperID = PoleKeeper3.ID;
                 Kernel.SendWorldMessage(new Message("نقابة, " + PoleKeeper3.Name + ", بواسطة " + PoleKeeper3.LeaderName + " قد فاز بهذه الجولة!", System.Drawing.Color.Red, Message.Center), Program.Values);
-                Kernel.SendWorldMessage(new Message("It is generald pardon time. You have 5 minutes to leave, run for your life!", System.Drawing.Color.White, Message.TopLeft), Program.Values, (ushort)6001);
+                Kernel.SendWorldMessage(new Message("It is generald pardon time. You have 5 minutes to leave, run for your life!", System.Drawing.Color.White, Message.TopLeft), Program.Values, 6001);
                 if (PoleKeeper3.Losts == 0)
                     PoleKeeper3.Wins++;
                 else
@@ -134,7 +134,7 @@ namespace MTA.Game
                 Pole.Name = PoleKeeper3.Name;
             }
             Pole.Hitpoints = Pole.MaxHitpoints;
-            Kernel.SendWorldMessage(Pole, Program.Values, (ushort)4542);
+            Kernel.SendWorldMessage(Pole, Program.Values, 4542);
             Reset();
         }
 
@@ -192,8 +192,8 @@ namespace MTA.Game
             for (int c = 0; c < scoreMessages.Length; c++)
             {
                 Message msg = new Message(scoreMessages[c], System.Drawing.Color.Red, c == 0 ? Message.FirstRightCorner : Message.ContinueRightCorner);
-                Kernel.SendWorldMessage(msg, Program.Values, (ushort)4542);
-                Kernel.SendWorldMessage(msg, Program.Values, (ushort)6001);
+                Kernel.SendWorldMessage(msg, Program.Values, 4542);
+                Kernel.SendWorldMessage(msg, Program.Values, 6001);
             }
         }
 

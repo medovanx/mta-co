@@ -10,7 +10,7 @@ namespace MTA.Network.GamePackets
             string send = Type + " " + Kisses + " " + UID + " " + UID + " " + name + " " + name + "";
             Buffer
                 = new byte[88];//18
-            WriteUInt16((byte)(80), 0, Buffer);
+            WriteUInt16(80, 0, Buffer);
             WriteUInt16(1151, 2, Buffer);
 
             Buffer[4] = 2;

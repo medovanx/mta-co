@@ -147,7 +147,7 @@ namespace MTA.Network.GamePackets {
                         LastResetTime = DateTime.FromBinary(rdr.ReadInt64("LastResetTime"));
                         if (DateTime.Now.DayOfYear != LastResetTime.DayOfYear) {
                             var array = src.Values.Where(p =>
-                                QuestInfo.CheckType((QuestID)p.QItem.UID) == QuestType.DailyQuest &&
+                                QuestInfo.CheckType(p.QItem.UID) == QuestType.DailyQuest &&
                                 p.QItem.Status == QuestPacket.QuestData.QuestStatus.Finished).ToArray();
                             for (int i = 0; i < array.Length; i++) {
                                 src.Remove(array[i].QItem.UID);
@@ -305,7 +305,7 @@ namespace MTA.Network.GamePackets {
                     Collection.Add(count, new Queue<QuestPacket.QuestData>());
                 }
 
-                if (src.ContainsKey((QuestID)Array[x].MissionId))
+                if (src.ContainsKey(Array[x].MissionId))
                     Collection[count].Enqueue(src[Array[x].MissionId].QItem);
                 else {
                     var quest = QuestPacket.QuestData.Create(Array[x].MissionId,

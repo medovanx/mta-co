@@ -363,17 +363,17 @@ namespace MTA.Game
                     if (!_enum.MoveNext()) break;
                     var entry = _enum.Current;
 
-                    wtr.Write((byte)entry.Level);
+                    wtr.Write(entry.Level);
                     if (type == 2603)
-                        wtr.Write((byte)entry.Grade);
+                        wtr.Write(entry.Grade);
                     else
                         wtr.Write((byte)i);
-                    wtr.Write((byte)entry.Class);
-                    wtr.Write((uint)entry.Model);
+                    wtr.Write(entry.Class);
+                    wtr.Write(entry.Model);
                     if (type == 2603)
-                        wtr.Write((uint)entry.Points);
+                        wtr.Write(entry.Points);
                     else
-                        wtr.Write((uint)entry.YesterdayPoints);
+                        wtr.Write(entry.YesterdayPoints);
                     byte[] array = Encoding.Default.GetBytes(entry.Name);
                     for (int j = 0; j < 16; j++)
                     {

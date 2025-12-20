@@ -454,23 +454,23 @@ namespace MTA
             }
             #endregion
             #region ManiacDance
-            if (client.Entity.ContainsFlag3((ulong)1UL << 53))
+            if (client.Entity.ContainsFlag3(1UL << 53))
             {
                 if (Time32.Now > client.Entity.ManiacDance.AddSeconds(15))
                 {
-                    client.Entity.RemoveFlag3((ulong)1UL << 53);
+                    client.Entity.RemoveFlag3(1UL << 53);
                 }
             }
             #endregion
             #region Backfire
-            if (client.Entity.ContainsFlag3((ulong)1UL << 51))
+            if (client.Entity.ContainsFlag3(1UL << 51))
             {
                 if (Time32.Now > client.Entity.BackfireStamp.AddSeconds(8))
                 {
                     if (client.Spells.ContainsKey(12680))
                     {
-                        if (client.Entity.ContainsFlag3((ulong)1UL << 51))
-                            client.Entity.RemoveFlag3((ulong)1UL << 51);
+                        if (client.Entity.ContainsFlag3(1UL << 51))
+                            client.Entity.RemoveFlag3(1UL << 51);
                     }
                     client.Entity.BackfireStamp = Time32.Now;
                 }
@@ -724,7 +724,7 @@ namespace MTA
                             }
                             else
                             {
-                                Game.Attacking.Calculate.CreateAzureDMG((uint)damage, client.Entity, client.Entity);
+                                Game.Attacking.Calculate.CreateAzureDMG(damage, client.Entity, client.Entity);
                                 client.Entity.AzureShieldDefence -= (ushort)damage;
                                 client.Entity.AzureShieldPacket();
                                 damage = 1;
@@ -786,7 +786,7 @@ namespace MTA
                             }
                             else
                             {
-                                Game.Attacking.Calculate.CreateAzureDMG((uint)damage, client.Entity, client.Entity);
+                                Game.Attacking.Calculate.CreateAzureDMG(damage, client.Entity, client.Entity);
                                 client.Entity.AzureShieldDefence -= (ushort)damage;
                                 client.Entity.AzureShieldPacket();
                                 damage = 1;
@@ -1065,7 +1065,7 @@ namespace MTA
             }
             #endregion
             #region IceBlock
-            if (client.Entity.ContainsFlag((ulong)Update.Flags.FreezeSmall))
+            if (client.Entity.ContainsFlag(Update.Flags.FreezeSmall))
             {
                 if (Now > client.FrightenStamp.AddSeconds(client.Entity.Fright))
                 {
@@ -1073,7 +1073,7 @@ namespace MTA
                     update.UID = client.Entity.UID;
                     update.Remove(GameCharacterUpdates.Dizzy);
                     client.SendScreen(update, true);
-                    client.Entity.RemoveFlag((ulong)Update.Flags.FreezeSmall);
+                    client.Entity.RemoveFlag(Update.Flags.FreezeSmall);
                 }
                 else
                 {
@@ -1189,16 +1189,16 @@ namespace MTA
             }
             #endregion
             #region ShockDaze
-            if (client.Entity.ContainsFlag((ulong)Update.Flags.Stun))
+            if (client.Entity.ContainsFlag(Update.Flags.Stun))
             {
                 if (Now > client.Entity.ShockStamp.AddSeconds(client.Entity.Shock))
                 {
-                    client.Entity.RemoveFlag((ulong)Update.Flags.Stun);
+                    client.Entity.RemoveFlag(Update.Flags.Stun);
                 }
             }
             #endregion
             #region ChaosCycle
-            if (client.Entity.ContainsFlag((ulong)Update.Flags.ChaosCycle))
+            if (client.Entity.ContainsFlag(Update.Flags.ChaosCycle))
             {
                 if (Now > client.FrightenStamp.AddSeconds(5))
                 {
@@ -1209,12 +1209,12 @@ namespace MTA
                         update.Remove(GameCharacterUpdates.Flustered);
                         client.SendScreen(update);
                     }
-                    client.Entity.RemoveFlag((ulong)Update.Flags.ChaosCycle);
+                    client.Entity.RemoveFlag(Update.Flags.ChaosCycle);
                 }
             }
             #endregion
             #region FreezeSmall
-            if (client.Entity.ContainsFlag((ulong)Update.Flags.FreezeSmall))
+            if (client.Entity.ContainsFlag(Update.Flags.FreezeSmall))
             {
                 {
                     if (Now > client.FrightenStamp.AddSeconds(20))
@@ -1226,7 +1226,7 @@ namespace MTA
                             update.Remove(GameCharacterUpdates.Flustered);
                             client.SendScreen(update, true);
                         }
-                        client.Entity.RemoveFlag((ulong)Update.Flags.FreezeSmall);
+                        client.Entity.RemoveFlag(Update.Flags.FreezeSmall);
                     }
                     else
                     {
@@ -1336,7 +1336,7 @@ namespace MTA
                                 {
                                     var spells = client.Spells[12560];
                                     var skill = Database.SpellTable.SpellInformations[12560][spells.Level];
-                                    stamina += (int)skill.Power;
+                                    stamina += skill.Power;
                                 }
                             }
                             if (client.Entity.Stamina != stamina)
@@ -1402,55 +1402,55 @@ namespace MTA
             #region lacb
             if (client.Entity.lacb >= 10 & client.Entity.lacb <= 300)
             {//MenaMagice 
-                client.Entity.Update((byte)Update.mantos, 1, true);
+                client.Entity.Update(Update.mantos, 1, true);
             }
             if (client.Entity.lacb >= 300 & client.Entity.lacb <= 600)
             {
-                client.Entity.Update((byte)Update.mantos, 2, true);
+                client.Entity.Update(Update.mantos, 2, true);
             }
             if (client.Entity.lacb >= 600 & client.Entity.lacb <= 900)
             {
-                client.Entity.Update((byte)Update.mantos, 3, true);
+                client.Entity.Update(Update.mantos, 3, true);
             }
             if (client.Entity.lacb >= 900 & client.Entity.lacb <= 1300)
             {
-                client.Entity.Update((byte)Update.mantos, 4, true);
+                client.Entity.Update(Update.mantos, 4, true);
             }
             if (client.Entity.lacb >= 1300 & client.Entity.lacb <= 1600)
             {
-                client.Entity.Update((byte)Update.mantos, 5, true);
+                client.Entity.Update(Update.mantos, 5, true);
             }
             if (client.Entity.lacb >= 1600 & client.Entity.lacb <= 1900)
             {
-                client.Entity.Update((byte)Update.mantos, 6, true);
+                client.Entity.Update(Update.mantos, 6, true);
             }
             if (client.Entity.lacb >= 1900 & client.Entity.lacb <= 2200)
             {
-                client.Entity.Update((byte)Update.mantos, 7, true);
+                client.Entity.Update(Update.mantos, 7, true);
             }
             if (client.Entity.lacb >= 2200 & client.Entity.lacb <= 2800)
             {
-                client.Entity.Update((byte)Update.mantos, 8, true);
+                client.Entity.Update(Update.mantos, 8, true);
             }
             if (client.Entity.lacb >= 2800 & client.Entity.lacb <= 3400)
             {
-                client.Entity.Update((byte)Update.mantos, 9, true);
+                client.Entity.Update(Update.mantos, 9, true);
             }
             if (client.Entity.lacb >= 3400 & client.Entity.lacb <= 4200)
             {
-                client.Entity.Update((byte)Update.mantos, 10, true);
+                client.Entity.Update(Update.mantos, 10, true);
             }
             if (client.Entity.lacb >= 4200 & client.Entity.lacb <= 5400)
             {
-                client.Entity.Update((byte)Update.mantos, 11, true);
+                client.Entity.Update(Update.mantos, 11, true);
             }
             if (client.Entity.lacb >= 5400 & client.Entity.lacb <= 6800)
             {
-                client.Entity.Update((byte)Update.mantos, 12, true);
+                client.Entity.Update(Update.mantos, 12, true);
             }
             if (client.Entity.lacb >= 6800)
             {
-                client.Entity.Update((byte)Update.mantos, 13, true);
+                client.Entity.Update(Update.mantos, 13, true);
             }
             #endregion
 
@@ -2026,7 +2026,7 @@ namespace MTA
                                         decrease = 700;
                                     if (client.Entity.OnSuperman())
                                         decrease = 200;
-                                    if (Now > client.Entity.AttackStamp.AddMilliseconds((1000 - client.Entity.Agility - decrease) * (int)(AttackType == Network.GamePackets.Attack.Ranged ? 1 : 1)))
+                                    if (Now > client.Entity.AttackStamp.AddMilliseconds((1000 - client.Entity.Agility - decrease) * (AttackType == Network.GamePackets.Attack.Ranged ? 1 : 1)))
                                     {
                                         new Game.Attacking.Handle(AttackPacket, client.Entity, null);
                                     }

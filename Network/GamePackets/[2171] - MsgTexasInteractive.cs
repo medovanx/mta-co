@@ -70,10 +70,10 @@
                         {
                             var T = Database.PokerTables.Tables[msg.TableNumber];
                             if (T.Players.ContainsKey(client.Entity.UID)) T.RemovePlayer(client.Entity.UID);
-                            T.SitIn(client, (byte)msg.Seat);
+                            T.SitIn(client, msg.Seat);
                             client.Send(msg.ToArray());
                             msg.Type2 = (byte)(T.ShowHand ? 2 : 1);
-                            T.UpdateSeats(client, (byte)msg.Seat);
+                            T.UpdateSeats(client, msg.Seat);
                             if (T.m_State == Game.Enums.GameClientEnum.WaitForPlayers)
                                 T.TryToBegin();
                         }
@@ -85,10 +85,10 @@
                         {
                             var T = Database.PokerTables.Tables[msg.TableNumber];
                             if (T.Players.ContainsKey(client.Entity.UID)) T.RemovePlayer(client.Entity.UID);
-                            T.SitIn(client, (byte)msg.Seat);
+                            T.SitIn(client, msg.Seat);
                             client.Send(msg.ToArray());
                             msg.Type2 = (byte)(T.ShowHand ? 2 : 1);
-                            T.UpdateSeats(client, (byte)msg.Seat);
+                            T.UpdateSeats(client, msg.Seat);
                         }
                         break;
                     }
@@ -97,11 +97,11 @@
                         if (Database.PokerTables.Tables.ContainsKey(msg.TableNumber))
                         {
                             var T = Database.PokerTables.Tables[msg.TableNumber];
-                            T.SitIn(client, (byte)msg.Seat, false);
+                            T.SitIn(client, msg.Seat, false);
                             if (T.Watchers.ContainsKey(client.Entity.UID))
                                 T.Watchers[client.Entity.UID].CurrentState = 2;
                             client.Send(msg.ToArray());
-                            T.UpdateSeats(client, (byte)msg.Seat);
+                            T.UpdateSeats(client, msg.Seat);
                             if (T.m_State == Game.Enums.GameClientEnum.WaitForPlayers)
                                 T.TryToBegin();
                         }

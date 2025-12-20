@@ -106,8 +106,8 @@ namespace MTA
 
             Damage *= Reborn;
             Damage *= Target.ItemBless;
-            double torist = (double)(Target.Gems[GemTypes.Tortoise] / 100d);
-            torist = (double)(1 - torist);
+            double torist = Target.Gems[GemTypes.Tortoise] / 100d;
+            torist = 1 - torist;
             torist = Math.Max(torist, 0.6);
             Damage *= torist;
 
@@ -119,8 +119,8 @@ namespace MTA
             {
                 if (Attacker.Breaktrough > Target.Counteraction)
                 {
-                    double Power = (double)(Attacker.Breaktrough - Target.Counteraction);
-                    Power = (double)(Power / 10);
+                    double Power = Attacker.Breaktrough - Target.Counteraction;
+                    Power = Power / 10;
                     if (MyMath.Success(Power))
                     {
                         bypass = true;
@@ -285,8 +285,8 @@ namespace MTA
 
             Damage *= Reborn;
             Damage *= Target.ItemBless;
-            double torist = (double)(Target.Gems[GemTypes.Tortoise] / 100d);
-            torist = (double)(1 - torist);
+            double torist = Target.Gems[GemTypes.Tortoise] / 100d;
+            torist = 1 - torist;
             torist = Math.Max(torist, 0.6);
             Damage *= torist;
 
@@ -299,8 +299,8 @@ namespace MTA
             {
                 if (Attacker.Breaktrough > Target.Counteraction)
                 {
-                    double Power = (double)(Attacker.Breaktrough - Target.Counteraction);
-                    Power = (double)(Power / 10);
+                    double Power = Attacker.Breaktrough - Target.Counteraction;
+                    Power = Power / 10;
                     if (MyMath.Success(Power))
                     {
                         bypass = true;

@@ -37,7 +37,7 @@ namespace MTA.Network.GamePackets.Roulette {
         }
 
         public byte TimerStamp {
-            set { Writer.Byte((byte)value, 9, packet); }
+            set { Writer.Byte(value, 9, packet); }
         }
 
         public byte[] ToArray() {

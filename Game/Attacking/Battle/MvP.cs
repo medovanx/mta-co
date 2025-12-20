@@ -49,8 +49,8 @@ namespace MTA
 
             Damage *= Reborn;
             Damage *= Target.ItemBless;
-            double torist = (double)(Target.Gems[GemTypes.Tortoise] / 100d);
-            torist = (double)(1 - torist);
+            double torist = Target.Gems[GemTypes.Tortoise] / 100d;
+            torist = 1 - torist;
             torist = Math.Max(torist, 0.6);
             Damage *= torist;
 
@@ -131,8 +131,8 @@ namespace MTA
             Damage *= Reborn;
             double bless = Target.ItemBless;
             Damage *= bless;
-            double torist = (double)(Target.Gems[GemTypes.Tortoise] / 100d);
-            torist = (double)(1 - torist);
+            double torist = Target.Gems[GemTypes.Tortoise] / 100d;
+            torist = 1 - torist;
             torist = Math.Max(torist, 0.6);
             Damage *= torist;
 
@@ -170,7 +170,7 @@ namespace MTA
             if (Damage >= MinDmg || Target.Level <= 15)
                 return (Int32)Damage;
 
-            MinDmg += (Int32)(Monster.Level / 10);
+            MinDmg += Monster.Level / 10;
 
             if (Target.EntityFlag == EntityFlag.Player)
             {
@@ -191,7 +191,7 @@ namespace MTA
         {
             Byte Level = 120;
             if (Monster.Level < 120)
-                Level = (Byte)Monster.Level;
+                Level = Monster.Level;
 
             if (Monster.IsRed(Target))
                 Damage *= 1.5;

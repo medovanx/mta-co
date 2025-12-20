@@ -45,7 +45,7 @@ namespace MTA.Game.ConquerStructures
             {
                 int max = Game.Enums.ChiMaxValues(attribute.Type);
                 int min = Game.Enums.ChiMinValues(attribute.Type);
-                score += (int)(100 * (attribute.Value - min) / (max - min));
+                score += 100 * (attribute.Value - min) / (max - min);
             }
             Points = score;
         }

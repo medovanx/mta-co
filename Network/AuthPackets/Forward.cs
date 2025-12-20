@@ -25,7 +25,7 @@
         {
             get
             {
-                return (ForwardType)(uint)BitConverter.ToUInt32(Buffer, 8);
+                return (ForwardType)BitConverter.ToUInt32(Buffer, 8);
             }
             set
             {

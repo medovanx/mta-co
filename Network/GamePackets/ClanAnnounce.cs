@@ -14,9 +14,9 @@ namespace MTA.Network.GamePackets
             WriteUInt16((UInt16)(mData.Length - 8), 0, mData);
             WriteUInt16(1312, 2, mData);
 
-            WriteByte((Byte)24, 4, mData);
+            WriteByte(24, 4, mData);
             WriteUInt16((UInt16)clan.ID, 8, mData);
-            WriteByte((Byte)1, 16, mData);
+            WriteByte(1, 16, mData);
             WriteStringWithLength(clan.Announcement, 17, mData);
         }
         public void Send(Client.GameState client)

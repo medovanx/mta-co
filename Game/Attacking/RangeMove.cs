@@ -45,14 +45,14 @@ namespace MTA.Game.Attacking
 
             double AddX = X2 - X;
             double AddY = Y2 - Y;
-            double r = (double)Math.Atan2(AddY, AddX);
+            double r = Math.Atan2(AddY, AddX);
 
-            if (r < 0) r += (double)Math.PI * 2;
+            if (r < 0) r += Math.PI * 2;
 
-            direction = 360 - (r * 180 / (double)Math.PI);
+            direction = 360 - (r * 180 / Math.PI);
 
             byte Dir = (byte)((7 - (Math.Floor(direction) / 45 % 8)) - 1 % 8);
-            return (Enums.ConquerAngle)(byte)((int)Dir % 8);
+            return (Enums.ConquerAngle)(byte)(Dir % 8);
         }
         public short GetDistance(ushort X, ushort Y, ushort X2, ushort Y2)
         {
@@ -71,7 +71,7 @@ namespace MTA.Game.Attacking
         {
             foreach (Coords line in bas)
             {
-                byte distance = (byte)GetDistance((ushort)X, (ushort)Y, (ushort)line.X, (ushort)line.Y);
+                byte distance = (byte)GetDistance(X, Y, (ushort)line.X, (ushort)line.Y);
                 if (distance <= Range)
                     return true;
             }

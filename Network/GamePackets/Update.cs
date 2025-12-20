@@ -177,22 +177,22 @@ namespace MTA.Network.GamePackets
                 MagicDefender = 0x01,
                 Assassin = 0x20000,
                 PathOfShadow = 1UL << 145,
-                BlueBall = (ulong)1UL << 132,
-                AutoHunting = (ulong)1UL << 20,
+                BlueBall = 1UL << 132,
+                AutoHunting = 1UL << 20,
                 SuperCyclone = (uint)1UL << 22,
-                ConuqerSuperYellow = (ulong)1UL << 23, //GL flag
-                ConuqerSuperBlue = (ulong)1UL << 24, //DL flag
-                ConuqerSuperUnderBlue = (ulong)1UL << 25, // Memeber Flag 
+                ConuqerSuperYellow = 1UL << 23, //GL flag
+                ConuqerSuperBlue = 1UL << 24, //DL flag
+                ConuqerSuperUnderBlue = 1UL << 25, // Memeber Flag 
                 MrConquer = 1UL << 166,
                 MsConquerHostess = 1UL << 167,
                 rygh_hglx = 1UL << 174,
                 rygh_syzs = 1UL << 175,
                 MRConquerHost = 1UL << 166,
                 MSConquerHostess = 1UL << 167,
-                Flame1 = (ulong)1UL << 168,
-                Flame2 = (ulong)1UL << 169,
-                Flame3 = (ulong)1UL << 170,
-                Flame4 = (ulong)1UL << 171,
+                Flame1 = 1UL << 168,
+                Flame2 = 1UL << 169,
+                Flame3 = 1UL << 170,
+                Flame4 = 1UL << 171,
                   GoldBrickNormal = 1UL << 161,
             GoldBrickRefined = 1UL << 162,
             GoldBrickUnique = 1UL << 163,
@@ -210,11 +210,11 @@ namespace MTA.Network.GamePackets
                 BackFire = 1UL << 51,
                 AngerWarriorEpic = 1UL << 178,
             #endregion
- DragonFlow = (ulong)1UL << 20,
+ DragonFlow = 1UL << 20,
                 DragonWarriorTop = (uint)1UL << 26,
-                DragonFury = (ulong)1UL << 30,
-                DragonCyclone = (ulong)1UL << 31,
-                DragonSwing = (ulong)1UL << 32,
+                DragonFury = 1UL << 30,
+                DragonCyclone = 1UL << 31,
+                DragonSwing = 1UL << 32,
                 lianhuaran01 = 1UL << 168,
             lianhuaran02 = 1UL << 169,
             lianhuaran03 = 1UL << 170,
@@ -430,7 +430,7 @@ namespace MTA.Network.GamePackets
             this.UpdateCount++;
             ushort offset = (ushort)(16 + ((UpdateCount - 1) * 32));
             Writer.WriteUInt32(type, offset, Buffer);
-            Writer.WriteUInt64((ulong)value, offset + 4, Buffer);
+            Writer.WriteUInt64(value, offset + 4, Buffer);
             Writer.WriteUInt64(value, offset + 8, Buffer);
         }
         public void Append(byte type, double value)

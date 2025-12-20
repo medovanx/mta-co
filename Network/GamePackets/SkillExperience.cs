@@ -26,7 +26,7 @@ namespace MTA.Network.GamePackets
 
         public ushort ID
         {
-            get { return (ushort)BitConverter.ToUInt16(Buffer, 12); }
+            get { return BitConverter.ToUInt16(Buffer, 12); }
             set { WriteUInt16(value, 12, Buffer); }
         }
 

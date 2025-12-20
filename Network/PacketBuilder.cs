@@ -61,7 +61,7 @@ namespace MTA.Network {
         }
 
         public void Long(ulong value) {
-            _buffer[Position] = ((byte)((ulong)value & 0xffL));
+            _buffer[Position] = ((byte)(value & 0xffL));
             Position++;
             _buffer[Position] = ((byte)(value >> 8 & 0xff));
             Position++;
@@ -187,7 +187,7 @@ namespace MTA.Network {
         }
 
         public void Long(ulong value, int Offset) {
-            _buffer[Offset] = ((byte)((ulong)value & 0xffL));
+            _buffer[Offset] = ((byte)(value & 0xffL));
             Offset++;
             _buffer[Offset] = ((byte)(value >> 8 & 0xff));
             Offset++;

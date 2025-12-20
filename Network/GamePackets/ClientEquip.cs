@@ -11,17 +11,17 @@ namespace MTA.Network.GamePackets
         {
             this.mData = new Byte[100];
             Writer.WriteUInt16((UInt16)(this.mData.Length - 8), 0, mData);
-            Writer.WriteUInt16((UInt16)1009, 2, mData);
+            Writer.WriteUInt16(1009, 2, mData);
             Writer.WriteUInt32((uint)Time32.timeGetTime().GetHashCode(), 4, mData);
-            Writer.WriteUInt16((UInt16)46, 20, mData);
+            Writer.WriteUInt16(46, 20, mData);
         }
         public ClientEquip(GameState c)
         {
             this.mData = new Byte[100];
             Writer.WriteUInt16((UInt16)(this.mData.Length - 8), 0, mData);
-            Writer.WriteUInt16((UInt16)1009, 2, mData);
+            Writer.WriteUInt16(1009, 2, mData);
             Writer.WriteUInt32((uint)Time32.timeGetTime().GetHashCode(), 4, mData);
-            Writer.WriteUInt16((UInt16)46, 20, mData);
+            Writer.WriteUInt16(46, 20, mData);
             DoEquips(c);
         }
 

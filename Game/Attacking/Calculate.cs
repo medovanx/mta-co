@@ -324,9 +324,9 @@ namespace MTA.Game.Attacking
                 if (attacker.Archer())
                 {
                     if (magic)
-                        Damage = (int)Damage * 6;
+                        Damage = Damage * 6;
                     else
-                        Damage = (int)Damage * 1;
+                        Damage = Damage * 1;
                     return;
                 }
             }
@@ -337,9 +337,9 @@ namespace MTA.Game.Attacking
                     if (attacked.MonsterInfo.Boss || attacked.Boss == 1)
                     {
                         if (magic)
-                            Damage = (int)Damage * 10;
+                            Damage = Damage * 10;
                         else
-                            Damage = (int)Damage * 4;
+                            Damage = Damage * 4;
                         return;
                     }
                 }
@@ -429,8 +429,8 @@ namespace MTA.Game.Attacking
                                 {
                                     if (attacker.CriticalStrike > attacked.Immunity)
                                     {
-                                        double Power = (double)(attacker.CriticalStrike - attacked.Immunity);
-                                        Power = (double)(Power / 100);
+                                        double Power = attacker.CriticalStrike - attacked.Immunity;
+                                        Power = Power / 100;
                                         if (MyMath.Success(Power))
                                         {
                                             Damage += Damage * 50 / 100;
@@ -450,7 +450,7 @@ namespace MTA.Game.Attacking
                             {
                                 if (attacker.Penetration > 0)
                                 {
-                                    double Power = (double)(attacker.Penetration / 100);
+                                    double Power = attacker.Penetration / 100;
                                     if (MyMath.Success(Power))
                                     {
                                         Damage += Damage * 50 / 100;
@@ -461,8 +461,8 @@ namespace MTA.Game.Attacking
                                     {
                                         if (attacker.SkillCStrike >= attacked.Immunity)
                                         {
-                                            Power = (double)(attacker.SkillCStrike - attacked.Immunity);
-                                            Power = (double)(Power / 100);
+                                            Power = attacker.SkillCStrike - attacked.Immunity;
+                                            Power = Power / 100;
                                             if (MyMath.Success(Power))
                                             {
                                                 Damage += Damage * 50 / 100;
@@ -481,8 +481,8 @@ namespace MTA.Game.Attacking
                                 {
                                     if (attacker.SkillCStrike >= attacked.Immunity)
                                     {
-                                        double Power = (double)(attacker.SkillCStrike - attacked.Immunity);
-                                        Power = (double)(Power / 100);
+                                        double Power = attacker.SkillCStrike - attacked.Immunity;
+                                        Power = Power / 100;
                                         if (MyMath.Success(Power))
                                         {
                                             Damage += Damage * 50 / 100;
@@ -507,7 +507,7 @@ namespace MTA.Game.Attacking
                 {
                     if (attacked.Block > 0)
                     {
-                        double Power = (double)(attacked.Block / 100);
+                        double Power = attacked.Block / 100;
                         if (MyMath.Success(Power))
                         {
                             Damage = Damage / 2;
@@ -540,8 +540,8 @@ namespace MTA.Game.Attacking
                         if (attacker.CriticalStrike > 0)
                         {
 
-                            double Power = (double)(attacker.CriticalStrike);
-                            Power = (double)(Power / 100);
+                            double Power = attacker.CriticalStrike;
+                            Power = Power / 100;
                             if (MyMath.Success(Power))
                             {
                                 Damage += Damage * 50 / 100;
@@ -554,7 +554,7 @@ namespace MTA.Game.Attacking
                     {
                         if (attacker.Penetration > 0)
                         {
-                            double Power = (double)(attacker.Penetration / 100);
+                            double Power = attacker.Penetration / 100;
                             if (MyMath.Success(Power))
                             {
                                 Damage = Damage * 50 / 100;
@@ -565,8 +565,8 @@ namespace MTA.Game.Attacking
                         }
                         if (attacker.SkillCStrike > 0)
                         {
-                            double Power = (double)(attacker.SkillCStrike);
-                            Power = (double)(Power / 100);
+                            double Power = attacker.SkillCStrike;
+                            Power = Power / 100;
                             if (MyMath.Success(Power))
                             {
                                 Damage += Damage * 50 / 100;
@@ -598,8 +598,8 @@ namespace MTA
         }
         public static void BitUnfold32(int bits32, out int lower16, out int upper16)
         {
-            lower16 = (int)(bits32 & UInt16.MaxValue);
-            upper16 = (int)(bits32 >> 16);
+            lower16 = bits32 & UInt16.MaxValue;
+            upper16 = bits32 >> 16;
         }
         public static void BitUnfold64(ulong bits64, out int lower32, out int upper32)
         {

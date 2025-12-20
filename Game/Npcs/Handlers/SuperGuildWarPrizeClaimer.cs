@@ -174,7 +174,7 @@ namespace MTA.Game.Npcs.Handlers {
                 case 4: {
                     if (!SuperGuildWar.IsWar && client.Guild.SuperPoleKeeper && client.Guild != null &&
                         client.AsMember.Rank == GuildMemberRank.DeputyLeader) {
-                        client.Entity.AddTopStatus((ulong)Update.Flags3.ConuqerSuperBlue, 3, DateTime.Now.AddDays(7));
+                        client.Entity.AddTopStatus(Update.Flags3.ConuqerSuperBlue, 3, DateTime.Now.AddDays(7));
                         Kernel.SendWorldMessage(
                             new Message(
                                 "Congratulations! " + client.Entity.Name + " from " + client.Guild.SuperPoleKeeper +

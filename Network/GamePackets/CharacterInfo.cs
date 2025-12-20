@@ -22,7 +22,7 @@ namespace MTA.Network.GamePackets
             Write(client.Entity.Mesh, 14, Packet);
             Writer.Write(client.Entity.HairStyle, 18, Packet);
             Write(client.Entity.Money, 20, Packet);
-            Write((uint)client.Entity.ConquerPoints, 28, Packet);
+            Write(client.Entity.ConquerPoints, 28, Packet);
             Writer.Write(client.Entity.Experience, 32, Packet);
             Writer.Write(client.Entity.Strength, 60, Packet);
             Writer.Write(client.Entity.Agility, 62, Packet);

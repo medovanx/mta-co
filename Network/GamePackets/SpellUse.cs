@@ -224,7 +224,7 @@ namespace MTA.Network.GamePackets
 
 
                 Writer.WriteUInt32((uint)(Targets.Count/* << 8*/), 19, buffer);
-                Writer.WriteByte((byte)SpellEffect, 20, buffer);
+                Writer.WriteByte(SpellEffect, 20, buffer);
                 if (SpellID == 12400)
                     Writer.WriteUInt32(1, 20, buffer);
                 ushort offset = 24;
@@ -270,7 +270,7 @@ namespace MTA.Network.GamePackets
 
 
                         Writer.WriteUInt32((uint)(targets/* << 8*/), 19, buffer);
-                        Writer.WriteByte((byte)SpellEffect, 20, buffer);
+                        Writer.WriteByte(SpellEffect, 20, buffer);
                         ushort offset = 24;
                         for (int j = 0; j < targets; j++)
                         {

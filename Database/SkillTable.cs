@@ -116,7 +116,7 @@
         public static void DeleteSpell(GameState client, ushort ID)
         {
             MTA.Database.MySqlCommand command = new MTA.Database.MySqlCommand(MySqlCommandType.DELETE);
-            command.Delete("skills", "ID", (long)ID).And("EntityID", (long)client.Entity.UID).Execute();
+            command.Delete("skills", "ID", ID).And("EntityID", client.Entity.UID).Execute();
         }
 
         public static void LoadProficiencies(GameState client)
@@ -126,7 +126,7 @@
             if (client.Entity != null)
             {
                 client.Proficiencies = new SafeDictionary<ushort, IProf>(100);
-                MySqlReader reader = new MySqlReader(new MTA.Database.MySqlCommand(MySqlCommandType.SELECT).Select("profs").Where("EntityID", (long)client.Entity.UID));
+                MySqlReader reader = new MySqlReader(new MTA.Database.MySqlCommand(MySqlCommandType.SELECT).Select("profs").Where("EntityID", client.Entity.UID));
                 while (reader.Read())
                 {
                     IProf prof = new Proficiency(true)
@@ -152,7 +152,7 @@
             if (client.Entity != null)
             {
                 client.Spells = new SafeDictionary<ushort, ISkill>(100);
-                MySqlReader reader = new MySqlReader(new MTA.Database.MySqlCommand(MySqlCommandType.SELECT).Select("skills").Where("EntityID", (long)client.Entity.UID));
+                MySqlReader reader = new MySqlReader(new MTA.Database.MySqlCommand(MySqlCommandType.SELECT).Select("skills").Where("EntityID", client.Entity.UID));
                 while (reader.Read())
                 {
                     ISkill skill = new Spell(true)
@@ -187,8 +187,8 @@
                         bool exists = false;
                         using (var reader = new MySqlReader(new MySqlCommand(MySqlCommandType.SELECT)
                             .Select("profs")
-                            .Where("EntityID", (long)client.Entity.UID)
-                            .And("ID", (long)prof.ID)))
+                            .Where("EntityID", client.Entity.UID)
+                            .And("ID", prof.ID)))
                         {
                             exists = reader.Read();
                         }
@@ -199,11 +199,11 @@
                             // UPDATE existing proficiency
                             command = new MTA.Database.MySqlCommand(MySqlCommandType.UPDATE);
                             command.Update("profs")
-                                .Set("Level", (long)prof.Level)
-                                .Set("PreviousLevel", (long)prof.PreviousLevel)
-                                .Set("Experience", (long)prof.Experience)
-                                .Where("EntityID", (long)client.Entity.UID)
-                                .And("ID", (long)prof.ID)
+                                .Set("Level", prof.Level)
+                                .Set("PreviousLevel", prof.PreviousLevel)
+                                .Set("Experience", prof.Experience)
+                                .Where("EntityID", client.Entity.UID)
+                                .And("ID", prof.ID)
                                 .Execute();
                             prof.Available = true;
                         }
@@ -212,11 +212,11 @@
                             // INSERT new proficiency
                             command = new MTA.Database.MySqlCommand(MySqlCommandType.INSERT);
                             command.Insert("profs")
-                                .Insert("ID", (long)prof.ID)
-                                .Insert("EntityID", (long)client.Entity.UID)
-                                .Insert("Level", (long)prof.Level)
-                                .Insert("PreviousLevel", (long)prof.Level)
-                                .Insert("Experience", (long)prof.Experience)
+                                .Insert("ID", prof.ID)
+                                .Insert("EntityID", client.Entity.UID)
+                                .Insert("Level", prof.Level)
+                                .Insert("PreviousLevel", prof.Level)
+                                .Insert("Experience", prof.Experience)
                                 .Execute();
                             prof.Available = true;
                         }
@@ -243,8 +243,8 @@
                         bool exists = false;
                         using (var reader = new MySqlReader(new MySqlCommand(MySqlCommandType.SELECT)
                             .Select("skills")
-                            .Where("EntityID", (long)client.Entity.UID)
-                            .And("ID", (long)skill.ID)))
+                            .Where("EntityID", client.Entity.UID)
+                            .And("ID", skill.ID)))
                         {
                             exists = reader.Read();
                         }
@@ -255,13 +255,13 @@
                             // UPDATE existing skill
                             command = new Database.MySqlCommand(MySqlCommandType.UPDATE);
                             command.Update("skills")
-                                .Set("Level", (long)skill.Level)
-                                .Set("PreviousLevel", (long)skill.PreviousLevel)
-                                .Set("Experience", (long)skill.Experience)
+                                .Set("Level", skill.Level)
+                                .Set("PreviousLevel", skill.PreviousLevel)
+                                .Set("Experience", skill.Experience)
                                 .Set("LevelHu", (long)skill.Souls)
                                 .Set("LevelHu2", skill.LevelHu2)
-                                .Where("EntityID", (long)client.Entity.UID)
-                                .And("ID", (long)skill.ID)
+                                .Where("EntityID", client.Entity.UID)
+                                .And("ID", skill.ID)
                                 .Execute();
                             skill.Available = true;
                         }
@@ -270,11 +270,11 @@
                             // INSERT new skill
                             command = new Database.MySqlCommand(MySqlCommandType.INSERT);
                             command.Insert("skills")
-                                .Insert("EntityID", (long)client.Entity.UID)
-                                .Insert("ID", (long)skill.ID)
-                                .Insert("Level", (long)skill.Level)
-                                .Insert("Experience", (long)skill.Experience)
-                                .Insert("PreviousLevel", (long)skill.Level)
+                                .Insert("EntityID", client.Entity.UID)
+                                .Insert("ID", skill.ID)
+                                .Insert("Level", skill.Level)
+                                .Insert("Experience", skill.Experience)
+                                .Insert("PreviousLevel", skill.Level)
                                 .Insert("TempLevel", 0)
                                 .Insert("LevelHu", (long)skill.Souls)
                                 .Insert("LevelHu2", skill.LevelHu2)

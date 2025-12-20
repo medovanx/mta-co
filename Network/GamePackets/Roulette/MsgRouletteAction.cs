@@ -35,7 +35,7 @@ namespace MTA.Network.GamePackets.Roulette {
                         var Ranks = Winner.OrderByDescending(p => p.Winning).ToArray();
 
                         MsgRouletteRecord RecordGui = new MsgRouletteRecord();
-                        RecordGui.ApplayUser(Ranks, (byte)table.LuckyNumber);
+                        RecordGui.ApplayUser(Ranks, table.LuckyNumber);
                         RecordGui.SendInfo(user);
                     }
 
@@ -45,7 +45,7 @@ namespace MTA.Network.GamePackets.Roulette {
                             var Ranks = Winner.OrderByDescending(p => p.Winning).ToArray();
 
                             MsgRouletteRecord RecordGui = new MsgRouletteRecord();
-                            RecordGui.ApplayUser(Ranks, (byte)table.LuckyNumber);
+                            RecordGui.ApplayUser(Ranks, table.LuckyNumber);
                             RecordGui.SendInfo(user);
                         }
                     }

@@ -33,8 +33,8 @@ namespace MTA.Game.ConquerStructures
                         {
                             ushort _StackCount = infos.BaseInformation.StackSize;
                             if (times <= infos.BaseInformation.StackSize)
-                                _StackCount = (ushort)times;
-                            item.StackSize = (ushort)_StackCount;
+                                _StackCount = times;
+                            item.StackSize = _StackCount;
                             Database.ConquerItemTable.UpdateStack(item);
                             times -= (byte)_StackCount;
                         }
@@ -304,8 +304,8 @@ namespace MTA.Game.ConquerStructures
                                 //item.StackSize = (byte)times;                                
                                 ushort _StackCount = infos.BaseInformation.StackSize;
                                 if (times <= infos.BaseInformation.StackSize)
-                                    _StackCount = (ushort)times;
-                                item.StackSize = (ushort)_StackCount;
+                                    _StackCount = times;
+                                item.StackSize = _StackCount;
                                 Database.ConquerItemTable.UpdateStack(item);
                                 times -= (byte)_StackCount;
                             }
@@ -418,8 +418,8 @@ namespace MTA.Game.ConquerStructures
                                 //item.StackSize = (byte)times;                                
                                 ushort _StackCount = infos.BaseInformation.StackSize;
                                 if (times <= infos.BaseInformation.StackSize)
-                                    _StackCount = (ushort)times;
-                                item.StackSize = (ushort)_StackCount;
+                                    _StackCount = times;
+                                item.StackSize = _StackCount;
                                 Database.ConquerItemTable.UpdateStack(item);
                                 times -= (byte)_StackCount;
                             }

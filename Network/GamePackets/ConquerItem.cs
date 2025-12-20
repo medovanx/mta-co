@@ -544,7 +544,7 @@ namespace MTA.Network.GamePackets
         }
         public bool IsTwoHander()
         {
-            ItemTypes item_type = (ItemTypes)GetItemType();
+            ItemTypes item_type = GetItemType();
             bool check = ((UInt16)item_type >= 500 && (UInt16)item_type <= 580);
             if (check)
             {

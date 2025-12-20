@@ -72,7 +72,7 @@ namespace MTA.Game.ConquerStructures
                     {
                         var Item = new Network.GamePackets.ConquerItem(true);
                         Item.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
-                        Item.ID = (uint)Ore1;
+                        Item.ID = Ore1;
                         Item.MaximDurability = 1;
                         Item.Durability = 1;
                         client.Inventory.Add(Item, Enums.ItemUse.CreateAndAdd);
@@ -88,7 +88,7 @@ namespace MTA.Game.ConquerStructures
                     {
                         var Item = new Network.GamePackets.ConquerItem(true);
                         Item.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
-                        Item.ID = (uint)Ore2;
+                        Item.ID = Ore2;
                         Item.MaximDurability = 1;
                         Item.Durability = 1;
                         client.Inventory.Add(Item, Enums.ItemUse.CreateAndAdd);
@@ -104,7 +104,7 @@ namespace MTA.Game.ConquerStructures
                     {
                         var Item = new Network.GamePackets.ConquerItem(true);
                         Item.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
-                        Item.ID = (uint)Ore3;
+                        Item.ID = Ore3;
                         Item.MaximDurability = 1;
                         Item.Durability = 1;
                         client.Inventory.Add(Item, Enums.ItemUse.CreateAndAdd);
@@ -120,7 +120,7 @@ namespace MTA.Game.ConquerStructures
                     {
                         var Item = new Network.GamePackets.ConquerItem(true);
                         Item.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
-                        Item.ID = (uint)Ore3;
+                        Item.ID = Ore3;
                         Item.MaximDurability = 1;
                         Item.Durability = 1;
                         client.Inventory.Add(Item, Enums.ItemUse.CreateAndAdd);
@@ -138,7 +138,7 @@ namespace MTA.Game.ConquerStructures
                     {
                         var Item = new Network.GamePackets.ConquerItem(true);
                         Item.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
-                        Item.ID = (uint)GemID;
+                        Item.ID = GemID;
                         Item.MaximDurability = 1;
                         Item.Durability = 1;
                         client.Inventory.Add(Item, Enums.ItemUse.CreateAndAdd);
@@ -156,7 +156,7 @@ namespace MTA.Game.ConquerStructures
                     {
                         var Item = new Network.GamePackets.ConquerItem(true);
                         Item.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
-                        Item.ID = (uint)GemID2;
+                        Item.ID = GemID2;
                         Item.MaximDurability = 1;
                         Item.Durability = 1;
                         client.Inventory.Add(Item, Enums.ItemUse.CreateAndAdd);
@@ -174,7 +174,7 @@ namespace MTA.Game.ConquerStructures
                     {
                         var Item = new Network.GamePackets.ConquerItem(true);
                         Item.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
-                        Item.ID = (uint)GemID3;
+                        Item.ID = GemID3;
                         Item.MaximDurability = 1;
                         Item.Durability = 1;
                         client.Inventory.Add(Item, Enums.ItemUse.CreateAndAdd);
@@ -192,7 +192,7 @@ namespace MTA.Game.ConquerStructures
                     {
                         var Item = new Network.GamePackets.ConquerItem(true);
                         Item.Color = (MTA.Game.Enums.Color)Kernel.Random.Next(4, 8);
-                        Item.ID = (uint)GemID4;
+                        Item.ID = GemID4;
                         Item.MaximDurability = 1;
                         Item.Durability = 1;
                         client.Inventory.Add(Item, Enums.ItemUse.CreateAndAdd);

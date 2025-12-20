@@ -271,7 +271,7 @@ namespace MTA.Database {
 
             public void ApplayNumberWinner(GameState client) {
                 MsgRouletteNoWinner Winner = MsgRouletteNoWinner.Create();
-                Winner.Number = (byte)LuckyNumber;
+                Winner.Number = LuckyNumber;
 
                 client.Send(Winner);
             }
@@ -370,7 +370,7 @@ namespace MTA.Database {
                     bool Contain = false;
                     foreach (var Entity in Array) {
                         LuckyNumber = (byte)Rand.Next(0, 38);
-                        if (Entity.MyLuckExtra.ContainsKey((byte)LuckyNumber))
+                        if (Entity.MyLuckExtra.ContainsKey(LuckyNumber))
                             Contain = true;
                     }
 
@@ -386,7 +386,7 @@ namespace MTA.Database {
 
                 foreach (var item in Member.MyLuckNumber.Values) {
                     if (item.Number == LuckyNumber) {
-                        Member.Winning += (uint)(item.BetPrice * 36);
+                        Member.Winning += item.BetPrice * 36;
                         Member.Betting += item.BetPrice;
                     }
                 }

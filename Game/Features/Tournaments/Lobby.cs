@@ -609,7 +609,7 @@ namespace MTA.MaTrix {
                                             return;
 
                                         if (Ais.ContainsKey(Target.UID)) {
-                                            if (Kernel.Rate((double)50.0)) {
+                                            if (Kernel.Rate(50.0)) {
                                                 ai.Bot.Entity.Die(Target);
                                             }
                                             else {
@@ -1278,8 +1278,8 @@ namespace MTA.MaTrix {
                     MemoryStream strm = new MemoryStream();
                     BinaryWriter wtr = new BinaryWriter(strm);
                     wtr.Write((ushort)56);
-                    wtr.Write((ushort)Type);
-                    wtr.Write((uint)Group.Player1.Entity.UID);
+                    wtr.Write(Type);
+                    wtr.Write(Group.Player1.Entity.UID);
                     byte[] array = Encoding.Default.GetBytes(Group.Player1.Entity.Name);
                     for (int i = 0; i < 16; i++) {
                         if (i < Group.Player1.Entity.Name.Length) {
@@ -1289,8 +1289,8 @@ namespace MTA.MaTrix {
                             wtr.Write((byte)0);
                     }
 
-                    wtr.Write((uint)Group.Player1Damage);
-                    wtr.Write((uint)Group.Player2.Entity.UID);
+                    wtr.Write(Group.Player1Damage);
+                    wtr.Write(Group.Player2.Entity.UID);
                     byte[] array2 = Encoding.Default.GetBytes(Group.Player2.Entity.Name);
                     for (int i = 0; i < 16; i++) {
                         if (i < Group.Player2.Entity.Name.Length) {
@@ -1300,7 +1300,7 @@ namespace MTA.MaTrix {
                             wtr.Write((byte)0);
                     }
 
-                    wtr.Write((uint)Group.Player2Damage);
+                    wtr.Write(Group.Player2Damage);
                     wtr.Write((uint)1);
                     wtr.Write(Encoding.Default.GetBytes("TQServer"));
                     strm.Position = 0;
@@ -1324,10 +1324,10 @@ namespace MTA.MaTrix {
                     MemoryStream strm = new MemoryStream();
                     BinaryWriter wtr = new BinaryWriter(strm);
                     wtr.Write((ushort)0);
-                    wtr.Write((ushort)Type);
-                    wtr.Write((uint)DialogID);
-                    wtr.Write((uint)OptionID);
-                    wtr.Write((uint)Stats.UID);
+                    wtr.Write(Type);
+                    wtr.Write(DialogID);
+                    wtr.Write(OptionID);
+                    wtr.Write(Stats.UID);
                     byte[] array = Encoding.Default.GetBytes(Stats.Name);
                     for (int i = 0; i < 20; i++) {
                         if (i < Stats.Name.Length) {

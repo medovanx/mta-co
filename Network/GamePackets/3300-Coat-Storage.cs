@@ -207,7 +207,7 @@ namespace MTA.Network.GamePackets {
                 var pkt = new byte[8 + memoryStream.Length];
                 memoryStream.ToArray().CopyTo(pkt, 0);
                 Writer.WriteUshort((ushort)memoryStream.Length, 0, pkt);
-                Writer.WriteUshort((ushort)3300, 2, pkt);
+                Writer.WriteUshort(3300, 2, pkt);
 
                 return pkt;
             }

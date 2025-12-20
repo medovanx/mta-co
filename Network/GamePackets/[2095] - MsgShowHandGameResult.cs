@@ -60,7 +60,7 @@ namespace MTA.Network.GamePackets
 
                 Write(Pl.UID, offset, Buffer);
                 offset += 4;
-                Write((ulong)(0 - Pl.TotalBet), offset, Buffer);
+                Write(0 - Pl.TotalBet, offset, Buffer);
                 offset += 8;
             }
         }

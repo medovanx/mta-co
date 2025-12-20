@@ -177,14 +177,14 @@ namespace MTA.Database
 
         public static ushort PurifyStabilizationPoints(byte plevel)
         {
-            return purifyStabilizationPoints[Math.Min(plevel - 1, (byte)5)];
+            return purifyStabilizationPoints[Math.Min(plevel - 1, 5)];
         }
 
         static ushort[] purifyStabilizationPoints = new ushort[6] { 10, 30, 60, 100, 150, 200 };
 
         public static ushort RefineryStabilizationPoints(byte elevel)
         {
-            return refineryStabilizationPoints[Math.Min(elevel - 1, (byte)4)];
+            return refineryStabilizationPoints[Math.Min(elevel - 1, 4)];
         }
         static ushort[] refineryStabilizationPoints = new ushort[5] { 10, 30, 70, 150, 270 };
 

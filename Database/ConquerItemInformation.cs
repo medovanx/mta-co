@@ -42,7 +42,7 @@ namespace MTA.Database
                         if (GradeInformations.ContainsKey(CIBI.Description) == false)
                         {
                             GradeInformations2.Add(CIBI.Description, new SafeDictionary<uint, int>(1000));
-                            GradeInformations2[CIBI.Description].Add((uint)(CIBI.ID / 10), 0);
+                            GradeInformations2[CIBI.Description].Add(CIBI.ID / 10, 0);
                             lastlevel = CIBI.Level;
                             GradeInformations.Add(CIBI.Description, new SafeDictionary<int, ConquerItemBaseInformation>(1000));
                             gkey = 0;
@@ -59,7 +59,7 @@ namespace MTA.Database
                             }
                             else
                             {
-                                GradeInformations2[CIBI.Description].Add((uint)(CIBI.ID / 10), 0);
+                                GradeInformations2[CIBI.Description].Add(CIBI.ID / 10, 0);
                                 lastlevel = CIBI.Level;
                                 gkey = gkey + 1;
                             }
@@ -275,24 +275,18 @@ namespace MTA.Database
             }
 
             itemtype = itemtype / 10 * 10;
-            ID = (uint)(
-                             ID - (ID % 10) // [5] = 0
-                         );
+            ID = ID - (ID % 10);
             uint orID = ID;
             byte itemType = (byte)(ID / 10000);
             ushort itemType2 = (ushort)(ID / 1000);
             if (itemType == 14 && itemType2 != 143 && itemType2 != 142 && itemType2 != 141)//armors
             {
-                ID = (uint)(
-                            (((uint)(ID / 1000)) * 1000) + // [3] = 0
-                            ((ID % 100))
-                        );
+                ID = (ID / 1000 * 1000) + // [3] = 0
+                     ((ID % 100));
             }
             else if (itemType2 == 141 || itemType2 == 142 || itemType2 == 143 || itemType == 13 || itemType == 11 || itemType2 == 123 || itemType == 30 || itemType == 20 || itemType == 12 || itemType == 15 || itemType == 16 || itemType == 50 || itemType2 == 421 || itemType2 == 601 || itemType2 == 610 || itemType == 90)//Necky bow bag
             {
-                ID = (uint)(
-                            ID - (ID % 10) // [5] = 0
-                        );
+                ID = ID - (ID % 10);
             }
             else
             {
@@ -410,28 +404,28 @@ namespace MTA.Database
         {
             if (BaseInformation.ID / 1000 == 616)
             {
-                return (uint)(616010 + BaseInformation.ID % 10);
+                return 616010 + BaseInformation.ID % 10;
             }
             var grades = GradeInformations[this.BaseInformation.Description];
             if (grades == null) return BaseInformation.ID;
             if (grades[BaseInformation.GradeKey - 1] == null)
                 return BaseInformation.ID;
             else
-                return (uint)((grades[BaseInformation.GradeKey - 1].ID / 10) * 10 + BaseInformation.ID % 10);
+                return (grades[BaseInformation.GradeKey - 1].ID / 10) * 10 + BaseInformation.ID % 10;
         }
         public uint LowestID(byte Level)
         {
             if (BaseInformation.ID / 1000 == 616)
             {
-                return (uint)(616010 + BaseInformation.ID % 10);
+                return 616010 + BaseInformation.ID % 10;
             }
             var grades = GradeInformations[this.BaseInformation.Description];
 
             if (grades == null) return BaseInformation.ID;
             for (byte gr = 0; gr < grades.Count; gr++)
                 if (grades[gr].Level == Level)
-                    return (uint)((grades[gr + 1].ID / 10) * 10 + BaseInformation.ID % 10);
-            return (uint)((grades[0].ID / 10) * 10 + BaseInformation.ID % 10);
+                    return (grades[gr + 1].ID / 10) * 10 + BaseInformation.ID % 10;
+            return (grades[0].ID / 10) * 10 + BaseInformation.ID % 10;
         }
     }
     public class ConquerItemPlusInformation

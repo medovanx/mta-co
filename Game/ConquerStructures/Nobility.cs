@@ -103,8 +103,8 @@ namespace MTA.Game.ConquerStructures
                             byte[] Ranks = { 1, 3, 5, 7, 9, 12 };
                             foreach (var Rank in Ranks)
                             {
-                                wtr.Write((ulong)Contributions[Rank]);
-                                wtr.Write((uint)4294967295);
+                                wtr.Write(Contributions[Rank]);
+                                wtr.Write(4294967295);
                                 wtr.Write((uint)Rank);
                             }
                             int packetlength = (int)strm.Length;
@@ -134,7 +134,7 @@ namespace MTA.Game.ConquerStructures
                         WriteUInt16((ushort)(BoardList.Count > 50 ? 5 : (BoardList.Count / 10) + 1), 10, packet);
                         ushort Count = 0;
                         int offset = 120;
-                        for (int i = (int)(information.wParam1 * 10); i < information.wParam1 * 10 + 10 && i < BoardList.Count; i++)
+                        for (int i = information.wParam1 * 10; i < information.wParam1 * 10 + 10 && i < BoardList.Count; i++)
                         {
                             var nob = BoardList[i];
                             WriteUInt32(nob.EntityUID, offset, packet);

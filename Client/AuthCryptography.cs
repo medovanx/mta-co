@@ -68,7 +68,7 @@ namespace MTA.Network.Cryptography
         {
             for (int i = 0; i < buffer.Length; i++)
             {
-                buffer[i] ^= (byte)0xAB;
+                buffer[i] ^= 0xAB;
                 buffer[i] = (byte)(buffer[i] >> 4 | buffer[i] << 4);
                 buffer[i] ^= (byte)(_cryptKey1[_encryptCounter.Key1] ^ _cryptKey2[_encryptCounter.Key2]);
                 _encryptCounter.Increment();
@@ -81,7 +81,7 @@ namespace MTA.Network.Cryptography
             {
                 for (int i = 0; i < length; i++)
                 {
-                    buffer[i] ^= (byte)0xAB;
+                    buffer[i] ^= 0xAB;
                     buffer[i] = (byte)(buffer[i] >> 4 | buffer[i] << 4);
                     buffer[i] ^= (byte)(_cryptKey2[_decryptCounter.Key2] ^ _cryptKey1[_decryptCounter.Key1]);
                     _decryptCounter.Increment();
@@ -91,7 +91,7 @@ namespace MTA.Network.Cryptography
             {
                 for (int i = 0; i < length; i++)
                 {
-                    buffer[i] ^= (byte)0xAB;
+                    buffer[i] ^= 0xAB;
                     buffer[i] = (byte)(buffer[i] >> 4 | buffer[i] << 4);
                     buffer[i] ^= (byte)(_cryptKey4[_decryptCounter.Key2] ^ _cryptKey3[_decryptCounter.Key1]);
                     _decryptCounter.Increment();
@@ -161,8 +161,8 @@ namespace MTA.Network.Cryptography
                 //	printf("%.2x ", addResult.c[b]);
                 tempKey[3 - b] = addResult[b];
             }
-            tempKey[2] = (byte)(tempKey[2] ^ (byte)0x43);
-            tempKey[3] = (byte)(tempKey[3] ^ (byte)0x21);
+            tempKey[2] = (byte)(tempKey[2] ^ 0x43);
+            tempKey[3] = (byte)(tempKey[3] ^ 0x21);
 
             for (int b = 0; b < 4; b++)
             {

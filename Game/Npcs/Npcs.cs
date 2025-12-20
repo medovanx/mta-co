@@ -1007,7 +1007,7 @@ namespace MTA {
                                     if (client.Guild != null) {
                                         if (client.AsMember != null) {
                                             if (client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader) {
-                                                uint Reaward = (uint)(client.Guild.CTFReward * Rates.Ctf);
+                                                uint Reaward = client.Guild.CTFReward * Rates.Ctf;
                                                 if (Reaward != 0) {
                                                     byte[] messaje =
                                                         new Message(
@@ -4778,7 +4778,7 @@ namespace MTA {
                                 }
                                 case 3: {
                                     if (client.Inventory.Contains(1088000, 1)) {
-                                        int Model = (int)client.Entity.Body % 10;
+                                        int Model = client.Entity.Body % 10;
                                         switch (Model) {
                                             case 2:
                                             case 4:
@@ -4804,7 +4804,7 @@ namespace MTA {
                                 }
                                 case 4: {
                                     if (client.Inventory.Contains(1088000, 1)) {
-                                        int Model = (int)client.Entity.Body % 10;
+                                        int Model = client.Entity.Body % 10;
                                         switch (Model) {
                                             case 3:
                                             case 4:
@@ -6005,7 +6005,7 @@ namespace MTA {
                                             client.Guild != null &&
                                             client.AsMember.Rank == Enums.GuildMemberRank.DeputyLeader) {
                                             //ClassPk.AddDl();
-                                            client.Entity.AddTopStatus((ulong)(((int)Titles.membmerguild)), 0,
+                                            client.Entity.AddTopStatus((int)Titles.membmerguild, 0,
                                                 DateTime.Now.AddDays(7));
                                             Kernel.SendWorldMessage(
                                                 new Message(
@@ -6241,7 +6241,7 @@ namespace MTA {
 
 
                                         GuildCondutors.Conductor cond = null;
-                                        if (GuildCondutors.GuildConductors.TryGetValue((uint)(client.ActiveNpc + 110),
+                                        if (GuildCondutors.GuildConductors.TryGetValue(client.ActiveNpc + 110,
                                                 out cond)) {
                                             client.Entity.Teleport(cond.Teleport_MapId, cond.Teleport_X,
                                                 cond.Teleport_Y);
@@ -14458,7 +14458,7 @@ namespace MTA {
                         }
                         case 5: {
                             if (client.Entity.ConquerPoints >= 10000) {
-                                if (client.Entity.Money <= (uint)(500000000 - 1000)) {
+                                if (client.Entity.Money <= 500000000 - 1000) {
                                     client.Entity.ConquerPoints -= 10000;
                                     client.Entity.Money += 50000000;
                                 }
@@ -16631,12 +16631,12 @@ namespace MTA {
                     var T1 = new TimeSpan(DateTime.Now.Ticks);
                     var T2 = new TimeSpan(client.OfflineTGEnterTime.Ticks);
                     ushort minutes = (ushort)(T1.TotalMinutes - T2.TotalMinutes);
-                    minutes = (ushort)Math.Min((ushort)900, minutes);
+                    minutes = Math.Min((ushort)900, minutes);
                     sts.TotalTrainingMinutesLeft = (ushort)(900 - minutes);
                     sts.TrainedMinutes = minutes;
                     ulong exp = client.Entity.Experience;
                     byte level = client.Entity.Level;
-                    double expballGain = (double)300 * (double)minutes / (double)900;
+                    double expballGain = 300 * (double)minutes / 900;
                     while (expballGain >= 100) {
                         expballGain -= 100;
                         exp += client.ExpBall;
@@ -16650,7 +16650,7 @@ namespace MTA {
                         level++;
                     }
 
-                    double percent = (double)exp * (double)100 / (double)DataHolder.LevelExperience(level);
+                    double percent = exp * (double)100 / DataHolder.LevelExperience(level);
 
                     sts.Character_NewExp = (ulong)(percent * 100000);
                     sts.Character_AcquiredLevel = level;
@@ -19520,13 +19520,13 @@ namespace MTA {
                                     dialog.Option("Ahh sorry.", 0xff);
                                 }
                                 else {
-                                    client.Inventory.Remove(3000502, (byte)1);
-                                    client.Inventory.Remove(3000503, (byte)1);
-                                    client.Inventory.Remove(3000504, (byte)1);
-                                    client.Inventory.Remove(3000505, (byte)1);
-                                    client.Inventory.Remove(3000506, (byte)1);
-                                    client.Inventory.Remove(3000507, (byte)1);
-                                    client.Inventory.Remove(3000508, (byte)1);
+                                    client.Inventory.Remove(3000502, 1);
+                                    client.Inventory.Remove(3000503, 1);
+                                    client.Inventory.Remove(3000504, 1);
+                                    client.Inventory.Remove(3000505, 1);
+                                    client.Inventory.Remove(3000506, 1);
+                                    client.Inventory.Remove(3000507, 1);
+                                    client.Inventory.Remove(3000508, 1);
                                     client.Entity.ConquerPoints += 250;
                                     client.Entity.Quest++;
                                     PacketHandler.WorldMessage("Congratulations! " + client.Entity.Name +
@@ -19586,12 +19586,12 @@ namespace MTA {
                                     dialog.Option("Ahh sorry.", 0xff);
                                 }
                                 else {
-                                    client.Inventory.Remove(710066, (byte)1);
-                                    client.Inventory.Remove(710067, (byte)1);
-                                    client.Inventory.Remove(710068, (byte)1);
-                                    client.Inventory.Remove(710069, (byte)1);
-                                    client.Inventory.Remove(710070, (byte)1);
-                                    client.Inventory.Remove(710071, (byte)1);
+                                    client.Inventory.Remove(710066, 1);
+                                    client.Inventory.Remove(710067, 1);
+                                    client.Inventory.Remove(710068, 1);
+                                    client.Inventory.Remove(710069, 1);
+                                    client.Inventory.Remove(710070, 1);
+                                    client.Inventory.Remove(710071, 1);
                                     client.Entity.ConquerPoints += 250;
                                     client.Entity.Quest++;
                                     PacketHandler.WorldMessage("Congratulations! " + client.Entity.Name +
@@ -23765,7 +23765,7 @@ namespace MTA {
                         case 2: {
                             if (client.Entity.ConquerPoints >= client.NpcCpsInput && client.NpcCpsInput != 0) {
                                 client.Entity.ConquerPoints -= client.NpcCpsInput;
-                                Nobility.Donate((ulong)client.NpcCpsInput, client);
+                                Nobility.Donate(client.NpcCpsInput, client);
                                 client.NpcCpsInput = 0;
                                 NobilityTable.Load();
                             }
@@ -24289,8 +24289,8 @@ namespace MTA {
                                                     ClanArena arena = new ClanArena(client, t);
                                                     arena.ValueFight = client.Entity.ClanArenaCps * 2;
                                                     Task.Factory.StartNew(() => arena.import());
-                                                    t.Entity.ConquerPoints -= (uint)client.Entity.ClanArenaCps;
-                                                    client.Entity.ConquerPoints -= (uint)client.Entity.ClanArenaCps;
+                                                    t.Entity.ConquerPoints -= client.Entity.ClanArenaCps;
+                                                    client.Entity.ConquerPoints -= client.Entity.ClanArenaCps;
                                                 }, null);
                                         }
                                         else
@@ -24381,8 +24381,8 @@ namespace MTA {
                                                     Guildarena arena = new Guildarena(client, t);
                                                     arena.ValueFight = client.Entity.GuildArenaCps * 2;
                                                     Task.Factory.StartNew(() => arena.import());
-                                                    t.Entity.ConquerPoints -= (uint)client.Entity.GuildArenaCps;
-                                                    client.Entity.ConquerPoints -= (uint)client.Entity.GuildArenaCps;
+                                                    t.Entity.ConquerPoints -= client.Entity.GuildArenaCps;
+                                                    client.Entity.ConquerPoints -= client.Entity.GuildArenaCps;
                                                 }, null);
                                         }
                                         else
@@ -24627,7 +24627,7 @@ namespace MTA {
 
                                     //client.Entity.AddFlag(Update.Flags.WeeklyPKChampion);
                                     client.Entity.SendSpawn(client, true);
-                                    client.Entity.AddTopStatus((ulong)Update.Flags3.ConuqerSuperYellow, 3,
+                                    client.Entity.AddTopStatus(Update.Flags3.ConuqerSuperYellow, 3,
                                         DateTime.Now.AddDays(1));
                                     client.Entity.Teleport(1002, 302, 278);
                                     //EntityTable.SaveEntity(client);
@@ -25883,7 +25883,7 @@ namespace MTA {
                             if (client.uniquepoints >= 20) {
                                 client.Entity.ConquerPoints += Rates.UniquePk;
                                 client.Entity.killerpoints += 100;
-                                client.Entity.AddTopStatus((ulong)(((int)Titles.UniquePk)), 0,
+                                client.Entity.AddTopStatus((int)Titles.UniquePk, 0,
                                     DateTime.Now.AddHours(22));
                                 client.Entity.AddTopStatus(Update.Flags2.Top8Ninja, 2, DateTime.Now.AddDays(1));
                                 Kernel.SendWorldMessage(
@@ -26336,7 +26336,7 @@ namespace MTA {
                                 if (alive == 1) {
                                     client.Entity.ConquerPoints += 2000000;
                                     client.Entity.killerpoints += 1;
-                                    client.Entity.AddTopStatus((ulong)Update.Flags3.rygh_hglx, 3,
+                                    client.Entity.AddTopStatus(Update.Flags3.rygh_hglx, 3,
                                         DateTime.Now.AddMinutes(58));
                                     Kernel.SendWorldMessage(
                                         new Message(
@@ -26555,7 +26555,7 @@ namespace MTA {
                                     client.AsMember.Rank == Enums.GuildMemberRank.DeputyLeader &&
                                     ClassPk.TopDlClaim <= 20) {
                                     //ClassPk.AddDl();
-                                    client.Entity.AddTopStatus((ulong)(((int)Titles.membmerguild)), 0,
+                                    client.Entity.AddTopStatus((int)Titles.membmerguild, 0,
                                         DateTime.Now.AddDays(7));
                                     Kernel.SendWorldMessage(
                                         new Message(

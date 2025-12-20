@@ -1425,12 +1425,12 @@ namespace MTA.Game.ConquerStructures.Society
                     wtr.Write((uint)member.Level);
                     wtr.Write((uint)member.Rank);
                     wtr.Write((uint)0); // EXP
-                    wtr.Write((uint)member.ArsenalDonation);
+                    wtr.Write(member.ArsenalDonation);
                     wtr.Write((uint)0);
                     wtr.Write((uint)0);
                     wtr.Write((uint)member.Class);
                     wtr.Write((uint)(((timernow - member.LastLogin) / 10000000)));
-                    wtr.Write((uint)client.Entity.Mesh);
+                    wtr.Write(client.Entity.Mesh);
                 }
                 count++;
             }
@@ -1495,8 +1495,8 @@ namespace MTA.Game.ConquerStructures.Society
                     member.Client.Send(command);
                     member.Client.AsMember = null;
                     member.Client.Guild = null;
-                    member.Client.Entity.GuildID = (ushort)0;
-                    member.Client.Entity.GuildRank = (ushort)0;
+                    member.Client.Entity.GuildID = 0;
+                    member.Client.Entity.GuildRank = 0;
                     member.Client.Screen.FullWipe();
                     member.Client.Screen.Reload(null);
                     member.Client.Entity.GuildBattlePower = 0;

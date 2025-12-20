@@ -76,8 +76,8 @@ namespace MTA.Network.GamePackets
             WriteUInt32(item.PlusProgress, 60, buffer);
             WriteByte((byte)(item.Inscribed == true ? 1 : 0), 64, buffer);
             WriteUInt16((ushort)item.Mode, 76, buffer);
-            WriteUInt16((ushort)item.Durability, 78, buffer);
-            WriteUInt16((ushort)item.MaximDurability, 80, buffer);
+            WriteUInt16(item.Durability, 78, buffer);
+            WriteUInt16(item.MaximDurability, 80, buffer);
             WriteUInt32((uint)((item.Days * 24) * 60), 72, buffer);
             WriteUInt32(item.TimeLeftInMinutes, 68, buffer);
         }

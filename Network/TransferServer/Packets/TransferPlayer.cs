@@ -26,7 +26,7 @@ namespace MTA.TransferServer
 
             WriteUInt32(client.Entity.UID, 78, Buff);
             WriteUInt64(client.Entity.Money, 6, Buff);
-            WriteUInt32((uint)client.Entity.ConquerPoints, 10, Buff);
+            WriteUInt32(client.Entity.ConquerPoints, 10, Buff);
             WriteUInt16(client.Entity.Class, 14, Buff);
             WriteUInt16(client.Entity.SecondRebornClass, 16, Buff);
             WriteUInt32(client.Entity.FirstRebornClass, 18, Buff);

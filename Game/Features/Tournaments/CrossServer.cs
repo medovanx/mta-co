@@ -47,7 +47,7 @@ namespace MTA.Game {
             for (int i = 0; i < top8.Length; i++) {
                 foreach (var client in Kernel.GamePool.Values) {
                     if ((uint)client.Entity.CountryID == top8[i].id) {
-                        uint prize = ((((uint)1200000 - ((uint)i * 200000)) / top8[i].playres));
+                        uint prize = (((1200000 - ((uint)i * 200000)) / top8[i].playres));
                         if (prize > 0) {
                             client.Entity.ConquerPoints += prize;
                         }
@@ -153,7 +153,7 @@ namespace MTA.Game {
             }
 
             Pole.Hitpoints = Pole.MaxHitpoints;
-            Kernel.SendWorldMessage(Pole, Program.Values, (ushort)mapid);
+            Kernel.SendWorldMessage(Pole, Program.Values, mapid);
             Reset();
         }
 
@@ -183,7 +183,7 @@ namespace MTA.Game {
             for (int c = 0; c < scoreMessages.Length; c++) {
                 Message msg = new Message(scoreMessages[c], Color.Red,
                     c == 0 ? Message.FirstRightCorner : Message.ContinueRightCorner);
-                Kernel.SendWorldMessage(msg, Program.Values, (ushort)mapid);
+                Kernel.SendWorldMessage(msg, Program.Values, mapid);
             }
         }
 
@@ -265,8 +265,8 @@ namespace MTA.Game {
                 uint num2 = (m - 1u) * 8u;
                 int offset = 30;
                 while (b < array.Length) {
-                    if ((uint)b >= num2) {
-                        if ((uint)b >= num2 + 8u || (int)b >= array.Length) {
+                    if (b >= num2) {
+                        if (b >= num2 + 8u || (int)b >= array.Length) {
                             break;
                         }
 

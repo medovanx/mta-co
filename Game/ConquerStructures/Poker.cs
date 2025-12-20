@@ -59,7 +59,7 @@ namespace MTA.Game.ConquerStructures
                 if (MyTable.BetType == Game.Enums.PokerBetType.Money)
                     return Entity.Money;
                 else if (MyTable.BetType == Game.Enums.PokerBetType.ConquerPoints)
-                    return (ulong)Entity.ConquerPoints;
+                    return Entity.ConquerPoints;
                 else
                     return 0;
             }
@@ -104,7 +104,7 @@ namespace MTA.Game.ConquerStructures
             foreach (var C in TCards)
             {
 
-                P += (ushort)(C.ID);
+                P += C.ID;
             }
             return P;
         }
@@ -113,7 +113,7 @@ namespace MTA.Game.ConquerStructures
             if (MyTable.BetType == Game.Enums.PokerBetType.Money)
             {
                 if (Entity.Money >= Money)
-                    Entity.Money -= (ulong)Money;
+                    Entity.Money -= Money;
                 else
                     Entity.Money = 0;
             }
@@ -460,7 +460,7 @@ namespace MTA.Game.ConquerStructures
             {
                 board |= HoldemHand.Hand.CardMasksTable[item.ID];
             }
-            return HoldemHand.Hand.Evaluate((ulong)(board | _hand));
+            return HoldemHand.Hand.Evaluate(board | _hand);
         }
         public bool SitIn(GameState client, byte Seat, bool Player = true)
         {
@@ -591,20 +591,20 @@ namespace MTA.Game.ConquerStructures
             byte CurrentState = 1;
             if (!Players.ContainsKey(client.Entity.UID))
                 if (Watchers.ContainsKey(client.Entity.UID))
-                    CurrentState = (byte)Watchers[client.Entity.UID].CurrentState;
+                    CurrentState = Watchers[client.Entity.UID].CurrentState;
 
             client.Send(new MsgShowHandEnter(true) { Type = 1, TableType2 = (byte)(ShowHand ? 2 : 1), Seat = NoSeat, UID = client.Entity.UID, State = CurrentState, TableNumber = Number }.ToArray());
 
             foreach (var P in Players.Values)
             {
                 if (P.UID == client.Entity.UID) continue;
-                client.Send(new MsgShowHandEnter(true) { Type = 1, TableType2 = (byte)(ShowHand ? 2 : 1), Seat = P.Seat, UID = P.UID, State = (byte)P.CurrentState, TableNumber = Number }.ToArray());
+                client.Send(new MsgShowHandEnter(true) { Type = 1, TableType2 = (byte)(ShowHand ? 2 : 1), Seat = P.Seat, UID = P.UID, State = P.CurrentState, TableNumber = Number }.ToArray());
                 P.Send(new MsgShowHandEnter(true) { Type = 1, TableType2 = (byte)(ShowHand ? 2 : 1), Seat = NoSeat, UID = client.Entity.UID, State = CurrentState, TableNumber = Number }.ToArray());
             }
             foreach (var P in Watchers.Values)
             {
                 if (P.UID == client.Entity.UID) continue;
-                client.Send(new MsgShowHandEnter(true) { Type = 1, TableType2 = (byte)(ShowHand ? 2 : 1), Seat = P.Seat, UID = P.UID, State = (byte)P.CurrentState, TableNumber = Number }.ToArray());
+                client.Send(new MsgShowHandEnter(true) { Type = 1, TableType2 = (byte)(ShowHand ? 2 : 1), Seat = P.Seat, UID = P.UID, State = P.CurrentState, TableNumber = Number }.ToArray());
                 P.Send(new MsgShowHandEnter(true) { Type = 1, TableType2 = (byte)(ShowHand ? 2 : 1), Seat = NoSeat, UID = client.Entity.UID, State = CurrentState, TableNumber = Number }.ToArray());
             }
         }
@@ -1498,7 +1498,7 @@ namespace MTA.Game.ConquerStructures
                         foreach (var p in players)
                         {
                             if (players.Length > 1)
-                                wonAmount = (ulong)(pot.Amount * p.TotalBet / Pot);
+                                wonAmount = pot.Amount * p.TotalBet / Pot;
                             if (!Winners.ContainsKey(p.UID))
                                 Winners.Add(p.UID, 0);
                             Winners[p.UID] += wonAmount;
@@ -1547,9 +1547,9 @@ namespace MTA.Game.ConquerStructures
                 if (Winners.Count > 1)
                     winnvalue = winnerplayer.Wins = winner.Value;
                 else
-                    winnerplayer.Wins = (ulong)(winnvalue + winnerplayer.TotalBet);
+                    winnerplayer.Wins = winnvalue + winnerplayer.TotalBet;
                 if (BetType == Game.Enums.PokerBetType.Money)
-                    winnerplayer.Entity.Money += (ulong)winnerplayer.Wins;
+                    winnerplayer.Entity.Money += winnerplayer.Wins;
                 else if (BetType == Game.Enums.PokerBetType.ConquerPoints)
                     winnerplayer.Entity.ConquerPoints += (uint)winnerplayer.Wins;
 

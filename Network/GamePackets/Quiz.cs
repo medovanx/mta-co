@@ -161,8 +161,8 @@ namespace MTA.Networking.GamePackets
         public QuizHistory()
         {
             Buffer = new byte[68];
-            WriteUInt16((ushort)(68 - 8), 0, Buffer);
-            WriteUInt16((ushort)2068, 2, Buffer);
+            WriteUInt16(68 - 8, 0, Buffer);
+            WriteUInt16(2068, 2, Buffer);
         }
         public ushort Type { get { return BitConverter.ToUInt16(Buffer, 4); } set { WriteUInt16(value, 4, Buffer); } }
 

@@ -99,7 +99,7 @@ namespace MTA.Game.Attacking
 
         public bool InLine(ushort X, ushort Y)
         {
-            int mydst = Kernel.GetDistance((ushort)X1, (ushort)Y1, X, Y);
+            int mydst = Kernel.GetDistance(X1, Y1, X, Y);
             byte dir = (byte)Kernel.GetAngle(X1, Y1, X, Y);
 
             if (mydst <= MaxDistance)
@@ -124,8 +124,8 @@ namespace MTA.Game.Attacking
                     }
                     else
                     {
-                        double val1 = ((double)(X - X1)) / ((double)(X2 - X1));
-                        double val2 = ((double)(Y + Y1)) / ((double)(Y2 + Y1));
+                        double val1 = (X - X1) / ((double)(X2 - X1));
+                        double val2 = (Y + Y1) / ((double)(Y2 + Y1));
                         bool works = Math.Floor(val1) == Math.Floor(val2);
                         return works;
                     }

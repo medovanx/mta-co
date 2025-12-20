@@ -137,7 +137,7 @@ namespace MTA.Game.Npcs.Handlers.Market {
                                     client.Inventory.Remove(CelestialStoneId, 1);
                                     if (type == 4) {
                                         if (client.SelectedGem != 0) {
-                                            uint gemId = (uint)(client.SelectedGem + SuperGemBaseId);
+                                            uint gemId = client.SelectedGem + SuperGemBaseId;
                                             client.Inventory.Add(gemId, 0, 1);
                                         }
                                     }

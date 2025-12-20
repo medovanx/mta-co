@@ -71,7 +71,7 @@ namespace MTA.Game
                 Pole.Name = PoleKeeper.Name;
             }
             Pole.Hitpoints = Pole.MaxHitpoints;
-            Kernel.SendWorldMessage(Pole, Program.Values, (ushort)1509);
+            Kernel.SendWorldMessage(Pole, Program.Values, 1509);
             Reset();
         }
 
@@ -122,7 +122,7 @@ namespace MTA.Game
             for (int c = 0; c < scoreMessages.Length; c++)
             {
                 Message msg = new Message(scoreMessages[c], System.Drawing.Color.Red, c == 0 ? Message.FirstRightCorner : Message.ContinueRightCorner);
-                Kernel.SendWorldMessage(msg, Program.Values, (ushort)1509);
+                Kernel.SendWorldMessage(msg, Program.Values, 1509);
             }
         }
 

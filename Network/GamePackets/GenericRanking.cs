@@ -129,11 +129,11 @@ namespace MTA.Network.GamePackets
                     offset += 16;
                     Writer.WriteString(name, offset, this.Buffer);
                     offset += 16;
-                    Writer.WriteUInt32((uint)level, offset, this.Buffer);
+                    Writer.WriteUInt32(level, offset, this.Buffer);
                     offset += 4;
-                    Writer.WriteUInt32((uint)Class, offset, this.Buffer);
+                    Writer.WriteUInt32(Class, offset, this.Buffer);
                     offset += 12;
-                    Writer.WriteUInt64((ulong)mesh, offset, this.Buffer);
+                    Writer.WriteUInt64(mesh, offset, this.Buffer);
                     offset += 8;
                 }
             }
@@ -152,11 +152,11 @@ namespace MTA.Network.GamePackets
                 offset += 16;
                 Writer.WriteString(name, offset, this.Buffer);
                 offset += 16;
-                Writer.WriteUInt32((uint)level, offset, this.Buffer);
+                Writer.WriteUInt32(level, offset, this.Buffer);
                 offset += 4;
-                Writer.WriteUInt32((uint)Class, offset, this.Buffer);
+                Writer.WriteUInt32(Class, offset, this.Buffer);
                 offset += 12;
-                Writer.WriteUInt64((ulong)mesh, offset, this.Buffer);
+                Writer.WriteUInt64(mesh, offset, this.Buffer);
                 offset += 8;
             }
         }
@@ -179,9 +179,9 @@ namespace MTA.Network.GamePackets
                 offset += 16;
                 Writer.WriteString(name, offset, this.Buffer);
                 offset += 16;
-                Writer.WriteUInt32((uint)level, offset, this.Buffer);
+                Writer.WriteUInt32(level, offset, this.Buffer);
                 offset += 4;
-                Writer.WriteUInt32((uint)Class, offset, this.Buffer);
+                Writer.WriteUInt32(Class, offset, this.Buffer);
                 offset += 4;
                 Writer.WriteUInt32(mesh, offset, this.Buffer);
                 offset += 4;
@@ -230,9 +230,9 @@ namespace MTA.Network.GamePackets
                 offset += 16;
                 Writer.WriteString(p_4, offset, this.Buffer);
                 offset += 16;
-                Writer.WriteUInt32((uint)p_5, offset, this.Buffer);
+                Writer.WriteUInt32(p_5, offset, this.Buffer);
                 offset += 4;
-                Writer.WriteUInt32((uint)p_6, offset, this.Buffer);
+                Writer.WriteUInt32(p_6, offset, this.Buffer);
                 offset += 4;
                 Writer.WriteUInt32(p_7, offset, this.Buffer);
                 offset += 4;
@@ -256,9 +256,9 @@ namespace MTA.Network.GamePackets
                 offset += 16;
                 Writer.WriteString(p_4, offset, this.Buffer);
                 offset += 16;
-                Writer.WriteUInt32((uint)p_5, offset, this.Buffer);
+                Writer.WriteUInt32(p_5, offset, this.Buffer);
                 offset += 4;
-                Writer.WriteUInt32((uint)p_6, offset, this.Buffer);
+                Writer.WriteUInt32(p_6, offset, this.Buffer);
                 offset += 4;
                 Writer.WriteUInt32(p_7, offset, this.Buffer);
                 offset += 4;
@@ -282,9 +282,9 @@ namespace MTA.Network.GamePackets
                     offset += 16;
                     Writer.WriteString(p_4, offset, this.Buffer);
                     offset += 16;
-                    Writer.WriteUInt32((uint)p_5, offset, this.Buffer);
+                    Writer.WriteUInt32(p_5, offset, this.Buffer);
                     offset += 4;
-                    Writer.WriteUInt32((uint)p_6, offset, this.Buffer);
+                    Writer.WriteUInt32(p_6, offset, this.Buffer);
                     offset += 4;
                     Writer.WriteUInt32(p_7, offset, this.Buffer);
                     offset += 4;

@@ -18,11 +18,11 @@ namespace MTA.Network.GamePackets.Roulette {
         }
 
         public byte UnKnow {
-            set { Writer.Byte((byte)value, 4, packet); }
+            set { Writer.Byte(value, 4, packet); }
         }
 
         public uint UID {
-            set { Writer.WriteUint((uint)value, 5, packet); }
+            set { Writer.WriteUint(value, 5, packet); }
         }
 
         public byte[] ToArray() {

@@ -144,18 +144,18 @@ namespace MTA.Network {
                             return;
 
                         Message.MessageBoard.MessageInfo Info =
-                            Message.MessageBoard.GetMsgInfoByAuthor(Param, (ushort)Channel);
+                            Message.MessageBoard.GetMsgInfoByAuthor(Param, Channel);
 
-                        Message.MessageBoard.Delete(Info, (ushort)Channel);
+                        Message.MessageBoard.Delete(Info, Channel);
                         return;
                     }
                     case Action.GetList: {
-                        String[] List = Message.MessageBoard.GetList(Index, (ushort)Channel);
+                        String[] List = Message.MessageBoard.GetList(Index, Channel);
                         Create(Client, Index, Channel, List, Action.List);
                         return;
                     }
                     case Action.GetWords: {
-                        String Words = Message.MessageBoard.GetWords(Param, (UInt16)Channel);
+                        String Words = Message.MessageBoard.GetWords(Param, Channel);
                         //   Player.Send(MsgTalk.Create(Param, Player.Name, Words, Channel, 0xFFFFFF));
                         Client.Send(new Message(Words, Client.Entity.Name, Param, Color.White, Channel));
                         return;

@@ -80,7 +80,7 @@ namespace MTA.Game
                 Poles.Name = PoleKeeper.Name;
             }
             Poles.Hitpoints = Poles.MaxHitpoints;
-            Kernel.SendWorldMessage(Poles, Program.Values, (ushort)2071);
+            Kernel.SendWorldMessage(Poles, Program.Values, 2071);
             Reset();
         }
         public static void End()
@@ -124,8 +124,8 @@ namespace MTA.Game
             {
                 Message msg = new Message(scoreMessages[c], System.Drawing.Color.Red,
                     c == 0 ? Message.FirstRightCorner : Message.ContinueRightCorner);
-                Kernel.SendWorldMessage(msg, Program.Values, (ushort)2071);
-                Kernel.SendWorldMessage(msg, Program.Values, (ushort)6001);
+                Kernel.SendWorldMessage(msg, Program.Values, 2071);
+                Kernel.SendWorldMessage(msg, Program.Values, 6001);
             }
         }
         private static void SortScores(out Guild winner)

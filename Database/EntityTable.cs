@@ -10,7 +10,7 @@ namespace MTA.Database
     {
         public static void SetFlowers(Client.GameState client)
         {
-            if (Network.PacketHandler.IsGirl((uint)client.Entity.Body))
+            if (Network.PacketHandler.IsGirl(client.Entity.Body))
             {
                 if (!MTA.Game.Features.Flowers.Flowers.Flowers_Poll.ContainsKey(client.Entity.UID))
                 {
@@ -95,7 +95,7 @@ namespace MTA.Database
                     client.Entity.SubClasses.Active = client.Entity.SubClass;
                     client.Entity.SubClassesActive = client.Entity.SubClass;
                     client.Entity.SubClasses.StudyPoints = reader.ReadUInt16("StudyPoints");
-                    client.VirtuePoints = (uint)reader.ReadUInt32("VirtuePoints");
+                    client.VirtuePoints = reader.ReadUInt32("VirtuePoints");
                     client.Entity.Mana = reader.ReadUInt16("Mana");
                     client.Entity.HairStyle = reader.ReadUInt16("HairStyle");
                     client.Entity.OnlinePoints = reader.ReadUInt32("OnlinePoints");
@@ -106,8 +106,8 @@ namespace MTA.Database
                     client.Entity.MapID = reader.ReadUInt16("MapID");
                     client.VendingDisguise = reader.ReadUInt16("VendingDisguise");
                     client.SpiritBeadQ.CanAccept = !Convert.ToBoolean(reader.ReadUInt32("CanAcceptSpiritBead"));
-                    client.SpiritBeadQ.Bead = (uint)reader.ReadUInt32("SpiritQuestBead");
-                    client.SpiritBeadQ.CollectedSpirits = (uint)reader.ReadUInt32("CollectedSpirits");
+                    client.SpiritBeadQ.Bead = reader.ReadUInt32("SpiritQuestBead");
+                    client.SpiritBeadQ.CollectedSpirits = reader.ReadUInt32("CollectedSpirits");
                     client.Entity.CountryID = (Game.Enums.CountryID)reader.ReadUInt32("CountryID");
                     if (client.VendingDisguise == 0)
                         client.VendingDisguise = 223;
@@ -699,7 +699,7 @@ namespace MTA.Database
                     .Set("LastLogin", e.LastLogin.Ticks)
                     .Set("CountryID", (ushort)e.CountryID)
                     .Set("Achievement", e.MyAchievement.ToString())
-                    .Set("ClanId", (uint)e.ClanId)
+                    .Set("ClanId", e.ClanId)
                     .Set("ClanRank", (uint)e.ClanRank);
                 if (e.MapID == 601)
                     cmd.Set("OfflineTGEnterTime", c.OfflineTGEnterTime.Ticks);
@@ -728,7 +728,7 @@ namespace MTA.Database
                 else
                 {
                     cmd.Set("GuildID", 0)
-                        .Set("GuildRank", (ushort)0)
+                        .Set("GuildRank", 0)
                         .Set("GuildSilverDonation", 0)
                         .Set("GuildConquerPointDonation", 0);
                 }

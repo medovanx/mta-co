@@ -42,7 +42,7 @@ namespace MTA.Network.GamePackets
         {
             mData = new Byte[143 + 8];
             Writer.WriteUInt16(((UInt16)(mData.Length - 8)), 0, mData);
-            Writer.WriteUInt16((UInt16)1108, 2, mData);
+            Writer.WriteUInt16(1108, 2, mData);
         }
         public UInt32 Perfectionlevel
         {
@@ -127,7 +127,7 @@ namespace MTA.Network.GamePackets
         public UInt16 Effect
         {
             get { return BitConverter.ToUInt16(mData, 41); }
-            set { Writer.WriteUInt16((UInt16)value, 41, mData); }
+            set { Writer.WriteUInt16(value, 41, mData); }
         }
         public Byte Plus
         {
@@ -162,7 +162,7 @@ namespace MTA.Network.GamePackets
         public UInt32 Color
         {
             get { return BitConverter.ToUInt32(mData, 54); }
-            set { Writer.WriteUInt32((UInt32)value, 54, mData); }
+            set { Writer.WriteUInt32(value, 54, mData); }
         }
         public UInt32 PlusProgress
         {
@@ -376,7 +376,7 @@ namespace MTA.Network.GamePackets
             ID = item.ID;
             Durability = item.Durability;
             MaximDurability = item.MaximDurability;
-            Buffer[24] = (byte)4;
+            Buffer[24] = 4;
             Buffer[26] = (byte)item.Position;
             SocketOne = item.SocketOne;
             SocketTwo = item.SocketTwo;

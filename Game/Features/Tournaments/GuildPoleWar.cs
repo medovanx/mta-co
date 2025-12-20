@@ -97,7 +97,7 @@ namespace MTA.MaTrix {
         public static bool Attack(uint addScore, Entity entity, SobNpcSpawn Pole) {
             if (!IsWar)
                 return false;
-            int _rank = (int)Member;
+            int _rank = Member;
             if (entity.GuildRank == (ushort)GuildRank.GuildLeader)
                 _rank = GuildLeader;
             else if (entity.GuildRank == (ushort)GuildRank.DeputyLeader)
@@ -210,7 +210,7 @@ namespace MTA.MaTrix {
 
         public static void AddScore(uint addScore, Entity entity, SobNpcSpawn Pole) {
             if (entity != null) {
-                int _rank = (int)Member;
+                int _rank = Member;
                 if (entity.GuildRank == (ushort)GuildRank.GuildLeader)
                     _rank = GuildLeader;
                 else if (entity.GuildRank == (ushort)GuildRank.DeputyLeader)
@@ -218,9 +218,9 @@ namespace MTA.MaTrix {
 
                 if (Pole.Hitpoints <= addScore)
                     Pole.Hitpoints = 0;
-                var Scores = AllScores[(ushort)((int)_rank)];
+                var Scores = AllScores[(ushort)_rank];
                 if (Scores == null)
-                    Scores = AllScores[(ushort)((int)_rank)] = new SafeDictionary<uint, Entity>();
+                    Scores = AllScores[(ushort)_rank] = new SafeDictionary<uint, Entity>();
 
                 if (!Scores.ContainsKey(entity.UID))
                     Scores.Add(entity.UID, entity);
@@ -228,7 +228,7 @@ namespace MTA.MaTrix {
                 entity.WarScore += addScore;
 
                 if ((int)Pole.Hitpoints <= 0) {
-                    FinishRound(Pole, (int)_rank);
+                    FinishRound(Pole, _rank);
                     return;
                 }
             }

@@ -405,7 +405,7 @@ namespace MTA.Client {
                         return;
 
             var spell = SpellTable.GetSpell(client.Spells[12400].ID, client.Spells[12400].Level);
-            if (MyMath.Success((double)30)) {
+            if (MyMath.Success(30)) {
                 if (Entity.ContainsFlag3(Update.Flags3.lianhuaran04)) {
                     SpellUse suse = new SpellUse(true);
                     suse.Attacker = Entity.UID;
@@ -976,7 +976,7 @@ namespace MTA.Client {
                     #region Load Entity
 
                     MySqlCommand command = new MySqlCommand(MySqlCommandType.SELECT);
-                    command.Select("bots").Where("BotID", (long)UID);
+                    command.Select("bots").Where("BotID", UID);
                     MySqlReader reader = new MySqlReader(command);
                     if (!reader.Read()) {
                         return;
@@ -2584,12 +2584,12 @@ namespace MTA.Client {
             get {
                 if (Equipment != null)
                     if (!Equipment.Free(12))
-                        return Equipment.TryGetItem((byte)12).Vigor;
+                        return Equipment.TryGetItem(12).Vigor;
                 return 65535;
             }
             set {
                 if (!Equipment.Free(12))
-                    Equipment.TryGetItem((byte)12).Vigor = value;
+                    Equipment.TryGetItem(12).Vigor = value;
             }
         }
 
@@ -2727,7 +2727,7 @@ namespace MTA.Client {
                     if (target != uint.MaxValue) {
                         if (Map.Floor[Entity.X, Entity.Y, MapObjectType.StaticEntity]) {
                             StaticEntity item = new StaticEntity((uint)(Entity.X * 1000 + Entity.Y), Entity.X, Entity.Y,
-                                (ushort)Map.ID);
+                                Map.ID);
                             item.DoFrozenTrap(Entity.UID);
                             Map.AddStaticEntity(item);
                             Kernel.SendSpawn(item);
@@ -3306,7 +3306,7 @@ namespace MTA.Client {
                 if (Entity.Reborn >= 2)
                     experience /= 3;
                 if (Entity.DoubleExperienceTime > 0 && this.SuperPotion > 0)
-                    experience *= (uint)(this.SuperPotion);
+                    experience *= this.SuperPotion;
 
                 if (Guild != null) {
                     if (Guild.Level > 0) {
@@ -5068,7 +5068,7 @@ namespace MTA.Client {
                 val += Uint;
 
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE))
-                cmd.Update("entities").Set("GuildArsenalDonation", (uint)val).Where("UID", this.Entity.UID)
+                cmd.Update("entities").Set("GuildArsenalDonation", val).Where("UID", this.Entity.UID)
                     .Execute();
             if (AsMember != null)
                 AsMember.ArsenalDonation = val;
@@ -5281,7 +5281,7 @@ namespace MTA.Client {
             Entity.PerfectionLevel = 0;
             Entity.ItemHP =
                 Entity.ItemMP =
-                    Entity.AttackRange = (byte)0;
+                    Entity.AttackRange = 0;
             Entity.Dodge = 0;
             Entity.MinAttack = 0;
             Entity.MaxAttack = 0;
@@ -5499,12 +5499,12 @@ namespace MTA.Client {
 
         public void doAuraBonuses(ulong type, uint power, int i) {
             switch (type) {
-                case (ulong)Update.Flags2.EarthAura: Entity.EarthResistance += (int)power * i; break;
-                case (ulong)Update.Flags2.FireAura: Entity.FireResistance += (int)power * i; break;
-                case (ulong)Update.Flags2.MetalAura: Entity.MetalResistance += (int)power * i; break;
-                case (ulong)Update.Flags2.WoodAura: Entity.WoodResistance += (int)power * i; break;
-                case (ulong)Update.Flags2.WaterAura: Entity.WaterResistance += (int)power * i; break;
-                case (ulong)Update.Flags2.TyrantAura: {
+                case Update.Flags2.EarthAura: Entity.EarthResistance += (int)power * i; break;
+                case Update.Flags2.FireAura: Entity.FireResistance += (int)power * i; break;
+                case Update.Flags2.MetalAura: Entity.MetalResistance += (int)power * i; break;
+                case Update.Flags2.WoodAura: Entity.WoodResistance += (int)power * i; break;
+                case Update.Flags2.WaterAura: Entity.WaterResistance += (int)power * i; break;
+                case Update.Flags2.TyrantAura: {
                     Entity.CriticalStrike += (int)power * i * 100;
                     Entity.SkillCStrike += (int)power * i * 100;
                     if (Entity.CriticalStrike > 120000) Entity.CriticalStrike = 120000;
@@ -5513,18 +5513,18 @@ namespace MTA.Client {
                     if (Entity.SkillCStrike < 0) Entity.SkillCStrike = 0;
                     break;
                 }
-                case (ulong)Update.Flags2.FendAura: Entity.Immunity += (int)power * i * 100; break;
+                case Update.Flags2.FendAura: Entity.Immunity += (int)power * i * 100; break;
             }
         }
 
         public void removeAuraBonuses(ulong type, uint power, int i) {
             switch (type) {
-                case (ulong)Update.Flags2.EarthAura: Entity.EarthResistance -= (int)power * i; break;
-                case (ulong)Update.Flags2.FireAura: Entity.FireResistance -= (int)power * i; break;
-                case (ulong)Update.Flags2.MetalAura: Entity.MetalResistance -= (int)power * i; break;
-                case (ulong)Update.Flags2.WoodAura: Entity.WoodResistance -= (int)power * i; break;
-                case (ulong)Update.Flags2.WaterAura: Entity.WaterResistance -= (int)power * i; break;
-                case (ulong)Update.Flags2.TyrantAura: {
+                case Update.Flags2.EarthAura: Entity.EarthResistance -= (int)power * i; break;
+                case Update.Flags2.FireAura: Entity.FireResistance -= (int)power * i; break;
+                case Update.Flags2.MetalAura: Entity.MetalResistance -= (int)power * i; break;
+                case Update.Flags2.WoodAura: Entity.WoodResistance -= (int)power * i; break;
+                case Update.Flags2.WaterAura: Entity.WaterResistance -= (int)power * i; break;
+                case Update.Flags2.TyrantAura: {
                     Entity.CriticalStrike -= (int)power * i * 100;
                     Entity.SkillCStrike -= (int)power * i * 100;
                     if (Entity.CriticalStrike > 120000) Entity.CriticalStrike = 120000;
@@ -5533,7 +5533,7 @@ namespace MTA.Client {
                     if (Entity.SkillCStrike < 0) Entity.SkillCStrike = 0;
                     break;
                 }
-                case (ulong)Update.Flags2.FendAura: Entity.Immunity -= (int)power * i * 100; break;
+                case Update.Flags2.FendAura: Entity.Immunity -= (int)power * i * 100; break;
             }
         }
 
@@ -6009,13 +6009,13 @@ namespace MTA.Client {
                 var per2 = 1;
                 //  if (item.Position == ConquerItem.Garment || item.Position == ConquerItem.Bottle || item.Position == ConquerItem.SteedArmor)
                 //      per = per2 = 1;                
-                Entity.CriticalStrike += (int)dbi.BaseInformation.CriticalStrike / per;
-                Entity.SkillCStrike += (int)dbi.BaseInformation.SkillCriticalStrike / per;
-                Entity.Immunity += (int)dbi.BaseInformation.Immunity / per;
-                Entity.Penetration += (int)dbi.BaseInformation.Penetration / per;
-                Entity.Block += (int)dbi.BaseInformation.Block / per;
-                Entity.Breaktrough += (int)dbi.BaseInformation.BreakThrough / per2;
-                Entity.Counteraction += (int)dbi.BaseInformation.CounterAction / per2;
+                Entity.CriticalStrike += dbi.BaseInformation.CriticalStrike / per;
+                Entity.SkillCStrike += dbi.BaseInformation.SkillCriticalStrike / per;
+                Entity.Immunity += dbi.BaseInformation.Immunity / per;
+                Entity.Penetration += dbi.BaseInformation.Penetration / per;
+                Entity.Block += dbi.BaseInformation.Block / per;
+                Entity.Breaktrough += dbi.BaseInformation.BreakThrough / per2;
+                Entity.Counteraction += dbi.BaseInformation.CounterAction / per2;
                 Entity.MetalResistance += dbi.BaseInformation.MetalResist;
                 Entity.WoodResistance += dbi.BaseInformation.WoodResist;
                 Entity.WaterResistance += dbi.BaseInformation.WaterResist;
@@ -6048,7 +6048,7 @@ namespace MTA.Client {
                 for (int i = 0; i < 360; i++) {
                     ushort x = (ushort)(Circle_Center.X + (Circle_Level * Math.Cos(i)));
                     ushort y = (ushort)(Circle_Center.Y + (Circle_Level * Math.Sin(i)));
-                    Point p = new Point((int)x, (int)y);
+                    Point p = new Point(x, y);
                     if (!DestructionAreas.Contains(p))
                         DestructionAreas.Add(p);
                 }

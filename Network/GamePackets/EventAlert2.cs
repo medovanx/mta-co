@@ -201,7 +201,7 @@ namespace MTA.Network.GamePackets.EventAlert {
         public EventAlert() {
             this.mData = new byte[20 + 8];
             Writer.Ushort(20, 0, this.mData);
-            Writer.Ushort((ushort)0x466, 2, this.mData);
+            Writer.Ushort(0x466, 2, this.mData);
         }
 
         public EventAlert(byte[] d) {

@@ -38,9 +38,9 @@ namespace MTA.Network.GamePackets {
             Writer.Write((ushort)0);
             Writer.Write((ushort)2220);
             Writer.Write((uint)0);
-            Writer.Write((uint)SubType);
-            Writer.Write((uint)Values);
-            Writer.Write((uint)MaxCount);
+            Writer.Write(SubType);
+            Writer.Write(Values);
+            Writer.Write(MaxCount);
             foreach (PkExpeliate e in PkValues) {
                 for (int i = 0; i < 16; i++) {
                     if (i < e.Name.Length) {
@@ -50,9 +50,9 @@ namespace MTA.Network.GamePackets {
                         Writer.Write((byte)0);
                 }
 
-                Writer.Write((uint)e.Times);
+                Writer.Write(e.Times);
                 Writer.Write((ushort)e.LostExp);
-                Writer.Write((byte)e.Level);
+                Writer.Write(e.Level);
                 Writer.Write((byte)0);
                 for (int i = 0; i < 16; i++) {
                     if (i < e.KilledAt.Length) {
@@ -65,7 +65,7 @@ namespace MTA.Network.GamePackets {
                 Writer.Write((ulong)0);
                 Writer.Write((ulong)0);
                 Writer.Write((uint)0);
-                Writer.Write((uint)e.Potency);
+                Writer.Write(e.Potency);
             }
 
             int packetlength = (int)Stream.Length;
@@ -126,7 +126,7 @@ namespace MTA.Database {
         public static void Load(GameState client) {
             try {
                 MySqlCommand command = new MySqlCommand(MySqlCommandType.SELECT);
-                command.Select("pk_explorer").Where("uid", (long)client.Entity.UID);
+                command.Select("pk_explorer").Where("uid", client.Entity.UID);
                 MySqlReader reader = new MySqlReader(command);
                 while (reader.Read()) {
                     PkExpeliate expeliate = new PkExpeliate();

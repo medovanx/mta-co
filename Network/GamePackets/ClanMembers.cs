@@ -13,7 +13,7 @@ namespace MTA.Network.GamePackets
         {
             mData = new Byte[56 + (36 * clan.Members.Count) + 8];
             WriteUInt16((UInt16)(mData.Length - 8), 0, mData);
-            WriteUInt16((UInt16)1312, 2, mData);
+            WriteUInt16(1312, 2, mData);
 
             UInt32 Count = (UInt32)clan.Members.Count();
             WriteUInt32(Count, Offset, mData); Offset += 4;
@@ -21,11 +21,11 @@ namespace MTA.Network.GamePackets
             {
 
                 WriteString(member.Name, Offset, mData); Offset += 16;
-                WriteUInt32((UInt32)member.Level, Offset, mData); Offset += 4;
+                WriteUInt32(member.Level, Offset, mData); Offset += 4;
                 WriteUInt16(Convert.ToUInt16(member.Rank), Offset, mData); Offset += 2;
                 WriteUInt16(Convert.ToUInt16(Kernel.GamePool.ContainsKey(member.Identifier)), Offset, mData); Offset += 2;
-                WriteUInt32((UInt32)member.Class, Offset, mData); Offset += 8;
-                WriteUInt32((UInt32)member.Donation, Offset, mData); Offset += 4;
+                WriteUInt32(member.Class, Offset, mData); Offset += 8;
+                WriteUInt32(member.Donation, Offset, mData); Offset += 4;
 
                 Count -= 1;
             }

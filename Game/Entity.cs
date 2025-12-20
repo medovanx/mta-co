@@ -182,11 +182,11 @@ namespace MTA.Game
                 points += (uint)PerfectionScore.CalculatePerfectionChiPoints(Owner);
                 points += (uint)((Vitality + Spirit + Strength + Agility + Atributes) * 5);
                 points += (uint)(Level < 140 ? Level * 20 : Level * 25);
-                points += (uint)((uint)NobilityRank * 1000);
+                points += (uint)NobilityRank * 1000;
                 points += (uint)(Reborn * 1000);
                 points += (PerfectionTable.PerfectionPoints(Owner, true));
                 points += (PerfectionTable.PerfectionPoints(Owner, true));
-                points += (uint)(PerfectionScore.CalculateSubClassPoints(Owner));
+                points += PerfectionScore.CalculateSubClassPoints(Owner);
                 return points;
             }
             set { totalperfectionscore_ = value; }
@@ -321,7 +321,7 @@ namespace MTA.Game
                 if (item == null) continue;
                 if (Owner.Equipment.Free(item.Position)) continue;
                 if (!item.IsWorn) continue;
-                switch ((ushort)item.Position)
+                switch (item.Position)
                 {
                     case Network.GamePackets.ConquerItem.AlternateHead:
                     case Network.GamePackets.ConquerItem.Head:
@@ -421,7 +421,7 @@ namespace MTA.Game
                         break;
                     case Network.GamePackets.ConquerItem.Steed:
                         Network.Writer.WriteUInt32(item.ID, Game.ConquerStructures.Equipment.Steed, Entity.SpawnPacket);
-                        Network.Writer.WriteUInt16((byte)item.Plus, Game.ConquerStructures.Equipment.SteedPlus,
+                        Network.Writer.WriteUInt16(item.Plus, Game.ConquerStructures.Equipment.SteedPlus,
                             Entity.SpawnPacket);
                         Network.Writer.WriteUInt32(item.SocketProgress, Game.ConquerStructures.Equipment.SteedColor,
                             Entity.SpawnPacket);
@@ -669,7 +669,7 @@ namespace MTA.Game
 
         public int AdjustWeaponDamage(Entity target, int damage)
         {
-            return MathHelper.MulDiv((int)damage, GetDefense2(target), DefaultDefense2);
+            return MathHelper.MulDiv(damage, GetDefense2(target), DefaultDefense2);
         }
 
         public int GetDefense2(Entity target)
@@ -711,9 +711,9 @@ namespace MTA.Game
             //  var addAttack = 0;
             if (OnIntensify())
                 //attack = (int)((double)attack * IntensifyPercent); //PvP Reduction!
-                attack = (int)((double)attack * 1.5); //PvP Reduction!
+                attack = (int)(attack * 1.5); //PvP Reduction!
             else if (ContainsFlag(Network.GamePackets.Update.Flags.Stigma))
-                attack += (int)((double)attack * 0.3);
+                attack += (int)(attack * 0.3);
             //{
             //    addAttack += Math.Max(0, AdjustData((int)attack, 30)) - (int)attack;
             //    attack = (attack + (addAttack * attack / 100));
@@ -742,7 +742,7 @@ namespace MTA.Game
 
 
             if (ContainsFlag(Network.GamePackets.Update.Flags.MagicShield))
-                defense += (int)((double)defense * 0.3); //PvP Reduction!
+                defense += (int)(defense * 0.3); //PvP Reduction!
 
             return defense;
         }
@@ -1151,13 +1151,13 @@ namespace MTA.Game
                 {
                     MySqlCommand cmd = new MySqlCommand(MySqlCommandType.UPDATE);
                     cmd.Update("status").Set("time", Kernel.ToDateTimeInt(EndsOn))
-                        .Where("status", Title).And("flagtype", flagtype).And("entityid", (UInt32)UID);
+                        .Where("status", Title).And("flagtype", flagtype).And("entityid", UID);
                     cmd.Execute();
                 }
                 else
                 {
                     MySqlCommand cmd = new MySqlCommand(MySqlCommandType.INSERT);
-                    cmd.Insert("status").Insert("entityid", (UInt32)UID).Insert("status", Title)
+                    cmd.Insert("status").Insert("entityid", UID).Insert("status", Title)
                         .Insert("flagtype", flagtype).Insert("time", Kernel.ToDateTimeInt(EndsOn));
                     cmd.Execute();
                 }
@@ -1619,7 +1619,7 @@ namespace MTA.Game
                 Database.EntityTable.UpdatebCps(this.Owner);
                 if (EntityFlag == EntityFlag.Player)
                 {
-                    Update(Network.GamePackets.Update.BoundConquerPoints, (uint)value, false);
+                    Update(Network.GamePackets.Update.BoundConquerPoints, value, false);
                 }
             }
         }
@@ -1839,9 +1839,9 @@ namespace MTA.Game
             physical += gemVal;
 
             if (Magic)
-                return (int)magic;
+                return magic;
             else
-                return (int)physical;
+                return physical;
         }
 
         public int getTower(bool Magic)
@@ -1964,9 +1964,9 @@ namespace MTA.Game
             physical += gemVal;
 
             if (Magic)
-                return (int)magic;
+                return magic;
             else
-                return (int)physical;
+                return physical;
         }
 
         #endregion
@@ -2079,7 +2079,7 @@ namespace MTA.Game
                 Database.EntityTable.UpdateCps(this.Owner);
                 if (EntityFlag == EntityFlag.Player)
                 {
-                    Update(Network.GamePackets.Update.ConquerPoints, (uint)value, false);
+                    Update(Network.GamePackets.Update.ConquerPoints, value, false);
                 }
             }
         }
@@ -2283,7 +2283,7 @@ namespace MTA.Game
             {
                 if (EntityFlag == EntityFlag.Player)
                 {
-                    Update((byte)Network.GamePackets.Update.Level, value, true);
+                    Update(Network.GamePackets.Update.Level, value, true);
                     Data update = new Data(true);
                     update.UID = UID;
                     update.ID = Data.Leveled;
@@ -2339,14 +2339,14 @@ namespace MTA.Game
                     {
                         ExtraBattlePower -= mentorBP;
                         mentorBP = 0;
-                        Update(Network.GamePackets.Update.MentorBattlePower, (uint)0, (uint)0);
+                        Update(Network.GamePackets.Update.MentorBattlePower, 0, 0);
                     }
                 }
                 else
                 {
                     ExtraBattlePower -= mentorBP;
                     mentorBP = 0;
-                    Update(Network.GamePackets.Update.MentorBattlePower, (uint)0, (uint)0);
+                    Update(Network.GamePackets.Update.MentorBattlePower, 0, 0);
                 }
             }
         }
@@ -2462,7 +2462,7 @@ namespace MTA.Game
             get
             {
                 if (OnCyclone())
-                    return (ushort)(_agility);
+                    return _agility;
                 return _agility;
             }
             set
@@ -2512,7 +2512,7 @@ namespace MTA.Game
             set
             {
                 if (EntityFlag == EntityFlag.Player)
-                    Update((byte)Network.GamePackets.Update.Hitpoints, value, false);
+                    Update(Network.GamePackets.Update.Hitpoints, value, false);
                 else if (EntityFlag == EntityFlag.Monster)
                 {
                     //    if (Owner != null)
@@ -2527,7 +2527,7 @@ namespace MTA.Game
                 _hitpoints = value;
                 if (Boss > 0)
                 {
-                    uint key = (uint)(MaxHitpoints / 10000);
+                    uint key = MaxHitpoints / 10000;
                     if (key != 0)
                         WriteUInt16((ushort)(value / key), _Hitpoints, SpawnPacket);
                     else
@@ -2958,7 +2958,7 @@ namespace MTA.Game
         public UInt32 ClanId
         {
             get { return BitConverter.ToUInt32(SpawnPacket, _ClanUID); }
-            set { WriteUInt32((UInt32)value, _ClanUID, SpawnPacket); }
+            set { WriteUInt32(value, _ClanUID, SpawnPacket); }
         }
 
         public Clan Myclan;
@@ -3218,7 +3218,7 @@ namespace MTA.Game
 
             BP += (Byte)(e.Reborn * 5);
             EquipmentColor = BP;
-            EquipmentColor = (uint)EquipmentColor;
+            EquipmentColor = EquipmentColor;
             return BP;
         }
 
@@ -3345,7 +3345,7 @@ namespace MTA.Game
                     int index = c + startfrom;
                     if (array[index] != null)
                     {
-                        var infos = Database.ConquerItemInformation.BaseInformations[(uint)array[index].ID];
+                        var infos = Database.ConquerItemInformation.BaseInformations[array[index].ID];
                         if (infos.Type == ConquerItemBaseInformation.ItemType.Dropable)
                         {
                             if (array[index].Lock == 0)
@@ -3374,7 +3374,7 @@ namespace MTA.Game
                                                     floorItem.Item = Item;
                                                     floorItem.ValueType = Network.GamePackets.FloorItem.FloorValueType
                                                         .Item;
-                                                    floorItem.ItemID = (uint)Item.ID;
+                                                    floorItem.ItemID = Item.ID;
                                                     floorItem.MapID = MapID;
                                                     floorItem.MapObjType = Game.MapObjectType.Item;
                                                     floorItem.X = x;
@@ -3432,19 +3432,19 @@ namespace MTA.Game
                         if (Item.Position == 5 + dwp)
                             if (Item.ID.ToString().StartsWith("105"))
                                 continue;
-                        if (Kernel.Rate(25 + (int)(PKPoints > 30 ? 75 : 0)))
+                        if (Kernel.Rate(25 + (PKPoints > 30 ? 75 : 0)))
                         {
                             ushort x = X, y = Y;
                             Game.Map Map = Kernel.Maps[MapID];
                             if (Map.SelectCoordonates(ref x, ref y))
                             {
                                 Owner.Equipment.RemoveToGround(Item.Position);
-                                var infos = Database.ConquerItemInformation.BaseInformations[(uint)Item.ID];
+                                var infos = Database.ConquerItemInformation.BaseInformations[Item.ID];
 
                                 Network.GamePackets.FloorItem floorItem = new Network.GamePackets.FloorItem(true);
                                 floorItem.Item = Item;
                                 floorItem.ValueType = Network.GamePackets.FloorItem.FloorValueType.Item;
-                                floorItem.ItemID = (uint)Item.ID;
+                                floorItem.ItemID = Item.ID;
                                 floorItem.MapID = MapID;
                                 floorItem.MapObjType = Game.MapObjectType.Item;
                                 floorItem.X = x;
@@ -3778,8 +3778,8 @@ namespace MTA.Game
         {
             if (killer.EntityFlag == Game.EntityFlag.Player)
             {
-                if (ContainsFlag3((ulong)1UL << 53))
-                    RemoveFlag3((ulong)1UL << 53);
+                if (ContainsFlag3(1UL << 53))
+                    RemoveFlag3(1UL << 53);
                 if (killer.MapID == 1234)
                 {
                     if (ConquerPoints >= 12000000)
@@ -4373,7 +4373,7 @@ namespace MTA.Game
                         extraExp += (uint)(extraExp * ((float)killer.BattlePower / 100));
 
                         if (killer.HeavenBlessing > 0)
-                            extraExp += (uint)(extraExp * 20 / 100);
+                            extraExp += extraExp * 20 / 100;
                         if (killer.Reborn >= 2)
                             extraExp /= 3;
                         killer.Owner.Send(Constants.ExtraExperience(extraExp));
@@ -4385,7 +4385,7 @@ namespace MTA.Game
                         extraExp += (uint)(extraExp * killer.Gems[3] / 100);
                         extraExp += (uint)(extraExp * ((float)killer.BattlePower / 100));
                         if (killer.HeavenBlessing > 0)
-                            extraExp += (uint)(extraExp * 10 / 100);
+                            extraExp += extraExp * 10 / 100;
                         if (killer.Reborn >= 2)
                             extraExp /= 4;
                         killer.Owner.Send(Constants.ExtraExperience(extraExp));
@@ -4823,7 +4823,7 @@ namespace MTA.Game
             BitVector32.Clear();
             BitVector32.Add(flag);
             for (byte x = 0; x < BitVector32.bits.Length; x++)
-                WriteUInt32(BitVector32.bits[x], (ushort)((byte)26 + x * 4), SpawnPacket);
+                WriteUInt32(BitVector32.bits[x], (ushort)(26 + x * 4), SpawnPacket);
             nUpdateEffects(true);
         }
 
@@ -4839,7 +4839,7 @@ namespace MTA.Game
                 BitVector32.Remove(flag);
 
                 for (byte x = 0; x < BitVector32.bits.Length; x++)
-                    WriteUInt32(BitVector32.bits[x], (ushort)((byte)26 + x * 4), SpawnPacket);
+                    WriteUInt32(BitVector32.bits[x], (ushort)(26 + x * 4), SpawnPacket);
 
                 nUpdateEffects(true);
             }
@@ -5150,7 +5150,7 @@ namespace MTA.Game
                     Weather = Database.MapsTable.MapInformations[Owner.Map.ID].Weather
                 });
                 if (!Owner.Equipment.Free(12))
-                    if (Owner.Map.ID == 1036 && Owner.Equipment.TryGetItem((byte)12).Plus < 6)
+                    if (Owner.Map.ID == 1036 && Owner.Equipment.TryGetItem(12).Plus < 6)
                         RemoveFlag(Network.GamePackets.Update.Flags.Ride);
                 AdvancedTeleport();
             }
@@ -5212,7 +5212,7 @@ namespace MTA.Game
                     Writer.WriteUshort(60, 0, buffer);
                     Writer.WriteUshort(2224, 2, buffer);
                     Writer.WriteUint(9, 4, buffer);
-                    Owner.Entity.RemoveFlag2((ulong)Network.GamePackets.Update.Flags2.CarryingFlag);
+                    Owner.Entity.RemoveFlag2(Network.GamePackets.Update.Flags2.CarryingFlag);
                     Owner.Send(buffer);
                 }
 
@@ -5238,12 +5238,12 @@ namespace MTA.Game
                 Owner.ReviveStamp = Time32.Now;
                 Owner.Attackable = false;
                 if (!Owner.Equipment.Free(12))
-                    if (Owner.Map.ID == 1036 && Owner.Equipment.TryGetItem((byte)12).Plus < 6)
-                        RemoveFlag((ulong)Network.GamePackets.Update.Flags.Ride);
-                if (ContainsFlag((ulong)Network.GamePackets.Update.Flags.Ride))
+                    if (Owner.Map.ID == 1036 && Owner.Equipment.TryGetItem(12).Plus < 6)
+                        RemoveFlag(Network.GamePackets.Update.Flags.Ride);
+                if (ContainsFlag(Network.GamePackets.Update.Flags.Ride))
                 {
                     if (Constants.RideForbiddenMaps.Contains(MapID))
-                        RemoveFlag((ulong)Network.GamePackets.Update.Flags.Ride);
+                        RemoveFlag(Network.GamePackets.Update.Flags.Ride);
                 }
 
                 AdvancedTeleport();
@@ -5292,7 +5292,7 @@ namespace MTA.Game
                         Weather = Database.MapsTable.MapInformations[Owner.Map.BaseID].Weather
                     });
                 if (!Owner.Equipment.Free(12))
-                    if (Owner.Map.ID == 1036 && Owner.Equipment.TryGetItem((byte)12).Plus < 6)
+                    if (Owner.Map.ID == 1036 && Owner.Equipment.TryGetItem(12).Plus < 6)
                         RemoveFlag(Network.GamePackets.Update.Flags.Ride);
                 AdvancedTeleport();
             }

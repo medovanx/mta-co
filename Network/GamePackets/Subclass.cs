@@ -102,7 +102,7 @@ namespace MTA.Network.GamePackets
         {
             this.mData = new Byte[33 + 8];
             Writer.WriteUInt16((UInt16)(mData.Length - 8), 0, mData);
-            Writer.WriteUInt16((UInt16)2320, 2, mData);
+            Writer.WriteUInt16(2320, 2, mData);
             Writer.WriteUInt32((uint)Time32.timeGetTime().GetHashCode(), 4, mData);
         }
 
@@ -182,7 +182,7 @@ namespace MTA.Network.GamePackets
             Buffer = new byte[8 + 30 + (Owner.SubClasses.Classes.Count * 3)];
             WriteUInt16((ushort)(Buffer.Length - 8), 0, Buffer);
             WriteUInt16(2320, 2, Buffer);
-            WriteUInt16((ushort)Type, 8, Buffer);
+            WriteUInt16(Type, 8, Buffer);
             WriteUInt16(Owner.SubClasses.StudyPoints, 10, Buffer);
             WriteUInt16((ushort)Owner.SubClasses.Classes.Count, 26, Buffer);
             int Position = 30;

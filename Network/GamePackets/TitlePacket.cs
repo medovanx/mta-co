@@ -13,13 +13,13 @@ namespace MTA.Network.GamePackets
             {
                 mData = new Byte[24 + 8];
                 Writer.WriteUInt16((UInt16)(mData.Length - 8), 0, mData);
-                Writer.WriteUInt16((UInt16)1130, 2, mData);
+                Writer.WriteUInt16(1130, 2, mData);
             }
         }
         public UInt32 Identifier // UID
         {
             get { return BitConverter.ToUInt32(mData, 4); }
-            set { Writer.WriteUInt32((UInt32)value, 4, mData); }
+            set { Writer.WriteUInt32(value, 4, mData); }
         }
         public Titles Title
         {

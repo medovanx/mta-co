@@ -1330,12 +1330,12 @@ namespace MTA.Game.Features.Reincarnation
             Entity.MagicAttack = Entity.BaseMagicAttack;
             if (Entity.Gems[0] != 0)
             {
-                Entity.MagicAttack += (uint)Math.Floor(Entity.MagicAttack * (double)(Entity.Gems[0] * 0.01));
+                Entity.MagicAttack += (uint)Math.Floor(Entity.MagicAttack * (Entity.Gems[0] * 0.01));
             }
             if (Entity.Gems[1] != 0)
             {
-                Entity.MaxAttack += (uint)Math.Floor(Entity.MaxAttack * (double)(Entity.Gems[1] * 0.01));
-                Entity.MinAttack += (uint)Math.Floor(Entity.MinAttack * (double)(Entity.Gems[1] * 0.01));
+                Entity.MaxAttack += (uint)Math.Floor(Entity.MaxAttack * (Entity.Gems[1] * 0.01));
+                Entity.MinAttack += (uint)Math.Floor(Entity.MinAttack * (Entity.Gems[1] * 0.01));
             }
         }
     }

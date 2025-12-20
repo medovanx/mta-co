@@ -72,11 +72,11 @@
                         {
                             var T = Database.PokerTables.Tables[TableId];
                             msg.TableType2 = (byte)(T.ShowHand ? 2 : 1);
-                            T.SitIn(client, (byte)NoSeat);
+                            T.SitIn(client, NoSeat);
                             if (T.Players.ContainsKey(client.Entity.UID))
                                 if (T.Watchers.ContainsKey(client.Entity.UID))
                                     T.Watchers.Remove(client.Entity.UID);
-                            T.UpdateSeats(client, (byte)NoSeat);
+                            T.UpdateSeats(client, NoSeat);
                             if (T.m_State == Game.Enums.GameClientEnum.WaitForPlayers)
                                 T.TryToBegin();
                         }

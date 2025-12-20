@@ -271,7 +271,7 @@ namespace MTA.Database {
                 // Check if any event wants to skip normal drop (event handles rewards instead)
                 if (!EventScheduler.ShouldSkipNormalDrop(this, Owner.MapID)) {
                     // Monster Cps Drop with AutoHunting Flag
-                    if (killer.ContainsFlag3((ulong)Update.Flags3.AutoHunting)) {
+                    if (killer.ContainsFlag3(Update.Flags3.AutoHunting)) {
                         killer.ConquerPoints += 150;
                         killer.Owner.Send(new Message(
                             "Congratulations! You defeated [" + Owner.Name +

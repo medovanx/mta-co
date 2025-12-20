@@ -131,7 +131,7 @@ namespace MTA.Network.GamePackets
             Writer.WriteUInt32(purify.PurificationLevel, offset + 12, this.Buffer);
             if (purify.PurificationDuration != 0)
             {
-                TimeSpan span = new TimeSpan(purify.AddedOn.AddSeconds((double)purify.PurificationDuration).Ticks);
+                TimeSpan span = new TimeSpan(purify.AddedOn.AddSeconds(purify.PurificationDuration).Ticks);
                 TimeSpan span2 = new TimeSpan(DateTime.Now.Ticks);
                 int num2 = (int)(span.TotalSeconds - span2.TotalSeconds);
                 if (num2 <= 0)
@@ -155,7 +155,7 @@ namespace MTA.Network.GamePackets
             Writer.WriteUInt32(effect.EffectPercent, offset + 0x10, this.Buffer);
             if (effect.EffectPercent != 0)
             {
-                TimeSpan span = new TimeSpan(effect.AddedOn.AddSeconds((double)effect.EffectDuration).Ticks);
+                TimeSpan span = new TimeSpan(effect.AddedOn.AddSeconds(effect.EffectDuration).Ticks);
                 TimeSpan span2 = new TimeSpan(DateTime.Now.Ticks);
                 int num2 = (int)(span.TotalSeconds - span2.TotalSeconds);
                 if (num2 <= 0 && effect.EffectDuration != 0)

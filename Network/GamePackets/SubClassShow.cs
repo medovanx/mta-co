@@ -24,7 +24,7 @@ namespace MTA.Network.GamePackets {
         private ushort Position = 30;
 
         public SubClassShow(ushort entry = 0) {
-            this.packet = new byte[(int)(38 + entry * 3)];
+            this.packet = new byte[38 + entry * 3];
             WriteUInt16((ushort)(this.packet.Length - 8), 0, this.packet);
             WriteUInt16(2320, 2, this.packet);
             WriteUInt32((uint)Time32.timeGetTime().GetHashCode(), 4, this.packet);

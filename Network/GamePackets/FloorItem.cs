@@ -80,7 +80,7 @@ namespace MTA.Network.GamePackets
         public ushort MaxLife
         {
             get { return BitConverter.ToUInt16(Buffer, 20); }
-            set { WriteUInt16((ushort)value, 20, Buffer); }
+            set { WriteUInt16(value, 20, Buffer); }
         }
         public uint Life
         {

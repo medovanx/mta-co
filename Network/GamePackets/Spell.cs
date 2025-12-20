@@ -66,7 +66,7 @@ namespace MTA.Network.GamePackets
 
                 if (_Souls == 0)
                     _Souls = (byte)Soul_Level.Default;
-                Buffer[24] = (byte)_Souls;
+                Buffer[24] = _Souls;
                 Buffer[28] = Buffer[24];
             }
         }
@@ -116,7 +116,7 @@ namespace MTA.Network.GamePackets
         }
         public ushort ID
         {
-            get { return (ushort)BitConverter.ToUInt16(Buffer, 12); }
+            get { return BitConverter.ToUInt16(Buffer, 12); }
             set { WriteUInt16(value, 12, Buffer); }
         }
         public byte PreviousLevel

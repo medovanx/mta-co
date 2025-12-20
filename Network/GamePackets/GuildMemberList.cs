@@ -98,8 +98,8 @@ namespace MTA.Network.GamePackets
 
             Writer.Write((ushort)0);
             Writer.Write((ushort)2102);
-            Writer.Write((ushort)SubType);
-            Writer.Write((ushort)PageNumber);//page
+            Writer.Write(SubType);
+            Writer.Write(PageNumber);//page
             Writer.Write((ushort)0);
             Writer.Write((ushort)0);
             Writer.Write((ushort)g.Members.Count);//count

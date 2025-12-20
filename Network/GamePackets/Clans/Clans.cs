@@ -29,7 +29,7 @@ namespace MTA.Network.GamePackets
             WriteUInt16((ushort)(Bufffer.Length - 8), 0, Bufffer);
             WriteUInt16(1312, 2, Bufffer);
 
-            Bufffer[16] = (byte)6;
+            Bufffer[16] = 6;
             Bufffer[17] = (byte)name1.Length;
 
             WriteByte(ClanType, 4, Bufffer);

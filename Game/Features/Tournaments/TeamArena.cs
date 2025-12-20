@@ -80,7 +80,7 @@ namespace MTA.Game
 
                     QualifierGroup entry = GroupsList[count];
 
-                    wtr.Write((uint)(entry.Player1.TeamArenaStatistic.EntityID));
+                    wtr.Write(entry.Player1.TeamArenaStatistic.EntityID);
                     byte[] array = Encoding.Default.GetBytes(entry.Player1.TeamArenaStatistic.Name);
                     for (int i = 0; i < 16; i++)
                     {
@@ -96,7 +96,7 @@ namespace MTA.Game
                         if (entry.Player1.Team.Teammates != null)
                             player1Teammates = (uint)entry.Player1.Team.Teammates.Length;
                     wtr.Write(player1Teammates);
-                    wtr.Write((uint)entry.Player2.TeamArenaStatistic.EntityID);
+                    wtr.Write(entry.Player2.TeamArenaStatistic.EntityID);
                     byte[] array2 = Encoding.Default.GetBytes(entry.Player2.TeamArenaStatistic.Name);
                     for (int i = 0; i < 16; i++)
                     {
@@ -172,12 +172,12 @@ namespace MTA.Game
                                 }
                             }
 
-                            wtr.Write((uint)client.Entity.UID);
+                            wtr.Write(client.Entity.UID);
                             wtr.Write((uint)client.Entity.Level);
                             wtr.Write((uint)client.Entity.Class);
                             wtr.Write((uint)client.Entity.Body / 1000);
-                            wtr.Write((uint)client.TeamArenaStatistic.Rank);
-                            wtr.Write((uint)client.ArenaPoints);
+                            wtr.Write(client.TeamArenaStatistic.Rank);
+                            wtr.Write(client.ArenaPoints);
                             for (int i = 0; i < 16; i++)
                             {
                                 if (i < client.TeamArenaStatistic.Name.Length)
@@ -214,12 +214,12 @@ namespace MTA.Game
                     BinaryWriter wtr = new BinaryWriter(strm);
                     wtr.Write((ushort)38);
                     wtr.Write((ushort)2211);
-                    wtr.Write((ushort)id);
+                    wtr.Write(id);
                     wtr.Write((uint)5);
-                    wtr.Write((uint)uid);
+                    wtr.Write(uid);
                     wtr.Write((uint)0);
-                    wtr.Write((uint)Player1Cheers);
-                    wtr.Write((uint)Player2Cheers);
+                    wtr.Write(Player1Cheers);
+                    wtr.Write(Player2Cheers);
                     int packetlength = (int)strm.Length;
                     strm.Position = 0;
                     wtr.Write((ushort)packetlength);
@@ -238,15 +238,15 @@ namespace MTA.Game
                     BinaryWriter wtr = new BinaryWriter(strm);
                     wtr.Write((ushort)38);
                     wtr.Write((ushort)2211);
-                    wtr.Write((ushort)id);
+                    wtr.Write(id);
                     wtr.Write((uint)5);
                     wtr.Write((uint)list.Count);
-                    wtr.Write((uint)uid);
-                    wtr.Write((uint)Player1Cheers);
-                    wtr.Write((uint)Player2Cheers);
+                    wtr.Write(uid);
+                    wtr.Write(Player1Cheers);
+                    wtr.Write(Player2Cheers);
                     foreach (Client.GameState client in list)
                     {
-                        wtr.Write((uint)client.Entity.Mesh);
+                        wtr.Write(client.Entity.Mesh);
                         for (int i = 0; i < 16; i++)
                         {
                             if (i < client.ArenaStatistic.Name.Length)
@@ -794,13 +794,13 @@ namespace MTA.Game
                         else
                             wtr.Write((byte)0);
                     }
-                    wtr.Write((uint)entry.LastSeasonRank);
-                    wtr.Write((uint)entry.Model);
+                    wtr.Write(entry.LastSeasonRank);
+                    wtr.Write(entry.Model);
                     wtr.Write((uint)entry.Class);
                     wtr.Write((uint)entry.Level);
-                    wtr.Write((uint)entry.LastSeasonArenaPoints);
-                    wtr.Write((uint)entry.LastSeasonWin);
-                    wtr.Write((uint)entry.LastSeasonLose);
+                    wtr.Write(entry.LastSeasonArenaPoints);
+                    wtr.Write(entry.LastSeasonWin);
+                    wtr.Write(entry.LastSeasonLose);
                     if (MyCount == 11)
                         break;
                 }
@@ -894,17 +894,17 @@ namespace MTA.Game
                 BinaryWriter wtr = new BinaryWriter(strm);
 
                 wtr.Write((ushort)0);
-                wtr.Write((ushort)Type);
-                wtr.Write((ushort)Subtype);
+                wtr.Write(Type);
+                wtr.Write(Subtype);
                 wtr.Write((ushort)InArenaCount);
                 wtr.Write((uint)ID);
                 foreach (TeamArenaStatistic entry in Players)
                 {
 
 
-                    wtr.Write((uint)entry.Rank);
-                    wtr.Write((uint)entry.HistoryHonor);
-                    wtr.Write((uint)entry.ArenaPoints);
+                    wtr.Write(entry.Rank);
+                    wtr.Write(entry.HistoryHonor);
+                    wtr.Write(entry.ArenaPoints);
                     wtr.Write((uint)entry.Class);
                     wtr.Write((uint)entry.Level);
                     wtr.Write((byte)1);
@@ -971,10 +971,10 @@ namespace MTA.Game
                     Stats.Name = "";
                 }
                 wtr.Write((ushort)0);
-                wtr.Write((ushort)Type);
-                wtr.Write((uint)DialogID);
-                wtr.Write((uint)OptionID);
-                wtr.Write((uint)Stats.EntityID);
+                wtr.Write(Type);
+                wtr.Write(DialogID);
+                wtr.Write(OptionID);
+                wtr.Write(Stats.EntityID);
                 byte[] array = Encoding.Default.GetBytes(Stats.Name);
                 for (int i = 0; i < 20; i++)
                 {
@@ -986,8 +986,8 @@ namespace MTA.Game
                         wtr.Write((byte)0);
                 }
                 wtr.Write((uint)Stats.Class);
-                wtr.Write((uint)Stats.Rank);
-                wtr.Write((uint)Stats.ArenaPoints);
+                wtr.Write(Stats.Rank);
+                wtr.Write(Stats.ArenaPoints);
                 wtr.Write((uint)Stats.Level);
                 int packetlength = (int)strm.Length;
                 strm.Position = 0;
@@ -1013,9 +1013,9 @@ namespace MTA.Game
                 BinaryWriter wtr = new BinaryWriter(strm);
 
                 wtr.Write((ushort)64);
-                wtr.Write((ushort)Type);
-                wtr.Write((uint)Group.Player1.TeamArenaStatistic.EntityID);
-                wtr.Write((uint)Group.Player1.TeamArenaStatistic.Rank);
+                wtr.Write(Type);
+                wtr.Write(Group.Player1.TeamArenaStatistic.EntityID);
+                wtr.Write(Group.Player1.TeamArenaStatistic.Rank);
                 byte[] array = Encoding.Default.GetBytes(Group.Player1.TeamArenaStatistic.Name);
                 for (int i = 0; i < 16; i++)
                 {
@@ -1026,9 +1026,9 @@ namespace MTA.Game
                     else
                         wtr.Write((byte)0);
                 }
-                wtr.Write((uint)Group.Player1Damage);
-                wtr.Write((uint)Group.Player2.TeamArenaStatistic.EntityID);
-                wtr.Write((uint)Group.Player2.TeamArenaStatistic.Rank);
+                wtr.Write(Group.Player1Damage);
+                wtr.Write(Group.Player2.TeamArenaStatistic.EntityID);
+                wtr.Write(Group.Player2.TeamArenaStatistic.Rank);
                 byte[] array2 = Encoding.Default.GetBytes(Group.Player2.TeamArenaStatistic.Name);
                 for (int i = 0; i < 16; i++)
                 {
@@ -1039,7 +1039,7 @@ namespace MTA.Game
                     else
                         wtr.Write((byte)0);
                 }
-                wtr.Write((uint)Group.Player2Damage);
+                wtr.Write(Group.Player2Damage);
                 wtr.Write((uint)1);
                 wtr.Write(Encoding.Default.GetBytes("TQServer"));
                 strm.Position = 0;

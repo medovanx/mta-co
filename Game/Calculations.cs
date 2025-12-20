@@ -11,18 +11,18 @@ namespace MTA.Game
 
             double AddX = x2 - x1;
             double AddY = y2 - y1;
-            double r = (double)Math.Atan2(AddY, AddX);
+            double r = Math.Atan2(AddY, AddX);
 
-            if (r < 0) r += (double)Math.PI * 2;
+            if (r < 0) r += Math.PI * 2;
 
-            direction = 360 - (r * 180 / (double)Math.PI);
+            direction = 360 - (r * 180 / Math.PI);
             return direction;
         }
         public static double PointDirectonRad(double x1, double y1, double x2, double y2)
         {
             double AddX = x2 - x1;
             double AddY = y2 - y1;
-            double r = (double)Math.Atan2(AddY, AddX);
+            double r = Math.Atan2(AddY, AddX);
 
             return r;
         }
@@ -32,16 +32,16 @@ namespace MTA.Game
 
             double AddX = x2 - x1;
             double AddY = y2 - y1;
-            double r = (double)Math.Atan2(AddY, AddX);
+            double r = Math.Atan2(AddY, AddX);
 
-            direction = (r * 180 / (double)Math.PI);
+            direction = (r * 180 / Math.PI);
             return direction;
         }
         public static double RadianToDegree(double r)
         {
-            if (r < 0) r += (double)Math.PI * 2;
+            if (r < 0) r += Math.PI * 2;
 
-            double direction = 360 - (r * 180 / (double)Math.PI);
+            double direction = 360 - (r * 180 / Math.PI);
             return direction;
         }
         public static double DegreeToRadian(double degr)

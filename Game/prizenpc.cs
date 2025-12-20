@@ -14,7 +14,7 @@
         {
             PrizeNpcInfo info = new PrizeNpcInfo
             {
-                Owner = (long)client.Entity.UID,
+                Owner = client.Entity.UID,
                 type = 1,
                 amount = Amount,
                 itemid = 0
@@ -26,7 +26,7 @@
         {
             PrizeNpcInfo info = new PrizeNpcInfo
             {
-                Owner = (long)client.Entity.UID,
+                Owner = client.Entity.UID,
                 type = 2,
                 amount = 0,
                 itemid = itemid
@@ -41,7 +41,7 @@
             {
                 PrizeNpcInfo info = new PrizeNpcInfo
                 {
-                    Owner = (long)reader.ReadUInt32("Owner"),
+                    Owner = reader.ReadUInt32("Owner"),
                     type = reader.ReadUInt32("type"),
                     amount = reader.ReadUInt32("amount"),
                     itemid = reader.ReadUInt32("itemid")
@@ -56,15 +56,15 @@
         public static void RemoveCps(GameState client)
         {
             MySqlCommand command = new MySqlCommand(MySqlCommandType.DELETE);
-            command.Delete("prizenpc", "Owner", (long)client.Entity.UID).And("type", "1").Execute();
-            PrizeNpcInformations.Remove((long)client.Entity.UID);
+            command.Delete("prizenpc", "Owner", client.Entity.UID).And("type", "1").Execute();
+            PrizeNpcInformations.Remove(client.Entity.UID);
             MySqlReader reader = new MySqlReader(new MySqlCommand(MySqlCommandType.SELECT).Select("prizenpc")
-                .Where("Owner", (long)client.Entity.UID));
+                .Where("Owner", client.Entity.UID));
             if (reader.Read())
             {
                 PrizeNpcInfo info = new PrizeNpcInfo
                 {
-                    Owner = (long)reader.ReadUInt32("Owner"),
+                    Owner = reader.ReadUInt32("Owner"),
                     type = reader.ReadUInt32("type"),
                     amount = reader.ReadUInt32("amount"),
                     itemid = reader.ReadUInt32("itemid")
@@ -78,15 +78,15 @@
         public static void RemoveItem(GameState client)
         {
             MySqlCommand command = new MySqlCommand(MySqlCommandType.DELETE);
-            command.Delete("prizenpc", "Owner", (long)client.Entity.UID).And("type", "2").Execute();
-            PrizeNpcInformations.Remove((long)client.Entity.UID);
+            command.Delete("prizenpc", "Owner", client.Entity.UID).And("type", "2").Execute();
+            PrizeNpcInformations.Remove(client.Entity.UID);
             MySqlReader reader = new MySqlReader(new MySqlCommand(MySqlCommandType.SELECT).Select("prizenpc")
-                .Where("Owner", (long)client.Entity.UID));
+                .Where("Owner", client.Entity.UID));
             if (reader.Read())
             {
                 PrizeNpcInfo info = new PrizeNpcInfo
                 {
-                    Owner = (long)reader.ReadUInt32("Owner"),
+                    Owner = reader.ReadUInt32("Owner"),
                     type = reader.ReadUInt32("type"),
                     amount = reader.ReadUInt32("amount"),
                     itemid = reader.ReadUInt32("itemid")

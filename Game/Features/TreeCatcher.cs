@@ -75,8 +75,8 @@ namespace MTA.MaTrix.New_Quests {
                 if (path != null) {
                     for (int i = 5; i < path.Count; i += 5) {
                         TwoMovements jump = new TwoMovements();
-                        jump.X = (ushort)path[i].X;
-                        jump.Y = (ushort)path[i].Y;
+                        jump.X = path[i].X;
+                        jump.Y = path[i].Y;
                         jump.EntityCount = 1;
                         jump.FirstEntity = Npc.UID;
                         jump.MovementType = TwoMovements.Jump;
@@ -88,8 +88,8 @@ namespace MTA.MaTrix.New_Quests {
                     }
 
                     TwoMovements jump2 = new TwoMovements();
-                    jump2.X = (ushort)path[path.Count - 1].X;
-                    jump2.Y = (ushort)path[path.Count - 1].Y;
+                    jump2.X = path[path.Count - 1].X;
+                    jump2.Y = path[path.Count - 1].Y;
                     jump2.EntityCount = 1;
                     jump2.FirstEntity = Npc.UID;
                     jump2.MovementType = TwoMovements.Jump;
