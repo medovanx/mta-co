@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using MTA.Client;
 using MTA.Database;
 using MTA.Network.GamePackets;

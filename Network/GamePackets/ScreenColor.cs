@@ -1,6 +1,4 @@
 ﻿
-using System;
-
 namespace MTA.Network.GamePackets
 {
     public class ScreenColor : Writer, Interfaces.IPacket//Franko

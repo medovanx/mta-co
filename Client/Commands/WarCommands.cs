@@ -1,5 +1,3 @@
-using System;
-
 namespace MTA.Client.Commands
 {
     public static class WarCommands

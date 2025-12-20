@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using MTA.Network;
-
-namespace MTA.Game
+﻿namespace MTA.Game
 {
     public unsafe class VipStatus
     {

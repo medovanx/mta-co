@@ -3,8 +3,6 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using MTA.Game.Features.Tournaments;
-using MTA.Network.GamePackets;
-using MTA.Game.Attacking;
 
 namespace MTA.Game.ConquerStructures
 {

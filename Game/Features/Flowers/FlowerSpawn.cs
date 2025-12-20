@@ -1,8 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Text;
-using MTA.Game.ConquerStructures.Society;
-using MTA.Network;
 
 namespace MTA.Network.GamePackets
 {

@@ -3,9 +3,6 @@
 // * COPS v6 Emulator - Project
 
 using System;
-using System.Drawing;
-using System.Collections.Generic;
-using CO2_CORE_DLL;
 
 namespace MTA
 {

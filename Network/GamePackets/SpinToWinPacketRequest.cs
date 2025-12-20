@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using MTA.Network;
-using MTA.Interfaces;
-using MTA.Client;
+﻿using MTA.Interfaces;
 
 namespace MTA.Network.GamePackets
 {

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace MTA
 {// a da ya 3m :D timestamp da :V wala nta gayb omo mninne? eh dah asln :D a7a :D ma 3lenii 

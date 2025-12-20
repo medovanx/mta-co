@@ -1,8 +1,5 @@
 ﻿namespace System.Collections.Generic
 {
-    using System;
-    using System.Reflection;
-
     public class CareDictionary<T, T2> : Dictionary<T, T2>
     {
         public CareDictionary()

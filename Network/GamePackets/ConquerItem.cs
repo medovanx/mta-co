@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Drawing;
 using MTA.Game;
 using System.Collections.Generic;
-using System.IO;
+
 namespace MTA.Network.GamePackets
 {
     public class ConquerItem : Writer, Interfaces.IPacket

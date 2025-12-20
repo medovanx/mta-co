@@ -1,6 +1,5 @@
-﻿using System;
-using System.Drawing;
-using MTA.Game;
+﻿using System.Drawing;
+
 namespace MTA.Network.GamePackets
 {
     public class Team : Writer, Interfaces.IPacket

@@ -2,7 +2,6 @@
 {
     using MTA.Interfaces;
     using MTA.Network;
-    using System;
 
     public class ItemView : Writer, IPacket
     {

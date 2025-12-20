@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MTA.Interfaces
+﻿namespace MTA.Interfaces
 {
     public interface ISobNpc
     {

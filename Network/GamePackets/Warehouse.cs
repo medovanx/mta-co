@@ -1,6 +1,4 @@
-﻿using MTA.Database;
-using MTA.Game;
-using System;
+﻿using System;
 namespace MTA.Network.GamePackets
 {
     public class Warehouse : Writer, Interfaces.IPacket

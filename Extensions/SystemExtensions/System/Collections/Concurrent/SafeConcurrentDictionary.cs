@@ -1,8 +1,5 @@
 ﻿namespace System.Collections.Concurrent
 {
-    using System;
-    using System.Reflection;
-
     public class SafeConcurrentDictionary<T, T2> : ConcurrentDictionary<T, T2>
     {
         public T2 this[T key]

@@ -1,7 +1,5 @@
-﻿using System;
-using MTA.Game;
+﻿using MTA.Game;
 using MTA.Network.GamePackets;
-using MTA.Client;
 
 namespace MTA.Database
 {

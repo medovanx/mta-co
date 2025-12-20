@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using MTA.Game.ConquerStructures.Society;
+﻿using MTA.Game.ConquerStructures.Society;
 
 namespace MTA.Network.GamePackets
 {

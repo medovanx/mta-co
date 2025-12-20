@@ -10,10 +10,7 @@ using System.Text;
 using System.IO;
 using MTA.Client;
 using MTA.Network.GamePackets;
-using System.Threading;
-using System.Globalization;
 using System.Collections.Concurrent;
-using MTA.Game;
 using System.Drawing;
 
 namespace MTA.Game

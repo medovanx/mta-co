@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Text;
+﻿using System.IO;
 using MTA.Game.ConquerStructures.Society;
 
 namespace MTA.Network.GamePackets

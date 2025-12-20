@@ -1,9 +1,7 @@
 ﻿namespace MTA.Network.GamePackets
 {
-    using MTA.Game.Features.Flowers;
     using MTA.Interfaces;
     using MTA.Network;
-    using MTA.Client;
     using System;
 
     public class FlowerPacket : Writer, IPacket

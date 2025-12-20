@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Collections.Generic;
 using MTA.Network.GamePackets;
-using MTA.Client;
 
 namespace MTA.Game.ConquerStructures
 {

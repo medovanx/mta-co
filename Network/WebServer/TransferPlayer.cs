@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using MTA.Client;
-using MTA.Network.GamePackets;
-using MTA.Game;
-using System.Collections.Concurrent;
-using MTA.Interfaces;
-using MTA.Network;
-using System.IO;
-using MTA.Game.ConquerStructures;
+﻿using System.IO;
 
 namespace MTA.WebServer
 {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using MTA.Network.GamePackets;
 
 namespace MTA.Database

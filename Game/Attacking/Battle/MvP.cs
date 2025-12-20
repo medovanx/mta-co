@@ -3,12 +3,9 @@
 // * COPS v6 Emulator - Project
 
 using System;
-using CO2_CORE_DLL.IO;
 using MTA.Game;
-using MTA;
 using MTA.Network.GamePackets;
 using MTA.Database;
-using MTA.Game.Attacking;
 
 namespace MTA
 {

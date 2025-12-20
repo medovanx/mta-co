@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using MTA.Client;
 using MTA.Network.GamePackets;
 using HoldemHand;
-using MTA.Game;
 using MTA.Network;
 
 namespace MTA.Game.ConquerStructures

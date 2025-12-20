@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using MTA.Network.GamePackets;
-using MTA.Client;
-using MTA.Interfaces;
-using MTA.Game;
-using MTA.Database;
 
 namespace MTA.Game.Features.Reincarnation
 {

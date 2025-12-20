@@ -3,22 +3,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using MTA.Network.GamePackets;
 using System.Threading;
 using System.Threading.Generic;
 using MTA.Network.Sockets;
 using MTA.Game.ConquerStructures;
-using MTA.Game.ConquerStructures.Society;
 using MTA.Client;
 using System.Drawing;
 using MTA.Network.GamePackets.EventAlert;
-using MTA.Game.Events;
-using MTA.Database;
-using System.Data.SqlClient;
-using System.Configuration;
-using MTA.MaTrix;
-using MTA.Network;
 
 namespace MTA
 {

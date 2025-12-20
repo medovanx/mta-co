@@ -63,8 +63,6 @@ namespace MTA.Network.GamePackets
     }
 }*/
 using System;
-using System.Text;
-using System.Collections.Generic;
 
 namespace MTA.Network.GamePackets
 {

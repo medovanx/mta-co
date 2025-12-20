@@ -2,7 +2,6 @@
 {
     using MTA;
     using System;
-    using System.Runtime.CompilerServices;
     using System.Threading;
 
     public class Thread

@@ -1,9 +1,5 @@
 ﻿using MTA.Client;
 using MTA.Game;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace MTA.Network.GamePackets
 {

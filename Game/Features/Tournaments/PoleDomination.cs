@@ -11,7 +11,6 @@ namespace MTA.Game
     using Coordinate = Tuple<ushort, ushort, ushort>;
     using System.Drawing;
     using MTA.Game.ConquerStructures.Society;
-    using MySql.Data.MySqlClient;
     using System.Collections.Concurrent;
     using System.IO;
 

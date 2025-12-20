@@ -1,6 +1,4 @@
 ﻿using System;
-using MTA.Network.Cryptography;
-using System.Net.Sockets;
 using MTA.Network.Sockets;
 using MTA.Network;
 

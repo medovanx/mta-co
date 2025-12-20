@@ -2,11 +2,6 @@
 // * Copyright © 2010-2014
 // * Emulator - Project
 
-using System;
-using System.Text;
-using System.Drawing;
-using System.Collections.Generic;
-
 namespace MTA.Network.GamePackets
 {
     public class MentorPrize : Writer, Interfaces.IPacket

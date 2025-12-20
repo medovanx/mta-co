@@ -1,5 +1,4 @@
 ﻿using System;
-using MTA.Network;
 using MTA.Interfaces;
 
 namespace MTA.Network.GamePackets

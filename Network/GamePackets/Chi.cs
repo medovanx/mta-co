@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace MTA.Network.GamePackets
+﻿namespace MTA.Network.GamePackets
 {
     public class Chi : Writer, Interfaces.IPacket
     {

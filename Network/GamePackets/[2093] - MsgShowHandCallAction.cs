@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MTA.Network.GamePackets
+﻿namespace MTA.Network.GamePackets
 {
     public class MsgShowHandCallAction : Writer, Interfaces.IPacket
     {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MTA.Network.GamePackets
+﻿namespace MTA.Network.GamePackets
 {
     public class KnownPersons : Writer, Interfaces.IPacket
     {

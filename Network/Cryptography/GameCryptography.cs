@@ -1,6 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using CO2_CORE_DLL.Security.Cryptography;
+﻿using CO2_CORE_DLL.Security.Cryptography;
 
 namespace MTA.Network.Cryptography
 {

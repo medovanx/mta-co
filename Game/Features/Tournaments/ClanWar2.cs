@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using MTA.Network.GamePackets;
-using MTA.Database;
 
 namespace MTA.Game
 {

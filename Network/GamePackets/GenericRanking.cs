@@ -1,6 +1,6 @@
 ﻿using MTA.Client;
 using MTA.Interfaces;
-using System;
+
 namespace MTA.Network.GamePackets
 {
     public class GenericRanking : Writer, IPacket

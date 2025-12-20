@@ -1,8 +1,4 @@
-﻿using System;
-using System.Text;
-using System.Timers;
-
-namespace MTA.Network.GamePackets
+﻿namespace MTA.Network.GamePackets
 {
     public class MentorInformation : Writer, Interfaces.IPacket
     {

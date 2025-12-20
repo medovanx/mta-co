@@ -2,11 +2,6 @@
 
 using System;
 using MTA.Network.GamePackets;
-using System.Runtime.InteropServices;
-using MTA.ServerBase;
-using MTA.Interfaces;
-using System.Collections.Generic;
-using MTA;
 
 namespace MTA.Game.Attacking
 {

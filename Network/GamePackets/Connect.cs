@@ -1,5 +1,4 @@
-﻿using System;
-using MTA.Network.AuthPackets;
+﻿using MTA.Network.AuthPackets;
 namespace MTA.Network.GamePackets
 {
     public class Connect : Interfaces.IPacket

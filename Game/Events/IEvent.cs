@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using MTA.Client;
 
 namespace MTA.Game.Events
 {

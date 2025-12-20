@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace MTA.Game.ConquerStructures.Society
+﻿namespace MTA.Game.ConquerStructures.Society
 {
     public class Friend : Interfaces.IKnownPerson
     {

@@ -5,7 +5,6 @@ using System.Text;
 namespace MTA.Database
 {
     using MYSQLCOMMAND = MySql.Data.MySqlClient.MySqlCommand;
-    using MYSQLREADER = MySql.Data.MySqlClient.MySqlDataReader;
     using MYSQLCONNECTION = MySql.Data.MySqlClient.MySqlConnection;
 
     public class MySqlCommand : IDisposable

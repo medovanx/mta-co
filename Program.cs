@@ -386,7 +386,7 @@ internal abstract class Program {
     /// Parses the command, identifies the command type, and executes the appropriate action.
     /// </summary>
     /// <param name="command">The command to execute.</param>
-    private static void CommandsAi(string command) {
+    public static void CommandsAi(string command) {
         try {
             var data = command.Split(' ');
             switch (data[0]) {
@@ -1067,7 +1067,7 @@ internal abstract class Program {
             }
 
             if (!MainServer) {
-                if ((ServerTransfer && Kernel.TransferdPlayers.Contains(player.Account.EntityID)) ||
+                if ((ServerTransfer && Kernel.TransferredPlayers.Contains(player.Account.EntityID)) ||
                     GameServer == null) {
                     if (fw.Type == Forward.ForwardType.Ready) {
                         var fClient = new GameState(null) {
@@ -1085,8 +1085,8 @@ internal abstract class Program {
                                 fw.IP = ServerIp;
                                 fw.Port = ServerGamePort;
                                 player.Send(fw);
-                                if (Kernel.TransferdPlayers.Contains(player.Account.EntityID))
-                                    Kernel.TransferdPlayers.Remove(player.Account.EntityID);
+                                if (Kernel.TransferredPlayers.Contains(player.Account.EntityID))
+                                    Kernel.TransferredPlayers.Remove(player.Account.EntityID);
                                 Console.WriteLine("[" + (player.Account.EntityID + ServerKey) + "] " +
                                                   player.Account.Username + " has been redirected to " +
                                                   ServerIp + " : " + ServerGamePort + " .");

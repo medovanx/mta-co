@@ -1,5 +1,4 @@
 ﻿using MTA.Network;
-using MTA;
 using MTA.Interfaces;
 using MTA.Client;
 

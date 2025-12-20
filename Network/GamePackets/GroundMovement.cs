@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Generic;
 
 namespace MTA.Network.GamePackets
 {

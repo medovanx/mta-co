@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using MTA.Client;
 using System.Drawing;
 using MTA.Network.GamePackets;
 

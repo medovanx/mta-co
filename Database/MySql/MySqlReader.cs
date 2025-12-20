@@ -1,9 +1,7 @@
 ﻿using System;
 using MySql.Data.MySqlClient;
-using System.Data.OleDb;
 using System.Data;
-using MySql.Data.Types;
-using System.Text;
+
 namespace MTA.Database
 {
     public class MySqlReader : IDisposable

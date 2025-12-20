@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Text;
-using MTA.Network;
-using MTA.Client;
 
 namespace MTA.Network.GamePackets
 {

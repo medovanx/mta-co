@@ -1,5 +1,4 @@
-﻿using MTA.Network.Cryptography;
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
 

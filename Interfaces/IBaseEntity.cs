@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MTA.Game
+﻿namespace MTA.Game
 {
     public enum EntityFlag : byte
     {

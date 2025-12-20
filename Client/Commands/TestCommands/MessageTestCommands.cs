@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using MTA.Network.GamePackets;
-using MTA.Game;
 
 namespace MTA.Client.Commands.TestCommands
 {

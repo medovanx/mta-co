@@ -2,7 +2,6 @@
 // ☺ Copyright © 2010 - 2016 TQ Digital
 // ☺ TQ Project
 
-using System;
 using MTA.Game.ConquerStructures;
 
 namespace MTA.Database

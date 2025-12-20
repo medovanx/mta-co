@@ -1,10 +1,6 @@
 ﻿namespace MTA.Network.GamePackets
 {
-    using MTA;
-    using MTA.Client;
-    using MTA.Interfaces;
     using MTA.Network;
-    using System;
 
     public class GuildProfilePacket : Writer, Interfaces.IPacket
     {

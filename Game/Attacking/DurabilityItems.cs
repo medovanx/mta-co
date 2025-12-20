@@ -1,8 +1,6 @@
 ﻿using System;
 using MTA.Network;
 using MTA.Database;
-using MTA;
-using MTA.Interfaces;
 using MTA.Network.GamePackets;
 
 namespace MTA.Game.Attacking

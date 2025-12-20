@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using MTA.Network;
 using MTA.Network.GamePackets;
-using System.Collections;
-using System.Windows;
-
 using MTA.Client;
 
 namespace MTA.Game

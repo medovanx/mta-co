@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using MTA.Client;
-using MTA.Game.Attacking;
+﻿using MTA.Client;
 using MTA.Network.GamePackets;
 
 namespace MTA.Effect

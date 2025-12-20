@@ -51,9 +51,7 @@ namespace MTA.Network.GamePackets
         }
     }
 }*/
-using System;
-using System.Drawing;
-using MTA.Game;
+
 namespace MTA.Network.GamePackets
 {
     public class Leadership : Writer, Interfaces.IPacket

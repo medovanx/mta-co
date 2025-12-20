@@ -1,6 +1,4 @@
-﻿using System;
-using System.Text;
-namespace MTA.Network.AuthPackets
+﻿namespace MTA.Network.AuthPackets
 {
     public class Forward : Interfaces.IPacket
     {

@@ -3,7 +3,6 @@
     using MTA.Client;
     using MTA.Interfaces;
     using MTA.Network.GamePackets;
-    using MySql.Data.MySqlClient;
     using System;
     using System.Collections.Generic;
 

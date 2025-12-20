@@ -1,6 +1,3 @@
-using System;
-using MTA.Game;
-
 namespace MTA.Client.Commands
 {
     public static class RebornCommands

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using MTA.Client;
-using MTA.Network;
 
 namespace MTA.Network.GamePackets
 {

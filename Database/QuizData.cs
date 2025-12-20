@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using MTA.Game.ConquerStructures;
+﻿using MTA.Game.ConquerStructures;
 using System.IO;
 
 namespace MTA.Database

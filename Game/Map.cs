@@ -1,11 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Drawing;
-using System.Threading;
 using System.Collections.Generic;
 using MTA.Interfaces;
-using System.Text;
-using System.Linq;
 using MTA.Network.GamePackets;
 using System.Threading.Generic;
 using MTA.Client;

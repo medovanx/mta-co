@@ -5,7 +5,6 @@ using MTA.Network;
 using System.IO;
 using System.Text;
 using System.Linq;
-using MTA.Game.Features;
 
 namespace MTA.Game.ConquerStructures.Society
 {

@@ -295,8 +295,8 @@ namespace MTA.Network {
                 }
                 case 2902: {
                     if (Program.ServerTransfer) {
-                        if (!Kernel.TransferdPlayers.Contains(client.Entity.UID))
-                            Kernel.TransferdPlayers.Add(client.Entity.UID);
+                        if (!Kernel.TransferredPlayers.Contains(client.Entity.UID))
+                            Kernel.TransferredPlayers.Add(client.Entity.UID);
                         byte serverid = packet[5];
                         client.Disconnect();
                     }
@@ -22607,8 +22607,8 @@ namespace MTA.Network {
                                 break;
                             }
                             case "itemeffect": {
-                                Kernel.boundID = int.Parse(Data[1]);
-                                Kernel.boundIDEnd = int.Parse(Data[2]);
+                                Kernel.BoundId = int.Parse(Data[1]);
+                                Kernel.BoundIdEnd = int.Parse(Data[2]);
                                 break;
                             }
                             case "kiko": {
@@ -23042,12 +23042,12 @@ namespace MTA.Network {
                                         }
                                         else {
                                             Program.ServerTransfer = true;
-                                            Kernel.TransferdPlayers.Clear();
+                                            Kernel.TransferredPlayers.Clear();
                                             foreach (var c in Kernel.GamePool.Values) {
                                                 c.MessageBox("Do You Want To Join Cross Server?", p => {
                                                     if (Program.ServerTransfer) {
-                                                        if (!Kernel.TransferdPlayers.Contains(p.Entity.UID))
-                                                            Kernel.TransferdPlayers.Add(p.Entity.UID);
+                                                        if (!Kernel.TransferredPlayers.Contains(p.Entity.UID))
+                                                            Kernel.TransferredPlayers.Add(p.Entity.UID);
                                                         p.Disconnect();
                                                     }
                                                 });
@@ -23068,7 +23068,7 @@ namespace MTA.Network {
                                         }
                                         else {
                                             Program.ServerTransfer = false;
-                                            Kernel.TransferdPlayers.Clear();
+                                            Kernel.TransferredPlayers.Clear();
                                         }
 
                                         break;
@@ -24388,7 +24388,7 @@ namespace MTA.Network {
                 }
             }
 
-            client.LastJumpTime = (int)Kernel.maxJumpTime(client.lastJumpDistance);
+            client.LastJumpTime = (int)Kernel.MaxJumpTime(client.lastJumpDistance);
             int a1 = Now.GetHashCode() - client.lastJumpTime.GetHashCode();
             int a2 = generalData.TimeStamp.GetHashCode() - client.lastClientJumpTime.GetHashCode();
             bool DOO = false;
@@ -24414,7 +24414,7 @@ namespace MTA.Network {
                     //return;
                 }
                 else if (client.Entity.ContainsFlag(Update.Flags.Ride)) {
-                    int time = (int)Kernel.maxJumpTime(client.lastJumpDistance);
+                    int time = (int)Kernel.MaxJumpTime(client.lastJumpDistance);
                     int speedprc = DataHolder.SteedSpeed(client.Equipment.TryGetItem(ConquerItem.Steed).Plus);
                     if (speedprc != 0) {
                         if (Now < client.lastJumpTime.AddMilliseconds(time - (time * speedprc / 100))) {

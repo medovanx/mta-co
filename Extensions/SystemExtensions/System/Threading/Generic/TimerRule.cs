@@ -1,7 +1,6 @@
 ﻿namespace System.Threading.Generic
 {
     using System;
-    using System.Runtime.InteropServices;
     using System.Threading;
 
     public class TimerRule<T>

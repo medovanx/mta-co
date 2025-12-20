@@ -1,17 +1,8 @@
-﻿using MTA.Game;
-using MTA.Network.GamePackets;
+﻿using MTA.Network.GamePackets;
 using System;
-using System.Threading.Generic;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace MTA.Game
 {
-    using Colors = System.Drawing.Color;
-    using MTA.Client;
-    using System.Threading.Generic;
-
     public class SteedRace
     {
         public uint[][] RaceSettings = new[]

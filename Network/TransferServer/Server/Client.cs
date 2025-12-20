@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net.Sockets;
-using System.Net;
 using MTA.Network.Sockets;
 using System.IO;
-using MTA.Network;
-using MTA.Network.AuthPackets;
 using MTA.Database;
 using MTA.Game;
 using MTA.Game.ConquerStructures;
