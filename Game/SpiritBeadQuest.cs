@@ -74,11 +74,11 @@ namespace MTA.Game.Features {
             if (Bead != 0) {
                 if (MobLevel <= 70)
                     CollectedSpirits++;
-                else if (MobLevel >= 70 && MobLevel <= 99)
+                else if (MobLevel is >= 70 and <= 99)
                     CollectedSpirits += 2;
-                else if (MobLevel >= 100 && MobLevel <= 119)
+                else if (MobLevel is >= 100 and <= 119)
                     CollectedSpirits += 3;
-                else if (MobLevel >= 120 && MobLevel <= 140)
+                else if (MobLevel is >= 120 and <= 140)
                     CollectedSpirits += 4;
 
                 if (CollectedSpirits >= Requiredspirits) {

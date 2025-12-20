@@ -197,7 +197,7 @@ namespace MTA.Game.ConquerStructures
         /// <summary>
         /// How many players are still in the Game (All-In not included)
         /// </summary>
-        public int NbPlaying { get { return Players.Values.Count(x => x.IsPlaying && !x.IsAllIn); } }
+        public int NbPlaying { get { return Players.Values.Count(x => x is { IsPlaying: true, IsAllIn: false }); } }
 
         /// <summary>
         /// How many players are still in the Game (All-In included)

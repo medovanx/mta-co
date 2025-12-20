@@ -94,7 +94,7 @@ namespace MTA.Game.Features.Tournaments {
 
                         if (CkeckUPAlive() == 1) {
                             var client = Kernel.GamePool.Values.SingleOrDefault(p =>
-                                p.Entity.MapID == 1507 && p.Entity.Hitpoints > 0);
+                                p.Entity is { MapID: 1507, Hitpoints: > 0 });
                             if (client != null) {
                                 Statue statue = new Statue(client.Entity.SpawnPacket);
                                 statue = new Statue(client.Entity.SpawnPacket, 105177, Enums.ConquerAction.Cool,

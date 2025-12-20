@@ -92,9 +92,7 @@ namespace MTA.Game
                             wtr.Write((byte)0);
                     }
                     uint player1Teammates = 0;
-                    if (entry.Player1.Team != null)
-                        if (entry.Player1.Team.Teammates != null)
-                            player1Teammates = (uint)entry.Player1.Team.Teammates.Length;
+                    if (entry.Player1.Team is { Teammates: not null }) player1Teammates = (uint)entry.Player1.Team.Teammates.Length;
                     wtr.Write(player1Teammates);
                     wtr.Write(entry.Player2.TeamArenaStatistic.EntityID);
                     byte[] array2 = Encoding.Default.GetBytes(entry.Player2.TeamArenaStatistic.Name);
@@ -109,9 +107,7 @@ namespace MTA.Game
                     }
 
                     uint player2Teammates = 0;
-                    if (entry.Player2.Team != null)
-                        if (entry.Player2.Team.Teammates != null)
-                            player2Teammates = (uint)entry.Player2.Team.Teammates.Length;
+                    if (entry.Player2.Team is { Teammates: not null }) player2Teammates = (uint)entry.Player2.Team.Teammates.Length;
                     wtr.Write(player2Teammates);
                 }
                 GroupsList = null;
@@ -654,7 +650,7 @@ namespace MTA.Game
                 if (client.Entity.MapID == 8877) return;
                 if (client.Entity.MapID == 3333) return;
                 if (client.Entity.MapID == 5928) return;
-                if (client.Map.BaseID >= 6000 && client.Map.BaseID <= 6003) return;
+                if (client.Map.BaseID is >= 6000 and <= 6003) return;
 
                 if (WaitingPlayerList.ContainsKey(client.Account.EntityID))
                 {
@@ -1059,46 +1055,39 @@ namespace MTA.Game
                     loser.TeamArenaStatistic.HasBox = false;
 
                 int diff = Kernel.Random.Next(30, 50);
-                if (winner.Team != null)
+                if (winner.Team is { Teammates: not null })
                 {
-                    if (winner.Team.Teammates != null)
+                    foreach (var teammate in winner.Team.Teammates)
                     {
-                        foreach (var teammate in winner.Team.Teammates)
-                        {
-                            if (teammate.Team.TeamLeader)
-                                teammate.ArenaPoints += (uint)diff;
-                            else
-                                teammate.ArenaPoints += (uint)(diff - 10);
-                            teammate.TeamArenaStatistic.TodayWin++;
-                            teammate.TeamArenaStatistic.TotalWin++;
-                            if (teammate.TeamArenaStatistic.TodayWin == 9)
-                                //   teammate.Inventory.Add(723912, 0, 1);
-                                if (teammate.TeamArenaStatistic.TodayBattles == 20)
-                                    //   teammate.Inventory.Add(723912, 0, 1);
-                                    teammate.Send(teammate.TeamArenaStatistic);
-                            teammate.TeamQualifierGroup = null;
-                        }
+                        if (teammate.Team.TeamLeader)
+                            teammate.ArenaPoints += (uint)diff;
+                        else
+                            teammate.ArenaPoints += (uint)(diff - 10);
+                        teammate.TeamArenaStatistic.TodayWin++;
+                        teammate.TeamArenaStatistic.TotalWin++;
+                        if (teammate.TeamArenaStatistic is { TodayWin: 9, TodayBattles: 20 })
+                            //   teammate.Inventory.Add(723912, 0, 1);
+                            //   teammate.Inventory.Add(723912, 0, 1);
+                            teammate.Send(teammate.TeamArenaStatistic);
+                        teammate.TeamQualifierGroup = null;
                     }
                 }
-                if (loser.Team != null)
+                if (loser.Team is { Teammates: not null })
                 {
-                    if (loser.Team.Teammates != null)
+                    foreach (var teammate in loser.Team.Teammates)
                     {
-                        foreach (var teammate in loser.Team.Teammates)
-                        {
-                            if (teammate.Team.TeamLeader)
-                                teammate.ArenaPoints -= (uint)diff;
-                            else
-                                teammate.ArenaPoints -= (uint)(diff - 10);
-                            teammate.TeamArenaStatistic.TodayBattles++;
-                            teammate.TeamArenaStatistic.TotalLose++;
-                            if (teammate.ArenaPoints > 80000)
-                                teammate.ArenaPoints = 0;
-                            if (teammate.TeamArenaStatistic.TodayBattles == 20)
-                                //      teammate.Inventory.Add(723912, 0, 1);
-                                teammate.Send(teammate.TeamArenaStatistic);
-                            teammate.TeamQualifierGroup = null;
-                        }
+                        if (teammate.Team.TeamLeader)
+                            teammate.ArenaPoints -= (uint)diff;
+                        else
+                            teammate.ArenaPoints -= (uint)(diff - 10);
+                        teammate.TeamArenaStatistic.TodayBattles++;
+                        teammate.TeamArenaStatistic.TotalLose++;
+                        if (teammate.ArenaPoints > 80000)
+                            teammate.ArenaPoints = 0;
+                        if (teammate.TeamArenaStatistic.TodayBattles == 20)
+                            //      teammate.Inventory.Add(723912, 0, 1);
+                            teammate.Send(teammate.TeamArenaStatistic);
+                        teammate.TeamQualifierGroup = null;
                     }
                 }
 
@@ -1451,7 +1440,7 @@ namespace MTA.Game
         public static void Reset()
         {
             DateTime Now64 = DateTime.Now;
-            AcceptingNewBattles = ((Now64.Hour >= 11 && Now64.Hour < 13) || (Now64.Hour >= 19 && Now64.Hour < 21));
+            AcceptingNewBattles = (Now64.Hour is >= 11 and < 13 || Now64.Hour is >= 19 and < 21);
             if (!AcceptingNewBattles && WaitingPlayerList.Count == 0 && PlayerList.Count != 0)
             {
                 foreach (var player in PlayerList.Values)
@@ -1501,25 +1490,19 @@ namespace MTA.Game
             if (client.Entity.ContainsFlag2(Update.Flags2.SoulShackle)) return false;
             if (client.Map.BaseID == 1038) return false;
             if (client.Map.BaseID == 700) return false;
-            if (client.Entity.MapID >= 1090 && client.Entity.MapID <= 1094) return false;
-            if (client.Entity.MapID >= 1505 && client.Entity.MapID <= 1509) return false;
+            if (client.Entity.MapID is >= 1090 and <= 1094) return false;
+            if (client.Entity.MapID is >= 1505 and <= 1509) return false;
             if (client.Entity.MapID == 1081) return false;
             return (!Constants.PKFreeMaps.Contains(client.Map.ID) || client.Map.ID == 1005);
         }
         private static bool CanJoin(GameState client, Time32 now)
         {
-            if (client != null)
+            if (client is { TeamArenaStatistic.PlayWith: null, TeamQualifierGroup: null })
             {
-                if (client.TeamArenaStatistic.PlayWith == null)
-                {
-                    if (client.TeamQualifierGroup == null)
-                    {
-                        if (!client.Entity.ContainsFlag(Update.Flags.TeamLeader)) return false;
-                        if (!CanFight(client)) return false;
-                        if (client.TeamArenaStatistic.Status == TeamArenaStatistic.WaitingForOpponent)
-                            return true;
-                    }
-                }
+                if (!client.Entity.ContainsFlag(Update.Flags.TeamLeader)) return false;
+                if (!CanFight(client)) return false;
+                if (client.TeamArenaStatistic.Status == TeamArenaStatistic.WaitingForOpponent)
+                    return true;
             }
             return false;
         }

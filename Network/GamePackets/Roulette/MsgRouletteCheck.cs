@@ -25,7 +25,7 @@ namespace MTA.Network.GamePackets.Roulette {
                             element.Number = stream[5 + (x * 5)];
                             element.BetPrice = BitConverter.ReadUint(stream, 5 + (x * 5) + 1);
 
-                            if (element.Number >= 0 && element.Number <= 37) {
+                            if (element.Number is >= 0 and <= 37) {
                                 if (!player.MyLuckNumber.ContainsKey(element.Number)) {
                                     player.MyLuckNumber.TryAdd(element.Number, element);
                                 }

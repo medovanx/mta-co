@@ -101,7 +101,7 @@ namespace MTA.Network.GamePackets
                 WriteUInt32(PermanentRefinery, offset + 4, Buffer);
             else
                 WriteUInt32(ExtraEffect, offset + 4, Buffer);
-            if (effect.EffectID >= 724440 && effect.EffectID <= 724444 || effect.EffectID == 3004140) effect.EffectID = 301;
+            if (effect.EffectID is >= 724440 and <= 724444 || effect.EffectID == 3004140) effect.EffectID = 301;
             WriteUInt32(effect.EffectID, offset + 8, Buffer);
             WriteUInt32(effect.EffectLevel, offset + 12, Buffer);
             WriteUInt32(effect.EffectPercent, offset + 16, Buffer);

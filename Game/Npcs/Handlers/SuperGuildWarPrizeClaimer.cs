@@ -101,8 +101,7 @@ namespace MTA.Game.Npcs.Handlers {
                 }
                 case 1: {
                     if (client.Guild != null) {
-                        if (client.Guild.SuperPoleKeeper && client.Guild != null &&
-                            client.AsMember.Rank == GuildMemberRank.GuildLeader) {
+                        if (client.Guild.SuperPoleKeeper && client is { Guild: not null, AsMember.Rank: GuildMemberRank.GuildLeader }) {
                             dialog.Text("Are you sure you want to claim your prize?");
                             dialog.Option("Yes", 2);
                             dialog.Option("Never mind", 255);
@@ -125,7 +124,7 @@ namespace MTA.Game.Npcs.Handlers {
                 }
                 case 2: {
                     if (!SuperGuildWar.IsWar && client.Guild.SuperPoleKeeper && SuperGuildWar.Claim &&
-                        client.Guild != null && client.AsMember.Rank == GuildMemberRank.GuildLeader) {
+                        client is { Guild: not null, AsMember.Rank: GuildMemberRank.GuildLeader }) {
                         Program.AddWarLog("SuperGuildWar", ".", client.Entity.Name);
                         SuperGuildWar.Claim = false;
                         SuperGuildWar.KeeperID = 0;
@@ -149,8 +148,7 @@ namespace MTA.Game.Npcs.Handlers {
                 }
                 case 3: {
                     if (client.Guild != null) {
-                        if (client.Guild.SuperPoleKeeper && client.Guild != null &&
-                            client.AsMember.Rank == GuildMemberRank.DeputyLeader) {
+                        if (client.Guild.SuperPoleKeeper && client is { Guild: not null, AsMember.Rank: GuildMemberRank.DeputyLeader }) {
                             dialog.Text("Are you sure you want to claim your prize?");
                             dialog.Option("Yes", 4);
                             dialog.Option("Never mind", 255);
@@ -172,8 +170,7 @@ namespace MTA.Game.Npcs.Handlers {
                     break;
                 }
                 case 4: {
-                    if (!SuperGuildWar.IsWar && client.Guild.SuperPoleKeeper && client.Guild != null &&
-                        client.AsMember.Rank == GuildMemberRank.DeputyLeader) {
+                    if (!SuperGuildWar.IsWar && client.Guild.SuperPoleKeeper && client is { Guild: not null, AsMember.Rank: GuildMemberRank.DeputyLeader }) {
                         client.Entity.AddTopStatus(Update.Flags3.ConuqerSuperBlue, 3, DateTime.Now.AddDays(7));
                         Kernel.SendWorldMessage(
                             new Message(

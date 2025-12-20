@@ -210,11 +210,9 @@ namespace MTA {
             ;
 
             if (!client.Map.Npcs.ContainsKey(client.ActiveNpc) || npcRequest == null || client == null ||
-                client.Entity == null || (npcRequest.NpcID == 0 && npcRequest.OptionID == 255))
+                client.Entity == null || npcRequest is { NpcID: 0, OptionID: 255 })
                 return;
-            if (client.Trade != null)
-                if (client.Trade.InTrade)
-                    return;
+            if (client.Trade is { InTrade: true }) return;
 
             INpc npcs = null;
             if (client.Map.Npcs.TryGetValue(client.ActiveNpc, out npcs)) {
@@ -1004,40 +1002,38 @@ namespace MTA {
                                     break;
                                 }
                                 case 3: {
-                                    if (client.Guild != null) {
-                                        if (client.AsMember != null) {
-                                            if (client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader) {
-                                                uint Reaward = client.Guild.CTFReward * Rates.Ctf;
-                                                if (Reaward != 0) {
-                                                    byte[] messaje =
-                                                        new Message(
-                                                            "The Guild Leader " + client.Entity.Name + " of " +
-                                                            client.Guild.Name + " Receive the CTFReward " + Reaward +
-                                                            "", Color.Red, Message.System).ToArray();
+                                    if (client is { Guild: not null, AsMember: not null }) {
+                                        if (client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader) {
+                                            uint Reaward = client.Guild.CTFReward * Rates.Ctf;
+                                            if (Reaward != 0) {
+                                                byte[] messaje =
+                                                    new Message(
+                                                        "The Guild Leader " + client.Entity.Name + " of " +
+                                                        client.Guild.Name + " Receive the CTFReward " + Reaward +
+                                                        "", Color.Red, Message.System).ToArray();
 
-                                                    client.Entity.ConquerPoints += Reaward;
-                                                    client.Guild.CTFReward = 0;
-                                                    GuildTable.SaveCTFReward(client.Guild);
-                                                    foreach (var clients in Kernel.GamePool.Values) {
-                                                        client.Send(messaje);
-                                                    }
-                                                }
-                                                else {
-                                                    dialog.Text("You Guild Not Have CTF Points ");
-                                                    dialog.Option("Oh Sorry.", 255);
-                                                    dialog.Avatar(83);
-                                                    dialog.Send();
+                                                client.Entity.ConquerPoints += Reaward;
+                                                client.Guild.CTFReward = 0;
+                                                GuildTable.SaveCTFReward(client.Guild);
+                                                foreach (var clients in Kernel.GamePool.Values) {
+                                                    client.Send(messaje);
                                                 }
                                             }
                                             else {
-                                                dialog.Text("Just The Guild Leader will receive the CTF Reward ");
+                                                dialog.Text("You Guild Not Have CTF Points ");
                                                 dialog.Option("Oh Sorry.", 255);
                                                 dialog.Avatar(83);
                                                 dialog.Send();
                                             }
-
-                                            break;
                                         }
+                                        else {
+                                            dialog.Text("Just The Guild Leader will receive the CTF Reward ");
+                                            dialog.Option("Oh Sorry.", 255);
+                                            dialog.Avatar(83);
+                                            dialog.Send();
+                                        }
+
+                                        break;
                                     }
 
                                     break;
@@ -1077,7 +1073,7 @@ namespace MTA {
                                     }
                                 }
                                 case 7: {
-                                    if (client.Entity.VIPLevel >= 4 && client.Entity.Level >= 130)
+                                    if (client.Entity is { VIPLevel: >= 4, Level: >= 130 })
                                         client.Entity.Teleport(1076, 143, 350);
 
                                     else {
@@ -1753,8 +1749,7 @@ namespace MTA {
                                     break;
                                 }
                                 case 2: {
-                                    if (client.Entity.VIPLevel >= 8 &&
-                                        (client.Entity.Level >= 140 && client.Entity.Level < 145)) {
+                                    if (client.Entity is { VIPLevel: >= 8, Level: >= 140 and < 145 }) {
                                         if (client.Entity.ConquerPoints >= 50000000) {
                                             client.Entity.ConquerPoints -= 50000000;
                                             client.Entity.Level++;
@@ -5031,25 +5026,25 @@ namespace MTA {
                                         #region exp reward switch
 
                                         byte level = client.Entity.Level;
-                                        if (level > 50 && level < 63)
+                                        if (level is > 50 and < 63)
                                             exp_reward = 27152909;
-                                        if (level >= 63 && level < 69)
+                                        if (level is >= 63 and < 69)
                                             exp_reward = 28860143;
-                                        if (level >= 69 && level < 74)
+                                        if (level is >= 69 and < 74)
                                             exp_reward = 36822370;
-                                        if (level >= 74 && level < 79)
+                                        if (level is >= 74 and < 79)
                                             exp_reward = 57533091;
-                                        if (level >= 79 && level < 87)
+                                        if (level is >= 79 and < 87)
                                             exp_reward = 70404048;
-                                        if (level >= 87 && level < 90)
+                                        if (level is >= 87 and < 90)
                                             exp_reward = 84097242;
-                                        if (level >= 90 && level < 93)
+                                        if (level is >= 90 and < 93)
                                             exp_reward = 102959118;
-                                        if (level >= 93 && level < 96)
+                                        if (level is >= 93 and < 96)
                                             exp_reward = 134266326;
-                                        if (level >= 96 && level < 98)
+                                        if (level is >= 96 and < 98)
                                             exp_reward = 100801220;
-                                        if (level >= 98 && level <= 100)
+                                        if (level is >= 98 and <= 100)
                                             exp_reward = 214351925;
 
                                         if (level > 100) {
@@ -5256,7 +5251,7 @@ namespace MTA {
                                             (client.Entity.Class == 135 ? 110 : 120)) {
                                             if (npcRequest.OptionID == 255)
                                                 return;
-                                            if (npcRequest.OptionID >= 200 && npcRequest.OptionID <= 254) {
+                                            if (npcRequest.OptionID is >= 200 and <= 254) {
                                                 client.SelectedGem = (byte)(npcRequest.OptionID % 100);
                                                 if (client.SelectedGem == 54)
                                                     client.SelectedGem = 63;
@@ -5835,8 +5830,7 @@ namespace MTA {
                                 }
                                 case 1: {
                                     if (client.Guild != null) {
-                                        if (client.Guild.PoleKeeper && client.Guild != null &&
-                                            client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader) {
+                                        if (client.Guild.PoleKeeper && client is { Guild: not null, AsMember.Rank: Enums.GuildMemberRank.GuildLeader }) {
                                             dialog.Text("Are you sure you want to claim your prize?");
                                             dialog.Option("Yes.", 2);
                                             dialog.Option("Ah, nevermind.", 255);
@@ -5910,8 +5904,7 @@ namespace MTA {
                                 }
                                 case 3: {
                                     if (client.Guild != null) {
-                                        if (client.Guild.PoleKeeper && client.Guild != null &&
-                                            client.AsMember.Rank == Enums.GuildMemberRank.DeputyLeader) {
+                                        if (client.Guild.PoleKeeper && client is { Guild: not null, AsMember.Rank: Enums.GuildMemberRank.DeputyLeader }) {
                                             dialog.Text("Are you sure you want to claim your prize?");
                                             dialog.Option("Yes.", 4);
                                             dialog.Option("Ah, nevermind.", 255);
@@ -6002,8 +5995,7 @@ namespace MTA {
                                     {
                                         if (DateTime.Now.Hour >= 20 && DateTime.Now.Hour < (20 + 4) &&
                                             DateTime.Now.DayOfWeek == DayOfWeek.Saturday && client.Guild.PoleKeeper &&
-                                            client.Guild != null &&
-                                            client.AsMember.Rank == Enums.GuildMemberRank.DeputyLeader) {
+                                            client is { Guild: not null, AsMember.Rank: Enums.GuildMemberRank.DeputyLeader }) {
                                             //ClassPk.AddDl();
                                             client.Entity.AddTopStatus((int)Titles.membmerguild, 0,
                                                 DateTime.Now.AddDays(7));
@@ -6032,59 +6024,57 @@ namespace MTA {
                         #region Gates
 
                         case 516074: {
-                            if (client.Guild != null) {
-                                if (client.Guild.PoleKeeper) {
-                                    switch (npcRequest.OptionID) {
-                                        case 0:
-                                            dialog.Text("Select the option you want to pursue.");
-                                            if (client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader ||
-                                                client.AsMember.Rank == Enums.GuildMemberRank.DeputyLeader) {
-                                                dialog.Option("Open gate.", 1);
-                                                //if (Game.GuildWar.LeftGate.Hitpoints == 0)
-                                                //  dialog.Option("Repair gate.", 22);
-                                                //  else
-                                                dialog.Option("Close gate.", 2);
-                                            }
+                            if (client.Guild is { PoleKeeper: true }) {
+                                switch (npcRequest.OptionID) {
+                                    case 0:
+                                        dialog.Text("Select the option you want to pursue.");
+                                        if (client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader ||
+                                            client.AsMember.Rank == Enums.GuildMemberRank.DeputyLeader) {
+                                            dialog.Option("Open gate.", 1);
+                                            //if (Game.GuildWar.LeftGate.Hitpoints == 0)
+                                            //  dialog.Option("Repair gate.", 22);
+                                            //  else
+                                            dialog.Option("Close gate.", 2);
+                                        }
 
-                                            dialog.Option("Get inside.", 3);
-                                            dialog.Option("Nothing.", 255);
-                                            dialog.Send();
-                                            break;
-                                        case 1: {
-                                            GuildWar.LeftGate.Mesh = (ushort)(250 + GuildWar.LeftGate.Mesh % 10);
+                                        dialog.Option("Get inside.", 3);
+                                        dialog.Option("Nothing.", 255);
+                                        dialog.Send();
+                                        break;
+                                    case 1: {
+                                        GuildWar.LeftGate.Mesh = (ushort)(250 + GuildWar.LeftGate.Mesh % 10);
 
-                                            Update upd = new Update(true);
-                                            upd.UID = GuildWar.LeftGate.UID;
-                                            upd.Append(Update.Mesh, GuildWar.LeftGate.Mesh);
-                                            client.SendScreen(upd);
-                                            break;
-                                        }
-                                        case 2: {
-                                            if (GuildWar.LeftGate.Hitpoints == 0)
-                                                return;
-                                            GuildWar.LeftGate.Mesh = (ushort)(240 + GuildWar.LeftGate.Mesh % 10);
-                                            Update upd = new Update(true);
-                                            upd.UID = GuildWar.LeftGate.UID;
-                                            upd.Append(Update.Mesh, GuildWar.LeftGate.Mesh);
-                                            upd.Append(Update.Hitpoints, GuildWar.LeftGate.Hitpoints);
-                                            client.SendScreen(upd);
-                                            break;
-                                        }
-                                        case 22: {
-                                            GuildWar.LeftGate.Mesh = (ushort)(240 + GuildWar.LeftGate.Mesh % 10);
-                                            if (GuildWar.LeftGate.Hitpoints == 0)
-                                                GuildWar.LeftGate.Hitpoints = GuildWar.LeftGate.MaxHitpoints;
-                                            Update upd = new Update(true);
-                                            upd.UID = GuildWar.LeftGate.UID;
-                                            upd.Append(Update.Mesh, GuildWar.LeftGate.Mesh);
-                                            upd.Append(Update.Hitpoints, GuildWar.LeftGate.Hitpoints);
-                                            client.SendScreen(upd);
-                                            break;
-                                        }
-                                        case 3: {
-                                            client.Entity.Teleport(1038, 162, 198);
-                                            break;
-                                        }
+                                        Update upd = new Update(true);
+                                        upd.UID = GuildWar.LeftGate.UID;
+                                        upd.Append(Update.Mesh, GuildWar.LeftGate.Mesh);
+                                        client.SendScreen(upd);
+                                        break;
+                                    }
+                                    case 2: {
+                                        if (GuildWar.LeftGate.Hitpoints == 0)
+                                            return;
+                                        GuildWar.LeftGate.Mesh = (ushort)(240 + GuildWar.LeftGate.Mesh % 10);
+                                        Update upd = new Update(true);
+                                        upd.UID = GuildWar.LeftGate.UID;
+                                        upd.Append(Update.Mesh, GuildWar.LeftGate.Mesh);
+                                        upd.Append(Update.Hitpoints, GuildWar.LeftGate.Hitpoints);
+                                        client.SendScreen(upd);
+                                        break;
+                                    }
+                                    case 22: {
+                                        GuildWar.LeftGate.Mesh = (ushort)(240 + GuildWar.LeftGate.Mesh % 10);
+                                        if (GuildWar.LeftGate.Hitpoints == 0)
+                                            GuildWar.LeftGate.Hitpoints = GuildWar.LeftGate.MaxHitpoints;
+                                        Update upd = new Update(true);
+                                        upd.UID = GuildWar.LeftGate.UID;
+                                        upd.Append(Update.Mesh, GuildWar.LeftGate.Mesh);
+                                        upd.Append(Update.Hitpoints, GuildWar.LeftGate.Hitpoints);
+                                        client.SendScreen(upd);
+                                        break;
+                                    }
+                                    case 3: {
+                                        client.Entity.Teleport(1038, 162, 198);
+                                        break;
                                     }
                                 }
                             }
@@ -6092,59 +6082,57 @@ namespace MTA {
                             break;
                         }
                         case 516075: {
-                            if (client.Guild != null) {
-                                if (client.Guild.PoleKeeper) {
-                                    switch (npcRequest.OptionID) {
-                                        case 0:
-                                            dialog.Text("Select the option you want to pursue.");
-                                            if (client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader ||
-                                                client.AsMember.Rank == Enums.GuildMemberRank.DeputyLeader) {
-                                                dialog.Option("Open gate.", 1);
-                                                // if (Game.GuildWar.RightGate.Hitpoints == 0)
-                                                //   dialog.Option("Repair gate.", 22);
-                                                // else
-                                                dialog.Option("Close gate.", 2);
-                                            }
+                            if (client.Guild is { PoleKeeper: true }) {
+                                switch (npcRequest.OptionID) {
+                                    case 0:
+                                        dialog.Text("Select the option you want to pursue.");
+                                        if (client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader ||
+                                            client.AsMember.Rank == Enums.GuildMemberRank.DeputyLeader) {
+                                            dialog.Option("Open gate.", 1);
+                                            // if (Game.GuildWar.RightGate.Hitpoints == 0)
+                                            //   dialog.Option("Repair gate.", 22);
+                                            // else
+                                            dialog.Option("Close gate.", 2);
+                                        }
 
-                                            dialog.Option("Get inside.", 3);
-                                            dialog.Option("Nothing.", 255);
-                                            dialog.Send();
-                                            break;
-                                        case 1: {
-                                            GuildWar.RightGate.Mesh = (ushort)(280 + GuildWar.RightGate.Mesh % 10);
+                                        dialog.Option("Get inside.", 3);
+                                        dialog.Option("Nothing.", 255);
+                                        dialog.Send();
+                                        break;
+                                    case 1: {
+                                        GuildWar.RightGate.Mesh = (ushort)(280 + GuildWar.RightGate.Mesh % 10);
 
-                                            Update upd = new Update(true);
-                                            upd.UID = GuildWar.RightGate.UID;
-                                            upd.Append(Update.Mesh, GuildWar.RightGate.Mesh);
-                                            client.SendScreen(upd);
-                                            break;
-                                        }
-                                        case 2: {
-                                            if (GuildWar.RightGate.Hitpoints == 0)
-                                                return;
-                                            GuildWar.RightGate.Mesh = (ushort)(270 + GuildWar.RightGate.Mesh % 10);
-                                            Update upd = new Update(true);
-                                            upd.UID = GuildWar.RightGate.UID;
-                                            upd.Append(Update.Mesh, GuildWar.RightGate.Mesh);
-                                            upd.Append(Update.Hitpoints, GuildWar.RightGate.Hitpoints);
-                                            client.SendScreen(upd);
-                                            break;
-                                        }
-                                        case 22: {
-                                            GuildWar.RightGate.Mesh = (ushort)(270 + GuildWar.RightGate.Mesh % 10);
-                                            if (GuildWar.RightGate.Hitpoints == 0)
-                                                GuildWar.RightGate.Hitpoints = GuildWar.RightGate.MaxHitpoints;
-                                            Update upd = new Update(true);
-                                            upd.UID = GuildWar.RightGate.UID;
-                                            upd.Append(Update.Mesh, GuildWar.RightGate.Mesh);
-                                            upd.Append(Update.Hitpoints, GuildWar.RightGate.Hitpoints);
-                                            client.SendScreen(upd);
-                                            break;
-                                        }
-                                        case 3: {
-                                            client.Entity.Teleport(1038, 210, 177);
-                                            break;
-                                        }
+                                        Update upd = new Update(true);
+                                        upd.UID = GuildWar.RightGate.UID;
+                                        upd.Append(Update.Mesh, GuildWar.RightGate.Mesh);
+                                        client.SendScreen(upd);
+                                        break;
+                                    }
+                                    case 2: {
+                                        if (GuildWar.RightGate.Hitpoints == 0)
+                                            return;
+                                        GuildWar.RightGate.Mesh = (ushort)(270 + GuildWar.RightGate.Mesh % 10);
+                                        Update upd = new Update(true);
+                                        upd.UID = GuildWar.RightGate.UID;
+                                        upd.Append(Update.Mesh, GuildWar.RightGate.Mesh);
+                                        upd.Append(Update.Hitpoints, GuildWar.RightGate.Hitpoints);
+                                        client.SendScreen(upd);
+                                        break;
+                                    }
+                                    case 22: {
+                                        GuildWar.RightGate.Mesh = (ushort)(270 + GuildWar.RightGate.Mesh % 10);
+                                        if (GuildWar.RightGate.Hitpoints == 0)
+                                            GuildWar.RightGate.Hitpoints = GuildWar.RightGate.MaxHitpoints;
+                                        Update upd = new Update(true);
+                                        upd.UID = GuildWar.RightGate.UID;
+                                        upd.Append(Update.Mesh, GuildWar.RightGate.Mesh);
+                                        upd.Append(Update.Hitpoints, GuildWar.RightGate.Hitpoints);
+                                        client.SendScreen(upd);
+                                        break;
+                                    }
+                                    case 3: {
+                                        client.Entity.Teleport(1038, 210, 177);
+                                        break;
                                     }
                                 }
                             }
@@ -6291,62 +6279,60 @@ namespace MTA {
                         #region Gates
 
                         case 516174: {
-                            if (client.Guild != null) {
-                                if (client.Guild.SuperPoleKeeper) {
-                                    switch (npcRequest.OptionID) {
-                                        case 0:
-                                            dialog.Text("Select the option you want to pursue.");
-                                            if (client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader ||
-                                                client.AsMember.Rank == Enums.GuildMemberRank.DeputyLeader) {
-                                                dialog.Option("Open gate.", 1);
-                                                // if (Game.SuperGuildWar.LeftGate.Hitpoints == 0)
-                                                //  dialog.Option("Repair gate.", 22);
-                                                // else
-                                                dialog.Option("Close gate.", 2);
-                                            }
+                            if (client.Guild is { SuperPoleKeeper: true }) {
+                                switch (npcRequest.OptionID) {
+                                    case 0:
+                                        dialog.Text("Select the option you want to pursue.");
+                                        if (client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader ||
+                                            client.AsMember.Rank == Enums.GuildMemberRank.DeputyLeader) {
+                                            dialog.Option("Open gate.", 1);
+                                            // if (Game.SuperGuildWar.LeftGate.Hitpoints == 0)
+                                            //  dialog.Option("Repair gate.", 22);
+                                            // else
+                                            dialog.Option("Close gate.", 2);
+                                        }
 
-                                            dialog.Option("Get inside.", 3);
-                                            dialog.Option("Nothing.", 255);
-                                            dialog.Send();
-                                            break;
-                                        case 1: {
-                                            SuperGuildWar.LeftGate.Mesh =
-                                                (ushort)(250 + SuperGuildWar.LeftGate.Mesh % 10);
+                                        dialog.Option("Get inside.", 3);
+                                        dialog.Option("Nothing.", 255);
+                                        dialog.Send();
+                                        break;
+                                    case 1: {
+                                        SuperGuildWar.LeftGate.Mesh =
+                                            (ushort)(250 + SuperGuildWar.LeftGate.Mesh % 10);
 
-                                            Update upd = new Update(true);
-                                            upd.UID = SuperGuildWar.LeftGate.UID;
-                                            upd.Append(Update.Mesh, SuperGuildWar.LeftGate.Mesh);
-                                            client.SendScreen(upd);
-                                            break;
-                                        }
-                                        case 2: {
-                                            if (SuperGuildWar.LeftGate.Hitpoints == 0)
-                                                return;
-                                            SuperGuildWar.LeftGate.Mesh =
-                                                (ushort)(240 + SuperGuildWar.LeftGate.Mesh % 10);
-                                            Update upd = new Update(true);
-                                            upd.UID = SuperGuildWar.LeftGate.UID;
-                                            upd.Append(Update.Mesh, SuperGuildWar.LeftGate.Mesh);
-                                            upd.Append(Update.Hitpoints, SuperGuildWar.LeftGate.Hitpoints);
-                                            client.SendScreen(upd);
-                                            break;
-                                        }
-                                        case 22: {
-                                            SuperGuildWar.LeftGate.Mesh =
-                                                (ushort)(240 + SuperGuildWar.LeftGate.Mesh % 10);
-                                            if (SuperGuildWar.LeftGate.Hitpoints == 0)
-                                                SuperGuildWar.LeftGate.Hitpoints = SuperGuildWar.LeftGate.MaxHitpoints;
-                                            Update upd = new Update(true);
-                                            upd.UID = SuperGuildWar.LeftGate.UID;
-                                            upd.Append(Update.Mesh, SuperGuildWar.LeftGate.Mesh);
-                                            upd.Append(Update.Hitpoints, SuperGuildWar.LeftGate.Hitpoints);
-                                            client.SendScreen(upd);
-                                            break;
-                                        }
-                                        case 3: {
-                                            client.Entity.Teleport(10380, 162, 198);
-                                            break;
-                                        }
+                                        Update upd = new Update(true);
+                                        upd.UID = SuperGuildWar.LeftGate.UID;
+                                        upd.Append(Update.Mesh, SuperGuildWar.LeftGate.Mesh);
+                                        client.SendScreen(upd);
+                                        break;
+                                    }
+                                    case 2: {
+                                        if (SuperGuildWar.LeftGate.Hitpoints == 0)
+                                            return;
+                                        SuperGuildWar.LeftGate.Mesh =
+                                            (ushort)(240 + SuperGuildWar.LeftGate.Mesh % 10);
+                                        Update upd = new Update(true);
+                                        upd.UID = SuperGuildWar.LeftGate.UID;
+                                        upd.Append(Update.Mesh, SuperGuildWar.LeftGate.Mesh);
+                                        upd.Append(Update.Hitpoints, SuperGuildWar.LeftGate.Hitpoints);
+                                        client.SendScreen(upd);
+                                        break;
+                                    }
+                                    case 22: {
+                                        SuperGuildWar.LeftGate.Mesh =
+                                            (ushort)(240 + SuperGuildWar.LeftGate.Mesh % 10);
+                                        if (SuperGuildWar.LeftGate.Hitpoints == 0)
+                                            SuperGuildWar.LeftGate.Hitpoints = SuperGuildWar.LeftGate.MaxHitpoints;
+                                        Update upd = new Update(true);
+                                        upd.UID = SuperGuildWar.LeftGate.UID;
+                                        upd.Append(Update.Mesh, SuperGuildWar.LeftGate.Mesh);
+                                        upd.Append(Update.Hitpoints, SuperGuildWar.LeftGate.Hitpoints);
+                                        client.SendScreen(upd);
+                                        break;
+                                    }
+                                    case 3: {
+                                        client.Entity.Teleport(10380, 162, 198);
+                                        break;
                                     }
                                 }
                             }
@@ -6354,63 +6340,61 @@ namespace MTA {
                             break;
                         }
                         case 516175: {
-                            if (client.Guild != null) {
-                                if (client.Guild.SuperPoleKeeper) {
-                                    switch (npcRequest.OptionID) {
-                                        case 0:
-                                            dialog.Text("Select the option you want to pursue.");
-                                            if (client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader ||
-                                                client.AsMember.Rank == Enums.GuildMemberRank.DeputyLeader) {
-                                                dialog.Option("Open gate.", 1);
-                                                //if (Game.SuperGuildWar.RightGate.Hitpoints == 0)
-                                                //  dialog.Option("Repair gate.", 22);
-                                                //  else
-                                                dialog.Option("Close gate.", 2);
-                                            }
+                            if (client.Guild is { SuperPoleKeeper: true }) {
+                                switch (npcRequest.OptionID) {
+                                    case 0:
+                                        dialog.Text("Select the option you want to pursue.");
+                                        if (client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader ||
+                                            client.AsMember.Rank == Enums.GuildMemberRank.DeputyLeader) {
+                                            dialog.Option("Open gate.", 1);
+                                            //if (Game.SuperGuildWar.RightGate.Hitpoints == 0)
+                                            //  dialog.Option("Repair gate.", 22);
+                                            //  else
+                                            dialog.Option("Close gate.", 2);
+                                        }
 
-                                            dialog.Option("Get inside.", 3);
-                                            dialog.Option("Nothing.", 255);
-                                            dialog.Send();
-                                            break;
-                                        case 1: {
-                                            SuperGuildWar.RightGate.Mesh =
-                                                (ushort)(280 + SuperGuildWar.RightGate.Mesh % 10);
+                                        dialog.Option("Get inside.", 3);
+                                        dialog.Option("Nothing.", 255);
+                                        dialog.Send();
+                                        break;
+                                    case 1: {
+                                        SuperGuildWar.RightGate.Mesh =
+                                            (ushort)(280 + SuperGuildWar.RightGate.Mesh % 10);
 
-                                            Update upd = new Update(true);
-                                            upd.UID = SuperGuildWar.RightGate.UID;
-                                            upd.Append(Update.Mesh, SuperGuildWar.RightGate.Mesh);
-                                            client.SendScreen(upd);
-                                            break;
-                                        }
-                                        case 2: {
-                                            if (SuperGuildWar.RightGate.Hitpoints == 0)
-                                                return;
-                                            SuperGuildWar.RightGate.Mesh =
-                                                (ushort)(270 + SuperGuildWar.RightGate.Mesh % 10);
-                                            Update upd = new Update(true);
-                                            upd.UID = SuperGuildWar.RightGate.UID;
-                                            upd.Append(Update.Mesh, SuperGuildWar.RightGate.Mesh);
-                                            upd.Append(Update.Hitpoints, SuperGuildWar.RightGate.Hitpoints);
-                                            client.SendScreen(upd);
-                                            break;
-                                        }
-                                        case 22: {
-                                            SuperGuildWar.RightGate.Mesh =
-                                                (ushort)(270 + SuperGuildWar.RightGate.Mesh % 10);
-                                            if (SuperGuildWar.RightGate.Hitpoints == 0)
-                                                SuperGuildWar.RightGate.Hitpoints =
-                                                    SuperGuildWar.RightGate.MaxHitpoints;
-                                            Update upd = new Update(true);
-                                            upd.UID = SuperGuildWar.RightGate.UID;
-                                            upd.Append(Update.Mesh, SuperGuildWar.RightGate.Mesh);
-                                            upd.Append(Update.Hitpoints, SuperGuildWar.RightGate.Hitpoints);
-                                            client.SendScreen(upd);
-                                            break;
-                                        }
-                                        case 3: {
-                                            client.Entity.Teleport(10380, 210, 177);
-                                            break;
-                                        }
+                                        Update upd = new Update(true);
+                                        upd.UID = SuperGuildWar.RightGate.UID;
+                                        upd.Append(Update.Mesh, SuperGuildWar.RightGate.Mesh);
+                                        client.SendScreen(upd);
+                                        break;
+                                    }
+                                    case 2: {
+                                        if (SuperGuildWar.RightGate.Hitpoints == 0)
+                                            return;
+                                        SuperGuildWar.RightGate.Mesh =
+                                            (ushort)(270 + SuperGuildWar.RightGate.Mesh % 10);
+                                        Update upd = new Update(true);
+                                        upd.UID = SuperGuildWar.RightGate.UID;
+                                        upd.Append(Update.Mesh, SuperGuildWar.RightGate.Mesh);
+                                        upd.Append(Update.Hitpoints, SuperGuildWar.RightGate.Hitpoints);
+                                        client.SendScreen(upd);
+                                        break;
+                                    }
+                                    case 22: {
+                                        SuperGuildWar.RightGate.Mesh =
+                                            (ushort)(270 + SuperGuildWar.RightGate.Mesh % 10);
+                                        if (SuperGuildWar.RightGate.Hitpoints == 0)
+                                            SuperGuildWar.RightGate.Hitpoints =
+                                                SuperGuildWar.RightGate.MaxHitpoints;
+                                        Update upd = new Update(true);
+                                        upd.UID = SuperGuildWar.RightGate.UID;
+                                        upd.Append(Update.Mesh, SuperGuildWar.RightGate.Mesh);
+                                        upd.Append(Update.Hitpoints, SuperGuildWar.RightGate.Hitpoints);
+                                        client.SendScreen(upd);
+                                        break;
+                                    }
+                                    case 3: {
+                                        client.Entity.Teleport(10380, 210, 177);
+                                        break;
                                     }
                                 }
                             }
@@ -6585,7 +6569,7 @@ namespace MTA {
                                 }
                                 case 2: {
                                     if (client.Entity.Reborn > 0) {
-                                        if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
+                                        if (client.Entity.Class is >= 50 and <= 55) {
                                             dialog.Text(
                                                 "You cannot learn skills like this one. Ninjas don't need such thing. They are much more stronger than every other class.");
                                             dialog.Option("Alright", 255);
@@ -6961,7 +6945,7 @@ namespace MTA {
                         }
                         case 8: {
                             if (client.Inventory.Count < 30) {
-                                if (client.Entity.Class >= 80 && client.Entity.Class <= 85) {
+                                if (client.Entity.Class is >= 80 and <= 85) {
                                     if (client.Entity.ConquerPoints >= 2500000) {
                                         // client.Entity.Level = 140;
                                         client.Entity.ConquerPoints -= 2500000;
@@ -7039,7 +7023,7 @@ namespace MTA {
                         }
                         case 1: {
                             if (client.Inventory.Count < 30) {
-                                if (client.Entity.Class >= 10 && client.Entity.Class <= 15) {
+                                if (client.Entity.Class is >= 10 and <= 15) {
                                     if (client.Entity.ConquerPoints >= 2500000) {
                                         // client.Entity.Level = 140;
                                         client.Entity.ConquerPoints -= 2500000;
@@ -7120,7 +7104,7 @@ namespace MTA {
                         }
                         case 2: {
                             if (client.Inventory.Count < 30) {
-                                if (client.Entity.Class >= 20 && client.Entity.Class <= 25) {
+                                if (client.Entity.Class is >= 20 and <= 25) {
                                     if (client.Entity.ConquerPoints >= 2500000) {
                                         // client.Entity.Level = 140;
                                         client.Entity.ConquerPoints -= 2500000;
@@ -7206,7 +7190,7 @@ namespace MTA {
                         }
                         case 3: {
                             if (client.Inventory.Count < 30) {
-                                if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+                                if (client.Entity.Class is >= 60 and <= 65) {
                                     if (client.Entity.ConquerPoints >= 2500000) {
                                         // client.Entity.Level = 140;
                                         client.Entity.ConquerPoints -= 2500000;
@@ -7281,7 +7265,7 @@ namespace MTA {
                         }
                         case 4: {
                             if (client.Inventory.Count < 30) {
-                                if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
+                                if (client.Entity.Class is >= 50 and <= 55) {
                                     if (client.Entity.ConquerPoints >= 2500000) {
                                         // client.Entity.Level = 140;
                                         client.Entity.ConquerPoints -= 2500000;
@@ -7363,7 +7347,7 @@ namespace MTA {
                         }
                         case 5: {
                             if (client.Inventory.Count < 30) {
-                                if (client.Entity.Class >= 70 && client.Entity.Class <= 75) {
+                                if (client.Entity.Class is >= 70 and <= 75) {
                                     if (client.Entity.ConquerPoints >= 2500000) {
                                         // client.Entity.Level = 140;
                                         client.Entity.ConquerPoints -= 2500000;
@@ -7439,7 +7423,7 @@ namespace MTA {
                         }
                         case 6: {
                             if (client.Inventory.Count < 30) {
-                                if (client.Entity.Class >= 40 && client.Entity.Class <= 45) {
+                                if (client.Entity.Class is >= 40 and <= 45) {
                                     if (client.Entity.ConquerPoints >= 2500000) {
                                         // client.Entity.Level = 140;
                                         client.Entity.ConquerPoints -= 2500000;
@@ -7519,7 +7503,7 @@ namespace MTA {
                         }
                         case 7: {
                             if (client.Inventory.Count < 32) {
-                                if (client.Entity.Class >= 100 && client.Entity.Class <= 145) {
+                                if (client.Entity.Class is >= 100 and <= 145) {
                                     if (client.Entity.ConquerPoints >= 2500000) {
                                         // client.Entity.Level = 140;
                                         client.Entity.ConquerPoints -= 2500000;
@@ -8937,7 +8921,7 @@ namespace MTA {
                             break;
                         }
                         case 1: {
-                            if (client.Entity.Level == 140 && client.Entity.Reborn == 2) {
+                            if (client.Entity is { Level: 140, Reborn: 2 }) {
                                 client.Entity.Strength = 0;
                                 client.Entity.Vitality = 502;
                                 client.Entity.Agility = 36;
@@ -8954,7 +8938,7 @@ namespace MTA {
                             break;
                         }
                         case 2: {
-                            if (client.Entity.Level == 140 && client.Entity.Reborn == 2) {
+                            if (client.Entity is { Level: 140, Reborn: 2 }) {
                                 client.Entity.Strength = 0;
                                 client.Entity.Vitality = 262;
                                 client.Entity.Agility = 276;
@@ -8971,7 +8955,7 @@ namespace MTA {
                             break;
                         }
                         case 3: {
-                            if (client.Entity.Level == 140 && client.Entity.Reborn == 2) {
+                            if (client.Entity is { Level: 140, Reborn: 2 }) {
                                 client.Entity.Strength = 0;
                                 client.Entity.Vitality = 438;
                                 client.Entity.Agility = 0;
@@ -8989,7 +8973,7 @@ namespace MTA {
                         }
 
                         case 4: {
-                            if (client.Entity.Level == 140 && client.Entity.Reborn == 2) {
+                            if (client.Entity is { Level: 140, Reborn: 2 }) {
                                 client.Entity.Strength = 0;
                                 client.Entity.Vitality = 418;
                                 client.Entity.Agility = 120;
@@ -9006,7 +8990,7 @@ namespace MTA {
                             break;
                         }
                         case 5: {
-                            if (client.Entity.Level == 140 && client.Entity.Reborn == 2) {
+                            if (client.Entity is { Level: 140, Reborn: 2 }) {
                                 client.Entity.Strength = 176;
                                 client.Entity.Vitality = 362;
                                 client.Entity.Agility = 0;
@@ -9023,7 +9007,7 @@ namespace MTA {
                             break;
                         }
                         case 6: {
-                            if (client.Entity.Level == 140 && client.Entity.Reborn == 2) {
+                            if (client.Entity is { Level: 140, Reborn: 2 }) {
                                 client.Entity.Strength = 176;
                                 client.Entity.Vitality = 362;
                                 client.Entity.Agility = 0;
@@ -9040,7 +9024,7 @@ namespace MTA {
                             break;
                         }
                         case 7: {
-                            if (client.Entity.Level == 140 && client.Entity.Reborn == 2) {
+                            if (client.Entity is { Level: 140, Reborn: 2 }) {
                                 client.Entity.Strength = 0;
                                 client.Entity.Vitality = 502;
                                 client.Entity.Agility = 36;
@@ -9057,7 +9041,7 @@ namespace MTA {
                             break;
                         }
                         case 8: {
-                            if (client.Entity.Level == 140 && client.Entity.Reborn == 2) {
+                            if (client.Entity is { Level: 140, Reborn: 2 }) {
                                 client.Entity.Strength = 0;
                                 client.Entity.Vitality = 538;
                                 client.Entity.Agility = 0;
@@ -11017,8 +11001,7 @@ namespace MTA {
                 case 12343211: {
                     switch (npcRequest.OptionID) {
                         case 0: {
-                            if (client.Entity.Level >= 120 && client.Entity.Class >= 10 && client.Entity.Class <= 15 &&
-                                client.Entity.Reborn == 2) {
+                            if (client.Entity is { Level: >= 120, Class: >= 10 and <= 15, Reborn: 2 }) {
                                 dialog.Text(
                                     "Hello , Iam GeneralPak the Ancient Trojan from the OldTwinCity Guards . we Discovered a Weapon stronger than the Blade even Stronger than the Ninja's Katana . the Name of this Weapon Was The CrossSaber . a weapon was made for the Ancient and Brave Trojans Only . i can help you get this Weapon . first you have to Talk to SuperMok at twincity (241,266) and get from her 27 SolarScrap , Then Come and Talk to me and i will teleport you To the Ancient Twincity 300 Years ago so , you can complete your quest to get the Trojan's Epic Weapon");
                                 dialog.Option("I have the 27 SolarScrap", 1);
@@ -11062,8 +11045,7 @@ namespace MTA {
                 case 12343212: {
                     switch (npcRequest.OptionID) {
                         case 0: {
-                            if (client.Entity.Level >= 120 && client.Entity.Class >= 10 && client.Entity.Class <= 15 &&
-                                client.Entity.Reborn == 2) {
+                            if (client.Entity is { Level: >= 120, Class: >= 10 and <= 15, Reborn: 2 }) {
                                 dialog.Text(
                                     "Hello, Iam General Pak's Daughter . He kept Raising me Forging Magical Potions and LegendaryWeapons i may help you in your Epic Quest . i can give you the SolarScraps for 1 Energy");
                                 dialog.Option("I Want to exchange a SolarScrap", 1);
@@ -11131,7 +11113,7 @@ namespace MTA {
                 case 12343218: {
                     switch (npcRequest.OptionID) {
                         case 0: {
-                            if (client.Entity.Class >= 10 && client.Entity.Class <= 15) {
+                            if (client.Entity.Class is >= 10 and <= 15) {
                                 dialog.Text(
                                     "Welcome, Iam the AncientWarrior from the Guards of the Ancient Twincity . i may be ur guide in ur EpicQuest in the Ancient Twincity . i can give you the SolarEssence for 2 Energies and Other Things from the Ancient Demons like Cores , Horns , Etc .. etc . you can get them by killing the Demons and Devastators Beside me . you will need 15 SandEssence to Complete the Task . Please choose the Method of exchanging :");
                                 dialog.Option("Energy & FuriousDevil'sHorn", 1);
@@ -11537,8 +11519,7 @@ namespace MTA {
                 case 127881: {
                     switch (npcRequest.OptionID) {
                         case 0: {
-                            if (client.Entity.Level >= 120 && client.Entity.Class >= 10 && client.Entity.Class <= 15 &&
-                                client.Entity.Reborn == 2) {
+                            if (client.Entity is { Level: >= 120, Class: >= 10 and <= 15, Reborn: 2 }) {
                                 dialog.Text(
                                     "Welcome Trojan . Iam the FirstStage Manager ! . I Can Teleport and Escort you to the SecondStage and pass through the First Stage ! , you need 5 SolarScraps so i can be able to teleport you to the second Stage ! , do you have them ?");
                                 dialog.Option("Yes !", 1);
@@ -11592,8 +11573,7 @@ namespace MTA {
                 case 127871: {
                     switch (npcRequest.OptionID) {
                         case 0: {
-                            if (client.Entity.Level >= 120 && client.Entity.Class >= 10 && client.Entity.Class <= 15 &&
-                                client.Entity.Reborn == 2) {
+                            if (client.Entity is { Level: >= 120, Class: >= 10 and <= 15, Reborn: 2 }) {
                                 dialog.Text(
                                     "Welcome Trojan . Iam the SecondStage Manager ! . I Can Teleport and Escort you to the ThirdStage and pass through the SecondStage Stage ! , you need 5 SolarEssences so i can be able to teleport you to the Third Stage ! , do you have them ?");
                                 dialog.Option("Yes !", 1);
@@ -11647,8 +11627,7 @@ namespace MTA {
                 case 127861: {
                     switch (npcRequest.OptionID) {
                         case 0: {
-                            if (client.Entity.Level >= 120 && client.Entity.Class >= 10 && client.Entity.Class <= 15 &&
-                                client.Entity.Reborn == 2) {
+                            if (client.Entity is { Level: >= 120, Class: >= 10 and <= 15, Reborn: 2 }) {
                                 dialog.Text(
                                     "Welcome Trojan . Iam the ThirdStage Manager ! . I Can Teleport and Escort you to the FourthStage and pass through the ThirdStage Stage ! , you need 5 SolarBladeRemains so i can be able to teleport you to the Fourth Stage ! , do you have them ?");
                                 dialog.Option("Yes !", 1);
@@ -11702,8 +11681,7 @@ namespace MTA {
                 case 122861: {
                     switch (npcRequest.OptionID) {
                         case 0: {
-                            if (client.Entity.Level >= 120 && client.Entity.Class >= 10 && client.Entity.Class <= 15 &&
-                                client.Entity.Reborn == 2) {
+                            if (client.Entity is { Level: >= 120, Class: >= 10 and <= 15, Reborn: 2 }) {
                                 dialog.Text(
                                     "Welcome Trojan . Iam the Fourth Manager ! . This is the Final and Last Stage , Here you can defeat te GhostReaverAdv 5 Times to get 5 SolarBlades so you can echange them for 2 Super +12 -7 CrossSabers ( TrojanEpicQuest ) , Do You have the Solar Blades Required ?");
                                 dialog.Option("Yes !", 1);
@@ -11761,8 +11739,7 @@ namespace MTA {
                 case 66712: {
                     switch (npcRequest.OptionID) {
                         case 0: {
-                            if (client.Entity.Level >= 120 && client.Entity.Class >= 10 && client.Entity.Class <= 15 &&
-                                client.Entity.Reborn == 2) {
+                            if (client.Entity is { Level: >= 120, Class: >= 10 and <= 15, Reborn: 2 }) {
                                 dialog.Text(
                                     "Hello , Iam GeneralPak the Ancient Trojan from the OldTwinCity Guards . we Discovered a Weapon stronger than the Blade even Stronger than the Ninja's Katana . the Name of this Weapon Was The CrossSaber . a weapon was made for the Ancient and Brave Trojans Only . i can help you get this Weapon , i can teleport you To the Ancient Twincity 300 Years ago so , you can complete your quest to get the Trojan's Epic Weapon");
                                 dialog.Option("Teleport me Please !", 1);
@@ -11896,8 +11873,7 @@ namespace MTA {
                             }
                         }
                         case 1: {
-                            if (!client.Entity.StartedEpicQuest && !client.Entity.FinishedFirstStage &&
-                                !client.Entity.DidntPassFirstStage) {
+                            if (client.Entity is { StartedEpicQuest: false, FinishedFirstStage: false, DidntPassFirstStage: false }) {
                                 if (Kernel.Rate(70, 100)) {
                                     client.Inventory.Add(3004462, 0, 1);
                                     client.Entity.Teleport(3850, 29, 39);
@@ -11945,10 +11921,7 @@ namespace MTA {
                             break;
                         }
                         case 1: {
-                            if (client.Inventory.Contains(3004462, 1) && client.Entity.StartedEpicQuest &&
-                                client.Entity.FinishedFirstStage &&
-                                !client.Entity.FinishedSecondStage &&
-                                !client.Entity.DidntPassSecondStage) {
+                            if (client.Inventory.Contains(3004462, 1) && client.Entity is { StartedEpicQuest: true, FinishedFirstStage: true, FinishedSecondStage: false, DidntPassSecondStage: false }) {
                                 if (Kernel.Rate(40, 100)) {
                                     client.Entity.Teleport(3851, 35, 35);
                                     client.Inventory.Add(3004463, 0, 1);
@@ -11998,9 +11971,7 @@ namespace MTA {
                             break;
                         }
                         case 1: {
-                            if (client.Inventory.Contains(3004463, 1) && client.Entity.StartedEpicQuest &&
-                                client.Entity.FinishedSecondStage &&
-                                !client.Entity.DidntPassThirdStage) {
+                            if (client.Inventory.Contains(3004463, 1) && client.Entity is { StartedEpicQuest: true, FinishedSecondStage: true, DidntPassThirdStage: false }) {
                                 if (Kernel.Rate(10, 100)) {
                                     client.Inventory.Add(3004464, 0, 1);
                                     client.Inventory.Remove(3004463, 1);
@@ -12052,7 +12023,7 @@ namespace MTA {
                             break;
                         }
                         case 91: {
-                            if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
+                            if (client.Entity.Class is >= 50 and <= 55) {
                                 dialog.Text(
                                     "Please, Choose the item you want to Exchange for . the Amount of StarDusts Neededis written between the : () .");
                                 dialog.Option("FrankoScroll (5)", 92);
@@ -12131,8 +12102,8 @@ namespace MTA {
                             break;
                         }
                         case 1: {
-                            if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
-                                if (client.Entity.Reborn == 2 && client.Entity.Level >= 120) {
+                            if (client.Entity.Class is >= 50 and <= 55) {
+                                if (client.Entity is { Reborn: 2, Level: >= 120 }) {
                                     client.Entity.Teleport(3849, 40, 40);
                                     dialog.Text("you are in the LegendaryPlace where the Weapon was Made . GoodLuck");
                                     dialog.Option("Thanks, you won't be Disappointed", 255);
@@ -13045,7 +13016,7 @@ namespace MTA {
                             break;
                         }
                         case 1: {
-                            if (client.Entity.Level >= 1 && client.Entity.Level < 140) {
+                            if (client.Entity.Level is >= 1 and < 140) {
                                 if (client.Entity.ConquerPoints >= 1000000) {
                                     client.Entity.ConquerPoints -= 1000000;
                                     client.Entity.Level++;
@@ -13194,7 +13165,7 @@ namespace MTA {
                             break;
                         }
                         case 2: {
-                            if (npcRequest.Input.Length > 4 && npcRequest.Input.Length < 15) {
+                            if (npcRequest.Input.Length is > 4 and < 15) {
                                 String newname = npcRequest.Input;
                                 if (!newname.Contains("[GM]") && !newname.Contains("[PM]") &&
                                     !newname.Contains("{GM}") && !newname.Contains("|GM|") &&
@@ -13946,7 +13917,7 @@ namespace MTA {
                 case 112251: {
                     switch (npcRequest.OptionID) {
                         case 0: {
-                            if (client.Entity.Reborn == 2 && client.Entity.Level >= 120) {
+                            if (client.Entity is { Reborn: 2, Level: >= 120 }) {
                                 dialog.Text(
                                     "I am the ReincarnationSeer i can help you to change your second reborn Class you need OblivionDew");
                                 dialog.Text(" and 500 k cps in your inventory deal?");
@@ -14495,7 +14466,7 @@ namespace MTA {
                             break;
                         }
                         case 1: {
-                            if (client.Entity.PKPoints > 30 && client.Entity.ConquerPoints >= 1000) {
+                            if (client.Entity is { PKPoints: > 30, ConquerPoints: >= 1000 }) {
                                 client.Entity.ConquerPoints -= 1000;
                                 client.Entity.PKPoints = 0;
                             }
@@ -15102,7 +15073,7 @@ namespace MTA {
                     }
 
                     if (npcRequest.OptionID == 1) {
-                        if (client.Entity.Class >= 10 && client.Entity.Class <= 15) {
+                        if (client.Entity.Class is >= 10 and <= 15) {
                             if (client.Entity.DisKO >= 800) {
                                 dialog.Text("Which Flank are you going to attack from?");
                                 dialog.Option("Right.", 3);
@@ -15118,7 +15089,7 @@ namespace MTA {
                                 dialog.Send();
                             }
                         }
-                        else if (client.Entity.Class >= 20 && client.Entity.Class <= 25) {
+                        else if (client.Entity.Class is >= 20 and <= 25) {
                             if (client.Entity.DisKO >= 900) {
                                 dialog.Text("Which Flank are you going to attack from?");
                                 dialog.Option("Right.", 3);
@@ -15134,7 +15105,7 @@ namespace MTA {
                                 dialog.Send();
                             }
                         }
-                        else if (client.Entity.Class >= 40 && client.Entity.Class <= 45) {
+                        else if (client.Entity.Class is >= 40 and <= 45) {
                             if (client.Entity.DisKO >= 1300) {
                                 dialog.Text("Which Flank are you going to attack from?");
                                 dialog.Option("Right.", 3);
@@ -15150,7 +15121,7 @@ namespace MTA {
                                 dialog.Send();
                             }
                         }
-                        else if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+                        else if (client.Entity.Class is >= 60 and <= 65) {
                             if (client.Entity.DisKO >= 700) {
                                 dialog.Text("Which Flank are you going to attack from?");
                                 dialog.Option("Right.", 3);
@@ -15166,7 +15137,7 @@ namespace MTA {
                                 dialog.Send();
                             }
                         }
-                        else if (client.Entity.Class >= 132 && client.Entity.Class <= 135) {
+                        else if (client.Entity.Class is >= 132 and <= 135) {
                             if (client.Entity.DisKO >= 600) {
                                 dialog.Text("Which Flank are you going to attack from?");
                                 dialog.Option("Right.", 3);
@@ -15182,7 +15153,7 @@ namespace MTA {
                                 dialog.Send();
                             }
                         }
-                        else if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
+                        else if (client.Entity.Class is >= 50 and <= 55) {
                             if (client.Entity.DisKO >= 900) {
                                 dialog.Text("Which Flank are you going to attack from?");
                                 dialog.Option("Right.", 3);
@@ -15198,7 +15169,7 @@ namespace MTA {
                                 dialog.Send();
                             }
                         }
-                        else if (client.Entity.Class >= 142 && client.Entity.Class <= 145) {
+                        else if (client.Entity.Class is >= 142 and <= 145) {
                             if (client.Entity.DisKO >= 1000) {
                                 dialog.Text("Which Flank are you going to attack from?");
                                 dialog.Option("Right.", 3);
@@ -15214,7 +15185,7 @@ namespace MTA {
                                 dialog.Send();
                             }
                         }
-                        else if (client.Entity.Class >= 70 && client.Entity.Class <= 75) {
+                        else if (client.Entity.Class is >= 70 and <= 75) {
                             if (client.Entity.DisKO >= 900) {
                                 dialog.Text("Which Flank are you going to attack from?");
                                 dialog.Option("Right.", 3);
@@ -17239,7 +17210,7 @@ namespace MTA {
                             break;
                         }
                         case 4: {
-                            if (client.Entity.Level >= 1 && client.Entity.Level < 140) {
+                            if (client.Entity.Level is >= 1 and < 140) {
                                 if (client.Entity.ConquerPoints >= 215) {
                                     client.Entity.ConquerPoints -= 215;
                                     client.Entity.Level++;
@@ -18241,7 +18212,7 @@ namespace MTA {
                         case 1: {
                             int alive = 0;
                             foreach (GameState players in Program.Values)
-                                if (players.Entity.MapID == 33333 && (!players.Entity.Dead))
+                                if (players.Entity is { MapID: 33333, Dead: false })
                                     alive++;
                             if (DateTime.Now.Hour >= 19 && DateTime.Now.Minute >= 10 && DateTime.Now.Minute <= 13) {
                                 if (alive == 1) {
@@ -19217,7 +19188,7 @@ namespace MTA {
                 case 151519: {
                     switch (npcRequest.OptionID) {
                         case 0: {
-                            if (client.Entity.Class >= 40 && client.Entity.Class <= 45) {
+                            if (client.Entity.Class is >= 40 and <= 45) {
                                 dialog.Text("your Are an archer You can't join this arena , [Nooop].");
                                 dialog.Option("I see.", 255);
                                 dialog.Avatar(116);
@@ -19281,7 +19252,7 @@ namespace MTA {
                             Daily.CheackAlive53();
                             int alive = 0;
                             foreach (GameState players in Program.Values)
-                                if (players.Entity.MapID == 3071 && (!players.Entity.Dead))
+                                if (players.Entity is { MapID: 3071, Dead: false })
                                     alive++;
                             if (alive == 1 && DateTime.Now.Minute >= 30) {
                                 if (Daily.howmanyinmap53 == 1) { }
@@ -24065,7 +24036,7 @@ namespace MTA {
                         case 1: {
                             int alive = 0;
                             foreach (GameState players in Program.Values)
-                                if (players.Entity.MapID == 1508 && (!players.Entity.Dead))
+                                if (players.Entity is { MapID: 1508, Dead: false })
                                     alive++;
                             if (DateTime.Now.DayOfWeek == DayOfWeek.Saturday && DateTime.Now.Minute >= 7) {
                                 if (alive == 1) {
@@ -24172,10 +24143,10 @@ namespace MTA {
                         case 1: {
                             int alive = 0;
                             foreach (GameState players in Program.Values)
-                                if (players.Entity.MapID == 1518 && (!players.Entity.Dead))
+                                if (players.Entity is { MapID: 1518, Dead: false })
                                     alive++;
                             var Now64 = DateTime.Now;
-                            if (Now64.DayOfWeek == DayOfWeek.Sunday && Now64.Hour >= 22 && Now64.Minute >= 5) {
+                            if (Now64 is { DayOfWeek: DayOfWeek.Sunday, Hour: >= 22, Minute: >= 5 }) {
                                 if (alive == 1) {
                                     //#warning MONTHLY PK PRIZE
                                     client.Entity.ConquerPoints += 5000000;
@@ -24416,7 +24387,7 @@ namespace MTA {
                         }
                         case 1: {
                             DateTime Now64 = DateTime.Now;
-                            if (Now64.Minute >= 31 && Now64.Minute <= 33) {
+                            if (Now64.Minute is >= 31 and <= 33) {
                                 Random R = new Random();
                                 int Nr = R.Next(1, 10);
                                 if (Nr == 1) client.Entity.Teleport(3333, 51, 73);
@@ -24602,7 +24573,7 @@ namespace MTA {
                         case 1: {
                             Daily.CheackAlive();
                             var Now64 = DateTime.Now;
-                            if (Now64.Minute >= 47 && Now64.Minute <= 48) {
+                            if (Now64.Minute is >= 47 and <= 48) {
                                 if (Daily.howmanyinmap == 1) {
                                     //#warning DAILY PK PRIZE
 
@@ -24726,7 +24697,7 @@ namespace MTA {
                         {
                             int alive = 0;
                             foreach (GameState players in Program.Values)
-                                if (players.Entity.MapID == 1458 && (!players.Entity.Dead))
+                                if (players.Entity is { MapID: 1458, Dead: false })
                                     alive++;
                             client.Send(new Message("there are in map" + alive + "", Color.Azure, Message.TopLeft));
                             if (DateTime.Now.Minute > 38 && DateTime.Now.Minute <= 43) {
@@ -24793,7 +24764,7 @@ namespace MTA {
                             //for debuty
                             int alive = 0;
                             foreach (GameState players in Program.Values)
-                                if (players.Entity.MapID == 1459 && (!players.Entity.Dead))
+                                if (players.Entity is { MapID: 1459, Dead: false })
                                     alive++;
                             client.Send(new Message("there are in map" + alive + "", Color.Azure, Message.TopLeft));
                             if (DateTime.Now.Minute > 38 && DateTime.Now.Minute <= 43) {
@@ -24861,7 +24832,7 @@ namespace MTA {
                             //for members 
                             int alive = 0;
                             foreach (GameState players in Program.Values)
-                                if (players.Entity.MapID == 1460 && (!players.Entity.Dead))
+                                if (players.Entity is { MapID: 1460, Dead: false })
                                     alive++;
                             client.Send(new Message("there are in map" + alive + "", Color.Azure, Message.TopLeft));
                             if (DateTime.Now.Minute > 38 && DateTime.Now.Minute <= 43) {
@@ -24927,7 +24898,7 @@ namespace MTA {
                         }
                         case 1:
                             DateTime Now64 = DateTime.Now;
-                            if (Now64.Minute >= 13 && Now64.Minute < 16) {
+                            if (Now64.Minute is >= 13 and < 16) {
                                 if (client.Team != null) {
                                     if (client.Team.TeamLeader) {
                                         foreach (GameState clients in client.Team.Teammates) {
@@ -24984,7 +24955,7 @@ namespace MTA {
                         }
                         case 1:
                             DateTime Now64 = DateTime.Now;
-                            if (Now64.Minute >= 17 && Now64.Minute <= 23) {
+                            if (Now64.Minute is >= 17 and <= 23) {
                                 client.Entity.SendScoreLAstTeam(client);
 
                                 Handle.cheakteam(client, dialog);
@@ -25059,7 +25030,7 @@ namespace MTA {
                         case 1: {
                             int alive = 0;
                             foreach (GameState players in Program.Values)
-                                if (players.Entity.MapID == 11224 && (!players.Entity.Dead))
+                                if (players.Entity is { MapID: 11224, Dead: false })
                                     alive++;
                             client.Send(new Message("there are in map" + alive + "", Color.Azure, Message.TopLeft));
                             if (DateTime.Now.Hour == 19 && DateTime.Now.Minute >= 34 && DateTime.Now.Minute <= 40) {
@@ -25167,7 +25138,7 @@ namespace MTA {
                         case 1: {
                             int alive = 0;
                             foreach (GameState players in Program.Values)
-                                if (players.Entity.MapID == 11225 && (!players.Entity.Dead))
+                                if (players.Entity is { MapID: 11225, Dead: false })
                                     alive++;
                             client.Send(new Message("there are in map" + alive + "", Color.Azure, Message.TopLeft));
                             if (DateTime.Now.Hour == 19 && DateTime.Now.Minute >= 34 && DateTime.Now.Minute <= 40) {
@@ -25224,7 +25195,7 @@ namespace MTA {
                 case 50545: {
                     switch (npcRequest.OptionID) {
                         case 0: {
-                            if (client.Entity.Class >= 40 && client.Entity.Class <= 45) {
+                            if (client.Entity.Class is >= 40 and <= 45) {
                                 dialog.Text("your Are an archer You can't join this arena.");
                                 dialog.Option("I see.", 255);
                                 dialog.Avatar(116);
@@ -25293,7 +25264,7 @@ namespace MTA {
                         case 1: {
                             int alive = 0;
                             foreach (GameState players in Kernel.GamePool.Values)
-                                if (players.Entity.MapID == 1707 && (!players.Entity.Dead))
+                                if (players.Entity is { MapID: 1707, Dead: false })
                                     alive++;
                             if (MatrixTimes.End.Fbss) {
                                 if (alive == 1) {
@@ -26164,7 +26135,7 @@ namespace MTA {
                         }
                         case 1: {
                             DateTime Now64 = DateTime.Now;
-                            if (Now64.Minute >= 10 && Now64.Minute <= 13) {
+                            if (Now64.Minute is >= 10 and <= 13) {
                                 Random R = new Random();
                                 int Nr = R.Next(1, 10);
                                 if (Nr == 1) client.Entity.Teleport(2222, 51, 73);
@@ -26214,9 +26185,9 @@ namespace MTA {
                             DateTime Now64 = DateTime.Now;
                             int alive = 0;
                             foreach (GameState players in Kernel.GamePool.Values)
-                                if (players.Entity.MapID == 2121 && (!players.Entity.Dead))
+                                if (players.Entity is { MapID: 2121, Dead: false })
                                     alive++;
-                            if (Now64.Minute >= 14 && Now64.Minute <= 56) {
+                            if (Now64.Minute is >= 14 and <= 56) {
                                 if (alive == 1) {
                                     client.Entity.ConquerPoints += 2000000;
                                     client.Entity.killerpoints += 1;
@@ -26280,7 +26251,7 @@ namespace MTA {
                         }
                         case 1: {
                             DateTime Now64 = DateTime.Now;
-                            if (Now64.Minute >= 43 && Now64.Minute <= 46) {
+                            if (Now64.Minute is >= 43 and <= 46) {
                                 Random R = new Random();
                                 int Nr = R.Next(1, 10);
                                 if (Nr == 1) client.Entity.Teleport(4444, 51, 73);
@@ -26330,9 +26301,9 @@ namespace MTA {
                             int alive = 0;
                             DateTime Now64 = DateTime.Now;
                             foreach (GameState players in Kernel.GamePool.Values)
-                                if (players.Entity.MapID == 4444 && (!players.Entity.Dead))
+                                if (players.Entity is { MapID: 4444, Dead: false })
                                     alive++;
-                            if (Now64.Minute >= 47 && Now64.Minute <= 55) {
+                            if (Now64.Minute is >= 47 and <= 55) {
                                 if (alive == 1) {
                                     client.Entity.ConquerPoints += 2000000;
                                     client.Entity.killerpoints += 1;
@@ -26946,7 +26917,7 @@ namespace MTA {
                         }
                         case 116: {
                             DateTime Now64 = DateTime.Now;
-                            if (Now64.Minute >= 15 && Now64.Minute < 18) {
+                            if (Now64.Minute is >= 15 and < 18) {
                                 if (client.Team != null) {
                                     if (client.Team.TeamLeader) {
                                         foreach (GameState clients in client.Team.Teammates) {
@@ -27052,7 +27023,7 @@ namespace MTA {
                         }
                         case 122: {
                             DateTime Now64 = DateTime.Now;
-                            if (Now64.Minute >= 10 && Now64.Minute <= 14) {
+                            if (Now64.Minute is >= 10 and <= 14) {
                                 Random R = new Random();
                                 int Nr = R.Next(1, 10);
                                 if (Nr == 1) client.Entity.Teleport(4444, 51, 73);
@@ -27082,7 +27053,7 @@ namespace MTA {
                         }
                         case 123: {
                             DateTime Now64 = DateTime.Now;
-                            if (Now64.Minute >= 50 && Now64.Minute <= 53) {
+                            if (Now64.Minute is >= 50 and <= 53) {
                                 Random R = new Random();
                                 int Nr = R.Next(1, 10);
                                 if (Nr == 1) client.Entity.Teleport(2222, 51, 73);
@@ -28942,9 +28913,8 @@ namespace MTA {
                         }
                         case 1: {
                             DateTime Now64 = DateTime.Now;
-                            if (Now64.DayOfWeek == DayOfWeek.Friday && Now64.Hour == 19 && Now64.Minute >= 30 &&
-                                Now64.Minute < 45) {
-                                if (client.Team != null && client.Team.TeamLeader &&
+                            if (Now64 is { DayOfWeek: DayOfWeek.Friday, Hour: 19, Minute: >= 30 and < 45 }) {
+                                if (client.Team is { TeamLeader: true } &&
                                     (client.Entity.Body == 1003 || client.Entity.Body == 1004)) {
                                     if (client.Team.SpouseWarFull) {
                                         client.Team.Teammates[0].Entity.Teleport(1090, 40, 50);
@@ -31278,7 +31248,7 @@ namespace MTA {
                                             break;
                                         }
                                         default:
-                                            if ((npcRequest.OptionID >= 200 + 0) && (npcRequest.OptionID <= 200 + 6)) {
+                                            if (npcRequest.OptionID is >= 200 + 0 and <= 200 + 6) {
                                                 //  client.AIBot = new ProjectX_V3_Game.Entities.AIBot((ProjectX_V3_Game.Entities.BotLevel)(npcRequest.OptionID - 2));
 
                                                 client.AI = new AI(client, (AI.BotLevel)(npcRequest.OptionID - 200));
@@ -31441,7 +31411,7 @@ namespace MTA {
 
                     #endregion
 
-                    if (client.ActiveNpc >= 101002 && client.Entity.MapID == 10002) {
+                    if (client is { ActiveNpc: >= 101002, Entity.MapID: 10002 }) {
                         client.SendScreen(new Data(true) { UID = client.ActiveNpc, ID = Data.RemoveEntity });
                         client.Map.RemoveNpc(client.Map.Npcs[client.ActiveNpc]);
                         // MTA.Game.TreasureBox.Reward(client);
@@ -31451,9 +31421,7 @@ namespace MTA {
                 }
             }
 
-            if (!dialog.Sent)
-                if (dialog.Replies.Count > 1)
-                    dialog.Send();
+            if (dialog is { Sent: false, Replies.Count: > 1 }) dialog.Send();
         }
     }
 }

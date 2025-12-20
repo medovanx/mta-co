@@ -91,13 +91,10 @@
                 Class = person.Client.Entity.Class;
                 PKPoints = person.Client.Entity.PKPoints;
                 Spouse = person.Client.Entity.Spouse;
-                if (person.Client.Guild != null)
+                if (person.Client is { Guild: not null, AsMember: not null })
                 {
-                    if (person.Client.AsMember != null)
-                    {
-                        GuildID = person.Client.Guild.ID;
-                        GuildRank = (ushort)person.Client.AsMember.Rank;
-                    }
+                    GuildID = person.Client.Guild.ID;
+                    GuildRank = (ushort)person.Client.AsMember.Rank;
                 }
             }
         }

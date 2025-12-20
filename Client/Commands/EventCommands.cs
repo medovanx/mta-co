@@ -114,7 +114,7 @@ namespace MTA.Client.Commands
                 Color statusColor = gameEvent.IsActive ? Color.Green : Color.Gray;
 
                 string overrideStatus = "";
-                if (gameEvent is BaseEvent baseEvent && baseEvent.IsManuallyOverridden)
+                if (gameEvent is BaseEvent { IsManuallyOverridden: true } baseEvent)
                 {
                     overrideStatus = baseEvent.IsForcedActive ? " [MANUALLY STARTED]" : " [MANUALLY STOPPED]";
                 }

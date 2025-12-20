@@ -329,7 +329,7 @@ namespace MTA.Game.Npcs.Handlers.Market {
                 #region Reincarnation
 
                 case 3: {
-                    if (client.Entity.Reborn == 2 && client.Entity.Level >= 120) {
+                    if (client.Entity is { Reborn: 2, Level: >= 120 }) {
                         dialog.Text(
                             "I can help you change your class through, but first you need to have an Oblivion Dew in your inventory.");
                         dialog.Option("Here is the Oblivion Dew.", 5);
@@ -409,7 +409,7 @@ namespace MTA.Game.Npcs.Handlers.Market {
                     break;
                 }
                 case 8: {
-                    if (client.Entity.Reborn > 0 && client.Entity.Level >= 70) {
+                    if (client.Entity is { Reborn: > 0, Level: >= 70 }) {
                         if (client.Inventory.Contains(DragonBallId, 1)) {
                             client.Inventory.Remove(DragonBallId, 1);
                             client.Entity.Agility = 0;

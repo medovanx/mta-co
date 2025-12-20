@@ -443,7 +443,7 @@ namespace MTA.Game
                 if (client.Entity.MapID == 8877) return;
                 if (client.Entity.MapID == 3333) return;
                 if (client.Entity.MapID == 5928) return;
-                if (client.Map.BaseID >= 6000 && client.Map.BaseID <= 6003) return;
+                if (client.Map.BaseID is >= 6000 and <= 6003) return;
 
                 if (WaitingPlayerList.ContainsKey(client.Account.EntityID))
                 {
@@ -1099,11 +1099,11 @@ namespace MTA.Game
                                 return;
                             }
                         }
-                        if (Challanger.ArenaState == WaitForOther && !Challanger.ArenaStatistic.AcceptBox)
+                        if (Challanger is { ArenaState: WaitForOther, ArenaStatistic.AcceptBox: false })
                         {
                             Win(Challanged, Challanger);
                         }
-                        else if (Challanged.ArenaState == WaitForOther && !Challanged.ArenaStatistic.AcceptBox)
+                        else if (Challanged is { ArenaState: WaitForOther, ArenaStatistic.AcceptBox: false })
                         {
                             Win(Challanger, Challanged);
                         }
@@ -1238,8 +1238,8 @@ namespace MTA.Game
                     {
                         if (client.Map.BaseID == 1038 || client.Map.BaseID == 2072 || client.Map.BaseID == 2073 || client.Map.BaseID == 2071 || client.Map.BaseID == 2074 || client.Map.BaseID == 2075) return false;
                         if (client.Map.BaseID == 700) return false;
-                        if (client.Entity.MapID >= 1090 && client.Entity.MapID <= 1094) return false;
-                        if (client.Entity.MapID >= 1505 && client.Entity.MapID <= 1509) return false;
+                        if (client.Entity.MapID is >= 1090 and <= 1094) return false;
+                        if (client.Entity.MapID is >= 1505 and <= 1509) return false;
                         if (client.Entity.ContainsFlag2(Update.Flags2.SoulShackle)) return false;
                         if (client.Map.ID == 1002 || client.Map.ID == 1005 || !Constants.PKFreeMaps.Contains(client.Map.ID))
                             if (client.ArenaStatistic.Status == ArenaStatistic.WaitingForOpponent)

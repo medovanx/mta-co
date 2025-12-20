@@ -139,11 +139,11 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     int optionId = npcRequest.OptionID;
 
                     // Chi attribute type selection (30-99)
-                    if (optionId >= CHI_TYPE_SELECT && optionId < PERFECTION_MENU) {
+                    if (optionId is >= CHI_TYPE_SELECT and < PERFECTION_MENU) {
                         HandleChiAttributeChange(client, dialog, optionId);
                     }
                     // Perfection item selections (101-199)
-                    else if (optionId >= PERFECTION_ITEM_BASE && optionId < DAMAGE_MENU) {
+                    else if (optionId is >= PERFECTION_ITEM_BASE and < DAMAGE_MENU) {
                         HandlePerfectionService(client, dialog, optionId);
                     }
                     // Damage item selections (201+)

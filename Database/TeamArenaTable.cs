@@ -40,9 +40,9 @@ namespace MTA.Database
 
         public static uint ArenaPointFill(byte level)
         {
-            if (level >= 70 && level < 100) return 1000;
-            else if (level >= 100 && level < 110) return 2000;
-            else if (level >= 110 && level < 120) return 3000;
+            if (level is >= 70 and < 100) return 1000;
+            else if (level is >= 100 and < 110) return 2000;
+            else if (level is >= 110 and < 120) return 3000;
             else if (level >= 120) return 4000;
             return 0;
         }

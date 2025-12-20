@@ -177,7 +177,7 @@
         {
             if (client.Fake) return;
             if (client.TransferedPlayer) return;
-            if ((client.Entity != null) && (client.Proficiencies != null) && (client.Proficiencies.Count != 0))
+            if (client is { Entity: not null, Proficiencies: not null } && (client.Proficiencies.Count != 0))
             {
                 foreach (IProf prof in client.Proficiencies.Values)
                 {
@@ -233,7 +233,7 @@
         {
             if (client.Fake) return;
             if (client.TransferedPlayer) return;
-            if ((client.Entity != null) && (client.Spells != null) && (client.Spells.Count != 0))
+            if (client is { Entity: not null, Spells: not null } && (client.Spells.Count != 0))
             {
                 foreach (ISkill skill in client.Spells.Values)
                 {

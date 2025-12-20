@@ -236,7 +236,7 @@ namespace MTA.MaTrix {
                                     }
                                 }
                                 else {
-                                    if (monster.MonsterInfo.InSight > 400000 && monster.MonsterInfo.InSight < 600000 ||
+                                    if (monster.MonsterInfo.InSight is > 400000 and < 600000 ||
                                         monster.MonsterInfo.InSight > 800000 &&
                                         monster.MonsterInfo.InSight != monster.UID) {
                                         Entity attacked = null;

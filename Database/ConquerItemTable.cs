@@ -163,24 +163,21 @@ namespace MTA.Database
                         {
 
                             MTA.Game.ConquerStructures.Warehouse.WarehouseID whID = (Game.ConquerStructures.Warehouse.WarehouseID)item.Warehouse;
-                            if (client != null)
+                            if (client is { Warehouses: not null })
                             {
-                                if (client.Warehouses != null)
+                                if (client.Warehouses.ContainsKey(whID))
                                 {
-                                    if (client.Warehouses.ContainsKey(whID))
-                                    {
-                                        client.Warehouses[whID].Add(item);
-                                    }
-                                    else
-                                    {
-                                        using (var cmdx = new MySqlCommand(MySqlCommandType.SELECT).Select("items").Where("Uid", item.Warehouse))
-                                        using (var readerx = new MySqlReader(cmdx))
-                                            if (readerx.Read())
-                                            {
-                                                client.Warehouses.Add((MTA.Game.ConquerStructures.Warehouse.WarehouseID)item.Warehouse, new MTA.Game.ConquerStructures.Warehouse(client, (MTA.Game.ConquerStructures.Warehouse.WarehouseID)item.Warehouse));
-                                                client.Warehouses[(MTA.Game.ConquerStructures.Warehouse.WarehouseID)(uint)whID].Add(item);
-                                            }
-                                    }
+                                    client.Warehouses[whID].Add(item);
+                                }
+                                else
+                                {
+                                    using (var cmdx = new MySqlCommand(MySqlCommandType.SELECT).Select("items").Where("Uid", item.Warehouse))
+                                    using (var readerx = new MySqlReader(cmdx))
+                                        if (readerx.Read())
+                                        {
+                                            client.Warehouses.Add((MTA.Game.ConquerStructures.Warehouse.WarehouseID)item.Warehouse, new MTA.Game.ConquerStructures.Warehouse(client, (MTA.Game.ConquerStructures.Warehouse.WarehouseID)item.Warehouse));
+                                            client.Warehouses[(MTA.Game.ConquerStructures.Warehouse.WarehouseID)(uint)whID].Add(item);
+                                        }
                                 }
                             }
                         }

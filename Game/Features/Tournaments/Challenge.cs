@@ -194,7 +194,7 @@ namespace MTA.Game
             player.Send(new Data(true) { UID = player.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)player.Entity.PKMode });
             player.Entity.OnDeath = p =>
             {
-                if (p != null && p.Owner != null && p.Owner.Challenge != null)
+                if (p is { Owner.Challenge: not null })
                 {
                     p.Owner.ChallengeScore++;
                     p.Owner.Challenge.sendScores();

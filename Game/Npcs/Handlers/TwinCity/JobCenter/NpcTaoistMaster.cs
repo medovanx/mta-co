@@ -18,7 +18,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
             dialog.Avatar(6);
             switch (npcRequest.OptionID) {
                 case 0: {
-                    if (client.Entity.Class >= 100 && client.Entity.Class <= 101) {
+                    if (client.Entity.Class is >= 100 and <= 101) {
                         dialog.Text(
                             "I am the master of the toist skills. As I see, you started your way on conquering this world. I will try to help you teaching you warrir skills and promoting you.");
                         dialog.Option("Promote me.", 100);
@@ -59,7 +59,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                 #region Prometed
 
                 case 100: {
-                    if (client.Entity.Class >= 100 && client.Entity.Class <= 101) {
+                    if (client.Entity.Class is >= 100 and <= 101) {
                         if (client.Entity.Class == 101) {
                             dialog.Text("I Want To promote ?");
                             dialog.Option("Water Taoist.", 253);
@@ -219,8 +219,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                 #region Learn Pure WaterTaoist
 
                 case 80: {
-                    if (client.Entity.Class >= 132 && client.Entity.FirstRebornClass >= 132 &&
-                        client.Entity.SecondRebornClass >= 132) {
+                    if (client.Entity is { Class: >= 132, FirstRebornClass: >= 132, SecondRebornClass: >= 132 }) {
                         if (!client.AddSpell(LearnableSpell(30000))) {
                             dialog.Text("You already know this skill.");
                             dialog.Option("Thank you master.", 255);
@@ -532,7 +531,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                 #endregion
 
                 case 20: {
-                    if (client.Entity.Class >= 131 && client.Entity.Class <= 135) {
+                    if (client.Entity.Class is >= 131 and <= 135) {
                         dialog.Text("Let me know what you want to learn.");
                         dialog.Option("Nectar [Level 94+].", 116);
                         dialog.Option("Summon Guard.", 88);
@@ -612,7 +611,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
 
                 case 81: {
                     if (client.Entity.Reborn > 0) {
-                        if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
+                        if (client.Entity.Class is >= 50 and <= 55) {
                             dialog.Text(
                                 "You cannot learn skills like this one. Ninjas don't need such thing. They are much more stronger than every other class.");
                             dialog.Option("Alright", 255);
@@ -1028,8 +1027,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                 #region Pure skill
 
                 case 70: {
-                    if (client.Entity.Class >= 142 && client.Entity.FirstRebornClass >= 142 &&
-                        client.Entity.SecondRebornClass >= 142) {
+                    if (client.Entity is { Class: >= 142, FirstRebornClass: >= 142, SecondRebornClass: >= 142 }) {
                         if (!client.AddSpell(LearnableSpell(10310))) {
                             dialog.Text("You already know this skill.");
                             dialog.Option("Thank you master.", 255);

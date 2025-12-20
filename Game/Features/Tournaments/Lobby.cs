@@ -195,10 +195,8 @@ namespace MTA.MaTrix {
             }
 
             Bot.Entity.OnDeath = p => {
-                if (p.Owner.Team != null) {
-                    if (p.Owner.Team.EliteMatch != null) {
-                        p.Owner.Team.EliteMatch.End(p.Owner.Team);
-                    }
+                if (p.Owner.Team is { EliteMatch: not null }) {
+                    p.Owner.Team.EliteMatch.End(p.Owner.Team);
                 }
 
                 p.Owner.SendScreen(new Message("Reviving in 18 seconds!", "ALL", p.Name, Color.White, Message.Talk),
@@ -530,12 +528,10 @@ namespace MTA.MaTrix {
                             #endregion Check Target
 
                             else {
-                                if (ai.Type == BotType.MatrixAI) {
-                                    if (ai.selectFunc != null) {
-                                        if (!ai.selectFunc(ai.Target.Owner)) {
-                                            ai.Target = null;
-                                            return;
-                                        }
+                                if (ai is { Type: BotType.MatrixAI, selectFunc: not null }) {
+                                    if (!ai.selectFunc(ai.Target.Owner)) {
+                                        ai.Target = null;
+                                        return;
                                     }
                                 }
 
@@ -1008,16 +1004,12 @@ namespace MTA.MaTrix {
                                         }, 6000);
                                     }
                                     else {
-                                        if (Challanger.LobbyGroup != null) {
-                                            if (Challanger.LobbyGroup.Done) {
-                                                Challanger.LobbyGroup.Export();
-                                            }
+                                        if (Challanger.LobbyGroup is { Done: true }) {
+                                            Challanger.LobbyGroup.Export();
                                         }
 
-                                        if (Challanged.LobbyGroup != null) {
-                                            if (Challanged.LobbyGroup.Done) {
-                                                Challanger.LobbyGroup.Export();
-                                            }
+                                        if (Challanged.LobbyGroup is { Done: true }) {
+                                            Challanger.LobbyGroup.Export();
                                         }
                                     }
                                 }

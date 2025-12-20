@@ -70,8 +70,8 @@ namespace MTA.Game {
             if (client.Entity.ContainsFlag2(Update.Flags2.SoulShackle)) return false;
             if (client.Map.BaseID == 1038) return false;
             if (client.Map.BaseID == 700) return false;
-            if (client.Entity.MapID >= 1090 && client.Entity.MapID <= 1094) return false;
-            if (client.Entity.MapID >= 1505 && client.Entity.MapID <= 1509) return false;
+            if (client.Entity.MapID is >= 1090 and <= 1094) return false;
+            if (client.Entity.MapID is >= 1505 and <= 1509) return false;
             if (client.Entity.MapID == 1081) return false;
             return (!Constants.PKFreeMaps.Contains(client.Map.ID) || client.Map.ID == 1005);
         }

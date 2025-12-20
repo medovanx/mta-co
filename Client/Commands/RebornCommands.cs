@@ -168,16 +168,16 @@ namespace MTA.Client.Commands
 
         private static string GetClassNameFromId(byte classId)
         {
-            if (classId >= 10 && classId <= 15) return "Trojan";
-            if (classId >= 20 && classId <= 25) return "Warrior";
-            if (classId >= 40 && classId <= 45) return "Archer";
-            if (classId >= 50 && classId <= 55) return "Ninja";
-            if (classId >= 60 && classId <= 65) return "Monk";
-            if (classId >= 70 && classId <= 75) return "Pirate";
-            if (classId >= 80 && classId <= 85) return "Leelong";
-            if (classId >= 130 && classId <= 135) return "Water";
-            if (classId >= 140 && classId <= 145) return "Fire";
-            if (classId >= 160 && classId <= 165) return "Windwalker";
+            if (classId is >= 10 and <= 15) return "Trojan";
+            if (classId is >= 20 and <= 25) return "Warrior";
+            if (classId is >= 40 and <= 45) return "Archer";
+            if (classId is >= 50 and <= 55) return "Ninja";
+            if (classId is >= 60 and <= 65) return "Monk";
+            if (classId is >= 70 and <= 75) return "Pirate";
+            if (classId is >= 80 and <= 85) return "Leelong";
+            if (classId is >= 130 and <= 135) return "Water";
+            if (classId is >= 140 and <= 145) return "Fire";
+            if (classId is >= 160 and <= 165) return "Windwalker";
             return "Unknown";
         }
 

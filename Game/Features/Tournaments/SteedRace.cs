@@ -188,7 +188,7 @@ namespace MTA.Game
             {
                 if (!InvitationsOut)
                 {
-                    if (now.Minute == 00 && now.Second == 07)
+                    if (now is { Minute: 00, Second: 07 })
                     {
                         Create();
                         SendInvitations();
@@ -239,7 +239,7 @@ namespace MTA.Game
 
             foreach (var client in Program.Values)
             {
-                if (client.Entity.MapID >= 6000 && client.Entity.MapID <= 6002) continue;
+                if (client.Entity.MapID is >= 6000 and <= 6002) continue;
                 client.MessageCancel = (pClient) =>
                 {
                     pClient.Send(new Message("If you change your mind about joining the Steed Race you can see the Mount Trainer (Twin City qqq,www).", System.Drawing.Color.Red, Message.World));

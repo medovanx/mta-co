@@ -48,7 +48,7 @@ namespace MTA.Network.GamePackets
             Write(client.Entity.Name, 132 + 8, Packet);
             Write((byte)client.Entity.Spouse.Length, 133 + 8 + client.Entity.Name.Length, Packet);
             Write(client.Entity.Spouse, 134 + 8 + client.Entity.Name.Length, Packet);
-            if (client.Entity.Class >= 160 && client.Entity.Class <= 165)
+            if (client.Entity.Class is >= 160 and <= 165)
                 WriteUInt32(client.Entity.Windwalker, 89, Packet);
             return Packet;
         }

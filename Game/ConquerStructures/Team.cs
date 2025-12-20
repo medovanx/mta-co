@@ -56,9 +56,9 @@ namespace MTA.Game.ConquerStructures
         {
             if (p <= 99)
                 return 0;
-            if (p >= 100 && p <= 119)
+            if (p is >= 100 and <= 119)
                 return 1;
-            if (p >= 120 && p <= 130)
+            if (p is >= 120 and <= 130)
                 return 2;
             return 3;
         }

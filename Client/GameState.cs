@@ -193,13 +193,12 @@ namespace MTA.Client {
             get { return this["SuperPotion"]; }
             set {
                 this["SuperPotion"] = value;
-                if (Entity.FullyLoaded)
-                    if (Entity.EntityFlag == EntityFlag.Player) {
-                        if (this != null) {
-                            Entity.Update(Update.DoubleExpTimer, Entity.DoubleExperienceTime, 500,
-                                false);
-                        }
+                if (Entity is { FullyLoaded: true, EntityFlag: EntityFlag.Player }) {
+                    if (this != null) {
+                        Entity.Update(Update.DoubleExpTimer, Entity.DoubleExperienceTime, 500,
+                            false);
                     }
+                }
             }
         }
 
@@ -351,10 +350,9 @@ namespace MTA.Client {
             if (!client.Spells.ContainsKey(12390))
                 return;
 
-            if (client.Weapons != null)
-                if (client.Weapons.Item2 != null)
-                    if (client.Weapons.Item2.ID / 1000 != 619)
-                        return;
+            if (client.Weapons is { Item2: not null })
+                if (client.Weapons.Item2.ID / 1000 != 619)
+                    return;
 
             var spell2 = SpellTable.GetSpell(client.Spells[12390].ID, client.Spells[12390].Level);
             if (Kernel.Rate((double)spell2.Percent)) {
@@ -399,10 +397,9 @@ namespace MTA.Client {
             if (!client.Spells.ContainsKey(12400))
                 return;
 
-            if (client.Weapons != null)
-                if (client.Weapons.Item2 != null)
-                    if (client.Weapons.Item2.ID / 1000 != 619)
-                        return;
+            if (client.Weapons is { Item2: not null })
+                if (client.Weapons.Item2.ID / 1000 != 619)
+                    return;
 
             var spell = SpellTable.GetSpell(client.Spells[12400].ID, client.Spells[12400].Level);
             if (MyMath.Success(30)) {
@@ -651,10 +648,7 @@ namespace MTA.Client {
 
         public bool InQualifier() {
             bool inteam = false;
-            if (Team != null) {
-                if (Team.EliteFighterStats != null)
-                    inteam = true;
-            }
+            if (Team is { EliteFighterStats: not null }) inteam = true;
 
             return QualifierGroup != null || TeamQualifierGroup != null || LobbyGroup != null || inteam;
         }
@@ -665,12 +659,9 @@ namespace MTA.Client {
 
         public bool InTeamQualifier() {
             bool inteam = false;
-            if (Team != null) {
-                if (Team.EliteMatch != null)
-                    if (Team.EliteMatch.Map != null)
-                        if (Team.EliteMatch.Map.ID == Entity.MapID)
-                            inteam = true;
-            }
+            if (Team is { EliteMatch.Map: not null })
+                if (Team.EliteMatch.Map.ID == Entity.MapID)
+                    inteam = true;
 
             return TeamQualifierGroup != null || inteam;
         }
@@ -682,10 +673,7 @@ namespace MTA.Client {
                 return TeamQualifierGroup.ImportTime;
             else if (LobbyGroup != null)
                 return LobbyGroup.ImportTime;
-            if (Team != null) {
-                if (Team.EliteMatch != null)
-                    return Team.EliteMatch.ImportTime;
-            }
+            if (Team is { EliteMatch: not null }) return Team.EliteMatch.ImportTime;
 
             return Time32.Now;
         }
@@ -713,16 +701,14 @@ namespace MTA.Client {
                         opponent.ElitePKStats.Points += (uint)damage;
                     ElitePKMatch.Update();
                 }
-                else if (Team != null) {
-                    if (Team.EliteMatch != null) {
-                        var opponent = Team.EliteMatch.targetOfWin(Team);
-                        if (opponent != null) {
-                            opponent.Points += (uint)damage;
-                            opponent.Team.SendMesageTeam(opponent.Team.EliteMatch.CreateUpdate().ToArray(), 0);
-                        }
-
-                        Team.SendMesageTeam(Team.EliteMatch.CreateUpdate().ToArray(), 0);
+                else if (Team is { EliteMatch: not null }) {
+                    var opponent = Team.EliteMatch.targetOfWin(Team);
+                    if (opponent != null) {
+                        opponent.Points += (uint)damage;
+                        opponent.Team.SendMesageTeam(opponent.Team.EliteMatch.CreateUpdate().ToArray(), 0);
                     }
+
+                    Team.SendMesageTeam(Team.EliteMatch.CreateUpdate().ToArray(), 0);
                 }
             }
         }
@@ -771,7 +757,7 @@ namespace MTA.Client {
                     PlayRouletteUID > 0) return;
             }
 
-            if (InQualifier() || (Challenge != null && Challenge.Inside))
+            if (InQualifier() || Challenge is { Inside: true })
                 return;
             if (language != Language)
                 return;
@@ -1504,12 +1490,7 @@ namespace MTA.Client {
         }
 
         public static bool IsVaildForTeamPk(GameState client) {
-            if (client.Team != null) {
-                if (client.Team.EliteFighterStats != null)
-                    if (client.Team.EliteFighterStats.Flag ==
-                        TeamElitePk.FighterStats.StatusFlag.Fighting)
-                        return true;
-            }
+            if (client.Team is { EliteFighterStats.Flag: TeamElitePk.FighterStats.StatusFlag.Fighting }) return true;
 
             return false;
         }
@@ -1534,7 +1515,7 @@ namespace MTA.Client {
 
         public bool Ninja() {
             if (Entity.EntityFlag == EntityFlag.Player) {
-                if (Entity.Class >= 50 && Entity.Class <= 55)
+                if (Entity.Class is >= 50 and <= 55)
                     return true;
                 else
                     return false;
@@ -1775,7 +1756,7 @@ namespace MTA.Client {
                     Time32 now = Time32.Now;
                     Kernel.DisconnectPool.Add(Entity.UID, this);
                     RemoveScreenSpawn(Entity, false);
-                    if (Entity != null && Entity.WTitles != null)
+                    if (Entity is { WTitles: not null })
                         Entity.WTitles.Update();
                     using (var conn = DataHolder.MySqlConnection) {
                         conn.Open();
@@ -1854,11 +1835,9 @@ namespace MTA.Client {
                             };
                             friend.Client.Send(packet);
                             packet.Type = Network.GamePackets.KnownPersons.AddFriend;
-                            if (friend != null) {
-                                if (friend.Client != null) {
-                                    friend.Client.Send(packet);
-                                    friend.Client.Send(msg);
-                                }
+                            if (friend is { Client: not null }) {
+                                friend.Client.Send(packet);
+                                friend.Client.Send(msg);
                             }
                         }
                     }
@@ -1879,11 +1858,9 @@ namespace MTA.Client {
                                 };
                                 partner.Client.Send(packet);
                                 packet.Type = Network.GamePackets.TradePartner.AddPartner;
-                                if (partner != null) {
-                                    if (partner.Client != null) {
-                                        partner.Client.Send(packet);
-                                        partner.Client.Send(msg2);
-                                    }
+                                if (partner is { Client: not null }) {
+                                    partner.Client.Send(packet);
+                                    partner.Client.Send(msg2);
                                 }
                             }
                         }
@@ -1912,21 +1889,19 @@ namespace MTA.Client {
                         }
                     }
 
-                    if (Mentor != null) {
-                        if (Mentor.IsOnline) {
-                            ApprenticeInformation AppInfo = new ApprenticeInformation();
-                            AppInfo.Apprentice_ID = Entity.UID;
-                            AppInfo.Apprentice_Level = Entity.Level;
-                            AppInfo.Apprentice_Name = Entity.Name;
-                            AppInfo.Apprentice_Online = false;
-                            AppInfo.Apprentice_Spouse_Name = Entity.Spouse;
-                            AppInfo.Enrole_date = Mentor.EnroleDate;
-                            AppInfo.Mentor_ID = Mentor.Client.Entity.UID;
-                            AppInfo.Mentor_Mesh = Mentor.Client.Entity.Mesh;
-                            AppInfo.Mentor_Name = Mentor.Client.Entity.Name;
-                            AppInfo.Type = 2;
-                            Mentor.Client.Send(AppInfo);
-                        }
+                    if (Mentor is { IsOnline: true }) {
+                        ApprenticeInformation AppInfo = new ApprenticeInformation();
+                        AppInfo.Apprentice_ID = Entity.UID;
+                        AppInfo.Apprentice_Level = Entity.Level;
+                        AppInfo.Apprentice_Name = Entity.Name;
+                        AppInfo.Apprentice_Online = false;
+                        AppInfo.Apprentice_Spouse_Name = Entity.Spouse;
+                        AppInfo.Enrole_date = Mentor.EnroleDate;
+                        AppInfo.Mentor_ID = Mentor.Client.Entity.UID;
+                        AppInfo.Mentor_Mesh = Mentor.Client.Entity.Mesh;
+                        AppInfo.Mentor_Name = Mentor.Client.Entity.Name;
+                        AppInfo.Type = 2;
+                        Mentor.Client.Send(AppInfo);
                     }
 
                     #endregion
@@ -2267,7 +2242,7 @@ namespace MTA.Client {
             if (id == 0) return false;
 
             var soulInfo = AddingInformationTable.SoulGearItems[id];
-            if (id >= 800000 && id < 900000) {
+            if (id is >= 800000 and < 900000) {
                 if (soulInfo.ItemIdentifier < 100)
                     if (soulInfo.ItemIdentifier != ConquerItem.Armor)
                         return false;
@@ -2286,7 +2261,7 @@ namespace MTA.Client {
             if (id == 0) return false;
 
             var soulInfo = AddingInformationTable.SoulGearItems[id];
-            if (id >= 800000 && id < 900000) {
+            if (id is >= 800000 and < 900000) {
                 if (soulInfo.ItemIdentifier < 100)
                     if (soulInfo.ItemIdentifier != ConquerItem.Head)
                         return false;
@@ -2818,17 +2793,15 @@ namespace MTA.Client {
                     Entity Target;
                     if (Screen.TryGetValue(target, out Target)) {
                         var Owner = Target.Owner;
-                        if (Owner != null) {
-                            if (!Owner.RaceGuard && !Owner.RaceFrightened) {
-                                Owner.DizzyStamp = Time32.Now;
-                                Owner.RaceDizzy = true;
-                                Owner.Entity.AddFlag(Update.Flags.Dizzy);
-                                {
-                                    var upd = new GameCharacterUpdates(true);
-                                    upd.UID = Entity.UID;
-                                    upd.Add(GameCharacterUpdates.Dizzy, 0, 5);
-                                    Owner.SendScreen(upd);
-                                }
+                        if (Owner is { RaceGuard: false, RaceFrightened: false }) {
+                            Owner.DizzyStamp = Time32.Now;
+                            Owner.RaceDizzy = true;
+                            Owner.Entity.AddFlag(Update.Flags.Dizzy);
+                            {
+                                var upd = new GameCharacterUpdates(true);
+                                upd.UID = Entity.UID;
+                                upd.Add(GameCharacterUpdates.Dizzy, 0, 5);
+                                Owner.SendScreen(upd);
                             }
                         }
                     }
@@ -2846,7 +2819,7 @@ namespace MTA.Client {
                     foreach (var obj in Screen.SelectWhere<Entity>(MapObjectType.Player,
                                  (o) => Kernel.GetDistance(o.X, o.Y, Entity.X, Entity.Y) <= 10)) {
                         var Owner = obj.Owner;
-                        if (!Owner.RaceGuard && !Owner.RaceDizzy) {
+                        if (Owner is { RaceGuard: false, RaceDizzy: false }) {
                             Owner.RaceFrightened = true;
                             Owner.FrightenStamp = Time32.Now;
                             Owner.Entity.AddFlag(Update.Flags.Frightened);
@@ -2974,35 +2947,31 @@ namespace MTA.Client {
             #region NotMentor
 
             uint nowBP = 0;
-            if (Mentor != null) {
-                if (Mentor.IsOnline) {
-                    nowBP = Entity.BattlePowerFrom(Mentor.Client.Entity);
-                }
+            if (Mentor is { IsOnline: true }) {
+                nowBP = Entity.BattlePowerFrom(Mentor.Client.Entity);
             }
 
             if (nowBP > 200) nowBP = 0;
             if (nowBP < 0) nowBP = 0;
             if (Entity.MentorBattlePower != nowBP) {
                 Entity.MentorBattlePower = nowBP;
-                if (Mentor != null) {
-                    if (Mentor.IsOnline) {
-                        MentorInformation Information = new MentorInformation(true);
-                        Information.Mentor_Type = 1;
-                        Information.Mentor_ID = Mentor.Client.Entity.UID;
-                        Information.Apprentice_ID = Entity.UID;
-                        Information.Enrole_Date = Mentor.EnroleDate;
-                        Information.Mentor_Level = Mentor.Client.Entity.Level;
-                        Information.Mentor_Class = Mentor.Client.Entity.Class;
-                        Information.Mentor_PkPoints = Mentor.Client.Entity.PKPoints;
-                        Information.Mentor_Mesh = Mentor.Client.Entity.Mesh;
-                        Information.Mentor_Online = true;
-                        Information.Shared_Battle_Power = nowBP;
-                        Information.String_Count = 3;
-                        Information.Mentor_Name = Mentor.Client.Entity.Name;
-                        Information.Apprentice_Name = Entity.Name;
-                        Information.Mentor_Spouse_Name = Mentor.Client.Entity.Spouse;
-                        Send(Information);
-                    }
+                if (Mentor is { IsOnline: true }) {
+                    MentorInformation Information = new MentorInformation(true);
+                    Information.Mentor_Type = 1;
+                    Information.Mentor_ID = Mentor.Client.Entity.UID;
+                    Information.Apprentice_ID = Entity.UID;
+                    Information.Enrole_Date = Mentor.EnroleDate;
+                    Information.Mentor_Level = Mentor.Client.Entity.Level;
+                    Information.Mentor_Class = Mentor.Client.Entity.Class;
+                    Information.Mentor_PkPoints = Mentor.Client.Entity.PKPoints;
+                    Information.Mentor_Mesh = Mentor.Client.Entity.Mesh;
+                    Information.Mentor_Online = true;
+                    Information.Shared_Battle_Power = nowBP;
+                    Information.String_Count = 3;
+                    Information.Mentor_Name = Mentor.Client.Entity.Name;
+                    Information.Apprentice_Name = Entity.Name;
+                    Information.Mentor_Spouse_Name = Mentor.Client.Entity.Spouse;
+                    Send(Information);
                 }
             }
 
@@ -3075,7 +3044,7 @@ namespace MTA.Client {
 
         public void KillTerrorist() {
             foreach (GameState Terrorist in Program.Values) {
-                if (Terrorist.Entity.KillTheTerrorist_IsTerrorist && Terrorist.Entity.MapID == 1801)
+                if (Terrorist.Entity is { KillTheTerrorist_IsTerrorist: true, MapID: 1801 })
                     Kernel.SendWorldMessage(
                         new Message("Terrorist: " + Terrorist.Entity.Name + " ",
                             Color.Black, Message.FirstRightCorner),
@@ -3308,10 +3277,8 @@ namespace MTA.Client {
                 if (Entity.DoubleExperienceTime > 0 && SuperPotion > 0)
                     experience *= SuperPotion;
 
-                if (Guild != null) {
-                    if (Guild.Level > 0) {
-                        experience += (ushort)(experience * Guild.Level / 100);
-                    }
+                if (Guild is { Level: > 0 }) {
+                    experience += (ushort)(experience * Guild.Level / 100);
                 }
 
                 prExperienece = experience + (ulong)(experience * ((float)Entity.BattlePower / 100));
@@ -3322,11 +3289,11 @@ namespace MTA.Client {
             else
                 _experience += experience;
 
-            if (Entity.Level < 140 && Entity.Auto) {
+            if (Entity is { Level: < 140, Auto: true }) {
                 Entity.autohuntxp += (_experience / 16);
                 return;
             }
-            else if (Entity.Level == 140 && Entity.Auto) {
+            else if (Entity is { Level: 140, Auto: true }) {
                 Entity.autohuntxp = 0;
                 return;
             }
@@ -3344,34 +3311,32 @@ namespace MTA.Client {
                             level = Entity.SecondRebornLevel;
                     }
 
-                    if (Entity.Class >= 10 && Entity.Class <= 15)
+                    if (Entity.Class is >= 10 and <= 15)
                         if (!Spells.ContainsKey(1110))
                             AddSpell(new Spell(true) { ID = 1110 });
-                    if (Entity.Class >= 20 && Entity.Class <= 25)
+                    if (Entity.Class is >= 20 and <= 25)
                         if (!Spells.ContainsKey(1020))
                             AddSpell(new Spell(true) { ID = 1020 });
-                    if (Entity.Class >= 40 && Entity.Class <= 45)
+                    if (Entity.Class is >= 40 and <= 45)
                         if (!Spells.ContainsKey(8002))
                             AddSpell(new Spell(true) { ID = 8002 });
-                    if (Entity.Class >= 50 && Entity.Class <= 55)
+                    if (Entity.Class is >= 50 and <= 55)
                         if (!Spells.ContainsKey(6011))
                             AddSpell(new Spell(true) { ID = 6011 });
-                    if (Entity.Class >= 60 && Entity.Class <= 65)
+                    if (Entity.Class is >= 60 and <= 65)
                         if (!Spells.ContainsKey(10490))
                             AddSpell(new Spell(true) { ID = 10490 });
-                    if (Mentor != null) {
-                        if (Mentor.IsOnline) {
-                            uint exExp = (uint)(level * 2);
-                            Mentor.Client.PrizeExperience += exExp;
-                            AsApprentice = Mentor.Client.Apprentices[Entity.UID];
-                            if (AsApprentice != null) {
-                                AsApprentice.Actual_Experience += exExp;
-                                AsApprentice.Total_Experience += exExp;
-                            }
-
-                            if (Mentor.Client.PrizeExperience > 50 * 606)
-                                Mentor.Client.PrizeExperience = 50 * 606;
+                    if (Mentor is { IsOnline: true }) {
+                        uint exExp = (uint)(level * 2);
+                        Mentor.Client.PrizeExperience += exExp;
+                        AsApprentice = Mentor.Client.Apprentices[Entity.UID];
+                        if (AsApprentice != null) {
+                            AsApprentice.Actual_Experience += exExp;
+                            AsApprentice.Total_Experience += exExp;
                         }
+
+                        if (Mentor.Client.PrizeExperience > 50 * 606)
+                            Mentor.Client.PrizeExperience = 50 * 606;
                     }
 
                     if (level == 70) {
@@ -3944,64 +3909,56 @@ namespace MTA.Client {
                 AddSpell(new Spell(true) { ID = 6002 });
             if (toClass == 81 && PreviousClass == 85 && Entity.Reborn == 1)
                 AddSpell(new Spell(true) { ID = 12280 });
-            if (Entity.FirstRebornClass == 85 && Entity.SecondRebornClass == 85 && Entity.Class == 81 &&
-                Entity.Reborn == 2)
+            if (Entity is { FirstRebornClass: 85, SecondRebornClass: 85, Class: 81, Reborn: 2 })
                 AddSpell(new Spell(true) { ID = 12300 });
-            if (Entity.FirstRebornClass == 15 && Entity.SecondRebornClass == 15 && Entity.Class == 11 &&
-                Entity.Reborn == 2)
+            if (Entity is { FirstRebornClass: 15, SecondRebornClass: 15, Class: 11, Reborn: 2 })
                 AddSpell(new Spell(true) { ID = 10315 });
-            if (Entity.FirstRebornClass == 25 && Entity.SecondRebornClass == 25 && Entity.Class == 21 &&
-                Entity.Reborn == 2)
+            if (Entity is { FirstRebornClass: 25, SecondRebornClass: 25, Class: 21, Reborn: 2 })
                 AddSpell(new Spell(true) { ID = 10311 });
-            if (Entity.FirstRebornClass == 45 && Entity.SecondRebornClass == 45 && Entity.Class == 41 &&
-                Entity.Reborn == 2)
+            if (Entity is { FirstRebornClass: 45, SecondRebornClass: 45, Class: 41, Reborn: 2 })
                 AddSpell(new Spell(true) { ID = 10313 });
-            if (Entity.FirstRebornClass == 55 && Entity.SecondRebornClass == 55 && Entity.Class == 51 &&
-                Entity.Reborn == 2)
+            if (Entity is { FirstRebornClass: 55, SecondRebornClass: 55, Class: 51, Reborn: 2 })
                 AddSpell(new Spell(true) { ID = 6003 });
-            if (Entity.FirstRebornClass == 65 && Entity.SecondRebornClass == 65 && Entity.Class == 61 &&
-                Entity.Reborn == 2)
+            if (Entity is { FirstRebornClass: 65, SecondRebornClass: 65, Class: 61, Reborn: 2 })
                 AddSpell(new Spell(true) { ID = 10405 });
-            if (Entity.FirstRebornClass == 135 && Entity.SecondRebornClass == 135 && Entity.Class == 132 &&
-                Entity.Reborn == 2)
+            if (Entity is { FirstRebornClass: 135, SecondRebornClass: 135, Class: 132, Reborn: 2 })
                 AddSpell(new Spell(true) { ID = 30000 });
-            if (Entity.FirstRebornClass == 145 && Entity.SecondRebornClass == 145 && Entity.Class == 142 &&
-                Entity.Reborn == 2)
+            if (Entity is { FirstRebornClass: 145, SecondRebornClass: 145, Class: 142, Reborn: 2 })
                 AddSpell(new Spell(true) { ID = 10310 });
             if (Entity.Reborn == 1) {
-                if (Entity.FirstRebornClass == 75 && Entity.Class == 71) {
+                if (Entity is { FirstRebornClass: 75, Class: 71 }) {
                     AddSpell(new Spell(true) { ID = 3050 });
                 }
 
-                if (Entity.FirstRebornClass == 15 && Entity.Class == 11) {
+                if (Entity is { FirstRebornClass: 15, Class: 11 }) {
                     AddSpell(new Spell(true) { ID = 3050 });
                 }
-                else if (Entity.FirstRebornClass == 25 && Entity.Class == 21) {
+                else if (Entity is { FirstRebornClass: 25, Class: 21 }) {
                     AddSpell(new Spell(true) { ID = 3060 });
                 }
-                else if (Entity.FirstRebornClass == 145 && Entity.Class == 142) {
+                else if (Entity is { FirstRebornClass: 145, Class: 142 }) {
                     AddSpell(new Spell(true) { ID = 3080 });
                 }
-                else if (Entity.FirstRebornClass == 135 && Entity.Class == 132) {
+                else if (Entity is { FirstRebornClass: 135, Class: 132 }) {
                     AddSpell(new Spell(true) { ID = 3090 });
                 }
             }
 
             if (Entity.Reborn == 2) {
-                if (Entity.SecondRebornClass == 75 && Entity.Class == 71) {
+                if (Entity is { SecondRebornClass: 75, Class: 71 }) {
                     AddSpell(new Spell(true) { ID = 3050 });
                 }
 
-                if (Entity.SecondRebornClass == 15 && Entity.Class == 11) {
+                if (Entity is { SecondRebornClass: 15, Class: 11 }) {
                     AddSpell(new Spell(true) { ID = 3050 });
                 }
                 else if (Entity.SecondRebornClass == 25) {
                     AddSpell(new Spell(true) { ID = 3060 });
                 }
-                else if (Entity.SecondRebornClass == 145 && Entity.Class == 142) {
+                else if (Entity is { SecondRebornClass: 145, Class: 142 }) {
                     AddSpell(new Spell(true) { ID = 3080 });
                 }
-                else if (Entity.SecondRebornClass == 135 && Entity.Class == 132) {
+                else if (Entity is { SecondRebornClass: 135, Class: 132 }) {
                     AddSpell(new Spell(true) { ID = 3090 });
                 }
             }
@@ -4013,40 +3970,40 @@ namespace MTA.Client {
             if (Entity.Reborn == 2) {
                 #region Pison Star Del
 
-                if (Entity.SecondRebornClass == 55 && Entity.Class == 41) {
+                if (Entity is { SecondRebornClass: 55, Class: 41 }) {
                     RemoveSpell(new Spell(false) { ID = 6002 });
                     //   RemoveSpell(new Spell(false) { ID = 8001 });
                 }
 
-                if (Entity.SecondRebornClass == 55 && Entity.Class == 81) {
+                if (Entity is { SecondRebornClass: 55, Class: 81 }) {
                     RemoveSpell(new Spell(false) { ID = 6002 });
                     RemoveSpell(new Spell(false) { ID = 8001 });
                 }
 
-                if (Entity.SecondRebornClass == 55 && Entity.Class == 11) {
+                if (Entity is { SecondRebornClass: 55, Class: 11 }) {
                     RemoveSpell(new Spell(false) { ID = 6002 });
                     RemoveSpell(new Spell(false) { ID = 8001 });
                 }
 
-                if (Entity.SecondRebornClass == 55 && Entity.Class == 71) {
+                if (Entity is { SecondRebornClass: 55, Class: 71 }) {
                     RemoveSpell(new Spell(false) { ID = 6002 });
                     RemoveSpell(new Spell(false) { ID = 8001 });
                 }
 
-                if (Entity.SecondRebornClass == 55 && Entity.Class == 61) {
+                if (Entity is { SecondRebornClass: 55, Class: 61 }) {
                     RemoveSpell(new Spell(false) { ID = 6002 });
                     RemoveSpell(new Spell(false) { ID = 8001 });
                 }
 
-                if (Entity.SecondRebornClass == 55 && Entity.Class == 21) {
+                if (Entity is { SecondRebornClass: 55, Class: 21 }) {
                     RemoveSpell(new Spell(false) { ID = 6002 });
                     RemoveSpell(new Spell(false) { ID = 8001 });
                 }
-                else if (Entity.SecondRebornClass == 55 && Entity.Class == 142) {
+                else if (Entity is { SecondRebornClass: 55, Class: 142 }) {
                     RemoveSpell(new Spell(false) { ID = 6002 });
                     RemoveSpell(new Spell(false) { ID = 8001 });
                 }
-                else if (Entity.SecondRebornClass == 55 && Entity.Class == 132) {
+                else if (Entity is { SecondRebornClass: 55, Class: 132 }) {
                     RemoveSpell(new Spell(false) { ID = 6002 });
                     RemoveSpell(new Spell(false) { ID = 8001 });
                 }
@@ -5343,7 +5300,7 @@ namespace MTA.Client {
                 if (Weapons.Item2 != null) {
                     if (!Weapons.Item1.IsTwoHander())
                         loadItemStats(Weapons.Item2);
-                    else if (PacketHandler.IsFranko(Weapons.Item2.ID) || (Entity.Class >= 20 && Entity.Class <= 25))
+                    else if (PacketHandler.IsFranko(Weapons.Item2.ID) || Entity.Class is >= 20 and <= 25)
                         loadItemStats(Weapons.Item2);
                 }
             }
@@ -5476,7 +5433,7 @@ namespace MTA.Client {
                 doAuraBonuses(Aura.TeamAuraStatusFlag, Aura.TeamAuraPower, 1);
             }
 
-            if (Entity.Class >= 60 && Entity.Class <= 65)
+            if (Entity.Class is >= 60 and <= 65)
                 Entity.AttackRange += 2;
 
 
@@ -5591,13 +5548,13 @@ namespace MTA.Client {
 
                 Entity.PerfectionLevel += item.Perfectionlevel;
 
-                if (item.Perfectionlevel > 3 && item.Perfectionlevel < 7) {
+                if (item.Perfectionlevel is > 3 and < 7) {
                     Entity.BaseMinAttack += 100 / 12;
                     Entity.BaseMaxAttack += 100 / 12;
                     Entity.BaseMagicAttack += 300 / 12;
                 }
 
-                if (item.Perfectionlevel > 7 && item.Perfectionlevel < 10) {
+                if (item.Perfectionlevel is > 7 and < 10) {
                     Entity.BaseMinAttack += 100 / 12;
                     Entity.BaseMaxAttack += 100 / 12;
                     Entity.BaseDefence += 100 / 12;
@@ -5605,7 +5562,7 @@ namespace MTA.Client {
                     Entity.MagicDefence += 100 / 12;
                 }
 
-                if (item.Perfectionlevel > 10 && item.Perfectionlevel < 14) {
+                if (item.Perfectionlevel is > 10 and < 14) {
                     Entity.BaseMinAttack += 300 / 12;
                     Entity.BaseMaxAttack += 300 / 12;
                     Entity.BaseDefence += 300 / 12;
@@ -5613,7 +5570,7 @@ namespace MTA.Client {
                     Entity.MagicDefence += 150 / 12;
                 }
 
-                if (item.Perfectionlevel > 14 && item.Perfectionlevel < 17) {
+                if (item.Perfectionlevel is > 14 and < 17) {
                     Entity.BaseMinAttack += 500 / 12;
                     Entity.BaseMaxAttack += 500 / 12;
                     Entity.BaseDefence += 500 / 12;
@@ -5621,7 +5578,7 @@ namespace MTA.Client {
                     Entity.MagicDefence += 250 / 12;
                 }
 
-                if (item.Perfectionlevel > 17 && item.Perfectionlevel < 25) {
+                if (item.Perfectionlevel is > 17 and < 25) {
                     Entity.BaseMinAttack += 800 / 12;
                     Entity.BaseMaxAttack += 800 / 12;
                     Entity.BaseDefence += 1200 / 12;
@@ -5629,7 +5586,7 @@ namespace MTA.Client {
                     Entity.MagicDefence += 500 / 12;
                 }
 
-                if (item.Perfectionlevel > 25 && item.Perfectionlevel < 28) {
+                if (item.Perfectionlevel is > 25 and < 28) {
                     Entity.BaseMinAttack += 1200 / 12;
                     Entity.BaseMaxAttack += 1200 / 12;
                     Entity.BaseDefence += 1200 / 12;
@@ -5637,7 +5594,7 @@ namespace MTA.Client {
                     Entity.MagicDefence += 500 / 12;
                 }
 
-                if (item.Perfectionlevel > 28 && item.Perfectionlevel < 32) {
+                if (item.Perfectionlevel is > 28 and < 32) {
                     Entity.BaseMinAttack += 1600 / 12;
                     Entity.BaseMaxAttack += 1600 / 12;
                     Entity.BaseDefence += 1600 / 12;
@@ -5645,7 +5602,7 @@ namespace MTA.Client {
                     Entity.MagicDefence += 625 / 12;
                 }
 
-                if (item.Perfectionlevel > 32 && item.Perfectionlevel < 55) {
+                if (item.Perfectionlevel is > 32 and < 55) {
                     Entity.BaseMinAttack += 3000 / 12;
                     Entity.BaseMaxAttack += 3000 / 12;
                     Entity.BaseDefence += 3000 / 12;

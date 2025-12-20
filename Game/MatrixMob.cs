@@ -155,32 +155,28 @@ namespace MTA.MaTrix {
                 if (Mobs[Monster.MapID].ContainsKey(Monster.UID)) {
                     var mob = Mobs[Monster.MapID][Monster.UID];
                     if (mob != null) {
-                        if (mob.cpsarray != null) {
-                            if (mob.cpsarray.Length > 0) {
-                                var cp = RandFromGivingNums(mob.cpsarray);
-                                if (cp != 0) {
-                                    Killer.ConquerPoints += 200000;
-                                    Kernel.SendWorldMessage(new Message(
-                                        Killer.Name + " has killed " + Monster.Name + " at " +
-                                        ((Enums.Maps)Monster.MapID).ToString() + " and get 200,000 Cps .", Color.Red,
-                                        Message.Center));
-                                    //Program.AddMobLog(Monster.Name, Killer.Name, cp);
-                                }
+                        if (mob.cpsarray is { Length: > 0 }) {
+                            var cp = RandFromGivingNums(mob.cpsarray);
+                            if (cp != 0) {
+                                Killer.ConquerPoints += 200000;
+                                Kernel.SendWorldMessage(new Message(
+                                    Killer.Name + " has killed " + Monster.Name + " at " +
+                                    ((Enums.Maps)Monster.MapID).ToString() + " and get 200,000 Cps .", Color.Red,
+                                    Message.Center));
+                                //Program.AddMobLog(Monster.Name, Killer.Name, cp);
                             }
                         }
 
-                        if (mob.itemsarray != null) {
-                            if (mob.itemsarray.Length > 0) {
-                                var item = RandFromGivingNums(mob.itemsarray);
-                                if (item != 0 && ConquerItemInformation.BaseInformations.ContainsKey(item)) {
-                                    Killer.Owner.Inventory.Add(item, 0, 1);
-                                    Kernel.SendWorldMessage(new Message(
-                                        Killer.Name + " has killed " + Monster.Name + " at " +
-                                        ((Enums.Maps)Monster.MapID).ToString() + " and get " +
-                                        ConquerItemInformation.BaseInformations[item].Name + " item .", Color.Red,
-                                        Message.BroadcastMessage));
-                                    Program.AddMobLog(Monster.Name, Killer.Name, 0, item);
-                                }
+                        if (mob.itemsarray is { Length: > 0 }) {
+                            var item = RandFromGivingNums(mob.itemsarray);
+                            if (item != 0 && ConquerItemInformation.BaseInformations.ContainsKey(item)) {
+                                Killer.Owner.Inventory.Add(item, 0, 1);
+                                Kernel.SendWorldMessage(new Message(
+                                    Killer.Name + " has killed " + Monster.Name + " at " +
+                                    ((Enums.Maps)Monster.MapID).ToString() + " and get " +
+                                    ConquerItemInformation.BaseInformations[item].Name + " item .", Color.Red,
+                                    Message.BroadcastMessage));
+                                Program.AddMobLog(Monster.Name, Killer.Name, 0, item);
                             }
                         }
 

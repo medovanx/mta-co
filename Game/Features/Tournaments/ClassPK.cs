@@ -27,7 +27,7 @@ namespace MTA.Game
             howmanyinmap = 0;
             foreach (Client.GameState client in Program.Values)
             {
-                if (client.Entity.MapID == 7001 && client.Entity.Hitpoints >= 1)
+                if (client.Entity is { MapID: 7001, Hitpoints: >= 1 })
                 {
                     howmanyinmap += 1;
                     Kernel.SendWorldMessage(new Message("Players Alive in ClassPk Now: " + howmanyinmap + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
@@ -41,7 +41,7 @@ namespace MTA.Game
             ClassPks = true;
             var date = DateTime.Now;
             foreach (Client.GameState client in Program.Values)
-                if (date.Minute == 00 && client.Entity.Class >= 10 && client.Entity.Class <= 15)
+                if (date.Minute == 00 && client.Entity.Class is >= 10 and <= 15)
                     client.Entity.RemoveTopStatus(Update.Flags.TopTrojan);
         }
         public static void SignUp1()
@@ -50,7 +50,7 @@ namespace MTA.Game
             ClassPks = true;
             var date = DateTime.Now;
             foreach (Client.GameState client in Program.Values)
-                if (date.Minute == 00 && client.Entity.Class >= 20 && client.Entity.Class <= 25)
+                if (date.Minute == 00 && client.Entity.Class is >= 20 and <= 25)
                     client.Entity.RemoveTopStatus(Update.Flags.TopWarrior);
         }
         public static void SignUp2()
@@ -59,7 +59,7 @@ namespace MTA.Game
             ClassPks = true;
             var date = DateTime.Now;
             foreach (Client.GameState client in Program.Values)
-                if (date.Minute == 00 && client.Entity.Class >= 40 && client.Entity.Class <= 45)
+                if (date.Minute == 00 && client.Entity.Class is >= 40 and <= 45)
                     client.Entity.RemoveTopStatus(Update.Flags.TopArcher);
         }
         public static void SignUp3()
@@ -68,7 +68,7 @@ namespace MTA.Game
             ClassPks = true;
             var date = DateTime.Now;
             foreach (Client.GameState client in Program.Values)
-                if (date.Minute == 00 && client.Entity.Class >= 50 && client.Entity.Class <= 55)
+                if (date.Minute == 00 && client.Entity.Class is >= 50 and <= 55)
                     client.Entity.RemoveTopStatus(Update.Flags.TopNinja);
         }
         public static void SignUp4()
@@ -77,7 +77,7 @@ namespace MTA.Game
             ClassPks = true;
             var date = DateTime.Now;
             foreach (Client.GameState client in Program.Values)
-                if (date.Minute == 00 && client.Entity.Class >= 60 && client.Entity.Class <= 65)
+                if (date.Minute == 00 && client.Entity.Class is >= 60 and <= 65)
                     client.Entity.RemoveTopStatus(Update.Flags2.TopMonk);
         }
         public static void SignUp5()
@@ -86,7 +86,7 @@ namespace MTA.Game
             ClassPks = true;
             var date = DateTime.Now;
             foreach (Client.GameState client in Program.Values)
-                if (date.Minute == 00 && client.Entity.Class >= 130 && client.Entity.Class <= 135)
+                if (date.Minute == 00 && client.Entity.Class is >= 130 and <= 135)
                     client.Entity.RemoveTopStatus(Update.Flags.TopWaterTaoist);
         }
         public static void SignUp6()
@@ -95,7 +95,7 @@ namespace MTA.Game
             ClassPks = true;
             var date = DateTime.Now;
             foreach (Client.GameState client in Program.Values)
-                if (date.Minute == 00 && client.Entity.Class >= 140 && client.Entity.Class <= 145)
+                if (date.Minute == 00 && client.Entity.Class is >= 140 and <= 145)
                     client.Entity.RemoveTopStatus(Update.Flags.TopFireTaoist);
         }
         public static void SignUp8()
@@ -104,7 +104,7 @@ namespace MTA.Game
             ClassPks = true;
             var date = DateTime.Now;
             foreach (Client.GameState client in Program.Values)
-                if (date.Minute == 00 && client.Entity.Class >= 70 && client.Entity.Class <= 75)
+                if (date.Minute == 00 && client.Entity.Class is >= 70 and <= 75)
                     client.Entity.RemoveTopStatus(Update.Flags2.TopPirate);
         }
         public static void SignUp9()
@@ -113,7 +113,7 @@ namespace MTA.Game
             ClassPks = true;
             var date = DateTime.Now;
             foreach (Client.GameState client in Program.Values)
-                if (date.Minute == 00 && client.Entity.Class >= 80 && client.Entity.Class <= 85)
+                if (date.Minute == 00 && client.Entity.Class is >= 80 and <= 85)
                     client.Entity.RemoveTopStatus(Update.Flags3.DragonWarriorTop);
         }
         public static void End()

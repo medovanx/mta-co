@@ -11,7 +11,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
         public static void Handle(GameState client, NpcRequest npcRequest, MTA.Npcs dialog) {
             switch (npcRequest.OptionID) {
                 case 0: {
-                    if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+                    if (client.Entity.Class is >= 60 and <= 65) {
                         dialog.Text(
                             "I am the coach monk, master of balance and harmony destruction What do you want, young monk.?");
                         dialog.Option("Promote me, master.", 1);
@@ -33,7 +33,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                 #region Promotion
 
                 case 1: {
-                    if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+                    if (client.Entity.Class is >= 60 and <= 65) {
                         if (client.Entity.Class == 65) {
                             dialog.Text("It can not be promoted more You have dominated this class.");
                             dialog.Option("Thank you master.", 255);
@@ -56,7 +56,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 3: {
-                    if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+                    if (client.Entity.Class is >= 60 and <= 65) {
                         if (client.Entity.Class == 65) {
                             dialog.Text("It can not be promoted more You have dominated his class..");
                             dialog.Option("Thank you master.", 255);
@@ -114,7 +114,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                 #region Skill
 
                 case 2: {
-                    if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+                    if (client.Entity.Class is >= 60 and <= 65) {
                         dialog.Text("Let me know what you want to learn.");
                         dialog.Option("Triple Attack (Lvl 5).", 6);
                         dialog.Option("Oblivion (XP) (Lvl 15)", 7);
@@ -136,7 +136,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 5: {
-                    if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+                    if (client.Entity.Class is >= 60 and <= 65) {
                         dialog.Text("What aura want to learn?");
                         dialog.Option("Tyrant (Lvl 20).", 13);
                         dialog.Option("Fend (Lvl 20)", 14);
@@ -158,7 +158,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 6: {
-                    if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+                    if (client.Entity.Class is >= 60 and <= 65) {
                         if (client.Entity.Level >= 5 && client.AddSpell(LearnableSpell(10490))) {
                             dialog.Text("You have learned Triple Attack.");
                             dialog.Option("Thank you master.", 255);
@@ -186,7 +186,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 7: {
-                    if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+                    if (client.Entity.Class is >= 60 and <= 65) {
                         if (client.Entity.Level >= 15 && client.AddSpell(LearnableSpell(10390))) {
                             dialog.Text("You have learned Oblivion XP skill.");
                             dialog.Option("Thank you master.", 255);
@@ -214,7 +214,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 8: {
-                    if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+                    if (client.Entity.Class is >= 60 and <= 65) {
                         if (client.Entity.Level >= 15 && client.AddSpell(LearnableSpell(10415))) {
                             dialog.Text("You have learned Whirlwind Kick.");
                             dialog.Option("Thank you master.", 255);
@@ -242,7 +242,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 9: {
-                    if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+                    if (client.Entity.Class is >= 60 and <= 65) {
                         if (client.Entity.Level >= 40 && client.AddSpell(LearnableSpell(10381))) {
                             dialog.Text("You have learned Radiant Palm.");
                             dialog.Option("Thank you master.", 255);
@@ -270,7 +270,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 10: {
-                    if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+                    if (client.Entity.Class is >= 60 and <= 65) {
                         if (client.Entity.Level >= 40 && client.AddSpell(LearnableSpell(10400))) {
                             dialog.Text("You have learned Serenity.");
                             dialog.Option("Thank you master.", 255);
@@ -298,7 +298,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 11: {
-                    if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+                    if (client.Entity.Class is >= 60 and <= 65) {
                         if (client.Entity.Level >= 70 && client.AddSpell(LearnableSpell(10425))) {
                             dialog.Text("You have learned Tranquility.");
                             dialog.Option("Thank you master.", 255);
@@ -326,7 +326,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 12: {
-                    if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+                    if (client.Entity.Class is >= 60 and <= 65) {
                         if (client.Entity.Level >= 100 && client.AddSpell(LearnableSpell(10430))) {
                             dialog.Text("You have learned Compassion.");
                             dialog.Option("Thank you master.", 255);
@@ -354,7 +354,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 13: {
-                    if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+                    if (client.Entity.Class is >= 60 and <= 65) {
                         if (client.Entity.Level >= 20 && client.AddSpell(LearnableSpell(10395))) {
                             dialog.Text("You have learned Tyrant Aura.");
                             dialog.Option("Thank you master.", 255);
@@ -382,7 +382,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 14: {
-                    if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+                    if (client.Entity.Class is >= 60 and <= 65) {
                         if (client.Entity.Level >= 20 && client.AddSpell(LearnableSpell(10410))) {
                             dialog.Text("You have learned Fend Aura.");
                             dialog.Option("Thank you master.", 255);
@@ -410,7 +410,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 15: {
-                    if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+                    if (client.Entity.Class is >= 60 and <= 65) {
                         if (client.Entity.Level >= 100 && client.AddSpell(LearnableSpell(10420))) {
                             dialog.Text("You have learned Metal Elemental Aura.");
                             dialog.Option("Thank you master.", 255);
@@ -438,7 +438,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 16: {
-                    if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+                    if (client.Entity.Class is >= 60 and <= 65) {
                         if (client.Entity.Level >= 100 && client.AddSpell(LearnableSpell(10421))) {
                             dialog.Text("You have learned Wood Elemental Aura.");
                             dialog.Option("Thank you master.", 255);
@@ -466,7 +466,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 17: {
-                    if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+                    if (client.Entity.Class is >= 60 and <= 65) {
                         if (client.Entity.Level >= 100 && client.AddSpell(LearnableSpell(10422))) {
                             dialog.Text("You have learned Water Elemental Aura.");
                             dialog.Option("Thank you master.", 255);
@@ -494,7 +494,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 18: {
-                    if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+                    if (client.Entity.Class is >= 60 and <= 65) {
                         if (client.Entity.Level >= 100 && client.AddSpell(LearnableSpell(10423))) {
                             dialog.Text("You have learned Fire Elemental Aura.");
                             dialog.Option("Thank you master.", 255);
@@ -522,7 +522,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 19: {
-                    if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+                    if (client.Entity.Class is >= 60 and <= 65) {
                         if (client.Entity.Level >= 100 && client.AddSpell(LearnableSpell(10424))) {
                             dialog.Text("You have learned Earth Elemental Aura.");
                             dialog.Option("Thank you master.", 255);
@@ -555,7 +555,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                 #region Epic
 
                 case 33: {
-                    if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+                    if (client.Entity.Class is >= 60 and <= 65) {
                         dialog.Text("Let me know what you want to Epic.");
                         dialog.Option("InfernalEcho.", 34);
                         dialog.Option("GraceofHeaven", 35);
@@ -573,7 +573,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 34: {
-                    if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+                    if (client.Entity.Class is >= 60 and <= 65) {
                         if (client.Entity.Level >= 40) {
                             dialog.Text("You have learned InfernalEcho.");
                             dialog.Option("Thank you master.", 255);
@@ -600,7 +600,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 35: {
-                    if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+                    if (client.Entity.Class is >= 60 and <= 65) {
                         if (client.Entity.Level >= 50) {
                             dialog.Text("You have learned GraceofHeaven.");
                             dialog.Option("Thank you master.", 255);
@@ -627,7 +627,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 36: {
-                    if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+                    if (client.Entity.Class is >= 60 and <= 65) {
                         if (client.Entity.Level >= 40) {
                             dialog.Text("You have learned WrathofiheEmperor.");
                             dialog.Option("Thank you master.", 255);

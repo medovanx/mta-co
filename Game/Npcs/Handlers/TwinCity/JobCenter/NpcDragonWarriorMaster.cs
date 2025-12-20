@@ -11,7 +11,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
         public static void Handle(GameState client, NpcRequest npcRequest, MTA.Npcs dialog) {
             switch (npcRequest.OptionID) {
                 case 0: {
-                    if (client.Entity.Class >= 80 && client.Entity.Class <= 85) {
+                    if (client.Entity.Class is >= 80 and <= 85) {
                         dialog.Text(
                             "Dragon-Warrior is a kung fu star who fights fast, accurately and ruthlessly, as well as a group training martial arts on the basis");
                         dialog.Text(
@@ -34,7 +34,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                 #region Promotion
 
                 case 1: {
-                    if (client.Entity.Class >= 80 && client.Entity.Class <= 85) {
+                    if (client.Entity.Class is >= 80 and <= 85) {
                         if (client.Entity.Class == 85) {
                             dialog.Text("You cannot be promoted anymore. You have mastered your class.");
                             dialog.Option("Thank you master.", 255);
@@ -57,7 +57,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 3: {
-                    if (client.Entity.Class >= 80 && client.Entity.Class <= 85) {
+                    if (client.Entity.Class is >= 80 and <= 85) {
                         if (client.Entity.Class == 85) {
                             dialog.Text("You cannot be promoted anymore. You have mastered your class.");
                             dialog.Option("Thank you master.", 255);
@@ -114,7 +114,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                 #region Skills
 
                 case 2: {
-                    if (client.Entity.Class >= 80 && client.Entity.Class <= 85) {
+                    if (client.Entity.Class is >= 80 and <= 85) {
                         dialog.Text(
                             "Dragon-Warrior enjoys unique and brilliant combo skills. Typically, the striking [Dragon Kicks], destructive [Dragon Swipe]");
                         dialog.Text(
@@ -140,7 +140,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 11: {
-                    if (client.Entity.Class >= 80 && client.Entity.Class <= 85) {
+                    if (client.Entity.Class is >= 80 and <= 85) {
                         dialog.Text("Let me know what you want to learn.");
                         dialog.Option("Splitting Swipe(lv.100).", 12);
                         dialog.Option("Dragon Slash(lv.100).", 13);
@@ -160,7 +160,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 5: {
-                    if (client.Entity.Class >= 80 && client.Entity.Class <= 85) {
+                    if (client.Entity.Class is >= 80 and <= 85) {
                         if (client.Entity.Level >= 40) {
                             if (client.AddSpell(LearnableSpell(12240)) && client.AddSpell(LearnableSpell(12220)) &&
                                 client.AddSpell(LearnableSpell(12210))) {
@@ -204,7 +204,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 6: {
-                    if (client.Entity.Class >= 80 && client.Entity.Class <= 85) {
+                    if (client.Entity.Class is >= 80 and <= 85) {
                         if (client.Entity.Level >= 40 && client.AddSpell(LearnableSpell(12290))) {
                             dialog.Text("You have learned the Dragon Cyclone.");
                             dialog.Option("Thank you master.", 255);
@@ -233,7 +233,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 7: {
-                    if (client.Entity.Class >= 80 && client.Entity.Class <= 85) {
+                    if (client.Entity.Class is >= 80 and <= 85) {
                         if (client.Entity.Level >= 15) {
                             if (client.AddSpell(LearnableSpell(12320)) && client.AddSpell(LearnableSpell(12330)) &&
                                 client.AddSpell(LearnableSpell(12340))) {
@@ -277,7 +277,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 8: {
-                    if (client.Entity.Class >= 80 && client.Entity.Class <= 85) {
+                    if (client.Entity.Class is >= 80 and <= 85) {
                         if (client.Entity.Level >= 15 && client.AddSpell(LearnableSpell(12270))) {
                             dialog.Text("You have learned the Dragon Flow.");
                             dialog.Option("Thank you master.", 255);
@@ -306,7 +306,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 9: {
-                    if (client.Entity.Class >= 80 && client.Entity.Class <= 85) {
+                    if (client.Entity.Class is >= 80 and <= 85) {
                         if (client.Entity.Level >= 40) {
                             if (client.AddSpell(LearnableSpell(12120)) && client.AddSpell(LearnableSpell(12130)) &&
                                 client.AddSpell(LearnableSpell(12140))) {
@@ -352,7 +352,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 10: {
-                    if (client.Entity.Class >= 80 && client.Entity.Class <= 85) {
+                    if (client.Entity.Class is >= 80 and <= 85) {
                         if (client.Entity.Level >= 70 && client.AddSpell(LearnableSpell(12160))) {
                             dialog.Text("You have learned the Cracking Swipe.");
                             dialog.Option("Thank you master.", 255);
@@ -383,7 +383,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 12: {
-                    if (client.Entity.Class >= 80 && client.Entity.Class <= 85) {
+                    if (client.Entity.Class is >= 80 and <= 85) {
                         if (client.Entity.Level >= 100 && client.AddSpell(LearnableSpell(12170))) {
                             dialog.Text("You have learned the Splitting Swipe.");
                             dialog.Option("Thank you master.", 255);
@@ -414,7 +414,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 13: {
-                    if (client.Entity.Class >= 80 && client.Entity.Class <= 85) {
+                    if (client.Entity.Class is >= 80 and <= 85) {
                         if (client.Entity.Level >= 100 && client.AddSpell(LearnableSpell(12350))) {
                             dialog.Text("You have learned the Dragon Slash.");
                             dialog.Option("Thank you master.", 255);
@@ -443,7 +443,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 14: {
-                    if (client.Entity.Class >= 80 && client.Entity.Class <= 85) {
+                    if (client.Entity.Class is >= 80 and <= 85) {
                         if (client.Entity.Level >= 70 && client.AddSpell(LearnableSpell(12280))) {
                             dialog.Text("You have learned the Dragon Roar.");
                             dialog.Option("Thank you master.", 255);
@@ -472,7 +472,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 15: {
-                    if (client.Entity.Class >= 80 && client.Entity.Class <= 85) {
+                    if (client.Entity.Class is >= 80 and <= 85) {
                         if (client.Entity.FirstRebornClass >= 85) {
                             if (client.Entity.Level >= 70 && client.AddSpell(LearnableSpell(12200))) {
                                 dialog.Text("You have learned the Dragon Swing.");
@@ -514,8 +514,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                 #region Pure Skill
 
                 case 95: {
-                    if (client.Entity.Class >= 85 && client.Entity.FirstRebornClass >= 85 &&
-                        client.Entity.SecondRebornClass >= 85) {
+                    if (client.Entity is { Class: >= 85, FirstRebornClass: >= 85, SecondRebornClass: >= 85 }) {
                         dialog.Text(
                             "The pure skill, [Dragon Fury], is exclusive for Dragon-Warrior who were also Dragon-Warrior in previous two lives.");
                         dialog.Text(
@@ -534,8 +533,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 17: {
-                    if (client.Entity.Class >= 85 && client.Entity.FirstRebornClass >= 85 &&
-                        client.Entity.SecondRebornClass >= 85) {
+                    if (client.Entity is { Class: >= 85, FirstRebornClass: >= 85, SecondRebornClass: >= 85 }) {
                         if (client.AddSpell(LearnableSpell(12300))) {
                             dialog.Text("You have learned Dragon Fury.");
                             dialog.Option("Thank you.", 255);

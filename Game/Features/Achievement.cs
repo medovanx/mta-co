@@ -64,7 +64,7 @@ namespace MTA.Game
             Network.GamePackets.Message mesaj = new Network.GamePackets.Message(Mesajje, Object.Name, System.Drawing.Color.Red, Network.GamePackets.Message.System);
             Object.Owner.Send(mesaj.ToArray());
 
-            if (!Object.Owner.Fake && !Object.Owner.TransferedPlayer)
+            if (Object.Owner is { Fake: false, TransferedPlayer: false })
             {
                 MySqlCommand command = new MySqlCommand(MySqlCommandType.SELECT);
                 command.Select("entities").Where("UID", Object.Owner.Entity.UID);

@@ -1,5 +1,4 @@
 ﻿using MTA.Game;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,25 +9,30 @@ using MTA.Network.Sockets;
 using MTA.Game.ConquerStructures;
 using MTA.Client;
 using System.Drawing;
+using MTA.Game.Features.Tournaments;
+using MTA.Game.Npcs.ScriptEngine;
 using MTA.Network.GamePackets.EventAlert;
 
-namespace MTA
-{
-    public class World
-    {
+namespace MTA {
+    public class World {
         /// <summary>
         /// The script engine for npcs.
         /// </summary>
         /// 
-        public static MTA.Game.Npcs.ScriptEngine.ScriptEngine ScriptEngine;
+        public static ScriptEngine? ScriptEngine;
+
         public static long Carnaval = 0;
+
         #region Cyclone War
-        public static bool cycolne3 = false;
-        public static bool cycolne1 = false;
-        public static bool cycolne = false;
+
+        public static bool Cycolne3;
+        public static bool Cycolne1;
+        public static bool Cycolne = false;
 
         public static bool LastTeam = false;
+
         #endregion Cyclone War
+
         public static StaticPool GenericThreadPool;
         public static StaticPool ReceivePool, SendPool;
         public TimerRule<GameState> Buffers, Characters, AutoAttack, Prayer;
@@ -36,30 +40,31 @@ namespace MTA
 
         public const uint
             NobilityMapBase = 700,
-            ClassPKMapBase = 1730;
+            ClassPkMapBase = 1730;
 
         public List<KillTournament> Tournaments;
+
         public PoleDomination PoleDomination;
+
         //public SteedRace SteedRace;
-        public CaptureTheFlag CTF;
-        private bool ClanWarAI;
+        public CaptureTheFlag Ctf;
+        private bool _clanWarAi;
         public bool PureLand, MonthlyPKWar;
-        public Game.Features.Tournaments.HeroOfGame HeroOFGame;
+        public HeroOfGame HeroOFGame;
         public Franko.DelayedTask DelayedTask;
-        public World()
-        {
+
+        public World(HeroOfGame heroOfGame) {
+            HeroOFGame = heroOfGame;
             GenericThreadPool = new StaticPool().Run();
             ReceivePool = new StaticPool(128).Run();
             SendPool = new StaticPool().Run();
         }
 
-        public void Init(bool onlylogin = false)
-        {
-            if (!onlylogin)
-            {
+        public void Init(bool onlylogin = false) {
+            if (!onlylogin) {
                 // Initialize event system
                 Game.Events.EventScheduler.Initialize();
-                
+
                 Buffers = new TimerRule<GameState>(BuffersCallback, 1000, ThreadPriority.BelowNormal);
                 Characters = new TimerRule<GameState>(CharactersCallback, 1000, ThreadPriority.BelowNormal);
                 AutoAttack = new TimerRule<GameState>(AutoAttackCallback, 1000, ThreadPriority.BelowNormal);
@@ -70,13 +75,13 @@ namespace MTA
                 Subscribe(TeamArenaFunctions, 1000, ThreadPriority.AboveNormal);
                 Subscribe(ChampionFunctions, 1000, ThreadPriority.AboveNormal);
             }
+
             ConnectionReview = new TimerRule<ClientWrapper>(connectionReview, 60000, ThreadPriority.Lowest);
             ConnectionReceive = new TimerRule<ClientWrapper>(connectionReceive, 1);
             ConnectionSend = new TimerRule<ClientWrapper>(connectionSend, 1);
         }
 
-        public void CreateTournaments()
-        {
+        public void CreateTournaments() {
             var map = Kernel.Maps[700];
             Tournaments = [
                 new KillTournament(map.MakeDynamicMap().ID, WeekDay.Everyday, 1, 05,
@@ -110,165 +115,150 @@ namespace MTA
                 new KillTournament(map.MakeDynamicMap().ID, WeekDay.Everyday, 14, 0,
                     (client) => { client.Entity.ConquerPoints += 1000000; }, "Nobility Tournament (Earl)",
                     (p) => { return p.Entity.NobilityRank == NobilityRank.Earl; })
-
             ];
 
             #region Class PK Tournament
+
             map = Kernel.Maps[1730];
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 20, 30,
-                (client) =>
-                {
+                (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags.TopTrojan, 1, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Trojan)", (p) => { return p.Entity.Class >= 10 && p.Entity.Class <= 15; },
+                }, "Class PK War (Trojan)", (p) => { return p.Entity.Class is >= 10 and <= 15; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 20, 30,
-                (client) =>
-                {
+                (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags.TopWarrior, 1, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Warrior)", (p) => { return p.Entity.Class >= 20 && p.Entity.Class <= 25; },
+                }, "Class PK War (Warrior)", (p) => { return p.Entity.Class is >= 20 and <= 25; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 20, 30,
-                (client) =>
-                {
+                (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags.TopArcher, 1, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Archer)", (p) => { return p.Entity.Class >= 40 && p.Entity.Class <= 45; },
+                }, "Class PK War (Archer)", (p) => { return p.Entity.Class is >= 40 and <= 45; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 20, 30,
-                (client) =>
-                {
+                (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags.TopNinja, 1, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Ninja)", (p) => { return p.Entity.Class >= 50 && p.Entity.Class <= 55; },
+                }, "Class PK War (Ninja)", (p) => { return p.Entity.Class is >= 50 and <= 55; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 20, 30,
-                (client) =>
-                {
+                (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags2.TopMonk, 2, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Monk)", (p) => { return p.Entity.Class >= 60 && p.Entity.Class <= 65; },
+                }, "Class PK War (Monk)", (p) => { return p.Entity.Class is >= 60 and <= 65; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 20, 30,
-                (client) =>
-                {
+                (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags2.TopPirate, 2, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Pirate)", (p) => { return p.Entity.Class >= 70 && p.Entity.Class <= 75; },
+                }, "Class PK War (Pirate)", (p) => { return p.Entity.Class is >= 70 and <= 75; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 20, 30,
-                (client) =>
-                {
+                (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags3.DragonWarriorTop, 3, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (LeeLong)", (p) => { return p.Entity.Class >= 80 && p.Entity.Class <= 85; },
+                }, "Class PK War (LeeLong)", (p) => { return p.Entity.Class is >= 80 and <= 85; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 20, 30,
-                (client) =>
-                {
+                (client) => {
                     client.Entity.ConquerPoints += 1000000;
 
                     client.Entity.AddTopStatus(Update.Flags.TopWaterTaoist, 1, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Water Taoist)", (p) => { return p.Entity.Class >= 130 && p.Entity.Class <= 135; },
+                }, "Class PK War (Water Taoist)", (p) => { return p.Entity.Class is >= 130 and <= 135; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 20, 30,
-                (client) =>
-                {
+                (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags.TopFireTaoist, 1, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Fire Taoist)", (p) => { return p.Entity.Class >= 140 && p.Entity.Class <= 145; },
+                }, "Class PK War (Fire Taoist)", (p) => { return p.Entity.Class is >= 140 and <= 145; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
+
             #endregion
+
             #region Class PK Tournament
+
             map = Kernel.Maps[1730];
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 8, 30,
-                (client) =>
-                {
+                (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags.TopTrojan, 1, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Trojan)", (p) => { return p.Entity.Class >= 10 && p.Entity.Class <= 15; },
+                }, "Class PK War (Trojan)", (p) => { return p.Entity.Class is >= 10 and <= 15; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 8, 30,
-                (client) =>
-                {
+                (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags.TopWarrior, 1, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Warrior)", (p) => { return p.Entity.Class >= 20 && p.Entity.Class <= 25; },
+                }, "Class PK War (Warrior)", (p) => { return p.Entity.Class is >= 20 and <= 25; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 8, 30,
-                (client) =>
-                {
+                (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags.TopArcher, 1, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Archer)", (p) => { return p.Entity.Class >= 40 && p.Entity.Class <= 45; },
+                }, "Class PK War (Archer)", (p) => { return p.Entity.Class is >= 40 and <= 45; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 8, 30,
-                (client) =>
-                {
+                (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags.TopNinja, 1, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Ninja)", (p) => { return p.Entity.Class >= 50 && p.Entity.Class <= 55; },
+                }, "Class PK War (Ninja)", (p) => { return p.Entity.Class is >= 50 and <= 55; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 8, 30,
-                (client) =>
-                {
+                (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags2.TopMonk, 2, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Monk)", (p) => { return p.Entity.Class >= 60 && p.Entity.Class <= 65; },
+                }, "Class PK War (Monk)", (p) => { return p.Entity.Class is >= 60 and <= 65; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 8, 30,
-                (client) =>
-                {
+                (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags2.TopPirate, 2, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Pirate)", (p) => { return p.Entity.Class >= 70 && p.Entity.Class <= 75; },
+                }, "Class PK War (Pirate)", (p) => { return p.Entity.Class is >= 70 and <= 75; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 8, 30,
-                (client) =>
-                {
+                (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags3.DragonWarriorTop, 3, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (LeeLong)", (p) => { return p.Entity.Class >= 80 && p.Entity.Class <= 85; },
+                }, "Class PK War (LeeLong)", (p) => { return p.Entity.Class is >= 80 and <= 85; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 8, 30,
-                (client) =>
-                {
+                (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags.TopWaterTaoist, 1, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Water Taoist)", (p) => { return p.Entity.Class >= 130 && p.Entity.Class <= 135; },
+                }, "Class PK War (Water Taoist)", (p) => { return p.Entity.Class is >= 130 and <= 135; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 8, 30,
-                (client) =>
-                {
+                (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags.TopFireTaoist, 1, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Fire Taoist)", (p) => { return p.Entity.Class >= 140 && p.Entity.Class <= 145; },
+                }, "Class PK War (Fire Taoist)", (p) => { return p.Entity.Class is >= 140 and <= 145; },
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
+
             #endregion
 
             PoleDomination = new PoleDomination(100000);
             ClanWarArena.Create();
-            Game.Features.Tournaments.TeamElitePk.TeamTournament.Create();
-            Game.Features.Tournaments.TeamElitePk.SkillTeamTournament.Create();
+            TeamElitePk.TeamTournament.Create();
+            TeamElitePk.SkillTeamTournament.Create();
             //new ClassPoleWar();
             //new NobiltyPoleWar();
 
-            new GuildScoreWar();
-            new MaTrix.Lobby();
-            new MaTrix.GuildPoleWar();
+            _ = new GuildScoreWar();
+            _ = new MaTrix.Lobby();
+            _ = new MaTrix.GuildPoleWar();
             //SteedRace = new SteedRace();
-            HeroOFGame = new Game.Features.Tournaments.HeroOfGame();
+            HeroOFGame = new HeroOfGame();
             ElitePKTournament.Create();
 
-            CTF = new CaptureTheFlag();
+            Ctf = new CaptureTheFlag();
 
             DelayedTask = new Franko.DelayedTask();
         }
-        public DateTime MonthlyPKDate
-        {
-            get
-            {
+
+        public DateTime MonthlyPKDate {
+            get {
                 DateTime now = DateTime.Now;
                 DateTime month = new DateTime(now.Year, now.Month, 1);
                 while (month.DayOfWeek != DayOfWeek.Sunday)
@@ -276,10 +266,9 @@ namespace MTA
                 return month;
             }
         }
-        public DateTime NextMonthlyPKDate
-        {
-            get
-            {
+
+        public DateTime NextMonthlyPKDate {
+            get {
                 DateTime now = DateTime.Now;
                 DateTime month = new DateTime(now.Year, now.Month, 1).AddMonths(1);
                 while (month.DayOfWeek != DayOfWeek.Sunday)
@@ -288,41 +277,45 @@ namespace MTA
             }
         }
 
-        private void connectionReview(ClientWrapper wrapper, int time)
-        {
+        private void connectionReview(ClientWrapper wrapper, int time) {
             ClientWrapper.TryReview(wrapper);
         }
-        private void connectionReceive(ClientWrapper wrapper, int time)
-        {
+
+        private void connectionReceive(ClientWrapper wrapper, int time) {
             ClientWrapper.TryReceive(wrapper);
         }
-        private void connectionSend(ClientWrapper wrapper, int time)
-        {
+
+        private void connectionSend(ClientWrapper wrapper, int time) {
             ClientWrapper.TrySend(wrapper);
         }
-        public bool tele, tele1, tele2, tele3, tele4, tele5, tele6, tele7 = false;
-        public static void TeleEffect(GameState client, ushort X, ushort Y, ushort Map, uint ID)
-        {
-            Map map = Kernel.Maps[Map];
 
-            FloorItem floorItem1 = new FloorItem(true);
-            floorItem1.ItemID = ID;
-            floorItem1.MapID = Map;
-            floorItem1.ItemColor = Enums.Color.Black;
-            floorItem1.Type = FloorItem.Effect;
-            floorItem1.X = X;
-            floorItem1.Y = Y;
-            floorItem1.OnFloor = Time32.Now;
-            floorItem1.Owner = client;
+        public bool tele, tele1, tele2, tele3, tele4, tele5, tele6, tele7;
+
+        static World() {
+            Cycolne1 = false;
+        }
+
+        public static void TeleEffect(GameState client, ushort x, ushort y, ushort Map, uint id) {
+            var map = Kernel.Maps[Map];
+
+            var floorItem1 = new FloorItem(true) {
+                ItemID = id,
+                MapID = Map,
+                ItemColor = Enums.Color.Black,
+                Type = FloorItem.Effect,
+                X = x,
+                Y = y,
+                OnFloor = Time32.Now,
+                Owner = client
+            };
             while (map.Npcs.ContainsKey(floorItem1.UID))
                 floorItem1.UID = FloorItem.FloorUID.Next;
             map.AddFloorItem(floorItem1);
             client.SendScreenSpawn(floorItem1, true);
         }
-        public bool Register(GameState client)
-        {
-            if (client.TimerSubscriptions == null)
-            {
+
+        public bool Register(GameState client) {
+            if (client.TimerSubscriptions == null) {
                 client.TimerSyncRoot = new object();
                 client.TimerSubscriptions = [
                     Buffers.Add(client),
@@ -332,244 +325,242 @@ namespace MTA
                 ];
                 return true;
             }
+
             return false;
         }
-        public void Unregister(GameState client)
-        {
+
+        public void Unregister(GameState client) {
             if (client.TimerSubscriptions == null) return;
-            lock (client.TimerSyncRoot)
-            {
-                if (client.TimerSubscriptions != null)
-                {
+            lock (client.TimerSyncRoot) {
+                if (client.TimerSubscriptions != null) {
                     foreach (var timer in client.TimerSubscriptions)
                         timer.Dispose();
                     client.TimerSubscriptions = null;
                 }
             }
         }
-        private bool Valid(GameState client)
-        {
-            if (!client.Socket.Alive || client.Entity == null)
-            {
+
+        private bool Valid(GameState client) {
+            if (!client.Socket.Alive || client.Entity == null) {
                 client.Disconnect();
                 return false;
             }
+
             return true;
         }
 
-        private void BuffersCallback(GameState client, int time)
-        {
-            if (!Valid(client)) return;
+        private void BuffersCallback(GameState c, int time) {
+            if (!Valid(c)) return;
             var now = new Time32(time);
-            foreach (var C in Program.Values)
-            {
-                if (C.Entity.BattlePower > 405 && C.Entity.NobilityRank == NobilityRank.King)
-                {
-                    C.Disconnect();
+            foreach (var client in Program.Values) {
+                if (client.Entity is { BattlePower: > 405, NobilityRank: NobilityRank.King }) {
+                    client.Disconnect();
                 }
-                if (C.Entity.BattlePower > 402 && C.Entity.NobilityRank == NobilityRank.Prince)
-                {
-                    C.Disconnect();
+
+                if (client.Entity is { BattlePower: > 402, NobilityRank: NobilityRank.Prince }) {
+                    client.Disconnect();
                 }
-                if (C.Entity.BattlePower > 400 && C.Entity.NobilityRank == NobilityRank.Duke)
-                {
-                    C.Disconnect();
+
+                if (client.Entity is { BattlePower: > 400, NobilityRank: NobilityRank.Duke }) {
+                    client.Disconnect();
                 }
-                if (C.Entity.BattlePower > 398 && C.Entity.NobilityRank == NobilityRank.Earl)
-                {
-                    C.Disconnect();
+
+                if (client.Entity is { BattlePower: > 398, NobilityRank: NobilityRank.Earl }) {
+                    client.Disconnect();
                 }
             }
 
             #region Exit PolePrize
-            if (DateTime.Now.Minute >= 10 && DateTime.Now.Second == 07)
-            {
-                if (client.Entity.MapID == 1024)
-                {
-                    client.Entity.Teleport(1002, 301, 279);
-                    Kernel.SendWorldMessage(new Message("PolePrize Is ended ,, Start This War at xx:05 Every Hour", Color.Black, Message.Center), Program.Values);
+
+            if (DateTime.Now.Minute >= 10 && DateTime.Now.Second == 07) {
+                if (c.Entity.MapID == 1024) {
+                    c.Entity.Teleport(1002, 301, 279);
+                    Kernel.SendWorldMessage(
+                        new Message("PolePrize Is ended ,, Start This War at xx:05 Every Hour", Color.Black,
+                            Message.Center), Program.Values);
                 }
             }
+
             #endregion
+
             #region Arena Quit
-            if (client.InArenaQualifier() && client.Map.BaseID != 700)
-            {
-                Arena.QualifyEngine.DoGiveUp(client);
+
+            if (c.InArenaQualifier() && c.Map.BaseID != 700) {
+                Arena.QualifyEngine.DoGiveUp(c);
             }
+
             #endregion
+
             #region Aura
-            if (client.Entity.Aura_isActive)
-            {
-                if (client.Entity.Aura_isActive)
-                {
-                    if (Time32.Now >= client.Entity.AuraStamp.AddSeconds(client.Entity.AuraTime))
-                    {
-                        client.Entity.RemoveFlag2(client.Entity.Aura_actType);
-                        client.removeAuraBonuses(client.Entity.Aura_actType, client.Entity.Aura_actPower, 1);
-                        client.Entity.Aura_isActive = false;
-                        client.Entity.AuraTime = 0;
-                        client.Entity.Aura_actType = 0;
-                        client.Entity.Aura_actPower = 0;
-                        client.Entity.Aura_actLevel = 0;
+
+            if (c.Entity.Aura_isActive) {
+                if (c.Entity.Aura_isActive) {
+                    if (Time32.Now >= c.Entity.AuraStamp.AddSeconds(c.Entity.AuraTime)) {
+                        c.Entity.RemoveFlag2(c.Entity.Aura_actType);
+                        c.removeAuraBonuses(c.Entity.Aura_actType, c.Entity.Aura_actPower, 1);
+                        c.Entity.Aura_isActive = false;
+                        c.Entity.AuraTime = 0;
+                        c.Entity.Aura_actType = 0;
+                        c.Entity.Aura_actPower = 0;
+                        c.Entity.Aura_actLevel = 0;
                     }
                 }
             }
+
             #endregion
+
             #region Bless
-            if (client.Entity.ContainsFlag(Update.Flags.CastPray))
-            {
-                if (client.BlessTime <= 7198500)
-                    client.BlessTime += 1000;
+
+            if (c.Entity.ContainsFlag(Update.Flags.CastPray)) {
+                if (c.BlessTime <= 7198500)
+                    c.BlessTime += 1000;
                 else
-                    client.BlessTime = 7200000;
-                client.Entity.Update(Update.LuckyTimeTimer, client.BlessTime, false);
+                    c.BlessTime = 7200000;
+                c.Entity.Update(Update.LuckyTimeTimer, c.BlessTime, false);
             }
-            else if (client.Entity.ContainsFlag(Update.Flags.Praying))
-            {
-                if (client.PrayLead != null)
-                {
-                    if (client.PrayLead.Socket.Alive)
-                    {
-                        if (client.BlessTime <= 7199000)
-                            client.BlessTime += 500;
+            else if (c.Entity.ContainsFlag(Update.Flags.Praying)) {
+                if (c.PrayLead != null) {
+                    if (c.PrayLead.Socket.Alive) {
+                        if (c.BlessTime <= 7199000)
+                            c.BlessTime += 500;
                         else
-                            client.BlessTime = 7200000;
-                        client.Entity.Update(Update.LuckyTimeTimer, client.BlessTime, false);
+                            c.BlessTime = 7200000;
+                        c.Entity.Update(Update.LuckyTimeTimer, c.BlessTime, false);
                     }
                     else
-                        client.Entity.RemoveFlag(Update.Flags.Praying);
+                        c.Entity.RemoveFlag(Update.Flags.Praying);
                 }
                 else
-                    client.Entity.RemoveFlag(Update.Flags.Praying);
+                    c.Entity.RemoveFlag(Update.Flags.Praying);
             }
-            else
-            {
-                if (client.BlessTime > 0)
-                {
-                    if (client.BlessTime >= 500)
-                        client.BlessTime -= 500;
+            else {
+                if (c.BlessTime > 0) {
+                    if (c.BlessTime >= 500)
+                        c.BlessTime -= 500;
                     else
-                        client.BlessTime = 0;
-                    client.Entity.Update(Update.LuckyTimeTimer, client.BlessTime, false);
+                        c.BlessTime = 0;
+                    c.Entity.Update(Update.LuckyTimeTimer, c.BlessTime, false);
                 }
             }
+
             #endregion
+
             #region XpBlueStamp
-            if (client.Entity.ContainsFlag3(Update.Flags3.WarriorEpicShield))
-            {
-                if (Time32.Now > client.Entity.XpBlueStamp.AddSeconds(33))
-                {
-                    client.Entity.ShieldIncrease = 0;
-                    client.Entity.ShieldTime = 0;
-                    client.Entity.MagicShieldIncrease = 0;
-                    client.Entity.MagicShieldTime = 0;
-                    client.Entity.RemoveFlag3(Update.Flags3.WarriorEpicShield);
+
+            if (c.Entity.ContainsFlag3(Update.Flags3.WarriorEpicShield)) {
+                if (Time32.Now > c.Entity.XpBlueStamp.AddSeconds(33)) {
+                    c.Entity.ShieldIncrease = 0;
+                    c.Entity.ShieldTime = 0;
+                    c.Entity.MagicShieldIncrease = 0;
+                    c.Entity.MagicShieldTime = 0;
+                    c.Entity.RemoveFlag3(Update.Flags3.WarriorEpicShield);
                 }
             }
+
             #endregion
+
             #region ManiacDance
-            if (client.Entity.ContainsFlag3(1UL << 53))
-            {
-                if (Time32.Now > client.Entity.ManiacDance.AddSeconds(15))
-                {
-                    client.Entity.RemoveFlag3(1UL << 53);
+
+            if (c.Entity.ContainsFlag3(1UL << 53)) {
+                if (Time32.Now > c.Entity.ManiacDance.AddSeconds(15)) {
+                    c.Entity.RemoveFlag3(1UL << 53);
                 }
             }
+
             #endregion
+
             #region Backfire
-            if (client.Entity.ContainsFlag3(1UL << 51))
-            {
-                if (Time32.Now > client.Entity.BackfireStamp.AddSeconds(8))
-                {
-                    if (client.Spells.ContainsKey(12680))
-                    {
-                        if (client.Entity.ContainsFlag3(1UL << 51))
-                            client.Entity.RemoveFlag3(1UL << 51);
+
+            if (c.Entity.ContainsFlag3(1UL << 51)) {
+                if (Time32.Now > c.Entity.BackfireStamp.AddSeconds(8)) {
+                    if (c.Spells.ContainsKey(12680)) {
+                        if (c.Entity.ContainsFlag3(1UL << 51))
+                            c.Entity.RemoveFlag3(1UL << 51);
                     }
-                    client.Entity.BackfireStamp = Time32.Now;
+
+                    c.Entity.BackfireStamp = Time32.Now;
                 }
             }
+
             #endregion
+
             #region Flashing name
-            if (client.Entity.ContainsFlag(Update.Flags.FlashingName))
-            {
-                if (now > client.Entity.FlashingNameStamp.AddSeconds(client.Entity.FlashingNameTime))
-                {
-                    client.Entity.RemoveFlag(Update.Flags.FlashingName);
+
+            if (c.Entity.ContainsFlag(Update.Flags.FlashingName)) {
+                if (now > c.Entity.FlashingNameStamp.AddSeconds(c.Entity.FlashingNameTime)) {
+                    c.Entity.RemoveFlag(Update.Flags.FlashingName);
                 }
             }
+
             #endregion
+
             #region XPList
-            if (!client.Entity.ContainsFlag(Update.Flags.XPList))
-            {
-                if (now > client.XPCountStamp.AddSeconds(3))
-                {
+
+            if (!c.Entity.ContainsFlag(Update.Flags.XPList)) {
+                if (now > c.XPCountStamp.AddSeconds(3)) {
                     #region Frankos
-                    if (client.Equipment != null)
-                    {
-                        if (!client.Equipment.Free(5))
-                        {
-                            if (Network.PacketHandler.IsFranko(client.Equipment.TryGetItem(5).ID))
-                            {
-                                Database.ConquerItemTable.UpdateDurabilityItem(client.Equipment.TryGetItem(5));
+
+                    if (c.Equipment != null) {
+                        if (!c.Equipment.Free(5)) {
+                            if (Network.PacketHandler.IsFranko(c.Equipment.TryGetItem(5).ID)) {
+                                Database.ConquerItemTable.UpdateDurabilityItem(c.Equipment.TryGetItem(5));
                             }
                         }
                     }
-                    #endregion
-                    client.XPCountStamp = now;
-                    client.XPCount++;
-                    if (client.XPCount >= 100)
-                    {
-                        client.Entity.AddFlag(Update.Flags.XPList);
-                        client.XPCount = 0;
-                        client.XPListStamp = now;
-                    }
-                }
-            }
-            else
-            {
-                if (now > client.XPListStamp.AddSeconds(20))
-                {
-                    client.Entity.RemoveFlag(Update.Flags.XPList);
-                }
-            }
-            #endregion
-            #region KOSpell
-            if (client.Entity.OnKOSpell())
-            {
-                if (client.Entity.OnCyclone())
-                {
-                    int Seconds = now.AllSeconds() - client.Entity.CycloneStamp.AddSeconds(client.Entity.CycloneTime).AllSeconds();
-                    if (Seconds >= 1)
-                    {
-                        client.Entity.RemoveFlag(Update.Flags.Cyclone);
-                    }
-                }
-                if (client.Entity.OnSuperman())
-                {
-                    int Seconds = now.AllSeconds() - client.Entity.SupermanStamp.AddSeconds(client.Entity.SupermanTime).AllSeconds();
-                    if (Seconds >= 1)
-                    {
-                        client.Entity.RemoveFlag(Update.Flags.Superman);
-                    }
-                }
-                if (!client.Entity.OnKOSpell())
-                {
-                    client.Entity.KOCount = 0;
-                }
-            }
-            #endregion
-            #region Buffers
-            if (client.Entity.Aura_isActive)
-            {
-                if (now >= client.Entity.AuraStamp.AddSeconds(client.Entity.AuraTime) || client.Entity.Dead)
-                {
 
-                    client.Entity.AuraTime = 0;
-                    client.Entity.Aura_isActive = false;
+                    #endregion
+
+                    c.XPCountStamp = now;
+                    c.XPCount++;
+                    if (c.XPCount >= 100) {
+                        c.Entity.AddFlag(Update.Flags.XPList);
+                        c.XPCount = 0;
+                        c.XPListStamp = now;
+                    }
+                }
+            }
+            else {
+                if (now > c.XPListStamp.AddSeconds(20)) {
+                    c.Entity.RemoveFlag(Update.Flags.XPList);
+                }
+            }
+
+            #endregion
+
+            #region KOSpell
+
+            if (c.Entity.OnKOSpell()) {
+                if (c.Entity.OnCyclone()) {
+                    int seconds = now.AllSeconds() -
+                                  c.Entity.CycloneStamp.AddSeconds(c.Entity.CycloneTime).AllSeconds();
+                    if (seconds >= 1) {
+                        c.Entity.RemoveFlag(Update.Flags.Cyclone);
+                    }
+                }
+
+                if (c.Entity.OnSuperman()) {
+                    var seconds = now.AllSeconds() -
+                                  c.Entity.SupermanStamp.AddSeconds(c.Entity.SupermanTime).AllSeconds();
+                    if (seconds >= 1) {
+                        c.Entity.RemoveFlag(Update.Flags.Superman);
+                    }
+                }
+
+                if (!c.Entity.OnKOSpell()) {
+                    c.Entity.KOCount = 0;
+                }
+            }
+
+            #endregion
+
+            #region Buffers
+
+            if (c.Entity.Aura_isActive) {
+                if (now >= c.Entity.AuraStamp.AddSeconds(c.Entity.AuraTime) || c.Entity.Dead) {
+                    c.Entity.AuraTime = 0;
+                    c.Entity.Aura_isActive = false;
                     Update.AuraType aura = Update.AuraType.TyrantAura;
-                    switch (client.Entity.Aura_actType)
-                    {
+                    switch (c.Entity.Aura_actType) {
                         case Update.Flags2.EarthAura: aura = Update.AuraType.EarthAura; break;
                         case Update.Flags2.FireAura: aura = Update.AuraType.FireAura; break;
                         case Update.Flags2.WaterAura: aura = Update.AuraType.WaterAura; break;
@@ -578,959 +569,967 @@ namespace MTA
                         case Update.Flags2.FendAura: aura = Update.AuraType.FendAura; break;
                         case Update.Flags2.TyrantAura: aura = Update.AuraType.TyrantAura; break;
                     }
-                    new Update(true).Aura(client.Entity, Update.AuraDataTypes.Remove, aura, client.Entity.Aura_actLevel, client.Entity.Aura_actPower);
 
-                    client.removeAuraBonuses(client.Entity.Aura_actType, client.Entity.Aura_actPower, 1);
-                    client.Entity.RemoveFlag2(client.Entity.Aura_actType);
-                    client.Entity.RemoveFlag2(client.Entity.Aura_actType2);
-                    client.Entity.Aura_actType = 0;
-                    client.Entity.Aura_actType2 = 0;
-                    client.Entity.Aura_actPower = 0;
-                    client.Entity.Aura_actLevel = 0;
-                }
+                    new Update(true).Aura(c.Entity, Update.AuraDataTypes.Remove, aura, c.Entity.Aura_actLevel,
+                        c.Entity.Aura_actPower);
 
+                    c.removeAuraBonuses(c.Entity.Aura_actType, c.Entity.Aura_actPower, 1);
+                    c.Entity.RemoveFlag2(c.Entity.Aura_actType);
+                    c.Entity.RemoveFlag2(c.Entity.Aura_actType2);
+                    c.Entity.Aura_actType = 0;
+                    c.Entity.Aura_actType2 = 0;
+                    c.Entity.Aura_actPower = 0;
+                    c.Entity.Aura_actLevel = 0;
+                }
+            }
 
-            }
-            if (client.Entity.ContainsFlag(Update.Flags.Stigma))
-            {
-                if (now >= client.Entity.StigmaStamp.AddSeconds(client.Entity.StigmaTime))
-                {
-                    client.Entity.StigmaTime = 0;
-                    client.Entity.StigmaIncrease = 0;
-                    client.Entity.RemoveFlag(Update.Flags.Stigma);
+            if (c.Entity.ContainsFlag(Update.Flags.Stigma)) {
+                if (now >= c.Entity.StigmaStamp.AddSeconds(c.Entity.StigmaTime)) {
+                    c.Entity.StigmaTime = 0;
+                    c.Entity.StigmaIncrease = 0;
+                    c.Entity.RemoveFlag(Update.Flags.Stigma);
                 }
             }
-            if (client.Entity.ContainsFlag(Update.Flags.Dodge))
-            {
-                if (now >= client.Entity.DodgeStamp.AddSeconds(client.Entity.DodgeTime))
-                {
-                    client.Entity.DodgeTime = 0;
-                    client.Entity.DodgeIncrease = 0;
-                    client.Entity.RemoveFlag(Update.Flags.Dodge);
+
+            if (c.Entity.ContainsFlag(Update.Flags.Dodge)) {
+                if (now >= c.Entity.DodgeStamp.AddSeconds(c.Entity.DodgeTime)) {
+                    c.Entity.DodgeTime = 0;
+                    c.Entity.DodgeIncrease = 0;
+                    c.Entity.RemoveFlag(Update.Flags.Dodge);
                 }
             }
-            if (client.Entity.ContainsFlag(Update.Flags.Invisibility))
-            {
-                if (now >= client.Entity.InvisibilityStamp.AddSeconds(client.Entity.InvisibilityTime))
-                {
-                    client.Entity.RemoveFlag(Update.Flags.Invisibility);
+
+            if (c.Entity.ContainsFlag(Update.Flags.Invisibility)) {
+                if (now >= c.Entity.InvisibilityStamp.AddSeconds(c.Entity.InvisibilityTime)) {
+                    c.Entity.RemoveFlag(Update.Flags.Invisibility);
                 }
             }
-            if (client.Entity.ContainsFlag(Update.Flags.StarOfAccuracy))
-            {
-                if (client.Entity.StarOfAccuracyTime != 0)
-                {
-                    if (now >= client.Entity.StarOfAccuracyStamp.AddSeconds(client.Entity.StarOfAccuracyTime))
-                    {
-                        client.Entity.RemoveFlag(Update.Flags.StarOfAccuracy);
+
+            if (c.Entity.ContainsFlag(Update.Flags.StarOfAccuracy)) {
+                if (c.Entity.StarOfAccuracyTime != 0) {
+                    if (now >= c.Entity.StarOfAccuracyStamp.AddSeconds(c.Entity.StarOfAccuracyTime)) {
+                        c.Entity.RemoveFlag(Update.Flags.StarOfAccuracy);
                     }
                 }
-                else
-                {
-                    if (now >= client.Entity.AccuracyStamp.AddSeconds(client.Entity.AccuracyTime))
-                    {
-                        client.Entity.RemoveFlag(Update.Flags.StarOfAccuracy);
+                else {
+                    if (now >= c.Entity.AccuracyStamp.AddSeconds(c.Entity.AccuracyTime)) {
+                        c.Entity.RemoveFlag(Update.Flags.StarOfAccuracy);
                     }
                 }
             }
-            if (client.Entity.ContainsFlag(Update.Flags.MagicShield))
-            {
-                if (client.Entity.MagicShieldTime != 0)
-                {
-                    if (now >= client.Entity.MagicShieldStamp.AddSeconds(client.Entity.MagicShieldTime))
-                    {
-                        client.Entity.MagicShieldIncrease = 0;
-                        client.Entity.MagicShieldTime = 0;
-                        client.Entity.RemoveFlag(Update.Flags.MagicShield);
+
+            if (c.Entity.ContainsFlag(Update.Flags.MagicShield)) {
+                if (c.Entity.MagicShieldTime != 0) {
+                    if (now >= c.Entity.MagicShieldStamp.AddSeconds(c.Entity.MagicShieldTime)) {
+                        c.Entity.MagicShieldIncrease = 0;
+                        c.Entity.MagicShieldTime = 0;
+                        c.Entity.RemoveFlag(Update.Flags.MagicShield);
                     }
                 }
-                else
-                {
-                    if (now >= client.Entity.ShieldStamp.AddSeconds(client.Entity.ShieldTime))
-                    {
-                        client.Entity.ShieldIncrease = 0;
-                        client.Entity.ShieldTime = 0;
-                        client.Entity.RemoveFlag(Update.Flags.MagicShield);
+                else {
+                    if (now >= c.Entity.ShieldStamp.AddSeconds(c.Entity.ShieldTime)) {
+                        c.Entity.ShieldIncrease = 0;
+                        c.Entity.ShieldTime = 0;
+                        c.Entity.RemoveFlag(Update.Flags.MagicShield);
                     }
                 }
             }
+
             #endregion
-            if (client.Map.BaseID == 700)
-            {
-                if (client.Entity.ContainsFlag(Update.Flags.Ride))
-                {
-                    client.Entity.RemoveFlag(Update.Flags.Ride);
+
+            if (c.Map.BaseID == 700) {
+                if (c.Entity.ContainsFlag(Update.Flags.Ride)) {
+                    c.Entity.RemoveFlag(Update.Flags.Ride);
                 }
             }
+
             #region AuroraLotus
-            if (client.Spells.ContainsKey(12370))
-            {
-                if (!client.Entity.ContainsFlag3(Update.Flags3.AuroraLotus))
-                {
-                    client.Entity.AuroraLotusEnergy = 0;
-                    if (client.Entity.Lotus(client.Entity.AuroraLotusEnergy))
-                        client.Entity.AddFlag3(Update.Flags3.AuroraLotus);
-                }
 
+            if (c.Spells.ContainsKey(12370)) {
+                if (!c.Entity.ContainsFlag3(Update.Flags3.AuroraLotus)) {
+                    c.Entity.AuroraLotusEnergy = 0;
+                    if (c.Entity.Lotus(c.Entity.AuroraLotusEnergy))
+                        c.Entity.AddFlag3(Update.Flags3.AuroraLotus);
+                }
             }
+
             #endregion AuroraLotus
+
             #region FlameLotus
-            if (client.Spells.ContainsKey(12380))
-            {
-                if (!client.Entity.ContainsFlag3(Update.Flags3.FlameLotus))
-                {
-                    client.Entity.FlameLotusEnergy = 0;
-                    if (client.Entity.Lotus(client.Entity.FlameLotusEnergy, Update.FlameLotus))
-                        client.Entity.AddFlag3(Update.Flags3.FlameLotus);
+
+            if (c.Spells.ContainsKey(12380)) {
+                if (!c.Entity.ContainsFlag3(Update.Flags3.FlameLotus)) {
+                    c.Entity.FlameLotusEnergy = 0;
+                    if (c.Entity.Lotus(c.Entity.FlameLotusEnergy, Update.FlameLotus))
+                        c.Entity.AddFlag3(Update.Flags3.FlameLotus);
                 }
             }
+
             #endregion FlameLotus
-            client.CheckTeamAura();
+
+            c.CheckTeamAura();
+
             #region Fly
-            if (client.Entity.ContainsFlag(Update.Flags.Fly))
-            {
-                if (now >= client.Entity.FlyStamp.AddSeconds(client.Entity.FlyTime))
-                {
-                    client.Entity.RemoveFlag(Update.Flags.Fly);
-                    client.Entity.FlyTime = 0;
+
+            if (c.Entity.ContainsFlag(Update.Flags.Fly)) {
+                if (now >= c.Entity.FlyStamp.AddSeconds(c.Entity.FlyTime)) {
+                    c.Entity.RemoveFlag(Update.Flags.Fly);
+                    c.Entity.FlyTime = 0;
                 }
             }
+
             #endregion
+
             #region PoisonStar
-            if (client.Entity.NoDrugsTime > 0)
-            {
-                if (now > client.Entity.NoDrugsStamp.AddSeconds(client.Entity.NoDrugsTime))
-                {
-                    client.Entity.NoDrugsTime = 0;
-                    client.Entity.RemoveFlag2(Update.Flags2.EffectBall);
+
+            if (c.Entity.NoDrugsTime > 0) {
+                if (now > c.Entity.NoDrugsStamp.AddSeconds(c.Entity.NoDrugsTime)) {
+                    c.Entity.NoDrugsTime = 0;
+                    c.Entity.RemoveFlag2(Update.Flags2.EffectBall);
                 }
             }
+
             #endregion
+
             #region ToxicFog
-            if (client.Entity.ToxicFogLeft > 0)
-            {
-                if (now >= client.Entity.ToxicFogStamp.AddSeconds(2))
-                {
-                    float Percent = client.Entity.ToxicFogPercent;
-                    if (client.Entity.Detoxication != 0)
-                    {
-                        float immu = 1 - client.Entity.Detoxication / 100F;
-                        Percent = Percent * immu;
+
+            if (c.Entity.ToxicFogLeft > 0) {
+                if (now >= c.Entity.ToxicFogStamp.AddSeconds(2)) {
+                    float percent = c.Entity.ToxicFogPercent;
+                    if (c.Entity.Detoxication != 0) {
+                        float immu = 1 - c.Entity.Detoxication / 100F;
+                        percent = percent * immu;
                     }
-                    client.Entity.ToxicFogLeft--;
-                    if (client.Entity.ToxicFogLeft == 0)
-                    {
-                        client.Entity.RemoveFlag(Update.Flags.Poisoned);
+
+                    c.Entity.ToxicFogLeft--;
+                    if (c.Entity.ToxicFogLeft == 0) {
+                        c.Entity.RemoveFlag(Update.Flags.Poisoned);
                         return;
                     }
-                    client.Entity.ToxicFogStamp = now;
-                    if (client.Entity.Hitpoints > 1)
-                    {
-                        uint damage = Game.Attacking.Calculate.Percent(client.Entity, Percent);
-                        if (client.Entity.ContainsFlag2(Update.Flags2.AzureShield))
-                        {
 
-                            if (damage > client.Entity.AzureShieldDefence)
-                            {
-                                damage -= client.Entity.AzureShieldDefence;
-                                Game.Attacking.Calculate.CreateAzureDMG(client.Entity.AzureShieldDefence, client.Entity, client.Entity);
-                                client.Entity.RemoveFlag2(Update.Flags2.AzureShield);
+                    c.Entity.ToxicFogStamp = now;
+                    if (c.Entity.Hitpoints > 1) {
+                        uint damage = Game.Attacking.Calculate.Percent(c.Entity, percent);
+                        if (c.Entity.ContainsFlag2(Update.Flags2.AzureShield)) {
+                            if (damage > c.Entity.AzureShieldDefence) {
+                                damage -= c.Entity.AzureShieldDefence;
+                                Game.Attacking.Calculate.CreateAzureDMG(c.Entity.AzureShieldDefence, c.Entity,
+                                    c.Entity);
+                                c.Entity.RemoveFlag2(Update.Flags2.AzureShield);
                             }
-                            else
-                            {
-                                Game.Attacking.Calculate.CreateAzureDMG(damage, client.Entity, client.Entity);
-                                client.Entity.AzureShieldDefence -= (ushort)damage;
-                                client.Entity.AzureShieldPacket();
+                            else {
+                                Game.Attacking.Calculate.CreateAzureDMG(damage, c.Entity, c.Entity);
+                                c.Entity.AzureShieldDefence -= (ushort)damage;
+                                c.Entity.AzureShieldPacket();
                                 damage = 1;
                             }
                         }
                         else
-                            client.Entity.Hitpoints -= damage;
+                            c.Entity.Hitpoints -= damage;
 
                         SpellUse suse = new SpellUse(true);
-                        suse.Attacker = client.Entity.UID;
+                        suse.Attacker = c.Entity.UID;
                         suse.SpellID = 10010;
-                        suse.AddTarget(client.Entity, damage, null);
-                        client.SendScreen(suse);
-                        client.UpdateQualifier(client.ArenaStatistic.PlayWith, client, damage);
-
+                        suse.AddTarget(c.Entity, damage, null);
+                        c.SendScreen(suse);
+                        c.UpdateQualifier(c.ArenaStatistic.PlayWith, c, damage);
                     }
                 }
             }
-            else
-            {
-                if (client.Entity.ContainsFlag(Update.Flags.Poisoned))
-                    client.Entity.RemoveFlag(Update.Flags.Poisoned);
+            else {
+                if (c.Entity.ContainsFlag(Update.Flags.Poisoned))
+                    c.Entity.RemoveFlag(Update.Flags.Poisoned);
             }
+
             #endregion
 
             #region lianhuaran
-            if (client.Entity.lianhuaranLeft > 0)
-            {
-                if (now >= client.Entity.lianhuaranStamp.AddSeconds(2))
-                {
-                    float percent = client.Entity.lianhuaranPercent;
-                    if (client.Entity.Detoxication != 0)
-                    {
-                        float immu = 1 - client.Entity.Detoxication / 100F;
+
+            if (c.Entity.lianhuaranLeft > 0) {
+                if (now >= c.Entity.lianhuaranStamp.AddSeconds(2)) {
+                    float percent = c.Entity.lianhuaranPercent;
+                    if (c.Entity.Detoxication != 0) {
+                        float immu = 1 - c.Entity.Detoxication / 100F;
                         percent = percent * immu;
                     }
-                    client.Entity.lianhuaranLeft--;
-                    if (client.Entity.lianhuaranLeft == 0)
-                    {
-                        client.Entity.RemoveFlag3(Update.Flags3.lianhuaran01);
-                        client.Entity.RemoveFlag3(Update.Flags3.lianhuaran02);
-                        client.Entity.RemoveFlag3(Update.Flags3.lianhuaran03);
-                        client.Entity.RemoveFlag3(Update.Flags3.lianhuaran04);
+
+                    c.Entity.lianhuaranLeft--;
+                    if (c.Entity.lianhuaranLeft == 0) {
+                        c.Entity.RemoveFlag3(Update.Flags3.lianhuaran01);
+                        c.Entity.RemoveFlag3(Update.Flags3.lianhuaran02);
+                        c.Entity.RemoveFlag3(Update.Flags3.lianhuaran03);
+                        c.Entity.RemoveFlag3(Update.Flags3.lianhuaran04);
                         return;
                     }
-                    client.Entity.lianhuaranStamp = now;
-                    if (client.Entity.Hitpoints > 1)
-                    {
-                        uint damage = Game.Attacking.Calculate.Percent(client.Entity, percent);
-                        if (client.Entity.ContainsFlag2(Update.Flags2.AzureShield))
-                        {
 
-                            if (damage > client.Entity.AzureShieldDefence)
-                            {
-                                damage -= client.Entity.AzureShieldDefence;
-                                Game.Attacking.Calculate.CreateAzureDMG(client.Entity.AzureShieldDefence, client.Entity, client.Entity);
-                                client.Entity.RemoveFlag2(Update.Flags2.AzureShield);
+                    c.Entity.lianhuaranStamp = now;
+                    if (c.Entity.Hitpoints > 1) {
+                        uint damage = Game.Attacking.Calculate.Percent(c.Entity, percent);
+                        if (c.Entity.ContainsFlag2(Update.Flags2.AzureShield)) {
+                            if (damage > c.Entity.AzureShieldDefence) {
+                                damage -= c.Entity.AzureShieldDefence;
+                                Game.Attacking.Calculate.CreateAzureDMG(c.Entity.AzureShieldDefence, c.Entity,
+                                    c.Entity);
+                                c.Entity.RemoveFlag2(Update.Flags2.AzureShield);
                             }
-                            else
-                            {
-                                Game.Attacking.Calculate.CreateAzureDMG(damage, client.Entity, client.Entity);
-                                client.Entity.AzureShieldDefence -= (ushort)damage;
-                                client.Entity.AzureShieldPacket();
+                            else {
+                                Game.Attacking.Calculate.CreateAzureDMG(damage, c.Entity, c.Entity);
+                                c.Entity.AzureShieldDefence -= (ushort)damage;
+                                c.Entity.AzureShieldPacket();
                                 damage = 1;
                             }
                         }
                         else
-                            client.Entity.Hitpoints -= damage;
+                            c.Entity.Hitpoints -= damage;
 
 
-                        client.UpdateQualifier(client.ArenaStatistic.PlayWith, client, damage);
-
+                        c.UpdateQualifier(c.ArenaStatistic.PlayWith, c, damage);
                     }
                 }
             }
-            else
-            {
-                if (client.Entity.ContainsFlag3(Update.Flags3.lianhuaran01))
-                    client.Entity.RemoveFlag3(Update.Flags3.lianhuaran01);
-                if (client.Entity.ContainsFlag3(Update.Flags3.lianhuaran02))
-                    client.Entity.RemoveFlag3(Update.Flags3.lianhuaran02);
-                if (client.Entity.ContainsFlag3(Update.Flags3.lianhuaran03))
-                    client.Entity.RemoveFlag3(Update.Flags3.lianhuaran03);
-                if (client.Entity.ContainsFlag3(Update.Flags3.lianhuaran04))
-                    client.Entity.RemoveFlag3(Update.Flags3.lianhuaran04);
-
+            else {
+                if (c.Entity.ContainsFlag3(Update.Flags3.lianhuaran01))
+                    c.Entity.RemoveFlag3(Update.Flags3.lianhuaran01);
+                if (c.Entity.ContainsFlag3(Update.Flags3.lianhuaran02))
+                    c.Entity.RemoveFlag3(Update.Flags3.lianhuaran02);
+                if (c.Entity.ContainsFlag3(Update.Flags3.lianhuaran03))
+                    c.Entity.RemoveFlag3(Update.Flags3.lianhuaran03);
+                if (c.Entity.ContainsFlag3(Update.Flags3.lianhuaran04))
+                    c.Entity.RemoveFlag3(Update.Flags3.lianhuaran04);
             }
+
             #endregion
 
             #region FatalStrike
-            if (client.Entity.OnFatalStrike())
-            {
-                if (now > client.Entity.FatalStrikeStamp.AddSeconds(client.Entity.FatalStrikeTime))
-                {
-                    client.Entity.RemoveFlag(Update.Flags.FatalStrike);
+
+            if (c.Entity.OnFatalStrike()) {
+                if (now > c.Entity.FatalStrikeStamp.AddSeconds(c.Entity.FatalStrikeTime)) {
+                    c.Entity.RemoveFlag(Update.Flags.FatalStrike);
                 }
             }
+
             #endregion
+
             #region Oblivion
-            if (client.Entity.OnOblivion())
-            {
-                if (now > client.Entity.OblivionStamp.AddSeconds(client.Entity.OblivionTime))
-                {
-                    client.Entity.RemoveFlag2(Update.Flags2.Oblivion);
+
+            if (c.Entity.OnOblivion()) {
+                if (now > c.Entity.OblivionStamp.AddSeconds(c.Entity.OblivionTime)) {
+                    c.Entity.RemoveFlag2(Update.Flags2.Oblivion);
                 }
             }
+
             #endregion
+
             #region ShurikenVortex
-            if (client.Entity.ContainsFlag(Update.Flags.ShurikenVortex))
-            {
-                if (now > client.Entity.ShurikenVortexStamp.AddSeconds(client.Entity.ShurikenVortexTime))
-                {
-                    client.Entity.RemoveFlag(Update.Flags.ShurikenVortex);
+
+            if (c.Entity.ContainsFlag(Update.Flags.ShurikenVortex)) {
+                if (now > c.Entity.ShurikenVortexStamp.AddSeconds(c.Entity.ShurikenVortexTime)) {
+                    c.Entity.RemoveFlag(Update.Flags.ShurikenVortex);
                 }
             }
+
             #endregion
+
             #region Transformations
-            if (client.Entity.Transformed)
-            {
-                if (now > client.Entity.TransformationStamp.AddSeconds(client.Entity.TransformationTime))
-                {
-                    client.Entity.Untransform();
+
+            if (c.Entity.Transformed) {
+                if (now > c.Entity.TransformationStamp.AddSeconds(c.Entity.TransformationTime)) {
+                    c.Entity.Untransform();
                 }
             }
+
             #endregion
+
             #region soulshackle
-            if (client.Entity.ContainsFlag2(Update.Flags2.SoulShackle))
-            {
-                if (now > client.Entity.ShackleStamp.AddSeconds(client.Entity.ShackleTime))
-                {
-                    client.Entity.RemoveFlag2(Update.Flags2.SoulShackle);
+
+            if (c.Entity.ContainsFlag2(Update.Flags2.SoulShackle)) {
+                if (now > c.Entity.ShackleStamp.AddSeconds(c.Entity.ShackleTime)) {
+                    c.Entity.RemoveFlag2(Update.Flags2.SoulShackle);
                 }
             }
+
             #endregion
+
             #region portals
-            if (client.Entity.MapID == 2222)
-            {
+
+            if (c.Entity.MapID == 2222) {
                 #region First Map
-                TeleEffect(client, 38, 40, 2222, 24);
-                TeleEffect(client, 38, 45, 2222, 1050);
-                TeleEffect(client, 38, 50, 2222, 24);
-                TeleEffect(client, 38, 55, 2222, 1050);
-                TeleEffect(client, 38, 60, 2222, 24);
-                if (client.Entity.X == 38 && client.Entity.Y == 40)
-                {
-                    if (!tele)
-                    {
-                        client.Entity.Teleport(1002, 428, 379);
+
+                TeleEffect(c, 38, 40, 2222, 24);
+                TeleEffect(c, 38, 45, 2222, 1050);
+                TeleEffect(c, 38, 50, 2222, 24);
+                TeleEffect(c, 38, 55, 2222, 1050);
+                TeleEffect(c, 38, 60, 2222, 24);
+                if (c.Entity is { X: 38, Y: 40 }) {
+                    if (!tele) {
+                        c.Entity.Teleport(1002, 428, 379);
                         tele = true;
                     }
-                    else { client.Entity.Teleport(2323, 50, 50); tele = false; }
+                    else {
+                        c.Entity.Teleport(2323, 50, 50);
+                        tele = false;
+                    }
                 }
-                else if (client.Entity.X == 38 && client.Entity.Y == 45)
-                {
-                    if (!tele1)
-                    {
-                        client.Entity.Teleport(2323, 50, 50);
+                else if (c.Entity is { X: 38, Y: 45 }) {
+                    if (!tele1) {
+                        c.Entity.Teleport(2323, 50, 50);
                         tele1 = true;
                     }
-                    else { client.Entity.Teleport(1002, 428, 379); tele1 = false; }
+                    else {
+                        c.Entity.Teleport(1002, 428, 379);
+                        tele1 = false;
+                    }
                 }
-                else if (client.Entity.X == 38 && client.Entity.Y == 50)
-                {
-                    if (!tele2)
-                    {
-
-                        client.Entity.Teleport(1002, 428, 379);
+                else if (c.Entity is { X: 38, Y: 50 }) {
+                    if (!tele2) {
+                        c.Entity.Teleport(1002, 428, 379);
                         tele2 = true;
                     }
-                    else { client.Entity.Teleport(2323, 50, 50); tele2 = false; }
+                    else {
+                        c.Entity.Teleport(2323, 50, 50);
+                        tele2 = false;
+                    }
                 }
-                else if (client.Entity.X == 38 && client.Entity.Y == 55)
-                {
-                    if (!tele3)
-                    {
-                        client.Entity.Teleport(2323, 50, 50);
+                else if (c.Entity is { X: 38, Y: 55 }) {
+                    if (!tele3) {
+                        c.Entity.Teleport(2323, 50, 50);
 
                         tele3 = true;
                     }
-                    else { client.Entity.Teleport(1002, 428, 379); tele3 = false; }
+                    else {
+                        c.Entity.Teleport(1002, 428, 379);
+                        tele3 = false;
+                    }
                 }
-                else if (client.Entity.X == 38 && client.Entity.Y == 60)
-                {
-                    if (!tele4)
-                    {
-
-                        client.Entity.Teleport(1002, 428, 379);
+                else if (c.Entity is { X: 38, Y: 60 }) {
+                    if (!tele4) {
+                        c.Entity.Teleport(1002, 428, 379);
                         tele4 = true;
                     }
-                    else { client.Entity.Teleport(2323, 50, 50); tele4 = false; }
+                    else {
+                        c.Entity.Teleport(2323, 50, 50);
+                        tele4 = false;
+                    }
                 }
+
                 #endregion
             }
-            if (client.Entity.MapID == 2323)
-            {
+
+            if (c.Entity.MapID == 2323) {
                 #region Second Map
-                TeleEffect(client, 38, 40, 2323, 24);
-                TeleEffect(client, 38, 50, 2323, 1050);
-                TeleEffect(client, 38, 60, 2323, 24);
-                if (client.Entity.X == 38 && client.Entity.Y == 40)
-                {
-                    if (!tele5)
-                    {
-                        client.Entity.Teleport(1002, 428, 379);
+
+                TeleEffect(c, 38, 40, 2323, 24);
+                TeleEffect(c, 38, 50, 2323, 1050);
+                TeleEffect(c, 38, 60, 2323, 24);
+                if (c.Entity is { X: 38, Y: 40 }) {
+                    if (!tele5) {
+                        c.Entity.Teleport(1002, 428, 379);
                         tele5 = true;
                     }
-                    else { client.Entity.Teleport(2121, 50, 50); tele5 = false; }
+                    else {
+                        c.Entity.Teleport(2121, 50, 50);
+                        tele5 = false;
+                    }
                 }
-                else if (client.Entity.X == 38 && client.Entity.Y == 50)
-                {
-                    if (!tele6)
-                    {
-                        client.Entity.Teleport(2121, 50, 50);
+                else if (c.Entity is { X: 38, Y: 50 }) {
+                    if (!tele6) {
+                        c.Entity.Teleport(2121, 50, 50);
                         tele6 = true;
                     }
-                    else { client.Entity.Teleport(1002, 428, 379); tele6 = false; }
+                    else {
+                        c.Entity.Teleport(1002, 428, 379);
+                        tele6 = false;
+                    }
                 }
-                else if (client.Entity.X == 38 && client.Entity.Y == 60)
-                {
-                    if (!tele7)
-                    {
-                        client.Entity.Teleport(1002, 428, 379);
+                else if (c.Entity is { X: 38, Y: 60 }) {
+                    if (!tele7) {
+                        c.Entity.Teleport(1002, 428, 379);
                         tele7 = true;
                     }
-                    else { client.Entity.Teleport(2121, 50, 50); tele7 = false; }
+                    else {
+                        c.Entity.Teleport(2121, 50, 50);
+                        tele7 = false;
+                    }
                 }
+
                 #endregion
             }
+
             #endregion
+
             #region AutoHunting
-            if (client.Entity.ContainsFlag3((uint)Update.Flags3.AutoHunting))
-            {
-                if (now > client.Entity.AutoHuntStamp.AddMinutes(15))
-                {
-                    client.Entity.RemoveFlag3((uint)Update.Flags3.AutoHunting);
+
+            if (c.Entity.ContainsFlag3((uint)Update.Flags3.AutoHunting)) {
+                if (now > c.Entity.AutoHuntStamp.AddMinutes(15)) {
+                    c.Entity.RemoveFlag3((uint)Update.Flags3.AutoHunting);
                 }
             }
+
             #endregion
+
             #region Intensify
-            if (client.Entity.IntensifyPercent != 0)
-            {
-                if (now > client.Entity.IntensifyStamp.AddSeconds(5))
-                {
-                    client.Entity.AddFlag(Update.Flags.Intensify);
+
+            if (c.Entity.IntensifyPercent != 0) {
+                if (now > c.Entity.IntensifyStamp.AddSeconds(5)) {
+                    c.Entity.AddFlag(Update.Flags.Intensify);
                 }
             }
+
             #endregion
+
             #region AzureShield
-            if (client.Entity.ContainsFlag2(Update.Flags2.AzureShield))
-            {
-                if (now > client.Entity.MagicShieldStamp.AddSeconds(client.Entity.MagicShieldTime))
-                {
-                    client.Entity.RemoveFlag2(Update.Flags2.AzureShield);
+
+            if (c.Entity.ContainsFlag2(Update.Flags2.AzureShield)) {
+                if (now > c.Entity.MagicShieldStamp.AddSeconds(c.Entity.MagicShieldTime)) {
+                    c.Entity.RemoveFlag2(Update.Flags2.AzureShield);
                 }
             }
+
             #endregion
+
             #region Blade Flurry
-            if (client.Entity.ContainsFlag3(Update.Flags3.BladeFlurry))
-            {
-                if (Time32.Now > client.Entity.BladeFlurryStamp.AddSeconds(45))
-                {
-                    client.Entity.RemoveFlag3(Update.Flags3.BladeFlurry);
+
+            if (c.Entity.ContainsFlag3(Update.Flags3.BladeFlurry)) {
+                if (Time32.Now > c.Entity.BladeFlurryStamp.AddSeconds(45)) {
+                    c.Entity.RemoveFlag3(Update.Flags3.BladeFlurry);
                 }
             }
+
             #endregion
 
             #region Flustered
-            if (client.Entity.ContainsFlag(Update.Flags.Frightened))
-            {
-                if (client.RaceFrightened)
-                {
-                    if (now > client.FrightenStamp.AddSeconds(20))
-                    {
-                        client.RaceFrightened = false;
+
+            if (c.Entity.ContainsFlag(Update.Flags.Frightened)) {
+                if (c.RaceFrightened) {
+                    if (now > c.FrightenStamp.AddSeconds(20)) {
+                        c.RaceFrightened = false;
                         {
                             GameCharacterUpdates update = new GameCharacterUpdates(true);
-                            update.UID = client.Entity.UID;
+                            update.UID = c.Entity.UID;
                             update.Remove(GameCharacterUpdates.Flustered);
-                            client.SendScreen(update);
+                            c.SendScreen(update);
                         }
-                        client.Entity.RemoveFlag(Update.Flags.Frightened);
+                        c.Entity.RemoveFlag(Update.Flags.Frightened);
                     }
-                    else
-                    {
+                    else {
                         int rand;
                         ushort x, y;
-                        do
-                        {
+                        do {
                             rand = Kernel.Random.Next(Map.XDir.Length);
-                            x = (ushort)(client.Entity.X + Map.XDir[rand]);
-                            y = (ushort)(client.Entity.Y + Map.YDir[rand]);
-                        }
-                        while (!client.Map.Floor[x, y, MapObjectType.Player]);
-                        client.Entity.Facing = Kernel.GetAngle(
-                            client.Entity.X, client.Entity.Y, x, y);
-                        client.Entity.X = x;
-                        client.Entity.Y = y;
+                            x = (ushort)(c.Entity.X + Map.XDir[rand]);
+                            y = (ushort)(c.Entity.Y + Map.YDir[rand]);
+                        } while (!c.Map.Floor[x, y, MapObjectType.Player]);
 
-                        client.SendScreen(
-                            new TwoMovements()
-                            {
+                        c.Entity.Facing = Kernel.GetAngle(
+                            c.Entity.X, c.Entity.Y, x, y);
+                        c.Entity.X = x;
+                        c.Entity.Y = y;
+
+                        c.SendScreen(
+                            new TwoMovements() {
                                 EntityCount = 1,
-                                Facing = client.Entity.Facing,
-                                FirstEntity = client.Entity.UID,
+                                Facing = c.Entity.Facing,
+                                FirstEntity = c.Entity.UID,
                                 WalkType = 9,
-                                X = client.Entity.X,
-                                Y = client.Entity.Y,
+                                X = c.Entity.X,
+                                Y = c.Entity.Y,
                                 MovementType = TwoMovements.Walk
                             });
                     }
                 }
             }
+
             #endregion
+
             #region Stunned
-            if (client.Entity.Stunned)
-            {
-                if (now > client.Entity.StunStamp.AddMilliseconds(2000))
-                {
-                    client.Entity.Stunned = false;
+
+            if (c.Entity.Stunned) {
+                if (now > c.Entity.StunStamp.AddMilliseconds(2000)) {
+                    c.Entity.Stunned = false;
                 }
             }
+
             #endregion
+
             #region Frozen
-            if (client.Entity.ContainsFlag(Update.Flags.Freeze))
-            {
-                if (now > client.Entity.FrozenStamp.AddSeconds(client.Entity.FrozenTime))
-                {
-                    client.Entity.FrozenD = false;
-                    client.Entity.FrozenTime = 0;
-                    client.Entity.RemoveFlag(Update.Flags.Freeze);
+
+            if (c.Entity.ContainsFlag(Update.Flags.Freeze)) {
+                if (now > c.Entity.FrozenStamp.AddSeconds(c.Entity.FrozenTime)) {
+                    c.Entity.FrozenD = false;
+                    c.Entity.FrozenTime = 0;
+                    c.Entity.RemoveFlag(Update.Flags.Freeze);
 
                     GameCharacterUpdates update = new GameCharacterUpdates(true);
-                    update.UID = client.Entity.UID;
+                    update.UID = c.Entity.UID;
                     update.Remove(GameCharacterUpdates.Freeze);
-                    client.SendScreen(update);
+                    c.SendScreen(update);
                 }
             }
+
             #endregion
+
             #region IceBlock
-            if (client.Entity.ContainsFlag(Update.Flags.FreezeSmall))
-            {
-                if (now > client.FrightenStamp.AddSeconds(client.Entity.Fright))
-                {
+
+            if (c.Entity.ContainsFlag(Update.Flags.FreezeSmall)) {
+                if (now > c.FrightenStamp.AddSeconds(c.Entity.Fright)) {
                     GameCharacterUpdates update = new GameCharacterUpdates(true);
-                    update.UID = client.Entity.UID;
+                    update.UID = c.Entity.UID;
                     update.Remove(GameCharacterUpdates.Dizzy);
-                    client.SendScreen(update);
-                    client.Entity.RemoveFlag(Update.Flags.FreezeSmall);
+                    c.SendScreen(update);
+                    c.Entity.RemoveFlag(Update.Flags.FreezeSmall);
                 }
-                else
-                {
+                else {
                     int rand;
                     ushort x, y;
-                    do
-                    {
+                    do {
                         rand = Kernel.Random.Next(Map.XDir.Length);
-                        x = (ushort)(client.Entity.X + Map.XDir[rand]);
-                        y = (ushort)(client.Entity.Y + Map.YDir[rand]);
-                    }
-                    while (!client.Map.Floor[x, y, MapObjectType.Player]);
-                    client.Entity.Facing = Kernel.GetAngle(client.Entity.X, client.Entity.Y, x, y);
-                    client.Entity.X = x;
-                    client.Entity.Y = y;
-                    client.SendScreen(new TwoMovements()
-                    {
+                        x = (ushort)(c.Entity.X + Map.XDir[rand]);
+                        y = (ushort)(c.Entity.Y + Map.YDir[rand]);
+                    } while (!c.Map.Floor[x, y, MapObjectType.Player]);
+
+                    c.Entity.Facing = Kernel.GetAngle(c.Entity.X, c.Entity.Y, x, y);
+                    c.Entity.X = x;
+                    c.Entity.Y = y;
+                    c.SendScreen(new TwoMovements() {
                         EntityCount = 1,
-                        Facing = client.Entity.Facing,
-                        FirstEntity = client.Entity.UID,
+                        Facing = c.Entity.Facing,
+                        FirstEntity = c.Entity.UID,
                         WalkType = 9,
-                        X = client.Entity.X,
-                        Y = client.Entity.Y,
+                        X = c.Entity.X,
+                        Y = c.Entity.Y,
                         MovementType = TwoMovements.Walk
                     });
                 }
             }
+
             #endregion
+
             #region Dizzy
-            if (client.Entity.ContainsFlag(Update.Flags.Dizzy))
-            {
-                if (client.RaceDizzy)
-                {
-                    if (now > client.DizzyStamp.AddSeconds(5))
-                    {
-                        client.RaceDizzy = false;
+
+            if (c.Entity.ContainsFlag(Update.Flags.Dizzy)) {
+                if (c.RaceDizzy) {
+                    if (now > c.DizzyStamp.AddSeconds(5)) {
+                        c.RaceDizzy = false;
                         {
                             GameCharacterUpdates update = new GameCharacterUpdates(true);
-                            update.UID = client.Entity.UID;
+                            update.UID = c.Entity.UID;
                             update.Remove(GameCharacterUpdates.Dizzy);
-                            client.SendScreen(update);
+                            c.SendScreen(update);
                         }
-                        client.Entity.RemoveFlag(Update.Flags.Dizzy);
+                        c.Entity.RemoveFlag(Update.Flags.Dizzy);
                     }
                 }
             }
+
             #endregion
+
             #region Confused
-            if (client.Entity.ContainsFlag(Update.Flags.Confused))
-            {
-                if (now > client.FrightenStamp.AddSeconds(15))
-                {
-                    client.RaceFrightened = false;
+
+            if (c.Entity.ContainsFlag(Update.Flags.Confused)) {
+                if (now > c.FrightenStamp.AddSeconds(15)) {
+                    c.RaceFrightened = false;
                     {
                         GameCharacterUpdates update = new GameCharacterUpdates(true);
-                        update.UID = client.Entity.UID;
+                        update.UID = c.Entity.UID;
                         update.Remove(GameCharacterUpdates.Flustered);
-                        client.SendScreen(update);
+                        c.SendScreen(update);
                     }
-                    client.Entity.RemoveFlag(Update.Flags.Confused);
+                    c.Entity.RemoveFlag(Update.Flags.Confused);
                 }
             }
+
             #endregion
+
             #region Divine Shield
-            if (client.Entity.ContainsFlag(Update.Flags.DivineShield))
-            {
-                if (now > client.GuardStamp.AddSeconds(10))
-                {
-                    client.RaceGuard = false;
+
+            if (c.Entity.ContainsFlag(Update.Flags.DivineShield)) {
+                if (now > c.GuardStamp.AddSeconds(10)) {
+                    c.RaceGuard = false;
                     {
                         GameCharacterUpdates update = new GameCharacterUpdates(true);
-                        update.UID = client.Entity.UID;
+                        update.UID = c.Entity.UID;
                         update.Remove(GameCharacterUpdates.DivineShield);
-                        client.SendScreen(update);
+                        c.SendScreen(update);
                     }
-                    client.Entity.RemoveFlag(Update.Flags.DivineShield);
+                    c.Entity.RemoveFlag(Update.Flags.DivineShield);
                 }
             }
+
             #endregion
+
             #region Extra Speed
-            if (client.Entity.ContainsFlag(Update.Flags.OrangeSparkles) && !client.InQualifier())
-            {
-                if (Time32.Now > client.RaceExcitementStamp.AddSeconds(15))
-                {
-                    var upd = new GameCharacterUpdates(true)
-                    {
-                        UID = client.Entity.UID
+
+            if (c.Entity.ContainsFlag(Update.Flags.OrangeSparkles) && !c.InQualifier()) {
+                if (Time32.Now > c.RaceExcitementStamp.AddSeconds(15)) {
+                    var upd = new GameCharacterUpdates(true) {
+                        UID = c.Entity.UID
                     };
                     upd.Remove(GameCharacterUpdates.Accelerated);
-                    client.SendScreen(upd);
-                    client.SpeedChange = null;
-                    client.Entity.RemoveFlag(Update.Flags.OrangeSparkles);
+                    c.SendScreen(upd);
+                    c.SpeedChange = null;
+                    c.Entity.RemoveFlag(Update.Flags.OrangeSparkles);
                 }
             }
+
             #endregion
+
             #region Decelerated
-            if (client.Entity.ContainsFlag(Update.Flags.PurpleSparkles) && !client.InQualifier())
-            {
-                if (Time32.Now > client.DecelerateStamp.AddSeconds(10))
-                {
+
+            if (c.Entity.ContainsFlag(Update.Flags.PurpleSparkles) && !c.InQualifier()) {
+                if (Time32.Now > c.DecelerateStamp.AddSeconds(10)) {
                     {
-                        client.RaceDecelerated = false;
-                        var upd = new GameCharacterUpdates(true)
-                        {
-                            UID = client.Entity.UID
+                        c.RaceDecelerated = false;
+                        var upd = new GameCharacterUpdates(true) {
+                            UID = c.Entity.UID
                         };
                         upd.Remove(GameCharacterUpdates.Decelerated);
-                        client.SendScreen(upd);
-                        client.SpeedChange = null;
+                        c.SendScreen(upd);
+                        c.SpeedChange = null;
                     }
-                    client.Entity.RemoveFlag(Update.Flags.PurpleSparkles);
+                    c.Entity.RemoveFlag(Update.Flags.PurpleSparkles);
                 }
             }
+
             #endregion
+
             #region ShockDaze
-            if (client.Entity.ContainsFlag(Update.Flags.Stun))
-            {
-                if (now > client.Entity.ShockStamp.AddSeconds(client.Entity.Shock))
-                {
-                    client.Entity.RemoveFlag(Update.Flags.Stun);
+
+            if (c.Entity.ContainsFlag(Update.Flags.Stun)) {
+                if (now > c.Entity.ShockStamp.AddSeconds(c.Entity.Shock)) {
+                    c.Entity.RemoveFlag(Update.Flags.Stun);
                 }
             }
+
             #endregion
+
             #region ChaosCycle
-            if (client.Entity.ContainsFlag(Update.Flags.ChaosCycle))
-            {
-                if (now > client.FrightenStamp.AddSeconds(5))
-                {
-                    client.RaceFrightened = false;
+
+            if (c.Entity.ContainsFlag(Update.Flags.ChaosCycle)) {
+                if (now > c.FrightenStamp.AddSeconds(5)) {
+                    c.RaceFrightened = false;
                     {
                         GameCharacterUpdates update = new GameCharacterUpdates(true);
-                        update.UID = client.Entity.UID;
+                        update.UID = c.Entity.UID;
                         update.Remove(GameCharacterUpdates.Flustered);
-                        client.SendScreen(update);
+                        c.SendScreen(update);
                     }
-                    client.Entity.RemoveFlag(Update.Flags.ChaosCycle);
+                    c.Entity.RemoveFlag(Update.Flags.ChaosCycle);
                 }
             }
+
             #endregion
+
             #region FreezeSmall
-            if (client.Entity.ContainsFlag(Update.Flags.FreezeSmall))
-            {
+
+            if (c.Entity.ContainsFlag(Update.Flags.FreezeSmall)) {
                 {
-                    if (now > client.FrightenStamp.AddSeconds(20))
-                    {
-                        client.RaceFrightened = false;
+                    if (now > c.FrightenStamp.AddSeconds(20)) {
+                        c.RaceFrightened = false;
                         {
                             GameCharacterUpdates update = new GameCharacterUpdates(true);
-                            update.UID = client.Entity.UID;
+                            update.UID = c.Entity.UID;
                             update.Remove(GameCharacterUpdates.Flustered);
-                            client.SendScreen(update);
+                            c.SendScreen(update);
                         }
-                        client.Entity.RemoveFlag(Update.Flags.FreezeSmall);
+                        c.Entity.RemoveFlag(Update.Flags.FreezeSmall);
                     }
-                    else
-                    {
+                    else {
                         int rand;
                         ushort x, y;
-                        do
-                        {
+                        do {
                             rand = Kernel.Random.Next(Map.XDir.Length);
-                            x = (ushort)(client.Entity.X + Map.XDir[rand]);
-                            y = (ushort)(client.Entity.Y + Map.YDir[rand]);
-                        }
-                        while (!client.Map.Floor[x, y, MapObjectType.Player]);
-                        client.Entity.Facing = Kernel.GetAngle(client.Entity.X, client.Entity.Y, x, y);
-                        client.Entity.X = x;
-                        client.Entity.Y = y;
-                        client.SendScreen(new TwoMovements()
-                        {
+                            x = (ushort)(c.Entity.X + Map.XDir[rand]);
+                            y = (ushort)(c.Entity.Y + Map.YDir[rand]);
+                        } while (!c.Map.Floor[x, y, MapObjectType.Player]);
+
+                        c.Entity.Facing = Kernel.GetAngle(c.Entity.X, c.Entity.Y, x, y);
+                        c.Entity.X = x;
+                        c.Entity.Y = y;
+                        c.SendScreen(new TwoMovements() {
                             EntityCount = 1,
-                            Facing = client.Entity.Facing,
-                            FirstEntity = client.Entity.UID,
+                            Facing = c.Entity.Facing,
+                            FirstEntity = c.Entity.UID,
                             WalkType = 9,
-                            X = client.Entity.X,
-                            Y = client.Entity.Y,
+                            X = c.Entity.X,
+                            Y = c.Entity.Y,
                             MovementType = TwoMovements.Walk
                         });
                     }
                 }
             }
+
             #endregion
+
             #region CTF Flag
-            if (client.Entity.ContainsFlag2(Update.Flags2.CarryingFlag))
-            {
-                if (Time32.Now > client.Entity.FlagStamp.AddSeconds(60))
-                {
-                    client.Entity.RemoveFlag2(Update.Flags2.CarryingFlag);
+
+            if (c.Entity.ContainsFlag2(Update.Flags2.CarryingFlag)) {
+                if (Time32.Now > c.Entity.FlagStamp.AddSeconds(60)) {
+                    c.Entity.RemoveFlag2(Update.Flags2.CarryingFlag);
                 }
             }
+
             #endregion
+
             #region Congelado
-            if (client.Entity.ContainsFlag(Update.Flags2.Congelado))
-            {
-                if (DateTime.Now > client.Entity.CongeladoTimeStamp.AddSeconds(client.Entity.CongeladoTime))
-                {
-                    client.Entity.RemoveFlag(Update.Flags2.Congelado);
+
+            if (c.Entity.ContainsFlag(Update.Flags2.Congelado)) {
+                if (DateTime.Now > c.Entity.CongeladoTimeStamp.AddSeconds(c.Entity.CongeladoTime)) {
+                    c.Entity.RemoveFlag(Update.Flags2.Congelado);
                 }
             }
+
             #endregion
+
             #region Cursed
-            if (client.Entity.ContainsFlag(Update.Flags.Cursed))
-            {
-                if (Time32.Now > client.Entity.Cursed.AddSeconds(300))
-                {
-                    client.Entity.RemoveFlag(Update.Flags.Cursed);
+
+            if (c.Entity.ContainsFlag(Update.Flags.Cursed)) {
+                if (Time32.Now > c.Entity.Cursed.AddSeconds(300)) {
+                    c.Entity.RemoveFlag(Update.Flags.Cursed);
                 }
             }
+
             #endregion
+
             #region SuperCycloneStamp
-            if (client.Entity.ContainsFlag3((uint)Update.Flags3.SuperCyclone))
-            {
-                if (Time32.Now > client.Entity.SuperCycloneStamp.AddSeconds(45))
-                {
-                    client.Entity.RemoveFlag3((uint)Update.Flags3.SuperCyclone);
+
+            if (c.Entity.ContainsFlag3((uint)Update.Flags3.SuperCyclone)) {
+                if (Time32.Now > c.Entity.SuperCycloneStamp.AddSeconds(45)) {
+                    c.Entity.RemoveFlag3((uint)Update.Flags3.SuperCyclone);
                 }
             }
+
             #endregion
+
             #region DragonCyclone
-            if (client.Entity.ContainsFlag3(Update.Flags3.DragonCyclone))
-            {
-                if (Time32.Now > client.Entity.DragonCycloneStamp.AddSeconds(45))
-                {
-                    client.Entity.RemoveFlag3(Update.Flags3.DragonCyclone);
+
+            if (c.Entity.ContainsFlag3(Update.Flags3.DragonCyclone)) {
+                if (Time32.Now > c.Entity.DragonCycloneStamp.AddSeconds(45)) {
+                    c.Entity.RemoveFlag3(Update.Flags3.DragonCyclone);
                 }
             }
+
             #endregion
+
             #region DragonFury
-            if (client.Entity.ContainsFlag3(Update.Flags3.DragonFury))
-            {
-                if (Time32.Now > client.Entity.DragonFuryStamp.AddSeconds(client.Entity.DragonFuryTime))
-                {
-                    client.Entity.RemoveFlag3(Update.Flags3.DragonFury);
+
+            if (c.Entity.ContainsFlag3(Update.Flags3.DragonFury)) {
+                if (Time32.Now > c.Entity.DragonFuryStamp.AddSeconds(c.Entity.DragonFuryTime)) {
+                    c.Entity.RemoveFlag3(Update.Flags3.DragonFury);
 
                     Update upgrade = new Update(true);
-                    upgrade.UID = client.Entity.UID;
+                    upgrade.UID = c.Entity.UID;
                     upgrade.Append(74
                         , 0
                         , 0, 0, 0);
-                    client.Entity.Owner.Send(upgrade.ToArray());
+                    c.Entity.Owner.Send(upgrade.ToArray());
                 }
             }
+
             #endregion
+
             #region DragonFlow
-            if (client.Entity.ContainsFlag3(Update.Flags3.DragonFlow) && !client.Entity.ContainsFlag3(Update.Flags3.DragonCyclone))
-            {
-                if (Time32.Now > client.Entity.DragonFlowStamp.AddSeconds(8))
-                {
-                    if (client != null && client.Spells.TryGetValue(12270, out Interfaces.ISkill? value)) {
+
+            if (c.Entity.ContainsFlag3(Update.Flags3.DragonFlow) &&
+                !c.Entity.ContainsFlag3(Update.Flags3.DragonCyclone)) {
+                if (Time32.Now > c.Entity.DragonFlowStamp.AddSeconds(8)) {
+                    if (c != null && c.Spells.TryGetValue(12270, out Interfaces.ISkill? value)) {
                         var spell = Database.SpellTable.GetSpell(value.ID, value.Level);
                         {
                             int stamina = 100;
-                            if (client.Entity.HeavenBlessing > 0)
+                            if (c.Entity.HeavenBlessing > 0)
                                 stamina += 50;
-                            if (client.Spells != null)
-                            {
-                                if (client.Spells.ContainsKey(12560))
-                                {
-                                    var spells = client.Spells[12560];
+                            if (c.Spells != null) {
+                                if (c.Spells.ContainsKey(12560)) {
+                                    var spells = c.Spells[12560];
                                     var skill = Database.SpellTable.SpellInformations[12560][spells.Level];
                                     stamina += skill.Power;
                                 }
                             }
-                            if (client.Entity.Stamina != stamina)
-                            {
-                                client.Entity.Stamina += (byte)spell.Power;
-                                if (client.Entity.ContainsFlag3(Update.Flags3.DragonCyclone))
-                                    if (client.Entity.Stamina != stamina)
-                                        client.Entity.Stamina += (byte)spell.Power;
+
+                            if (c.Entity.Stamina != stamina) {
+                                c.Entity.Stamina += (byte)spell.Power;
+                                if (c.Entity.ContainsFlag3(Update.Flags3.DragonCyclone))
+                                    if (c.Entity.Stamina != stamina)
+                                        c.Entity.Stamina += (byte)spell.Power;
                                 _String str = new _String(true);
-                                str.UID = client.Entity.UID;
+                                str.UID = c.Entity.UID;
                                 str.TextsCount = 1;
                                 str.Type = _String.Effect;
                                 str.Texts.Add("leedragonblood");
-                                client.SendScreen(str);
+                                c.SendScreen(str);
                             }
                         }
                     }
-                    client.Entity.DragonFlowStamp = Time32.Now;
-                }
-            }
-            #endregion
-            #region DragonSwing
-            if (client.Entity.ContainsFlag3(Update.Flags3.DragonSwing))
-            {
-                if (Time32.Now > client.Entity.DragonSwingStamp.AddSeconds(160))
-                {
-                    client.Entity.RemoveFlag3(Update.Flags3.DragonSwing);
-                    client.Entity.OnDragonSwing = false;
-                    Update upgrade = new Update(true);
-                    upgrade.UID = client.Entity.UID;
-                    upgrade.Append(Update.DragonSwing, 0, 0, 0, 0);
-                    client.Entity.Owner.Send(upgrade.ToArray());
-                }
-            }
-            #endregion
-            if (client.Entity.race == 1 && cycolne1)
-            {
-                client.Entity.RemoveFlag(Update.Flags.Ride);
 
-                client.Entity.CycloneStamp = Time32.Now;
-                client.Entity.CycloneTime = 180;
-                client.Entity.AddFlag(Update.Flags.Cyclone);
-                client.Entity.race = 0;
+                    c.Entity.DragonFlowStamp = Time32.Now;
+                }
+            }
+
+            #endregion
+
+            #region DragonSwing
+
+            if (c.Entity.ContainsFlag3(Update.Flags3.DragonSwing)) {
+                if (Time32.Now > c.Entity.DragonSwingStamp.AddSeconds(160)) {
+                    c.Entity.RemoveFlag3(Update.Flags3.DragonSwing);
+                    c.Entity.OnDragonSwing = false;
+                    Update upgrade = new Update(true);
+                    upgrade.UID = c.Entity.UID;
+                    upgrade.Append(Update.DragonSwing, 0, 0, 0, 0);
+                    c.Entity.Owner.Send(upgrade.ToArray());
+                }
+            }
+
+            #endregion
+
+            if (c.Entity.race == 1 && Cycolne1) {
+                c.Entity.RemoveFlag(Update.Flags.Ride);
+
+                c.Entity.CycloneStamp = Time32.Now;
+                c.Entity.CycloneTime = 180;
+                c.Entity.AddFlag(Update.Flags.Cyclone);
+                c.Entity.race = 0;
                 Random R = new Random();
                 int Nr = R.Next(1, 2);
-                if (Nr == 1) client.Entity.Teleport(1645, 309, 238);
-                if (Nr == 2) client.Entity.Teleport(1645, 305, 231);
-
+                if (Nr == 1) c.Entity.Teleport(1645, 309, 238);
+                if (Nr == 2) c.Entity.Teleport(1645, 305, 231);
             }
-            if (!cycolne3 && client.Entity.MapID == 1645)
-            {
 
-                client.Entity.Teleport(1002, 435 - 128, 378 - 100);
-
+            if (!Cycolne3 && c.Entity.MapID == 1645) {
+                c.Entity.Teleport(1002, 435 - 128, 378 - 100);
             }
-            if (client.Entity.ContainsFlag(Update.Flags.Ride) && client.Entity.MapID == 1645)
-            {
-                client.Entity.RemoveFlag(Update.Flags.Ride);
+
+            if (c.Entity.ContainsFlag(Update.Flags.Ride) && c.Entity.MapID == 1645) {
+                c.Entity.RemoveFlag(Update.Flags.Ride);
             }
         }
-        private void CharactersCallback(GameState client, int time)
-        {
+
+        private void CharactersCallback(GameState client, int time) {
             #region lacb
-            if (client.Entity.lacb >= 10 & client.Entity.lacb <= 300)
-            {//MenaMagice 
+
+            if (client.Entity.lacb >= 10 & client.Entity.lacb <= 300) {
+                //MenaMagice 
                 client.Entity.Update(Update.mantos, 1, true);
             }
-            if (client.Entity.lacb >= 300 & client.Entity.lacb <= 600)
-            {
+
+            if (client.Entity.lacb >= 300 & client.Entity.lacb <= 600) {
                 client.Entity.Update(Update.mantos, 2, true);
             }
-            if (client.Entity.lacb >= 600 & client.Entity.lacb <= 900)
-            {
+
+            if (client.Entity.lacb >= 600 & client.Entity.lacb <= 900) {
                 client.Entity.Update(Update.mantos, 3, true);
             }
-            if (client.Entity.lacb >= 900 & client.Entity.lacb <= 1300)
-            {
+
+            if (client.Entity.lacb >= 900 & client.Entity.lacb <= 1300) {
                 client.Entity.Update(Update.mantos, 4, true);
             }
-            if (client.Entity.lacb >= 1300 & client.Entity.lacb <= 1600)
-            {
+
+            if (client.Entity.lacb >= 1300 & client.Entity.lacb <= 1600) {
                 client.Entity.Update(Update.mantos, 5, true);
             }
-            if (client.Entity.lacb >= 1600 & client.Entity.lacb <= 1900)
-            {
+
+            if (client.Entity.lacb >= 1600 & client.Entity.lacb <= 1900) {
                 client.Entity.Update(Update.mantos, 6, true);
             }
-            if (client.Entity.lacb >= 1900 & client.Entity.lacb <= 2200)
-            {
+
+            if (client.Entity.lacb >= 1900 & client.Entity.lacb <= 2200) {
                 client.Entity.Update(Update.mantos, 7, true);
             }
-            if (client.Entity.lacb >= 2200 & client.Entity.lacb <= 2800)
-            {
+
+            if (client.Entity.lacb >= 2200 & client.Entity.lacb <= 2800) {
                 client.Entity.Update(Update.mantos, 8, true);
             }
-            if (client.Entity.lacb >= 2800 & client.Entity.lacb <= 3400)
-            {
+
+            if (client.Entity.lacb >= 2800 & client.Entity.lacb <= 3400) {
                 client.Entity.Update(Update.mantos, 9, true);
             }
-            if (client.Entity.lacb >= 3400 & client.Entity.lacb <= 4200)
-            {
+
+            if (client.Entity.lacb >= 3400 & client.Entity.lacb <= 4200) {
                 client.Entity.Update(Update.mantos, 10, true);
             }
-            if (client.Entity.lacb >= 4200 & client.Entity.lacb <= 5400)
-            {
+
+            if (client.Entity.lacb >= 4200 & client.Entity.lacb <= 5400) {
                 client.Entity.Update(Update.mantos, 11, true);
             }
-            if (client.Entity.lacb >= 5400 & client.Entity.lacb <= 6800)
-            {
+
+            if (client.Entity.lacb >= 5400 & client.Entity.lacb <= 6800) {
                 client.Entity.Update(Update.mantos, 12, true);
             }
-            if (client.Entity.lacb >= 6800)
-            {
+
+            if (client.Entity.lacb >= 6800) {
                 client.Entity.Update(Update.mantos, 13, true);
             }
+
             #endregion
 
             #region Time Check
+
             if (DateTime.Now.Second == 00)
-            #endregion Time Check
+
+                #endregion Time Check
+
             {
                 if (!Valid(client)) return;
+
                 #region Winners for FB and SS
-                if (client.Entity.aWinner)
-                {
-                    if (Time32.Now > client.Entity.WinnerWaiting.AddSeconds(1))
-                    {
-                        switch (client.Entity.MapID)
-                        {
-                            case 1543://room 1 
-                                {
-                                    Program.Room1 = false;
-                                    break;
-                                }
-                            case 1544://room 2 
-                                {
-                                    Program.Room2 = false;
-                                    break;
-                                }
-                            case 1545://room 3 
-                                {
-                                    Program.Room3 = false;
-                                    break;
-                                }
-                            case 1546://room 4 
-                                {
-                                    Program.Room4 = false;
-                                    break;
-                                }
-                            case 1547://room 5 
-                                {
-                                    Program.Room5 = false;
-                                    break;
-                                }
-                            case 1548://room 6 
-                                {
-                                    Program.Room6 = false;
-                                    break;
-                                }
+
+                if (client.Entity.aWinner) {
+                    if (Time32.Now > client.Entity.WinnerWaiting.AddSeconds(1)) {
+                        switch (client.Entity.MapID) {
+                            case 1543: //room 1 
+                            {
+                                Program.Room1 = false;
+                                break;
+                            }
+                            case 1544: //room 2 
+                            {
+                                Program.Room2 = false;
+                                break;
+                            }
+                            case 1545: //room 3 
+                            {
+                                Program.Room3 = false;
+                                break;
+                            }
+                            case 1546: //room 4 
+                            {
+                                Program.Room4 = false;
+                                break;
+                            }
+                            case 1547: //room 5 
+                            {
+                                Program.Room5 = false;
+                                break;
+                            }
+                            case 1548: //room 6 
+                            {
+                                Program.Room6 = false;
+                                break;
+                            }
                         }
+
                         client.Entity.Teleport(1002, 299, 281);
                         client.Entity.aWinner = false;
                     }
                 }
+
                 #endregion
+
                 Time32 Now32 = new Time32(time);
                 DateTime Now64 = DateTime.Now;
 
-                if (client.Entity.Titles.Count > 0)
-                {
-                    foreach (var titles in client.Entity.Titles)
-                    {
-                        if (Now64 > titles.Value)
-                        {
+                if (client.Entity.Titles.Count > 0) {
+                    foreach (var titles in client.Entity.Titles) {
+                        if (Now64 > titles.Value) {
                             client.Entity.RemoveTopStatus((UInt64)titles.Key);
                         }
                     }
                 }
-                if (client.OnDonation)
-                {
-                    if (DateTime.Now >= client.matrixtime.AddHours(1.0))
-                    {
-                        SafeDictionary<uint, NobilityInformation> Board = new SafeDictionary<uint, NobilityInformation>(10000);
+
+                if (client.OnDonation) {
+                    if (DateTime.Now >= client.matrixtime.AddHours(1.0)) {
+                        SafeDictionary<uint, NobilityInformation> Board =
+                            new SafeDictionary<uint, NobilityInformation>(10000);
                         client.NobilityInformation.Donation -= client.Donationx;
                         Board.Add(client.Entity.UID, client.NobilityInformation);
                         Database.NobilityTable.UpdateNobilityInformation(client.NobilityInformation);
@@ -1539,8 +1538,8 @@ namespace MTA
                     }
                 }
 
-                if (client.Entity.attributes9 && (DateTime.Now > client.Entity.attributestime9.AddSeconds(80.0)) && client.Entity.StartTimer)
-                {
+                if (client.Entity.attributes9 && (DateTime.Now > client.Entity.attributestime9.AddSeconds(80.0)) &&
+                    client.Entity.StartTimer) {
                     client.Entity.MaxAttack -= 3000;
                     client.Entity.MinAttack -= 3000;
                     client.Entity.MaxHitpoints -= 3000;
@@ -1548,215 +1547,253 @@ namespace MTA
                     client.Entity.MagicAttack -= 3000;
                     client.Entity.attributes9 = false;
                 }
-                if (client.Entity.attributes8 && (DateTime.Now > client.Entity.attributestime8.AddSeconds(80.0)) && client.Entity.StartTimer)
-                {
+
+                if (client.Entity.attributes8 && (DateTime.Now > client.Entity.attributestime8.AddSeconds(80.0)) &&
+                    client.Entity.StartTimer) {
                     client.Entity.attributes8 = false;
                 }
-                if (client.Entity.attributes7 && (DateTime.Now > client.Entity.attributestime7.AddSeconds(80.0)) && client.Entity.StartTimer)
-                {
+
+                if (client.Entity.attributes7 && (DateTime.Now > client.Entity.attributestime7.AddSeconds(80.0)) &&
+                    client.Entity.StartTimer) {
                     client.Entity.Breaktrough -= 1500;
                     client.Entity.attributes7 = false;
                 }
-                if (client.Entity.attributes6 && (DateTime.Now > client.Entity.attributestime6.AddSeconds(80.0)) && client.Entity.StartTimer)
-                {
+
+                if (client.Entity.attributes6 && (DateTime.Now > client.Entity.attributestime6.AddSeconds(80.0)) &&
+                    client.Entity.StartTimer) {
                     client.Entity.CriticalStrike -= 15000;
                     client.Entity.SkillCStrike -= 15000;
                     client.Entity.attributes6 = false;
                 }
-                if (client.Entity.attributes5 && (DateTime.Now > client.Entity.attributestime5.AddSeconds(80.0)) && client.Entity.StartTimer)
-                {
+
+                if (client.Entity.attributes5 && (DateTime.Now > client.Entity.attributestime5.AddSeconds(80.0)) &&
+                    client.Entity.StartTimer) {
                     client.Entity.Counteraction -= 1500;
                     client.Entity.attributes5 = false;
                 }
-                if (client.Entity.attributes4 && (DateTime.Now > client.Entity.attributestime4.AddSeconds(80.0)) && client.Entity.StartTimer)
-                {
+
+                if (client.Entity.attributes4 && (DateTime.Now > client.Entity.attributestime4.AddSeconds(80.0)) &&
+                    client.Entity.StartTimer) {
                     client.Entity.Immunity -= 15000;
                     client.Entity.attributes4 = false;
                 }
-                if (client.Entity.attributes3 && (DateTime.Now > client.Entity.attributestime3.AddSeconds(80.0)) && client.Entity.StartTimer)
-                {
+
+                if (client.Entity.attributes3 && (DateTime.Now > client.Entity.attributestime3.AddSeconds(80.0)) &&
+                    client.Entity.StartTimer) {
                     client.Entity.PhysicalDamageIncrease -= 3000;
                     client.Entity.attributes3 = false;
                 }
-                if (client.Entity.attributes2 && (DateTime.Now > client.Entity.attributestime2.AddSeconds(80.0)) && client.Entity.StartTimer)
-                {
+
+                if (client.Entity.attributes2 && (DateTime.Now > client.Entity.attributestime2.AddSeconds(80.0)) &&
+                    client.Entity.StartTimer) {
                     client.Entity.MagicDamageIncrease -= 3000;
                     client.Entity.attributes2 = false;
                 }
-                if (client.Entity.attributes1 && (DateTime.Now > client.Entity.attributestime1.AddSeconds(80.0)) && client.Entity.StartTimer)
-                {
+
+                if (client.Entity.attributes1 && (DateTime.Now > client.Entity.attributestime1.AddSeconds(80.0)) &&
+                    client.Entity.StartTimer) {
                     client.Entity.PhysicalDamageDecrease -= 3000;
                     client.Entity.attributes1 = false;
                 }
-                if (client.Entity.attributes && (DateTime.Now > client.Entity.attributestime.AddSeconds(80.0)) && client.Entity.StartTimer)
-                {
+
+                if (client.Entity.attributes && (DateTime.Now > client.Entity.attributestime.AddSeconds(80.0)) &&
+                    client.Entity.StartTimer) {
                     client.Entity.MagicDamageDecrease -= 3000;
                     client.Entity.attributes = false;
                 }
 
 
-
-
                 #region Training points
-                if (client.Entity.HeavenBlessing > 0 && !client.Entity.Dead)
-                {
-                    if (Now32 > client.LastTrainingPointsUp.AddMinutes(10))
-                    {
+
+                if (client.Entity is { HeavenBlessing: > 0, Dead: false }) {
+                    if (Now32 > client.LastTrainingPointsUp.AddMinutes(10)) {
                         client.OnlineTrainingPoints += 10;
-                        if (client.OnlineTrainingPoints >= 30)
-                        {
+                        if (client.OnlineTrainingPoints >= 30) {
                             client.OnlineTrainingPoints -= 30;
                             client.IncreaseExperience(client.ExpBall / 100, false);
                         }
+
                         client.LastTrainingPointsUp = Now32;
                         client.Entity.Update(Update.OnlineTraining, client.OnlineTrainingPoints, false);
                     }
                 }
+
                 #endregion
+
                 #region Extra treasure points
-                if (client.AllowedTreasurePoints)
-                {
-                    if (Now32 > client.LastTreasurePoints.AddMinutes(1))
-                    {
+
+                if (client.AllowedTreasurePoints) {
+                    if (Now32 > client.LastTreasurePoints.AddMinutes(1)) {
                         client.Entity.TreasuerPoints++;
                         client.LastTreasurePoints = Time32.Now;
                     }
                 }
+
                 #endregion
+
                 #region Minning
-                if (client.Mining && !client.Entity.Dead)
-                {
-                    if (Now32 >= client.MiningStamp.AddSeconds(2))
-                    {
+
+                if (client is { Mining: true, Entity.Dead: false }) {
+                    if (Now32 >= client.MiningStamp.AddSeconds(2)) {
                         client.MiningStamp = Now32;
                         Mining.Mine(client);
                     }
                 }
+
                 #endregion
+
                 #region Class Fix With Auto Skill
+
                 #region Trojan
-                if (client.Entity.Class == 16)
-                {
+
+                if (client.Entity.Class == 16) {
                     client.Entity.Class -= 1;
                 }
+
                 #endregion
+
                 #region Warrior
-                if (client.Entity.Class == 26)
-                {
+
+                if (client.Entity.Class == 26) {
                     client.Entity.Class -= 1;
                 }
+
                 #endregion
+
                 #region Archer
-                if (client.Entity.Class == 46)
-                {
+
+                if (client.Entity.Class == 46) {
                     client.Entity.Class -= 1;
                 }
+
                 #endregion
+
                 #region Ninja
-                if (client.Entity.Class == 56)
-                {
+
+                if (client.Entity.Class == 56) {
                     client.Entity.Class -= 1;
                 }
+
                 #endregion
+
                 #region Monk
-                if (client.Entity.Class == 66)
-                {
+
+                if (client.Entity.Class == 66) {
                     client.Entity.Class -= 1;
                 }
+
                 #endregion
+
                 #region Pirate
-                if (client.Entity.Class == 76)
-                {
+
+                if (client.Entity.Class == 76) {
                     client.Entity.Class -= 1;
                 }
+
                 #endregion
+
                 #region Leelong
-                if (client.Entity.Class == 86)
-                {
+
+                if (client.Entity.Class == 86) {
                     client.Entity.Class -= 1;
                 }
+
                 #endregion
+
                 #region Toaist
-                if (client.Entity.Class == 103)
-                {
+
+                if (client.Entity.Class == 103) {
                     client.Entity.Class -= 1;
                 }
+
                 #endregion
+
                 #region Water
-                if (client.Entity.Class == 136)
-                {
+
+                if (client.Entity.Class == 136) {
                     client.Entity.Class -= 1;
                 }
+
                 #endregion
+
                 #region Fire
-                if (client.Entity.Class == 146)
-                {
+
+                if (client.Entity.Class == 146) {
                     client.Entity.Class -= 1;
                 }
+
                 #endregion
+
                 #endregion
+
                 #region MentorPrizeSave
-                if (Now32 > client.LastMentorSave.AddSeconds(5))
-                {
+
+                if (Now32 > client.LastMentorSave.AddSeconds(5)) {
                     Database.KnownPersons.SaveApprenticeInfo(client.AsApprentice);
                     client.LastMentorSave = Now32;
                 }
+
                 #endregion
+
                 #region Attackable
-                if (client.JustLoggedOn)
-                {
+
+                if (client.JustLoggedOn) {
                     client.JustLoggedOn = false;
                     client.ReviveStamp = Now32;
                 }
-                if (!client.Attackable)
-                {
-                    if (Now32 > client.ReviveStamp.AddSeconds(5))
-                    {
+
+                if (!client.Attackable) {
+                    if (Now32 > client.ReviveStamp.AddSeconds(5)) {
                         client.Attackable = true;
                     }
                 }
+
                 #endregion
+
                 #region DoubleExperience
-                if (client.Entity.DoubleExperienceTime == 0 && client.SuperPotion > 0)
-                {
+
+                if (client.Entity.DoubleExperienceTime == 0 && client.SuperPotion > 0) {
                     client.SuperPotion = 0;
                 }
-                if (client.Entity.DoubleExperienceTime > 0)
-                {
-                    if (Now32 >= client.Entity.DoubleExpStamp.AddMilliseconds(1000))
-                    {
+
+                if (client.Entity.DoubleExperienceTime > 0) {
+                    if (Now32 >= client.Entity.DoubleExpStamp.AddMilliseconds(1000)) {
                         client.Entity.DoubleExpStamp = Now32;
                         client.Entity.DoubleExperienceTime--;
                     }
                 }
+
                 #endregion
+
                 #region HeavenBlessing
-                if (client.Entity.HeavenBlessing > 0)
-                {
-                    if (Now32 > client.Entity.HeavenBlessingStamp.AddMilliseconds(1000))
-                    {
+
+                if (client.Entity.HeavenBlessing > 0) {
+                    if (Now32 > client.Entity.HeavenBlessingStamp.AddMilliseconds(1000)) {
                         client.Entity.HeavenBlessingStamp = Now32;
                         client.Entity.HeavenBlessing--;
                     }
                 }
+
                 #endregion
+
                 #region Enlightment
-                if (client.Entity.EnlightmentTime > 0)
-                {
-                    if (Now32 >= client.Entity.EnlightmentStamp.AddMinutes(1))
-                    {
+
+                if (client.Entity.EnlightmentTime > 0) {
+                    if (Now32 >= client.Entity.EnlightmentStamp.AddMinutes(1)) {
                         client.Entity.EnlightmentStamp = Now32;
                         client.Entity.EnlightmentTime--;
                         if (client.Entity.EnlightmentTime % 10 == 0 && client.Entity.EnlightmentTime > 0)
-                            client.IncreaseExperience(Game.Attacking.Calculate.Percent((int)client.ExpBall, .10F), false);
+                            client.IncreaseExperience(Game.Attacking.Calculate.Percent((int)client.ExpBall, .10F),
+                                false);
                     }
                 }
+
                 #endregion
+
                 #region starTeam
-                if (client.Team != null)
-                {
-                    if (client.Entity.MapID == client.Team.Leader.Entity.MapID)
-                    {
+
+                if (client.Team != null) {
+                    if (client.Entity.MapID == client.Team.Leader.Entity.MapID) {
                         Data Data = new Data(true);
                         Data.UID = client.Team.Leader.Entity.UID;
                         Data.dwParam = client.Team.Leader.Entity.MapID;
@@ -1766,96 +1803,107 @@ namespace MTA
                         Data.Send(client);
                     }
                 }
+
                 #endregion
+
                 #region PKPoints
-                if (Now32 >= client.Entity.PKPointDecreaseStamp.AddMinutes(5))
-                {
+
+                if (Now32 >= client.Entity.PKPointDecreaseStamp.AddMinutes(5)) {
                     client.Entity.PKPointDecreaseStamp = Now32;
-                    if (client.Entity.PKPoints > 0)
-                    {
+                    if (client.Entity.PKPoints > 0) {
                         client.Entity.PKPoints--;
                     }
                     else
                         client.Entity.PKPoints = 0;
                 }
+
                 #endregion
+
                 #region OverHP
-                if (client.Entity.FullyLoaded)
-                {
-                    if (client.Entity.Hitpoints > client.Entity.MaxHitpoints && client.Entity.MaxHitpoints > 1 && !client.Entity.Transformed)
-                    {
+
+                if (client.Entity.FullyLoaded) {
+                    if (client.Entity.Hitpoints > client.Entity.MaxHitpoints && client.Entity is { MaxHitpoints: > 1, Transformed: false }) {
                         client.Entity.Hitpoints = client.Entity.MaxHitpoints;
                     }
                 }
+
                 #endregion
+
                 #region Room
+
                 #region Room
-                if (client.Entity.MapID == 1543)
-                {
-                    if (client.Entity.MapID == 1543)
-                    {
+
+                if (client.Entity.MapID == 1543) {
+                    if (client.Entity.MapID == 1543) {
                         client.Entity.RemoveFlag(Update.Flags.ShurikenVortex);
                         client.Entity.RemoveFlag(Update.Flags.ReflectMelee);
                     }
                 }
+
                 #endregion
+
                 #region Room
-                if (client.Entity.MapID == 1544)
-                {
-                    if (client.Entity.MapID == 1544)
-                    {
+
+                if (client.Entity.MapID == 1544) {
+                    if (client.Entity.MapID == 1544) {
                         client.Entity.RemoveFlag(Update.Flags.ShurikenVortex);
                         client.Entity.RemoveFlag(Update.Flags.ReflectMelee);
                     }
                 }
+
                 #endregion
+
                 #region Room
-                if (client.Entity.MapID == 1545)
-                {
-                    if (client.Entity.MapID == 1545)
-                    {
+
+                if (client.Entity.MapID == 1545) {
+                    if (client.Entity.MapID == 1545) {
                         client.Entity.RemoveFlag(Update.Flags.ShurikenVortex);
                         client.Entity.RemoveFlag(Update.Flags.ReflectMelee);
                     }
                 }
+
                 #endregion
+
                 #region Room
-                if (client.Entity.MapID == 1546)
-                {
-                    if (client.Entity.MapID == 1546)
-                    {
+
+                if (client.Entity.MapID == 1546) {
+                    if (client.Entity.MapID == 1546) {
                         client.Entity.RemoveFlag(Update.Flags.ShurikenVortex);
                         client.Entity.RemoveFlag(Update.Flags.ReflectMelee);
                     }
                 }
+
                 #endregion
+
                 #region Room
-                if (client.Entity.MapID == 1547)
-                {
-                    if (client.Entity.MapID == 1547)
-                    {
+
+                if (client.Entity.MapID == 1547) {
+                    if (client.Entity.MapID == 1547) {
                         client.Entity.RemoveFlag(Update.Flags.ShurikenVortex);
                         client.Entity.RemoveFlag(Update.Flags.ReflectMelee);
                     }
                 }
+
                 #endregion
+
                 #region Room
-                if (client.Entity.MapID == 1548)
-                {
-                    if (client.Entity.MapID == 1548)
-                    {
+
+                if (client.Entity.MapID == 1548) {
+                    if (client.Entity.MapID == 1548) {
                         client.Entity.RemoveFlag(Update.Flags.ShurikenVortex);
                         client.Entity.RemoveFlag(Update.Flags.ReflectMelee);
                     }
                 }
+
                 #endregion
+
                 #endregion
 
                 #region Die Delay
-                if (client.Entity.Hitpoints == 0 && client.Entity.ContainsFlag(Update.Flags.Dead) && !client.Entity.ContainsFlag(Update.Flags.Ghost))
-                {
-                    if (Now32 > client.Entity.DeathStamp.AddSeconds(2))
-                    {
+
+                if (client.Entity.Hitpoints == 0 && client.Entity.ContainsFlag(Update.Flags.Dead) &&
+                    !client.Entity.ContainsFlag(Update.Flags.Ghost)) {
+                    if (Now32 > client.Entity.DeathStamp.AddSeconds(2)) {
                         client.Entity.AddFlag(Update.Flags.Ghost);
                         if (client.Entity.Body % 10 < 3)
                             client.Entity.TransformationID = 99;
@@ -1865,8 +1913,11 @@ namespace MTA
                         client.SendScreenSpawn(client.Entity, true);
                     }
                 }
+
                 #endregion
+
                 #region OverVigor
+
                 /* if (client.Entity.FullyLoaded)
             {
                 if (client.Vigor > client.Entity.ExtraVigor)
@@ -1874,44 +1925,46 @@ namespace MTA
                     client.Vigor = client.Entity.ExtraVigor;
                 }
             }*/
+
                 #endregion
+
                 #region ChainBolt
+
                 if (client.Entity.ContainsFlag2(Update.Flags2.ChainBoltActive))
                     if (Now32 > client.Entity.ChainboltStamp.AddSeconds(client.Entity.ChainboltTime))
                         client.Entity.RemoveFlag2(Update.Flags2.ChainBoltActive);
+
                 #endregion
 
-                if (client.Entity.HasMagicDefender && Now32 >= client.Entity.MagicDefenderStamp.AddSeconds(client.Entity.MagicDefenderSecs))
-                {
+                if (client.Entity.HasMagicDefender &&
+                    Now32 >= client.Entity.MagicDefenderStamp.AddSeconds(client.Entity.MagicDefenderSecs)) {
                     client.Entity.RemoveMagicDefender();
                 }
-                if (Now32 >= client.Entity.BlackbeardsRageStamp.AddSeconds(60))
-                {
+
+                if (Now32 >= client.Entity.BlackbeardsRageStamp.AddSeconds(60)) {
                     client.Entity.RemoveFlag2(Update.Flags2.BlackbeardsRage);
                 }
-                if (Now32 >= client.Entity.CannonBarrageStamp.AddSeconds(60))
-                {
+
+                if (Now32 >= client.Entity.CannonBarrageStamp.AddSeconds(60)) {
                     client.Entity.RemoveFlag2(Update.Flags2.CannonBarrage);
                 }
-                if (Now32 >= client.Entity.FatigueStamp.AddSeconds(client.Entity.FatigueSecs))
-                {
+
+                if (Now32 >= client.Entity.FatigueStamp.AddSeconds(client.Entity.FatigueSecs)) {
                     client.Entity.RemoveFlag2(Update.Flags2.Fatigue);
                     client.Entity.IsDefensiveStance = false;
                 }
-                if (Now32 > client.Entity.GuildRequest.AddSeconds(30))
-                {
+
+                if (Now32 > client.Entity.GuildRequest.AddSeconds(30)) {
                     client.GuildJoinTarget = 0;
                 }
 
 
                 #region Equipment
-                if (client.Entity.MapID == 1036)
-                {
-                    if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, 184, 205) < 17 && !client.Effect)
-                    {
+
+                if (client.Entity.MapID == 1036) {
+                    if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, 184, 205) < 17 && !client.Effect) {
                         client.Effect = true;
-                        if (client.Entity.MapID == 1036)
-                        {
+                        if (client.Entity.MapID == 1036) {
                             FloorItem floorItem = new FloorItem(true);
                             floorItem.ItemID = 812;
                             floorItem.MapID = 1036;
@@ -1921,35 +1974,38 @@ namespace MTA
                             client.Send(floorItem);
                         }
                     }
-                    else
-                    {
-                        if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, 184, 205) > 17)
-                        {
+                    else {
+                        if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, 184, 205) > 17) {
                             client.Effect = false;
                         }
                     }
                 }
+
                 #endregion
+
                 #region Team Qualifier
-                if ((Now64.Hour == 11 || Now64.Hour == 19) && Now64.Minute == 19 && Now64.Second == 2)
-                {
+
+                if ((Now64.Hour == 11 || Now64.Hour == 19) && Now64 is { Minute: 19, Second: 2 }) {
                     client.MessageBox("TeamArena has started! It will open for two hours! Would you like to sign up?",
                         (p) => { TeamArena.QualifyEngine.DoSignup(p); },
                         (p) => { p.Send("You can still join from the team arena interface!"); });
                 }
+
                 #endregion
+
                 #region Weekly PK
-                if (Now64.Second <= 2 && Now64.DayOfWeek == DayOfWeek.Saturday && Now64.Hour == 20 && Now64.Minute == 00)
-                {
+
+                if (Now64 is { Second: <= 2, DayOfWeek: DayOfWeek.Saturday, Hour: 20, Minute: 00 }) {
                     client.MessageBox("Weekly PK has begun! Would you like to join? Prize [ TOP And Cps]",
-                          (p) => { p.Entity.Teleport(1002, 327, 194); }, null, 60);
+                        (p) => { p.Entity.Teleport(1002, 327, 194); }, null, 60);
                 }
+
                 #endregion
+
                 #region Night
-                if (Rates.Night == 1)
-                {
-                    if (client.Entity.MapID == 701)
-                    {
+
+                if (Rates.Night == 1) {
+                    if (client.Entity.MapID == 701) {
                         Random disco = new Random();
                         uint discocolor = (uint)disco.Next(50000, 999999999);
                         Data datas = new Data(true);
@@ -1958,18 +2014,15 @@ namespace MTA
                         datas.dwParam = discocolor;
                         client.Send(datas);
                     }
-                    else
-                    {
-                        if (DateTime.Now.Minute >= 40 && DateTime.Now.Minute <= 45)
-                        {
+                    else {
+                        if (DateTime.Now.Minute >= 40 && DateTime.Now.Minute <= 45) {
                             Data datas = new Data(true);
                             datas.UID = client.Entity.UID;
                             datas.ID = 104;
                             datas.dwParam = 5855577;
                             client.Send(datas);
                         }
-                        else
-                        {
+                        else {
                             Data datas = new Data(true);
                             datas.UID = client.Entity.UID;
                             datas.ID = 104;
@@ -1982,72 +2035,56 @@ namespace MTA
                 #endregion
             }
         }
-        private void AutoAttackCallback(GameState client, int time)
-        {
+
+        private void AutoAttackCallback(GameState client, int time) {
             if (!Valid(client)) return;
             Time32 Now = new Time32(time);
-            if (client.Entity.AttackPacket != null || client.Entity.VortexPacket != null)
-            {
-                try
-                {
-                    if (client.Entity.ContainsFlag(Update.Flags.ShurikenVortex))
-                    {
-                        if (client.Entity.VortexPacket != null && client.Entity.VortexPacket.ToArray() != null)
-                        {
-                            if (Now > client.Entity.VortexAttackStamp.AddMilliseconds(1400))
-                            {
+            if (client.Entity.AttackPacket != null || client.Entity.VortexPacket != null) {
+                try {
+                    if (client.Entity.ContainsFlag(Update.Flags.ShurikenVortex)) {
+                        if (client.Entity.VortexPacket != null && client.Entity.VortexPacket.ToArray() != null) {
+                            if (Now > client.Entity.VortexAttackStamp.AddMilliseconds(1400)) {
                                 client.Entity.VortexAttackStamp = Now;
                                 client.Entity.VortexPacket.AttackType = Attack.Magic;
                                 new Game.Attacking.Handle(client.Entity.VortexPacket, client.Entity, null);
                             }
                         }
                     }
-                    else
-                    {
-                        var AttackPacket = client.Entity.AttackPacket;
-                        if (AttackPacket != null && AttackPacket.ToArray() != null)
-                        {
-                            uint AttackType = AttackPacket.AttackType;
-                            if (AttackType == Attack.Magic || AttackType == Attack.Melee || AttackType == Attack.Ranged)
-                            {
-                                if (AttackType == Attack.Magic)
-                                {
-                                    if (Now > client.Entity.AttackStamp.AddSeconds(1))
-                                    {
-                                        if (AttackPacket.Damage != 12160 &&
-                                            AttackPacket.Damage != 12170 &&
-                                            AttackPacket.Damage != 12120 &&
-                                            AttackPacket.Damage != 12130 &&
-                                            AttackPacket.Damage != 12140 &&
-                                            AttackPacket.Damage != 12320 &&
-                                            AttackPacket.Damage != 12330 &&
-                                            AttackPacket.Damage != 12340 &&
-                                            AttackPacket.Damage != 12570 &&
-                                            AttackPacket.Damage != 12210)
-                                        {
-                                            new Game.Attacking.Handle(AttackPacket, client.Entity, null);
-                                        }
-                                    }
-                                }
-
-                                else
-                                {
-                                    int decrease = 300;
-                                    if (client.Entity.OnCyclone())
-                                        decrease = 700;
-                                    if (client.Entity.OnSuperman())
-                                        decrease = 200;
-                                    if (Now > client.Entity.AttackStamp.AddMilliseconds((1000 - client.Entity.Agility - decrease) * (AttackType == Attack.Ranged ? 1 : 1)))
-                                    {
-                                        new Game.Attacking.Handle(AttackPacket, client.Entity, null);
-                                    }
-                                }
+                    else {
+                        var attackPacket = client.Entity.AttackPacket;
+                        var array = attackPacket?.ToArray();
+                        if (attackPacket == null) return;
+                        var attackType = attackPacket.AttackType;
+                        if (attackType != Attack.Magic && attackType != Attack.Melee &&
+                            attackType != Attack.Ranged) return;
+                        var handle = new Game.Attacking.Handle(attackPacket, client.Entity, null);
+                        if (attackType == Attack.Magic) {
+                            if (Now > client.Entity.AttackStamp.AddSeconds(1)) {
+                                if (attackPacket.Damage != 12160 &&
+                                    attackPacket.Damage != 12170 &&
+                                    attackPacket.Damage != 12120 &&
+                                    attackPacket.Damage != 12130 &&
+                                    attackPacket.Damage != 12140 &&
+                                    attackPacket.Damage != 12320 &&
+                                    attackPacket.Damage != 12330 &&
+                                    attackPacket.Damage != 12340 &&
+                                    attackPacket.Damage != 12570 &&
+                                    attackPacket.Damage != 12210) { }
                             }
+                        }
+
+                        else {
+                            int decrease = 300;
+                            if (client.Entity.OnCyclone())
+                                decrease = 700;
+                            if (client.Entity.OnSuperman())
+                                decrease = 200;
+                            if (Now > client.Entity.AttackStamp.AddMilliseconds(
+                                    (1000 - client.Entity.Agility - decrease) * (1))) { }
                         }
                     }
                 }
-                catch (Exception e)
-                {
+                catch (Exception e) {
                     Program.SaveException(e);
                     client.Entity.AttackPacket = null;
                     client.Entity.VortexPacket = null;
@@ -2055,76 +2092,54 @@ namespace MTA
             }
         }
 
-        private void PrayerCallback(GameState client, int time)
-        {
+        private void PrayerCallback(GameState client, int time) {
             if (!Valid(client)) return;
-            Time32 Now = new Time32(time);
 
             if (client.Entity.Reborn > 1)
                 return;
 
-            if (!client.Entity.ContainsFlag(Update.Flags.Praying))
-            {
-                foreach (Interfaces.IMapObject ClientObj in client.Screen.Objects)
-                {
-                    if (ClientObj != null)
-                    {
-                        if (ClientObj.MapObjType == MapObjectType.Player)
-                        {
-                            var Client = ClientObj.Owner;
-                            if (Client.Entity.ContainsFlag(Update.Flags.CastPray))
-                            {
-                                if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, ClientObj.X, ClientObj.Y) <= 3)
-                                {
-                                    client.Entity.AddFlag(Update.Flags.Praying);
-                                    client.PrayLead = Client;
-                                    client.Entity.Action = Client.Entity.Action;
-                                    Client.Prayers.Add(client);
-                                    break;
-                                }
-                            }
-                        }
-                    }
+            if (!client.Entity.ContainsFlag(Update.Flags.Praying)) {
+                foreach (var clientObj in client.Screen.Objects) {
+                    if (clientObj.MapObjType != MapObjectType.Player) continue;
+                    var clientObjOwner = clientObj.Owner;
+                    if (!clientObjOwner.Entity.ContainsFlag(Update.Flags.CastPray)) continue;
+                    if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, clientObj.X, clientObj.Y) > 3) continue;
+                    client.Entity.AddFlag(Update.Flags.Praying);
+                    client.PrayLead = clientObjOwner;
+                    client.Entity.Action = clientObjOwner.Entity.Action;
+                    clientObjOwner.Prayers.Add(client);
+                    break;
                 }
             }
-            else
-            {
-                if (client.PrayLead != null)
-                {
-                    if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, client.PrayLead.Entity.X, client.PrayLead.Entity.Y) > 4)
-                    {
-                        client.Entity.RemoveFlag(Update.Flags.Praying);
-                        client.PrayLead.Prayers.Remove(client);
-                        client.PrayLead = null;
-                    }
-                }
+            else {
+                if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, client.PrayLead.Entity.X,
+                        client.PrayLead.Entity.Y) <= 4) return;
+                client.Entity.RemoveFlag(Update.Flags.Praying);
+                client.PrayLead.Prayers.Remove(client);
+                client.PrayLead = null;
             }
         }
 
-        private void WorldTournaments(int time)
-        {
-            Time32 Now = new Time32(time);
-            DateTime Now64 = DateTime.Now;
+        private void WorldTournaments(int time) {
+            DateTime now64 = DateTime.Now;
+
             #region Event System
+
             // Update all scheduled events
             Game.Events.EventScheduler.Update(DateTime.Now);
-            
+
             // Send pre-event warnings for CP Castle
             Game.Events.CpCastle.CpCastleEvent.SendPreEventWarnings(DateTime.Now);
+
             #endregion
 
             HeroOFGame.CheakUp();
-            if (MatrixTimes.Start.SkillTeam && !Game.Features.Tournaments.TeamElitePk.SkillTeamTournament.Opened)
-            {
-                Game.Features.Tournaments.TeamElitePk.SkillTeamTournament.Open();
-                foreach (GameState client in Kernel.GamePool.Values)
-                {
+            if (MatrixTimes.Start.SkillTeam && !TeamElitePk.SkillTeamTournament.Opened) {
+                TeamElitePk.SkillTeamTournament.Open();
+                foreach (GameState client in Kernel.GamePool.Values) {
                     client.ClaimedSkillTeam = 0;
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6000 && !client.Entity.Dead)
-                    {
-
-                        EventAlert alert = new EventAlert
-                        {
+                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6000 && !client.Entity.Dead) {
+                        EventAlert alert = new EventAlert {
                             StrResID = 10541,
                             Countdown = 60,
                             UK12 = 1
@@ -2134,17 +2149,13 @@ namespace MTA
                     }
                 }
             }
-            if (MatrixTimes.Start.TeamPk && !Game.Features.Tournaments.TeamElitePk.TeamTournament.Opened)
-            {
-                Game.Features.Tournaments.TeamElitePk.TeamTournament.Open();
-                foreach (GameState client in Kernel.GamePool.Values)
-                {
-                    client.ClaimedTeampk = 0;
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6000 && !client.Entity.Dead)
-                    {
 
-                        EventAlert alert = new EventAlert
-                        {
+            if (MatrixTimes.Start.TeamPk && !TeamElitePk.TeamTournament.Opened) {
+                TeamElitePk.TeamTournament.Open();
+                foreach (GameState client in Kernel.GamePool.Values) {
+                    client.ClaimedTeampk = 0;
+                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6000 && !client.Entity.Dead) {
+                        EventAlert alert = new EventAlert {
                             StrResID = 10543,
                             Countdown = 60,
                             UK12 = 1
@@ -2154,47 +2165,56 @@ namespace MTA
                     }
                 }
             }
+
             #region Couples PK War
-            if (DateTime.Now.DayOfWeek == DayOfWeek.Friday && DateTime.Now.Hour == 19 && DateTime.Now.Minute == 30 && DateTime.Now.Second == 1)
-            {
-                Kernel.SendWorldMessage(new Message("Couples PkWar has started! You have 5 minute to signup go to TC CouplesPkGuide in TwinCity!", Color.White, Message.Center), Program.Values);
+
+            if (DateTime.Now.DayOfWeek == DayOfWeek.Friday && DateTime.Now.Hour == 19 && DateTime.Now.Minute == 30 &&
+                DateTime.Now.Second == 1) {
+                Kernel.SendWorldMessage(
+                    new Message(
+                        "Couples PkWar has started! You have 5 minute to signup go to TC CouplesPkGuide in TwinCity!",
+                        Color.White, Message.Center), Program.Values);
                 foreach (var client in Program.Values)
                     if (client.Entity.Spouse != "None")
-                        client.MessageBox("CouplesPk War has started! Would you like to join? [Prize: " + 5000000 + " CPs]",
+                        client.MessageBox(
+                            "CouplesPk War has started! Would you like to join? [Prize: " + 5000000 + " CPs]",
                             p => { p.Entity.Teleport(1002, 275, 187); });
             }
+
             #endregion
+
             #region cycolne race
-            if (DateTime.Now.Minute == 57 && DateTime.Now.Second == 1)
-            {
-                cycolne3 = true;
+
+            if (DateTime.Now.Minute == 57 && DateTime.Now.Second == 1) {
+                Cycolne3 = true;
                 Entity.Speed = 0;
                 foreach (var client in Program.Values)
                     client.MessageBox("Cycolne Race Start U Like To Join And Get " + 100000 + " CPS ",
-                             p => { p.Entity.Teleport(1002, 308, 235); });
+                        p => { p.Entity.Teleport(1002, 308, 235); });
             }
-            if (DateTime.Now.Minute == 58 && DateTime.Now.Second == 1)
-            {
-                cycolne1 = true;
-            }
-            if (DateTime.Now.Minute == 59 && cycolne3)
-            {
-                cycolne3 = false;
-                cycolne1 = false;
 
+            if (DateTime.Now.Minute == 58 && DateTime.Now.Second == 1) {
+                Cycolne1 = true;
             }
+
+            if (DateTime.Now.Minute == 59 && Cycolne3) {
+                Cycolne3 = false;
+                Cycolne1 = false;
+            }
+
             #endregion
+
             //
 
             #region Elite GW
+
             {
                 foreach (var client in Program.Values)
-                    if (client.Entity.MapID == 6000 || client.Entity.MapID == 6001 || client.Entity.MapID == 6002 || client.Entity.MapID == 6003 || client.Entity.MapID == 6004)
+                    if (client.Entity.MapID == 6000 || client.Entity.MapID == 6001 || client.Entity.MapID == 6002 ||
+                        client.Entity.MapID == 6003 || client.Entity.MapID == 6004)
                         return;
-                if (!EliteGuildWar.IsWar)
-                {
-                    if (Now64.Minute == 15 && Now64.Second == 01)
-                    {
+                if (!EliteGuildWar.IsWar) {
+                    if (now64 is { Minute: 15, Second: 01 }) {
                         EliteGuildWar.Start();
                         foreach (var client in Program.Values)
                             if (client.Entity.GuildID != 0)
@@ -2202,103 +2222,107 @@ namespace MTA
                                     p => { p.Entity.Teleport(1002, 286, 158); });
                     }
                 }
-                if (EliteGuildWar.IsWar)
-                {
-                    if (Time32.Now > EliteGuildWar.ScoreSendStamp.AddSeconds(3))
-                    {
+
+                if (EliteGuildWar.IsWar) {
+                    if (Time32.Now > EliteGuildWar.ScoreSendStamp.AddSeconds(3)) {
                         EliteGuildWar.ScoreSendStamp = Time32.Now;
                         EliteGuildWar.SendScores();
                     }
-                    if (Now64.Minute == 25 && Now64.Second <= 02)
-                    {
-                        Kernel.SendWorldMessage(new Message("5 Minutes left till Elite GuildWar End Hurry kick other Guild's Ass!.", Color.White, Message.Center), Program.Values);
+
+                    if (now64 is { Minute: 25, Second: <= 02 }) {
+                        Kernel.SendWorldMessage(
+                            new Message("5 Minutes left till Elite GuildWar End Hurry kick other Guild's Ass!.",
+                                Color.White, Message.Center), Program.Values);
                     }
                 }
 
-                if (EliteGuildWar.IsWar)
-                {
-                    if (Now64.Minute == 29 && Now64.Second == 58)
-                    {
+                if (EliteGuildWar.IsWar) {
+                    if (now64 is { Minute: 29, Second: 58 }) {
                         EliteGuildWar.End();
                         {
-                            Kernel.SendWorldMessage(new Message("Elite Guild War Ended Thanks To MTA.", Color.White, Message.Center), Program.Values);
+                            Kernel.SendWorldMessage(
+                                new Message("Elite Guild War Ended Thanks To MTA.", Color.White, Message.Center),
+                                Program.Values);
                         }
                     }
                 }
             }
+
             #endregion
+
             #region Clan War
-            if ((Now64.Hour == 21 || Now64.Hour == 16) && Now64.Minute == 00 && Now64.Second == 05 && !ClanWar.IsWar)
-            {
+
+            if ((now64.Hour == 21 || now64.Hour == 16) && now64 is { Minute: 00, Second: 05 } && !ClanWar.IsWar) {
                 ClanWar.Start();
-                ClanWarAI = false;
-                if (Now64.Hour != 16)
-                {
-                    ClanWarAI = Now64.Hour != 16;
+                _clanWarAi = false;
+                if (now64.Hour != 16) {
+                    _clanWarAi = now64.Hour != 16;
                     foreach (var client in Program.Values)
                         if (client.Entity.GuildID != 0)
                             client.MessageBox("ClanWar Has Begun! Would You Like To Join This War ...?",
                                 p => { p.Entity.Teleport(1002, 284, 146); });
                 }
             }
-            if (Now64.Hour == 16 && Now64.Minute == 10 && !ClanWarAI)
-            {
-                ClanWarAI = true;
+
+            if (now64 is { Hour: 16, Minute: 10 } && !_clanWarAi) {
+                _clanWarAi = true;
                 foreach (var client in Program.Values)
                     if (client.Entity.GuildID != 0)
                         client.MessageBox("ClanWar Has Begun! Would You Like To Join This War ...?",
                             p => { p.Entity.Teleport(1002, 284, 146); });
             }
-            if ((Now64.Hour == 22 || Now64.Hour == 17) && Now64.Minute == 00 && ClanWar.IsWar)
-            {
+
+            if ((now64.Hour == 22 || now64.Hour == 17) && now64.Minute == 00 && ClanWar.IsWar) {
                 ClanWar.End();
             }
-            if (ClanWar.IsWar)
-            {
-                if (Time32.Now > ClanWar.ScoreSendStamp.AddSeconds(3))
-                {
+
+            if (ClanWar.IsWar) {
+                if (Time32.Now > ClanWar.ScoreSendStamp.AddSeconds(3)) {
                     ClanWar.ScoreSendStamp = Time32.Now;
                     ClanWar.SendScores();
                 }
-
             }
+
             #endregion
+
             #region Dis City
-            if (Now64.DayOfWeek == DayOfWeek.Wednesday || Now64.DayOfWeek == DayOfWeek.Sunday)
-            {
-                if ((Now64.Hour == 12 || Now64.Hour == 19) && Now64.Minute == 05 && Now64.Second == 2)
-                {
-                    Kernel.SendWorldMessage(new Message("DisCity signup has been closed. Please try next time!", Color.White, Message.Center), Program.Values);
+
+            if (now64.DayOfWeek == DayOfWeek.Wednesday || now64.DayOfWeek == DayOfWeek.Sunday) {
+                if ((now64.Hour == 12 || now64.Hour == 19) && now64 is { Minute: 05, Second: 2 }) {
+                    Kernel.SendWorldMessage(
+                        new Message("DisCity signup has been closed. Please try next time!", Color.White,
+                            Message.Center), Program.Values);
 
                     Game.Features.DisCity.Signup = false;
                 }
             }
-            #endregion
-            #region Class PK
-            if (Now64.Hour == 20 && Now64.Minute == 30 && Now64.Second == 0 || Now64.Hour == 8 && Now64.Minute == 30 && Now64.Second == 0)
-            {
-                Kernel.SendWorldMessage(new Message("Class PK War began! all Go Twin 302, 148", Color.White, Message.Center), Program.Values);
-                foreach (var client in Program.Values) ;
 
-            }
             #endregion
+
+            #region Class PK
+
+            if (now64 is { Hour: 20, Minute: 30, Second: 0 } ||
+                now64 is { Hour: 8, Minute: 30, Second: 0 }) {
+                Kernel.SendWorldMessage(
+                    new Message("Class PK War began! all Go Twin 302, 148", Color.White, Message.Center),
+                    Program.Values);
+            }
+
+            #endregion
+
             #region Monthly PK
-            if (Now64.Day <= 7 && Now64.DayOfWeek == DayOfWeek.Sunday)
-            {
-                if (Now64.Hour == 21 && Now64.Minute >= 50 && Now64.Second == 2)
-                {
-                    int min = 60 - Now64.Minute;
+
+            if (now64 is { Day: <= 7, DayOfWeek: DayOfWeek.Sunday }) {
+                if (now64 is { Hour: 21, Minute: >= 50, Second: 2 }) {
+                    int min = 60 - now64.Minute;
                     Kernel.SendWorldMessage(new Message("MonthelyPk " + min.ToString() + " Minute!", Color.Red, 2012));
                 }
-                if (Now64.Hour == 22 && Now64.Minute == 00 && Now64.Second <= 2)
-                {
+
+                if (now64 is { Hour: 22, Minute: 00, Second: <= 2 }) {
                     MonthlyPKWar = true;
-                    foreach (GameState client in Kernel.GamePool.Values)
-                    {
-                        if (client.Map.BaseID != 6001 && client.Map.BaseID != 6000 && !client.Entity.Dead)
-                        {
-                            EventAlert alert = new EventAlert
-                            {
+                    foreach (GameState client in Kernel.GamePool.Values) {
+                        if (client.Map.BaseID != 6001 && client.Map.BaseID != 6000 && !client.Entity.Dead) {
+                            EventAlert alert = new EventAlert {
                                 StrResID = 10523,
                                 Countdown = 60,
                                 UK12 = 1
@@ -2308,30 +2332,39 @@ namespace MTA
                         }
                     }
                 }
-                if (Now64.Hour == 22 && Now64.Minute >= 15 && MonthlyPKWar)
-                {
+
+                if (now64 is { Hour: 22, Minute: >= 15 } && MonthlyPKWar) {
                     MonthlyPKWar = false;
                     Kernel.SendWorldMessage(new Message("MonthelyPk Ended!", Color.Red, Message.Center));
                 }
             }
+
             #endregion
+
             #region LuckyMan
-            if (Now64.Minute == 43 && Now64.Second == 5)
-            {
-                Kernel.SendWorldMessage(new Message("Lucky Man War began !", Color.White, Message.Center), Program.Values);
+
+            if (now64 is { Minute: 43, Second: 5 }) {
+                Kernel.SendWorldMessage(new Message("Lucky Man War began !", Color.White, Message.Center),
+                    Program.Values);
                 foreach (var client in Program.Values)
                     client.MessageBox("Lucky Man began! Would you Like to join ...?",
-                     p => { p.Entity.Teleport(1002, 288, 360); }, null, 60);
+                        p => { p.Entity.Teleport(1002, 288, 360); }, null, 60);
             }
+
             #endregion
+
             #region SuperGuildWar
-            if (Now64.Hour == 20 && Now64.Minute == 5 && Now64.Second == 0 && (Now64.Day == 1 || Now64.Day == 7 || Now64.Day == 14 || Now64.Day == 21))
-            {
-                Kernel.SendWorldMessage(new Message("Super Guild War now work will end at [23:00] Server time? !", Color.White, Message.BroadcastMessage), Program.Values);
+
+            if (now64 is { Hour: 20, Minute: 5, Second: 0 } &&
+                (now64.Day == 1 || now64.Day == 7 || now64.Day == 14 || now64.Day == 21)) {
+                Kernel.SendWorldMessage(
+                    new Message("Super Guild War now work will end at [23:00] Server time? !", Color.White,
+                        Message.BroadcastMessage), Program.Values);
                 foreach (var client in Program.Values)
                     client.MessageBox("Super Guild War now work will end at 23:00 Server time?",
-                    p => { p.Entity.Teleport(1038, 348, 337); }, null, 60);
+                        p => { p.Entity.Teleport(1038, 348, 337); }, null, 60);
             }
+
             #endregion
 
 
@@ -2348,16 +2381,16 @@ namespace MTA
             //    }
             //    #endregion
             //////////////////////
+
             #region PoleIslanD
 
-            if (!PoleIslanD.IsWar)
-            {
-                if (Now64.Hour == 16 && Now64.Minute == 00 && Now64.Second == 35)
-                {
+            if (!PoleIslanD.IsWar) {
+                if (now64 is { Hour: 16, Minute: 00, Second: 35 }) {
                     PoleIslanD.Start();
 
                     foreach (var client in Program.Values)
-                        if (client.Entity.MapID == 6000 || client.Entity.MapID == 6001 || client.Entity.MapID == 6002 || client.Entity.MapID == 6003 || client.Entity.MapID == 6004)
+                        if (client.Entity.MapID == 6000 || client.Entity.MapID == 6001 || client.Entity.MapID == 6002 ||
+                            client.Entity.MapID == 6003 || client.Entity.MapID == 6004)
                             return;
                     foreach (var client in Program.Values)
                         if (client.Entity.GuildID != 0)
@@ -2365,40 +2398,38 @@ namespace MTA
                                 p => { p.Entity.Teleport(1002, 298, 230); });
                 }
             }
-            if (PoleIslanD.IsWar)
-            {
-                if (Time32.Now > PoleIslanD.ScoreSendStamp.AddSeconds(3))
-                {
+
+            if (PoleIslanD.IsWar) {
+                if (Time32.Now > PoleIslanD.ScoreSendStamp.AddSeconds(3)) {
                     PoleIslanD.ScoreSendStamp = Time32.Now;
                     PoleIslanD.SendScores();
                 }
-                if (Now64.Hour == 16 && Now64.Minute == 50 && Now64.Second <= 2)
-                {
-                    Kernel.SendWorldMessage(new Message("10 Minutes left till PoleIslanD End Hurry kick other Guild's Ass!.", Color.White, Message.Center), Program.Values);
+
+                if (now64 is { Hour: 16, Minute: 50, Second: <= 2 }) {
+                    Kernel.SendWorldMessage(
+                        new Message("10 Minutes left till PoleIslanD End Hurry kick other Guild's Ass!.", Color.White,
+                            Message.Center), Program.Values);
                 }
             }
 
-            if (PoleIslanD.IsWar)
-            {
-                if (Now64.Hour == 17 && Now64.Minute == 00 && Now64.Second == 04)
-                {
+            if (PoleIslanD.IsWar) {
+                if (now64 is { Hour: 17, Minute: 00, Second: 04 }) {
                     PoleIslanD.End();
-                    {
-
-                    }
+                    { }
                 }
             }
+
             #endregion
+
             #region PoleRakion
 
-            if (!PoleRakion.IsWar)
-            {
-                if (Now64.Hour == 22 && Now64.Minute == 00 && Now64.Second == 35)
-                {
+            if (!PoleRakion.IsWar) {
+                if (now64 is { Hour: 22, Minute: 00, Second: 35 }) {
                     PoleRakion.Start();
 
                     foreach (var client in Program.Values)
-                        if (client.Entity.MapID == 6000 || client.Entity.MapID == 6001 || client.Entity.MapID == 6002 || client.Entity.MapID == 6003 || client.Entity.MapID == 6004)
+                        if (client.Entity.MapID == 6000 || client.Entity.MapID == 6001 || client.Entity.MapID == 6002 ||
+                            client.Entity.MapID == 6003 || client.Entity.MapID == 6004)
                             return;
                     foreach (var client in Program.Values)
                         if (client.Entity.GuildID != 0)
@@ -2406,217 +2437,285 @@ namespace MTA
                                 p => { p.Entity.Teleport(1002, 249, 215); });
                 }
             }
-            if (PoleRakion.IsWar)
-            {
-                if (Time32.Now > PoleRakion.ScoreSendStamp.AddSeconds(3))
-                {
+
+            if (PoleRakion.IsWar) {
+                if (Time32.Now > PoleRakion.ScoreSendStamp.AddSeconds(3)) {
                     PoleRakion.ScoreSendStamp = Time32.Now;
                     PoleRakion.SendScores();
                 }
-                if (Now64.Hour == 22 && Now64.Minute == 50 && Now64.Second <= 2)
-                {
-                    Kernel.SendWorldMessage(new Message("10 Minutes left till PoleRakion End Hurry kick other Guild's Ass!.", Color.White, Message.Center), Program.Values);
+
+                if (now64 is { Hour: 22, Minute: 50, Second: <= 2 }) {
+                    Kernel.SendWorldMessage(
+                        new Message("10 Minutes left till PoleRakion End Hurry kick other Guild's Ass!.", Color.White,
+                            Message.Center), Program.Values);
                 }
             }
 
-            if (PoleRakion.IsWar)
-            {
-                if (Now64.Hour == 23 && Now64.Minute == 00 && Now64.Second == 04)
-                {
+            if (PoleRakion.IsWar) {
+                if (now64 is { Hour: 23, Minute: 00, Second: 04 }) {
                     PoleRakion.End();
-                    {
-
-                    }
+                    { }
                 }
             }
+
             #endregion
+
             /////////////////////
             ////////////////////New Quests Adedd By Franko///////////////////
+
             #region Portals`War
-            if (DateTime.Now.Minute == 10 && Now64.Second == 10)
-            {
-                Kernel.SendWorldMessage(new Message(" PortalsWar Pk, Now Online All Go To Play PK, !", Color.White, Message.Center), Program.Values);
+
+            if (DateTime.Now.Minute == 10 && now64.Second == 10) {
+                Kernel.SendWorldMessage(
+                    new Message(" PortalsWar Pk, Now Online All Go To Play PK, !", Color.White, Message.Center),
+                    Program.Values);
                 foreach (var client in Program.Values)
                     client.MessageBox(" PortalsWar Pk, Now Online, like to Join? ",
-                    p => { p.Entity.Teleport(1002, 291, 360); }, null, 60);
+                        p => { p.Entity.Teleport(1002, 291, 360); }, null, 60);
             }
+
             #endregion
+
             #region ConquerPK PK
-            if (DateTime.Now.Minute == 01 && Now64.Second == 10)
-            {
-                Kernel.SendWorldMessage(new Message(" ConquerPK Pk, Now Online All Go To Play PK, !", Color.White, Message.Center), Program.Values);
+
+            if (DateTime.Now.Minute == 01 && now64.Second == 10) {
+                Kernel.SendWorldMessage(
+                    new Message(" ConquerPK Pk, Now Online All Go To Play PK, !", Color.White, Message.Center),
+                    Program.Values);
                 foreach (var client in Program.Values)
                     client.MessageBox(" ConquerPK Pk, Now Online, like to Join? ",
-                    p => { p.Entity.Teleport(1002, 274, 360); }, null, 60);
+                        p => { p.Entity.Teleport(1002, 274, 360); }, null, 60);
             }
+
             #endregion
+
             #region PolePrize
-            if (DateTime.Now.Minute == 05 && Now64.Second == 01)
-            {
-                Kernel.SendWorldMessage(new Message("The War PolePrize Is Started Now ,, End This War at xx:10", Color.White, Message.Center), Program.Values);
+
+            if (DateTime.Now.Minute == 05 && now64.Second == 01) {
+                Kernel.SendWorldMessage(
+                    new Message("The War PolePrize Is Started Now ,, End This War at xx:10", Color.White,
+                        Message.Center), Program.Values);
                 foreach (var client in Program.Values)
                     client.MessageBox("PolePrize Start Now Let's go Fast? ",
-                    p => { p.Entity.Teleport(1002, 230, 227); }, null, 60);
+                        p => { p.Entity.Teleport(1002, 230, 227); }, null, 60);
             }
+
             #endregion
+
             #region Ghost PK
-            if (DateTime.Now.Minute == 06 && Now64.Second == 10)
-            {
-                Kernel.SendWorldMessage(new Message(" Ghost Pk, Now Online All Go To Play PK !", Color.White, Message.Center), Program.Values);
+
+            if (DateTime.Now.Minute == 06 && now64.Second == 10) {
+                Kernel.SendWorldMessage(
+                    new Message(" Ghost Pk, Now Online All Go To Play PK !", Color.White, Message.Center),
+                    Program.Values);
                 foreach (var client in Program.Values)
                     client.MessageBox(" Ghostpk Pk, Now Online, like to Join? ",
-                    p => { p.Entity.Teleport(1002, 300, 361); }, null, 60);
+                        p => { p.Entity.Teleport(1002, 300, 361); }, null, 60);
             }
+
             #endregion
+
             #region StayAlive PK
-            if (DateTime.Now.Minute == 16 && Now64.Second == 10)
-            {
-                Kernel.SendWorldMessage(new Message(" StayAlive Pk, Now Online All Go To Play PK !", Color.White, Message.Center), Program.Values);
+
+            if (DateTime.Now.Minute == 16 && now64.Second == 10) {
+                Kernel.SendWorldMessage(
+                    new Message(" StayAlive Pk, Now Online All Go To Play PK !", Color.White, Message.Center),
+                    Program.Values);
                 foreach (var client in Program.Values)
                     client.MessageBox(" StayAlive Pk, Now Online, like to Join? ",
-                    p => { p.Entity.Teleport(1002, 297, 360); }, null, 60);
+                        p => { p.Entity.Teleport(1002, 297, 360); }, null, 60);
             }
+
             #endregion
+
             #region PrinceWar
-            if (DateTime.Now.Minute == 23 && Now64.Second == 1)
-            {
-                Kernel.SendWorldMessage(new Message("(PrinceWar Pk, Now Online All Go To Play PK", Color.White, Message.Center), Program.Values);
+
+            if (DateTime.Now.Minute == 23 && now64.Second == 1) {
+                Kernel.SendWorldMessage(
+                    new Message("(PrinceWar Pk, Now Online All Go To Play PK", Color.White, Message.Center),
+                    Program.Values);
                 foreach (var client in Program.Values)
                     client.MessageBox(" PrinceWar, Now Online, like to Join? ",
-                    p => { p.Entity.Teleport(1002, 274, 362); }, null, 60);
+                        p => { p.Entity.Teleport(1002, 274, 362); }, null, 60);
             }
+
             #endregion
+
             #region Attackers QuesT
-            if (DateTime.Now.Minute == 32 && Now64.Second == 1)
-            {
-                Kernel.SendWorldMessage(new Message(" Attackers  Pk, Now Online All Go To Play PK !", Color.White, Message.Center), Program.Values);
+
+            if (DateTime.Now.Minute == 32 && now64.Second == 1) {
+                Kernel.SendWorldMessage(
+                    new Message(" Attackers  Pk, Now Online All Go To Play PK !", Color.White, Message.Center),
+                    Program.Values);
                 foreach (var client in Program.Values)
                     client.MessageBox(" Attackers QuesT Pk, Now Online, like to Join?",
-                    (p) => { p.Entity.Teleport(1002, 294, 360); }, null, 60);
+                        (p) => { p.Entity.Teleport(1002, 294, 360); }, null, 60);
             }
+
             #endregion
+
             #region Rabbit PK
-            if (DateTime.Now.Minute == 38 && Now64.Second == 1)
-            {
-                Kernel.SendWorldMessage(new Message(" Rabbit Pk, Now Online All Go To Play PK !", Color.White, Message.Center), Program.Values);
+
+            if (DateTime.Now.Minute == 38 && now64.Second == 1) {
+                Kernel.SendWorldMessage(
+                    new Message(" Rabbit Pk, Now Online All Go To Play PK !", Color.White, Message.Center),
+                    Program.Values);
                 foreach (var client in Program.Values)
                     client.MessageBox(" Rabbit Pk, Now Online, like to Join? ",
-                    p => { p.Entity.Teleport(1002, 277, 360); }, null, 60);
+                        p => { p.Entity.Teleport(1002, 277, 360); }, null, 60);
             }
+
             #endregion
+
             #region RevengerWar
-            if (DateTime.Now.Minute == 47 && Now64.Second == 1)
-            {
-                Kernel.SendWorldMessage(new Message(" ReVenger, Now Online All Go To Play PK,!", Color.White, Message.Center), Program.Values);
+
+            if (DateTime.Now.Minute == 47 && now64.Second == 1) {
+                Kernel.SendWorldMessage(
+                    new Message(" ReVenger, Now Online All Go To Play PK,!", Color.White, Message.Center),
+                    Program.Values);
                 foreach (var client in Program.Values)
                     client.MessageBox(" ReVengerWar Pk, Now Online, like to Join? ",
-                    (p) => { p.Entity.Teleport(1002, 279, 360); }, null, 60);
+                        (p) => { p.Entity.Teleport(1002, 279, 360); }, null, 60);
             }
+
             #endregion
+
             #region Dead World
-            if (DateTime.Now.Minute == 53 && Now64.Second == 1)
-            {
-                Kernel.SendWorldMessage(new Message(" Dead World Pk, Now Online All Go To Play PK!", Color.White, Message.Center), Program.Values);
+
+            if (DateTime.Now.Minute == 53 && now64.Second == 1) {
+                Kernel.SendWorldMessage(
+                    new Message(" Dead World Pk, Now Online All Go To Play PK!", Color.White, Message.Center),
+                    Program.Values);
                 foreach (var client in Program.Values)
                     client.MessageBox(" Dead World Pk, Now Online, like to Join? ",
-                    p => { p.Entity.Teleport(1002, 282, 360); }, null, 60);
+                        p => { p.Entity.Teleport(1002, 282, 360); }, null, 60);
             }
+
             #endregion
+
             #region MemberAlter
-            if (DateTime.Now.Minute == 57 && Now64.Second == 10)
-            {
-                Kernel.SendWorldMessage(new Message(" MemberAlter, Now Online All Go To Play PK,!", Color.White, Message.Center), Program.Values);
+
+            if (DateTime.Now.Minute == 57 && now64.Second == 10) {
+                Kernel.SendWorldMessage(
+                    new Message(" MemberAlter, Now Online All Go To Play PK,!", Color.White, Message.Center),
+                    Program.Values);
                 foreach (var client in Program.Values)
                     client.MessageBox("War, MemberAlter, Now Online, like to Join? ",
-                    p => { p.Entity.Teleport(1002, 285, 360); }, null, 60);
+                        p => { p.Entity.Teleport(1002, 285, 360); }, null, 60);
             }
+
             #endregion
+
             #region [T]KingDom.GLD
-            if (Now64.Second <= 2 && Now64.DayOfWeek == DayOfWeek.Monday && Now64.Hour == 18 && Now64.Minute == 48)
-            {
-                Kernel.SendWorldMessage(new Message("((#42))War [T]KingDom.GLD, Now Online All Go To Play PK,((#41))--((#50))Monday, 18:48 To 18:55((#50)) !", Color.White, Message.Center), Program.Values);
+
+            if (now64 is { Second: <= 2, DayOfWeek: DayOfWeek.Monday, Hour: 18, Minute: 48 }) {
+                Kernel.SendWorldMessage(
+                    new Message(
+                        "((#42))War [T]KingDom.GLD, Now Online All Go To Play PK,((#41))--((#50))Monday, 18:48 To 18:55((#50)) !",
+                        Color.White, Message.Center), Program.Values);
                 foreach (var client in Program.Values)
                     client.MessageBox("KingDom.GLD PK, Now Online, like to Join?",
-                      p => { p.Entity.Teleport(1002, 255, 235); }, null, 60);
+                        p => { p.Entity.Teleport(1002, 255, 235); }, null, 60);
             }
+
             #endregion
+
             #region [T]KingDom.DLD
-            if (Now64.Second <= 2 && Now64.DayOfWeek == DayOfWeek.Tuesday && Now64.Hour == 18 && Now64.Minute == 48)
-            {
-                Kernel.SendWorldMessage(new Message("((#42))War [T]KingDom.DLD, Now Online All Go To Play PK,((#41))--((#50))Tuesday, 18:48 To 18:55((#50)) !", Color.White, Message.Center), Program.Values);
+
+            if (now64 is { Second: <= 2, DayOfWeek: DayOfWeek.Tuesday, Hour: 18, Minute: 48 }) {
+                Kernel.SendWorldMessage(
+                    new Message(
+                        "((#42))War [T]KingDom.DLD, Now Online All Go To Play PK,((#41))--((#50))Tuesday, 18:48 To 18:55((#50)) !",
+                        Color.White, Message.Center), Program.Values);
                 foreach (var client in Program.Values)
                     client.MessageBox("KingDom.DLD PK, Now Online, like to Join?",
                         p => { p.Entity.Teleport(1002, 255, 235); }, null, 60);
             }
+
             #endregion
+
             /////////////////////////////////////////////
+
             #region Mr/Ms Conquer
+
             //   if ()
-            if (DateTime.Now.Hour == 19 && DateTime.Now.Minute == 31 && Now64.Second == 15)
-            {
-                Kernel.SendWorldMessage(new Message("Mr/Ms Conquer War began! Go Twin city ", Color.Red, Message.BroadcastMessage), Program.Values);
+            if (DateTime.Now.Hour == 19 && DateTime.Now.Minute == 31 && now64.Second == 15) {
+                Kernel.SendWorldMessage(
+                    new Message("Mr/Ms Conquer War began! Go Twin city ", Color.Red, Message.BroadcastMessage),
+                    Program.Values);
                 foreach (var client in Program.Values)
 
                     client.MessageBox("Mr/Ms Conquer  began! Would you like to join Priz ?",
                         p => { p.Entity.Teleport(1002, 288, 192); }, null, 60);
             }
+
             #endregion
+
             #region Topguild
-            if (Now64.Minute == 35 && Now64.Second == 10)
-            {
-                Kernel.SendWorldMessage(new Message("Hero Guild War began !", Color.White, Message.Center), Program.Values);
+
+            if (now64 is { Minute: 35, Second: 10 }) {
+                Kernel.SendWorldMessage(new Message("Hero Guild War began !", Color.White, Message.Center),
+                    Program.Values);
                 foreach (var client in Program.Values)
                     client.MessageBox("Hero Guild began! Would you like to join ?",
-                    p => { p.Entity.Teleport(1002, 313, 143); }, null, 60);
+                        p => { p.Entity.Teleport(1002, 313, 143); }, null, 60);
             }
+
             #endregion
+
             #region LastTeam Fight
-            if (Now64.Minute == 13 && Now64.Second == 10)
-            {
-                Kernel.SendWorldMessage(new Message("Last Team Fight began !", Color.White, Message.Center), Program.Values);
+
+            if (now64 is { Minute: 13, Second: 10 }) {
+                Kernel.SendWorldMessage(new Message("Last Team Fight began !", Color.White, Message.Center),
+                    Program.Values);
                 foreach (var client in Program.Values)
                     client.MessageBox("Last Team Fight began! Would you like to join ?",
-                    p => { p.Entity.Teleport(1002, 289, 143); }, null, 60);
+                        p => { p.Entity.Teleport(1002, 289, 143); }, null, 60);
             }
+
             #endregion
+
             #region Team & SKill PK
-            if (MatrixTimes.Start.TeamPk && !Game.Features.Tournaments.TeamElitePk.TeamTournament.Opened)
-            {
-                Kernel.SendWorldMessage(new Message("The Team PK Tournament has start at 19:00. Prepare yourself and sign up for it as a team!", Color.White, Message.BroadcastMessage), Program.Values);
+
+            if (MatrixTimes.Start.TeamPk && !TeamElitePk.TeamTournament.Opened) {
+                Kernel.SendWorldMessage(
+                    new Message(
+                        "The Team PK Tournament has start at 19:00. Prepare yourself and sign up for it as a team!",
+                        Color.White, Message.BroadcastMessage), Program.Values);
                 foreach (var client in Program.Values)
                     client.MessageBox("The Team PK Tournament began! Would you like to join Prize [100kk] First Rank?",
-                    p => { p.Entity.Teleport(1002, 440, 249); }, null, 60);
+                        p => { p.Entity.Teleport(1002, 440, 249); }, null, 60);
             }
-            if (MatrixTimes.Start.SkillTeam && !Game.Features.Tournaments.TeamElitePk.SkillTeamTournament.Opened)
-            {
-                Kernel.SendWorldMessage(new Message("The Skill Team PK Tournament will start at 10:00. Prepare yourself and sign up for it as a team!", Color.White, Message.BroadcastMessage), Program.Values);
+
+            if (MatrixTimes.Start.SkillTeam && !TeamElitePk.SkillTeamTournament.Opened) {
+                Kernel.SendWorldMessage(
+                    new Message(
+                        "The Skill Team PK Tournament will start at 10:00. Prepare yourself and sign up for it as a team!",
+                        Color.White, Message.BroadcastMessage), Program.Values);
                 foreach (var client in Program.Values)
-                    client.MessageBox("The Skill Team PK Tournament began! Would you like to join, Prize [100kk] First Rank?",
-                    p => { p.Entity.Teleport(1002, 445, 242); }, null, 60);
+                    client.MessageBox(
+                        "The Skill Team PK Tournament began! Would you like to join, Prize [100kk] First Rank?",
+                        p => { p.Entity.Teleport(1002, 445, 242); }, null, 60);
             }
+
             #endregion
+
             #region GuildWar
-            if (GuildWar.IsWar)
-            {
-                if (Time32.Now > GuildWar.ScoreSendStamp.AddSeconds(3))
-                {
+
+            if (GuildWar.IsWar) {
+                if (Time32.Now > GuildWar.ScoreSendStamp.AddSeconds(3)) {
                     GuildWar.ScoreSendStamp = Time32.Now;
                     GuildWar.SendScores();
                 }
-
             }
-            if (Now64.Hour >= 20 && Now64.Hour <= 21 && Now64.DayOfWeek == DayOfWeek.Friday)
-            {
-                if (!GuildWar.IsWar)
-                {
+
+            if (now64.Hour is >= 20 and <= 21 && now64.DayOfWeek == DayOfWeek.Friday) {
+                if (!GuildWar.IsWar) {
                     GuildWar.Start();
-                    foreach (GameState client in Kernel.GamePool.Values)
-                    {
+                    foreach (GameState client in Kernel.GamePool.Values) {
                         client.Entity.DeputyLeader = 0;
-                        if (client.Map.BaseID != 6001 && client.Map.BaseID != 6000 && !client.Entity.Dead)
-                        {
-                            EventAlert alert = new EventAlert
-                            {
+                        if (client.Map.BaseID != 6001 && client.Map.BaseID != 6000 && !client.Entity.Dead) {
+                            EventAlert alert = new EventAlert {
                                 StrResID = 10515,
                                 Countdown = 60,
                                 UK12 = 1
@@ -2627,103 +2726,100 @@ namespace MTA
                     }
                 }
             }
-            if (GuildWar.IsWar)
-            {
-                if (Now64.Hour == 21 && Now64.Second <= 2)
-                {
+
+            if (GuildWar.IsWar) {
+                if (now64 is { Hour: 21, Second: <= 2 }) {
                     GuildWar.Flame10th = false;
                     GuildWar.End();
                 }
             }
+
             #endregion
 
             #region SuperGuildWar
-            if (SuperGuildWar.IsWar)
-            {
-                if (Time32.Now > SuperGuildWar.ScoreSendStamp.AddSeconds(3))
-                {
+
+            if (SuperGuildWar.IsWar) {
+                if (Time32.Now > SuperGuildWar.ScoreSendStamp.AddSeconds(3)) {
                     SuperGuildWar.ScoreSendStamp = Time32.Now;
                     SuperGuildWar.SendScores();
                 }
             }
-            if (Now64.Hour >= 01 && Now64.Hour <= 20 && (Now64.Day == 1 || Now64.Day == 7 || Now64.Day == 14 || Now64.Day == 21))
-            {
-                if (!SuperGuildWar.IsWar)
-                {
+
+            if (now64.Hour is >= 01 and <= 20 &&
+                (now64.Day == 1 || now64.Day == 7 || now64.Day == 14 || now64.Day == 21)) {
+                if (!SuperGuildWar.IsWar) {
                     SuperGuildWar.Start();
                     foreach (var client in Program.Values)
                         if (client.Entity.GuildID != 0)
-                            client.MessageBox("Super GuildWar has begun! Would you like to join?", p => { p.Entity.Teleport(1002, 352, 337); });
+                            client.MessageBox("Super GuildWar has begun! Would you like to join?",
+                                p => { p.Entity.Teleport(1002, 352, 337); });
                 }
             }
-            if (SuperGuildWar.IsWar)
-            {
-                if (Now64.Hour == 23 && Now64.Second <= 2)
-                {
+
+            if (SuperGuildWar.IsWar) {
+                if (now64 is { Hour: 23, Second: <= 2 }) {
                     SuperGuildWar.End();
                 }
             }
+
             #endregion
 
             #region Elite PK Tournament
-            if ((Now64.Hour == ElitePK.EventTime) && Now64.Minute >= 55 && !ElitePKTournament.TimersRegistered)
-            {
+
+            if ((now64.Hour == ElitePK.EventTime) && now64.Minute >= 55 && !ElitePKTournament.TimersRegistered) {
                 ElitePK.EventTime = DateTime.Now.Hour;
                 ElitePKTournament.RegisterTimers();
                 ElitePKBrackets brackets = new ElitePKBrackets(true);
                 brackets.Type = ElitePKBrackets.EPK_State;
                 brackets.OnGoing = true;
-                foreach (var client in Program.Values)
-                {
+                foreach (var client in Program.Values) {
                     client.ClaimedElitePk = 0;
                     client.Send(brackets);
-                    foreach (GameState Client in Kernel.GamePool.Values)
-                    {
-                        if (client.Map.BaseID != 6001 && client.Map.BaseID != 6000 && !client.Entity.Dead)
-                        {
-                            EventAlert alert = new EventAlert
-                            {
-                                StrResID = 10533,
-                                Countdown = 60,
-                                UK12 = 1
-                            };
-                            client.Entity.StrResID = 10533;
-                            client.Send(alert);
-                        }
+                    foreach (var unused in Kernel.GamePool.Values) {
+                        if (client.Map.BaseID == 6001 || client.Map.BaseID == 6000 || client.Entity.Dead) continue;
+                        var alert = new EventAlert {
+                            StrResID = 10533,
+                            Countdown = 60,
+                            UK12 = 1
+                        };
+                        client.Entity.StrResID = 10533;
+                        client.Send(alert);
                     }
+
                     #region RemoveTopElite
-                    var EliteChampion = TitlePacket.Titles.ElitePKChamption_High;
-                    var EliteSecond = TitlePacket.Titles.ElitePK2ndPlace_High;
-                    var EliteThird = TitlePacket.Titles.ElitePK3ndPlace_High;
-                    var EliteEightChampion = TitlePacket.Titles.ElitePKChamption_Low;
+
+                    var eliteChampion = TitlePacket.Titles.ElitePKChamption_High;
+                    var eliteSecond = TitlePacket.Titles.ElitePK2ndPlace_High;
+                    var eliteThird = TitlePacket.Titles.ElitePK3ndPlace_High;
+                    var eliteEightChampion = TitlePacket.Titles.ElitePKChamption_Low;
                     var EliteEightSecond = TitlePacket.Titles.ElitePK2ndPlace_Low;
-                    var EliteEightThird = TitlePacket.Titles.ElitePK3ndPlace_Low;
-                    var EliteEight = TitlePacket.Titles.ElitePKTopEight_Low;
-                    if (client.Entity.Titles.ContainsKey(EliteChampion))
-                        client.Entity.RemoveTopStatus((ulong)EliteChampion);
-                    if (client.Entity.Titles.ContainsKey(EliteSecond))
-                        client.Entity.RemoveTopStatus((ulong)EliteSecond);
-                    if (client.Entity.Titles.ContainsKey(EliteThird))
-                        client.Entity.RemoveTopStatus((ulong)EliteThird);
-                    if (client.Entity.Titles.ContainsKey(EliteEightChampion))
-                        client.Entity.RemoveTopStatus((ulong)EliteEightChampion);
+                    var eliteEightThird = TitlePacket.Titles.ElitePK3ndPlace_Low;
+                    var eliteEight = TitlePacket.Titles.ElitePKTopEight_Low;
+                    if (client.Entity.Titles.ContainsKey(eliteChampion))
+                        client.Entity.RemoveTopStatus((ulong)eliteChampion);
+                    if (client.Entity.Titles.ContainsKey(eliteSecond))
+                        client.Entity.RemoveTopStatus((ulong)eliteSecond);
+                    if (client.Entity.Titles.ContainsKey(eliteThird))
+                        client.Entity.RemoveTopStatus((ulong)eliteThird);
+                    if (client.Entity.Titles.ContainsKey(eliteEightChampion))
+                        client.Entity.RemoveTopStatus((ulong)eliteEightChampion);
                     if (client.Entity.Titles.ContainsKey(EliteEightSecond))
                         client.Entity.RemoveTopStatus((ulong)EliteEightSecond);
-                    if (client.Entity.Titles.ContainsKey(EliteEightThird))
-                        client.Entity.RemoveTopStatus((ulong)EliteEightThird);
-                    if (client.Entity.Titles.ContainsKey(EliteEight))
-                        client.Entity.RemoveTopStatus((ulong)EliteEight);
+                    if (client.Entity.Titles.ContainsKey(eliteEightThird))
+                        client.Entity.RemoveTopStatus((ulong)eliteEightThird);
+                    if (client.Entity.Titles.ContainsKey(eliteEight))
+                        client.Entity.RemoveTopStatus((ulong)eliteEight);
+
                     #endregion
                 }
             }
-            if (Now64.Hour == ElitePK.EventTime + 1 && Now64.Minute >= 10 && ElitePKTournament.TimersRegistered)
-            {
+
+            if (now64.Hour == ElitePK.EventTime + 1 && now64.Minute >= 10 && ElitePKTournament.TimersRegistered) {
                 bool done = true;
                 foreach (var epk in ElitePKTournament.Tournaments)
                     if (epk.Players.Count != 0)
                         done = false;
-                if (done)
-                {
+                if (done) {
                     ElitePKTournament.TimersRegistered = false;
                     ElitePKBrackets brackets = new ElitePKBrackets(true);
                     brackets.Type = ElitePKBrackets.EPK_State;
@@ -2732,186 +2828,195 @@ namespace MTA
                         client.Send(brackets);
                 }
             }
-            #endregion
 
+            #endregion
         }
-        private void ServerFunctions(int time)
-        {
-            DateTime LastPerfectionSort = DateTime.Now;
-            if (DateTime.Now >= LastPerfectionSort.AddMinutes(10))
-            {
-                LastPerfectionSort = DateTime.Now;
+
+        private void ServerFunctions(int time) {
+            var lastPerfectionSort = DateTime.Now;
+            if (DateTime.Now >= lastPerfectionSort.AddMinutes(10)) {
                 new PerfectionScore().GetRankingList();
                 new PerfectionRank().UpdateRanking();
             }
-            #region New weather
-            Network.GamePackets.Weather weather;
-            #region Rain System
-            if (DateTime.Now.Minute == 10 && DateTime.Now.Second == 0 || DateTime.Now.Minute == 00 && DateTime.Now.Second == 00)
-            {
-                foreach (GameState state in Kernel.GamePool.Values)
-                {
-                    Program.WeatherType = Network.GamePackets.Weather.Snow;
-                    weather = new Network.GamePackets.Weather(true)
-                    {
-                        WeatherType = (uint)Program.WeatherType,
-                        Intensity = 255,
-                        Appearence = 255,
-                        Direction = 255
-                    };
-                    state.Send(weather);
-                }
-            }
-            #endregion Rain System
-            #region Snow System
-            if (DateTime.Now.Minute == 20 && DateTime.Now.Second == 0 || DateTime.Now.Minute == 00 && DateTime.Now.Second == 00)
-            {
-                foreach (GameState state in Kernel.GamePool.Values)
-                {
-                    Program.WeatherType = Network.GamePackets.Weather.Snow;
-                    weather = new Network.GamePackets.Weather(true)
-                    {
-                        WeatherType = (uint)Program.WeatherType,
-                        Intensity = 255,
-                        Appearence = 255,
-                        Direction = 255
-                    };
-                    state.Send(weather);
-                }
-            }
-            #endregion Snow System
-            #region AutumnLeaves
-            if (DateTime.Now.Minute == 30 && DateTime.Now.Second == 0 || DateTime.Now.Minute == 00 && DateTime.Now.Second == 00)
-            {
-                foreach (GameState state in Kernel.GamePool.Values)
-                {
-                    Program.WeatherType = Network.GamePackets.Weather.Snow;
-                    weather = new Network.GamePackets.Weather(true)
-                    {
-                        WeatherType = (uint)Program.WeatherType,
-                        Intensity = 255,
-                        Appearence = 255,
-                        Direction = 255
-                    };
-                    state.Send(weather);
-                }
-            }
-            #endregion AutumnLeaves
-            #region CherryBlossomPetals
-            if (DateTime.Now.Minute == 40 && DateTime.Now.Second == 0 || DateTime.Now.Minute == 00 && DateTime.Now.Second == 00)
-            {
-                foreach (GameState state in Kernel.GamePool.Values)
-                {
-                    Program.WeatherType = Network.GamePackets.Weather.Snow;
-                    weather = new Network.GamePackets.Weather(true)
-                    {
-                        WeatherType = (uint)Program.WeatherType,
-                        Intensity = 255,
-                        Appearence = 255,
-                        Direction = 255
-                    };
-                    state.Send(weather);
-                }
-            }
-            #endregion CherryBlossomPetals
-            #region BlowingCotten
-            if (DateTime.Now.Minute == 60 && DateTime.Now.Second == 0 || DateTime.Now.Minute == 00 && DateTime.Now.Second == 00)
-            {
-                foreach (GameState state in Kernel.GamePool.Values)
-                {
-                    Program.WeatherType = Network.GamePackets.Weather.Snow;
-                    weather = new Network.GamePackets.Weather(true)
-                    {
-                        WeatherType = (uint)Program.WeatherType,
-                        Intensity = 255,
-                        Appearence = 255,
-                        Direction = 255
-                    };
-                    state.Send(weather);
-                }
-            }
-            #endregion CherryBlossomPetals
-            #endregion  New weather
 
-            var kvpArray = Kernel.GamePool.ToArray();
-            foreach (var kvp in kvpArray)
-                if (kvp.Value == null || kvp.Value.Entity == null)
-                    Kernel.GamePool.Remove(kvp.Key);
+            #region New weather
+
+            Network.GamePackets.Weather weather;
+
+            #region Rain System
+
+            if (DateTime.Now.Minute == 10 && DateTime.Now.Second == 0 ||
+                DateTime.Now.Minute == 00 && DateTime.Now.Second == 00) {
+                foreach (GameState state in Kernel.GamePool.Values) {
+                    Program.WeatherType = Network.GamePackets.Weather.Snow;
+                    weather = new Network.GamePackets.Weather(true) {
+                        WeatherType = (uint)Program.WeatherType,
+                        Intensity = 255,
+                        Appearence = 255,
+                        Direction = 255
+                    };
+                    state.Send(weather);
+                }
+            }
+
+            #endregion Rain System
+
+            #region Snow System
+
+            if (DateTime.Now.Minute == 20 && DateTime.Now.Second == 0 ||
+                DateTime.Now.Minute == 00 && DateTime.Now.Second == 00) {
+                foreach (GameState state in Kernel.GamePool.Values) {
+                    Program.WeatherType = Network.GamePackets.Weather.Snow;
+                    weather = new Network.GamePackets.Weather(true) {
+                        WeatherType = (uint)Program.WeatherType,
+                        Intensity = 255,
+                        Appearence = 255,
+                        Direction = 255
+                    };
+                    state.Send(weather);
+                }
+            }
+
+            #endregion Snow System
+
+            #region AutumnLeaves
+
+            if (DateTime.Now.Minute == 30 && DateTime.Now.Second == 0 ||
+                DateTime.Now.Minute == 00 && DateTime.Now.Second == 00) {
+                foreach (GameState state in Kernel.GamePool.Values) {
+                    Program.WeatherType = Network.GamePackets.Weather.Snow;
+                    weather = new Network.GamePackets.Weather(true) {
+                        WeatherType = (uint)Program.WeatherType,
+                        Intensity = 255,
+                        Appearence = 255,
+                        Direction = 255
+                    };
+                    state.Send(weather);
+                }
+            }
+
+            #endregion AutumnLeaves
+
+            #region CherryBlossomPetals
+
+            if (DateTime.Now.Minute == 40 && DateTime.Now.Second == 0 ||
+                DateTime.Now.Minute == 00 && DateTime.Now.Second == 00) {
+                foreach (GameState state in Kernel.GamePool.Values) {
+                    Program.WeatherType = Network.GamePackets.Weather.Snow;
+                    weather = new Network.GamePackets.Weather(true) {
+                        WeatherType = (uint)Program.WeatherType,
+                        Intensity = 255,
+                        Appearence = 255,
+                        Direction = 255
+                    };
+                    state.Send(weather);
+                }
+            }
+
+            #endregion CherryBlossomPetals
+
+            #region BlowingCotten
+
+            if (DateTime.Now.Minute == 60 && DateTime.Now.Second == 0 ||
+                DateTime.Now.Minute == 00 && DateTime.Now.Second == 00) {
+                foreach (GameState state in Kernel.GamePool.Values) {
+                    Program.WeatherType = Network.GamePackets.Weather.Snow;
+                    weather = new Network.GamePackets.Weather(true) {
+                        WeatherType = (uint)Program.WeatherType,
+                        Intensity = 255,
+                        Appearence = 255,
+                        Direction = 255
+                    };
+                    state.Send(weather);
+                }
+            }
+
+            #endregion CherryBlossomPetals
+
+            #endregion New weather
+
+            Kernel.GamePool.ToArray();
+
             Program.Values = Kernel.GamePool.Values.ToArray();
 
             Console.Title = Constants.ServerName + " - Online : " + Kernel.GamePool.Count + "/" + Program.PlayerCap;
 
-            if (Kernel.GamePool.Count > Program.MaxOn)
-            {
+            if (Kernel.GamePool.Count > Program.MaxOn) {
                 Program.MaxOn = Kernel.GamePool.Count;
             }
-            Console.Title = Constants.ServerName + " - Online : " + Kernel.GamePool.Count + "/" + Program.PlayerCap + " (Peak: " + Program.MaxOn + ")";
-            new Database.MySqlCommand(Database.MySqlCommandType.UPDATE).Update("configuration").Set("GuildID", Game.ConquerStructures.Society.Guild.GuildCounter.Now).Set("MaxOnline", Program.MaxOn).Set("ItemUID", Program.NextItemId).Where("Server", Constants.ServerName).Execute();
+
+            Console.Title = Constants.ServerName + " - Online : " + Kernel.GamePool.Count + "/" + Program.PlayerCap +
+                            " (Peak: " + Program.MaxOn + ")";
+            if (Constants.ServerName != null)
+                new Database.MySqlCommand(Database.MySqlCommandType.UPDATE).Update("configuration")
+                    .Set("GuildID", Game.ConquerStructures.Society.Guild.GuildCounter.Now)
+                    .Set("MaxOnline", Program.MaxOn).Set("ItemUID", Program.NextItemId)
+                    .Where("Server", Constants.ServerName).Execute();
             Database.EntityVariableTable.Save(0, Program.Vars);
-            if (Kernel.BlackSpoted.Values.Count > 0)
-            {
-                foreach (var spot in Kernel.BlackSpoted.Values)
-                {
-                    if (Time32.Now >= spot.BlackSpotStamp.AddSeconds(spot.BlackSpotStepSecs))
-                    {
-                        if (spot.Dead && spot.EntityFlag == EntityFlag.Player)
-                        {
-                            foreach (var h in Program.Values)
-                            {
+            if (Kernel.BlackSpoted.Values.Count > 0) {
+                foreach (var spot in Kernel.BlackSpoted.Values) {
+                    if (Time32.Now >= spot.BlackSpotStamp.AddSeconds(spot.BlackSpotStepSecs)) {
+                        if (spot is { Dead: true, EntityFlag: EntityFlag.Player }) {
+                            foreach (var h in Program.Values) {
                                 h.Send(Program.BlackSpotPacket.ToArray(false, spot.UID));
                             }
+
                             Kernel.BlackSpoted.Remove(spot.UID);
                             continue;
                         }
-                        foreach (var h in Program.Values)
-                        {
+
+                        foreach (var h in Program.Values) {
                             h.Send(Program.BlackSpotPacket.ToArray(false, spot.UID));
                         }
+
                         spot.IsBlackSpotted = false;
                         Kernel.BlackSpoted.Remove(spot.UID);
                     }
                 }
             }
-            DateTime Now = DateTime.Now;
 
-            if (Now > Game.ConquerStructures.Broadcast.LastBroadcast.AddMinutes(1))
-            {
-                if (Game.ConquerStructures.Broadcast.Broadcasts.Count > 0)
-                {
+            var now = DateTime.Now;
+
+            if (now > Game.ConquerStructures.Broadcast.LastBroadcast.AddMinutes(1)) {
+                if (Game.ConquerStructures.Broadcast.Broadcasts.Count > 0) {
                     Game.ConquerStructures.Broadcast.CurrentBroadcast = Game.ConquerStructures.Broadcast.Broadcasts[0];
-                    Game.ConquerStructures.Broadcast.Broadcasts.Remove(Game.ConquerStructures.Broadcast.CurrentBroadcast);
-                    Game.ConquerStructures.Broadcast.LastBroadcast = Now;
-                    Kernel.SendWorldMessage(new Message(Game.ConquerStructures.Broadcast.CurrentBroadcast.Message, "ALLUSERS", Game.ConquerStructures.Broadcast.CurrentBroadcast.EntityName, Color.Red, Message.BroadcastMessage), Program.Values);
+                    Game.ConquerStructures.Broadcast.Broadcasts.Remove(
+                        Game.ConquerStructures.Broadcast.CurrentBroadcast);
+                    Game.ConquerStructures.Broadcast.LastBroadcast = now;
+                    Kernel.SendWorldMessage(
+                        new Message(Game.ConquerStructures.Broadcast.CurrentBroadcast.Message, "ALLUSERS",
+                            Game.ConquerStructures.Broadcast.CurrentBroadcast.EntityName, Color.Red,
+                            Message.BroadcastMessage), Program.Values);
                 }
                 else
                     Game.ConquerStructures.Broadcast.CurrentBroadcast.EntityID = 1;
             }
 
 
-            if (Now > Program.LastRandomReset.AddMinutes(30))
-            {
-                Program.LastRandomReset = Now;
+            if (now > Program.LastRandomReset.AddMinutes(30)) {
+                Program.LastRandomReset = now;
                 Kernel.Random = new FastRandom(Program.RandomSeed);
             }
-            Program.Today = Now.DayOfWeek;
+
+            Program.Today = now.DayOfWeek;
         }
-        private void ArenaFunctions(int time)
-        {
+
+        private void ArenaFunctions(int time) {
             Arena.EngagePlayers();
             Arena.CheckGroups();
             Arena.VerifyAwaitingPeople();
             Arena.Reset();
         }
-        private void TeamArenaFunctions(int time)
-        {
+
+        private void TeamArenaFunctions(int time) {
             TeamArena.PickUpTeams();
             TeamArena.EngagePlayers();
             TeamArena.CheckGroups();
             TeamArena.VerifyAwaitingPeople();
             TeamArena.Reset();
         }
-        private void ChampionFunctions(int time)
-        {
+
+        private void ChampionFunctions(int time) {
             Champion.EngagePlayers();
             Champion.CheckGroups();
             Champion.VerifyAwaitingPeople();
@@ -2919,38 +3024,42 @@ namespace MTA
         }
 
         #region Funcs
-        public static void Execute(Action<int> action, int timeOut = 0, ThreadPriority priority = ThreadPriority.Normal)
-        {
+
+        public static void Execute(Action<int> action, int timeOut = 0,
+            ThreadPriority priority = ThreadPriority.Normal) {
             GenericThreadPool.Subscribe(new LazyDelegate(action, timeOut, priority));
         }
-        public static void Execute<T>(Action<T, int> action, T param, int timeOut = 0, ThreadPriority priority = ThreadPriority.Normal)
-        {
+
+        public static void Execute<T>(Action<T, int> action, T param, int timeOut = 0,
+            ThreadPriority priority = ThreadPriority.Normal) {
             GenericThreadPool.Subscribe(new LazyDelegate<T>(action, timeOut, priority), param);
         }
-        public static IDisposable Subscribe(Action<int> action, int period = 1, ThreadPriority priority = ThreadPriority.Normal)
-        {
+
+        public static IDisposable Subscribe(Action<int> action, int period = 1,
+            ThreadPriority priority = ThreadPriority.Normal) {
             return GenericThreadPool.Subscribe(new TimerRule(action, period, priority));
         }
-        public static IDisposable Subscribe<T>(Action<T, int> action, T param, int timeOut = 0, ThreadPriority priority = ThreadPriority.Normal)
-        {
+
+        public static IDisposable Subscribe<T>(Action<T, int> action, T param, int timeOut = 0,
+            ThreadPriority priority = ThreadPriority.Normal) {
             return GenericThreadPool.Subscribe(new TimerRule<T>(action, timeOut, priority), param);
         }
-        public static IDisposable Subscribe<T>(TimerRule<T> rule, T param, StandalonePool pool)
-        {
+
+        public static IDisposable Subscribe<T>(TimerRule<T> rule, T param, StandalonePool pool) {
             return pool.Subscribe(rule, param);
         }
-        public static IDisposable Subscribe<T>(TimerRule<T> rule, T param, StaticPool pool)
-        {
+
+        public static IDisposable Subscribe<T>(TimerRule<T> rule, T param, StaticPool pool) {
             return pool.Subscribe(rule, param);
         }
-        public static IDisposable Subscribe<T>(TimerRule<T> rule, T param)
-        {
+
+        public static IDisposable Subscribe<T>(TimerRule<T> rule, T param) {
             return GenericThreadPool.Subscribe(rule, param);
         }
+
         #endregion
 
-        internal void SendServerMessaj(string p)
-        {
+        internal void SendServerMessaj(string p) {
             Kernel.SendWorldMessage(new Message(p, Color.Red, Message.TopLeft), Program.Values);
         }
     }

@@ -216,7 +216,7 @@ End Namespace";
                 var assembly = Assembly.Load(ms.ToArray());
                 foreach (Type type in assembly.GetTypes())
                 {
-                    if (type.Namespace == "scriptnamespace" && type.IsClass && type.Name == "scriptclass")
+                    if (type is { Namespace: "scriptnamespace", IsClass: true, Name: "scriptclass" })
                     {
                         foreach (MethodInfo method in type.GetMethods())
                         {
@@ -270,7 +270,7 @@ End Namespace";
             {
                 foreach (Type type in compilerResults.CompiledAssembly.GetTypes())
                 {
-                    if (type.Namespace == "scriptnamespace" && type.IsClass && type.Name == "scriptclass")
+                    if (type is { Namespace: "scriptnamespace", IsClass: true, Name: "scriptclass" })
                     {
                         foreach (MethodInfo method in type.GetMethods())
                         {

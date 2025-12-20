@@ -216,7 +216,7 @@ namespace MTA.Game.Features.Tournaments {
                     using (MySqlReader rdr = new MySqlReader(cmd)) {
                         if (rdr.Read()) {
                             byte[] data = rdr.ReadBlob("data");
-                            if (data != null && data.Length > 0) {
+                            if (data is { Length: > 0 }) {
                                 try {
                                     using (var stream = new MemoryStream(data))
                                     using (var reader = new BinaryReader(stream)) {
@@ -383,25 +383,23 @@ namespace MTA.Game.Features.Tournaments {
                             .ToArray());
                         foreach (var team in Teams.Values) {
                             foreach (var player in team.Players) {
-                                if (player != null) {
-                                    if (player.Team != null) {
-                                        SkillEliteSetTeamName teamname =
-                                            new SkillEliteSetTeamName(ID);
-                                        {
-                                            teamname.Type = SkillEliteSetTeamName.SuccessfulName;
-                                            teamname.TeamID = player.Team.UID;
-                                            teamname.TeamName = player.Team.EliteFighterStats.Name;
-                                            player.Send(teamname.ToArray());
+                                if (player is { Team: not null }) {
+                                    SkillEliteSetTeamName teamname =
+                                        new SkillEliteSetTeamName(ID);
+                                    {
+                                        teamname.Type = SkillEliteSetTeamName.SuccessfulName;
+                                        teamname.TeamID = player.Team.UID;
+                                        teamname.TeamName = player.Team.EliteFighterStats.Name;
+                                        player.Send(teamname.ToArray());
 
-                                            if (player.Team.TeamLider(player)) {
-                                                teamname.Type = SkillEliteSetTeamName.Remove;
-                                                player.Send(teamname.ToArray());
-                                            }
+                                        if (player.Team.TeamLider(player)) {
+                                            teamname.Type = SkillEliteSetTeamName.Remove;
+                                            player.Send(teamname.ToArray());
                                         }
-                                        //TeamPK A~prize~for~every~participant~in~the~Team~PK~Tournament.~Right~click~it~to~get~1~hour`s~double~EXP.
-                                        if (ID == GamePackets.TeamElitePkBrackets)
-                                            player.Inventory.Add(720793, 0, 1);
                                     }
+                                    //TeamPK A~prize~for~every~participant~in~the~Team~PK~Tournament.~Right~click~it~to~get~1~hour`s~double~EXP.
+                                    if (ID == GamePackets.TeamElitePkBrackets)
+                                        player.Inventory.Add(720793, 0, 1);
                                 }
                             }
                         }
@@ -1909,7 +1907,7 @@ namespace MTA.Game.Features.Tournaments {
 
                         foreach (var teams in MatchStats) {
                             if (teams != null) {
-                                if (!teams.Waiting && teams.Teleported || teams.OnNextMatch) {
+                                if (teams is { Waiting: false, Teleported: true } || teams.OnNextMatch) {
                                     foreach (var player in teams.Team.Players) {
                                         if (player.Entity.MapID == Map.ID) {
                                             player.Entity.InSkillPk = false;
@@ -1946,7 +1944,7 @@ namespace MTA.Game.Features.Tournaments {
             }
 
             public void SwitchBetween() {
-                if (Imports == 1 && MatchStats.Length == 3 && MatchStats[0] != null && !MatchStats[0].Lost) {
+                if (Imports == 1 && MatchStats is [{ Lost: false }, _, _]) {
                     MatchStats[0].Flag = FighterStats.StatusFlag.Waiting;
                     if (MatchStats[1].Winner) {
                         MatchStats[1].Teleported = false;
@@ -2008,9 +2006,8 @@ namespace MTA.Game.Features.Tournaments {
             public void Update() {
                 var update = CreateUpdate();
                 foreach (var player in Players)
-                    if (player != null)
-                        if (player.Team.EliteFighterStats.Fighting)
-                            player.Send(update.ToArray());
+                    if (player is { Team.EliteFighterStats.Fighting: true })
+                        player.Send(update.ToArray());
             }
 
             public void UpdateWatchers() {

@@ -148,98 +148,96 @@ namespace MTA.Game {
             #endregion
 
             foreach (IMapObject obj in client.Screen.Objects) {
-                if (obj != null) {
-                    if (obj.MapObjType == MapObjectType.Monster) {
-                        Entity monster = obj as Entity;
-                        if (monster == null) continue;
+                if (obj is { MapObjType: MapObjectType.Monster }) {
+                    Entity monster = obj as Entity;
+                    if (monster == null) continue;
 
-                        if (monster.ContainsFlag(Update.Flags.Stigma)) {
-                            if (monster.StigmaStamp.AddSeconds(monster.StigmaTime).Next(time: time) || monster.Dead) {
-                                monster.StigmaTime = 0;
-                                monster.StigmaIncrease = 0;
-                                monster.RemoveFlag(Update.Flags.Stigma);
+                    if (monster.ContainsFlag(Update.Flags.Stigma)) {
+                        if (monster.StigmaStamp.AddSeconds(monster.StigmaTime).Next(time: time) || monster.Dead) {
+                            monster.StigmaTime = 0;
+                            monster.StigmaIncrease = 0;
+                            monster.RemoveFlag(Update.Flags.Stigma);
+                        }
+                    }
+
+                    if (monster.ContainsFlag(Update.Flags.Dodge)) {
+                        if (monster.DodgeStamp.AddSeconds(monster.DodgeTime).Next(time: time) || monster.Dead) {
+                            monster.DodgeTime = 0;
+                            monster.DodgeIncrease = 0;
+                            monster.RemoveFlag(Update.Flags.Dodge);
+                        }
+                    }
+
+                    if (monster.ContainsFlag(Update.Flags.Invisibility)) {
+                        if (monster.InvisibilityStamp.AddSeconds(monster.InvisibilityTime).Next(time: time) ||
+                            monster.Dead) {
+                            monster.RemoveFlag(Update.Flags.Invisibility);
+                        }
+                    }
+
+                    if (monster.ContainsFlag(Update.Flags.StarOfAccuracy)) {
+                        if (monster.StarOfAccuracyTime != 0) {
+                            if (monster.StarOfAccuracyStamp.AddSeconds(monster.StarOfAccuracyTime)
+                                    .Next(time: time) || monster.Dead) {
+                                monster.RemoveFlag(Update.Flags.StarOfAccuracy);
                             }
                         }
-
-                        if (monster.ContainsFlag(Update.Flags.Dodge)) {
-                            if (monster.DodgeStamp.AddSeconds(monster.DodgeTime).Next(time: time) || monster.Dead) {
-                                monster.DodgeTime = 0;
-                                monster.DodgeIncrease = 0;
-                                monster.RemoveFlag(Update.Flags.Dodge);
-                            }
-                        }
-
-                        if (monster.ContainsFlag(Update.Flags.Invisibility)) {
-                            if (monster.InvisibilityStamp.AddSeconds(monster.InvisibilityTime).Next(time: time) ||
+                        else {
+                            if (monster.AccuracyStamp.AddSeconds(monster.AccuracyTime).Next(time: time) ||
                                 monster.Dead) {
-                                monster.RemoveFlag(Update.Flags.Invisibility);
+                                monster.RemoveFlag(Update.Flags.StarOfAccuracy);
                             }
                         }
+                    }
 
-                        if (monster.ContainsFlag(Update.Flags.StarOfAccuracy)) {
-                            if (monster.StarOfAccuracyTime != 0) {
-                                if (monster.StarOfAccuracyStamp.AddSeconds(monster.StarOfAccuracyTime)
-                                        .Next(time: time) || monster.Dead) {
-                                    monster.RemoveFlag(Update.Flags.StarOfAccuracy);
-                                }
-                            }
-                            else {
-                                if (monster.AccuracyStamp.AddSeconds(monster.AccuracyTime).Next(time: time) ||
-                                    monster.Dead) {
-                                    monster.RemoveFlag(Update.Flags.StarOfAccuracy);
-                                }
+                    if (monster.ContainsFlag(Update.Flags.MagicShield)) {
+                        if (monster.MagicShieldTime != 0) {
+                            if (monster.MagicShieldStamp.AddSeconds(monster.MagicShieldTime).Next(time: time) ||
+                                monster.Dead) {
+                                monster.MagicShieldIncrease = 0;
+                                monster.MagicShieldTime = 0;
+                                monster.RemoveFlag(Update.Flags.MagicShield);
                             }
                         }
-
-                        if (monster.ContainsFlag(Update.Flags.MagicShield)) {
-                            if (monster.MagicShieldTime != 0) {
-                                if (monster.MagicShieldStamp.AddSeconds(monster.MagicShieldTime).Next(time: time) ||
-                                    monster.Dead) {
-                                    monster.MagicShieldIncrease = 0;
-                                    monster.MagicShieldTime = 0;
-                                    monster.RemoveFlag(Update.Flags.MagicShield);
-                                }
-                            }
-                            else {
-                                if (monster.ShieldStamp.AddSeconds(monster.ShieldTime).Next(time: time) ||
-                                    monster.Dead) {
-                                    monster.ShieldIncrease = 0;
-                                    monster.ShieldTime = 0;
-                                    monster.RemoveFlag(Update.Flags.MagicShield);
-                                }
+                        else {
+                            if (monster.ShieldStamp.AddSeconds(monster.ShieldTime).Next(time: time) ||
+                                monster.Dead) {
+                                monster.ShieldIncrease = 0;
+                                monster.ShieldTime = 0;
+                                monster.RemoveFlag(Update.Flags.MagicShield);
                             }
                         }
+                    }
 
-                        if (monster.Dead || monster.Killed) {
-                            if (!monster.ContainsFlag(Update.Flags.Ghost) || monster.Killed) {
-                                monster.Killed = false;
-                                monster.MonsterInfo.InSight = 0;
-                                monster.AddFlag(Update.Flags.Ghost);
-                                monster.AddFlag(Update.Flags.Dead);
-                                monster.AddFlag(Update.Flags.FadeAway);
-                                Attack attack = new Attack(true);
-                                attack.Attacker = monster.Killer.UID;
-                                attack.Attacked = monster.UID;
-                                attack.AttackType = Attack.Kill;
-                                attack.X = monster.X;
-                                attack.Y = monster.Y;
-                                client.Map.Floor[monster.X, monster.Y, MapObjectType.Monster, monster] = true;
-                                attack.KOCount = ++monster.Killer.KOCount;
-                                if (monster.Killer.EntityFlag == EntityFlag.Player) {
-                                    monster.MonsterInfo.ExcludeFromSend = monster.Killer.UID;
-                                    monster.Killer.Owner.Send(attack);
-                                }
-
-                                monster.MonsterInfo.SendScreen(attack);
-                                monster.MonsterInfo.ExcludeFromSend = 0;
+                    if (monster.Dead || monster.Killed) {
+                        if (!monster.ContainsFlag(Update.Flags.Ghost) || monster.Killed) {
+                            monster.Killed = false;
+                            monster.MonsterInfo.InSight = 0;
+                            monster.AddFlag(Update.Flags.Ghost);
+                            monster.AddFlag(Update.Flags.Dead);
+                            monster.AddFlag(Update.Flags.FadeAway);
+                            Attack attack = new Attack(true);
+                            attack.Attacker = monster.Killer.UID;
+                            attack.Attacked = monster.UID;
+                            attack.AttackType = Attack.Kill;
+                            attack.X = monster.X;
+                            attack.Y = monster.Y;
+                            client.Map.Floor[monster.X, monster.Y, MapObjectType.Monster, monster] = true;
+                            attack.KOCount = ++monster.Killer.KOCount;
+                            if (monster.Killer.EntityFlag == EntityFlag.Player) {
+                                monster.MonsterInfo.ExcludeFromSend = monster.Killer.UID;
+                                monster.Killer.Owner.Send(attack);
                             }
 
-                            if (monster.DeathStamp.AddSeconds(4).Next(time: time)) {
-                                Data data = new Data(true);
-                                data.UID = monster.UID;
-                                data.ID = Data.RemoveEntity;
-                                monster.MonsterInfo.SendScreen(data);
-                            }
+                            monster.MonsterInfo.SendScreen(attack);
+                            monster.MonsterInfo.ExcludeFromSend = 0;
+                        }
+
+                        if (monster.DeathStamp.AddSeconds(4).Next(time: time)) {
+                            Data data = new Data(true);
+                            data.UID = monster.UID;
+                            data.ID = Data.RemoveEntity;
+                            monster.MonsterInfo.SendScreen(data);
                         }
                     }
                 }
@@ -261,112 +259,110 @@ namespace MTA.Game {
 
             Time32 Now = new Time32(time);
             foreach (IMapObject obj in client.Screen.Objects) {
-                if (obj != null) {
-                    if (obj.MapObjType == MapObjectType.Monster) {
-                        Entity monster = obj as Entity;
-                        if (monster.Companion) continue;
-                        if (monster.Boss == 1 || monster.MonsterInfo.Boss) continue;
-                        if (monster.Dead || monster.Killed) continue;
+                if (obj is { MapObjType: MapObjectType.Monster }) {
+                    Entity monster = obj as Entity;
+                    if (monster.Companion) continue;
+                    if (monster.Boss == 1 || monster.MonsterInfo.Boss) continue;
+                    if (monster.Dead || monster.Killed) continue;
 
-                        if (monster.MonsterInfo.Guard) {
-                            if (Now >= monster.MonsterInfo.LastMove.AddMilliseconds(monster.MonsterInfo.MinimumSpeed)) {
-                                if (monster.MonsterInfo.InSight == 0) {
-                                    ushort xx = (ushort)Kernel.Random.Next(monster.X - 2, monster.X + 2);
-                                    ushort yy = (ushort)Kernel.Random.Next(monster.Y - 2, monster.Y + 2);
-                                    if (monster.X != monster.MonsterInfo.BoundX ||
-                                        monster.Y != monster.MonsterInfo.BoundY) {
-                                        monster.X = monster.MonsterInfo.BoundX;
-                                        monster.Y = monster.MonsterInfo.BoundY;
-                                        TwoMovements jump = new TwoMovements();
-                                        jump.X = monster.MonsterInfo.BoundX;
-                                        jump.Y = monster.MonsterInfo.BoundY;
-                                        jump.EntityCount = 1;
-                                        jump.FirstEntity = monster.UID;
-                                        jump.MovementType = TwoMovements.Jump;
-                                        client.SendScreen(jump);
-                                    }
-
-                                    if (client.Entity.ContainsFlag(Update.Flags.FlashingName))
-                                        monster.MonsterInfo.InSight = client.Entity.UID;
+                    if (monster.MonsterInfo.Guard) {
+                        if (Now >= monster.MonsterInfo.LastMove.AddMilliseconds(monster.MonsterInfo.MinimumSpeed)) {
+                            if (monster.MonsterInfo.InSight == 0) {
+                                ushort xx = (ushort)Kernel.Random.Next(monster.X - 2, monster.X + 2);
+                                ushort yy = (ushort)Kernel.Random.Next(monster.Y - 2, monster.Y + 2);
+                                if (monster.X != monster.MonsterInfo.BoundX ||
+                                    monster.Y != monster.MonsterInfo.BoundY) {
+                                    monster.X = monster.MonsterInfo.BoundX;
+                                    monster.Y = monster.MonsterInfo.BoundY;
+                                    TwoMovements jump = new TwoMovements();
+                                    jump.X = monster.MonsterInfo.BoundX;
+                                    jump.Y = monster.MonsterInfo.BoundY;
+                                    jump.EntityCount = 1;
+                                    jump.FirstEntity = monster.UID;
+                                    jump.MovementType = TwoMovements.Jump;
+                                    client.SendScreen(jump);
                                 }
-                                else {
-                                    if (client.Entity.ContainsFlag(Update.Flags.FlashingName)) {
-                                        if (monster.MonsterInfo.InSight == client.Entity.UID) {
-                                            if (!client.Entity.Dead) {
-                                                if (Now >= monster.MonsterInfo.LastMove.AddMilliseconds(
-                                                        monster.MonsterInfo.AttackSpeed)) {
-                                                    short distance = Kernel.GetDistance(monster.X, monster.Y,
-                                                        client.Entity.X, client.Entity.Y);
 
-                                                    if (distance <= monster.MonsterInfo.AttackRange) {
-                                                        monster.MonsterInfo.LastMove = Time32.Now;
-                                                        new Handle(null, monster, client.Entity);
-                                                    }
-                                                    else {
-                                                        if (distance <= monster.MonsterInfo.ViewRange) {
-                                                            TwoMovements jump = new TwoMovements();
-                                                            jump.X = client.Entity.X;
-                                                            jump.Y = client.Entity.Y;
-                                                            monster.X = client.Entity.X;
-                                                            monster.Y = client.Entity.Y;
-                                                            jump.EntityCount = 1;
-                                                            jump.FirstEntity = monster.UID;
-                                                            jump.MovementType = TwoMovements.Jump;
-                                                            client.SendScreen(jump);
-                                                        }
+                                if (client.Entity.ContainsFlag(Update.Flags.FlashingName))
+                                    monster.MonsterInfo.InSight = client.Entity.UID;
+                            }
+                            else {
+                                if (client.Entity.ContainsFlag(Update.Flags.FlashingName)) {
+                                    if (monster.MonsterInfo.InSight == client.Entity.UID) {
+                                        if (!client.Entity.Dead) {
+                                            if (Now >= monster.MonsterInfo.LastMove.AddMilliseconds(
+                                                    monster.MonsterInfo.AttackSpeed)) {
+                                                short distance = Kernel.GetDistance(monster.X, monster.Y,
+                                                    client.Entity.X, client.Entity.Y);
+
+                                                if (distance <= monster.MonsterInfo.AttackRange) {
+                                                    monster.MonsterInfo.LastMove = Time32.Now;
+                                                    new Handle(null, monster, client.Entity);
+                                                }
+                                                else {
+                                                    if (distance <= monster.MonsterInfo.ViewRange) {
+                                                        TwoMovements jump = new TwoMovements();
+                                                        jump.X = client.Entity.X;
+                                                        jump.Y = client.Entity.Y;
+                                                        monster.X = client.Entity.X;
+                                                        monster.Y = client.Entity.Y;
+                                                        jump.EntityCount = 1;
+                                                        jump.FirstEntity = monster.UID;
+                                                        jump.MovementType = TwoMovements.Jump;
+                                                        client.SendScreen(jump);
                                                     }
                                                 }
                                             }
                                         }
                                     }
-                                    else {
-                                        if (monster.MonsterInfo.InSight == client.Entity.UID) {
-                                            monster.MonsterInfo.InSight = 0;
-                                        }
+                                }
+                                else {
+                                    if (monster.MonsterInfo.InSight == client.Entity.UID) {
+                                        monster.MonsterInfo.InSight = 0;
                                     }
                                 }
+                            }
 
-                                foreach (IMapObject obj2 in client.Screen.Objects) {
-                                    if (obj2 == null) continue;
-                                    //if (obj2.MapObjType == MapObjectType.Item)
-                                    //{
-                                    //    FloorItem flooritem = obj2 as FloorItem;
-                                    //    if (flooritem == null) continue;
-                                    //    if (flooritem.ValueType == FloorItem.FloorValueType.Money)
-                                    //    {
-                                    //        short distance = Kernel.GetDistance(monster.X, monster.Y, flooritem.X, flooritem.Y);
-                                    //        if (distance <= 15)
-                                    //        {
-                                    //            FloorItem item = new FloorItem(true); 
-                                    //            item.Type = 3;
-                                    //            item.UID = client.Entity.UID;
-                                    //            item.X = client.Entity.X;
-                                    //            item.Y = client.Entity.Y;
-                                    //            //  client.Send(Constants.PickupGold(floorItem.Value));
-                                    //            monster.MonsterInfo.SendScreen(item);
-                                    //            flooritem.Type = 2;
-                                    //            client.RemoveScreenSpawn(flooritem, true);
+                            foreach (IMapObject obj2 in client.Screen.Objects) {
+                                if (obj2 == null) continue;
+                                //if (obj2.MapObjType == MapObjectType.Item)
+                                //{
+                                //    FloorItem flooritem = obj2 as FloorItem;
+                                //    if (flooritem == null) continue;
+                                //    if (flooritem.ValueType == FloorItem.FloorValueType.Money)
+                                //    {
+                                //        short distance = Kernel.GetDistance(monster.X, monster.Y, flooritem.X, flooritem.Y);
+                                //        if (distance <= 15)
+                                //        {
+                                //            FloorItem item = new FloorItem(true); 
+                                //            item.Type = 3;
+                                //            item.UID = client.Entity.UID;
+                                //            item.X = client.Entity.X;
+                                //            item.Y = client.Entity.Y;
+                                //            //  client.Send(Constants.PickupGold(floorItem.Value));
+                                //            monster.MonsterInfo.SendScreen(item);
+                                //            flooritem.Type = 2;
+                                //            client.RemoveScreenSpawn(flooritem, true);
 
-                                    //        }
-                                    //    }
-                                    //}
-                                    if (obj2.MapObjType == MapObjectType.Monster) {
-                                        Entity monster2 = obj2 as Entity;
+                                //        }
+                                //    }
+                                //}
+                                if (obj2.MapObjType == MapObjectType.Monster) {
+                                    Entity monster2 = obj2 as Entity;
 
-                                        if (monster2 == null) continue;
-                                        if (monster2.Dead) continue;
+                                    if (monster2 == null) continue;
+                                    if (monster2.Dead) continue;
 
-                                        if (Now >= monster.MonsterInfo.LastMove.AddMilliseconds(monster.MonsterInfo
-                                                .AttackSpeed)) {
-                                            if (!monster2.MonsterInfo.Guard && (!monster2.Companion ||
-                                                    monster2.Owner.Entity.ContainsFlag(Update.Flags.FlashingName))) {
-                                                short distance = Kernel.GetDistance(monster.X, monster.Y, monster2.X,
-                                                    monster2.Y);
+                                    if (Now >= monster.MonsterInfo.LastMove.AddMilliseconds(monster.MonsterInfo
+                                            .AttackSpeed)) {
+                                        if (!monster2.MonsterInfo.Guard && (!monster2.Companion ||
+                                                                            monster2.Owner.Entity.ContainsFlag(Update.Flags.FlashingName))) {
+                                            short distance = Kernel.GetDistance(monster.X, monster.Y, monster2.X,
+                                                monster2.Y);
 
-                                                if (distance <= monster.MonsterInfo.AttackRange) {
-                                                    monster.MonsterInfo.LastMove = Time32.Now;
-                                                    new Handle(null, monster, monster2);
-                                                }
+                                            if (distance <= monster.MonsterInfo.AttackRange) {
+                                                monster.MonsterInfo.LastMove = Time32.Now;
+                                                new Handle(null, monster, monster2);
                                             }
                                         }
                                     }
@@ -397,7 +393,7 @@ namespace MTA.Game {
                     if (obj.MapObjType == MapObjectType.Monster) {
                         Entity monster = obj as Entity;
                         if (monster == null) continue;
-                        if (monster.Name == "CasprGuard" && !monster.Dead) {
+                        if (monster is { Name: "CasprGuard", Dead: false }) {
                             if (client.Entity.Dead && !client.Entity.ContainsFlag2(Update.Flags2.SoulShackle)) {
                                 if (MyMath.Success(50.0)) {
                                     client.Entity.BringToLife();
@@ -531,7 +527,7 @@ namespace MTA.Game {
                                     if (pet != null) {
                                         #region Pets
 
-                                        if (pet.Entity.Companion && !pet.Entity.Dead) {
+                                        if (pet.Entity is { Companion: true, Dead: false }) {
                                             short distance2 = Kernel.GetDistance(monster.X, monster.Y, pet.Entity.X,
                                                 pet.Entity.Y);
                                             if (distance > distance2 ||
@@ -873,93 +869,64 @@ namespace MTA.Game {
 
             Time32 Now = new Time32(time);
             foreach (IMapObject obj in client.Screen.Objects) {
-                if (obj != null) {
-                    if (obj.MapObjType == MapObjectType.Item) {
-                        FloorItem item = obj as FloorItem;
-                        if (item == null) continue;
+                if (obj is { MapObjType: MapObjectType.Item }) {
+                    FloorItem item = obj as FloorItem;
+                    if (item == null) continue;
 
-                        if (item.Type == FloorItem.Effect) {
-                            if (item.ItemID == 1397) {
-                                if (item.OnFloor.AddSeconds(3).Next(time: time)) {
-                                    if (!item.Owner.Spells.ContainsKey(12550))
-                                        return;
-                                    var spell = SpellTable.GetSpell(item.Owner.Spells[12550].ID,
-                                        item.Owner.Spells[12550].Level);
+                    if (item.Type == FloorItem.Effect) {
+                        if (item.ItemID == 1397) {
+                            if (item.OnFloor.AddSeconds(3).Next(time: time)) {
+                                if (!item.Owner.Spells.ContainsKey(12550))
+                                    return;
+                                var spell = SpellTable.GetSpell(item.Owner.Spells[12550].ID,
+                                    item.Owner.Spells[12550].Level);
 
-                                    var attack = new Attack(true);
-                                    attack.Attacker = item.Owner.Entity.UID;
-                                    attack.X = item.X;
-                                    attack.Y = item.Y;
-                                    attack.Damage = spell.ID;
-                                    attack.AttackType = Attack.Magic;
-                                    SpellUse suse = new SpellUse(true);
-                                    suse.Attacker = item.Owner.Entity.UID;
-                                    suse.SpellID = spell.ID;
-                                    suse.SpellLevel = spell.Level;
-                                    suse.X = item.X;
-                                    suse.Y = item.Y;
-                                    suse.SpellEffect = 1;
+                                var attack = new Attack(true);
+                                attack.Attacker = item.Owner.Entity.UID;
+                                attack.X = item.X;
+                                attack.Y = item.Y;
+                                attack.Damage = spell.ID;
+                                attack.AttackType = Attack.Magic;
+                                SpellUse suse = new SpellUse(true);
+                                suse.Attacker = item.Owner.Entity.UID;
+                                suse.SpellID = spell.ID;
+                                suse.SpellLevel = spell.Level;
+                                suse.X = item.X;
+                                suse.Y = item.Y;
+                                suse.SpellEffect = 1;
 
-                                    foreach (var _Ob in item.Owner.Screen.Objects) {
-                                        if (_Ob == null)
-                                            continue;
-                                        if (_Ob.MapObjType == MapObjectType.Monster ||
-                                            _Ob.MapObjType == MapObjectType.Player) {
-                                            var attacked = _Ob as Entity;
-                                            if (Kernel.GetDistance(item.X, item.Y, attacked.X, attacked.Y) <=
-                                                spell.Range) {
-                                                if (Handle.CanAttack(item.Owner.Entity, attacked, spell,
-                                                        attack.AttackType == Attack.Ranged)) {
-                                                    uint damage = Calculate.Melee(item.Owner.Entity, attacked,
-                                                        ref attack);
-                                                    damage = (uint)(damage * 0.7);
-                                                    suse.Effect1 = attack.Effect1;
-                                                    Handle.ReceiveAttack(item.Owner.Entity, attacked, attack,
-                                                        ref damage, spell);
-                                                    suse.AddTarget(attacked, damage, attack);
-                                                }
+                                foreach (var _Ob in item.Owner.Screen.Objects) {
+                                    if (_Ob == null)
+                                        continue;
+                                    if (_Ob.MapObjType == MapObjectType.Monster ||
+                                        _Ob.MapObjType == MapObjectType.Player) {
+                                        var attacked = _Ob as Entity;
+                                        if (Kernel.GetDistance(item.X, item.Y, attacked.X, attacked.Y) <=
+                                            spell.Range) {
+                                            if (Handle.CanAttack(item.Owner.Entity, attacked, spell,
+                                                    attack.AttackType == Attack.Ranged)) {
+                                                uint damage = Calculate.Melee(item.Owner.Entity, attacked,
+                                                    ref attack);
+                                                damage = (uint)(damage * 0.7);
+                                                suse.Effect1 = attack.Effect1;
+                                                Handle.ReceiveAttack(item.Owner.Entity, attacked, attack,
+                                                    ref damage, spell);
+                                                suse.AddTarget(attacked, damage, attack);
                                             }
                                         }
                                     }
-
-                                    item.Owner.SendScreen(suse);
-                                    item.Type = FloorItem.Effect;
-                                    client.Map.RemoveFloorItem(item);
-
-                                    client.RemoveScreenSpawn(item, true);
                                 }
-                            }
 
-                            if (item.ItemID == FloorItem.DaggerStorm || item.ItemID == FloorItem.FuryofEgg ||
-                                item.ItemID == FloorItem.ShacklingIce) {
-                                if (item.ItemID == FloorItem.Twilight) {
-                                    if (item.OnFloor.AddMilliseconds(500).Next(time: time)) {
-                                        item.Type = FloorItem.RemoveEffect;
-                                        //client.SendScreen(item, true);
-                                        client.Map.RemoveFloorItem(item);
-                                        client.RemoveScreenSpawn(item, true);
-                                    }
-                                }
-                            }
+                                item.Owner.SendScreen(suse);
+                                item.Type = FloorItem.Effect;
+                                client.Map.RemoveFloorItem(item);
 
-                            if (item.ItemID == FloorItem.AuroraLotus) {
-                                if (item.OnFloor.AddSeconds(7).Next(time: time)) {
-                                    item.Type = FloorItem.RemoveEffect;
-                                    client.Map.RemoveFloorItem(item);
-                                    client.RemoveScreenSpawn(item, true);
-                                    Handle.AuroraLotus(item);
-                                }
+                                client.RemoveScreenSpawn(item, true);
                             }
+                        }
 
-                            if (item.ItemID == FloorItem.FlameLotus) {
-                                if (item.OnFloor.AddSeconds(7).Next(time: time)) {
-                                    item.Type = FloorItem.RemoveEffect;
-                                    client.Map.RemoveFloorItem(item);
-                                    client.RemoveScreenSpawn(item, true);
-                                    Handle.FlameLotus(item);
-                                }
-                            }
-
+                        if (item.ItemID == FloorItem.DaggerStorm || item.ItemID == FloorItem.FuryofEgg ||
+                            item.ItemID == FloorItem.ShacklingIce) {
                             if (item.ItemID == FloorItem.Twilight) {
                                 if (item.OnFloor.AddMilliseconds(500).Next(time: time)) {
                                     item.Type = FloorItem.RemoveEffect;
@@ -967,6 +934,33 @@ namespace MTA.Game {
                                     client.Map.RemoveFloorItem(item);
                                     client.RemoveScreenSpawn(item, true);
                                 }
+                            }
+                        }
+
+                        if (item.ItemID == FloorItem.AuroraLotus) {
+                            if (item.OnFloor.AddSeconds(7).Next(time: time)) {
+                                item.Type = FloorItem.RemoveEffect;
+                                client.Map.RemoveFloorItem(item);
+                                client.RemoveScreenSpawn(item, true);
+                                Handle.AuroraLotus(item);
+                            }
+                        }
+
+                        if (item.ItemID == FloorItem.FlameLotus) {
+                            if (item.OnFloor.AddSeconds(7).Next(time: time)) {
+                                item.Type = FloorItem.RemoveEffect;
+                                client.Map.RemoveFloorItem(item);
+                                client.RemoveScreenSpawn(item, true);
+                                Handle.FlameLotus(item);
+                            }
+                        }
+
+                        if (item.ItemID == FloorItem.Twilight) {
+                            if (item.OnFloor.AddMilliseconds(500).Next(time: time)) {
+                                item.Type = FloorItem.RemoveEffect;
+                                //client.SendScreen(item, true);
+                                client.Map.RemoveFloorItem(item);
+                                client.RemoveScreenSpawn(item, true);
                             }
                         }
                     }
@@ -989,60 +983,58 @@ namespace MTA.Game {
 
             Time32 Now = new Time32(time);
             foreach (IMapObject obj in client.Screen.Objects) {
-                if (obj != null) {
-                    if (obj.MapObjType == MapObjectType.Monster) {
-                        Entity monster = obj as Entity;
-                        if (monster.Companion) continue;
-                        if (monster.Dead || monster.Killed) continue;
+                if (obj is { MapObjType: MapObjectType.Monster }) {
+                    Entity monster = obj as Entity;
+                    if (monster.Companion) continue;
+                    if (monster.Dead || monster.Killed) continue;
 
-                        if (monster.MonsterInfo.Type == 2 || monster.Mesh == 482) {
-                            if (Now >= monster.MonsterInfo.LastMove.AddMilliseconds(monster.MonsterInfo.MinimumSpeed)) {
-                                if (monster.MonsterInfo.InSight == 0) {
-                                    ushort xx = (ushort)Kernel.Random.Next(monster.X - 10, monster.X + 10);
-                                    ushort yy = (ushort)Kernel.Random.Next(monster.Y - 10, monster.Y + 10);
-                                    if (monster.X != xx || monster.Y != yy) {
-                                        monster.X = xx;
-                                        monster.Y = yy;
-                                        TwoMovements jump = new TwoMovements();
-                                        jump.X = xx;
-                                        jump.Y = yy;
-                                        jump.EntityCount = 1;
-                                        jump.FirstEntity = monster.UID;
-                                        jump.MovementType = TwoMovements.Jump;
-                                        client.SendScreen(jump);
-                                    }
-                                    // if (client.Entity.ContainsFlag(Update.Flags.FlashingName))
-                                    //    monster.MonsterInfo.InSight = client.Entity.UID;
+                    if (monster.MonsterInfo.Type == 2 || monster.Mesh == 482) {
+                        if (Now >= monster.MonsterInfo.LastMove.AddMilliseconds(monster.MonsterInfo.MinimumSpeed)) {
+                            if (monster.MonsterInfo.InSight == 0) {
+                                ushort xx = (ushort)Kernel.Random.Next(monster.X - 10, monster.X + 10);
+                                ushort yy = (ushort)Kernel.Random.Next(monster.Y - 10, monster.Y + 10);
+                                if (monster.X != xx || monster.Y != yy) {
+                                    monster.X = xx;
+                                    monster.Y = yy;
+                                    TwoMovements jump = new TwoMovements();
+                                    jump.X = xx;
+                                    jump.Y = yy;
+                                    jump.EntityCount = 1;
+                                    jump.FirstEntity = monster.UID;
+                                    jump.MovementType = TwoMovements.Jump;
+                                    client.SendScreen(jump);
                                 }
-                                else {
-                                    //  if (client.Entity.ContainsFlag(Update.Flags.FlashingName))
-                                    {
-                                        if (monster.MonsterInfo.InSight == client.Entity.UID) {
-                                            if (!client.Entity.Dead) {
-                                                if (Now >= monster.MonsterInfo.LastMove.AddMilliseconds(
-                                                        monster.MonsterInfo.AttackSpeed)) {
-                                                    short distance = Kernel.GetDistance(monster.X, monster.Y,
-                                                        client.Entity.X, client.Entity.Y);
+                                // if (client.Entity.ContainsFlag(Update.Flags.FlashingName))
+                                //    monster.MonsterInfo.InSight = client.Entity.UID;
+                            }
+                            else {
+                                //  if (client.Entity.ContainsFlag(Update.Flags.FlashingName))
+                                {
+                                    if (monster.MonsterInfo.InSight == client.Entity.UID) {
+                                        if (!client.Entity.Dead) {
+                                            if (Now >= monster.MonsterInfo.LastMove.AddMilliseconds(
+                                                    monster.MonsterInfo.AttackSpeed)) {
+                                                short distance = Kernel.GetDistance(monster.X, monster.Y,
+                                                    client.Entity.X, client.Entity.Y);
 
-                                                    if (distance <= monster.MonsterInfo.AttackRange) {
-                                                        monster.MonsterInfo.LastMove = Time32.Now;
-                                                        new Handle(null, monster, client.Entity);
-                                                        if (Time32.Now >= monster.MonsterInfo.Lastpop.AddSeconds(30)) {
-                                                            monster.MonsterInfo.Lastpop = Time32.Now;
-                                                        }
+                                                if (distance <= monster.MonsterInfo.AttackRange) {
+                                                    monster.MonsterInfo.LastMove = Time32.Now;
+                                                    new Handle(null, monster, client.Entity);
+                                                    if (Time32.Now >= monster.MonsterInfo.Lastpop.AddSeconds(30)) {
+                                                        monster.MonsterInfo.Lastpop = Time32.Now;
                                                     }
-                                                    else {
-                                                        if (distance <= monster.MonsterInfo.ViewRange) {
-                                                            TwoMovements jump = new TwoMovements();
-                                                            jump.X = client.Entity.X;
-                                                            jump.Y = client.Entity.Y;
-                                                            monster.X = client.Entity.X;
-                                                            monster.Y = client.Entity.Y;
-                                                            jump.EntityCount = 1;
-                                                            jump.FirstEntity = monster.UID;
-                                                            jump.MovementType = TwoMovements.Jump;
-                                                            client.SendScreen(jump);
-                                                        }
+                                                }
+                                                else {
+                                                    if (distance <= monster.MonsterInfo.ViewRange) {
+                                                        TwoMovements jump = new TwoMovements();
+                                                        jump.X = client.Entity.X;
+                                                        jump.Y = client.Entity.Y;
+                                                        monster.X = client.Entity.X;
+                                                        monster.Y = client.Entity.Y;
+                                                        jump.EntityCount = 1;
+                                                        jump.FirstEntity = monster.UID;
+                                                        jump.MovementType = TwoMovements.Jump;
+                                                        client.SendScreen(jump);
                                                     }
                                                 }
                                             }
@@ -1372,9 +1364,8 @@ namespace MTA.Game {
                             if (item.OnFloor.AddSeconds(4).Next(time: Time32.Now.AllMilliseconds())) {
                                 item.Type = FloorItem.RemoveEffect;
                                 foreach (IMapObject _obj in Objects)
-                                    if (_obj != null)
-                                        if (_obj.MapObjType == MapObjectType.Player)
-                                            (_obj as Entity).Owner.Send(item);
+                                    if (_obj is { MapObjType: MapObjectType.Player })
+                                        (_obj as Entity).Owner.Send(item);
                                 Map.RemoveFloorItem(item);
                             }
                             else

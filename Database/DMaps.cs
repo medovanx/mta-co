@@ -21,7 +21,7 @@ namespace MTA.Database
                 {
                     ushort MapID = (ushort)BR.ReadUInt32();
                     string Path = Program.Encoding.GetString(BR.ReadBytes(BR.ReadInt32()));
-                    if (MapID >= 1712 && MapID <= 1720)
+                    if (MapID is >= 1712 and <= 1720)
                     {
                         BR.ReadUInt32();
                         continue;

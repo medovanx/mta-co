@@ -754,8 +754,8 @@ namespace MTA.Database
             foreach (char c in Name)
             {
                 // Allow: letters (a-z, A-Z), numbers (0-9), and symbols: !#$%^&*()_
-                bool isLetter = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
-                bool isDigit = c >= '0' && c <= '9';
+                bool isLetter = c is >= 'a' and <= 'z' || c is >= 'A' and <= 'Z';
+                bool isDigit = c is >= '0' and <= '9';
                 bool isAllowedSymbol = c == '!' || c == '$' || c == '%' || c == '^' ||
                                        c == '&' || c == '*' || c == '(' || c == ')' || c == '_';
 

@@ -46,13 +46,13 @@ namespace MTA.Database
             catch { }
             finally
             {
-                if (reader != null && !reader.IsClosed)
+                if (reader is { IsClosed: false })
                 {
                     reader.Close();
                     reader.Dispose();
                     reader = null;
                 }
-                if (conn != null && conn.State == ConnectionState.Open)
+                if (conn is { State: ConnectionState.Open })
                 {
                     conn.Close();
                     conn.Dispose();

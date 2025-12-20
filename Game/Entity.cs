@@ -239,20 +239,17 @@ namespace MTA.Game
 
         public bool Lotus(uint LotusEnergy, uint aura = Network.GamePackets.Update.AuroraLotus)
         {
-            if (Owner.Weapons != null)
+            if (Owner.Weapons is { Item1: not null })
             {
-                if (Owner.Weapons.Item1 != null)
-                {
-                    if (Owner.Weapons.Item1.ID / 1000 != 620)
-                        return false;
-                    Update upgrade = new Update(true);
-                    upgrade.UID = UID;
-                    upgrade.AppendFull(Network.GamePackets.Update.StatusFlag, StatusFlag, StatusFlag2, StatusFlag3,
-                        StatusFlag4);
-                    upgrade.Append(Network.GamePackets.Update.Lotus, aura, 5, LotusEnergy, 0);
-                    Owner.SendScreen(upgrade);
-                    return true;
-                }
+                if (Owner.Weapons.Item1.ID / 1000 != 620)
+                    return false;
+                Update upgrade = new Update(true);
+                upgrade.UID = UID;
+                upgrade.AppendFull(Network.GamePackets.Update.StatusFlag, StatusFlag, StatusFlag2, StatusFlag3,
+                    StatusFlag4);
+                upgrade.Append(Network.GamePackets.Update.Lotus, aura, 5, LotusEnergy, 0);
+                Owner.SendScreen(upgrade);
+                return true;
             }
 
             return false;
@@ -1115,7 +1112,7 @@ namespace MTA.Game
 
         public bool IsWarTop(ulong Title)
         {
-            return Title >= 11 && Title <= 20 || Title >= 23 && Title <= 200;
+            return Title is >= 11 and <= 20 || Title is >= 23 and <= 200;
         }
 
         public void AddTopStatus(UInt64 Title, byte flagtype, DateTime EndsOn, Boolean Db = true)
@@ -1732,102 +1729,99 @@ namespace MTA.Game
 
             ConquerItem Item = Owner.Equipment.TryGetItem(10);
 
-            if (Item != null)
+            if (Item is { ID: > 0 })
             {
-                if (Item.ID > 0)
+                switch (Item.ID % 10)
                 {
-                    switch (Item.ID % 10)
-                    {
-                        case 3:
-                        case 4:
-                        case 5:
-                            physical += 300;
-                            magic += 150;
-                            break;
-                        case 6:
-                            physical += 500;
-                            magic += 200;
-                            break;
-                        case 7:
-                            physical += 700;
-                            magic += 300;
-                            break;
-                        case 8:
-                            physical += 900;
-                            magic += 450;
-                            break;
-                        case 9:
-                            physical += 1200;
-                            magic += 750;
-                            break;
-                    }
+                    case 3:
+                    case 4:
+                    case 5:
+                        physical += 300;
+                        magic += 150;
+                        break;
+                    case 6:
+                        physical += 500;
+                        magic += 200;
+                        break;
+                    case 7:
+                        physical += 700;
+                        magic += 300;
+                        break;
+                    case 8:
+                        physical += 900;
+                        magic += 450;
+                        break;
+                    case 9:
+                        physical += 1200;
+                        magic += 750;
+                        break;
+                }
 
-                    switch (Item.Plus)
-                    {
-                        case 0: break;
-                        case 1:
-                            physical += 200;
-                            magic += 100;
-                            break;
-                        case 2:
-                            physical += 400;
-                            magic += 200;
-                            break;
-                        case 3:
-                            physical += 600;
-                            magic += 300;
-                            break;
-                        case 4:
-                            physical += 800;
-                            magic += 400;
-                            break;
-                        case 5:
-                            physical += 1000;
-                            magic += 500;
-                            break;
-                        case 6:
-                            physical += 1200;
-                            magic += 600;
-                            break;
-                        case 7:
-                            physical += 1300;
-                            magic += 700;
-                            break;
-                        case 8:
-                            physical += 1400;
-                            magic += 800;
-                            break;
-                        case 9:
-                            physical += 1500;
-                            magic += 900;
-                            break;
-                        case 10:
-                            physical += 1600;
-                            magic += 950;
-                            break;
-                        case 11:
-                            physical += 1700;
-                            magic += 1000;
-                            break;
-                        case 12:
-                            physical += 1800;
-                            magic += 1050;
-                            break;
-                    }
+                switch (Item.Plus)
+                {
+                    case 0: break;
+                    case 1:
+                        physical += 200;
+                        magic += 100;
+                        break;
+                    case 2:
+                        physical += 400;
+                        magic += 200;
+                        break;
+                    case 3:
+                        physical += 600;
+                        magic += 300;
+                        break;
+                    case 4:
+                        physical += 800;
+                        magic += 400;
+                        break;
+                    case 5:
+                        physical += 1000;
+                        magic += 500;
+                        break;
+                    case 6:
+                        physical += 1200;
+                        magic += 600;
+                        break;
+                    case 7:
+                        physical += 1300;
+                        magic += 700;
+                        break;
+                    case 8:
+                        physical += 1400;
+                        magic += 800;
+                        break;
+                    case 9:
+                        physical += 1500;
+                        magic += 900;
+                        break;
+                    case 10:
+                        physical += 1600;
+                        magic += 950;
+                        break;
+                    case 11:
+                        physical += 1700;
+                        magic += 1000;
+                        break;
+                    case 12:
+                        physical += 1800;
+                        magic += 1050;
+                        break;
+                }
 
-                    switch (Item.SocketOne)
-                    {
-                        case Enums.Gem.NormalThunderGem: gemVal += 100; break;
-                        case Enums.Gem.RefinedThunderGem: gemVal += 300; break;
-                        case Enums.Gem.SuperThunderGem: gemVal += 500; break;
-                    }
+                switch (Item.SocketOne)
+                {
+                    case Enums.Gem.NormalThunderGem: gemVal += 100; break;
+                    case Enums.Gem.RefinedThunderGem: gemVal += 300; break;
+                    case Enums.Gem.SuperThunderGem: gemVal += 500; break;
+                }
 
-                    switch (Item.SocketTwo)
-                    {
-                        case Enums.Gem.NormalThunderGem: gemVal += 100; break;
-                        case Enums.Gem.RefinedThunderGem: gemVal += 300; break;
-                        case Enums.Gem.SuperThunderGem: gemVal += 500; break;
-                    }
+                switch (Item.SocketTwo)
+                {
+                    case Enums.Gem.NormalThunderGem: gemVal += 100; break;
+                    case Enums.Gem.RefinedThunderGem: gemVal += 300; break;
+                    case Enums.Gem.SuperThunderGem: gemVal += 500; break;
                 }
             }
 
@@ -1857,102 +1851,99 @@ namespace MTA.Game
 
             ConquerItem Item = Owner.Equipment.TryGetItem(11);
 
-            if (Item != null)
+            if (Item is { ID: > 0 })
             {
-                if (Item.ID > 0)
+                switch (Item.ID % 10)
                 {
-                    switch (Item.ID % 10)
-                    {
-                        case 3:
-                        case 4:
-                        case 5:
-                            physical += 250;
-                            magic += 100;
-                            break;
-                        case 6:
-                            physical += 400;
-                            magic += 150;
-                            break;
-                        case 7:
-                            physical += 550;
-                            magic += 200;
-                            break;
-                        case 8:
-                            physical += 700;
-                            magic += 300;
-                            break;
-                        case 9:
-                            physical += 1100;
-                            magic += 600;
-                            break;
-                    }
+                    case 3:
+                    case 4:
+                    case 5:
+                        physical += 250;
+                        magic += 100;
+                        break;
+                    case 6:
+                        physical += 400;
+                        magic += 150;
+                        break;
+                    case 7:
+                        physical += 550;
+                        magic += 200;
+                        break;
+                    case 8:
+                        physical += 700;
+                        magic += 300;
+                        break;
+                    case 9:
+                        physical += 1100;
+                        magic += 600;
+                        break;
+                }
 
-                    switch (Item.Plus)
-                    {
-                        case 0: break;
-                        case 1:
-                            physical += 150;
-                            magic += 50;
-                            break;
-                        case 2:
-                            physical += 350;
-                            magic += 150;
-                            break;
-                        case 3:
-                            physical += 550;
-                            magic += 250;
-                            break;
-                        case 4:
-                            physical += 750;
-                            magic += 350;
-                            break;
-                        case 5:
-                            physical += 950;
-                            magic += 450;
-                            break;
-                        case 6:
-                            physical += 1100;
-                            magic += 550;
-                            break;
-                        case 7:
-                            physical += 1200;
-                            magic += 625;
-                            break;
-                        case 8:
-                            physical += 1300;
-                            magic += 700;
-                            break;
-                        case 9:
-                            physical += 1400;
-                            magic += 750;
-                            break;
-                        case 10:
-                            physical += 1500;
-                            magic += 800;
-                            break;
-                        case 11:
-                            physical += 1600;
-                            magic += 850;
-                            break;
-                        case 12:
-                            physical += 1700;
-                            magic += 900;
-                            break;
-                    }
+                switch (Item.Plus)
+                {
+                    case 0: break;
+                    case 1:
+                        physical += 150;
+                        magic += 50;
+                        break;
+                    case 2:
+                        physical += 350;
+                        magic += 150;
+                        break;
+                    case 3:
+                        physical += 550;
+                        magic += 250;
+                        break;
+                    case 4:
+                        physical += 750;
+                        magic += 350;
+                        break;
+                    case 5:
+                        physical += 950;
+                        magic += 450;
+                        break;
+                    case 6:
+                        physical += 1100;
+                        magic += 550;
+                        break;
+                    case 7:
+                        physical += 1200;
+                        magic += 625;
+                        break;
+                    case 8:
+                        physical += 1300;
+                        magic += 700;
+                        break;
+                    case 9:
+                        physical += 1400;
+                        magic += 750;
+                        break;
+                    case 10:
+                        physical += 1500;
+                        magic += 800;
+                        break;
+                    case 11:
+                        physical += 1600;
+                        magic += 850;
+                        break;
+                    case 12:
+                        physical += 1700;
+                        magic += 900;
+                        break;
+                }
 
-                    switch (Item.SocketOne)
-                    {
-                        case Enums.Gem.NormalGloryGem: gemVal += 100; break;
-                        case Enums.Gem.RefinedGloryGem: gemVal += 300; break;
-                        case Enums.Gem.SuperGloryGem: gemVal += 500; break;
-                    }
+                switch (Item.SocketOne)
+                {
+                    case Enums.Gem.NormalGloryGem: gemVal += 100; break;
+                    case Enums.Gem.RefinedGloryGem: gemVal += 300; break;
+                    case Enums.Gem.SuperGloryGem: gemVal += 500; break;
+                }
 
-                    switch (Item.SocketTwo)
-                    {
-                        case Enums.Gem.NormalGloryGem: gemVal += 100; break;
-                        case Enums.Gem.RefinedGloryGem: gemVal += 300; break;
-                        case Enums.Gem.SuperGloryGem: gemVal += 500; break;
-                    }
+                switch (Item.SocketTwo)
+                {
+                    case Enums.Gem.NormalGloryGem: gemVal += 100; break;
+                    case Enums.Gem.RefinedGloryGem: gemVal += 300; break;
+                    case Enums.Gem.SuperGloryGem: gemVal += 500; break;
                 }
             }
 
@@ -2295,12 +2286,9 @@ namespace MTA.Game
                         Owner.ArenaStatistic.ArenaPoints = 1000;
                     }
 
-                    if (Owner != null)
+                    if (Owner is { AsMember: not null })
                     {
-                        if (Owner.AsMember != null)
-                        {
-                            Owner.AsMember.Level = value;
-                        }
+                        Owner.AsMember.Level = value;
                     }
 
                     SpawnPacket[_Level] = value;
@@ -2536,20 +2524,17 @@ namespace MTA.Game
                 else WriteUInt16((ushort)value, _Hitpoints, SpawnPacket);
 
                 if (EntityFlag == EntityFlag.Player)
-                    if (Owner != null)
+                    if (Owner is { Team: not null })
                     {
-                        if (Owner.Team != null)
+                        foreach (var Team in Owner.Team.Temates)
                         {
-                            foreach (var Team in Owner.Team.Temates)
-                            {
-                                AddToTeam addme = new AddToTeam();
-                                addme.UID = Owner.Entity.UID;
-                                addme.Hitpoints = (ushort)Owner.Entity.Hitpoints;
-                                addme.Mesh = Owner.Entity.Mesh;
-                                addme.Name = Owner.Entity.Name;
-                                addme.MaxHitpoints = (ushort)Owner.Entity.MaxHitpoints;
-                                Team.entry.Send(addme.ToArray());
-                            }
+                            AddToTeam addme = new AddToTeam();
+                            addme.UID = Owner.Entity.UID;
+                            addme.Hitpoints = (ushort)Owner.Entity.Hitpoints;
+                            addme.Mesh = Owner.Entity.Mesh;
+                            addme.Name = Owner.Entity.Name;
+                            addme.MaxHitpoints = (ushort)Owner.Entity.MaxHitpoints;
+                            Team.entry.Send(addme.ToArray());
                         }
                     }
             }
@@ -2645,12 +2630,9 @@ namespace MTA.Game
             {
                 NobilityRank_ = value;
                 SpawnPacket[_NobilityRank] = (byte)value;
-                if (Owner != null)
+                if (Owner is { AsMember: not null })
                 {
-                    if (Owner.AsMember != null)
-                    {
-                        Owner.AsMember.NobilityRank = value;
-                    }
+                    Owner.AsMember.NobilityRank = value;
                 }
             }
         }
@@ -3132,10 +3114,9 @@ namespace MTA.Game
             GameState[] Chars = new GameState[Kernel.GamePool.Count];
             Kernel.GamePool.Values.CopyTo(Chars, 0);
             foreach (GameState C in Chars)
-                if (C != null)
-                    if (C.Entity != null)
-                        if (Calculations.PointDistance(X, Y, C.Entity.X, C.Entity.Y) <= 20)
-                            C.Send(Data);
+                if (C is { Entity: not null })
+                    if (Calculations.PointDistance(X, Y, C.Entity.X, C.Entity.Y) <= 20)
+                        C.Send(Data);
             Chars = null;
         }
 
@@ -3361,7 +3342,7 @@ namespace MTA.Game
                                                 array[index].ID != 723776)
                                             {
                                                 var Item = array[index];
-                                                if (Item.ID >= 729960 && Item.ID <= 729970)
+                                                if (Item.ID is >= 729960 and <= 729970)
                                                     return;
                                                 Item.Lock = 0;
                                                 ushort x = X, y = Y;
@@ -3398,7 +3379,7 @@ namespace MTA.Game
                 }
             }
 
-            if (PKPoints >= 30 && Killer != null && Killer.Owner != null)
+            if (PKPoints >= 30 && Killer is { Owner: not null })
             {
                 // foreach (var item in Owner.Equipment.Objects)
                 for (int i = 0; i < 9; i++)
@@ -4037,7 +4018,7 @@ namespace MTA.Game
                 //    Hunt_Thief.AddScore(killer.Owner);
             }
 
-            if (EntityFlag == EntityFlag.Player && Owner.Fake && Owner.Booth != null)
+            if (EntityFlag == EntityFlag.Player && Owner is { Fake: true, Booth: not null })
                 return;
             if (killer.MapID == 7777)
                 killer.Owner.elitepoints += 1;
@@ -4378,7 +4359,7 @@ namespace MTA.Game
                             extraExp /= 3;
                         killer.Owner.Send(Constants.ExtraExperience(extraExp));
                     }
-                    else if (killer.Level >= 138 && killer.Level < 140)
+                    else if (killer.Level is >= 138 and < 140)
                     {
                         uint extraExp = MaxHitpoints / 2;
                         extraExp *= Constants.ExtraExperienceRate / 2;
@@ -5336,30 +5317,27 @@ namespace MTA.Game
                     }
                 }
 
-                if (Owner.Pet != null)
+                if (Owner.Pet is { Pets.Count: > 0 })
                 {
-                    if (Owner.Pet.Pets.Count > 0)
+                    foreach (var pet in Owner.Pet.Pets.Values)
                     {
-                        foreach (var pet in Owner.Pet.Pets.Values)
+                        if (pet == null) continue;
+                        if (pet.Entity == null) continue;
+                        if (remove)
                         {
-                            if (pet == null) continue;
-                            if (pet.Entity == null) continue;
-                            if (remove)
-                            {
-                                Data data = new Data(true);
-                                data.UID = pet.Entity.UID;
-                                data.ID = Data.RemoveEntity;
-                                Owner.SendScreen(data);
-                                Owner.RemoveScreenSpawn(pet.Entity, true);
-                            }
-                            else
-                            {
-                                pet.Entity.MapID = MapID;
-                                pet.Entity.X = X;
-                                pet.Entity.Y = Y;
+                            Data data = new Data(true);
+                            data.UID = pet.Entity.UID;
+                            data.ID = Data.RemoveEntity;
+                            Owner.SendScreen(data);
+                            Owner.RemoveScreenSpawn(pet.Entity, true);
+                        }
+                        else
+                        {
+                            pet.Entity.MapID = MapID;
+                            pet.Entity.X = X;
+                            pet.Entity.Y = Y;
 
-                                Owner.SendScreenSpawn(pet.Entity, true);
-                            }
+                            Owner.SendScreenSpawn(pet.Entity, true);
                         }
                     }
                 }
@@ -5477,7 +5455,7 @@ namespace MTA.Game
         {
             if (EntityFlag == EntityFlag.Player)
             {
-                if (Class >= 40 && Class <= 45)
+                if (Class is >= 40 and <= 45)
                 {
                     var weapons = Owner.Weapons;
                     if (weapons.Item1 != null)
@@ -6651,10 +6629,10 @@ namespace MTA.Game
         {
             if (EntityFlag == EntityFlag.Player)
             {
-                if (Class >= 50 && Class <= 55)
+                if (Class is >= 50 and <= 55)
                 {
                     var weapons = Owner.Weapons;
-                    if (weapons.Item1 != null && weapons.Item2 != null)
+                    if (weapons is { Item1: not null, Item2: not null })
                         if (weapons.Item1.ID / 1000 == 601 || weapons.Item2.ID / 1000 == 601)
                             return true;
                         else
@@ -6669,7 +6647,7 @@ namespace MTA.Game
         {
             if (EntityFlag == EntityFlag.Player)
             {
-                if (Class >= 140 && Class >= 145)
+                if (Class is >= 140 and >= 145)
                     return true;
                 else
                     return false;
@@ -6682,7 +6660,7 @@ namespace MTA.Game
         {
             if (EntityFlag == EntityFlag.Player)
             {
-                if (Class >= 130 && Class >= 135)
+                if (Class is >= 130 and >= 135)
                     return true;
                 else
                     return false;
@@ -6874,7 +6852,7 @@ namespace MTA.Game
                 return false;
             if (MapID == 1038)
             {
-                if ((X == 223 || X == 222) && (Y >= 175 && Y <= 185))
+                if ((X == 223 || X == 222) && Y is >= 175 and <= 185)
                 {
                     if (GuildWar.RightGate.Mesh / 10 == 27)
                     {
@@ -6887,7 +6865,7 @@ namespace MTA.Game
                 return false;
             if (MapID == 10380)
             {
-                if ((X == 223 || X == 222) && (Y >= 175 && Y <= 185))
+                if ((X == 223 || X == 222) && Y is >= 175 and <= 185)
                 {
                     if (SuperGuildWar.RightGate.Mesh / 10 == 27)
                     {
@@ -6905,7 +6883,7 @@ namespace MTA.Game
                 return false;
             if (MapID == 1038)
             {
-                if ((Y == 210 || Y == 209) && (X >= 154 && X <= 166))
+                if ((Y == 210 || Y == 209) && X is >= 154 and <= 166)
                 {
                     if (GuildWar.LeftGate.Mesh / 10 == 24)
                     {
@@ -6918,7 +6896,7 @@ namespace MTA.Game
                 return false;
             if (MapID == 10380)
             {
-                if ((Y == 210 || Y == 209) && (X >= 154 && X <= 166))
+                if ((Y == 210 || Y == 209) && X is >= 154 and <= 166)
                 {
                     if (SuperGuildWar.LeftGate.Mesh / 10 == 24)
                     {

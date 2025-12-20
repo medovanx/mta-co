@@ -52,8 +52,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     break;
                 }
                 case 17: {
-                    if (client.Guild != null && client.AsMember.Rank == GuildMemberRank.GuildLeader &&
-                        client.Entity.ConquerPoints >= 215) {
+                    if (client is { Guild: not null, AsMember.Rank: GuildMemberRank.GuildLeader, Entity.ConquerPoints: >= 215 }) {
                         dialog.Text("Name your guild. The name must be less than 16 characters.");
                         dialog.Text("This will cost 215 Conquer Points.");
                         dialog.Input("Enter new guild name:", 18, 16);
@@ -70,8 +69,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     break;
                 }
                 case 18: {
-                    if (client.Guild != null && client.AsMember.Rank == GuildMemberRank.GuildLeader &&
-                        client.Entity.ConquerPoints >= 215) {
+                    if (client is { Guild: not null, AsMember.Rank: GuildMemberRank.GuildLeader, Entity.ConquerPoints: >= 215 }) {
                         if (npcRequest.Input != "" && npcRequest.Input.Length < 16) {
                             if (!Guild.CheckNameExist(npcRequest.Input)) {
                                 GuildTable.ChangeName(client, npcRequest.Input);
@@ -106,7 +104,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     break;
                 }
                 case 9: {
-                    if (client.Guild != null && client.AsMember.Rank == GuildMemberRank.GuildLeader) {
+                    if (client is { Guild: not null, AsMember.Rank: GuildMemberRank.GuildLeader }) {
                         dialog.Text("Are you sure you want to disband your guild? This action cannot be undone!");
                         dialog.Option("Yes, disband my guild", 10);
                         dialog.Option("No, cancel", 255);
@@ -121,14 +119,14 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     break;
                 }
                 case 10: {
-                    if (client.Guild != null && client.AsMember.Rank == GuildMemberRank.GuildLeader) {
+                    if (client is { Guild: not null, AsMember.Rank: GuildMemberRank.GuildLeader }) {
                         client.Guild.Disband();
                     }
 
                     break;
                 }
                 case 7: {
-                    if (client.Guild != null && client.AsMember.Rank == GuildMemberRank.GuildLeader) {
+                    if (client is { Guild: not null, AsMember.Rank: GuildMemberRank.GuildLeader }) {
                         if (npcRequest.Input != "") {
                             string lookingFor = npcRequest.Input.Replace(" ", "").Replace("~", "");
                             var member = client.Guild.Members.Values.FirstOrDefault((p) =>
@@ -175,7 +173,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     break;
                 }
                 case 4: {
-                    if (client.Guild != null && client.AsMember.Rank == GuildMemberRank.GuildLeader) {
+                    if (client is { Guild: not null, AsMember.Rank: GuildMemberRank.GuildLeader }) {
                         if (npcRequest.Input != "") {
                             string lookingFor = npcRequest.Input.Replace(" ", "~");
                             var member = client.Guild.Members.Values.FirstOrDefault((p) => p.Name == lookingFor);
@@ -223,7 +221,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     break;
                 }
                 case 1: {
-                    if (client.Guild == null && client.Entity.Level >= 90 && client.Entity.Money >= 500000) {
+                    if (client.Guild == null && client.Entity is { Level: >= 90, Money: >= 500000 }) {
                         dialog.Text("Name your guild. The name must be between 1 and 15 characters.");
                         dialog.Input("Guild name:", 2, 16);
                         dialog.Option("Cancel", 255);
@@ -239,8 +237,8 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     break;
                 }
                 case 2: {
-                    if (client.Guild == null && client.Entity.Level >= 90 && client.Entity.Money >= 500000) {
-                        if (npcRequest.Input != "" && npcRequest.Input.Length >= 1 && npcRequest.Input.Length < 16) {
+                    if (client.Guild == null && client.Entity is { Level: >= 90, Money: >= 500000 }) {
+                        if (npcRequest.Input != "" && npcRequest.Input.Length is >= 1 and < 16) {
                             if (!Guild.CheckNameExist(npcRequest.Input)) {
                                 client.Entity.Money -= 500000;
                                 Guild guild = new Guild(client.Entity.Name);

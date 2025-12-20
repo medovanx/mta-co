@@ -158,7 +158,7 @@ namespace MTA.Game.Attacking {
             if (client.Team != null)
                 deads = deads.Where(p => client.Team.Contain(p.Entity.UID)).ToArray();
             else if (client.Guild != null)
-                if (client.Guild.Members != null && client.Guild.Ally != null)
+                if (client.Guild is { Members: not null, Ally: not null })
                     deads = deads.Where(p =>
                         client.Guild.Members.ContainsKey(p.Entity.UID) ||
                         client.Guild.Ally.ContainsKey(p.Entity.GuildID)).ToArray();
@@ -1090,18 +1090,16 @@ namespace MTA.Game.Attacking {
                                     if (attacked.EntityFlag == EntityFlag.Monster) {
                                         var weaps = attacker.Owner.Weapons;
                                         bool can = false;
-                                        if (weaps.Item1 != null)
-                                            if (weaps.Item1 != null)
-                                                if (weaps.Item1.ID / 1000 == 601 || weaps.Item1.ID / 1000 == 616)
-                                                    can = true;
+                                        if (weaps.Item1 is not null)
+                                            if (weaps.Item1.ID / 1000 == 601 || weaps.Item1.ID / 1000 == 616)
+                                                can = true;
                                         if (weaps.Item2 != null)
                                             if (weaps.Item2.ID / 1000 == 601 || weaps.Item2.ID / 1000 == 616)
                                                 can = true;
                                         can = true;
-                                        if (weaps.Item2 != null)
-                                            if (weaps.Item1 != null)
-                                                if (weaps.Item1.ID / 1000 == 601 || weaps.Item1.ID / 1000 == 616)
-                                                    can = true;
+                                        if (weaps is { Item2: not null, Item1: not null })
+                                            if (weaps.Item1.ID / 1000 == 601 || weaps.Item1.ID / 1000 == 616)
+                                                can = true;
                                         if (weaps.Item2 != null)
                                             if (weaps.Item2.ID / 1000 == 601 || weaps.Item2.ID / 1000 == 616)
                                                 can = true;
@@ -1681,7 +1679,7 @@ namespace MTA.Game.Attacking {
                         uint Experience = 100;
                         bool shuriken = false;
                         ushort spellID = SpellID;
-                        if (SpellID >= 3090 && SpellID <= 3306)
+                        if (SpellID is >= 3090 and <= 3306)
                             spellID = 3090;
                         if (spellID == 6012)
                             shuriken = true;
@@ -1745,19 +1743,17 @@ namespace MTA.Game.Attacking {
                                 }
                             }
 
-                            if (Target >= 400000 && Target <= 600000 || Target >= 800000) {
+                            if (Target is >= 400000 and <= 600000 || Target >= 800000) {
                                 if (attacked == null && attackedsob == null)
                                     return;
                             }
                             else if (Target != 0 && attacked == null && attackedsob == null && attackedItem == null)
                                 return;
 
-                            if (attacked != null) {
-                                if (attacked.EntityFlag == EntityFlag.Monster) {
-                                    if (spell.CanKill) {
-                                        if (attacked.MonsterInfo.InSight == 0) {
-                                            attacked.MonsterInfo.InSight = attacker.UID;
-                                        }
+                            if (attacked is { EntityFlag: EntityFlag.Monster }) {
+                                if (spell.CanKill) {
+                                    if (attacked.MonsterInfo.InSight == 0) {
+                                        attacked.MonsterInfo.InSight = attacker.UID;
                                     }
                                 }
                             }
@@ -1833,12 +1829,10 @@ namespace MTA.Game.Attacking {
                                     }
                                 }
 
-                                if (attacker.Owner.LobbyGroup != null) {
-                                    if (attacker.Owner.LobbyGroup.MatchType == Lobby.MatchType.FBSS) {
-                                        if (spellID != 1045 && spellID != 1046 && spellID != 11005) {
-                                            attacker.AttackPacket = null;
-                                            return;
-                                        }
+                                if (attacker.Owner.LobbyGroup is { MatchType: Lobby.MatchType.FBSS }) {
+                                    if (spellID != 1045 && spellID != 1046 && spellID != 11005) {
+                                        attacker.AttackPacket = null;
+                                        return;
                                     }
                                 }
 
@@ -3653,29 +3647,27 @@ namespace MTA.Game.Attacking {
                                 #region Dash
 
                                 case 1051: {
-                                    if (attacked != null) {
-                                        if (!attacked.Dead) {
-                                            var direction = Kernel.GetAngle(attacker.X, attacker.Y, attacked.X,
-                                                attacked.Y);
-                                            if (CanAttack(attacker, attacked, spell,
-                                                    attack.AttackType == Attack.Melee)) {
-                                                attack = new Attack(true);
-                                                attack.Effect1 = Attack.AttackEffects1.None;
-                                                uint damage = Calculate.Melee(attacker, attacked, ref attack);
-                                                attack.AttackType = Attack.Dash;
-                                                attack.X = attacked.X;
-                                                attack.Y = attacked.Y;
-                                                attack.Attacker = attacker.UID;
-                                                attack.Attacked = attacked.UID;
-                                                attack.Damage = damage;
-                                                attack.ToArray()[27] = (byte)direction;
-                                                attacked.Move(direction);
-                                                attacker.Move(direction);
+                                    if (attacked is { Dead: false }) {
+                                        var direction = Kernel.GetAngle(attacker.X, attacker.Y, attacked.X,
+                                            attacked.Y);
+                                        if (CanAttack(attacker, attacked, spell,
+                                                attack.AttackType == Attack.Melee)) {
+                                            attack = new Attack(true);
+                                            attack.Effect1 = Attack.AttackEffects1.None;
+                                            uint damage = Calculate.Melee(attacker, attacked, ref attack);
+                                            attack.AttackType = Attack.Dash;
+                                            attack.X = attacked.X;
+                                            attack.Y = attacked.Y;
+                                            attack.Attacker = attacker.UID;
+                                            attack.Attacked = attacked.UID;
+                                            attack.Damage = damage;
+                                            attack.ToArray()[27] = (byte)direction;
+                                            attacked.Move(direction);
+                                            attacker.Move(direction);
 
-                                                ReceiveAttack(attacker, attacked, attack, ref damage, spell);
+                                            ReceiveAttack(attacker, attacked, attack, ref damage, spell);
 
-                                                attacker.Owner.SendScreen(attack);
-                                            }
+                                            attacker.Owner.SendScreen(attack);
                                         }
                                     }
 
@@ -5618,18 +5610,16 @@ namespace MTA.Game.Attacking {
                                 case 10381: {
                                     var weaps = attacker.Owner.Weapons;
                                     bool can = false;
-                                    if (weaps.Item1 != null)
-                                        if (weaps.Item1 != null)
-                                            if (weaps.Item1.ID / 1000 == 610)
-                                                can = true;
+                                    if (weaps.Item1 is not null)
+                                        if (weaps.Item1.ID / 1000 == 610)
+                                            can = true;
                                     if (weaps.Item2 != null)
                                         if (weaps.Item2.ID / 1000 == 610)
                                             can = true;
                                     can = true;
-                                    if (weaps.Item2 != null)
-                                        if (weaps.Item1 != null)
-                                            if (weaps.Item1.ID / 1000 == 610)
-                                                can = true;
+                                    if (weaps is { Item2: not null, Item1: not null })
+                                        if (weaps.Item1.ID / 1000 == 610)
+                                            can = true;
                                     if (weaps.Item2 != null)
                                         if (weaps.Item2.ID / 1000 == 610)
                                             can = true;
@@ -7942,7 +7932,7 @@ namespace MTA.Game.Attacking {
                             }
                             else {
                                 if (spell.NextSpellID != 0) {
-                                    if (spell.NextSpellID >= 1000 && spell.NextSpellID <= 1002)
+                                    if (spell.NextSpellID is >= 1000 and <= 1002)
                                         if (Target >= 1000000) {
                                             attacker.AttackPacket = null;
                                             return;
@@ -8567,7 +8557,7 @@ namespace MTA.Game.Attacking {
         }
 
         public static bool isArcherSkill(uint ID) {
-            if (ID >= 8000 && ID <= 9875)
+            if (ID is >= 8000 and <= 9875)
                 return true;
             return false;
         }
@@ -8907,10 +8897,7 @@ namespace MTA.Game.Attacking {
             uint TeamCount = 0;
             foreach (GameState clients in Program.Values) {
                 if (clients.Entity.MapID == 16414) {
-                    if (clients.Team != null) {
-                        if (!clients.Entity.Dead)
-                            TeamCount++;
-                    }
+                    if (clients is { Team: not null, Entity.Dead: false }) TeamCount++;
                 }
             }
 
@@ -8918,7 +8905,7 @@ namespace MTA.Game.Attacking {
                 uint lastcheak = 0;
                 if (client.Team != null) {
                     foreach (GameState team in client.Team.Teammates) {
-                        if (team.Entity.MapID == 16414 && !team.Entity.Dead)
+                        if (team.Entity is { MapID: 16414, Dead: false })
                             lastcheak++;
                     }
 
@@ -8953,11 +8940,9 @@ namespace MTA.Game.Attacking {
         public static bool CanAttack(Entity attacker, Entity attacked, SpellInformation spell, bool melee) {
             if (DateTime.Now < attacker.Owner.timerattack.AddSeconds(6))
                 return false;
-            if (attacked.EntityFlag == EntityFlag.Monster) {
-                if (attacked.Companion) {
-                    if (attacked.Owner == attacker.Owner)
-                        return false;
-                }
+            if (attacked is { EntityFlag: EntityFlag.Monster, Companion: true }) {
+                if (attacked.Owner == attacker.Owner)
+                    return false;
             }
 
             if (attacker.MapID == 1507) {
@@ -8967,14 +8952,10 @@ namespace MTA.Game.Attacking {
                 }
             }
 
-            if (attacker.EntityFlag == EntityFlag.Player) {
-                if (attacker.Owner.Map.BaseID == ElitePKTournament.WaitingAreaID) {
-                    if (attacker.Owner.Team != null)
-                        if (attacker.Owner.Team.EliteFighterStats != null)
-                            return false;
-                    if (attacker.Owner.ElitePKStats != null)
-                        return false;
-                }
+            if (attacker is { EntityFlag: EntityFlag.Player, Owner.Map.BaseID: ElitePKTournament.WaitingAreaID }) {
+                if (attacker.Owner.Team is { EliteFighterStats: not null }) return false;
+                if (attacker.Owner.ElitePKStats != null)
+                    return false;
             }
 
             //if (attacker.MapID == CrossServer.mapid)
@@ -9012,32 +8993,24 @@ namespace MTA.Game.Attacking {
                 }
             }
 
-            if (spell != null) {
-                if (spell.ID == 6010) {
-                    if (attacked.ContainsFlag(Update.Flags.Fly))
-                        return false;
-                }
+            if (spell is { ID: 6010 }) {
+                if (attacked.ContainsFlag(Update.Flags.Fly))
+                    return false;
             }
 
-            if (spell != null) {
-                if (spell.ID == 10381) {
-                    if (attacked.ContainsFlag(Update.Flags.Fly))
-                        return false;
-                }
+            if (spell is { ID: 10381 }) {
+                if (attacked.ContainsFlag(Update.Flags.Fly))
+                    return false;
             }
 
-            if (spell != null) {
-                if (spell.ID == 6000) {
-                    if (attacked.ContainsFlag(Update.Flags.Fly))
-                        return false;
-                }
+            if (spell is { ID: 6000 }) {
+                if (attacked.ContainsFlag(Update.Flags.Fly))
+                    return false;
             }
 
-            if (spell != null) {
-                if (spell.ID == 5030) {
-                    if (attacked.ContainsFlag(Update.Flags.Fly))
-                        return false;
-                }
+            if (spell is { ID: 5030 }) {
+                if (attacked.ContainsFlag(Update.Flags.Fly))
+                    return false;
             }
 
             if (spell == null) {
@@ -9045,18 +9018,12 @@ namespace MTA.Game.Attacking {
                     return false;
             }
 
-            if (attacked.EntityFlag == EntityFlag.Monster)
-                if (attacked.MonsterInfo.ID == MonsterInformation.ReviverID)
-                    return false;
+            if (attacked is { EntityFlag: EntityFlag.Monster, MonsterInfo.ID: MonsterInformation.ReviverID }) return false;
             if (attacked.Dead) return false;
+            if (attacker is { EntityFlag: EntityFlag.Player, Owner.WatchingElitePKMatch: not null }) return false;
+            if (attacked is { EntityFlag: EntityFlag.Player, Owner.WatchingElitePKMatch: not null }) return false;
             if (attacker.EntityFlag == EntityFlag.Player)
-                if (attacker.Owner.WatchingElitePKMatch != null)
-                    return false;
-            if (attacked.EntityFlag == EntityFlag.Player)
-                if (attacked.Owner.WatchingElitePKMatch != null)
-                    return false;
-            if (attacker.EntityFlag == EntityFlag.Player)
-                if (attacked != null && attacked.EntityFlag == EntityFlag.Player)
+                if (attacked is { EntityFlag: EntityFlag.Player })
                     if (attacker.Owner.InTeamQualifier() && attacked.Owner.InTeamQualifier())
                         return !attacker.Owner.Team.IsTeammate(attacked.UID);
 
@@ -9072,9 +9039,7 @@ namespace MTA.Game.Attacking {
                     Constants.IsPKForbidden(attacker.Owner.Map.ID, attacker.Owner.Map) &&
                     attacked.EntityFlag == EntityFlag.Player)
                     return false;
-            if (attacker.EntityFlag == EntityFlag.Player)
-                if (attacker.Owner.WatchingGroup != null)
-                    return false;
+            if (attacker is { EntityFlag: EntityFlag.Player, Owner.WatchingGroup: not null }) return false;
             if (attacked == null)
                 return false;
             if (attacked.Dead) {
@@ -9123,19 +9088,15 @@ namespace MTA.Game.Attacking {
                     return true;
             }
             else {
-                if (attacked.EntityFlag == EntityFlag.Player)
-                    if (!attacked.Owner.Attackable)
+                if (attacked is { EntityFlag: EntityFlag.Player, Owner.Attackable: false }) return false;
+                if (attacker is { EntityFlag: EntityFlag.Player, Owner.WatchingGroup: null })
+                    if (attacked is { EntityFlag: EntityFlag.Player, Owner.WatchingGroup: not null })
                         return false;
-                if (attacker.EntityFlag == EntityFlag.Player)
-                    if (attacker.Owner.WatchingGroup == null)
-                        if (attacked.EntityFlag == EntityFlag.Player)
-                            if (attacked.Owner.WatchingGroup != null)
-                                return false;
 
 
                 if (Constants.IsPKForbidden(attacker.Owner.Map.ID, attacker.Owner.Map)) {
                     if (attacker.PKMode == Enums.PkMode.PK ||
-                        attacker.PKMode == Enums.PkMode.Team || (spell != null && spell.CanKill)) {
+                        attacker.PKMode == Enums.PkMode.Team || spell is { CanKill: true }) {
                         attacker.Owner.Send(Constants.PKForbidden);
                         attacker.AttackPacket = null;
                     }
@@ -9180,13 +9141,11 @@ namespace MTA.Game.Attacking {
                         return false;
                     }
 
-                    if (attacker.Owner.Guild != null) {
-                        if (attacker.Owner.Guild.Ally != null)
-                            if (attacker.Owner.Guild.Ally.ContainsKey(attacked.GuildID)) {
-                                attacker.AttackPacket = null;
-                                return false;
-                            }
-                    }
+                    if (attacker.Owner.Guild is { Ally: not null })
+                        if (attacker.Owner.Guild.Ally.ContainsKey(attacked.GuildID)) {
+                            attacker.AttackPacket = null;
+                            return false;
+                        }
 
                     if (attacker.ClanId != 0) {
                         var clan = attacker.GetClan;
@@ -9198,14 +9157,11 @@ namespace MTA.Game.Attacking {
                     }
                 }
 
-                if (spell != null)
-                    if (spell.OnlyGround)
-                        if (attacked.ContainsFlag(Update.Flags.Fly))
-                            return false;
+                if (spell is { OnlyGround: true })
+                    if (attacked.ContainsFlag(Update.Flags.Fly))
+                        return false;
 
-                if (spell != null)
-                    if (!spell.CanKill)
-                        return true;
+                if (spell is { CanKill: false }) return true;
 
                 if (attacker.PKMode != Enums.PkMode.PK &&
                     attacker.PKMode != Enums.PkMode.Team && attacked.PKPoints < 99) {

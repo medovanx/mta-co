@@ -18,12 +18,12 @@ namespace MTA.Game.Events {
         public static void CheackAlive() {
             Alive = 0;
             foreach (GameState state in Kernel.GamePool.Values) {
-                if (state.Entity.MapID == Map && state.Entity.Hitpoints >= 1 && !state.Entity.Dead) {
+                if (state.Entity.MapID == Map && state.Entity is { Hitpoints: >= 1, Dead: false }) {
                     Alive++;
                     //      Kernel.SendWorldMessage(new Message("Players Alive in DizzyLand Now: " + Alive + " ", Color.Black, 0x83c), Program.Values);
                 }
 
-                if (state.Entity.MapID == Map && state.Entity.Hitpoints >= 1 && !state.Entity.Dead) {
+                if (state.Entity.MapID == Map && state.Entity is { Hitpoints: >= 1, Dead: false }) {
                     if (!state.Entity.ContainsFlag(Update.Flags.Confused)) {
                         state.Entity.AddFlag(Update.Flags.Confused);
                     }

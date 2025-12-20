@@ -11,7 +11,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
         public static void Handle(GameState client, NpcRequest npcRequest, MTA.Npcs dialog) {
             switch (npcRequest.OptionID) {
                 case 0: {
-                    if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                    if (client.Entity.Class is >= 160 and <= 165) {
                         dialog.Text(
                             "Our Windwalker school was founded by Saint Wan on the principle of KINDNESS and JUSTICE. Once you decide to");
                         dialog.Text(
@@ -36,7 +36,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                 #region Promotion
 
                 case 1: {
-                    if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                    if (client.Entity.Class is >= 160 and <= 165) {
                         if (client.Entity.Class == 165) {
                             dialog.Text("You cannot be promoted anymore. You have mastered your class.");
                             dialog.Option("Thank you master.", 255);
@@ -61,7 +61,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 27: {
-                    if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                    if (client.Entity.Class is >= 160 and <= 165) {
                         if (client.Entity.Class == 165) {
                             dialog.Text("You cannot be promoted anymore. You have mastered your class.");
                             dialog.Option("Thank you master.", 255);
@@ -123,7 +123,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                 #region Skill
 
                 case 2: {
-                    if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                    if (client.Entity.Class is >= 160 and <= 165) {
                         dialog.Text(
                             "Our Windwalker school is divided into two branches: Chaser and Stomper. Chaser focuses on");
                         dialog.Text(
@@ -166,7 +166,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 4: {
-                    if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                    if (client.Entity.Class is >= 160 and <= 165) {
                         dialog.Text(
                             "The Stomper branch has developed overwhelming melee skills which enable the caster to disable an enemy with swift and flexible fighting moves.");
                         dialog.Text("~FellowBrother, which skill would you like to learn?");
@@ -234,7 +234,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 5: {
-                    if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                    if (client.Entity.Class is >= 160 and <= 165) {
                         dialog.Text(
                             "The Chaser branch is famous for its ability to control wind and outstanding ranged attacks.");
                         dialog.Text("~FellowBrother, which skill would you like to learn?");
@@ -288,7 +288,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 6: {
-                    if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                    if (client.Entity.Class is >= 160 and <= 165) {
                         dialog.Text(
                             "Frost Gaze is an exclusive rebirth skill for Windwalker. The heroes who got reborn to be Windwalker can learn Frost Gaze I. If both of your precious and");
                         dialog.Text(
@@ -309,7 +309,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 7: {
-                    if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                    if (client.Entity.Class is >= 160 and <= 165) {
                         dialog.Text(
                             "Omnipotence and Justice Chant are basic skills for Windwalker, which are available to both Chaser and Stomper learners. I'll teach you if you want.");
                         if (client.Spells.ContainsKey(12860)) {
@@ -348,7 +348,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 9: {
-                    if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                    if (client.Entity.Class is >= 160 and <= 165) {
                         if (client.AddSpell(LearnableSpell(12980))) {
                             dialog.Text("FellowBrother has learned AngerofStomper. Go practice and feel its power.");
                             dialog.Option("Okay.", 255);
@@ -382,7 +382,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 10: {
-                    if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                    if (client.Entity.Class is >= 160 and <= 165) {
                         if (client.Entity.Level >= 15) {
                             if (client.AddSpell(LearnableSpell(12940))) {
                                 dialog.Text("FellowBrother has learned BurntFrost. Go practice and feel its power.");
@@ -425,7 +425,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 11: {
-                    if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                    if (client.Entity.Class is >= 160 and <= 165) {
                         if (client.Entity.Level >= 15) {
                             if (client.AddSpell(LearnableSpell(12950))) {
                                 dialog.Text("FellowBrother has learned HealingSnow. Go practice and feel its power.");
@@ -468,7 +468,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 12: {
-                    if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                    if (client.Entity.Class is >= 160 and <= 165) {
                         if (client.Entity.Level >= 40) {
                             if (client.AddSpell(LearnableSpell(12930))) {
                                 dialog.Text("FellowBrother has learned RageofWar. Go practice and feel its power.");
@@ -511,7 +511,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 13: {
-                    if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                    if (client.Entity.Class is >= 160 and <= 165) {
                         if (client.Entity.Level >= 40) {
                             if (client.AddSpell(LearnableSpell(12990))) {
                                 dialog.Text(
@@ -555,7 +555,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 14: {
-                    if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                    if (client.Entity.Class is >= 160 and <= 165) {
                         if (client.Entity.Level >= 70) {
                             if (client.AddSpell(LearnableSpell(12960))) {
                                 dialog.Text("FellowBrother has learned ChillingSnow. Go practice and feel its power.");
@@ -598,7 +598,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 15: {
-                    if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                    if (client.Entity.Class is >= 160 and <= 165) {
                         if (client.Entity.Level >= 70) {
                             if (client.AddSpell(LearnableSpell(13000))) {
                                 dialog.Text(
@@ -642,7 +642,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 16: {
-                    if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                    if (client.Entity.Class is >= 160 and <= 165) {
                         dialog.Text(
                             "The Stomper branch has developed overwhelming melee skills which enable the caster to disable an enemy with swift and flexible fighting moves.");
                         dialog.Text("~FellowBrother, which skill would you like to learn?");
@@ -664,7 +664,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 17: {
-                    if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                    if (client.Entity.Class is >= 160 and <= 165) {
                         if (client.Entity.Level >= 15) {
                             if (client.AddSpell(LearnableSpell(12890))) {
                                 dialog.Text("FellowBrother has learned SwirlingStorm. Go practice and feel its power.");
@@ -707,7 +707,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 18: {
-                    if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                    if (client.Entity.Class is >= 160 and <= 165) {
                         if (client.Entity.Level >= 15) {
                             if (client.AddSpell(LearnableSpell(13090))) {
                                 dialog.Text(
@@ -751,7 +751,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 19: {
-                    if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                    if (client.Entity.Class is >= 160 and <= 165) {
                         if (client.Entity.Level >= 40) {
                             if (client.AddSpell(LearnableSpell(12850))) {
                                 dialog.Text("FellowBrother has learned TripleBlasts. Go practice and feel its power.");
@@ -794,7 +794,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 20: {
-                    if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                    if (client.Entity.Class is >= 160 and <= 165) {
                         if (client.Entity.Level >= 70) {
                             if (client.AddSpell(LearnableSpell(12840))) {
                                 dialog.Text("FellowBrother has learned Thundercloud. Go practice and feel its power.");
@@ -837,7 +837,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 21: {
-                    if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                    if (client.Entity.Class is >= 160 and <= 165) {
                         if (client.Entity.Level >= 100) {
                             if (client.AddSpell(LearnableSpell(12970))) {
                                 dialog.Text("FellowBrother has learned Thunderbolt. Go practice and feel its power.");
@@ -880,7 +880,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 22: {
-                    if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                    if (client.Entity.Class is >= 160 and <= 165) {
                         client.MessageBox("You're not qualified to learn this skill.");
                     }
                     else {
@@ -893,7 +893,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 23: {
-                    if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                    if (client.Entity.Class is >= 160 and <= 165) {
                         if (client.Entity.Level >= 3) {
                             if (client.AddSpell(LearnableSpell(12860))) {
                                 dialog.Text("FellowBrother has learned Omnipotence. Go practice and feel its power.");
@@ -936,7 +936,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 24: {
-                    if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                    if (client.Entity.Class is >= 160 and <= 165) {
                         if (client.Entity.Level >= 3) {
                             if (client.AddSpell(LearnableSpell(12870))) {
                                 dialog.Text("FellowBrother has learned JusticeChant. Go practice and feel its power.");
@@ -979,7 +979,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 25: {
-                    if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                    if (client.Entity.Class is >= 160 and <= 165) {
                         if (client.Entity.Level >= 100) {
                             if (client.AddSpell(LearnableSpell(13030))) {
                                 dialog.Text("FellowBrother has learned RevengeTail. Go practice and feel its power.");
@@ -1022,7 +1022,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 26: {
-                    if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                    if (client.Entity.Class is >= 160 and <= 165) {
                         if (client.Entity.Level >= 100) {
                             if (client.AddSpell(LearnableSpell(13020))) {
                                 dialog.Text(

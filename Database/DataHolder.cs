@@ -30,16 +30,16 @@ namespace MTA.Database
         static SafeDictionary<byte, string> TaoistStats = new SafeDictionary<byte, string>(130);
         static SafeDictionary<byte, string> MonkStats = new SafeDictionary<byte, string>(130);
         static SafeDictionary<byte, string> WindwalkerStats = new SafeDictionary<byte, string>(130);
-        public static bool IsTrojan(byte Job) { return Job >= 10 && Job <= 15; }
-        public static bool IsWarrior(byte Job) { return Job >= 20 && Job <= 25; }
-        public static bool IsArcher(byte Job) { return Job >= 40 && Job <= 45; }
-        public static bool IsNinja(byte Job) { return Job >= 50 && Job <= 55; }
-        public static bool IsMonk(byte Job) { return Job >= 60 && Job <= 65; }
-        public static bool IsPirate(byte Job) { return Job >= 70 && Job <= 75; }
-        public static bool IsWather(byte Job) { return Job >= 100 && Job <= 135; }
-        public static bool IsFire(byte Job) { return Job >= 140 && Job <= 145; }
-        public static bool IsTaoist(byte Job) { return Job >= 100 && Job <= 145; }
-        public static bool IsWindwalker(byte Job) { return Job >= 160 && Job <= 165; }
+        public static bool IsTrojan(byte Job) { return Job is >= 10 and <= 15; }
+        public static bool IsWarrior(byte Job) { return Job is >= 20 and <= 25; }
+        public static bool IsArcher(byte Job) { return Job is >= 40 and <= 45; }
+        public static bool IsNinja(byte Job) { return Job is >= 50 and <= 55; }
+        public static bool IsMonk(byte Job) { return Job is >= 60 and <= 65; }
+        public static bool IsPirate(byte Job) { return Job is >= 70 and <= 75; }
+        public static bool IsWather(byte Job) { return Job is >= 100 and <= 135; }
+        public static bool IsFire(byte Job) { return Job is >= 140 and <= 145; }
+        public static bool IsTaoist(byte Job) { return Job is >= 100 and <= 145; }
+        public static bool IsWindwalker(byte Job) { return Job is >= 160 and <= 165; }
 
 
         public static void ReadStats()

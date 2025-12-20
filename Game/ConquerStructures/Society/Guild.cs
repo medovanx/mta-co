@@ -279,11 +279,11 @@ namespace MTA.Game.ConquerStructures.Society
         public uint GetCurrentArsenalCost()
         {
             int val = UnlockedArsenals;
-            if (val >= 0 && val <= 1)
+            if (val is >= 0 and <= 1)
                 return 5000000;
-            else if (val >= 2 && val <= 4)
+            else if (val is >= 2 and <= 4)
                 return 10000000;
-            else if (val >= 5 && val <= 6)
+            else if (val is >= 5 and <= 6)
                 return 15000000;
             else
                 return 20000000;
@@ -1703,7 +1703,7 @@ namespace MTA.Game.ConquerStructures.Society
         }
         public static bool ValidName(string Name)
         {
-            if (Name.Length < 4 && Name.Length > 15) return false;
+            if (Name.Length is < 4 and > 15) return false;
             else if (Name.IndexOfAny([' ', '#', '%', '^', '&', '*', '(', ')', ';', ':', '\'', '\"', '/', '\\', ',', '.', '{', '}', '[', ']'
                      ]) > 0) return false;
             else return true;

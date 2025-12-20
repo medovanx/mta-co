@@ -525,18 +525,15 @@ namespace MTA.Game
                     #endregion
                     foreach (var player in Players)
                     {
-                        if (player != null)
+                        if (player is { ElitePKStats.Waiting: false })
                         {
-                            if (!player.ElitePKStats.Waiting)
-                            {
-                                player.CurrentHonor += 1000;
-                                player.HistoryHonor += 1000;
-                                player.IncreaseExperience(player.ExpBall, false);
+                            player.CurrentHonor += 1000;
+                            player.HistoryHonor += 1000;
+                            player.IncreaseExperience(player.ExpBall, false);
 
-                                var map = ElitePKTournament.Tournaments[GroupID].WaitingArea;
-                                var coords = map.RandomCoordinates();
-                                player.Entity.Teleport(map.ID, coords.Item1, coords.Item2);
-                            }
+                            var map = ElitePKTournament.Tournaments[GroupID].WaitingArea;
+                            var coords = map.RandomCoordinates();
+                            player.Entity.Teleport(map.ID, coords.Item1, coords.Item2);
                         }
                     }
                     Exported = true;
@@ -551,17 +548,14 @@ namespace MTA.Game
             {
                 if (Imports == 1)
                 {
-                    if (Players.Length == 3)
+                    if (Players is [not null, _, _])
                     {
-                        if (Players[0] != null)
-                        {
-                            MatchStats[0].Flag = FighterStats.StatusFlag.None;
-                            if (MatchStats[1].Winner)
-                                MatchStats[1].Flag = FighterStats.StatusFlag.None;
-                            if (MatchStats[2].Winner)
-                                MatchStats[2].Flag = FighterStats.StatusFlag.None;
-                            Completed = false;
-                        }
+                        MatchStats[0].Flag = FighterStats.StatusFlag.None;
+                        if (MatchStats[1].Winner)
+                            MatchStats[1].Flag = FighterStats.StatusFlag.None;
+                        if (MatchStats[2].Winner)
+                            MatchStats[2].Flag = FighterStats.StatusFlag.None;
+                        Completed = false;
                     }
                 }
                 else
@@ -594,9 +588,7 @@ namespace MTA.Game
             public void BeginWatch(GameState client)
             {
                 if (Watchers.ContainsKey(client.Entity.UID)) return;
-                if (client.ElitePKMatch != null)
-                    if (!client.ElitePKStats.Waiting && !client.ElitePKStats.Lost)
-                        return;
+                if (client is { ElitePKMatch: not null, ElitePKStats: { Waiting: false, Lost: false } }) return;
 
                 Watchers.TryAdd(client.Entity.UID, client);
                 var coords = Map.RandomCoordinates();
@@ -630,9 +622,8 @@ namespace MTA.Game
                 var update = CreateUpdate();
                 if (Players != null)
                     foreach (var player in Players)
-                        if (player != null)
-                            if (player.ElitePKStats.Fighting)
-                                player.Send(update);
+                        if (player is { ElitePKStats.Fighting: true })
+                            player.Send(update);
             }
             public void UpdateWatchers()
             {
@@ -699,7 +690,7 @@ namespace MTA.Game
 
                 foreach (var player in Players)
                 {
-                    if (!player.ElitePKStats.Lost && !player.ElitePKStats.Waiting)
+                    if (player.ElitePKStats is { Lost: false, Waiting: false })
                     {
                         if (player.Entity.MapID != Map.ID)
                         {
@@ -1428,7 +1419,7 @@ namespace MTA.Game
                             client.Send(brackets);
                             foreach (var match in MatchArray)
                             {
-                                if (match.Inside && !match.Done)
+                                if (match is { Inside: true, Done: false })
                                     match.Flag = Match.StatusFlag.Watchable;
                                 match.Send(client, State);
                             }

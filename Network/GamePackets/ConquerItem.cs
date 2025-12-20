@@ -492,7 +492,7 @@ namespace MTA.Network.GamePackets
         }
         public static Boolean isRune(UInt32 itemid)
         {
-            if (itemid >= 729960 && itemid <= 729970)
+            if (itemid is >= 729960 and <= 729970)
                 return true;
             return false;
         }

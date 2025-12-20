@@ -37,7 +37,7 @@ namespace MTA.Game.Events.CpCastle
         public override bool ShouldTrigger(DateTime now)
         {
             // Check if event should start
-            if ((now.Hour == EVENT_START_HOUR_1 || now.Hour == EVENT_START_HOUR_2) && now.Minute == 0 && now.Second == 0)
+            if ((now.Hour == EVENT_START_HOUR_1 || now.Hour == EVENT_START_HOUR_2) && now is { Minute: 0, Second: 0 })
             {
                 return true;
             }
@@ -178,8 +178,8 @@ namespace MTA.Game.Events.CpCastle
         public static void SendPreEventWarnings(DateTime now)
         {
             // 5 minutes before (13:55 / 19:55)
-            if ((now.Hour == EVENT_START_HOUR_1 - 1 && now.Minute == 55 && now.Second == 0) ||
-                (now.Hour == EVENT_START_HOUR_2 - 1 && now.Minute == 55 && now.Second == 0))
+            if (now is { Hour: EVENT_START_HOUR_1 - 1, Minute: 55, Second: 0 } ||
+                now is { Hour: EVENT_START_HOUR_2 - 1, Minute: 55, Second: 0 })
             {
                 foreach (var client in Program.Values)
                 {
@@ -188,8 +188,8 @@ namespace MTA.Game.Events.CpCastle
             }
 
             // 10 seconds before (13:59:50 / 19:59:50)
-            if ((now.Hour == EVENT_START_HOUR_1 - 1 && now.Minute == 59 && now.Second == 50) ||
-                (now.Hour == EVENT_START_HOUR_2 - 1 && now.Minute == 59 && now.Second == 50))
+            if (now is { Hour: EVENT_START_HOUR_1 - 1, Minute: 59, Second: 50 } ||
+                now is { Hour: EVENT_START_HOUR_2 - 1, Minute: 59, Second: 50 })
             {
                 foreach (var client in Program.Values)
                 {

@@ -236,11 +236,11 @@ namespace MTA
                 return Math.Max(0, (Int32)Damage);
 
             Int32 DeltaLvl = Attacker.Level - Monster.Level;
-            if (DeltaLvl >= 3 && DeltaLvl <= 5)
+            if (DeltaLvl is >= 3 and <= 5)
                 Damage *= 1.5;
-            else if (DeltaLvl > 5 && DeltaLvl <= 10)
+            else if (DeltaLvl is > 5 and <= 10)
                 Damage *= 2;
-            else if (DeltaLvl > 10 && DeltaLvl <= 20)
+            else if (DeltaLvl is > 10 and <= 20)
                 Damage *= 2.5;
             else if (DeltaLvl > 20)
                 Damage *= 3;

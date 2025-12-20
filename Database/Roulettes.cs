@@ -56,23 +56,23 @@ namespace MTA.Database {
             }
 
             public bool IsSmall(byte Number) {
-                return Number >= 1 && Number <= 18;
+                return Number is >= 1 and <= 18;
             }
 
             public bool IsBig(byte Number) {
-                return Number >= 19 && Number <= 36;
+                return Number is >= 19 and <= 36;
             }
 
             public bool IsFront(byte Number) {
-                return Number >= 1 && Number <= 12;
+                return Number is >= 1 and <= 12;
             }
 
             public bool IsMiddle(byte Number) {
-                return Number >= 13 && Number <= 24;
+                return Number is >= 13 and <= 24;
             }
 
             public bool IsBack(byte Number) {
-                return Number >= 25 && Number <= 36;
+                return Number is >= 25 and <= 36;
             }
         }
 

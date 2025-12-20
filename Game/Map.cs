@@ -737,7 +737,7 @@ namespace MTA.Game
                         npc.Hitpoints = reader.ReadUInt32("life");
                         npc.MaxHitpoints = reader.ReadUInt32("maxlife");
                         npc._isprize = reader.ReadBoolean("prize");
-                        if (npc.UID >= 9994 && npc.UID <= 9997)
+                        if (npc.UID is >= 9994 and <= 9997)
                         {
                             GuildCondutors.GuildConductors.Add(npc.UID, new GuildCondutors.Conductor() { npc = npc });
                             GuildCondutors.MoveNpc(npc.UID, npc.MapID, npc.X, npc.Y);

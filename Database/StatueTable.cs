@@ -8,12 +8,10 @@ namespace MTA.Database {
 
             bool WasAdd = false;
             foreach (var statu in Game.Statue.Statues.Values) {
-                if (statu.SpawnPacket != null) {
-                    if (statu.SpawnPacket.Length > 200) {
-                        WasAdd = true;
-                        writer.Write(statu.SpawnPacket.Length);
-                        writer.Write(statu.SpawnPacket);
-                    }
+                if (statu.SpawnPacket is { Length: > 200 }) {
+                    WasAdd = true;
+                    writer.Write(statu.SpawnPacket.Length);
+                    writer.Write(statu.SpawnPacket);
                 }
             }
 

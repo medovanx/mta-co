@@ -198,9 +198,9 @@ namespace MTA
             else if (Monster.IsBlack(Target))
             {
                 Int32 DeltaLvl = Target.Level - Level;
-                if (DeltaLvl >= -10 && DeltaLvl <= -5)
+                if (DeltaLvl is >= -10 and <= -5)
                     Damage *= 2.0;
-                else if (DeltaLvl >= -20 && DeltaLvl < -10)
+                else if (DeltaLvl is >= -20 and < -10)
                     Damage *= 3.5;
                 else if (DeltaLvl < -20)
                     Damage *= 5.0;

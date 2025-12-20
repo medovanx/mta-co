@@ -153,13 +153,13 @@ namespace MTA.Database
                     spell.NextSpellID = reader.ReadUInt16("next_magic");
                     spell.NeedXP = reader.ReadByte("use_xp");
                     //  spell.CPCost = reader.ReadUInt16("cpcost");
-                    if (spell.CPCost == 0 && spell.Level == 0)
+                    if (spell is { CPCost: 0, Level: 0 })
                         spell.CPCost = 27;
-                    if (spell.CPCost == 0 && spell.Level == 1)
+                    if (spell is { CPCost: 0, Level: 1 })
                         spell.CPCost = 81;
-                    if (spell.CPCost == 0 && spell.Level == 2)
+                    if (spell is { CPCost: 0, Level: 2 })
                         spell.CPCost = 122;
-                    if (spell.CPCost == 0 && spell.Level == 3)
+                    if (spell is { CPCost: 0, Level: 3 })
                         spell.CPCost = 181;
 
                     if (SpellInformations.ContainsKey(spell.ID))

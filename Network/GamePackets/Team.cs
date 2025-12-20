@@ -76,7 +76,7 @@ namespace MTA.Network.GamePackets
                     }
                 case Mode.AcceptJoinRequest:
                     {
-                        if (client.Team != null && client.Entity.Hitpoints > 0)
+                        if (client is { Team: not null, Entity.Hitpoints: > 0 })
                         {
                             if (client.Team.AllowADD() && client.Team.TeamLider(client) && !client.Team.ForbidJoin)
                             {
@@ -208,7 +208,7 @@ namespace MTA.Network.GamePackets
                 case Mode.Dismiss:
                     {
                         if (client.Entity.MapID == 16414) return;
-                        if (client != null && client.Team != null)
+                        if (client is { Team: not null })
                         {
                             client.Team.Remove(client, false);
                         }

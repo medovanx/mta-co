@@ -56,7 +56,7 @@ namespace MTA.Game.Events
             foreach (var gameEvent in _events)
             {
                 // Skip scheduled triggers if event is manually overridden
-                if (gameEvent is BaseEvent baseEvent && baseEvent.IsManuallyOverridden)
+                if (gameEvent is BaseEvent { IsManuallyOverridden: true })
                 {
                     // Only update active events that are manually overridden
                     if (gameEvent.IsActive)

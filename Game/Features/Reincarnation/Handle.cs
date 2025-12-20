@@ -11,7 +11,7 @@ namespace MTA.Game.Features.Reincarnation
         {
             if (Kernel.ReincarnatedCharacters.ContainsKey(client.Entity.UID))
             {
-                if (client.Entity.Level >= 110 && client.Entity.Reborn >= 2)
+                if (client.Entity is { Level: >= 110, Reborn: >= 2 })
                 {
                     ushort stats = 0;
                     uint lev1 = client.Entity.Level;
@@ -86,43 +86,35 @@ namespace MTA.Game.Features.Reincarnation
 
             #region Remove Extra Skill
 
-                if (client.Entity.FirstRebornClass == 15 && client.Entity.SecondRebornClass == 15 &&
-                    client.Entity.Class == 15)
+                if (client.Entity is { FirstRebornClass: 15, SecondRebornClass: 15, Class: 15 })
             {
                 WontAdd(Enums.SkillIDs.DragonWhirl);
             }
-            if (client.Entity.FirstRebornClass == 85 && client.Entity.SecondRebornClass == 85 &&
-                client.Entity.Class == 85)
+            if (client.Entity is { FirstRebornClass: 85, SecondRebornClass: 85, Class: 85 })
             {
                 WontAdd(Enums.SkillIDs.DragonFury);
             }
-            if (client.Entity.FirstRebornClass == 25 && client.Entity.SecondRebornClass == 25 &&
-                client.Entity.Class == 25)
+            if (client.Entity is { FirstRebornClass: 25, SecondRebornClass: 25, Class: 25 })
             {
                 WontAdd(Enums.SkillIDs.Perseverance);
             }
-            if (client.Entity.FirstRebornClass == 45 && client.Entity.SecondRebornClass == 45 &&
-                client.Entity.Class == 45)
+            if (client.Entity is { FirstRebornClass: 45, SecondRebornClass: 45, Class: 45 })
             {
                 WontAdd(Enums.SkillIDs.StarFranko);
             }
-            if (client.Entity.FirstRebornClass == 55 && client.Entity.SecondRebornClass == 55 &&
-                client.Entity.Class == 55)
+            if (client.Entity is { FirstRebornClass: 55, SecondRebornClass: 55, Class: 55 })
             {
                 WontAdd(Enums.SkillIDs.PoisonStar);
             }
-            if (client.Entity.FirstRebornClass == 65 && client.Entity.SecondRebornClass == 65 &&
-                client.Entity.Class == 65)
+            if (client.Entity is { FirstRebornClass: 65, SecondRebornClass: 65, Class: 65 })
             {
                 WontAdd(Enums.SkillIDs.soulshackle);
             }
-            if (client.Entity.FirstRebornClass == 135 && client.Entity.SecondRebornClass == 135 &&
-                client.Entity.Class == 135)
+            if (client.Entity is { FirstRebornClass: 135, SecondRebornClass: 135, Class: 135 })
             {
                 WontAdd(Enums.SkillIDs.AzureShield);
             }
-            if (client.Entity.FirstRebornClass == 145 && client.Entity.SecondRebornClass == 145 &&
-                client.Entity.Class == 145)
+            if (client.Entity is { FirstRebornClass: 145, SecondRebornClass: 145, Class: 145 })
             {
                 WontAdd(Enums.SkillIDs.HeavenBlade);
             }
@@ -753,44 +745,36 @@ namespace MTA.Game.Features.Reincarnation
 
             #region Add Extra Skill
 
-            if (client.Entity.FirstRebornClass == 15 && client.Entity.SecondRebornClass == 15 &&
-                client.Entity.Class == 11)
+            if (client.Entity is { FirstRebornClass: 15, SecondRebornClass: 15, Class: 11 })
             {
                 Add(Enums.SkillIDs.DragonWhirl);
             }
-            if (client.Entity.FirstRebornClass == 85 && client.Entity.SecondRebornClass == 85 &&
-                client.Entity.Class == 81)
+            if (client.Entity is { FirstRebornClass: 85, SecondRebornClass: 85, Class: 81 })
             {
                 Add(Enums.SkillIDs.DragonFury);
             }
-            if (client.Entity.FirstRebornClass == 25 && client.Entity.SecondRebornClass == 25 &&
-                client.Entity.Class == 21)
+            if (client.Entity is { FirstRebornClass: 25, SecondRebornClass: 25, Class: 21 })
             {
                 Add(Enums.SkillIDs.Perseverance);
             }
-            if (client.Entity.FirstRebornClass == 45 && client.Entity.SecondRebornClass == 45 &&
-                client.Entity.Class == 41)
+            if (client.Entity is { FirstRebornClass: 45, SecondRebornClass: 45, Class: 41 })
             {
                 Add(Enums.SkillIDs.StarFranko);
             }
-            if (client.Entity.FirstRebornClass == 55 && client.Entity.SecondRebornClass == 55 &&
-                client.Entity.Class == 55)
+            if (client.Entity is { FirstRebornClass: 55, SecondRebornClass: 55, Class: 55 })
             {
                 Add(Enums.SkillIDs.PoisonStar);
                 Add(Enums.SkillIDs.CounterKill);
             }
-            if (client.Entity.FirstRebornClass == 65 && client.Entity.SecondRebornClass == 65 &&
-                client.Entity.Class == 61)
+            if (client.Entity is { FirstRebornClass: 65, SecondRebornClass: 65, Class: 61 })
             {
                 Add(Enums.SkillIDs.soulshackle);
             }
-            if (client.Entity.FirstRebornClass == 135 && client.Entity.SecondRebornClass == 135 &&
-                client.Entity.Class == 132)
+            if (client.Entity is { FirstRebornClass: 135, SecondRebornClass: 135, Class: 132 })
             {
                 Add(Enums.SkillIDs.AzureShield);
             }
-            if (client.Entity.FirstRebornClass == 145 && client.Entity.SecondRebornClass == 145 &&
-                client.Entity.Class == 142)
+            if (client.Entity is { FirstRebornClass: 145, SecondRebornClass: 145, Class: 142 })
             {
                 Add(Enums.SkillIDs.HeavenBlade);
             }

@@ -53,12 +53,12 @@ namespace MTA.Game
                 Kernel.SendWorldMessage(new Message("Kill The Terrorist! <!His Flashy!> ", System.Drawing.Color.Red, Message.Center), Program.Values);
                 foreach (Client.GameState client in Program.Values)
                 {
-                    if (client.Entity.Tournament_Signed && !client.Entity.KillTheTerrorist_IsTerrorist)
+                    if (client.Entity is { Tournament_Signed: true, KillTheTerrorist_IsTerrorist: false })
                     {
                         client.Entity.SpawnProtection = true;
                         client.Entity.Teleport(1801, 55, 55);
                     }
-                    if (client.Entity.Tournament_Signed && client.Entity.KillTheTerrorist_IsTerrorist)
+                    if (client.Entity is { Tournament_Signed: true, KillTheTerrorist_IsTerrorist: true })
                     {
                         client.Entity.Teleport(1801, 55, 50);
                         client.Entity.AddFlag(Update.Flags.Flashy);

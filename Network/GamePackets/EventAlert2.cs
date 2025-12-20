@@ -42,35 +42,35 @@ namespace MTA.Network.GamePackets.EventAlert {
                     break;
                 }
                 case ClassPKWar: {
-                    if (client.Entity.Class >= 10 && client.Entity.Class <= 15) {
+                    if (client.Entity.Class is >= 10 and <= 15) {
                         client.Entity.Teleport(7001, 25, 40);
                     }
 
-                    if (client.Entity.Class >= 20 && client.Entity.Class <= 25) {
+                    if (client.Entity.Class is >= 20 and <= 25) {
                         client.Entity.Teleport(4500, 25, 40);
                     }
 
-                    if (client.Entity.Class >= 40 && client.Entity.Class <= 45) {
+                    if (client.Entity.Class is >= 40 and <= 45) {
                         client.Entity.Teleport(4501, 25, 40);
                     }
 
-                    if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
+                    if (client.Entity.Class is >= 50 and <= 55) {
                         client.Entity.Teleport(4502, 25, 40);
                     }
 
-                    if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+                    if (client.Entity.Class is >= 60 and <= 65) {
                         client.Entity.Teleport(4503, 25, 40);
                     }
 
-                    if (client.Entity.Class >= 70 && client.Entity.Class <= 75) {
+                    if (client.Entity.Class is >= 70 and <= 75) {
                         client.Entity.Teleport(4504, 25, 40);
                     }
 
-                    if (client.Entity.Class >= 132 && client.Entity.Class <= 135) {
+                    if (client.Entity.Class is >= 132 and <= 135) {
                         client.Entity.Teleport(4505, 25, 40);
                     }
 
-                    if (client.Entity.Class >= 142 && client.Entity.Class <= 145) {
+                    if (client.Entity.Class is >= 142 and <= 145) {
                         client.Entity.Teleport(4506, 25, 40);
                     }
 

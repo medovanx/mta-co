@@ -396,7 +396,7 @@ namespace MTA.Game.ConquerStructures.House
 								if (wh == null) return true;
 								if (client.Inventory.TryGetItem(warehousepacket.UID, out ConquerItem item))
 								{
-									if (item.ID >= 729960 && item.ID <= 729970)
+									if (item.ID is >= 729960 and <= 729970)
 										return true;
 									if (item.ID == 729611 || item.ID == 729612 || item.ID == 729613 || item.ID == 729614 || item.ID == 729703)
 										return true;

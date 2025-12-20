@@ -19,7 +19,7 @@ namespace MTA.Game.Attacking
                         ConquerItem item = attacker.Owner.Equipment.TryGetItem(position);
                         if ((((((item != null) && (position != 0)) && ((item.ID != 50000) && (item.ID != 1050000))) && (((item.ID != 1050001) && (item.ID != 1050002)) && ((item.ID != 1050020) && (item.ID != 1050021)))) && ((((item.ID != 1050022) && (item.ID != 1050023)) && ((item.ID != 1050030) && (item.ID != 1050031))) && (((item.ID != 1050032) && (item.ID != 1050033)) && ((item.ID != 1050040) && (item.ID != 1050041))))) && ((((item.ID != 1050042) && (item.ID != 1050043)) && ((item.ID != 1050050) && (item.ID != 1050051))) && ((item.ID != 1050052) && Kernel.ChanceSuccess((double)(100 - (attacker.Dodge / 90))))))
                         {
-                            if ((item.ID > 0) && (item.Durability > 0))
+                            if (item is { ID: > 0, Durability: > 0 })
                             {
                                 if (item.Durability >= 1)
                                 {
@@ -43,7 +43,7 @@ namespace MTA.Game.Attacking
                                     }
                                 }
                             }
-                            else if ((item.Durability == 0) && (item.ID > 0))
+                            else if (item is { Durability: 0, ID: > 0 })
                             {
                                 item.Durability = 0;
                                 item.Mode = Enums.ItemMode.Update;
@@ -76,7 +76,7 @@ namespace MTA.Game.Attacking
         {
             try
             {
-                if (((attacked != null) && (attacked.Owner != null)) && (attacked.EntityFlag == EntityFlag.Player))
+                if (attacked is { Owner: not null, EntityFlag: EntityFlag.Player })
                 {
                     uint position = (uint)Kernel.Random.Next(1, 700);
                     if (((((position == 1) || (position == 2)) || ((position == 3) || (position == 8))) || ((position == 11) || (position == 0x12))) && !attacked.Owner.Equipment.Free(position))
@@ -84,7 +84,7 @@ namespace MTA.Game.Attacking
                         ConquerItem item = attacked.Owner.Equipment.TryGetItem(position);
                         if (((item != null) || (position != 0)) && ((((((item.ID != 50000) && (item.ID != 1050000)) && ((item.ID != 1050001) && (item.ID != 1050002))) && (((item.ID != 1050020) && (item.ID != 1050021)) && ((item.ID != 1050022) && (item.ID != 1050023)))) && ((((item.ID != 1050030) && (item.ID != 1050031)) && ((item.ID != 1050032) && (item.ID != 1050033))) && (((item.ID != 1050040) && (item.ID != 1050041)) && ((item.ID != 1050042) && (item.ID != 1050043))))) && (((item.ID != 1050050) && (item.ID != 1050051)) && ((item.ID != 1050052) && Kernel.ChanceSuccess((double)(100 - (attacked.Dodge / 100)))))))
                         {
-                            if ((item.ID > 0) && (item.Durability > 0))
+                            if (item is { ID: > 0, Durability: > 0 })
                             {
                                 if (item.Durability >= 1)
                                 {
@@ -119,7 +119,7 @@ namespace MTA.Game.Attacking
                                     }
                                 }
                             }
-                            else if ((item.Durability == 0) && (item.ID > 0))
+                            else if (item is { Durability: 0, ID: > 0 })
                             {
                                 item.Durability = 0;
                                 item.Mode = Enums.ItemMode.Update;

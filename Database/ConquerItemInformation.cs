@@ -229,7 +229,7 @@ namespace MTA.Database
             }
 
             var sort = ((type % 10000000) / 100000);
-            if (sort >= 20 && sort < 30) return ItemSort.RingL;
+            if (sort is >= 20 and < 30) return ItemSort.RingL;
 
             return ItemSort.Invalid;
         }

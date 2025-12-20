@@ -305,7 +305,7 @@ namespace MTA.Game
                 {
                     if (count_clans < 2)
                     {
-                        if (clients_on_MAP != null && clients_on_MAP.Length > 0)
+                        if (clients_on_MAP is { Length: > 0 })
                         {
                             var clan = clients_on_MAP[0].Entity.GetClan;
                             foreach (var member in clients_on_MAP)

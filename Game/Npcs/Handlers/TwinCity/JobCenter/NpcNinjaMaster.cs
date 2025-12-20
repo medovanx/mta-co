@@ -11,7 +11,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
         public static void Handle(GameState client, NpcRequest npcRequest, MTA.Npcs dialog) {
             switch (npcRequest.OptionID) {
                 case 0: {
-                    if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
+                    if (client.Entity.Class is >= 50 and <= 55) {
                         dialog.Text(
                             "I am the master of the no sound attack and the master of the katanas. As I see, you started your way on conquering this world. I will try to help you teaching you warrior skills and promoting you.");
                         dialog.Option("Promote me.", 1);
@@ -34,7 +34,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                 #region Promotion
 
                 case 1: {
-                    if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
+                    if (client.Entity.Class is >= 50 and <= 55) {
                         if (client.Entity.Class == 55) {
                             dialog.Text("You cannot be promoted anymore. You have mastered your class.");
                             dialog.Option("Thank you master.", 255);
@@ -56,7 +56,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 3: {
-                    if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
+                    if (client.Entity.Class is >= 50 and <= 55) {
                         if (client.Entity.Class == 55) {
                             dialog.Text("You cannot be promoted anymore. You have mastered your class.");
                             dialog.Option("Thank you master.", 255);
@@ -112,7 +112,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                 #region Skills
 
                 case 2: {
-                    if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
+                    if (client.Entity.Class is >= 50 and <= 55) {
                         dialog.Text(
                             "Let me know what you want to learn. '[...]' and '{...}' means ninja as second life and ninja as third life.");
                         dialog.Option("FatalStrike (Lvl 15).", 11);
@@ -134,7 +134,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 11: {
-                    if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
+                    if (client.Entity.Class is >= 50 and <= 55) {
                         if (client.Entity.Level >= 15 && client.AddSpell(LearnableSpell(6011))) {
                             dialog.Text("You have learned the FatalStrike.");
                             dialog.Option("Thank you master.", 255);
@@ -161,7 +161,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 5: {
-                    if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
+                    if (client.Entity.Class is >= 50 and <= 55) {
                         if (client.Entity.Level >= 40 && client.AddSpell(LearnableSpell(6000))) {
                             dialog.Text("You have learned the TwofoldBlades.");
                             dialog.Option("Thank you master.", 255);
@@ -188,7 +188,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 82: {
-                    if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
+                    if (client.Entity.Class is >= 50 and <= 55) {
                         if (client.Entity.Level >= 40 && client.AddSpell(LearnableSpell(12080))) {
                             dialog.Text("You have learned the SuperTwofoldBlade.");
                             dialog.Option("Thank you master.", 255);
@@ -215,7 +215,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 6: {
-                    if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
+                    if (client.Entity.Class is >= 50 and <= 55) {
                         if (client.Entity.Level >= 70 && client.AddSpell(LearnableSpell(6001))) {
                             dialog.Text("You have learned the ToxicFog.");
                             dialog.Option("Thank you master.", 255);
@@ -242,7 +242,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 10: {
-                    if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
+                    if (client.Entity.Class is >= 50 and <= 55) {
                         if (client.Entity.Level >= 70 && client.AddSpell(LearnableSpell(6010))) {
                             dialog.Text("You have learned the ShurikenVortex.");
                             dialog.Option("Thank you master.", 255);
@@ -269,10 +269,10 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 7: {
-                    if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
+                    if (client.Entity.Class is >= 50 and <= 55) {
                         if (client.Entity.Level >= 70) {
-                            if ((client.Entity.Reborn == 1 && client.Entity.Class == 55) ||
-                                (client.Entity.Reborn == 2 && client.Entity.SecondRebornClass == 55)) {
+                            if (client.Entity is { Reborn: 1, Class: 55 } ||
+                                client.Entity is { Reborn: 2, SecondRebornClass: 55 }) {
                                 if (client.AddSpell(LearnableSpell(6002))) {
                                     dialog.Text("You have learned the PoisonStar.");
                                     dialog.Option("Thank you master.", 255);
@@ -311,7 +311,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 9: {
-                    if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
+                    if (client.Entity.Class is >= 50 and <= 55) {
                         if (client.Entity.Level >= 110 && client.AddSpell(LearnableSpell(6004))) {
                             dialog.Text("You have learned the ArcherBane.");
                             dialog.Option("Thank you master.", 255);
@@ -343,7 +343,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                 #region Epic Shadow Skills
 
                 case 76: {
-                    if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
+                    if (client.Entity.Class is >= 50 and <= 55) {
                         dialog.Text("Let me know what you want to learn.");
                         dialog.Option("TwilightDance.", 80);
                         dialog.Option("ShadowClone.", 81);
@@ -360,7 +360,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 80: {
-                    if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
+                    if (client.Entity.Class is >= 50 and <= 55) {
                         if (client.Entity.Level >= 15 && client.AddSpell(LearnableSpell(12070))) {
                             dialog.Text("You have learned the TwilightDance.");
                             dialog.Option("Thank you master.", 255);
@@ -387,7 +387,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 81: {
-                    if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
+                    if (client.Entity.Class is >= 50 and <= 55) {
                         if (client.Entity.Level >= 40 && client.AddSpell(LearnableSpell(12090))) {
                             dialog.Text("You have learned the ShadowClone.");
                             dialog.Option("Thank you master.", 255);
@@ -414,7 +414,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 83: {
-                    if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
+                    if (client.Entity.Class is >= 50 and <= 55) {
                         if (client.Entity.Level >= 15 && client.AddSpell(LearnableSpell(12110))) {
                             dialog.Text("You have learned the FatalSpin.");
                             dialog.Option("Thank you master.", 255);
@@ -446,7 +446,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                 #region Scythe Skills
 
                 case 59: {
-                    if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
+                    if (client.Entity.Class is >= 50 and <= 55) {
                         dialog.Text("Let me know what you want to learn.");
                         dialog.Option("Learn Bloody Scythe.", 60);
                         dialog.Option("Learn Mortal Drag.", 61);
@@ -462,7 +462,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 60: {
-                    if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
+                    if (client.Entity.Class is >= 50 and <= 55) {
                         if (client.Entity.Level >= 20 && client.AddSpell(LearnableSpell(11170))) {
                             dialog.Text("You have learned the Bloody Scythe.");
                             dialog.Option("Thank you master.", 255);
@@ -489,7 +489,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                     break;
                 }
                 case 61: {
-                    if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
+                    if (client.Entity.Class is >= 50 and <= 55) {
                         if (client.Entity.Level >= 20 && client.AddSpell(LearnableSpell(11180))) {
                             dialog.Text("You have learned the Mortal Drag.");
                             dialog.Option("Thank you master.", 255);

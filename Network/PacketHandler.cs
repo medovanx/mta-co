@@ -749,16 +749,12 @@ namespace MTA.Network {
                                 Writer.WriteString(obj.Name, 20, packet);
                                 Writer.WriteString(obj.DominationMap, 56, packet);
 
-                                if (client.Entity.ClanRank == Clan.Ranks.ClanLeader) {
-                                    if (!client.Entity.GetClan.CalnWar) {
-                                        packet[16] = 5; //Apply
-                                    }
+                                if (client.Entity is { ClanRank: Clan.Ranks.ClanLeader, GetClan.CalnWar: false }) {
+                                    packet[16] = 5; //Apply
                                 }
 
-                                if (client.Entity.ClanRank == Clan.Ranks.ClanLeader) {
-                                    if (client.Entity.GetClan.CalnWar) {
-                                        packet[16] = 3; //Cancel
-                                    }
+                                if (client.Entity is { ClanRank: Clan.Ranks.ClanLeader, GetClan.CalnWar: true }) {
+                                    packet[16] = 3; //Cancel
                                 }
 
                                 //packet[4] = 4;//Register Gui
@@ -1157,7 +1153,7 @@ namespace MTA.Network {
                     if ((spawn.Mesh / 10) == 147) {
                         uint UID = client.Entity.OnMoveNpc;
                         if (client.Guild != null || client.Account.State == AccountTable.AccountState.GM) {
-                            if (client.AsMember != null && client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader ||
+                            if (client.AsMember is { Rank: Enums.GuildMemberRank.GuildLeader } ||
                                 client.Account.State == AccountTable.AccountState.GM) {
                                 if (client.Guild.Name != null && client.Guild.Name != "") {
                                     if (client.Guild.Name == GuildWar.Pole.Name ||
@@ -1748,8 +1744,7 @@ namespace MTA.Network {
                                         if (Kernel.GamePool.ContainsKey(item.GainerUID)) {
                                             GameState pClient;
                                             if (Kernel.GamePool.TryGetValue(item.GainerUID, out pClient)) {
-                                                if (pClient.Entity != null && pClient != null &&
-                                                    pClient.ClaimableItem != null) {
+                                                if (pClient.Entity != null && pClient is { ClaimableItem: not null }) {
                                                     pClient.ClaimableItem[item.UID].OwnerUID = 500;
                                                     pClient.ClaimableItem[item.UID].MakeItReadyToClaim();
                                                     usage.dwParam = pClient.Entity.UID;
@@ -2390,7 +2385,7 @@ namespace MTA.Network {
                             if (wh == null) return;
                             ConquerItem item = null;
                             if (client.Inventory.TryGetItem(warehousepacket.UID, out item)) {
-                                if (item.ID >= 729960 && item.ID <= 729970)
+                                if (item.ID is >= 729960 and <= 729970)
                                     return;
                                 if (item.ID == 729611 || item.ID == 729612 || item.ID == 729613 || item.ID == 729614 ||
                                     item.ID == 729703)
@@ -2519,41 +2514,31 @@ namespace MTA.Network {
                         case GuildCommand.Neutral1:
                         case GuildCommand.Neutral2: {
                             string name = Encoding.Default.GetString(packet, 26, packet[25]);
-                            if (client.Guild != null) {
-                                if (client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader) {
-                                    client.Guild.RemoveAlly(name);
-                                    foreach (var guild in Kernel.Guilds.Values) {
-                                        if (guild.Name == name && client.Guild.Name != name) {
-                                            guild.RemoveAlly(client.Guild.Name);
-                                        }
+                            if (client is { Guild: not null, AsMember.Rank: Enums.GuildMemberRank.GuildLeader }) {
+                                client.Guild.RemoveAlly(name);
+                                foreach (var guild in Kernel.Guilds.Values) {
+                                    if (guild.Name == name && client.Guild.Name != name) {
+                                        guild.RemoveAlly(client.Guild.Name);
                                     }
-
-                                    client.Guild.RemoveEnemy(name);
                                 }
+
+                                client.Guild.RemoveEnemy(name);
                             }
 
                             break;
                         }
                         case GuildCommand.Allied: {
                             string name = Encoding.Default.GetString(packet, 26, packet[25]);
-                            if (client.Guild != null) {
-                                if (client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader) {
-                                    if (client.Guild.Ally.Count < 15) {
-                                        AllyGuilds(name, client);
-                                    }
-                                }
+                            if (client is { Guild.Ally.Count: < 15, AsMember.Rank: Enums.GuildMemberRank.GuildLeader }) {
+                                AllyGuilds(name, client);
                             }
 
                             break;
                         }
                         case GuildCommand.Enemied: {
                             string name = Encoding.Default.GetString(packet, 26, packet[25]);
-                            if (client.Guild != null) {
-                                if (client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader) {
-                                    if (client.Guild.Enemy.Count < 15) {
-                                        client.Guild.AddEnemy(name);
-                                    }
-                                }
+                            if (client is { Guild.Enemy.Count: < 15, AsMember.Rank: Enums.GuildMemberRank.GuildLeader }) {
+                                client.Guild.AddEnemy(name);
                             }
 
                             break;
@@ -2589,13 +2574,11 @@ namespace MTA.Network {
                         }
                         case GuildCommand.Bulletin: {
                             string message = Encoding.Default.GetString(packet, 26, packet[25]);
-                            if (client.Guild != null) {
-                                if (client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader) {
-                                    client.Guild.Bulletin = message;
-                                    client.Guild.CreateBuletinTime();
-                                    client.Guild.SendGuild(client);
-                                    GuildTable.UpdateBulletin(client.Guild, client.Guild.Bulletin);
-                                }
+                            if (client is { Guild: not null, AsMember.Rank: Enums.GuildMemberRank.GuildLeader }) {
+                                client.Guild.Bulletin = message;
+                                client.Guild.CreateBuletinTime();
+                                client.Guild.SendGuild(client);
+                                GuildTable.UpdateBulletin(client.Guild, client.Guild.Bulletin);
                             }
 
                             break;
@@ -2631,33 +2614,28 @@ namespace MTA.Network {
                             break;
                         }
                         case GuildCommand.Refresh: {
-                            if (client.AsMember != null) {
-                                if (client.Guild != null)
-                                    client.Guild.SendGuild(client);
-                            }
+                            if (client is { AsMember: not null, Guild: not null }) client.Guild.SendGuild(client);
 
                             break;
                         }
                         case GuildCommand.Discharge: {
                             string name = Encoding.Default.GetString(packet, 26, packet[25]);
-                            if (client.Guild != null) {
-                                if (client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader) {
-                                    var member = client.Guild.GetMemberByName(name);
-                                    if (member.ID != client.Entity.UID) {
-                                        if (member.Rank == Enums.GuildMemberRank.DeputyLeader) {
-                                            client.Guild.RanksCounts[(ushort)Enums.GuildMemberRank.DeputyLeader]--;
-                                            member.Rank = Enums.GuildMemberRank.Member;
-                                            if (member.IsOnline) {
-                                                client.Guild.SendGuild(member.Client);
-                                                member.Client.Entity.GuildRank = (ushort)member.Rank;
-                                                member.Client.Screen.FullWipe();
-                                                member.Client.Screen.Reload();
-                                                member.Client.Entity.GuildBattlePower =
-                                                    member.Guild.GetSharedBattlepower(member.Rank);
-                                            }
-
-                                            EntityTable.UpdateData(member.ID, "GuildRank", (int)member.Rank);
+                            if (client is { Guild: not null, AsMember.Rank: Enums.GuildMemberRank.GuildLeader }) {
+                                var member = client.Guild.GetMemberByName(name);
+                                if (member.ID != client.Entity.UID) {
+                                    if (member.Rank == Enums.GuildMemberRank.DeputyLeader) {
+                                        client.Guild.RanksCounts[(ushort)Enums.GuildMemberRank.DeputyLeader]--;
+                                        member.Rank = Enums.GuildMemberRank.Member;
+                                        if (member.IsOnline) {
+                                            client.Guild.SendGuild(member.Client);
+                                            member.Client.Entity.GuildRank = (ushort)member.Rank;
+                                            member.Client.Screen.FullWipe();
+                                            member.Client.Screen.Reload();
+                                            member.Client.Entity.GuildBattlePower =
+                                                member.Guild.GetSharedBattlepower(member.Rank);
                                         }
+
+                                        EntityTable.UpdateData(member.ID, "GuildRank", (int)member.Rank);
                                     }
                                 }
                             }
@@ -2665,7 +2643,7 @@ namespace MTA.Network {
                             break;
                         }
                         case GuildCommand.Promote: {
-                            if (client.Guild != null && client.AsMember != null) {
+                            if (client is { Guild: not null, AsMember: not null }) {
                                 //if (client.Guild.Members.ContainsKey(command.dwParam))
                                 {
                                     string GetMemberName = ReadString(packet, 26, packet[25]);
@@ -3215,8 +3193,7 @@ namespace MTA.Network {
 
                     #region TreasureChest
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6000 && !client.Entity.Dead &&
-                        client.Entity.PokerTableUID == 0 && req.OptionID == 47 &&
+                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6000 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 47 &&
                         client.Map.BaseID != 700) //CaptureFlag
                     {
                         if (client.Inventory.Contains(3000628, 1)) {
@@ -3233,9 +3210,8 @@ namespace MTA.Network {
 
                     #region TopRedName & BlackName
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6002 && !client.Entity.Dead &&
-                        client.Entity.PokerTableUID == 0 && req.OptionID == 232) {
-                        if (client.Entity.PKPoints >= 50 && client.Entity.PKPoints <= 150) //BlackName
+                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6002 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 232) {
+                        if (client.Entity.PKPoints is >= 50 and <= 150) //BlackName
                         {
                             _String str = new _String(true);
                             str.UID = client.Entity.UID;
@@ -3247,7 +3223,7 @@ namespace MTA.Network {
                             client.Send(new NpcReply(6, "You have joined TopBlackname Map Just Wait Until it Start ."));
                         }
 
-                        if (client.Entity.PKPoints >= 10 && client.Entity.PKPoints <= 60) //TopRedname
+                        if (client.Entity.PKPoints is >= 10 and <= 60) //TopRedname
                         {
                             _String str = new _String(true);
                             str.UID = client.Entity.UID;
@@ -3306,99 +3282,83 @@ namespace MTA.Network {
 
                     #region Cyclone War
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6000 && !client.Entity.Dead &&
-                        client.Entity.PokerTableUID == 0 && req.OptionID == 147 && client.Map.BaseID != 700) {
+                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6000 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 147 && client.Map.BaseID != 700) {
                         client.Entity.Teleport(1002, 424, 249);
                     }
 
                     #endregion Cyclone War
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6000 && !client.Entity.Dead &&
-                        client.Entity.PokerTableUID == 0 && req.OptionID == 251 &&
+                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6000 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 251 &&
                         client.Map.BaseID != 700) // Critical PK
                     {
                         Random R = new Random();
                         client.Entity.Teleport(1002, 415, 383);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6002 && !client.Entity.Dead &&
-                        client.Entity.PokerTableUID == 0 && req.OptionID == 230) {
+                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6002 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 230) {
                         client.Entity.Teleport(1702, 50, 50);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6002 && !client.Entity.Dead &&
-                        client.Entity.PokerTableUID == 0 && req.OptionID == 231) {
+                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6002 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 231) {
                         client.Entity.Teleport(1701, 50, 50);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && !client.Entity.Dead &&
-                        client.Entity.PokerTableUID == 0 && req.OptionID == 249 && client.Map.BaseID != 700) //ElitePk
+                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 249 && client.Map.BaseID != 700) //ElitePk
                     {
                         client.Entity.Teleport(1002, 425, 378);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && !client.Entity.Dead &&
-                        client.Entity.PokerTableUID == 0 && req.OptionID == 248 && client.Map.BaseID != 700) //ClassPk
+                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 248 && client.Map.BaseID != 700) //ClassPk
                     {
                         client.Entity.Teleport(1002, 439, 246);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && !client.Entity.Dead &&
-                        client.Entity.PokerTableUID == 0 && req.OptionID == 247 && client.Map.BaseID != 700) //WeeklyPk
+                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 247 && client.Map.BaseID != 700) //WeeklyPk
                     {
                         client.Entity.Teleport(1002, 453, 294);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && !client.Entity.Dead &&
-                        client.Entity.PokerTableUID == 0 && req.OptionID == 246 && client.Map.BaseID != 700) //MonthlyPk
+                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 246 && client.Map.BaseID != 700) //MonthlyPk
                     {
                         client.Entity.Teleport(1002, 428, 243);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && !client.Entity.Dead &&
-                        client.Entity.PokerTableUID == 0 && req.OptionID == 245 && client.Map.BaseID != 700) //DisCity
+                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 245 && client.Map.BaseID != 700) //DisCity
                     {
                         client.Entity.Teleport(1020, 534, 484);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && !client.Entity.Dead &&
-                        client.Entity.PokerTableUID == 0 && req.OptionID == 244 && client.Map.BaseID != 700) //GuildWar
+                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 244 && client.Map.BaseID != 700) //GuildWar
                     {
                         client.Entity.Teleport(1038, 340, 331);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && !client.Entity.Dead &&
-                        client.Entity.PokerTableUID == 0 && req.OptionID == 243 && client.Map.BaseID != 700) //DailyPk
+                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 243 && client.Map.BaseID != 700) //DailyPk
                     {
                         client.Entity.Teleport(1002, 449, 372);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && !client.Entity.Dead &&
-                        client.Entity.PokerTableUID == 0 && req.OptionID == 242 && client.Map.BaseID != 700) //SteedRace
+                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 242 && client.Map.BaseID != 700) //SteedRace
                     {
                         client.Entity.Teleport(1002, 423, 245);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && !client.Entity.Dead &&
-                        client.Entity.PokerTableUID == 0 && req.OptionID == 241 && client.Map.BaseID != 700) //SpouseWar
+                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 241 && client.Map.BaseID != 700) //SpouseWar
                     {
                         client.Entity.Teleport(1002, 421, 292);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && !client.Entity.Dead &&
-                        client.Entity.PokerTableUID == 0 && req.OptionID == 240 && client.Map.BaseID != 700) //DeathTeam
+                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 240 && client.Map.BaseID != 700) //DeathTeam
                     {
                         client.Entity.Teleport(1002, 439, 389);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && !client.Entity.Dead &&
-                        client.Entity.PokerTableUID == 0 && req.OptionID == 239 && client.Map.BaseID != 700) //EliteGW
+                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 239 && client.Map.BaseID != 700) //EliteGW
                     {
                         client.Entity.Teleport(1002, 414, 259);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && !client.Entity.Dead &&
-                        client.Entity.PokerTableUID == 0 && req.OptionID == 238 && client.Map.BaseID != 700) //champion
+                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 238 && client.Map.BaseID != 700) //champion
                     {
                         if (!client.ChampionStats.SignedUp) {
                             Champion.QualifyEngine.DoSignup(client);
@@ -3521,9 +3481,9 @@ namespace MTA.Network {
                             return;
                         }
 
-                        if (client.ActiveNpc >= 728525 && client.ActiveNpc <= 728527) {
+                        if (client.ActiveNpc is >= 728525 and <= 728527) {
                             if (client.Inventory.Contains(client.ActiveNpc, 1)) {
-                                if (req.OptionID >= 1 && req.OptionID <= 3) {
+                                if (req.OptionID is >= 1 and <= 3) {
                                     uint color = 255 | 150 << 16;
                                     if (req.OptionID == 2)
                                         color = 150 << 8 | 255 << 16;
@@ -3602,7 +3562,7 @@ namespace MTA.Network {
                         //        }
                         //        return;
                         //    }
-                        if (client.ActiveNpc == 9999996 && client.WaitingTradePassword) {
+                        if (client is { ActiveNpc: 9999996, WaitingTradePassword: true }) {
                             if (req.OptionID == 255) {
                                 CloseTrade(new Trade(true) { Type = Trade.Close }, client);
                                 return;
@@ -3624,7 +3584,7 @@ namespace MTA.Network {
                         }
 
                         if (client.Booth != null)
-                            if (client.ActiveNpc == 9999995 && client.WaitingItemUnlockPassword) {
+                            if (client is { ActiveNpc: 9999995, WaitingItemUnlockPassword: true }) {
                                 if (req.OptionID == 255) {
                                     client.ItemUnlockPacket = null;
                                     return;
@@ -3730,7 +3690,7 @@ namespace MTA.Network {
 
                         #endregion
 
-                        if (client.ActiveNpc >= 9994 && client.ActiveNpc <= 9997) {
+                        if (client.ActiveNpc is >= 9994 and <= 9997) {
                             if (req.OptionID == 255 || (req.OptionID == 0 && ID == 2032)) return;
                             switch (req.OptionID) {
                                 case 0: {
@@ -3779,7 +3739,7 @@ namespace MTA.Network {
                             //    Vote_System.Voted(client);
                             //    return;
                             //}
-                            if ((client.Map.BaseID >= 6000 && client.Map.BaseID <= 6004) &&
+                            if (client.Map.BaseID is >= 6000 and <= 6004 &&
                                 (!(Constants.ActiveNPC.Contains(client.ActiveNpc))))
                                 return;
                             Npcs.GetDialog(req, client);
@@ -4003,10 +3963,7 @@ namespace MTA.Network {
                             DateTime LastBC = client["lastbroadcast"];
 
                             if (Now >= LastBC.AddMinutes(2) || client.Account.State == AccountTable.AccountState.GM) {
-                                if (client.Trade != null) {
-                                    if (client.Trade.InTrade)
-                                        break;
-                                }
+                                if (client.Trade is { InTrade: true }) break;
 
                                 if (client.Entity.ConquerPoints >= Rates.Broadcast) {
                                     client["lastbroadcast"] = Now;
@@ -4053,10 +4010,7 @@ namespace MTA.Network {
                                 var broadcast = Game.ConquerStructures.Broadcast.Broadcasts[c];
                                 if (broadcast.ID == cast.dwParam) {
                                     if (c != 0) {
-                                        if (client.Trade != null) {
-                                            if (client.Trade.InTrade)
-                                                break;
-                                        }
+                                        if (client.Trade is { InTrade: true }) break;
 
                                         if (client.Entity.ConquerPoints > Rates.Broadcast) {
                                             broadcast.SpentCPs += Rates.Broadcast;
@@ -4085,10 +4039,7 @@ namespace MTA.Network {
                                 var broadcast = Game.ConquerStructures.Broadcast.Broadcasts[c];
                                 if (broadcast.ID == cast.dwParam) {
                                     if (c != 0) {
-                                        if (client.Trade != null) {
-                                            if (client.Trade.InTrade)
-                                                break;
-                                        }
+                                        if (client.Trade is { InTrade: true }) break;
 
                                         if (client.Entity.ConquerPoints > Rates.Broadcast * 3) {
                                             broadcast.SpentCPs += Rates.Broadcast * 3;
@@ -4279,7 +4230,7 @@ namespace MTA.Network {
                 #region TopGuilds
 
                 case 1058: {
-                    if (client.Guild != null && client.AsMember != null) {
+                    if (client is { Guild: not null, AsMember: not null }) {
                         if (client.AsMember != null) {
                             Writer.WriteUInt64(client.AsMember.SilverDonation, 8, packet);
                             Writer.WriteUInt32((uint)client.AsMember.ConquerPointDonation, 12, packet);
@@ -4369,8 +4320,7 @@ namespace MTA.Network {
                                     ranking.Mode = 2;
                                     //  ranking.RankingType = GamePackets.GenericRanking.Kiss;
                                     ranking.Count = 1;
-                                    if (client.Entity.MyFlowers.RankRoses < 100 &&
-                                        client.Entity.MyFlowers.RankRoses > 0) {
+                                    if (client.Entity.MyFlowers.RankRoses is < 100 and > 0) {
                                         ranking.Append((uint)client.Entity.MyFlowers.RankRoses,
                                             client.Entity.MyFlowers.RedRoses, client.Entity.UID, client.Entity.Name);
                                         client.Send(ranking.ToArray());
@@ -4760,21 +4710,17 @@ namespace MTA.Network {
                     wager.Deserialize(packet);
                     if (Kernel.GamePool.ContainsKey(wager.WagedUID)) {
                         var pClient = Kernel.GamePool[wager.WagedUID];
-                        if (pClient != null) {
-                            if (pClient.ElitePKMatch != null) {
-                                if (pClient.ElitePKMatch.Flag == ElitePK.Match.StatusFlag.AcceptingWagers) {
-                                    if (client.Entity.Money >= wager.Wager * 100000) {
-                                        client.Entity.Money -= wager.Wager * 100000;
-                                        if (!pClient.ElitePKStats.Wagers.ContainsKey(client.Entity.UID))
-                                            pClient.ElitePKStats.Wagers[client.Entity.UID] = wager.Wager;
-                                        else
-                                            pClient.ElitePKStats.Wagers[client.Entity.UID] += wager.Wager;
-                                        pClient.ElitePKStats.Wager += wager.Wager;
-                                        pClient.ElitePKMatch.TotalWagers += wager.Wager;
-                                        var epk = ElitePKTournament.Tournaments[pClient.ElitePKMatch.GroupID];
-                                        epk.Update(client);
-                                    }
-                                }
+                        if (pClient is { ElitePKMatch.Flag: ElitePK.Match.StatusFlag.AcceptingWagers }) {
+                            if (client.Entity.Money >= wager.Wager * 100000) {
+                                client.Entity.Money -= wager.Wager * 100000;
+                                if (!pClient.ElitePKStats.Wagers.ContainsKey(client.Entity.UID))
+                                    pClient.ElitePKStats.Wagers[client.Entity.UID] = wager.Wager;
+                                else
+                                    pClient.ElitePKStats.Wagers[client.Entity.UID] += wager.Wager;
+                                pClient.ElitePKStats.Wager += wager.Wager;
+                                pClient.ElitePKMatch.TotalWagers += wager.Wager;
+                                var epk = ElitePKTournament.Tournaments[pClient.ElitePKMatch.GroupID];
+                                epk.Update(client);
                             }
                         }
                     }
@@ -4859,12 +4805,10 @@ namespace MTA.Network {
                 case 2260: {
                     string TeamName = ReadString(packet, 12, 32); // packet.ReadString(12, 32);
                     byte Mode = packet[4];
-                    if (client.Team != null) {
-                        if (client.Team.EliteFighterStats != null) {
-                            client.Team.EliteFighterStats.Name = TeamName;
+                    if (client.Team is { EliteFighterStats: not null }) {
+                        client.Team.EliteFighterStats.Name = TeamName;
 
-                            client.Send(packet);
-                        }
+                        client.Send(packet);
                     }
 
                     break;
@@ -5063,7 +5007,7 @@ namespace MTA.Network {
                 #region AutoHunting (1070)
 
                 case 1070: {
-                    if (!client.Entity.Auto && client.Entity.VIPLevel < 1) {
+                    if (client.Entity is { Auto: false, VIPLevel: < 1 }) {
                         client.Send(new NpcReply(6, "Sorry You Should Have Vip 1 To Run Auto Hunting & get Level's !"));
                         return;
                     }
@@ -5670,10 +5614,7 @@ namespace MTA.Network {
 
                 case 2102: {
                     ushort Page = BitConverter.ToUInt16(packet, 8);
-                    if (client.Guild != null) {
-                        if (client.AsMember != null)
-                            client.Guild.SendMembers(client, Page);
-                    }
+                    if (client is { Guild: not null, AsMember: not null }) client.Guild.SendMembers(client, Page);
 
                     break;
                 }
@@ -5749,12 +5690,11 @@ namespace MTA.Network {
                             break;
                         }
                         case 5: {
-                            if (client.ArenaPoints <= 1500)
-                                if (client.Entity.Money >= 9000000) {
-                                    client.Entity.Money -= 9000000;
-                                    client.ArenaPoints += 1500;
-                                    client.Send(client.ArenaStatistic);
-                                }
+                            if (client is { ArenaPoints: <= 1500, Entity.Money: >= 9000000 }) {
+                                client.Entity.Money -= 9000000;
+                                client.ArenaPoints += 1500;
+                                client.Send(client.ArenaStatistic);
+                            }
 
                             break;
                         }
@@ -5782,7 +5722,7 @@ namespace MTA.Network {
                 }
                 case 2211: {
                     if (client.Entity.MapID == 601) return;
-                    if (client.Map.BaseID >= 6000 && client.Map.BaseID <= 6003) return;
+                    if (client.Map.BaseID is >= 6000 and <= 6003) return;
 
                     #region MaxsMap
 
@@ -5813,10 +5753,8 @@ namespace MTA.Network {
                             if (Kernel.GamePool.ContainsKey(Fighter)) {
                                 GameState Client = Kernel.GamePool[Fighter];
                                 if (Client.Team != null) {
-                                    if (Client.Team.EliteMatch != null) {
-                                        if (Client.Team.EliteMatch.OnGoing) {
-                                            Client.Team.EliteMatch.BeginWatch(client);
-                                        }
+                                    if (Client.Team.EliteMatch is { OnGoing: true }) {
+                                        Client.Team.EliteMatch.BeginWatch(client);
                                     }
                                 }
                                 else if (Client.ElitePKMatch != null) {
@@ -5830,10 +5768,8 @@ namespace MTA.Network {
                                             client.QualifierGroup.End(client);
                                         }
                                     }
-                                    else if (Client.TeamQualifierGroup != null) {
-                                        if (!Client.TeamQualifierGroup.Done) {
-                                            Client.TeamQualifierGroup.BeginWatching(client);
-                                        }
+                                    else if (Client.TeamQualifierGroup is { Done: false }) {
+                                        Client.TeamQualifierGroup.BeginWatching(client);
                                     }
                                 }
                             }
@@ -5842,10 +5778,8 @@ namespace MTA.Network {
                                 if (Client == null)
                                     return;
                                 if (Client.Team != null) {
-                                    if (Client.Team.EliteMatch != null) {
-                                        if (Client.Team.EliteMatch.OnGoing) {
-                                            Client.Team.EliteMatch.BeginWatch(client);
-                                        }
+                                    if (Client.Team.EliteMatch is { OnGoing: true }) {
+                                        Client.Team.EliteMatch.BeginWatch(client);
                                     }
                                 }
                                 else if (Client.ElitePKMatch != null) {
@@ -5859,10 +5793,8 @@ namespace MTA.Network {
                                             client.QualifierGroup.End(client);
                                         }
                                     }
-                                    else if (Client.TeamQualifierGroup != null) {
-                                        if (!Client.TeamQualifierGroup.Done) {
-                                            Client.TeamQualifierGroup.BeginWatching(client);
-                                        }
+                                    else if (Client.TeamQualifierGroup is { Done: false }) {
+                                        Client.TeamQualifierGroup.BeginWatching(client);
                                     }
                                 }
                             }
@@ -5947,12 +5879,10 @@ namespace MTA.Network {
                             break;
                         }
                         case 5: {
-                            if (client.ArenaPoints <= 1500) {
-                                if (client.Entity.Money >= 9000000) {
-                                    client.Entity.Money -= 9000000;
-                                    client.ArenaPoints += 1500;
-                                    client.Send(client.TeamArenaStatistic);
-                                }
+                            if (client is { ArenaPoints: <= 1500, Entity.Money: >= 9000000 }) {
+                                client.Entity.Money -= 9000000;
+                                client.ArenaPoints += 1500;
+                                client.Send(client.TeamArenaStatistic);
                             }
 
                             break;
@@ -5981,7 +5911,7 @@ namespace MTA.Network {
                 }
                 case 2247: {
                     if (client.Entity.MapID == 601) return;
-                    if (client.Map.BaseID >= 6000 && client.Map.BaseID <= 6003) return;
+                    if (client.Map.BaseID is >= 6000 and <= 6003) return;
                     ushort Type = BitConverter.ToUInt16(packet, 4);
                     uint Fighter = BitConverter.ToUInt32(packet, 8);
                     if (Type == 0) {
@@ -6231,8 +6161,10 @@ namespace MTA.Network {
 
                             if (packet[16] == 1) {
                                 Clan getClan3 = gameClient13.Entity.GetClan;
-                                if (gameClient13.Entity.ClanRank == Clan.Ranks.ClanLeader && getClan3 != null &&
-                                    getClan3.Members.Count < 12) {
+                                if (gameClient13.Entity.ClanRank == Clan.Ranks.ClanLeader && getClan3 is
+                                    {
+                                        Members.Count: < 12
+                                    }) {
                                     getClan3.Join(client);
                                 }
                             }
@@ -7360,7 +7292,7 @@ namespace MTA.Network {
                     break;
                 }
                 case Data.PokerTournament: {
-                    if (client != null && client.Entity.MapID < 10000 && !client.Entity.Dead && client.Entity != null &&
+                    if (client is { Entity: { MapID: < 10000, Dead: false } } &&
                         !client.Entity.InJail() && !client.InQualifier() && !client.InTeamQualifier() &&
                         !client.IsWatching() && client.Booth == null &&
                         !Constants.PKFreeMaps.Contains(client.Entity.MapID)) {
@@ -7576,7 +7508,7 @@ namespace MTA.Network {
             if (Sc.Level > Sc.Phase && Entity.Level >= Level && Entity.Reborn >= Reborns)
                 Pass = true;
 
-            if (Sc.Level == 9 && Sc.Phase == 9)
+            if (Sc is { Level: 9, Phase: 9 })
                 Pass = false;
 
             return Pass;
@@ -7629,13 +7561,13 @@ namespace MTA.Network {
             cmd.dwParam2 = guild.LevelRequirement;
             cmd.dwParam3 = guild.RebornRequirement;
             cmd.dwParam4 = guild.ClassRequirement;
-            if (((client.Entity.Class >= 10 && client.Entity.Class <= 15) && !guild.AllowTrojans) ||
-                ((client.Entity.Class >= 20 && client.Entity.Class <= 25) && !guild.AllowWarriors) ||
-                ((client.Entity.Class >= 40 && client.Entity.Class <= 45) && !guild.AllowArchers) ||
-                ((client.Entity.Class >= 50 && client.Entity.Class <= 55) && !guild.AllowNinjas) ||
-                ((client.Entity.Class >= 60 && client.Entity.Class <= 65) && !guild.AllowMonks) ||
-                ((client.Entity.Class >= 70 && client.Entity.Class <= 75) && !guild.AllowPirates) ||
-                ((client.Entity.Class >= 100 && client.Entity.Class <= 190) && !guild.AllowTaoists)) {
+            if ((client.Entity.Class is >= 10 and <= 15 && !guild.AllowTrojans) ||
+                (client.Entity.Class is >= 20 and <= 25 && !guild.AllowWarriors) ||
+                (client.Entity.Class is >= 40 and <= 45 && !guild.AllowArchers) ||
+                (client.Entity.Class is >= 50 and <= 55 && !guild.AllowNinjas) ||
+                (client.Entity.Class is >= 60 and <= 65 && !guild.AllowMonks) ||
+                (client.Entity.Class is >= 70 and <= 75 && !guild.AllowPirates) ||
+                (client.Entity.Class is >= 100 and <= 190 && !guild.AllowTaoists)) {
                 client.Send(cmd);
                 return false;
             }
@@ -8084,7 +8016,7 @@ namespace MTA.Network {
 
         public static void ReincarnationHash(GameState client) {
             if (Kernel.ReincarnatedCharacters.ContainsKey(client.Entity.UID)) {
-                if (client.Entity.Level >= 110 && client.Entity.Reborn == 2) {
+                if (client.Entity is { Level: >= 110, Reborn: 2 }) {
                     ushort stats = 0;
                     uint lev1 = client.Entity.Level;
                     ReincarnateInfo info = Kernel.ReincarnatedCharacters[client.Entity.UID];
@@ -8160,64 +8092,56 @@ namespace MTA.Network {
         static void AllyGuilds(string name, GameState client) {
             foreach (var guild in Kernel.Guilds.Values) {
                 if (guild.Name == name && client.Guild.Name != name) {
-                    if (guild.Leader != null) {
-                        if (guild.Leader.IsOnline) {
-                            guild.Leader.Client.OnMessageBoxEventParams = [
-                                guild,
-                                client.Guild
-                            ];
-                            client.OnMessageBoxEventParams = [
-                                guild,
-                                client.Guild
-                            ];
-                            GameState Leader = guild.Leader.Client;
-                            Leader.MessageOK = delegate {
-                                Guild Guild1 =
-                                    Leader.OnMessageBoxEventParams[0] as Guild;
-                                Guild Guild2 =
-                                    Leader.OnMessageBoxEventParams[1] as Guild;
-                                if (Guild1.Ally.Count == 6 || Guild2.Ally.Count == 6)
-                                    return;
-                                Guild1.AddAlly(Guild2.Name);
-                                Guild2.AddAlly(Guild1.Name);
+                    if (guild.Leader is { IsOnline: true }) {
+                        guild.Leader.Client.OnMessageBoxEventParams = [
+                            guild,
+                            client.Guild
+                        ];
+                        client.OnMessageBoxEventParams = [
+                            guild,
+                            client.Guild
+                        ];
+                        GameState Leader = guild.Leader.Client;
+                        Leader.MessageOK = delegate {
+                            Guild Guild1 =
+                                Leader.OnMessageBoxEventParams[0] as Guild;
+                            Guild Guild2 =
+                                Leader.OnMessageBoxEventParams[1] as Guild;
+                            if (Guild1.Ally.Count == 6 || Guild2.Ally.Count == 6)
+                                return;
+                            Guild1.AddAlly(Guild2.Name);
+                            Guild2.AddAlly(Guild1.Name);
 
-                                if (Guild1.Leader.Client != null) {
-                                    if (Guild1.Leader.Client.Socket.Alive) {
-                                        if (Guild2.Leader.Client != null && Guild2.Leader.Client.Socket.Alive) {
-                                            Guild2.Leader.Client.Send(new Message(
-                                                Guild1.Leader.Name + " has accepted your ally request.", Color.Blue,
-                                                Message.TopLeft));
-                                        }
+                            if (Guild1.Leader.Client is { Socket.Alive: true }) {
+                                if (Guild2.Leader.Client is { Socket.Alive: true }) {
+                                    Guild2.Leader.Client.Send(new Message(
+                                        Guild1.Leader.Name + " has accepted your ally request.", Color.Blue,
+                                        Message.TopLeft));
+                                }
+                            }
+                        };
+                        guild.Leader.Client.MessageCancel = delegate {
+                            try {
+                                if (guild.Leader.Client is { Socket.Alive: true, OnMessageBoxEventParams: not null }) {
+                                    Guild Guild2 =
+                                        guild.Leader.Client.OnMessageBoxEventParams[1] as Guild;
+                                    Guild Guild1 =
+                                        guild.Leader.Client.OnMessageBoxEventParams[0] as Guild;
+
+                                    if (Guild2.Leader.IsOnline) {
+                                        Guild2.Leader.Client.Send(new Message(
+                                            Guild1.Leader.Name + " has declined your ally request.",
+                                            Color.Blue, Message.TopLeft));
                                     }
                                 }
-                            };
-                            guild.Leader.Client.MessageCancel = delegate {
-                                try {
-                                    if (guild.Leader.Client != null) {
-                                        if (guild.Leader.Client.Socket.Alive) {
-                                            if (guild.Leader.Client.OnMessageBoxEventParams != null) {
-                                                Guild Guild2 =
-                                                    guild.Leader.Client.OnMessageBoxEventParams[1] as Guild;
-                                                Guild Guild1 =
-                                                    guild.Leader.Client.OnMessageBoxEventParams[0] as Guild;
-
-                                                if (Guild2.Leader.IsOnline) {
-                                                    Guild2.Leader.Client.Send(new Message(
-                                                        Guild1.Leader.Name + " has declined your ally request.",
-                                                        Color.Blue, Message.TopLeft));
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                catch (Exception e) {
-                                    Program.SaveException(e);
-                                }
-                            };
-                            guild.Leader.Client.Send(new NpcReply(NpcReply.MessageBox,
-                                client.Entity.Name + " , GuildLeader of " + client.Guild.Name +
-                                " wants to make with you an alliance."));
-                        }
+                            }
+                            catch (Exception e) {
+                                Program.SaveException(e);
+                            }
+                        };
+                        guild.Leader.Client.Send(new NpcReply(NpcReply.MessageBox,
+                            client.Entity.Name + " , GuildLeader of " + client.Guild.Name +
+                            " wants to make with you an alliance."));
                     }
                 }
             }
@@ -8334,7 +8258,7 @@ namespace MTA.Network {
         public static bool NulledClient(GameState client) {
             if (client == null)
                 return true;
-            if (client != null && client.Entity == null)
+            if (client is { Entity: null })
                 return true;
 
             return false;
@@ -8408,7 +8332,7 @@ namespace MTA.Network {
 
                 #region Arch-Arch
 
-                if (client.Entity.FirstRebornClass == 45 && client.Entity.SecondRebornClass == 45) {
+                if (client.Entity is { FirstRebornClass: 45, SecondRebornClass: 45 }) {
                     if (client.Entity.Class == 41) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 10313 }); //Star Franko
@@ -8425,7 +8349,7 @@ namespace MTA.Network {
 
                 #region Arch-Fire
 
-                else if (client.Entity.FirstRebornClass == 45 && client.Entity.SecondRebornClass == 145) {
+                else if (client.Entity is { FirstRebornClass: 45, SecondRebornClass: 145 }) {
                     if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 41 ||
                         client.Entity.Class == 71 || client.Entity.Class == 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
@@ -8459,7 +8383,7 @@ namespace MTA.Network {
 
                 #region Arch-Tro
 
-                if (client.Entity.FirstRebornClass == 45 && client.Entity.SecondRebornClass == 15) {
+                if (client.Entity is { FirstRebornClass: 45, SecondRebornClass: 15 }) {
                     if (client.Entity.Class == 41 || client.Entity.Class == 132 || client.Entity.Class == 142 ||
                         client.Entity.Class == 51 || client.Entity.Class == 61 || client.Entity.Class == 71 ||
                         client.Entity.Class == 81) {
@@ -8488,7 +8412,7 @@ namespace MTA.Network {
 
                 #region Arch-War
 
-                if (client.Entity.FirstRebornClass == 45 && client.Entity.SecondRebornClass == 25) {
+                if (client.Entity is { FirstRebornClass: 45, SecondRebornClass: 25 }) {
                     if (client.Entity.Class == 142 || client.Entity.Class == 41) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 5002 }); //Poisonous Frankos
@@ -8529,7 +8453,7 @@ namespace MTA.Network {
 
                 #region Arch-Water
 
-                if (client.Entity.FirstRebornClass == 45 && client.Entity.SecondRebornClass == 135) {
+                if (client.Entity is { FirstRebornClass: 45, SecondRebornClass: 135 }) {
                     if (client.Entity.Class == 41) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1005 }); //Cure
@@ -8600,7 +8524,7 @@ namespace MTA.Network {
 
                 #region Arch-Nin
 
-                if (client.Entity.FirstRebornClass == 45 && client.Entity.SecondRebornClass == 55) {
+                if (client.Entity is { FirstRebornClass: 45, SecondRebornClass: 55 }) {
                     if (client.Entity.Class == 41) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 6001 }); //ToxicFog
@@ -8628,7 +8552,7 @@ namespace MTA.Network {
 
                 #region Arch-Monk
 
-                if (client.Entity.FirstRebornClass == 45 && client.Entity.SecondRebornClass == 65) {
+                if (client.Entity is { FirstRebornClass: 45, SecondRebornClass: 65 }) {
                     if (client.Entity.Class == 21) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 10400 }); //Serenity
@@ -8650,7 +8574,7 @@ namespace MTA.Network {
 
                 #region Arch-Pirate
 
-                if (client.Entity.FirstRebornClass == 45 && client.Entity.SecondRebornClass == 75) {
+                if (client.Entity is { FirstRebornClass: 45, SecondRebornClass: 75 }) {
                     if (client.Entity.Class == 132 || client.Entity.Class == 142 || client.Entity.Class == 41) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 11070 }); //Gale Bomb
@@ -8667,7 +8591,7 @@ namespace MTA.Network {
 
                 #region Arch-Brucelee
 
-                if (client.Entity.FirstRebornClass == 45 && client.Entity.SecondRebornClass == 85) {
+                if (client.Entity is { FirstRebornClass: 45, SecondRebornClass: 85 }) {
                     if (client.Entity.Class == 132 || client.Entity.Class == 142 || client.Entity.Class == 41) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     }
@@ -8686,7 +8610,7 @@ namespace MTA.Network {
 
                 #region Tro-Arch
 
-                if (client.Entity.FirstRebornClass == 15 && client.Entity.SecondRebornClass == 45) {
+                if (client.Entity is { FirstRebornClass: 15, SecondRebornClass: 45 }) {
                     if (client.Entity.Class == 41) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1190 }); //SpiritHealing
@@ -8713,7 +8637,7 @@ namespace MTA.Network {
 
                 #region Tro-Fire
 
-                if (client.Entity.FirstRebornClass == 15 && client.Entity.SecondRebornClass == 145) {
+                if (client.Entity is { FirstRebornClass: 15, SecondRebornClass: 145 }) {
                     if (client.Entity.Class == 41 || client.Entity.Class == 51 || client.Entity.Class == 61 ||
                         client.Entity.Class == 71 || client.Entity.Class == 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
@@ -8753,7 +8677,7 @@ namespace MTA.Network {
 
                 #region Tro-Tro
 
-                if (client.Entity.FirstRebornClass == 15 && client.Entity.SecondRebornClass == 15) {
+                if (client.Entity is { FirstRebornClass: 15, SecondRebornClass: 15 }) {
                     if (client.Entity.Class == 41 || client.Entity.Class == 51 || client.Entity.Class == 61 ||
                         client.Entity.Class == 71 || client.Entity.Class == 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
@@ -8795,7 +8719,7 @@ namespace MTA.Network {
 
                 #region Tro-War
 
-                if (client.Entity.FirstRebornClass == 15 && client.Entity.SecondRebornClass == 25) {
+                if (client.Entity is { FirstRebornClass: 15, SecondRebornClass: 25 }) {
                     if (client.Entity.Class == 41 || client.Entity.Class == 142) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1110 }); //Cyclone
@@ -8842,7 +8766,7 @@ namespace MTA.Network {
 
                 #region Tro-Water
 
-                if (client.Entity.FirstRebornClass == 15 && client.Entity.SecondRebornClass == 135) {
+                if (client.Entity is { FirstRebornClass: 15, SecondRebornClass: 135 }) {
                     if (client.Entity.Class == 41) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1110 }); //Cyclone
@@ -8910,7 +8834,7 @@ namespace MTA.Network {
 
                 #region Tro-Nin
 
-                if (client.Entity.FirstRebornClass == 15 && client.Entity.SecondRebornClass == 55) {
+                if (client.Entity is { FirstRebornClass: 15, SecondRebornClass: 55 }) {
                     if (client.Entity.Class == 51) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1110 }); //Cyclone
@@ -8936,7 +8860,7 @@ namespace MTA.Network {
 
                 #region Tro-Monk
 
-                if (client.Entity.FirstRebornClass == 15 && client.Entity.SecondRebornClass == 65) {
+                if (client.Entity is { FirstRebornClass: 15, SecondRebornClass: 65 }) {
                     client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     client.AddSpell(new Spell(true) { ID = 1110 }); //Cyclone
                     client.AddSpell(new Spell(true) { ID = 1190 }); //SpiritHealing
@@ -8948,7 +8872,7 @@ namespace MTA.Network {
 
                 #region Tro-Pirate
 
-                if (client.Entity.FirstRebornClass == 15 && client.Entity.SecondRebornClass == 75) {
+                if (client.Entity is { FirstRebornClass: 15, SecondRebornClass: 75 }) {
                     client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     client.AddSpell(new Spell(true) { ID = 1110 }); //Cyclone
                     client.AddSpell(new Spell(true) { ID = 1190 }); //SpiritHealing
@@ -8960,7 +8884,7 @@ namespace MTA.Network {
 
                 #region Tro-Brucelee
 
-                if (client.Entity.FirstRebornClass == 15 && client.Entity.SecondRebornClass == 85) {
+                if (client.Entity is { FirstRebornClass: 15, SecondRebornClass: 85 }) {
                     client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     client.AddSpell(new Spell(true) { ID = 1110 }); //Cyclone
                     client.AddSpell(new Spell(true) { ID = 1190 }); //SpiritHealing
@@ -8975,7 +8899,7 @@ namespace MTA.Network {
 
                 #region Nin-Arch
 
-                if (client.Entity.FirstRebornClass == 55 && client.Entity.SecondRebornClass == 45) {
+                if (client.Entity is { FirstRebornClass: 55, SecondRebornClass: 45 }) {
                     if (client.Entity.Class == 41) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 6001 }); //Toxic Fog
@@ -8999,7 +8923,7 @@ namespace MTA.Network {
                 #region Nin-Fire
 
                 {
-                    if (client.Entity.FirstRebornClass == 55 && client.Entity.SecondRebornClass == 145) {
+                    if (client.Entity is { FirstRebornClass: 55, SecondRebornClass: 145 }) {
                         if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 41 ||
                             client.Entity.Class == 51 || client.Entity.Class == 61 || client.Entity.Class == 71 ||
                             client.Entity.Class == 81) {
@@ -9028,7 +8952,7 @@ namespace MTA.Network {
 
                 #region Nin-Tro
 
-                if (client.Entity.FirstRebornClass == 55 && client.Entity.SecondRebornClass == 15) {
+                if (client.Entity is { FirstRebornClass: 55, SecondRebornClass: 15 }) {
                     if (client.Entity.Class == 41 || client.Entity.Class == 51 || client.Entity.Class == 132 ||
                         client.Entity.Class == 142 || client.Entity.Class == 61 || client.Entity.Class == 71 ||
                         client.Entity.Class == 81) {
@@ -9056,7 +8980,7 @@ namespace MTA.Network {
 
                 #region Nin-War
 
-                if (client.Entity.FirstRebornClass == 55 && client.Entity.SecondRebornClass == 25) {
+                if (client.Entity is { FirstRebornClass: 55, SecondRebornClass: 25 }) {
                     if (client.Entity.Class == 41 || client.Entity.Class == 142) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 6001 }); //Toxic Fog
@@ -9092,7 +9016,7 @@ namespace MTA.Network {
 
                 #region Nin-Water
 
-                if (client.Entity.FirstRebornClass == 55 && client.Entity.SecondRebornClass == 135) {
+                if (client.Entity is { FirstRebornClass: 55, SecondRebornClass: 135 }) {
                     if (client.Entity.Class == 41) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 6001 }); //Toxic Fog
@@ -9131,7 +9055,7 @@ namespace MTA.Network {
 
                 #region Nin-Nin
 
-                if (client.Entity.FirstRebornClass == 55 && client.Entity.SecondRebornClass == 55) {
+                if (client.Entity is { FirstRebornClass: 55, SecondRebornClass: 55 }) {
                     if (client.Entity.Class == 51) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 6000 }); //
@@ -9152,7 +9076,7 @@ namespace MTA.Network {
 
                 #region Nin-Monk
 
-                if (client.Entity.FirstRebornClass == 55 && client.Entity.SecondRebornClass == 65) {
+                if (client.Entity is { FirstRebornClass: 55, SecondRebornClass: 65 }) {
                     client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     client.AddSpell(new Spell(true) { ID = 10400 }); //Serenity
                     client.AddSpell(new Spell(true) { ID = 6001 }); //ToxicFog
@@ -9162,7 +9086,7 @@ namespace MTA.Network {
 
                 #region Nin-Pirate
 
-                if (client.Entity.FirstRebornClass == 55 && client.Entity.SecondRebornClass == 75) {
+                if (client.Entity is { FirstRebornClass: 55, SecondRebornClass: 75 }) {
                     client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     client.AddSpell(new Spell(true) { ID = 11070 }); //Gale Bomb
                     client.AddSpell(new Spell(true) { ID = 6001 }); //ToxicFog
@@ -9172,7 +9096,7 @@ namespace MTA.Network {
 
                 #region Nin-Brucelee
 
-                if (client.Entity.FirstRebornClass == 55 && client.Entity.SecondRebornClass == 85) {
+                if (client.Entity is { FirstRebornClass: 55, SecondRebornClass: 85 }) {
                     client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     client.AddSpell(new Spell(true) { ID = 6001 }); //ToxicFog
                 }
@@ -9185,7 +9109,7 @@ namespace MTA.Network {
 
                 #region Fire-Arch
 
-                if (client.Entity.FirstRebornClass == 145 && client.Entity.SecondRebornClass == 45) {
+                if (client.Entity is { FirstRebornClass: 145, SecondRebornClass: 45 }) {
                     client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     client.AddSpell(new Spell(true) { ID = 1000 }); //Thunder
                     client.AddSpell(new Spell(true) { ID = 1001 }); //Fire
@@ -9198,7 +9122,7 @@ namespace MTA.Network {
 
                 #region Fire-Fire
 
-                if (client.Entity.FirstRebornClass == 145 && client.Entity.SecondRebornClass == 145) {
+                if (client.Entity is { FirstRebornClass: 145, SecondRebornClass: 145 }) {
                     if (client.Entity.Class == 41 || client.Entity.Class == 11 || client.Entity.Class == 51 ||
                         client.Entity.Class == 21 || client.Entity.Class == 71 || client.Entity.Class == 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
@@ -9229,7 +9153,7 @@ namespace MTA.Network {
 
                 #region Fire-Tro
 
-                if (client.Entity.FirstRebornClass == 145 && client.Entity.SecondRebornClass == 15) {
+                if (client.Entity is { FirstRebornClass: 145, SecondRebornClass: 15 }) {
                     if (client.Entity.Class == 41 || client.Entity.Class == 142 || client.Entity.Class == 132 ||
                         client.Entity.Class == 51 || client.Entity.Class == 61) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
@@ -9274,7 +9198,7 @@ namespace MTA.Network {
 
                 #region Fire-War
 
-                if (client.Entity.FirstRebornClass == 145 && client.Entity.SecondRebornClass == 25) {
+                if (client.Entity is { FirstRebornClass: 145, SecondRebornClass: 25 }) {
                     if (client.Entity.Class == 41) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1000 }); //
@@ -9328,7 +9252,7 @@ namespace MTA.Network {
 
                 #region Fire-Water
 
-                if (client.Entity.FirstRebornClass == 145 && client.Entity.SecondRebornClass == 135) {
+                if (client.Entity is { FirstRebornClass: 145, SecondRebornClass: 135 }) {
                     if (client.Entity.Class == 41) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1005 }); //
@@ -9373,7 +9297,7 @@ namespace MTA.Network {
 
                 #region Fire-Nin
 
-                if (client.Entity.FirstRebornClass == 145 && client.Entity.SecondRebornClass == 55) {
+                if (client.Entity is { FirstRebornClass: 145, SecondRebornClass: 55 }) {
                     if (client.Entity.Class == 51 || client.Entity.Class == 61 || client.Entity.Class == 71 ||
                         client.Entity.Class == 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
@@ -9398,7 +9322,7 @@ namespace MTA.Network {
 
                 #region Fire-Monk
 
-                if (client.Entity.FirstRebornClass == 145 && client.Entity.SecondRebornClass == 65) {
+                if (client.Entity is { FirstRebornClass: 145, SecondRebornClass: 65 }) {
                     if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 41 ||
                         client.Entity.Class == 132 || client.Entity.Class == 142) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
@@ -9424,7 +9348,7 @@ namespace MTA.Network {
 
                 #region Fire-Pirate
 
-                if (client.Entity.FirstRebornClass == 145 && client.Entity.SecondRebornClass == 75) {
+                if (client.Entity is { FirstRebornClass: 145, SecondRebornClass: 75 }) {
                     client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     client.AddSpell(new Spell(true) { ID = 1000 }); //Thunder
                     client.AddSpell(new Spell(true) { ID = 1000 }); //Fire
@@ -9437,7 +9361,7 @@ namespace MTA.Network {
 
                 #region Fire-Brucelee
 
-                if (client.Entity.FirstRebornClass == 145 && client.Entity.SecondRebornClass == 85) {
+                if (client.Entity is { FirstRebornClass: 145, SecondRebornClass: 85 }) {
                     client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     client.AddSpell(new Spell(true) { ID = 1000 }); //Thunder
                     client.AddSpell(new Spell(true) { ID = 1000 }); //Fire
@@ -9453,7 +9377,7 @@ namespace MTA.Network {
 
                 #region War-Arch
 
-                if (client.Entity.FirstRebornClass == 25 && client.Entity.SecondRebornClass == 45) {
+                if (client.Entity is { FirstRebornClass: 25, SecondRebornClass: 45 }) {
                     if (client.Entity.Class == 41) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 5000 }); //Freezing Frankos
@@ -9480,7 +9404,7 @@ namespace MTA.Network {
 
                 #region War-Fire
 
-                if (client.Entity.FirstRebornClass == 25 && client.Entity.SecondRebornClass == 145) {
+                if (client.Entity is { FirstRebornClass: 25, SecondRebornClass: 145 }) {
                     if (client.Entity.Class == 41) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1020 });
@@ -9524,7 +9448,7 @@ namespace MTA.Network {
 
                 #region War-Tro
 
-                if (client.Entity.FirstRebornClass == 25 && client.Entity.SecondRebornClass == 15) {
+                if (client.Entity is { FirstRebornClass: 25, SecondRebornClass: 15 }) {
                     if (client.Entity.Class == 41 || client.Entity.Class == 142 || client.Entity.Class == 132 ||
                         client.Entity.Class == 51 || client.Entity.Class == 61 || client.Entity.Class == 71 ||
                         client.Entity.Class == 81) {
@@ -9554,7 +9478,7 @@ namespace MTA.Network {
 
                 #region War-War
 
-                if (client.Entity.FirstRebornClass == 25 && client.Entity.SecondRebornClass == 25) {
+                if (client.Entity is { FirstRebornClass: 25, SecondRebornClass: 25 }) {
                     if (client.Entity.Class == 41 || client.Entity.Class == 142) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1040 });
@@ -9587,7 +9511,7 @@ namespace MTA.Network {
 
                 #region War-Water
 
-                if (client.Entity.FirstRebornClass == 25 && client.Entity.SecondRebornClass == 135) {
+                if (client.Entity is { FirstRebornClass: 25, SecondRebornClass: 135 }) {
                     if (client.Entity.Class == 41) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1020 });
@@ -9669,7 +9593,7 @@ namespace MTA.Network {
 
                 #region War-Nin
 
-                if (client.Entity.FirstRebornClass == 25 && client.Entity.SecondRebornClass == 55) {
+                if (client.Entity is { FirstRebornClass: 25, SecondRebornClass: 55 }) {
                     if (client.Entity.Class == 51) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1320 });
@@ -9687,7 +9611,7 @@ namespace MTA.Network {
 
                 #region War-Monk
 
-                if (client.Entity.FirstRebornClass == 25 && client.Entity.SecondRebornClass == 65) {
+                if (client.Entity is { FirstRebornClass: 25, SecondRebornClass: 65 }) {
                     if (client.Entity.Class == 21 || client.Entity.Class == 41 || client.Entity.Class == 51 ||
                         client.Entity.Class == 61 || client.Entity.Class == 142 || client.Entity.Class == 71 ||
                         client.Entity.Class == 81) {
@@ -9716,7 +9640,7 @@ namespace MTA.Network {
 
                 #region War-Pirate
 
-                if (client.Entity.FirstRebornClass == 25 && client.Entity.SecondRebornClass == 75) {
+                if (client.Entity is { FirstRebornClass: 25, SecondRebornClass: 75 }) {
                     client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     client.AddSpell(new Spell(true) { ID = 1040 }); //Roar
                     client.AddSpell(new Spell(true) { ID = 1320 }); //FlyingMoon
@@ -9728,7 +9652,7 @@ namespace MTA.Network {
 
                 #region War-Brucelee
 
-                if (client.Entity.FirstRebornClass == 25 && client.Entity.SecondRebornClass == 85) {
+                if (client.Entity is { FirstRebornClass: 25, SecondRebornClass: 85 }) {
                     client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     client.AddSpell(new Spell(true) { ID = 1040 }); //Roar
                     client.AddSpell(new Spell(true) { ID = 1320 }); //FlyingMoon
@@ -9743,7 +9667,7 @@ namespace MTA.Network {
 
                 #region Water-Arch
 
-                if (client.Entity.FirstRebornClass == 135 && client.Entity.SecondRebornClass == 45) {
+                if (client.Entity is { FirstRebornClass: 135, SecondRebornClass: 45 }) {
                     if (client.Entity.Class == 41) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1005 });
@@ -9794,7 +9718,7 @@ namespace MTA.Network {
 
                 #region Water-Fire
 
-                if (client.Entity.FirstRebornClass == 135 && client.Entity.SecondRebornClass == 145) {
+                if (client.Entity is { FirstRebornClass: 135, SecondRebornClass: 145 }) {
                     if (client.Entity.Class == 11 || client.Entity.Class == 21 | client.Entity.Class == 41 ||
                         client.Entity.Class == 51 || client.Entity.Class == 71 || client.Entity.Class == 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
@@ -9842,7 +9766,7 @@ namespace MTA.Network {
 
                 #region Water-Tro
 
-                if (client.Entity.FirstRebornClass == 135 && client.Entity.SecondRebornClass == 15) {
+                if (client.Entity is { FirstRebornClass: 135, SecondRebornClass: 15 }) {
                     if (client.Entity.Class == 41 || client.Entity.Class == 142 || client.Entity.Class == 132 ||
                         client.Entity.Class == 51) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
@@ -9905,7 +9829,7 @@ namespace MTA.Network {
 
                 #region Water-War
 
-                if (client.Entity.FirstRebornClass == 135 && client.Entity.SecondRebornClass == 25) {
+                if (client.Entity is { FirstRebornClass: 135, SecondRebornClass: 25 }) {
                     if (client.Entity.Class == 41) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1005 }); //
@@ -9984,7 +9908,7 @@ namespace MTA.Network {
 
                 #region Water-Water
 
-                if (client.Entity.FirstRebornClass == 135 && client.Entity.SecondRebornClass == 135) {
+                if (client.Entity is { FirstRebornClass: 135, SecondRebornClass: 135 }) {
                     if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 41 ||
                         client.Entity.Class == 51 || client.Entity.Class == 71 || client.Entity.Class == 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
@@ -10025,7 +9949,7 @@ namespace MTA.Network {
 
                 #region Water-Nin
 
-                if (client.Entity.FirstRebornClass == 135 && client.Entity.SecondRebornClass == 55) {
+                if (client.Entity is { FirstRebornClass: 135, SecondRebornClass: 55 }) {
                     client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     client.AddSpell(new Spell(true) { ID = 1005 }); //
                     client.AddSpell(new Spell(true) { ID = 1085 }); //
@@ -10039,7 +9963,7 @@ namespace MTA.Network {
 
                 #region Water-Monk
 
-                if (client.Entity.FirstRebornClass == 135 && client.Entity.SecondRebornClass == 65) {
+                if (client.Entity is { FirstRebornClass: 135, SecondRebornClass: 65 }) {
                     client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     client.AddSpell(new Spell(true) { ID = 1005 }); //Cure
                     client.AddSpell(new Spell(true) { ID = 1085 }); //Star of Accuracy
@@ -10053,7 +9977,7 @@ namespace MTA.Network {
 
                 #region Water-Pirate
 
-                if (client.Entity.FirstRebornClass == 135 && client.Entity.SecondRebornClass == 75) {
+                if (client.Entity is { FirstRebornClass: 135, SecondRebornClass: 75 }) {
                     client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     client.AddSpell(new Spell(true) { ID = 1005 }); //Cure
                     client.AddSpell(new Spell(true) { ID = 1085 }); //Star of Accuracy
@@ -10067,7 +9991,7 @@ namespace MTA.Network {
 
                 #region Water-Brucelee
 
-                if (client.Entity.FirstRebornClass == 135 && client.Entity.SecondRebornClass == 85) {
+                if (client.Entity is { FirstRebornClass: 135, SecondRebornClass: 85 }) {
                     client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     client.AddSpell(new Spell(true) { ID = 1005 }); //Cure
                     client.AddSpell(new Spell(true) { ID = 1085 }); //Star of Accuracy
@@ -10084,7 +10008,7 @@ namespace MTA.Network {
 
                 #region Monk-Arch
 
-                if (client.Entity.FirstRebornClass == 65 && client.Entity.SecondRebornClass == 45) {
+                if (client.Entity is { FirstRebornClass: 65, SecondRebornClass: 45 }) {
                     client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     client.AddSpell(new Spell(true) { ID = 5002 }); //Poisonous Frankos
                     client.AddSpell(new Spell(true) { ID = 10400 }); //Serenity
@@ -10094,7 +10018,7 @@ namespace MTA.Network {
 
                 #region Monk-Fire
 
-                if (client.Entity.FirstRebornClass == 65 && client.Entity.SecondRebornClass == 145) {
+                if (client.Entity is { FirstRebornClass: 65, SecondRebornClass: 145 }) {
                     if (client.Entity.Class == 11 || client.Entity.Class == 21 | client.Entity.Class == 41 ||
                         client.Entity.Class == 61 || client.Entity.Class == 71 || client.Entity.Class == 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
@@ -10128,7 +10052,7 @@ namespace MTA.Network {
 
                 #region Monk-Tro
 
-                if (client.Entity.FirstRebornClass == 65 && client.Entity.SecondRebornClass == 15) {
+                if (client.Entity is { FirstRebornClass: 65, SecondRebornClass: 15 }) {
                     client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     client.AddSpell(new Spell(true) { ID = 10400 }); //Serenity
                     client.AddSpell(new Spell(true) { ID = 1190 }); //SpiritHealing
@@ -10140,7 +10064,7 @@ namespace MTA.Network {
 
                 #region Monk-War
 
-                if (client.Entity.FirstRebornClass == 65 && client.Entity.SecondRebornClass == 25) {
+                if (client.Entity is { FirstRebornClass: 65, SecondRebornClass: 25 }) {
                     if (client.Entity.Class == 41 || client.Entity.Class == 142) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 10400 }); //Serenity
@@ -10177,7 +10101,7 @@ namespace MTA.Network {
 
                 #region Monk-Water
 
-                if (client.Entity.FirstRebornClass == 65 && client.Entity.SecondRebornClass == 135) {
+                if (client.Entity is { FirstRebornClass: 65, SecondRebornClass: 135 }) {
                     if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 41 ||
                         client.Entity.Class == 51 || client.Entity.Class == 61) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
@@ -10220,7 +10144,7 @@ namespace MTA.Network {
 
                 #region Monk-Nin
 
-                if (client.Entity.FirstRebornClass == 65 && client.Entity.SecondRebornClass == 55) {
+                if (client.Entity is { FirstRebornClass: 65, SecondRebornClass: 55 }) {
                     if (client.Entity.Class == 51) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 10400 }); //Serenity
@@ -10240,7 +10164,7 @@ namespace MTA.Network {
 
                 #region Monk-Monk
 
-                if (client.Entity.FirstRebornClass == 65 && client.Entity.SecondRebornClass == 65) {
+                if (client.Entity is { FirstRebornClass: 65, SecondRebornClass: 65 }) {
                     if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 41 ||
                         client.Entity.Class == 51 || client.Entity.Class == 132 || client.Entity.Class == 142 ||
                         client.Entity.Class == 71 || client.Entity.Class == 81) {
@@ -10258,7 +10182,7 @@ namespace MTA.Network {
 
                 #region Monk-Pirate
 
-                if (client.Entity.FirstRebornClass == 65 && client.Entity.SecondRebornClass == 75) {
+                if (client.Entity is { FirstRebornClass: 65, SecondRebornClass: 75 }) {
                     client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     client.AddSpell(new Spell(true) { ID = 10400 }); //Serenity
                     client.AddSpell(new Spell(true) { ID = 11070 }); //Gale Bomb
@@ -10268,7 +10192,7 @@ namespace MTA.Network {
 
                 #region Monk-Brucelee
 
-                if (client.Entity.FirstRebornClass == 65 && client.Entity.SecondRebornClass == 85) {
+                if (client.Entity is { FirstRebornClass: 65, SecondRebornClass: 85 }) {
                     client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     client.AddSpell(new Spell(true) { ID = 10400 }); //Serenity
                 }
@@ -10281,7 +10205,7 @@ namespace MTA.Network {
 
                 #region Pirate-Arch
 
-                if (client.Entity.FirstRebornClass == 75 && client.Entity.SecondRebornClass == 45) {
+                if (client.Entity is { FirstRebornClass: 75, SecondRebornClass: 45 }) {
                     client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     client.AddSpell(new Spell(true) { ID = 11070 }); //Gale Bomb
                     client.AddSpell(new Spell(true) { ID = 5002 }); //Poisonous Frankos
@@ -10291,7 +10215,7 @@ namespace MTA.Network {
 
                 #region Pirate-Fire
 
-                if (client.Entity.FirstRebornClass == 75 && client.Entity.SecondRebornClass == 145) {
+                if (client.Entity is { FirstRebornClass: 75, SecondRebornClass: 145 }) {
                     if (client.Entity.Class == 11 || client.Entity.Class == 21 | client.Entity.Class == 41 ||
                         client.Entity.Class == 61 || client.Entity.Class == 71 || client.Entity.Class == 51 ||
                         client.Entity.Class == 81) {
@@ -10317,7 +10241,7 @@ namespace MTA.Network {
 
                 #region Pirate-Tro
 
-                if (client.Entity.FirstRebornClass == 75 && client.Entity.SecondRebornClass == 15) {
+                if (client.Entity is { FirstRebornClass: 75, SecondRebornClass: 15 }) {
                     client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     client.AddSpell(new Spell(true) { ID = 11070 }); //Gale Bomb
                     client.AddSpell(new Spell(true) { ID = 1190 }); //SpiritHealing
@@ -10329,7 +10253,7 @@ namespace MTA.Network {
 
                 #region Pirate-War
 
-                if (client.Entity.FirstRebornClass == 75 && client.Entity.SecondRebornClass == 25) {
+                if (client.Entity is { FirstRebornClass: 75, SecondRebornClass: 25 }) {
                     if (client.Entity.Class == 41 || client.Entity.Class == 142) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 11070 }); //Gale Bomb
@@ -10366,7 +10290,7 @@ namespace MTA.Network {
 
                 #region Pirate-Water
 
-                if (client.Entity.FirstRebornClass == 75 && client.Entity.SecondRebornClass == 135) {
+                if (client.Entity is { FirstRebornClass: 75, SecondRebornClass: 135 }) {
                     if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 41 ||
                         client.Entity.Class == 51 || client.Entity.Class == 61 || client.Entity.Class == 71 ||
                         client.Entity.Class == 81) {
@@ -10401,7 +10325,7 @@ namespace MTA.Network {
 
                 #region Pirate-Nin
 
-                if (client.Entity.FirstRebornClass == 75 && client.Entity.SecondRebornClass == 55) {
+                if (client.Entity is { FirstRebornClass: 75, SecondRebornClass: 55 }) {
                     if (client.Entity.Class == 51) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 11070 }); //Gale Bomb
@@ -10420,7 +10344,7 @@ namespace MTA.Network {
 
                 #region Pirate-Monk
 
-                if (client.Entity.FirstRebornClass == 75 && client.Entity.SecondRebornClass == 65) {
+                if (client.Entity is { FirstRebornClass: 75, SecondRebornClass: 65 }) {
                     if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 41 ||
                         client.Entity.Class == 51 || client.Entity.Class == 132 || client.Entity.Class == 142) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
@@ -10442,7 +10366,7 @@ namespace MTA.Network {
 
                 #region Pirate-Pirate
 
-                if (client.Entity.FirstRebornClass == 75 && client.Entity.SecondRebornClass == 75) {
+                if (client.Entity is { FirstRebornClass: 75, SecondRebornClass: 75 }) {
                     if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 41 ||
                         client.Entity.Class == 51 || client.Entity.Class == 132 || client.Entity.Class == 142 ||
                         client.Entity.Class == 61 || client.Entity.Class == 81) {
@@ -10460,7 +10384,7 @@ namespace MTA.Network {
 
                 #region Pirate-Brucelee
 
-                if (client.Entity.FirstRebornClass == 75 && client.Entity.SecondRebornClass == 85) {
+                if (client.Entity is { FirstRebornClass: 75, SecondRebornClass: 85 }) {
                     if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 41 ||
                         client.Entity.Class == 51 || client.Entity.Class == 132 || client.Entity.Class == 142 ||
                         client.Entity.Class == 61 || client.Entity.Class == 71) {
@@ -10477,7 +10401,7 @@ namespace MTA.Network {
 
                 #region Brucelee-Arch
 
-                if (client.Entity.FirstRebornClass == 85 && client.Entity.SecondRebornClass == 45) {
+                if (client.Entity is { FirstRebornClass: 85, SecondRebornClass: 45 }) {
                     client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     client.AddSpell(new Spell(true) { ID = 5002 }); //Poisonous Frankos
                 }
@@ -10486,7 +10410,7 @@ namespace MTA.Network {
 
                 #region Brucelee-Fire
 
-                if (client.Entity.FirstRebornClass == 85 && client.Entity.SecondRebornClass == 145) {
+                if (client.Entity is { FirstRebornClass: 85, SecondRebornClass: 145 }) {
                     if (client.Entity.Class == 11 || client.Entity.Class == 21 | client.Entity.Class == 41 ||
                         client.Entity.Class == 61 || client.Entity.Class == 71 || client.Entity.Class == 51 ||
                         client.Entity.Class == 81) {
@@ -10509,7 +10433,7 @@ namespace MTA.Network {
 
                 #region Brucelee-Tro
 
-                if (client.Entity.FirstRebornClass == 85 && client.Entity.SecondRebornClass == 15) {
+                if (client.Entity is { FirstRebornClass: 85, SecondRebornClass: 15 }) {
                     client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     client.AddSpell(new Spell(true) { ID = 1190 }); //SpiritHealing
                     client.AddSpell(new Spell(true) { ID = 1110 }); //Cyclone
@@ -10520,7 +10444,7 @@ namespace MTA.Network {
 
                 #region Pirate-War
 
-                if (client.Entity.FirstRebornClass == 85 && client.Entity.SecondRebornClass == 25) {
+                if (client.Entity is { FirstRebornClass: 85, SecondRebornClass: 25 }) {
                     if (client.Entity.Class == 41 || client.Entity.Class == 142) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1020 }); //Shield
@@ -10553,7 +10477,7 @@ namespace MTA.Network {
 
                 #region Brucelee-Water
 
-                if (client.Entity.FirstRebornClass == 85 && client.Entity.SecondRebornClass == 135) {
+                if (client.Entity is { FirstRebornClass: 85, SecondRebornClass: 135 }) {
                     if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 41 ||
                         client.Entity.Class == 51 || client.Entity.Class == 61 || client.Entity.Class == 71 ||
                         client.Entity.Class == 81) {
@@ -10585,7 +10509,7 @@ namespace MTA.Network {
 
                 #region Brucelee-Nin
 
-                if (client.Entity.FirstRebornClass == 85 && client.Entity.SecondRebornClass == 55) {
+                if (client.Entity is { FirstRebornClass: 85, SecondRebornClass: 55 }) {
                     if (client.Entity.Class == 51) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 6002 }); //PoisonStar
@@ -10602,7 +10526,7 @@ namespace MTA.Network {
 
                 #region Brucelee-Monk
 
-                if (client.Entity.FirstRebornClass == 85 && client.Entity.SecondRebornClass == 65) {
+                if (client.Entity is { FirstRebornClass: 85, SecondRebornClass: 65 }) {
                     if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 41 ||
                         client.Entity.Class == 51 || client.Entity.Class == 132 || client.Entity.Class == 142) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
@@ -10622,7 +10546,7 @@ namespace MTA.Network {
 
                 #region Brucelee-Pirate
 
-                if (client.Entity.FirstRebornClass == 85 && client.Entity.SecondRebornClass == 75) {
+                if (client.Entity is { FirstRebornClass: 85, SecondRebornClass: 75 }) {
                     client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     client.AddSpell(new Spell(true) { ID = 11070 }); //Gale Bomb
                 }
@@ -10631,7 +10555,7 @@ namespace MTA.Network {
 
                 #region Brucelee-Brucelee
 
-                if (client.Entity.FirstRebornClass == 85 && client.Entity.SecondRebornClass == 85) {
+                if (client.Entity is { FirstRebornClass: 85, SecondRebornClass: 85 }) {
                     if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 41 ||
                         client.Entity.Class == 51 || client.Entity.Class == 132 || client.Entity.Class == 142 ||
                         client.Entity.Class == 61 || client.Entity.Class == 71) {
@@ -10891,9 +10815,8 @@ namespace MTA.Network {
                 if (item.Inscribed)
                     UninscribeItem(item, client);
             foreach (var item in client.Equipment.Objects)
-                if (item != null)
-                    if (item.Inscribed)
-                        UninscribeItem(item, client);
+                if (item is { Inscribed: true })
+                    UninscribeItem(item, client);
             foreach (var wh in client.Warehouses.Values)
             foreach (var item in wh.Objects)
                 if (item.Inscribed)
@@ -11067,7 +10990,7 @@ namespace MTA.Network {
         }
 
         static void AddItemOnBooth(ItemUsage usage, GameState client) {
-            if (client.Booth != null && !client.Trade.InTrade) {
+            if (client is { Booth: not null, Trade.InTrade: false }) {
                 if (!client.Booth.ItemList.ContainsKey(usage.UID)) {
                     if (client.Inventory.ContainsUID(usage.UID)) {
                         Game.ConquerStructures.BoothItem item = new Game.ConquerStructures.BoothItem();
@@ -11126,9 +11049,7 @@ namespace MTA.Network {
                 if (client.Trade.InTrade || Owner.Trade.InTrade)
                     return;
                 if (Owner != null) {
-                    if (Owner.Trade != null) {
-                        if (Owner.Trade.InTrade) return;
-                    }
+                    if (Owner.Trade is { InTrade: true }) return;
 
                     if (Owner.Entity.UID != client.Entity.UID) {
                         if (Owner.Booth.ItemList.ContainsKey(usage.UID)) {
@@ -11592,35 +11513,33 @@ namespace MTA.Network {
                 if (Kernel.GamePool.ContainsKey(knownperson.UID)) {
                     GameState Client = Kernel.GamePool[knownperson.UID];
                     if (Client != null) {
-                        if (client != null) {
-                            if (client.Socket.Alive) {
-                                if (!Client.Friends.ContainsKey(client.Entity.UID)) {
-                                    client.Friends.Add(Client.Entity.UID, new Friend() {
-                                        ID = Client.Entity.UID,
-                                        Name = Client.Entity.Name
-                                    });
-                                    Client.Friends.Add(client.Entity.UID, new Friend() {
-                                        ID = client.Entity.UID,
-                                        Name = client.Entity.Name
-                                    });
-                                    client.Send(new KnownPersons(true) {
-                                        UID = Client.Entity.UID,
-                                        Type = KnownPersons.AddFriend,
-                                        Name = Client.Entity.Name,
-                                        NobilityRank = Client.Entity.NobilityRank,
-                                        IsBoy = IsBoy(Client.Entity.Body),
-                                        Online = true
-                                    });
-                                    Client.Send(new KnownPersons(true) {
-                                        UID = client.Entity.UID,
-                                        Type = KnownPersons.AddFriend,
-                                        Name = client.Entity.Name,
-                                        NobilityRank = client.Entity.NobilityRank,
-                                        IsBoy = IsBoy(client.Entity.Body),
-                                        Online = true
-                                    });
-                                    Database.KnownPersons.AddFriend(client, client.Friends[Client.Entity.UID]);
-                                }
+                        if (client is { Socket.Alive: true }) {
+                            if (!Client.Friends.ContainsKey(client.Entity.UID)) {
+                                client.Friends.Add(Client.Entity.UID, new Friend() {
+                                    ID = Client.Entity.UID,
+                                    Name = Client.Entity.Name
+                                });
+                                Client.Friends.Add(client.Entity.UID, new Friend() {
+                                    ID = client.Entity.UID,
+                                    Name = client.Entity.Name
+                                });
+                                client.Send(new KnownPersons(true) {
+                                    UID = Client.Entity.UID,
+                                    Type = KnownPersons.AddFriend,
+                                    Name = Client.Entity.Name,
+                                    NobilityRank = Client.Entity.NobilityRank,
+                                    IsBoy = IsBoy(Client.Entity.Body),
+                                    Online = true
+                                });
+                                Client.Send(new KnownPersons(true) {
+                                    UID = client.Entity.UID,
+                                    Type = KnownPersons.AddFriend,
+                                    Name = client.Entity.Name,
+                                    NobilityRank = client.Entity.NobilityRank,
+                                    IsBoy = IsBoy(client.Entity.Body),
+                                    Online = true
+                                });
+                                Database.KnownPersons.AddFriend(client, client.Friends[Client.Entity.UID]);
                             }
                         }
                     }
@@ -12559,7 +12478,7 @@ namespace MTA.Network {
                     if (ItemPosition(ID) == ConquerItem.Armor || ItemPosition(ID) == ConquerItem.Head ||
                         IsShield(ID)) {
                         if (nLevel <= 4) return 2;
-                        if (nLevel > 4 && nLevel < 6) return 3;
+                        if (nLevel is > 4 and < 6) return 3;
                         if (nLevel == 6) return 4;
                         if (nLevel == 7) return 6;
                         if (nLevel > 7) return 9;
@@ -12579,7 +12498,7 @@ namespace MTA.Network {
                     if (ItemPosition(ID) == ConquerItem.Armor || ItemPosition(ID) == ConquerItem.Head ||
                         IsShield(ID)) {
                         if (nLevel <= 4) return 2;
-                        if (nLevel > 4 && nLevel < 7) return 3;
+                        if (nLevel is > 4 and < 7) return 3;
                         if (nLevel == 7) return 4;
                         if (nLevel > 7) return 7;
                     }
@@ -12596,7 +12515,7 @@ namespace MTA.Network {
                     if (ItemPosition(ID) == ConquerItem.Armor || ItemPosition(ID) == ConquerItem.Head ||
                         IsShield(ID)) {
                         if (nLevel <= 4) return 2;
-                        if (nLevel > 4 && nLevel < 7) return 3;
+                        if (nLevel is > 4 and < 7) return 3;
                         if (nLevel == 7) return 4;
                         if (nLevel > 7) return 7;
                     }
@@ -12735,8 +12654,7 @@ namespace MTA.Network {
                             #region No ONecan make un allowedgem in Talisman
 
                             if (sock == (ushort)Positions.AttackTalisman) {
-                                if (!(gemBase >= (byte)Enums.Gem.NormalThunderGem &&
-                                      gemBase <= (byte)Enums.Gem.SuperThunderGem)) {
+                                if (!(gemBase is >= (byte)Enums.Gem.NormalThunderGem and <= (byte)Enums.Gem.SuperThunderGem)) {
                                     client.Send(new Message("Sorry can't make socket in this item !", Color.Red,
                                         Message.Talk));
                                     return;
@@ -12744,8 +12662,7 @@ namespace MTA.Network {
                             }
 
                             if (sock == (ushort)Positions.DefenceTalisman) {
-                                if (!(gemBase >= (byte)Enums.Gem.NormalGloryGem &&
-                                      gemBase <= (byte)Enums.Gem.SuperGloryGem)) {
+                                if (!(gemBase is >= (byte)Enums.Gem.NormalGloryGem and <= (byte)Enums.Gem.SuperGloryGem)) {
                                     client.Send(new Message("Sorry can't make socket in this item !", Color.Red,
                                         Message.Talk));
                                     return;
@@ -12944,16 +12861,14 @@ namespace MTA.Network {
                     }
 
                     talisman.SocketProgress += Points;
-                    if (talisman.SocketOne == Enums.Gem.NoSocket) {
-                        if (talisman.SocketProgress >= 8000) {
-                            talisman.SocketProgress -= 8000;
-                            talisman.SocketOne = Enums.Gem.EmptySocket;
+                    if (talisman is { SocketOne: Enums.Gem.NoSocket, SocketProgress: >= 8000 }) {
+                        talisman.SocketProgress -= 8000;
+                        talisman.SocketOne = Enums.Gem.EmptySocket;
 
-                            talisman.Mode = Enums.ItemMode.Update;
-                            talisman.Send(client);
-                            if (talisman.Position != 0)
-                                client.LoadItemStats();
-                        }
+                        talisman.Mode = Enums.ItemMode.Update;
+                        talisman.Send(client);
+                        if (talisman.Position != 0)
+                            client.LoadItemStats();
                     }
 
                     if (talisman.SocketOne != Enums.Gem.NoSocket) {
@@ -13079,7 +12994,7 @@ namespace MTA.Network {
 
             #region guildCondutors
 
-            if (item.ID >= 720021 && item.ID <= 720024) {
+            if (item.ID is >= 720021 and <= 720024) {
                 NpcRequest npc = new NpcRequest(5);
                 {
                     switch (item.ID) {
@@ -15512,8 +15427,7 @@ namespace MTA.Network {
 
                 case 720020: {
                     if (client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader) {
-                        if (client.Guild.PoleKeeper && client.Guild != null &&
-                            client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader && !GuildWar.IsWar) {
+                        if (client.Guild.PoleKeeper && client is { Guild: not null, AsMember.Rank: Enums.GuildMemberRank.GuildLeader } && !GuildWar.IsWar) {
                             #region Work
 
                             byte[] test = new byte[((ushort)(247 + client.Entity.Name.Length + 8))];
@@ -16086,7 +16000,7 @@ namespace MTA.Network {
                 case 729626: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
                     var array = ConquerItemInformation.BaseInformations.Values
-                        .Where(p => (p.ID >= 724130 && p.ID <= 724499 && p.Name.Contains("Super"))).ToArray();
+                        .Where(p => (p.ID is >= 724130 and <= 724499 && p.Name.Contains("Super"))).ToArray();
                     client.Inventory.Add(array[Kernel.Random.Next(array.Length)].ID, 0, 1);
                     // 
                     break;
@@ -16094,7 +16008,7 @@ namespace MTA.Network {
                 case 720731: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
                     var array = ConquerItemInformation.BaseInformations.Keys
-                        .Where(p => (p >= 350001 && p <= 380030)).ToArray();
+                        .Where(p => p is >= 350001 and <= 380030).ToArray();
                     client.Inventory.Add(array[Kernel.Random.Next(array.Length)], 0, 1);
                     break;
                 }
@@ -18654,7 +18568,7 @@ namespace MTA.Network {
                     break;
                 }
                 case 725002: {
-                    if (client.Entity.Class >= 140 && client.Entity.Class <= 145 && client.Entity.Level >= 90) {
+                    if (client.Entity.Class is >= 140 and <= 145 && client.Entity.Level >= 90) {
                         client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
                         client.AddSpell(new Spell(true) { ID = 1002 });
                     }
@@ -18670,8 +18584,8 @@ namespace MTA.Network {
                     break;
                 }
                 case 725004: {
-                    if (client.Entity.Class >= 130 && client.Entity.Class <= 135 ||
-                        client.Entity.Class >= 140 && client.Entity.Class <= 145 && client.Entity.Level >= 15 ||
+                    if (client.Entity.Class is >= 130 and <= 135 ||
+                        client.Entity.Class is >= 140 and <= 145 && client.Entity.Level >= 15 ||
                         client.Entity.Class == 100 || client.Entity.Class == 101) {
                         client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
                         client.AddSpell(new Spell(true) { ID = 1010 });
@@ -18768,7 +18682,7 @@ namespace MTA.Network {
                     break;
                 }
                 case 725015: {
-                    if (client.Entity.Class >= 130 && client.Entity.Class <= 135) {
+                    if (client.Entity.Class is >= 130 and <= 135) {
                         client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
                         client.AddSpell(new Spell(true) { ID = 1350 });
                     }
@@ -18831,8 +18745,8 @@ namespace MTA.Network {
                     break;
                 }
                 case 725028: {
-                    if (client.Entity.Class >= 130 && client.Entity.Class <= 135 ||
-                        client.Entity.Class >= 140 && client.Entity.Class <= 145)
+                    if (client.Entity.Class is >= 130 and <= 135 ||
+                        client.Entity.Class is >= 140 and <= 145)
                         client.AddSpell(new Spell(true) { ID = 5001 });
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
                     break;
@@ -18878,7 +18792,7 @@ namespace MTA.Network {
                     break;
                 }
                 case 1060100: {
-                    if (client.Entity.Class >= 140 && client.Entity.Class <= 145 && client.Entity.Level >= 82) {
+                    if (client.Entity.Class is >= 140 and <= 145 && client.Entity.Level >= 82) {
                         client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
                         client.AddSpell(new Spell(true) { ID = 1160 });
                     }
@@ -18886,7 +18800,7 @@ namespace MTA.Network {
                     break;
                 }
                 case 1060101: {
-                    if (client.Entity.Class >= 140 && client.Entity.Class <= 145 && client.Entity.Level >= 84) {
+                    if (client.Entity.Class is >= 140 and <= 145 && client.Entity.Level >= 84) {
                         client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
                         client.AddSpell(new Spell(true) { ID = 1165 });
                     }
@@ -20321,7 +20235,7 @@ namespace MTA.Network {
             else
                 item.SocketProgress += 5;
             ushort need = 0;
-            if (item.SocketOne == Enums.Gem.NoSocket && item.SocketTwo == Enums.Gem.NoSocket)
+            if (item is { SocketOne: Enums.Gem.NoSocket, SocketTwo: Enums.Gem.NoSocket })
                 need = Constants.SocketOneProgress;
             else if (item.SocketOne != Enums.Gem.NoSocket && item.SocketTwo == Enums.Gem.NoSocket)
                 need = Constants.SocketTwoProgress;
@@ -20380,18 +20294,18 @@ namespace MTA.Network {
 
         public static Positions GetPositionFromID(UInt32 itemid) {
             UInt32 iType = itemid / 1000;
-            if (iType >= 111 && iType <= 118 || iType == 123 || iType >= 141 && iType <= 145 || iType == 148 ||
+            if (iType is >= 111 and <= 118 || iType == 123 || iType is >= 141 and <= 145 || iType == 148 ||
                 iType == 170)
                 return Positions.Head;
-            else if (iType >= 120 && iType <= 121)
+            else if (iType is >= 120 and <= 121)
                 return Positions.Necklace;
-            else if (iType >= 130 && iType <= 139 || iType == 101)
+            else if (iType is >= 130 and <= 139 || iType == 101)
                 return Positions.Armor;
-            else if (iType >= 150 && iType <= 152)
+            else if (iType is >= 150 and <= 152)
                 return Positions.Ring;
             else if (iType == 160)
                 return Positions.Boots;
-            else if (iType >= 181 && iType <= 194)
+            else if (iType is >= 181 and <= 194)
                 return Positions.Garment;
             else if (iType == 201)
                 return Positions.AttackTalisman;
@@ -20407,10 +20321,10 @@ namespace MTA.Network {
                 return Positions.Bottle;
             else if (iType == 1050 || iType == 900 || iType == 619)
                 return Positions.Left;
-            else if ((iType >= 410 && iType <= 490) || (iType >= 500 && iType <= 580) ||
-                     (iType >= 601 && iType <= 617) || iType == 620 || iType == 622 || iType == 624 || iType == 626)
+            else if (iType is >= 410 and <= 490 || iType is >= 500 and <= 580 ||
+                     iType is >= 601 and <= 617 || iType == 620 || iType == 622 || iType == 624 || iType == 626)
                 return Positions.Right;
-            else if (iType >= 350 && iType <= 370)
+            else if (iType is >= 350 and <= 370)
                 return Positions.RightAccessory;
             else if (iType == 380)
                 return Positions.LeftAccessory;
@@ -20420,54 +20334,54 @@ namespace MTA.Network {
         }
 
         public static ushort ItemPosition(uint ID) {
-            if ((ID >= 111003 && ID <= 118309) || (ID >= 123000 && ID <= 123309) || (ID >= 141003 && ID <= 145069) ||
-                (ID >= 148000 && ID <= 148309) || (ID >= 170000 && ID <= 170309))
+            if (ID is >= 111003 and <= 118309 || ID is >= 123000 and <= 123309 || ID is >= 141003 and <= 145069 ||
+                ID is >= 148000 and <= 148309 || ID is >= 170000 and <= 170309)
                 return ConquerItem.Head;
-            else if (ID >= 120001 && ID <= 121269)
+            else if (ID is >= 120001 and <= 121269)
                 return ConquerItem.Necklace;
-            else if ((ID >= 130003 && ID <= 139309) || (ID >= 101000 && ID <= 101309) || (ID >= 101313 && ID <= 101319))
+            else if (ID is >= 130003 and <= 139309 || ID is >= 101000 and <= 101309 || ID is >= 101313 and <= 101319)
                 return ConquerItem.Armor;
-            else if (ID >= 150000 && ID <= 152279)
+            else if (ID is >= 150000 and <= 152279)
                 return ConquerItem.Ring;
-            else if (ID >= 160013 && ID <= 160249)
+            else if (ID is >= 160013 and <= 160249)
                 return ConquerItem.Boots;
-            else if (ID >= 181305 && ID <= 194300)
+            else if (ID is >= 181305 and <= 194300)
                 return ConquerItem.Garment;
-            else if (ID >= 201003 && ID <= 201009)
+            else if (ID is >= 201003 and <= 201009)
                 return ConquerItem.Fan;
-            else if (ID >= 202003 && ID <= 202009)
+            else if (ID is >= 202003 and <= 202009)
                 return ConquerItem.Tower;
-            else if (ID >= 203003 && ID <= 203009)
+            else if (ID is >= 203003 and <= 203009)
                 return ConquerItem.SteedCrop;
             else if (ID == 300000)
                 return ConquerItem.Steed;
-            else if (ID >= 410003 && ID <= 617439 || ID >= 620003 && ID <= 620439 || ID >= 622000 && ID <= 622439 ||
-                     ID >= 624003 && ID <= 624439 || ID >= 626003 && ID <= 626439)
+            else if (ID is >= 410003 and <= 617439 || ID is >= 620003 and <= 620439 || ID is >= 622000 and <= 622439 ||
+                     ID is >= 624003 and <= 624439 || ID is >= 626003 and <= 626439)
                 return ConquerItem.RightWeapon;
-            else if ((ID >= 900000 && ID <= 900309) || ID >= 1050000 && ID <= 1051052 || ID >= 619000 && ID <= 619439 ||
-                     ID >= 624003 && ID <= 624439 || ID >= 626003 && ID <= 626439 /* || ID >= 624000 && ID <= 624439*/)
+            else if (ID is >= 900000 and <= 900309 || ID is >= 1050000 and <= 1051052 || ID is >= 619000 and <= 619439 ||
+                     ID is >= 624003 and <= 624439 || ID is >= 626003 and <= 626439 /* || ID >= 624000 && ID <= 624439*/)
                 return ConquerItem.LeftWeapon;
-            else if (ID >= 2100005 && ID <= 2100999)
+            else if (ID is >= 2100005 and <= 2100999)
                 return ConquerItem.Bottle;
-            else if (ID >= 350001 && ID <= 380030)
+            else if (ID is >= 350001 and <= 380030)
                 return ConquerItem.LeftWeaponAccessory;
-            else if (ID >= 350001 && ID <= 380030)
+            else if (ID is >= 350001 and <= 380030)
                 return ConquerItem.RightWeaponAccessory;
-            else if (ID >= 200000 && ID <= 200540)
+            else if (ID is >= 200000 and <= 200540)
                 return ConquerItem.SteedArmor;
-            else if (ID >= 204003 && ID <= 204009)
+            else if (ID is >= 204003 and <= 204009)
                 return ConquerItem.Wing;
             return 0;
         }
 
         public static bool IsFranko(uint ID) {
-            if (ID >= 1050000 && ID <= 1051000)
+            if (ID is >= 1050000 and <= 1051000)
                 return true;
             return false;
         }
 
         public static bool IsWing(uint ID) {
-            if (ID >= 204005 && ID <= 205129)
+            if (ID is >= 204005 and <= 205129)
                 return true;
             return false;
         }
@@ -20477,7 +20391,7 @@ namespace MTA.Network {
         }
 
         public static bool IsAccessory(uint ID) {
-            return ID >= 350001 && ID <= 380015;
+            return ID is >= 350001 and <= 380015;
         }
 
         public enum Positions : byte {
@@ -20504,17 +20418,17 @@ namespace MTA.Network {
         public static Positions ItemPositionFromID(UInt32 itemid) {
             UInt32 iType = itemid / 1000;
 
-            if (iType >= 111 && iType <= 118 || iType == 123 || iType >= 141 && iType <= 143 || iType == 145)
+            if (iType is >= 111 and <= 118 || iType == 123 || iType is >= 141 and <= 143 || iType == 145)
                 return Positions.Head;
-            else if (iType >= 120 && iType <= 121)
+            else if (iType is >= 120 and <= 121)
                 return Positions.Necklace;
-            else if (iType >= 130 && iType <= 137)
+            else if (iType is >= 130 and <= 137)
                 return Positions.Armor;
-            else if (iType >= 150 && iType <= 152)
+            else if (iType is >= 150 and <= 152)
                 return Positions.Ring;
             else if (iType == 160)
                 return Positions.Boots;
-            else if (iType >= 181 && iType <= 194)
+            else if (iType is >= 181 and <= 194)
                 return Positions.Garment;
             else if (iType == 201)
                 return Positions.AttackTalisman;
@@ -20524,7 +20438,7 @@ namespace MTA.Network {
                 return Positions.SteedTalisman;
             else if (iType == 200)
                 return Positions.SteedArmor;
-            else if (iType >= 204 && iType <= 205)
+            else if (iType is >= 204 and <= 205)
                 return Positions.Wing;
             else if (iType == 300)
                 return Positions.Steed;
@@ -20532,11 +20446,11 @@ namespace MTA.Network {
                 return Positions.Bottle;
             else if (iType == 1050 || iType == 900)
                 return Positions.Left;
-            else if ((iType >= 410 && iType <= 490) || (iType >= 500 && iType <= 580) ||
-                     (iType >= 601 && iType <= 613) ||
-                     (iType >= 616 && iType <= 617 || (iType >= 619 && iType <= 620)) || (iType == 622))
+            else if (iType is >= 410 and <= 490 || iType is >= 500 and <= 580 ||
+                     iType is >= 601 and <= 613 ||
+                     (iType is >= 616 and <= 617 || iType is >= 619 and <= 620) || (iType == 622))
                 return Positions.Right;
-            else if (iType >= 350 && iType <= 370)
+            else if (iType is >= 350 and <= 370)
                 return Positions.RightAccessory;
             else if (iType == 380)
                 return Positions.LeftAccessory;
@@ -20545,7 +20459,7 @@ namespace MTA.Network {
         }
 
         public static bool Knife(uint ID) {
-            if (ID >= 613000 && ID <= 613429) {
+            if (ID is >= 613000 and <= 613429) {
                 return true;
             }
             else {
@@ -20554,39 +20468,39 @@ namespace MTA.Network {
         }
 
         public static bool UniverseHossu(uint ID) {
-            return ID >= 619000 && ID <= 619439;
+            return ID is >= 619000 and <= 619439;
         }
 
         public static bool StarTower(uint ID) {
-            return ID >= 202003 && ID <= 202009;
+            return ID is >= 202003 and <= 202009;
         }
 
         public static bool HeavenFan(uint ID) {
-            return ID >= 201003 && ID <= 201009;
+            return ID is >= 201003 and <= 201009;
         }
 
         public static bool Necklace(uint ID) {
-            return ID >= 120001 && ID <= 120269;
+            return ID is >= 120001 and <= 120269;
         }
 
         public static bool Ring(uint ID) {
-            return ID >= 150003 && ID <= 150269;
+            return ID is >= 150003 and <= 150269;
         }
 
         public static bool Boots(uint ID) {
-            return ID >= 160013 && ID <= 160249;
+            return ID is >= 160013 and <= 160249;
         }
 
         public static bool RidingCrop(uint ID) {
-            return ID >= 203003 && ID <= 203009;
+            return ID is >= 203003 and <= 203009;
         }
 
         public static bool Wing(uint ID) {
-            return ID >= 204003 && ID <= 204009;
+            return ID is >= 204003 and <= 204009;
         }
 
         public static bool LordPistol(uint ID) {
-            if (ID >= 612000 && ID <= 612439) {
+            if (ID is >= 612000 and <= 612439) {
                 return true;
             }
             else {
@@ -20627,38 +20541,38 @@ namespace MTA.Network {
                 uint dwExtra = 0;
                 if (itemUsage.dwParam > 20)
                     dwExtra = 20;
-                if (client.Entity.Class >= 11 && client.Entity.Class <= 75)
+                if (client.Entity.Class is >= 11 and <= 75)
                     can2hand = true;
-                if (client.Entity.Class >= 11 && client.Entity.Class <= 15 ||
-                    client.Entity.Class >= 51 && client.Entity.Class <= 55 ||
-                    client.Entity.Class >= 61 && client.Entity.Class <= 65 ||
-                    client.Entity.Class >= 71 && client.Entity.Class <= 75)
+                if (client.Entity.Class is >= 11 and <= 15 ||
+                    client.Entity.Class is >= 51 and <= 55 ||
+                    client.Entity.Class is >= 61 and <= 65 ||
+                    client.Entity.Class is >= 71 and <= 75)
                     can2wpn = true;
-                if (client.Entity.Class >= 71 && client.Entity.Class <= 75 ||
-                    client.Entity.Class >= 41 && client.Entity.Class <= 45)
+                if (client.Entity.Class is >= 71 and <= 75 ||
+                    client.Entity.Class is >= 41 and <= 45)
                     can2wpn = true;
-                if (client.Entity.Class >= 20 && client.Entity.Class <= 25) {
-                    can2hand = true;
-                    can2wpn = true;
-                }
-
-                if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
+                if (client.Entity.Class is >= 20 and <= 25) {
                     can2hand = true;
                     can2wpn = true;
                 }
 
-                if (client.Entity.Class >= 130 && client.Entity.Class <= 135 ||
-                    client.Entity.Class >= 140 && client.Entity.Class <= 145) {
+                if (client.Entity.Class is >= 50 and <= 55) {
                     can2hand = true;
                     can2wpn = true;
                 }
 
-                if (client.Entity.Class >= 80 && client.Entity.Class <= 85) {
+                if (client.Entity.Class is >= 130 and <= 135 ||
+                    client.Entity.Class is >= 140 and <= 145) {
                     can2hand = true;
                     can2wpn = true;
                 }
 
-                if (client.Entity.Class >= 160 && client.Entity.Class <= 165) {
+                if (client.Entity.Class is >= 80 and <= 85) {
+                    can2hand = true;
+                    can2wpn = true;
+                }
+
+                if (client.Entity.Class is >= 160 and <= 165) {
                     can2hand = true;
                     can2wpn = true;
                 }
@@ -20690,8 +20604,8 @@ namespace MTA.Network {
 
                 #region Hossu
 
-                if (client.Entity.Class >= 130 && client.Entity.Class <= 135 ||
-                    client.Entity.Class >= 140 && client.Entity.Class <= 145) {
+                if (client.Entity.Class is >= 130 and <= 135 ||
+                    client.Entity.Class is >= 140 and <= 145) {
                     if ((itemUsage.dwParam - dwExtra) == 5) {
                         if ((item.ID / 1000) == 421 || (item.ID / 1000) == 620)
                             return;
@@ -20747,8 +20661,7 @@ namespace MTA.Network {
                             else {
                                 if (IsShield(item.ID)) {
                                     if ((rItem.ID / 1000) == 421) return;
-                                    if (!client.Spells.ContainsKey(10311) && client.Entity.FirstRebornClass == 25 &&
-                                        client.Entity.SecondRebornClass == 25) //Perseverance
+                                    if (!client.Spells.ContainsKey(10311) && client.Entity is { FirstRebornClass: 25, SecondRebornClass: 25 }) //Perseverance
                                     {
                                         client.Send(new Message(
                                             "You need to know Perseverance (Warrior Pure skill) to be able to wear 2-handed weapon and shield.",
@@ -20772,7 +20685,7 @@ namespace MTA.Network {
                         if (item.ID / 1000 != 500)
                             return;
 
-                if (!((client.Entity.Class >= 50 && client.Entity.Class <= 55)))
+                if (!(client.Entity.Class is >= 50 and <= 55))
                     if ((item.ID / 1000) == 601)
                         if ((itemUsage.dwParam - dwExtra) == 5)
                             return;
@@ -20781,25 +20694,25 @@ namespace MTA.Network {
 
                 uint itemType = item.ID / 1000;
                 if (itemType == 613) {
-                    if ((client.Entity.Class >= 70 && client.Entity.Class <= 75) ||
-                        (client.Entity.Class >= 60 && client.Entity.Class <= 65 ||
-                         (client.Entity.Class >= 10 && client.Entity.Class <= 15 ||
-                          (client.Entity.Class >= 50 && client.Entity.Class <= 55 ||
-                           (client.Entity.Class >= 20 && client.Entity.Class <= 25 ||
-                            (client.Entity.Class >= 142 && client.Entity.Class <= 145 ||
-                             (client.Entity.Class >= 132 && client.Entity.Class <= 135))))))) {
+                    if (client.Entity.Class is >= 70 and <= 75 ||
+                        (client.Entity.Class is >= 60 and <= 65 ||
+                         (client.Entity.Class is >= 10 and <= 15 ||
+                          (client.Entity.Class is >= 50 and <= 55 ||
+                           (client.Entity.Class is >= 20 and <= 25 ||
+                            (client.Entity.Class is >= 142 and <= 145 ||
+                             client.Entity.Class is >= 132 and <= 135)))))) {
                         item.Position = 0;
                         return;
                     }
                 }
 
                 if (itemType == 612) {
-                    if ((client.Entity.Class >= 60 && client.Entity.Class <= 65 ||
-                         (client.Entity.Class >= 10 && client.Entity.Class <= 15 ||
-                          (client.Entity.Class >= 50 && client.Entity.Class <= 55 ||
-                           (client.Entity.Class >= 20 && client.Entity.Class <= 25 ||
-                            (client.Entity.Class >= 142 && client.Entity.Class <= 145 ||
-                             (client.Entity.Class >= 132 && client.Entity.Class <= 135))))))) {
+                    if ((client.Entity.Class is >= 60 and <= 65 ||
+                         (client.Entity.Class is >= 10 and <= 15 ||
+                          (client.Entity.Class is >= 50 and <= 55 ||
+                           (client.Entity.Class is >= 20 and <= 25 ||
+                            (client.Entity.Class is >= 142 and <= 145 ||
+                             client.Entity.Class is >= 132 and <= 135)))))) {
                         item.Position = 0;
                         return;
                     }
@@ -20835,7 +20748,7 @@ namespace MTA.Network {
                 }
 
                 if (itemType == 900) {
-                    if (!(client.Entity.Class >= 20 && client.Entity.Class <= 25)) {
+                    if (!(client.Entity.Class is >= 20 and <= 25)) {
                         item.Position = 0;
                         return;
                     }
@@ -20932,7 +20845,7 @@ namespace MTA.Network {
         }
 
         static bool EquipPassRbReq(ConquerItemBaseInformation baseInformation, GameState client) {
-            if (baseInformation.Level < 71 && client.Entity.Reborn > 0 && client.Entity.Level >= 70)
+            if (baseInformation.Level < 71 && client.Entity is { Reborn: > 0, Level: >= 70 })
                 return true;
             else
                 return false;
@@ -20950,19 +20863,19 @@ namespace MTA.Network {
                 #region Trojan
 
                 case 10:
-                    if (client.Entity.Class <= 15 && client.Entity.Class >= 10) return true;
+                    if (client.Entity.Class is <= 15 and >= 10) return true;
                     break;
                 case 11:
-                    if (client.Entity.Class <= 15 && client.Entity.Class >= 11) return true;
+                    if (client.Entity.Class is <= 15 and >= 11) return true;
                     break;
                 case 12:
-                    if (client.Entity.Class <= 15 && client.Entity.Class >= 12) return true;
+                    if (client.Entity.Class is <= 15 and >= 12) return true;
                     break;
                 case 13:
-                    if (client.Entity.Class <= 15 && client.Entity.Class >= 13) return true;
+                    if (client.Entity.Class is <= 15 and >= 13) return true;
                     break;
                 case 14:
-                    if (client.Entity.Class <= 15 && client.Entity.Class >= 14) return true;
+                    if (client.Entity.Class is <= 15 and >= 14) return true;
                     break;
                 case 15:
                     if (client.Entity.Class == 15) return true;
@@ -20973,19 +20886,19 @@ namespace MTA.Network {
                 #region Warrior
 
                 case 20:
-                    if (client.Entity.Class <= 25 && client.Entity.Class >= 20) return true;
+                    if (client.Entity.Class is <= 25 and >= 20) return true;
                     break;
                 case 21:
-                    if (client.Entity.Class <= 25 && client.Entity.Class >= 21) return true;
+                    if (client.Entity.Class is <= 25 and >= 21) return true;
                     break;
                 case 22:
-                    if (client.Entity.Class <= 25 && client.Entity.Class >= 22) return true;
+                    if (client.Entity.Class is <= 25 and >= 22) return true;
                     break;
                 case 23:
-                    if (client.Entity.Class <= 25 && client.Entity.Class >= 23) return true;
+                    if (client.Entity.Class is <= 25 and >= 23) return true;
                     break;
                 case 24:
-                    if (client.Entity.Class <= 25 && client.Entity.Class >= 24) return true;
+                    if (client.Entity.Class is <= 25 and >= 24) return true;
                     break;
                 case 25:
                     if (client.Entity.Class == 25) return true;
@@ -20996,19 +20909,19 @@ namespace MTA.Network {
                 #region Archer
 
                 case 40:
-                    if (client.Entity.Class <= 45 && client.Entity.Class >= 40) return true;
+                    if (client.Entity.Class is <= 45 and >= 40) return true;
                     break;
                 case 41:
-                    if (client.Entity.Class <= 45 && client.Entity.Class >= 41) return true;
+                    if (client.Entity.Class is <= 45 and >= 41) return true;
                     break;
                 case 42:
-                    if (client.Entity.Class <= 45 && client.Entity.Class >= 42) return true;
+                    if (client.Entity.Class is <= 45 and >= 42) return true;
                     break;
                 case 43:
-                    if (client.Entity.Class <= 45 && client.Entity.Class >= 43) return true;
+                    if (client.Entity.Class is <= 45 and >= 43) return true;
                     break;
                 case 44:
-                    if (client.Entity.Class <= 45 && client.Entity.Class >= 44) return true;
+                    if (client.Entity.Class is <= 45 and >= 44) return true;
                     break;
                 case 45:
                     if (client.Entity.Class == 45) return true;
@@ -21019,19 +20932,19 @@ namespace MTA.Network {
                 #region Ninja
 
                 case 50:
-                    if (client.Entity.Class <= 55 && client.Entity.Class >= 50) return true;
+                    if (client.Entity.Class is <= 55 and >= 50) return true;
                     break;
                 case 51:
-                    if (client.Entity.Class <= 55 && client.Entity.Class >= 51) return true;
+                    if (client.Entity.Class is <= 55 and >= 51) return true;
                     break;
                 case 52:
-                    if (client.Entity.Class <= 55 && client.Entity.Class >= 52) return true;
+                    if (client.Entity.Class is <= 55 and >= 52) return true;
                     break;
                 case 53:
-                    if (client.Entity.Class <= 55 && client.Entity.Class >= 53) return true;
+                    if (client.Entity.Class is <= 55 and >= 53) return true;
                     break;
                 case 54:
-                    if (client.Entity.Class <= 55 && client.Entity.Class >= 54) return true;
+                    if (client.Entity.Class is <= 55 and >= 54) return true;
                     break;
                 case 55:
                     if (client.Entity.Class == 55) return true;
@@ -21042,19 +20955,19 @@ namespace MTA.Network {
                 #region Monk
 
                 case 60:
-                    if (client.Entity.Class <= 65 && client.Entity.Class >= 60) return true;
+                    if (client.Entity.Class is <= 65 and >= 60) return true;
                     break;
                 case 61:
-                    if (client.Entity.Class <= 65 && client.Entity.Class >= 61) return true;
+                    if (client.Entity.Class is <= 65 and >= 61) return true;
                     break;
                 case 62:
-                    if (client.Entity.Class <= 65 && client.Entity.Class >= 62) return true;
+                    if (client.Entity.Class is <= 65 and >= 62) return true;
                     break;
                 case 63:
-                    if (client.Entity.Class <= 65 && client.Entity.Class >= 63) return true;
+                    if (client.Entity.Class is <= 65 and >= 63) return true;
                     break;
                 case 64:
-                    if (client.Entity.Class <= 65 && client.Entity.Class >= 64) return true;
+                    if (client.Entity.Class is <= 65 and >= 64) return true;
                     break;
                 case 65:
                     if (client.Entity.Class == 65) return true;
@@ -21065,19 +20978,19 @@ namespace MTA.Network {
                 #region Pirate
 
                 case 70:
-                    if (client.Entity.Class <= 75 && client.Entity.Class >= 70) return true;
+                    if (client.Entity.Class is <= 75 and >= 70) return true;
                     break;
                 case 71:
-                    if (client.Entity.Class <= 75 && client.Entity.Class >= 71) return true;
+                    if (client.Entity.Class is <= 75 and >= 71) return true;
                     break;
                 case 72:
-                    if (client.Entity.Class <= 75 && client.Entity.Class >= 72) return true;
+                    if (client.Entity.Class is <= 75 and >= 72) return true;
                     break;
                 case 73:
-                    if (client.Entity.Class <= 75 && client.Entity.Class >= 73) return true;
+                    if (client.Entity.Class is <= 75 and >= 73) return true;
                     break;
                 case 74:
-                    if (client.Entity.Class <= 75 && client.Entity.Class >= 74) return true;
+                    if (client.Entity.Class is <= 75 and >= 74) return true;
                     break;
                 case 75:
                     if (client.Entity.Class == 75) return true;
@@ -21088,7 +21001,7 @@ namespace MTA.Network {
                 #region Taoist
 
                 case 190:
-                    if (client.Entity.Class >= 100 && client.Entity.Class <= 145) return true;
+                    if (client.Entity.Class is >= 100 and <= 145) return true;
                     break;
 
                 #endregion
@@ -21096,19 +21009,19 @@ namespace MTA.Network {
                 #region LeeLong
 
                 case 80:
-                    if (client.Entity.Class <= 85 && client.Entity.Class >= 80) return true;
+                    if (client.Entity.Class is <= 85 and >= 80) return true;
                     break;
                 case 81:
-                    if (client.Entity.Class <= 85 && client.Entity.Class >= 81) return true;
+                    if (client.Entity.Class is <= 85 and >= 81) return true;
                     break;
                 case 82:
-                    if (client.Entity.Class <= 85 && client.Entity.Class >= 82) return true;
+                    if (client.Entity.Class is <= 85 and >= 82) return true;
                     break;
                 case 83:
-                    if (client.Entity.Class <= 85 && client.Entity.Class >= 83) return true;
+                    if (client.Entity.Class is <= 85 and >= 83) return true;
                     break;
                 case 84:
-                    if (client.Entity.Class <= 85 && client.Entity.Class >= 84) return true;
+                    if (client.Entity.Class is <= 85 and >= 84) return true;
                     break;
                 case 85:
                     if (client.Entity.Class == 85) return true;
@@ -21119,19 +21032,19 @@ namespace MTA.Network {
                 #region Windwalker
 
                 case 160:
-                    if (client.Entity.Class <= 165 && client.Entity.Class >= 160) return true;
+                    if (client.Entity.Class is <= 165 and >= 160) return true;
                     break;
                 case 161:
-                    if (client.Entity.Class <= 165 && client.Entity.Class >= 161) return true;
+                    if (client.Entity.Class is <= 165 and >= 161) return true;
                     break;
                 case 162:
-                    if (client.Entity.Class <= 165 && client.Entity.Class >= 162) return true;
+                    if (client.Entity.Class is <= 165 and >= 162) return true;
                     break;
                 case 163:
-                    if (client.Entity.Class <= 165 && client.Entity.Class >= 163) return true;
+                    if (client.Entity.Class is <= 165 and >= 163) return true;
                     break;
                 case 164:
-                    if (client.Entity.Class <= 165 && client.Entity.Class >= 164) return true;
+                    if (client.Entity.Class is <= 165 and >= 164) return true;
                     break;
                 case 165:
                     if (client.Entity.Class == 165) return true;
@@ -21529,11 +21442,9 @@ namespace MTA.Network {
                                     SpecialID = uint.Parse(Data[3]);
                                 if (loweredName == "exp") {
                                     foreach (IMapObject ClientObj in client.Screen.Objects) {
-                                        if (ClientObj != null) {
-                                            if (ClientObj is Entity) {
-                                                if (ClientObj.MapObjType == MapObjectType.Player) {
-                                                    ClientObj.Owner.IncreaseExperience(ClientObj.Owner.ExpBall, false);
-                                                }
+                                        if (ClientObj is Entity) {
+                                            if (ClientObj.MapObjType == MapObjectType.Player) {
+                                                ClientObj.Owner.IncreaseExperience(ClientObj.Owner.ExpBall, false);
                                             }
                                         }
                                     }
@@ -24189,16 +24100,14 @@ namespace MTA.Network {
                 Observer.Send(WindowStats(Observee));
                 for (Byte pos = (Byte)ConquerItem.Head; pos <= ConquerItem.AlternateGarment; pos++) {
                     ConquerItem i = Observee.Equipment.TryGetItem(pos);
-                    if (i != null) {
-                        if (i.IsWorn) {
-                            BoothItem2 view = new BoothItem2();
-                            view.CostType = BoothItem2.CostTypes.ViewEquip;
-                            view.Identifier = Observee.Entity.UID;
-                            view.Position = (Positions)(pos % 20);
-                            view.ParseItem(i);
-                            Observer.Send(view);
-                            i.SendExtras(client);
-                        }
+                    if (i is { IsWorn: true }) {
+                        BoothItem2 view = new BoothItem2();
+                        view.CostType = BoothItem2.CostTypes.ViewEquip;
+                        view.Identifier = Observee.Entity.UID;
+                        view.Position = (Positions)(pos % 20);
+                        view.ParseItem(i);
+                        Observer.Send(view);
+                        i.SendExtras(client);
                     }
                 }
 
@@ -24447,7 +24356,7 @@ namespace MTA.Network {
                             CheckForFlag(client);
                         client.SendScreen(generalData);
                         client.Screen.Reload(generalData);
-                        if (client.Entity.InteractionInProgress && client.Entity.InteractionSet) {
+                        if (client.Entity is { InteractionInProgress: true, InteractionSet: true }) {
                             if (client.Entity.Body == 1003 || client.Entity.Body == 1004) {
                                 if (Kernel.GamePool.ContainsKey(client.Entity.InteractionWith)) {
                                     GameState ch = Kernel.GamePool[client.Entity.InteractionWith];
@@ -25183,7 +25092,7 @@ namespace MTA.Network {
                 if (!(client.Entity.SecondRebornClass / 10 == client.Entity.Class / 10 &&
                       client.Entity.Class / 10 == 5))
                     client.RemoveSpell(new Spell(true) { ID = 6002 });
-            if (!((client.Entity.Class >= 130 && client.Entity.Class <= 135)))
+            if (!(client.Entity.Class is >= 130 and <= 135))
                 if (client.Spells.ContainsKey(30000))
 
                     if (client.Spells.ContainsKey(10309))
@@ -25362,57 +25271,57 @@ namespace MTA.Network {
                 client.Send(whp);
             }
 
-            if (client.Entity.Class >= 40 && client.Entity.Class <= 45) {
+            if (client.Entity.Class is >= 40 and <= 45) {
                 client.RemoveSpell(new Spell(true) { ID = 1025 }); //SuperMan
             }
 
-            if (client.Entity.Class >= 60 && client.Entity.Class <= 65) {
+            if (client.Entity.Class is >= 60 and <= 65) {
                 client.RemoveSpell(new Spell(true) { ID = 1025 }); //Superman
             }
 
-            if (client.Entity.Class >= 132 && client.Entity.Class <= 135) {
+            if (client.Entity.Class is >= 132 and <= 135) {
                 client.RemoveSpell(new Spell(true) { ID = 10425 }); //tranq
             }
 
-            if (client.Entity.Class >= 50 && client.Entity.Class <= 55) {
+            if (client.Entity.Class is >= 50 and <= 55) {
                 client.RemoveSpell(new Spell(true) { ID = 1025 }); //Superman
             }
 
-            if (client.Entity.Class >= 10 && client.Entity.Class <= 15) {
+            if (client.Entity.Class is >= 10 and <= 15) {
                 client.RemoveSpell(new Spell(true) { ID = 1025 }); //Superman
             }
 
-            if ((client.Entity.Class >= 70 && client.Entity.Class <= 75) ||
-                (client.Entity.Class >= 60 && client.Entity.Class <= 65 ||
-                 (client.Entity.Class >= 10 && client.Entity.Class <= 15 ||
-                  (client.Entity.Class >= 50 && client.Entity.Class <= 55 ||
-                   (client.Entity.Class >= 20 && client.Entity.Class <= 25 ||
-                    (client.Entity.Class >= 142 && client.Entity.Class <= 145 ||
-                     (client.Entity.Class >= 132 && client.Entity.Class <= 135))))))) {
+            if (client.Entity.Class is >= 70 and <= 75 ||
+                (client.Entity.Class is >= 60 and <= 65 ||
+                 (client.Entity.Class is >= 10 and <= 15 ||
+                  (client.Entity.Class is >= 50 and <= 55 ||
+                   (client.Entity.Class is >= 20 and <= 25 ||
+                    (client.Entity.Class is >= 142 and <= 145 ||
+                     client.Entity.Class is >= 132 and <= 135)))))) {
                 client.RemoveSpell(new Spell(true) { ID = 8001 }); //Scatter
             }
 
-            if (client.Entity.Class >= 10 && client.Entity.Class <= 45) {
+            if (client.Entity.Class is >= 10 and <= 45) {
                 client.RemoveSpell(new Spell(true) { ID = 12090 }); //FrankoClone
             }
 
-            if (client.Entity.Class >= 65 && client.Entity.Class <= 145) {
+            if (client.Entity.Class is >= 65 and <= 145) {
                 client.RemoveSpell(new Spell(true) { ID = 12090 }); //FrankoClone
             }
 
-            if (client.Entity.Class >= 142 && client.Entity.Class <= 145) {
+            if (client.Entity.Class is >= 142 and <= 145) {
                 client.RemoveSpell(new Spell(true) { ID = 11180 }); //MortalDrag
             }
 
-            if (client.Entity.Class >= 142 && client.Entity.Class <= 145) {
+            if (client.Entity.Class is >= 142 and <= 145) {
                 client.RemoveSpell(new Spell(true) { ID = 11190 }); //MortalDrag
             }
 
-            if (client.Entity.Class >= 142 && client.Entity.Class <= 145) {
+            if (client.Entity.Class is >= 142 and <= 145) {
                 client.RemoveSpell(new Spell(true) { ID = 11200 }); //MortalDrag
             }
 
-            if (client.Entity.Class >= 42 && client.Entity.Class <= 45) {
+            if (client.Entity.Class is >= 42 and <= 45) {
                 client.RemoveSpell(new Spell(true) { ID = 10425 }); //Tranquality
             }
 
@@ -25671,7 +25580,7 @@ namespace MTA.Network {
 
             #region TeamArena
 
-            if ((Now64.Hour >= 11 && Now64.Hour < 13) || (Now64.Hour >= 19 && Now64.Hour < 21)) {
+            if (Now64.Hour is >= 11 and < 13 || Now64.Hour is >= 19 and < 21) {
                 client.MessageBox("Team arena has started! It will open for two hours! Would you like to sign up?",
                     ////// hot yad code ya3ml create team 
                     (p) => { TeamArena.QualifyEngine.DoSignup(p); },
@@ -26006,13 +25915,13 @@ namespace MTA.Network {
 
 
         public static uint GetFlowerTyp(uint ID) {
-            if (ID >= 751001 && ID <= 751999 || ID >= 755001 && ID <= 755999)
+            if (ID is >= 751001 and <= 751999 || ID is >= 755001 and <= 755999)
                 return (uint)FlowersT.Rouse;
-            if (ID >= 752001 && ID <= 752999 || ID >= 756001 && ID <= 756999)
+            if (ID is >= 752001 and <= 752999 || ID is >= 756001 and <= 756999)
                 return (uint)FlowersT.Lilies;
-            if (ID >= 753001 && ID <= 753999 || ID >= 757001 && ID <= 757999)
+            if (ID is >= 753001 and <= 753999 || ID is >= 757001 and <= 757999)
                 return (uint)FlowersT.Orchids;
-            if (ID >= 754001 && ID <= 754999 || ID >= 758001 && ID <= 758999)
+            if (ID is >= 754001 and <= 754999 || ID is >= 758001 and <= 758999)
                 return (uint)FlowersT.Tulips;
             return 0;
         }
@@ -26052,7 +25961,7 @@ namespace MTA.Network {
                     return f2.Amount.CompareTo(f1.Amount);
                 return n_rank;
             });
-            if (array != null && array.Length > 0) {
+            if (array is { Length: > 0 }) {
                 ClientRank BestRank = array[0];
                 if (BestRank.Rank != 0) {
                     rank = (int)BestRank.Rank;

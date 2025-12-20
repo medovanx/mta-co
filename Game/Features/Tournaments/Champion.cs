@@ -270,7 +270,7 @@ namespace MTA.Game
                     return;
                 }
                 if (client.Entity.MapID == 601) return;
-                if (client.Map.BaseID >= 6000 && client.Map.BaseID <= 6003) return;
+                if (client.Map.BaseID is >= 6000 and <= 6003) return;
 
                 if (WaitingPlayerList.ContainsKey(client.Entity.UID))
                 {
@@ -723,12 +723,12 @@ namespace MTA.Game
                                 return;
                             }
                         }
-                        if (Challanger.ArenaState == WaitForOther && !Challanger.ChampionStats.AcceptBox)
+                        if (Challanger is { ArenaState: WaitForOther, ChampionStats.AcceptBox: false })
                         {
                             Challanger.ChampionStats.GivenUp = true;
                             Win(Challanged, Challanger);
                         }
-                        else if (Challanged.ArenaState == WaitForOther && !Challanged.ChampionStats.AcceptBox)
+                        else if (Challanged is { ArenaState: WaitForOther, ChampionStats.AcceptBox: false })
                         {
                             Challanged.ChampionStats.GivenUp = true;
                             Win(Challanger, Challanged);
@@ -809,7 +809,7 @@ namespace MTA.Game
                 if (now.DayOfWeek != DayOfWeek.Saturday && now.DayOfWeek != DayOfWeek.Sunday)
                 {
 
-                    if (now.Hour == 21 && now.Minute >= 25)
+                    if (now is { Hour: 21, Minute: >= 25 })
                     {
 
                         DayPassed = true;
@@ -842,8 +842,8 @@ namespace MTA.Game
                     {
                         if (client.Map.BaseID == 1038) return false;
                         if (client.Map.BaseID == 700) return false;
-                        if (client.Entity.MapID >= 1090 && client.Entity.MapID <= 1094) return false;
-                        if (client.Entity.MapID >= 1505 && client.Entity.MapID <= 1509) return false;
+                        if (client.Entity.MapID is >= 1090 and <= 1094) return false;
+                        if (client.Entity.MapID is >= 1505 and <= 1509) return false;
                         if (client.Entity.ContainsFlag2(Update.Flags2.SoulShackle)) return false;
                         if (!Constants.PKFreeMaps.Contains(client.Map.ID) || client.Map.ID == 1005)
                             if (client.ArenaState == FindMatch)

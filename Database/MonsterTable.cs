@@ -67,15 +67,13 @@ namespace MTA.Database {
 
         public void SendScreen(byte[] buffer) {
             foreach (GameState client in Program.Values) {
-                if (client != null) {
-                    if (client.Entity != null) {
-                        if (client.Entity.UID != ExcludeFromSend) {
-                            if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, Owner.X, Owner.Y) > 18) {
-                                continue;
-                            }
-
-                            client.Send(buffer);
+                if (client is { Entity: not null }) {
+                    if (client.Entity.UID != ExcludeFromSend) {
+                        if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, Owner.X, Owner.Y) > 18) {
+                            continue;
                         }
+
+                        client.Send(buffer);
                     }
                 }
             }
@@ -87,16 +85,14 @@ namespace MTA.Database {
 
         public void SendScreenSpawn(IMapObject _object) {
             foreach (GameState client in Program.Values) {
-                if (client != null) {
-                    if (client.Entity != null) {
-                        if (client.Entity.UID != ExcludeFromSend) {
-                            if (client.Map.ID == Owner.MapID) {
-                                if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, Owner.X, Owner.Y) > 25) {
-                                    continue;
-                                }
-
-                                _object.SendSpawn(client, false);
+                if (client is { Entity: not null }) {
+                    if (client.Entity.UID != ExcludeFromSend) {
+                        if (client.Map.ID == Owner.MapID) {
+                            if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, Owner.X, Owner.Y) > 25) {
+                                continue;
                             }
+
+                            _object.SendSpawn(client, false);
                         }
                     }
                 }
@@ -824,11 +820,9 @@ namespace MTA.Database {
                 if (sitem.Map != 0 && Owner.MapID != sitem.Map)
                     continue;
                 if (Kernel.Rate(sitem.Rate, sitem.Discriminant)) {
-                    if (killer.VIPLevel < 0) {
-                        if (killer.Owner.Inventory.Count <= 39) {
-                            killer.Owner.Inventory.Add((uint)sitem.ItemID, 0, 1);
-                            return;
-                        }
+                    if (killer is { VIPLevel: < 0, Owner.Inventory.Count: <= 39 }) {
+                        killer.Owner.Inventory.Add((uint)sitem.ItemID, 0, 1);
+                        return;
                     }
 
                     if (sitem.ItemID == 0 || !ConquerItemInformation.BaseInformations.ContainsKey((uint)sitem.ItemID))
