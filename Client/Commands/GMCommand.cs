@@ -577,8 +577,7 @@ namespace MTA.Client.Commands
                                             Item = new ConquerItem(true)
                                         };
                                         item.Item.ID = uint.Parse(Data[4]);
-                                        item.Item.UID = Program.NextItemID;
-                                        //Program.NextItemID++;
+                                        item.Item.UID = Program.GetNextItemId();
                                         if (Data.Length > 5)
                                         {
                                             item.Item.Plus = byte.Parse(Data[5]);

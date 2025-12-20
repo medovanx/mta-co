@@ -25,468 +25,401 @@ using MTA.Network.GamePackets;
 using MTA.Network.Sockets;
 using MTA.ServerBase;
 using MTA.WebServer;
+using static MTA.Constants;
 using Message = MTA.Network.GamePackets.Message;
-using MySqlCommand = MySql.Data.MySqlClient.MySqlCommand;
 using Screen = MTA.Game.Screen;
 using Trade = MTA.Game.ConquerStructures.Trade;
 
-namespace MTA {
-    class Program {
-        public static uint _NextItemID;
-        public static Encoding Encoding = ASCIIEncoding.Default; //Encoding.GetEncoding("iso-8859-1");
-        public static int PlayerCap = 800;
-        public static bool NemesisTyrantSpanwed = false;
-        public static long MaxOn = 0;
-        public static ServerSocket[] AuthServer;
-        public static ServerSocket GameServer;
-        public static Counter EntityUID;
-        public static string GameIP;
+namespace MTA;
 
-        public static bool SpookAlive = false;
+internal class InClassName(Exception e, bool dont) {
+    public Exception E { get; } = e;
+    public bool Dont { get; } = dont;
+}
 
-        //  public static bool SpookSpawned = false;
-        //  public static DateTime SpookTime;
-        public static DayOfWeek Today;
-        public static long Carnaval = 0;
-        public static long Carnaval2 = 0;
-        public static long Carnaval3 = 0;
-        public static ushort GamePort;
-        public static List<ushort> AuthPort;
-        public static DateTime StartDate;
-        public static bool reseted = false;
-        public static uint ScreenColor = 0;
-        public static DateTime RestartDate = DateTime.Now.AddHours(24);
-        public static bool restarted = false;
-        public static bool WarEnd = false;
-        public static bool uniquepk = false;
+internal abstract class Program {
+    public static uint NextItemId;
+    public static readonly Encoding Encoding = Encoding.Default; //Encoding.GetEncoding("iso-8859-1");
+    public static int PlayerCap = 800;
+    public static long MaxOn;
+    public static ServerSocket[]? AuthServer;
+    public static ServerSocket? GameServer;
+    public static Counter? EntityUid;
+    public static string? GameIp;
 
-        public static uint mess = 10;
+    //  public static bool SpookSpawned = false;
+    //  public static DateTime SpookTime;
+    public static DayOfWeek Today;
+    public static ushort GamePort;
+    public static List<ushort>? AuthPort;
+    public static uint ScreenColor = 0;
 
-        //public static Time32 messtime;
-        public static World World;
-        public static GameState[] Values = new GameState[0];
+    //public static Time32 messtime;
+    public static World? World;
+    public static GameState[] Values = [];
 
-        public static VariableVault Vars;
+    public static VariableVault? Vars;
 
-        //public static string Password;
-        public static long WeatherType = 0L;
-        public static int RandomSeed = 0;
-        public static ushort WebServerPort = 9700;
-        public static ushort TransferServerPort = 9800;
-        public static string ServerIP;
-        public static ushort ServerGamePort;
-        public static uint ServerKey = 10000000;
-        public static bool MainServer = false;
-        public static bool TransferServer = false;
-        public static bool ServerTransfer = false;
-        public static bool ALEXPC = false;
-        public static DateTime LastRandomReset = DateTime.Now;
-        public static BlackSpotPacket BlackSpotPacket = new BlackSpotPacket();
-        public static bool MyPC = true;
+    //public static string Password;
+    public static long WeatherType = 0L;
+    public static int RandomSeed;
+    public static ushort WebServerPort = 9700;
+    public static ushort TransferServerPort = 9800;
+    public static string? ServerIp;
+    public static ushort ServerGamePort;
+    public static uint ServerKey = 10000000;
+    public static bool MainServer;
+    public static bool TransferServer;
+    public static bool ServerTransfer;
+    public static bool UniquePk;
+    public static DateTime LastRandomReset = DateTime.Now;
+    public static BlackSpotPacket BlackSpotPacket = new();
 
-        public static uint NextItemID {
-            get { return _NextItemID++; }
-        }
+    public static uint GetNextItemId() {
+        return ++NextItemId;
+    }
 
-        [DllImport("user32.dll")]
-        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+    [DllImport("user32.dll")]
+    public static extern IntPtr FindWindow(string? lpClassName, string lpWindowName);
 
-        [DllImport("user32.dll")]
-        public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-        public static bool Transfer(GameState game) {
-            byte[] CreateTransfer = new Transfer(game, Constants.ServerName).GetArray();
-            try {
-                Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                socket.Connect(ServerIP, WebServerPort);
-                socket.SendBufferSize = ushort.MaxValue;
-                if (socket.Connected) {
-                    socket.SendTo(CreateTransfer, socket.RemoteEndPoint);
-                    return true;
-                }
-            }
-            catch (SocketException e) {
-                Console.WriteLine(e.Message);
-            }
-
-            return false;
-        }
-
-        public static void Members30Guilds_Save(string epk) {
-            try {
-                var array = Kernel.Members30Guilds.ToArray();
-                int len = array.Length;
-                var stream = new MemoryStream();
-                var writer = new BinaryWriter(stream);
-                writer.Write(len);
-                foreach (var item in array)
-                    writer.Write(item);
-
-                string SQL = "UPDATE `matrixvariable` SET data=@data where ID = '" + epk + "' ;";
-                byte[] rawData = stream.ToArray();
-                using (var conn = DataHolder.MySqlConnection) {
-                    conn.Open();
-                    using (var cmd = new MySqlCommand()) {
-                        cmd.Connection = conn;
-                        cmd.CommandText = SQL;
-                        cmd.Parameters.AddWithValue("@data", rawData);
-                        cmd.ExecuteNonQuery();
-                    }
-                }
-            }
-            catch (Exception e) {
-                Console.WriteLine(e);
+    public static bool Transfer(GameState game) {
+        if (ServerName == null) return false;
+        var createTransfer = new Transfer(game, ServerName).GetArray();
+        try {
+            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            if (ServerIp != null) socket.Connect(ServerIp, WebServerPort);
+            socket.SendBufferSize = ushort.MaxValue;
+            if (socket.Connected) {
+                if (socket.RemoteEndPoint != null) socket.SendTo(createTransfer, socket.RemoteEndPoint);
+                return true;
             }
         }
-
-        public static void Members30Guilds_Load(string epk) {
-            try {
-                using (var cmd = new Database.MySqlCommand(MySqlCommandType.SELECT)) {
-                    cmd.Select("matrixvariable").Where("ID", epk);
-                    using (MySqlReader rdr = new MySqlReader(cmd)) {
-                        if (rdr.Read()) {
-                            byte[] data = rdr.ReadBlob("data");
-                            if (data.Length > 0) {
-                                using (var stream = new MemoryStream(data))
-                                using (var reader = new BinaryReader(stream)) {
-                                    int len = reader.ReadInt32();
-                                    for (int i = 0; i < len; i++) {
-                                        var ID = reader.ReadUInt32();
-                                        if (!Kernel.Members30Guilds.Contains(ID))
-                                            Kernel.Members30Guilds.Add(ID);
-                                    }
-                                }
-                            }
-                        }
-                        else {
-                            using (var command = new Database.MySqlCommand(MySqlCommandType.INSERT)) {
-                                command.Insert("matrixvariable").Insert("ID", epk);
-                                command.Execute();
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception e) {
-                Console.WriteLine(e);
-            }
+        catch (SocketException e) {
+            Console.WriteLine(e.Message);
         }
 
-        static void Main(string[] args) {
-            AppDomain.CurrentDomain.UnhandledException +=
-                new UnhandledExceptionEventHandler(Application_ThreadException);
-            ALEXPC = true;
-            Time32 Start = Time32.Now;
-            RandomSeed =
-                Convert.ToInt32(DateTime.Now.Ticks.ToString().Remove(DateTime.Now.Ticks.ToString().Length / 2));
-            Kernel.Random = new FastRandom(RandomSeed);
-            StartDate = DateTime.Now;
-            Console.Title = "MTA Server";
-            IntPtr hWnd = FindWindow(null, Console.Title);
-            Console.WriteLine("Loaded server configuration.");
-            string ConfigFileName = "Config\\configuration.ini";
-            IniFile IniFile = new IniFile(ConfigFileName);
-            GameIP = IniFile.ReadString("configuration", "IP");
-            GamePort = IniFile.ReadUInt16("configuration", "GamePort");
+        return false;
+    }
 
-            AuthPort = new List<ushort>() {
-                IniFile.ReadUInt16("configuration", "AuthPort"),
-            };
 
-            Constants.ServerName = IniFile.ReadString("configuration", "ServerName");
-            rates.Load(IniFile);
+    private static void Main() {
+        AppDomain.CurrentDomain.UnhandledException +=
+            Application_ThreadException;
+        var start = Time32.Now;
+        RandomSeed =
+            Convert.ToInt32(DateTime.Now.Ticks.ToString().Remove(DateTime.Now.Ticks.ToString().Length / 2));
+        Kernel.Random = new FastRandom(RandomSeed);
+        Console.Title = "MTA Server";
+        FindWindow(null, Console.Title);
+        Console.WriteLine("Loaded server configuration.");
+        const string configFileName = "Config\\configuration.ini";
+        var iniFile = new IniFile(configFileName);
+        GameIp = iniFile.ReadString("configuration", "IP");
+        GamePort = iniFile.ReadUInt16("configuration", "GamePort");
 
-            Console.WriteLine("loading Transfer config.....");
-            // TransferServer
-            TransferServer = IniFile.ReadString("TransferServer", "TransferServer", "0") == "1" ? true : false;
-            if (TransferServer) {
-                TransferServerPort = IniFile.ReadUInt16("TransferServer", "Webport");
-                var count = IniFile.ReadUInt16("TransferServer", "count");
-                for (int i = 1; i < count + 1; i++) {
-                    var serverline = IniFile.ReadString("TransferServer", "server" + i);
-                    var array = serverline.Split(':');
-                    TransferServer.Client.TranServer server = new TransferServer.Client.TranServer();
-                    server.ID = byte.Parse(array[0]);
-                    server.ip = array[1];
-                    server.port = int.Parse(array[2]);
-                    server.servername = array[3];
+        AuthPort = [
+            iniFile.ReadUInt16("configuration", "AuthPort")
+        ];
 
-                    if (!MTA.TransferServer.Client.TranServers.ContainsKey(server.servername))
-                        MTA.TransferServer.Client.TranServers.Add(server.servername, server);
-                }
+        ServerName = iniFile.ReadString("configuration", "ServerName");
+        Rates.Load(iniFile);
 
-                Console.WriteLine(string.Format("TransferServerPort : {0} , ServersCount : {1}", TransferServerPort,
-                    count));
-                foreach (var server in MTA.TransferServer.Client.TranServers.Values)
-                    Console.WriteLine(string.Format("Server1 :  ID : {0} , IP : {1} , Port : {2}, Name {3} ", server.ID,
-                        server.ip, server.port, server.servername));
+        Console.WriteLine("loading Transfer config.....");
+        // TransferServer
+        TransferServer = iniFile.ReadString("TransferServer", "TransferServer", "0") == "1";
+        if (TransferServer) {
+            TransferServerPort = iniFile.ReadUInt16("TransferServer", "Webport");
+            var count = iniFile.ReadUInt16("TransferServer", "count");
+            for (var i = 1; i < count + 1; i++) {
+                var serverline = iniFile.ReadString("TransferServer", "server" + i);
+                var array = serverline.Split(':');
+                var server = new TransferServer.Client.TranServer {
+                    ID = byte.Parse(array[0]),
+                    ip = array[1],
+                    port = int.Parse(array[2]),
+                    servername = array[3]
+                };
+
+                if (!MTA.TransferServer.Client.TranServers.ContainsKey(server.servername))
+                    MTA.TransferServer.Client.TranServers.Add(server.servername, server);
             }
 
-            //Main
-            MainServer = IniFile.ReadString("Transfers", "MainServer", "0") == "1" ? true : false;
-            if (MainServer) {
-                WebServerPort = IniFile.ReadUInt16("Transfers", "Webport");
-                var count = IniFile.ReadUInt16("Transfers", "count");
-                for (int i = 1; i < count + 1; i++) {
-                    var serverline = IniFile.ReadString("Transfers", "server" + i);
-                    var array = serverline.Split(':');
-                    WebServer.Client.TranServer server = new WebServer.Client.TranServer();
-                    server.ip = array[0];
-                    server.servername = array[1];
-                    server.Key = uint.Parse(array[2]);
-                    server.ID = byte.Parse(array[3]);
-                    if (!WebServer.Client.TranServers.ContainsKey(server.ip))
-                        WebServer.Client.TranServers.Add(server.ip, server);
-                }
+            Console.WriteLine(string.Format("TransferServerPort : {0} , ServersCount : {1}", TransferServerPort,
+                count));
+            foreach (var server in MTA.TransferServer.Client.TranServers.Values)
+                Console.WriteLine(string.Format("Server1 :  ID : {0} , IP : {1} , Port : {2}, Name {3} ", server.ID,
+                    server.ip, server.port, server.servername));
+        }
 
-                Console.WriteLine(string.Format("WebServerPort : {0} , ServersCount : {1}", WebServerPort, count));
-                foreach (var server in WebServer.Client.TranServers.Values)
-                    Console.WriteLine(string.Format("Server1 :  IP : {0} , Name : {1} , Key : {2}, ID {3} ", server.ip,
-                        server.servername, server.Key, server.ID));
+        //Main
+        MainServer = iniFile.ReadString("Transfers", "MainServer", "0") == "1";
+        if (MainServer) {
+            WebServerPort = iniFile.ReadUInt16("Transfers", "Webport");
+            var count = iniFile.ReadUInt16("Transfers", "count");
+            for (var i = 1; i < count + 1; i++) {
+                var serverline = iniFile.ReadString("Transfers", "server" + i);
+                var array = serverline.Split(':');
+                var server = new WebServer.Client.TranServer {
+                    ip = array[0],
+                    servername = array[1],
+                    Key = uint.Parse(array[2]),
+                    ID = byte.Parse(array[3])
+                };
+                if (!WebServer.Client.TranServers.ContainsKey(server.ip))
+                    WebServer.Client.TranServers.Add(server.ip, server);
             }
-            else {
-                ServerIP = IniFile.ReadString("Transfer", "IP");
-                ServerGamePort = IniFile.ReadUInt16("Transfer", "GamePort");
-                WebServerPort = IniFile.ReadUInt16("Transfer", "Webport");
-                ServerKey = IniFile.ReadUInt32("Transfer", "Key");
-                ServerTransfer = IniFile.ReadUInt16("Transfer", "Transfer") == 1;
+
+            Console.WriteLine($"WebServerPort : {WebServerPort} , ServersCount : {count}");
+            foreach (var server in WebServer.Client.TranServers.Values)
                 Console.WriteLine(
-                    $"Server IP : {ServerIP}, Game Port {ServerGamePort}, Transfer Port {WebServerPort}, Auth Port : {string.Join(",", AuthPort)}");
-            }
+                    $"Server1 :  IP : {server.ip} , Name : {server.servername} , Key : {server.Key}, ID {server.ID} ");
+        }
+        else {
+            ServerIp = iniFile.ReadString("Transfer", "IP");
+            ServerGamePort = iniFile.ReadUInt16("Transfer", "GamePort");
+            WebServerPort = iniFile.ReadUInt16("Transfer", "Webport");
+            ServerKey = iniFile.ReadUInt32("Transfer", "Key");
+            ServerTransfer = iniFile.ReadUInt16("Transfer", "Transfer") == 1;
+            Console.WriteLine(
+                $"Server IP : {ServerIp}, Game Port {ServerGamePort}, Transfer Port {WebServerPort}, Auth Port : {string.Join(",", AuthPort)}");
+        }
 
-            DataHolder.CreateConnection(
-                IniFile.ReadString("MySql", "Host"),
-                IniFile.ReadString("MySql", "Username"),
-                IniFile.ReadString("MySql", "Password"),
-                IniFile.ReadString("MySql", "Database")
-            );
-            EntityUID = new Counter(0);
-            using (Database.MySqlCommand cmd = new Database.MySqlCommand(MySqlCommandType.SELECT)) {
-                cmd.Select("configuration").Where("Server", Constants.ServerName);
-                using (MySqlReader r = new MySqlReader(cmd)) {
-                    if (r.Read()) {
-                        EntityUID = new Counter(r.ReadUInt32("EntityID"));
-                        Guild.GuildCounter = new Counter(r.ReadUInt32("GuildID"));
-                        // Network.GamePackets.ConquerItem.ItemUID = new MTA.Counter(r.ReadUInt32("ItemUID"));
-                        Constants.ExtraExperienceRate = r.ReadUInt32("ExperienceRate");
-                        Constants.ExtraSpellRate = r.ReadUInt32("ProficiencyExperienceRate");
-                        Constants.ExtraProficiencyRate = r.ReadUInt32("SpellExperienceRate");
-                        Constants.MoneyDropRate = r.ReadUInt32("MoneyDropRate");
-                        Constants.MoneyDropMultiple = r.ReadUInt32("MoneyDropMultiple");
-                        Constants.ConquerPointsDropRate = r.ReadUInt32("ConquerPointsDropRate");
-                        Constants.ConquerPointsDropMultiple = r.ReadUInt32("ConquerPointsDropMultiple");
-                        Constants.ItemDropRate = r.ReadUInt32("ItemDropRate");
-                        Constants.ItemDropQualityRates = r.ReadString("ItemDropQualityString").Split('~');
-                        Constants.WebAccExt = r.ReadString("AccountWebExt");
-                        Constants.WebVoteExt = r.ReadString("VoteWebExt");
-                        Constants.WebDonateExt = r.ReadString("DonateWebExt");
-                        Constants.ServerWebsite = r.ReadString("ServerWebsite");
-                        Constants.ServerGMPass = r.ReadString("ServerGMPass");
-                        PlayerCap = r.ReadInt32("PlayerCap");
-                        MaxOn = r.ReadInt64("MaxOnline");
-                        EntityVariableTable.Load(0, out Vars);
-                    }
+        DataHolder.CreateConnection(
+            iniFile.ReadString("MySql", "Host"),
+            iniFile.ReadString("MySql", "Username"),
+            iniFile.ReadString("MySql", "Password"),
+            iniFile.ReadString("MySql", "Database")
+        );
+        EntityUid = new Counter(0);
+        using (var cmd = new MySqlCommand(MySqlCommandType.SELECT)) {
+            cmd.Select("configuration").Where("Server", ServerName);
+            using (var mySqlReader = new MySqlReader(cmd)) {
+                if (mySqlReader.Read()) {
+                    EntityUid = new Counter(mySqlReader.ReadUInt32("EntityID"));
+                    Guild.GuildCounter = new Counter(mySqlReader.ReadUInt32("GuildID"));
+                    // Network.GamePackets.ConquerItem.ItemUID = new MTA.Counter(r.ReadUInt32("ItemUID"));
+                    ExtraExperienceRate = mySqlReader.ReadUInt32("ExperienceRate");
+                    ExtraSpellRate = mySqlReader.ReadUInt32("ProficiencyExperienceRate");
+                    ExtraProficiencyRate = mySqlReader.ReadUInt32("SpellExperienceRate");
+                    MoneyDropRate = mySqlReader.ReadUInt32("MoneyDropRate");
+                    MoneyDropMultiple = mySqlReader.ReadUInt32("MoneyDropMultiple");
+                    ConquerPointsDropRate = mySqlReader.ReadUInt32("ConquerPointsDropRate");
+                    ConquerPointsDropMultiple = mySqlReader.ReadUInt32("ConquerPointsDropMultiple");
+                    ItemDropRate = mySqlReader.ReadUInt32("ItemDropRate");
+                    ItemDropQualityRates = mySqlReader.ReadString("ItemDropQualityString").Split('~');
+                    WebAccExt = mySqlReader.ReadString("AccountWebExt");
+                    WebVoteExt = mySqlReader.ReadString("VoteWebExt");
+                    WebDonateExt = mySqlReader.ReadString("DonateWebExt");
+                    ServerWebsite = mySqlReader.ReadString("ServerWebsite");
+                    ServerGMPass = mySqlReader.ReadString("ServerGMPass");
+                    PlayerCap = mySqlReader.ReadInt32("PlayerCap");
+                    MaxOn = mySqlReader.ReadInt64("MaxOnline");
+                    EntityVariableTable.Load(0, out Vars);
                 }
             }
+        }
 
-            if (EntityUID.Now == 0) {
-                Console.Clear();
-                Console.WriteLine("Database error. Please check your MySQL. Server will now close.");
-                // Print error
-                Console.WriteLine(EntityUID);
-                Console.ReadLine();
-                return;
-            }
-            else
-                NextItemUID();
+        if (EntityUid.Now == 0) {
+            Console.Clear();
+            Console.WriteLine("Database error. Please check your MySQL. Server will now close.");
+            Console.WriteLine(EntityUid);
+            Console.ReadLine();
+            return;
+        }
 
-            Console.WriteLine("Initializing database.");
-            World = new World();
-            //  World.Init();           
-            ScriptDatabase.LoadSettings();
-            ScriptDatabase.LoadNPCScripts();
-            Console.WriteLine("Checking LastItem UID.");
+        NextItemUid();
 
-            ConquerItemInformation.Load();
-            ConquerItemTable.ClearNulledItems();
+        Console.WriteLine("Initializing database.");
+        World = new World();
+        //  World.Init();           
+        ScriptDatabase.LoadSettings();
+        ScriptDatabase.LoadNPCScripts();
+        Console.WriteLine("Checking LastItem UID.");
+
+        ConquerItemInformation.Load();
+        ConquerItemTable.ClearNulledItems();
+        if (!ServerTransfer) {
+            MonsterInformation.Load();
+            MapsTable.Load();
+            Map.CreateTimerFactories();
+            DMaps.Load();
+            ChampionTable.Load();
+        }
+
+        {
             if (!ServerTransfer) {
-                MonsterInformation.Load();
-                MapsTable.Load();
-                Map.CreateTimerFactories();
-                DMaps.Load();
-                ChampionTable.Load();
+                QuestInfo.Load();
+                GameUpdatess.LoadRates();
+                SpellTable.Load();
+                ShopFile.Load();
+                HonorShop.Load();
+                RacePointShop.Load();
+                ChampionShop.Load();
+                EShopFile.Load();
+                EShopV2File.Load();
+                StorageManager.Load();
+                _ = new Map(2073, DMaps.MapPaths[1015]);
+                _ = new Map(2075, DMaps.MapPaths[2075]);
+                PoleIslanD.PoleIslanDIni(); // PoleIslanD
+                Console.WriteLine("PoleIslanD initializated.");
+                _ = new Map(3990, DMaps.MapPaths[3990]);
+                PoleRakion.PoleRakionIni(); // PoleRakion
+                Console.WriteLine("PoleRakion initializated.");
+                _ = new Map(3995, DMaps.MapPaths[3995]);
+                PoleMagice.PoleMagiceIni(); // PoleRakion
+                Console.WriteLine("PoleMagice initializated.");
+                Kernel.QuizShow = new QuizShow();
+                Refinery.Load();
+                Values = [];
+                _ = new Map(1002, DMaps.MapPaths[1002]);
+                _ = new Map(1038, DMaps.MapPaths[1038]);
+                _ = new Map(2071, DMaps.MapPaths[2071]);
+                _ = new Map(10380, DMaps.MapPaths[10380]);
+                GuildWar.Initiate();
+                SuperGuildWar.Initiate();
+                _ = new Map(1509, DMaps.MapPaths[1509]);
+                _ = new Map(10002, 2021, DMaps.MapPaths[2021]);
+                _ = new Map(8883, 1004, DMaps.MapPaths[1004]);
+                PKFreeMaps.Add(8883);
+                ClanWar.Initiate();
+                Console.WriteLine("Guild war initializated.");
+                EliteGuildWar.EliteGwint();
+                Console.WriteLine("Elite Guild war initializated.");
+                Furniture.Load();
+                House.LoadHouses();
+                PokerTables.LoadTables();
+                Console.WriteLine("Poker [Money + CPs] Tables Loaded.");
+            }
+
+            Flowers.LoadFlowers();
+            DataHolder.ReadStats();
+            IPBan.Load();
+            GhRooms.Execute += GHRooms_Execute;
+            GhRooms.Start();
+            NobilityTable.Load();
+            ArenaTable.Load();
+            TeamArenaTable.Load();
+            GuildTable.Load();
+            guildtop.Load();
+            ChiTable.LoadAllChi();
+            Console.WriteLine("Loading Game Clans.");
+            Clan.LoadClans();
+            Screen.CreateTimerFactories();
+            PerfectionTable.Load();
+            AuthCryptography.PrepareAuthCryptography();
+            Console.WriteLine("Initializing NPC handlers...");
+            NpcHandlerRegistry.Initialize();
+            _ = new Map(700, DMaps.MapPaths[700]);
+            _ = new Map(1730, DMaps.MapPaths[1730]);
+            _ = new Map(2068, DMaps.MapPaths[2068]);
+            if (!ServerTransfer)
+                World.CreateTournaments();
+            World.Init(ServerTransfer);
+            new MySqlCommand(MySqlCommandType.UPDATE).Update("entities").Set("Online", 0).Execute();
+            Console.WriteLine("Initializing sockets.");
+            AuthServer = new ServerSocket[AuthPort.Count];
+            for (var i = 0; i < AuthServer.Length; i++) {
+                AuthServer[i] = new ServerSocket();
+                AuthServer[i].OnClientConnect += AuthServer_OnClientConnect;
+                AuthServer[i].OnClientReceive += AuthServer_OnClientReceive;
+                AuthServer[i].OnClientDisconnect += AuthServer_OnClientDisconnect;
+                AuthServer[i].Enable(AuthPort[i], "0.0.0.0");
+                Console.WriteLine("Auth " + i + " server  online.");
             }
 
             {
-                if (!ServerTransfer) {
-                    QuestInfo.Load();
-                    GameUpdatess.LoadRates();
-                    SpellTable.Load();
-                    ShopFile.Load();
-                    HonorShop.Load();
-                    RacePointShop.Load();
-                    ChampionShop.Load();
-                    EShopFile.Load();
-                    EShopV2File.Load();
-                    StorageManager.Load();
-                    new Map(2073, DMaps.MapPaths[1015]);
-                    new Map(2075, DMaps.MapPaths[2075]);
-                    PoleIslanD.PoleIslanDIni(); // PoleIslanD
-                    Console.WriteLine("PoleIslanD initializated.");
-                    new Map(3990, DMaps.MapPaths[3990]);
-                    PoleRakion.PoleRakionIni(); // PoleRakion
-                    Console.WriteLine("PoleRakion initializated.");
-                    new Map(3995, DMaps.MapPaths[3995]);
-                    PoleMagice.PoleMagiceIni(); // PoleRakion
-                    Console.WriteLine("PoleMagice initializated.");
-                    Kernel.QuizShow = new QuizShow();
-                    Refinery.Load();
-                    Values = new GameState[0];
-                    new Map(1002, DMaps.MapPaths[1002]);
-                    new Map(1038, DMaps.MapPaths[1038]);
-                    new Map(2071, DMaps.MapPaths[2071]);
-                    new Map(10380, DMaps.MapPaths[10380]);
-                    GuildWar.Initiate();
-                    SuperGuildWar.Initiate();
-                    new Map(1509, DMaps.MapPaths[1509]);
-                    new Map(10002, 2021, DMaps.MapPaths[2021]);
-                    new Map(8883, 1004, DMaps.MapPaths[1004]);
-                    Constants.PKFreeMaps.Add(8883);
-                    ClanWar.Initiate();
-                    Console.WriteLine("Guild war initializated.");
-                    EliteGuildWar.EliteGwint();
-                    Console.WriteLine("Elite Guild war initializated.");
-                    Furniture.Load();
-                    House.LoadHouses();
-                    PokerTables.LoadTables();
-                    Console.WriteLine("Poker [Money + CPs] Tables Loaded.");
-                }
-
-                Flowers.LoadFlowers();
-                DataHolder.ReadStats();
-                IPBan.Load();
-                GHRooms.Execute += new Action(GHRooms_Execute);
-                GHRooms.Start();
-                NobilityTable.Load();
-                ArenaTable.Load();
-                TeamArenaTable.Load();
-                GuildTable.Load();
-                guildtop.Load();
-                ChiTable.LoadAllChi();
-                Console.WriteLine("Loading Game Clans.");
-                Clan.LoadClans();
-                Screen.CreateTimerFactories();
-                PerfectionTable.Load();
-                AuthCryptography.PrepareAuthCryptography();
-                Console.WriteLine("Initializing NPC handlers...");
-                NpcHandlerRegistry.Initialize();
-                new Map(700, DMaps.MapPaths[700]);
-                new Map(1730, DMaps.MapPaths[1730]);
-                new Map(2068, DMaps.MapPaths[2068]);
-                if (!ServerTransfer)
-                    World.CreateTournaments();
-                World.Init(ServerTransfer);
-                new Database.MySqlCommand(MySqlCommandType.UPDATE).Update("entities").Set("Online", 0).Execute();
-                Console.WriteLine("Initializing sockets.");
-                AuthServer = new ServerSocket[AuthPort.Count];
-                for (int i = 0; i < AuthServer.Length; i++) {
-                    AuthServer[i] = new ServerSocket();
-                    AuthServer[i].OnClientConnect += AuthServer_OnClientConnect;
-                    AuthServer[i].OnClientReceive += AuthServer_OnClientReceive;
-                    AuthServer[i].OnClientDisconnect += AuthServer_OnClientDisconnect;
-                    AuthServer[i].Enable(AuthPort[i], "0.0.0.0");
-                    Console.WriteLine("Auth " + i + " server  online.");
-                }
-
-                {
-                    GameServer = new ServerSocket();
-                    GameServer.OnClientConnect += GameServer_OnClientConnect;
-                    GameServer.OnClientReceive += GameServer_OnClientReceive;
-                    GameServer.OnClientDisconnect += GameServer_OnClientDisconnect;
-                    GameServer.Enable(GamePort, "0.0.0.0");
-                    Console.WriteLine("Game server online.");
-                    Console.WriteLine("Web server online.");
-                    if (MainServer)
-                        WebServer.Client.Create();
-                    if (TransferServer)
-                        //MTA.TransferServer.Client.Create();
-                        _handler += new EventHandler(Handler);
-                    SetConsoleCtrlHandler(_handler, true);
-                    Pet.CreateTimerFactories();
-                    AI.CreateTimerFactories();
-                    MatrixMob.CreateTimerFactories();
-                    Console.WriteLine("Testing Npcs");
-                    var client = new GameState(null);
-                    client.Entity = new Entity(EntityFlag.Monster, false);
-                    client.Entity.MapID = 1002;
-                    Npcs npc = new Npcs(client);
-                    var req = new NpcRequest();
-                    req.Deserialize(new byte[28]);
-                    Npcs.GetDialog(req, client);
-                    client = null;
-                    new PerfectionScore().GetRankingList();
-                    new PerfectionRank().UpdateRanking();
-                    Console.WriteLine("Loading Booths");
-                    Booths.Load();
-                }
-                Console.WriteLine(
-                    $"Server has been loaded in {(((Time32.Now - Start).Value) / 1000.0):F2} seconds and is now online and ready to accept players.",
-                    ConsoleColor.Green);
-                GC.Collect();
-                WorkConsole();
+                GameServer = new ServerSocket();
+                GameServer.OnClientConnect += GameServer_OnClientConnect;
+                GameServer.OnClientReceive += GameServer_OnClientReceive;
+                GameServer.OnClientDisconnect += GameServer_OnClientDisconnect;
+                GameServer.Enable(GamePort, "0.0.0.0");
+                Console.WriteLine("Game server online.");
+                Console.WriteLine("Web server online.");
+                if (MainServer)
+                    WebServer.Client.Create();
+                if (TransferServer)
+                    //MTA.TransferServer.Client.Create();
+                    _handler += Handler;
+                if (_handler != null) SetConsoleCtrlHandler(_handler, true);
+                Pet.CreateTimerFactories();
+                AI.CreateTimerFactories();
+                MatrixMob.CreateTimerFactories();
+                Console.WriteLine("Testing Npcs");
+                var client = new GameState(null) {
+                    Entity = new Entity(EntityFlag.Monster, false) {
+                        MapID = 1002
+                    }
+                };
+                var req = new NpcRequest();
+                req.Deserialize(new byte[28]);
+                Npcs.GetDialog(req, client);
+                new PerfectionScore().GetRankingList();
+                new PerfectionRank().UpdateRanking();
+                Console.WriteLine("Loading Booths");
+                Booths.Load();
             }
+            Console.WriteLine(
+                $"Server has been loaded in {(Time32.Now - start).Value / 1000.0:F2} seconds and is now online and ready to accept players.",
+                ConsoleColor.Green);
+            GC.Collect();
+            WorkConsole();
         }
+    }
 
-        private static void WorkConsole() {
-            while (true) {
-                try {
-                    CommandsAI(Console.ReadLine());
-                }
-                catch (Exception e) {
-                    Console.WriteLine(e);
-                }
-            }
-        }
-
-        public static void CommandsAI(string command) {
+    /// <summary>
+    /// Intentional infinite loop - server console runs until process termination.
+    /// Continuously reads commands from the console and dispatches them to the command handler.
+    /// </summary>
+    private static void WorkConsole() {
+        while (true)
             try {
-                if (command == null)
-                    return;
-                string[] data = command.Split(' ');
-                switch (data[0]) {
-                    case "@nob": {
-                        NobilityTable.Load();
-                        break;
-                    }
-                    case "@reloadnpc": {
-                        World.ScriptEngine.Check_Updates();
-                        Console.WriteLine("New System's Npc Reloaded.");
-                        break;
-                    }
-                    case "@campion": {
-                        foreach (var client in Kernel.GamePool.Values) {
-                            if (client.ChampionStats.SignedUp)
-                                client.Send(Champion.ChampionKernel.SignUp().BuildPacket());
-                            //   Game.Champion.QualifyEngine.DoSignup(client);
-                        }
+                CommandsAi(Console.ReadLine());
+            }
+            catch (Exception e) {
+                Console.WriteLine(e);
+            }
+        // ReSharper disable once FunctionNeverReturns
+    }
 
-                        break;
-                    }
-                    case "@save": {
-                        Save();
-                    }
-                        break;
-                    case "@exit": {
-                        GameServer.Disable();
-                        for (int i = 0; i < AuthServer.Length; i++) {
-                            AuthServer[i].Disable();
-                        }
+    /// <summary>
+    /// Handles console commands.
+    /// Parses the command, identifies the command type, and executes the appropriate action.
+    /// </summary>
+    /// <param name="command">The command to execute.</param>
+    private static void CommandsAi(string command) {
+        try {
+            var data = command.Split(' ');
+            switch (data[0]) {
+                case "@nob": {
+                    NobilityTable.Load();
+                    break;
+                }
+                case "@reloadnpc": {
+                    World.ScriptEngine.Check_Updates();
+                    Console.WriteLine("New System's Npc Reloaded.");
+                    break;
+                }
+                case "@campion": {
+                    foreach (var client in Kernel.GamePool.Values)
+                        if (client.ChampionStats.SignedUp)
+                            client.Send(Champion.ChampionKernel.SignUp().BuildPacket());
+                    //   Game.Champion.QualifyEngine.DoSignup(client);
+                    break;
+                }
+                case "@save": {
+                    Save();
+                }
+                    break;
+                case "@exit": {
+                    GameServer?.Disable();
+                    if (AuthServer != null)
+                        foreach (var t in AuthServer)
+                            t.Disable();
 
-                        new Database.MySqlCommand(MySqlCommandType.UPDATE).Update("configuration")
-                            .Set("ItemUID", ConquerItem.ItemUID.Now).Where("Server", Constants.ServerName).Execute();
-                        EntityVariableTable.Save(0, Vars);
-                        var WC = Values.ToArray();
-                        // foreach (Client.GameState client in WC)
+                    if (ServerName != null) {
+                        new MySqlCommand(MySqlCommandType.UPDATE).Update("configuration")
+                            .Set("ItemUID", ConquerItem.ItemUID.Now).Where("Server", ServerName).Execute();
+                        if (Vars != null) EntityVariableTable.Save(0, Vars);
                         Parallel.ForEach(Values, client => {
                             client.Send("Server will exit for 5 min to fix some bugs, please be paitent !");
                             client.Disconnect();
@@ -495,1340 +428,1131 @@ namespace MTA {
                         Kernel.SendWorldMessage(
                             new Message(
                                 string.Concat(new object[]
-                                    { "Server will exit for 5 min to fix some bugs, please be paitent" }), Color.Black,
+                                    { "Server will exit for 5 min to fix some bugs, please be paitent" }),
+                                Color.Black,
                                 0x7db), Values);
-                        CommandsAI("@save");
+                        CommandsAi("@save");
 
                         if (GuildWar.IsWar)
                             GuildWar.End();
 
-                        new Database.MySqlCommand(MySqlCommandType.UPDATE).Update("configuration")
-                            .Set("ItemUID", ConquerItem.ItemUID.Now).Where("Server", Constants.ServerName).Execute();
-                        //  new Database.MySqlCommand(Database.MySqlCommandType.UPDATE).Update("configuration").Set("ItemUID", Program._NextItemID).Where("Server", Constants.ServerName).Execute();
-                        Environment.Exit(0);
+                        new MySqlCommand(MySqlCommandType.UPDATE).Update("configuration")
+                            .Set("ItemUID", ConquerItem.ItemUID.Now).Where("Server", ServerName).Execute();
                     }
-                        break;
-                    case "@restart": {
-                        try {
-                            Kernel.SendWorldMessage(
-                                new Message(string.Concat(new object[] { "Server Will Be Restart Now !" }), Color.Black,
-                                    0x7db), Values);
-                            CommandsAI("@save");
-                            new Database.MySqlCommand(MySqlCommandType.UPDATE).Update("configuration")
-                                .Set("ItemUID", ConquerItem.ItemUID.Now).Where("Server", Constants.ServerName)
+                    Environment.Exit(0);
+                }
+                    break;
+                case "@restart": {
+                    try {
+                        Kernel.SendWorldMessage(
+                            new Message(string.Concat(new object[] { "Server Will Be Restart Now !" }), Color.Black,
+                                0x7db), Values);
+                        CommandsAi("@save");
+                        if (ServerName != null) {
+                            new MySqlCommand(MySqlCommandType.UPDATE).Update("configuration")
+                                .Set("ItemUID", ConquerItem.ItemUID.Now).Where("Server", ServerName)
                                 .Execute();
-                            //new Database.MySqlCommand(Database.MySqlCommandType.UPDATE).Update("configuration").Set("ItemUID", Program._NextItemID).Where("Server", Constants.ServerName).Execute();
-
-                            var WC = Values.ToArray();
-                            foreach (GameState client in WC) {
+                            var wc = Values.ToArray();
+                            foreach (var client in wc) {
                                 client.Send("Server Will Be Restart Now !");
                                 client.Disconnect();
                             }
-
-                            GameServer.Disable();
-                            for (int i = 0; i < AuthServer.Length; i++) {
-                                AuthServer[i].Disable();
-                            }
+                            GameServer?.Disable();
+                            if (AuthServer != null)
+                                foreach (var t in AuthServer)
+                                    t.Disable();
 
                             if (GuildWar.IsWar)
                                 GuildWar.End();
-                            new Database.MySqlCommand(MySqlCommandType.UPDATE).Update("configuration")
-                                .Set("ItemUID", ConquerItem.ItemUID.Now).Where("Server", Constants.ServerName)
+                            new MySqlCommand(MySqlCommandType.UPDATE).Update("configuration")
+                                .Set("ItemUID", ConquerItem.ItemUID.Now).Where("Server", ServerName)
                                 .Execute();
-                            Application.Restart();
-                            Environment.Exit(0);
                         }
-                        catch (Exception e) {
-                            Console.WriteLine(e);
-                            Console.ReadLine();
-                        }
+
+                        Application.Restart();
+                        Environment.Exit(0);
                     }
-                        break;
+                    catch (Exception e) {
+                        Console.WriteLine(e);
+                        Console.ReadLine();
+                    }
                 }
-            }
-            catch (Exception e) {
-                Console.WriteLine(e.ToString());
+                    break;
             }
         }
+        catch (Exception e) {
+            Console.WriteLine(e.ToString());
+        }
+    }
 
-        static void GameServer_OnClientReceive(byte[] buffer, int length, ClientWrapper obj) {
-            if (obj.Connector == null) {
-                obj.Disconnect();
+    private static void GameServer_OnClientReceive(byte[] buffer, int length, ClientWrapper obj) {
+        var client = obj.Connector as GameState;
+        if (client is { Exchange: true }) {
+            client.Exchange = false;
+            client.Action = 1;
+            var crypto = new GameCryptography(Encoding.GetBytes(GameCryptographyKey));
+            var otherData = new byte[length];
+            Array.Copy(buffer, otherData, length);
+            crypto.Decrypt(otherData, length);
+
+            var extra = false;
+            var pos = 0;
+            if (BitConverter.ToInt32(otherData, length - 140) == 128) //no extra packet
+            {
+                pos = length - 140;
+                client.Cryptography.Decrypt(buffer, length);
+            }
+            else if (BitConverter.ToInt32(otherData, length - 176) == 128) //extra packet
+            {
+                pos = length - 176;
+                extra = true;
+                client.Cryptography.Decrypt(buffer, length - 36);
+            }
+
+            var len = BitConverter.ToInt32(buffer, pos);
+            pos += 4;
+            if (len != 128) {
+                client.Disconnect();
                 return;
             }
 
-            GameState Client = obj.Connector as GameState;
-            if (Client.Exchange) {
-                Client.Exchange = false;
-                Client.Action = 1;
-                var crypto = new GameCryptography(Encoding.GetBytes(Constants.GameCryptographyKey));
-                byte[] otherData = new byte[length];
-                Array.Copy(buffer, otherData, length);
-                crypto.Decrypt(otherData, length);
+            var pubKey = new byte[128];
+            for (var x = 0; x < len; x++, pos++) pubKey[x] = buffer[pos];
 
-                bool extra = false;
-                int pos = 0;
-                if (BitConverter.ToInt32(otherData, length - 140) == 128) //no extra packet
-                {
-                    pos = length - 140;
-                    Client.Cryptography.Decrypt(buffer, length);
-                }
-                else if (BitConverter.ToInt32(otherData, length - 176) == 128) //extra packet
-                {
-                    pos = length - 176;
-                    extra = true;
-                    Client.Cryptography.Decrypt(buffer, length - 36);
-                }
+            var pubKeyStr = Encoding.GetString(pubKey);
+            client.Cryptography = client.DHKeyExchange.HandleClientKeyPacket(pubKeyStr, client.Cryptography);
 
-                int len = BitConverter.ToInt32(buffer, pos);
-                pos += 4;
-                if (len != 128) {
-                    Client.Disconnect();
-                    return;
-                }
-
-                byte[] pubKey = new byte[128];
-                for (int x = 0; x < len; x++, pos++) pubKey[x] = buffer[pos];
-
-                string PubKey = Encoding.GetString(pubKey);
-                Client.Cryptography = Client.DHKeyExchange.HandleClientKeyPacket(PubKey, Client.Cryptography);
-
-                if (extra) {
-                    byte[] data = new byte[36];
-                    Buffer.BlockCopy(buffer, length - 36, data, 0, 36);
-                    processData(data, 36, Client);
-                }
-            }
-            else {
-                processData(buffer, length, Client);
+            if (extra) {
+                var data = new byte[36];
+                Buffer.BlockCopy(buffer, length - 36, data, 0, 36);
+                ProcessData(data, 36, client);
             }
         }
+        else {
+            if (client != null) ProcessData(buffer, length, client);
+        }
+    }
 
-        private static void processData(byte[] buffer, int length, GameState Client) {
-            Client.Cryptography.Decrypt(buffer, length);
-            Client.Queue.Enqueue(buffer, length);
-            while (Client.Queue.CanDequeue()) {
-                byte[] data = Client.Queue.Dequeue();
-                Task.Factory.StartNew(() => PacketHandler.HandlePacket(data, Client));
+    private static void ProcessData(byte[] buffer, int length, GameState client) {
+        client.Cryptography.Decrypt(buffer, length);
+        client.Queue.Enqueue(buffer, length);
+        while (client.Queue.CanDequeue()) {
+            var data = client.Queue.Dequeue();
+            Task.Factory.StartNew(() => PacketHandler.HandlePacket(data, client));
+        }
+    }
+
+    private static void GameServer_OnClientConnect(ClientWrapper obj) {
+        var client = new GameState(obj);
+        client.Send(client.DHKeyExchange.CreateServerKeyPacket());
+        obj.Connector = client;
+    }
+
+    private static void GameServer_OnClientDisconnect(ClientWrapper obj) {
+        (obj.Connector as GameState)?.Disconnect();
+    }
+
+    private static void GHRooms_Execute() {
+        #region Rooms FBandSS
+
+        #region Room1
+
+        if (!Room1) {
+            var entered1 = 0;
+            foreach (var player in Kernel.GamePool.Values) {
+                if (player.Entity is { MapID: 1543, Dead: false })
+                    entered1++;
             }
-        }
 
-        static void GameServer_OnClientConnect(ClientWrapper obj) {
-            GameState client = new GameState(obj);
-            client.Send(client.DHKeyExchange.CreateServerKeyPacket());
-            obj.Connector = client;
-        }
-
-        static void GameServer_OnClientDisconnect(ClientWrapper obj) {
-            if (obj.Connector != null)
-                (obj.Connector as GameState).Disconnect();
-            else
-                obj.Disconnect();
-        }
-
-        static void GHRooms_Execute() {
-            #region Rooms FBandSS
-
-            #region Room1
-
-            if (Room1 == false) {
-                int entered1 = 0;
-                foreach (GameState Player in Kernel.GamePool.Values) {
-                    if (Player.Entity.MapID == 1543 && (!Player.Entity.Dead)) {
-                        entered1++;
-                    }
-                }
-
-                if (entered1 > 1) {
+            switch (entered1) {
+                case > 1:
                     Room1 = true;
-                }
-                else if (entered1 == 1) {
-                    foreach (GameState Player in Kernel.GamePool.Values) {
-                        if (Player.Entity.MapID == 1543 && (!Player.Entity.Dead)) {
-                            if (Time32.Now > Player.Entity.WaitingTimeFB.AddSeconds(20)) {
-                                Player.Entity.ConquerPoints += Room1Price;
+                    break;
+                case 1: {
+                    foreach (var player in Kernel.GamePool.Values)
+                        if (player.Entity is { MapID: 1543, Dead: false })
+                            if (Time32.Now > player.Entity.WaitingTimeFB.AddSeconds(20)) {
+                                player.Entity.ConquerPoints += Room1Price;
                                 Room1Price = 0;
-                                Player.Entity.Teleport(1002, 311, 290);
+                                player.Entity.Teleport(1002, 311, 290);
                             }
-                        }
-                    }
+
+                    break;
                 }
             }
-            else {
-                int alive1 = 0;
-                foreach (GameState Player in Kernel.GamePool.Values) {
-                    if (Player.Entity.MapID == 1543 && (!Player.Entity.Dead)) {
-                        alive1++;
-                    }
-                }
+        }
+        else {
+            var alive1 = Kernel.GamePool.Values.Count(player => player.Entity is { MapID: 1543, Dead: false });
 
-                if (alive1 == 1) {
-                    foreach (GameState Player in Kernel.GamePool.Values) {
-                        if (Player.Entity.MapID == 1543) {
-                            if (!Player.Entity.Dead) //winner 
-                            {
-                                Player.Entity.ConquerPoints += Room1Price * 2;
-                                Player.Entity.WaitingTimeFB = Time32.Now;
-                                Room1 = false;
-                                Kernel.SendWorldMessage(
-                                    new Message(
-                                        string.Concat(new object[] {
-                                            "Congratulations! ", Player.Entity.Name, " has won ", Room1Price * 2,
-                                            "  CPs FB/SS in Room 1."
-                                        }), Color.Black, 0x7db), Values);
-                                Room1Price = 0;
-                                _String str = new _String(true) {
-                                    UID = Player.Entity.UID,
-                                    TextsCount = 1,
-                                    Type = 10
-                                };
-                                str.Texts.Add("sports_victory");
-                                Player.SendScreen(str, true);
-                                Player.Entity.WinnerWaiting = Time32.Now;
-                                Player.Entity.aWinner = true;
-                            }
-                            else //loser 
-                            {
-                                Player.Entity.Teleport(1002, 311, 290);
+            if (alive1 == 1)
+                foreach (var player in Kernel.GamePool.Values)
+                    if (player.Entity.MapID == 1543) {
+                        if (!player.Entity.Dead) //winner 
+                        {
+                            player.Entity.ConquerPoints += Room1Price * 2;
+                            player.Entity.WaitingTimeFB = Time32.Now;
+                            Room1 = false;
+                            Kernel.SendWorldMessage(
+                                new Message(
+                                    string.Concat(new object[] {
+                                        "Congratulations! ", player.Entity.Name, " has won ", Room1Price * 2,
+                                        "  CPs FB/SS in Room 1."
+                                    }), Color.Black, 0x7db), Values);
+                            Room1Price = 0;
+                            var str = new _String(true) {
+                                UID = player.Entity.UID,
+                                TextsCount = 1,
+                                Type = 10
+                            };
+                            str.Texts.Add("sports_victory");
+                            player.SendScreen(str);
+                            player.Entity.WinnerWaiting = Time32.Now;
+                            player.Entity.aWinner = true;
+                        }
+                        else //loser 
+                        {
+                            player.Entity.Teleport(1002, 311, 290);
 
-                                _String str = new _String(true) {
-                                    UID = Player.Entity.UID,
-                                    TextsCount = 1,
-                                    Type = 10
-                                };
-                                str.Texts.Add("sports_failure");
-                                Player.SendScreen(str, true);
-                                Player.Entity.Action = Enums.ConquerAction.None;
-                                Player.ReviveStamp = Time32.Now;
-                                Player.Attackable = false;
+                            var str = new _String(true) {
+                                UID = player.Entity.UID,
+                                TextsCount = 1,
+                                Type = 10
+                            };
+                            str.Texts.Add("sports_failure");
+                            player.SendScreen(str);
+                            player.Entity.Action = Enums.ConquerAction.None;
+                            player.ReviveStamp = Time32.Now;
+                            player.Attackable = false;
 
-                                Player.Entity.TransformationID = 0;
-                                Player.Entity.RemoveFlag(Update.Flags.Dead);
-                                Player.Entity.RemoveFlag(Update.Flags.Ghost);
-                                Player.Entity.Hitpoints = Player.Entity.MaxHitpoints;
+                            player.Entity.TransformationID = 0;
+                            player.Entity.RemoveFlag(Update.Flags.Dead);
+                            player.Entity.RemoveFlag(Update.Flags.Ghost);
+                            player.Entity.Hitpoints = player.Entity.MaxHitpoints;
 
-                                Player.Entity.Ressurect();
-                            }
+                            player.Entity.Ressurect();
                         }
                     }
-                }
-            }
-
-            #endregion
-
-            #region Room2
-
-            if (Room2 == false) {
-                int entered2 = 0;
-                foreach (GameState Player in Kernel.GamePool.Values) {
-                    if (Player.Entity.MapID == 1544 && (!Player.Entity.Dead)) {
-                        entered2++;
-                    }
-                }
-
-                if (entered2 > 1) {
-                    Room2 = true;
-                }
-                else if (entered2 == 1) {
-                    foreach (GameState Player in Kernel.GamePool.Values) {
-                        if (Player.Entity.MapID == 1544 && (!Player.Entity.Dead)) {
-                            if (Time32.Now > Player.Entity.WaitingTimeFB.AddSeconds(20)) {
-                                Player.Entity.ConquerPoints += Room2Price;
-                                Room2Price = 0;
-                                Player.Entity.Teleport(1002, 311, 290);
-                            }
-                        }
-                    }
-                }
-            }
-            else {
-                int alive2 = 0;
-                foreach (GameState Player in Kernel.GamePool.Values) {
-                    if (Player.Entity.MapID == 1544 && (!Player.Entity.Dead)) {
-                        alive2++;
-                    }
-                }
-
-                if (alive2 == 1) {
-                    foreach (GameState Player in Kernel.GamePool.Values) {
-                        if (Player.Entity.MapID == 1544) {
-                            if (!Player.Entity.Dead) //winner 
-                            {
-                                Player.Entity.ConquerPoints += Room2Price * 2;
-                                Player.Entity.WaitingTimeFB = Time32.Now;
-                                Room2 = false;
-                                Kernel.SendWorldMessage(
-                                    new Message(
-                                        string.Concat(new object[] {
-                                            "Congratulations! ", Player.Entity.Name, " has won ", Room2Price * 2,
-                                            "  CPs FB/SS in Room 2."
-                                        }), Color.Black, 0x7db), Values);
-                                Room2Price = 0;
-                                _String str = new _String(true) {
-                                    UID = Player.Entity.UID,
-                                    TextsCount = 1,
-                                    Type = 10
-                                };
-                                str.Texts.Add("sports_victory");
-                                Player.SendScreen(str, true);
-                                Player.Entity.WinnerWaiting = Time32.Now;
-                                Player.Entity.aWinner = true;
-                            }
-                            else //loser 
-                            {
-                                Player.Entity.Teleport(1002, 311, 290);
-                                _String str = new _String(true) {
-                                    UID = Player.Entity.UID,
-                                    TextsCount = 1,
-                                    Type = 10
-                                };
-                                str.Texts.Add("sports_failure");
-                                Player.SendScreen(str, true);
-                                Player.Entity.Action = Enums.ConquerAction.None;
-                                Player.ReviveStamp = Time32.Now;
-                                Player.Attackable = false;
-
-                                Player.Entity.TransformationID = 0;
-                                Player.Entity.RemoveFlag(Update.Flags.Dead);
-                                Player.Entity.RemoveFlag(Update.Flags.Ghost);
-                                Player.Entity.Hitpoints = Player.Entity.MaxHitpoints;
-
-                                Player.Entity.Ressurect();
-                            }
-                        }
-                    }
-                }
-            }
-
-            #endregion
-
-            #region Room3
-
-            if (Room3 == false) {
-                int entered3 = 0;
-                foreach (GameState Player in Kernel.GamePool.Values) {
-                    if (Player.Entity.MapID == 1545 && (!Player.Entity.Dead)) {
-                        entered3++;
-                    }
-                }
-
-                if (entered3 > 1) {
-                    Room3 = true;
-                }
-                else if (entered3 == 1) {
-                    foreach (GameState Player in Kernel.GamePool.Values) {
-                        if (Player.Entity.MapID == 1545 && (!Player.Entity.Dead)) {
-                            if (Time32.Now > Player.Entity.WaitingTimeFB.AddSeconds(20)) {
-                                Player.Entity.ConquerPoints += Room3Price;
-                                Room3Price = 0;
-                                Player.Entity.Teleport(1002, 299, 281);
-                            }
-                        }
-                    }
-                }
-            }
-            else {
-                int alive3 = 0;
-                foreach (GameState Player in Kernel.GamePool.Values) {
-                    if (Player.Entity.MapID == 1545 && (!Player.Entity.Dead)) {
-                        alive3++;
-                    }
-                }
-
-                if (alive3 == 1) {
-                    foreach (GameState Player in Kernel.GamePool.Values) {
-                        if (Player.Entity.MapID == 1545) {
-                            if (!Player.Entity.Dead) //winner 
-                            {
-                                Player.Entity.ConquerPoints += Room3Price * 2;
-                                Player.Entity.WaitingTimeFB = Time32.Now;
-                                Room3 = false;
-                                Kernel.SendWorldMessage(
-                                    new Message(
-                                        string.Concat(new object[] {
-                                            "Congratulations! ", Player.Entity.Name, " has won ", Room3Price * 2,
-                                            "  CPs FB/SS in Room 3."
-                                        }), Color.Black, 0x7db), Values);
-                                Room3Price = 0;
-                                _String str = new _String(true) {
-                                    UID = Player.Entity.UID,
-                                    TextsCount = 1,
-                                    Type = 10
-                                };
-                                str.Texts.Add("sports_victory");
-                                Player.SendScreen(str, true);
-                                Player.Entity.WinnerWaiting = Time32.Now;
-                                Player.Entity.aWinner = true;
-                            }
-                            else //loser 
-                            {
-                                Player.Entity.Teleport(1002, 311, 290);
-                                _String str = new _String(true) {
-                                    UID = Player.Entity.UID,
-                                    TextsCount = 1,
-                                    Type = 10
-                                };
-                                str.Texts.Add("sports_failure");
-                                Player.SendScreen(str, true);
-                                Player.Entity.Action = Enums.ConquerAction.None;
-                                Player.ReviveStamp = Time32.Now;
-                                Player.Attackable = false;
-
-                                Player.Entity.TransformationID = 0;
-                                Player.Entity.RemoveFlag(Update.Flags.Dead);
-                                Player.Entity.RemoveFlag(Update.Flags.Ghost);
-                                Player.Entity.Hitpoints = Player.Entity.MaxHitpoints;
-
-                                Player.Entity.Ressurect();
-                            }
-                        }
-                    }
-                }
-            }
-
-            #endregion
-
-            #region Room4
-
-            if (Room4 == false) {
-                int entered4 = 0;
-                foreach (GameState Player in Kernel.GamePool.Values) {
-                    if (Player.Entity.MapID == 1546 && (!Player.Entity.Dead)) {
-                        entered4++;
-                    }
-                }
-
-                if (entered4 > 1) {
-                    Room4 = true;
-                }
-                else if (entered4 == 1) {
-                    foreach (GameState Player in Kernel.GamePool.Values) {
-                        if (Player.Entity.MapID == 1546 && (!Player.Entity.Dead)) {
-                            if (Time32.Now > Player.Entity.WaitingTimeFB.AddSeconds(20)) {
-                                Player.Entity.ConquerPoints += Room4Price;
-                                Room4Price = 0;
-                                Player.Entity.Teleport(1002, 311, 290);
-                            }
-                        }
-                    }
-                }
-            }
-            else {
-                int alive4 = 0;
-                foreach (GameState Player in Kernel.GamePool.Values) {
-                    if (Player.Entity.MapID == 1546 && (!Player.Entity.Dead)) {
-                        alive4++;
-                    }
-                }
-
-                if (alive4 == 1) {
-                    foreach (GameState Player in Kernel.GamePool.Values) {
-                        if (Player.Entity.MapID == 1546) {
-                            if (!Player.Entity.Dead) //winner 
-                            {
-                                Player.Entity.ConquerPoints += Room4Price * 2;
-                                Player.Entity.WaitingTimeFB = Time32.Now;
-                                Room4 = false;
-                                Kernel.SendWorldMessage(
-                                    new Message(
-                                        string.Concat(new object[] {
-                                            "Congratulations! ", Player.Entity.Name, " has won ", Room4Price * 2,
-                                            "  CPs FB/SS in Room 4."
-                                        }), Color.Black, 0x7db), Values);
-                                Room4Price = 0;
-                                _String str = new _String(true) {
-                                    UID = Player.Entity.UID,
-                                    TextsCount = 1,
-                                    Type = 10
-                                };
-                                str.Texts.Add("sports_victory");
-                                Player.SendScreen(str, true);
-                                Player.Entity.WinnerWaiting = Time32.Now;
-                                Player.Entity.aWinner = true;
-                            }
-                            else //loser 
-                            {
-                                Player.Entity.Teleport(1002, 311, 290);
-                                _String str = new _String(true) {
-                                    UID = Player.Entity.UID,
-                                    TextsCount = 1,
-                                    Type = 10
-                                };
-                                str.Texts.Add("sports_failure");
-                                Player.SendScreen(str, true);
-                                Player.Entity.Action = Enums.ConquerAction.None;
-                                Player.ReviveStamp = Time32.Now;
-                                Player.Attackable = false;
-
-                                Player.Entity.TransformationID = 0;
-                                Player.Entity.RemoveFlag(Update.Flags.Dead);
-                                Player.Entity.RemoveFlag(Update.Flags.Ghost);
-                                Player.Entity.Hitpoints = Player.Entity.MaxHitpoints;
-
-                                Player.Entity.Ressurect();
-                            }
-                        }
-                    }
-                }
-            }
-
-            #endregion
-
-            #region Room5
-
-            if (Room5 == false) {
-                int entered5 = 0;
-                foreach (GameState Player in Kernel.GamePool.Values) {
-                    if (Player.Entity.MapID == 1547 && (!Player.Entity.Dead)) {
-                        entered5++;
-                    }
-                }
-
-                if (entered5 > 1) {
-                    Room5 = true;
-                }
-                else if (entered5 == 1) {
-                    foreach (GameState Player in Kernel.GamePool.Values) {
-                        if (Player.Entity.MapID == 1547 && (!Player.Entity.Dead)) {
-                            if (Time32.Now > Player.Entity.WaitingTimeFB.AddSeconds(20)) {
-                                Player.Entity.ConquerPoints += Room5Price;
-                                Room5Price = 0;
-                                Player.Entity.Teleport(1002, 311, 290);
-                            }
-                        }
-                    }
-                }
-            }
-            else {
-                int alive5 = 0;
-                foreach (GameState Player in Kernel.GamePool.Values) {
-                    if (Player.Entity.MapID == 1547 && (!Player.Entity.Dead)) {
-                        alive5++;
-                    }
-                }
-
-                if (alive5 == 1) {
-                    foreach (GameState Player in Kernel.GamePool.Values) {
-                        if (Player.Entity.MapID == 1547) {
-                            if (!Player.Entity.Dead) //winner 
-                            {
-                                Player.Entity.ConquerPoints += Room5Price * 2;
-                                Player.Entity.WaitingTimeFB = Time32.Now;
-                                Room5 = false;
-                                Kernel.SendWorldMessage(
-                                    new Message(
-                                        string.Concat(new object[] {
-                                            "Congratulations! ", Player.Entity.Name, " has won ", Room5Price * 2,
-                                            "  CPs FB/SS in Room 5."
-                                        }), Color.Black, 0x7db), Values);
-                                Room5Price = 0;
-                                _String str = new _String(true) {
-                                    UID = Player.Entity.UID,
-                                    TextsCount = 1,
-                                    Type = 10
-                                };
-                                str.Texts.Add("sports_victory");
-                                Player.SendScreen(str, true);
-                                Player.Entity.WinnerWaiting = Time32.Now;
-                                Player.Entity.aWinner = true;
-                            }
-                            else //loser 
-                            {
-                                Player.Entity.Teleport(1002, 311, 290);
-                                _String str = new _String(true) {
-                                    UID = Player.Entity.UID,
-                                    TextsCount = 1,
-                                    Type = 10
-                                };
-                                str.Texts.Add("sports_failure");
-                                Player.SendScreen(str, true);
-                                Player.Entity.Action = Enums.ConquerAction.None;
-                                Player.ReviveStamp = Time32.Now;
-                                Player.Attackable = false;
-
-                                Player.Entity.TransformationID = 0;
-                                Player.Entity.RemoveFlag(Update.Flags.Dead);
-                                Player.Entity.RemoveFlag(Update.Flags.Ghost);
-                                Player.Entity.Hitpoints = Player.Entity.MaxHitpoints;
-
-                                Player.Entity.Ressurect();
-                            }
-                        }
-                    }
-                }
-            }
-
-            #endregion
-
-            #region Room6
-
-            if (Room6 == false) {
-                int entered6 = 0;
-                foreach (GameState Player in Kernel.GamePool.Values) {
-                    if (Player.Entity.MapID == 1548 && (!Player.Entity.Dead)) {
-                        entered6++;
-                    }
-                }
-
-                if (entered6 > 1) {
-                    Room6 = true;
-                }
-                else if (entered6 == 1) {
-                    foreach (GameState Player in Kernel.GamePool.Values) {
-                        if (Player.Entity.MapID == 1548 && (!Player.Entity.Dead)) {
-                            if (Time32.Now > Player.Entity.WaitingTimeFB.AddSeconds(20)) {
-                                Player.Entity.ConquerPoints += Room6Price;
-                                Room6Price = 0;
-                                Player.Entity.Teleport(1002, 311, 290);
-                            }
-                        }
-                    }
-                }
-            }
-            else {
-                int alive6 = 0;
-                foreach (GameState Player in Kernel.GamePool.Values) {
-                    if (Player.Entity.MapID == 1548 && (!Player.Entity.Dead)) {
-                        alive6++;
-                    }
-                }
-
-                if (alive6 == 1) {
-                    foreach (GameState Player in Kernel.GamePool.Values) {
-                        if (Player.Entity.MapID == 1548) {
-                            if (!Player.Entity.Dead) //winner 
-                            {
-                                Player.Entity.ConquerPoints += Room6Price * 2;
-                                Player.Entity.WaitingTimeFB = Time32.Now;
-                                Room6 = false;
-                                Kernel.SendWorldMessage(
-                                    new Message(
-                                        string.Concat(new object[] {
-                                            "Congratulations! ", Player.Entity.Name, " has won ", Room6Price * 2,
-                                            "  CPs FB/SS in Room 6."
-                                        }), Color.White, 0x7db), Values);
-                                Room6Price = 0;
-                                _String str = new _String(true) {
-                                    UID = Player.Entity.UID,
-                                    TextsCount = 1,
-                                    Type = 10
-                                };
-                                str.Texts.Add("sports_victory");
-                                Player.SendScreen(str, true);
-                                Player.Entity.WinnerWaiting = Time32.Now;
-                                Player.Entity.aWinner = true;
-                            }
-                            else //loser 
-                            {
-                                Player.Entity.Teleport(1002, 311, 290);
-                                _String str = new _String(true) {
-                                    UID = Player.Entity.UID,
-                                    TextsCount = 1,
-                                    Type = 10
-                                };
-                                str.Texts.Add("sports_failure");
-                                Player.SendScreen(str, true);
-                                Player.Entity.Action = Enums.ConquerAction.None;
-                                Player.ReviveStamp = Time32.Now;
-                                Player.Attackable = false;
-
-                                Player.Entity.TransformationID = 0;
-                                Player.Entity.RemoveFlag(Update.Flags.Dead);
-                                Player.Entity.RemoveFlag(Update.Flags.Ghost);
-                                Player.Entity.Hitpoints = Player.Entity.MaxHitpoints;
-
-                                Player.Entity.Ressurect();
-                            }
-                        }
-                    }
-                }
-            }
-
-            #endregion
-
-            #endregion
         }
 
-        static void AuthServer_OnClientReceive(byte[] buffer, int length, ClientWrapper arg3) {
-            var player = arg3.Connector as AuthClient;
+        #endregion
 
-            player.Cryptographer.Decrypt(buffer, length);
+        #region Room2
 
-            player.Queue.Enqueue(buffer, length);
-            while (player.Queue.CanDequeue()) {
-                byte[] packet = player.Queue.Dequeue();
+        if (!Room2) {
+            var entered2 = Kernel.GamePool.Values.Count(player => player.Entity is { MapID: 1544, Dead: false });
 
-                ushort len = BitConverter.ToUInt16(packet, 0);
-                ushort id = BitConverter.ToUInt16(packet, 2);
-                if (len == 312) {
-                    player.Info = new Authentication();
-                    player.Info.Deserialize(packet);
-                    string accounts = "accounts";
-
-                    player.Account = new AccountTable(player.Info.Username, accounts);
-                    msvcrt.msvcrt.srand(player.PasswordSeed);
-
-                    Forward Fw = new Forward();
-                    Console.WriteLine("[LOGIN] Username: " + player.Info.Username + ", Password: " +
-                                      player.Info.Password);
-                    if (player.Info.Password == player.Account.Password && player.Account.exists)
-                        Fw.Type = Forward.ForwardType.Ready;
-                    else
-                        Fw.Type = Forward.ForwardType.InvalidInfo;
-
-                    if (IPBan.IsBanned(arg3.IP)) {
-                        Fw.Type = Forward.ForwardType.Banned;
-                        player.Send(Fw);
-                        return;
-                    }
-
-                    if (!MainServer) {
-                        if (ServerTransfer && (Kernel.TransferdPlayers.Contains(player.Account.EntityID)) ||
-                            GameServer == null) {
-                            if (Fw.Type == Forward.ForwardType.Ready) {
-                                var fClient = new GameState(null);
-                                fClient.Fake = false;
-                                fClient.FakeLoad(player.Account.EntityID, false);
-                                fClient.Account = player.Account;
-                                if (fClient.FakeLoaded) {
-                                    if (Transfer(fClient)) {
-                                        // if (Program.World.DelayedTask == null)
-                                        //     Program.World.DelayedTask = new MaTrix.DelayedTask();
-                                        // Program.World.DelayedTask.StartDelayedTask(() =>
-                                        // {
-                                        Fw.Identifier = (uint)(player.Account.EntityID + ServerKey);
-                                        Fw.IP = ServerIP;
-                                        Fw.Port = ServerGamePort;
-                                        player.Send(Fw);
-                                        if (Kernel.TransferdPlayers.Contains(player.Account.EntityID))
-                                            Kernel.TransferdPlayers.Remove(player.Account.EntityID);
-                                        Console.WriteLine("[" + (player.Account.EntityID + ServerKey) + "] " +
-                                                          player.Account.Username + " has been redirected to " +
-                                                          ServerIP + " : " + ServerGamePort + " .");
-                                        // }, 100);
-
-                                        return;
-                                    }
-                                    else {
-                                        Fw.Type = (Forward.ForwardType)56;
-                                    }
-                                }
-                                else {
-                                    Fw.Type = (Forward.ForwardType)56;
-                                }
+            switch (entered2) {
+                case > 1:
+                    Room2 = true;
+                    break;
+                case 1: {
+                    foreach (var player in Kernel.GamePool.Values)
+                        if (player.Entity is { MapID: 1544, Dead: false })
+                            if (Time32.Now > player.Entity.WaitingTimeFB.AddSeconds(20)) {
+                                player.Entity.ConquerPoints += Room2Price;
+                                Room2Price = 0;
+                                player.Entity.Teleport(1002, 311, 290);
                             }
+
+                    break;
+                }
+            }
+        }
+        else {
+            var alive2 = 0;
+            foreach (var player in Kernel.GamePool.Values)
+                if (player.Entity is { MapID: 1544, Dead: false })
+                    alive2++;
+
+            if (alive2 == 1)
+                foreach (var player in Kernel.GamePool.Values)
+                    if (player.Entity.MapID == 1544) {
+                        if (!player.Entity.Dead) //winner 
+                        {
+                            player.Entity.ConquerPoints += Room2Price * 2;
+                            player.Entity.WaitingTimeFB = Time32.Now;
+                            Room2 = false;
+                            Kernel.SendWorldMessage(
+                                new Message(
+                                    string.Concat(new object[] {
+                                        "Congratulations! ", player.Entity.Name, " has won ", Room2Price * 2,
+                                        "  CPs FB/SS in Room 2."
+                                    }), Color.Black, 0x7db), Values);
+                            Room2Price = 0;
+                            var str = new _String(true) {
+                                UID = player.Entity.UID,
+                                TextsCount = 1,
+                                Type = 10
+                            };
+                            str.Texts.Add("sports_victory");
+                            player.SendScreen(str);
+                            player.Entity.WinnerWaiting = Time32.Now;
+                            player.Entity.aWinner = true;
+                        }
+                        else //loser 
+                        {
+                            player.Entity.Teleport(1002, 311, 290);
+                            var str = new _String(true) {
+                                UID = player.Entity.UID,
+                                TextsCount = 1,
+                                Type = 10
+                            };
+                            str.Texts.Add("sports_failure");
+                            player.SendScreen(str);
+                            player.Entity.Action = Enums.ConquerAction.None;
+                            player.ReviveStamp = Time32.Now;
+                            player.Attackable = false;
+
+                            player.Entity.TransformationID = 0;
+                            player.Entity.RemoveFlag(Update.Flags.Dead);
+                            player.Entity.RemoveFlag(Update.Flags.Ghost);
+                            player.Entity.Hitpoints = player.Entity.MaxHitpoints;
+
+                            player.Entity.Ressurect();
+                        }
+                    }
+        }
+
+        #endregion
+
+        #region Room3
+
+        if (!Room3) {
+            var entered3 = 0;
+            foreach (var player in Kernel.GamePool.Values)
+                if (player.Entity is { MapID: 1545, Dead: false })
+                    entered3++;
+
+            if (entered3 > 1)
+                Room3 = true;
+            else if (entered3 == 1)
+                foreach (var player in Kernel.GamePool.Values)
+                    if (player.Entity is { MapID: 1545, Dead: false })
+                        if (Time32.Now > player.Entity.WaitingTimeFB.AddSeconds(20)) {
+                            player.Entity.ConquerPoints += Room3Price;
+                            Room3Price = 0;
+                            player.Entity.Teleport(1002, 299, 281);
+                        }
+        }
+        else {
+            var alive3 = 0;
+            foreach (var player in Kernel.GamePool.Values) {
+                if (player.Entity is { MapID: 1545, Dead: false })
+                    alive3++;
+            }
+
+            if (alive3 == 1)
+                foreach (var player in Kernel.GamePool.Values)
+                    if (player.Entity.MapID == 1545) {
+                        if (!player.Entity.Dead) //winner 
+                        {
+                            player.Entity.ConquerPoints += Room3Price * 2;
+                            player.Entity.WaitingTimeFB = Time32.Now;
+                            Room3 = false;
+                            Kernel.SendWorldMessage(
+                                new Message(
+                                    string.Concat(new object[] {
+                                        "Congratulations! ", player.Entity.Name, " has won ", Room3Price * 2,
+                                        "  CPs FB/SS in Room 3."
+                                    }), Color.Black, 0x7db), Values);
+                            Room3Price = 0;
+                            var str = new _String(true) {
+                                UID = player.Entity.UID,
+                                TextsCount = 1,
+                                Type = 10
+                            };
+                            str.Texts.Add("sports_victory");
+                            player.SendScreen(str);
+                            player.Entity.WinnerWaiting = Time32.Now;
+                            player.Entity.aWinner = true;
+                        }
+                        else //loser 
+                        {
+                            player.Entity.Teleport(1002, 311, 290);
+                            var str = new _String(true) {
+                                UID = player.Entity.UID,
+                                TextsCount = 1,
+                                Type = 10
+                            };
+                            str.Texts.Add("sports_failure");
+                            player.SendScreen(str);
+                            player.Entity.Action = Enums.ConquerAction.None;
+                            player.ReviveStamp = Time32.Now;
+                            player.Attackable = false;
+
+                            player.Entity.TransformationID = 0;
+                            player.Entity.RemoveFlag(Update.Flags.Dead);
+                            player.Entity.RemoveFlag(Update.Flags.Ghost);
+                            player.Entity.Hitpoints = player.Entity.MaxHitpoints;
+
+                            player.Entity.Ressurect();
+                        }
+                    }
+        }
+
+        #endregion
+
+        #region Room4
+
+        if (!Room4) {
+            var entered4 = Kernel.GamePool.Values.Count(player => player.Entity is { MapID: 1546, Dead: false });
+
+            switch (entered4) {
+                case > 1:
+                    Room4 = true;
+                    break;
+                case 1: {
+                    foreach (var player in Kernel.GamePool.Values)
+                        if (player.Entity is { MapID: 1546, Dead: false })
+                            if (Time32.Now > player.Entity.WaitingTimeFB.AddSeconds(20)) {
+                                player.Entity.ConquerPoints += Room4Price;
+                                Room4Price = 0;
+                                player.Entity.Teleport(1002, 311, 290);
+                            }
+
+                    break;
+                }
+            }
+        }
+        else {
+            var alive4 = 0;
+            foreach (var player in Kernel.GamePool.Values)
+                if (player.Entity is { MapID: 1546, Dead: false })
+                    alive4++;
+
+            if (alive4 == 1)
+                foreach (var player in Kernel.GamePool.Values)
+                    if (player.Entity.MapID == 1546) {
+                        if (!player.Entity.Dead) //winner 
+                        {
+                            player.Entity.ConquerPoints += Room4Price * 2;
+                            player.Entity.WaitingTimeFB = Time32.Now;
+                            Room4 = false;
+                            Kernel.SendWorldMessage(
+                                new Message(
+                                    string.Concat(new object[] {
+                                        "Congratulations! ", player.Entity.Name, " has won ", Room4Price * 2,
+                                        "  CPs FB/SS in Room 4."
+                                    }), Color.Black, 0x7db), Values);
+                            Room4Price = 0;
+                            var str = new _String(true) {
+                                UID = player.Entity.UID,
+                                TextsCount = 1,
+                                Type = 10
+                            };
+                            str.Texts.Add("sports_victory");
+                            player.SendScreen(str);
+                            player.Entity.WinnerWaiting = Time32.Now;
+                            player.Entity.aWinner = true;
+                        }
+                        else //loser 
+                        {
+                            player.Entity.Teleport(1002, 311, 290);
+                            var str = new _String(true) {
+                                UID = player.Entity.UID,
+                                TextsCount = 1,
+                                Type = 10
+                            };
+                            str.Texts.Add("sports_failure");
+                            player.SendScreen(str);
+                            player.Entity.Action = Enums.ConquerAction.None;
+                            player.ReviveStamp = Time32.Now;
+                            player.Attackable = false;
+
+                            player.Entity.TransformationID = 0;
+                            player.Entity.RemoveFlag(Update.Flags.Dead);
+                            player.Entity.RemoveFlag(Update.Flags.Ghost);
+                            player.Entity.Hitpoints = player.Entity.MaxHitpoints;
+
+                            player.Entity.Ressurect();
+                        }
+                    }
+        }
+
+        #endregion
+
+        #region Room5
+
+        if (!Room5) {
+            var entered5 = 0;
+            foreach (var player in Kernel.GamePool.Values)
+                if (player.Entity is { MapID: 1547, Dead: false })
+                    entered5++;
+
+            switch (entered5) {
+                case > 1:
+                    Room5 = true;
+                    break;
+                case 1: {
+                    foreach (var player in Kernel.GamePool.Values)
+                        if (player.Entity is { MapID: 1547, Dead: false })
+                            if (Time32.Now > player.Entity.WaitingTimeFB.AddSeconds(20)) {
+                                player.Entity.ConquerPoints += Room5Price;
+                                Room5Price = 0;
+                                player.Entity.Teleport(1002, 311, 290);
+                            }
+
+                    break;
+                }
+            }
+        }
+        else {
+            var alive5 = Kernel.GamePool.Values.Count(player => player.Entity is { MapID: 1547, Dead: false });
+
+            if (alive5 == 1)
+                foreach (var player in Kernel.GamePool.Values)
+                    if (player.Entity.MapID == 1547) {
+                        if (!player.Entity.Dead) //winner 
+                        {
+                            player.Entity.ConquerPoints += Room5Price * 2;
+                            player.Entity.WaitingTimeFB = Time32.Now;
+                            Room5 = false;
+                            Kernel.SendWorldMessage(
+                                new Message(
+                                    string.Concat(new object[] {
+                                        "Congratulations! ", player.Entity.Name, " has won ", Room5Price * 2,
+                                        "  CPs FB/SS in Room 5."
+                                    }), Color.Black, 0x7db), Values);
+                            Room5Price = 0;
+                            var str = new _String(true) {
+                                UID = player.Entity.UID,
+                                TextsCount = 1,
+                                Type = 10
+                            };
+                            str.Texts.Add("sports_victory");
+                            player.SendScreen(str);
+                            player.Entity.WinnerWaiting = Time32.Now;
+                            player.Entity.aWinner = true;
+                        }
+                        else //loser 
+                        {
+                            player.Entity.Teleport(1002, 311, 290);
+                            var str = new _String(true) {
+                                UID = player.Entity.UID,
+                                TextsCount = 1,
+                                Type = 10
+                            };
+                            str.Texts.Add("sports_failure");
+                            player.SendScreen(str);
+                            player.Entity.Action = Enums.ConquerAction.None;
+                            player.ReviveStamp = Time32.Now;
+                            player.Attackable = false;
+
+                            player.Entity.TransformationID = 0;
+                            player.Entity.RemoveFlag(Update.Flags.Dead);
+                            player.Entity.RemoveFlag(Update.Flags.Ghost);
+                            player.Entity.Hitpoints = player.Entity.MaxHitpoints;
+
+                            player.Entity.Ressurect();
+                        }
+                    }
+        }
+
+        #endregion
+
+        #region Room6
+
+        if (!Room6) {
+            var entered6 = 0;
+            foreach (var player in Kernel.GamePool.Values) {
+                if (player.Entity is { MapID: 1548, Dead: false })
+                    entered6++;
+            }
+
+            switch (entered6) {
+                case > 1:
+                    Room6 = true;
+                    break;
+                case 1: {
+                    foreach (var player in Kernel.GamePool.Values)
+                        if (player.Entity is { MapID: 1548, Dead: false })
+                            if (Time32.Now > player.Entity.WaitingTimeFB.AddSeconds(20)) {
+                                player.Entity.ConquerPoints += Room6Price;
+                                Room6Price = 0;
+                                player.Entity.Teleport(1002, 311, 290);
+                            }
+
+                    break;
+                }
+            }
+        }
+        else {
+            var alive6 = Kernel.GamePool.Values.Count(player => player.Entity is { MapID: 1548, Dead: false });
+
+            if (alive6 != 1) return;
+            {
+                foreach (var player in Kernel.GamePool.Values)
+                    if (player.Entity.MapID == 1548) {
+                        if (!player.Entity.Dead) //winner 
+                        {
+                            player.Entity.ConquerPoints += Room6Price * 2;
+                            player.Entity.WaitingTimeFB = Time32.Now;
+                            Room6 = false;
+                            Kernel.SendWorldMessage(
+                                new Message(
+                                    string.Concat(new object[] {
+                                        "Congratulations! ", player.Entity.Name, " has won ", Room6Price * 2,
+                                        "  CPs FB/SS in Room 6."
+                                    }), Color.White, 0x7db), Values);
+                            Room6Price = 0;
+                            var str = new _String(true) {
+                                UID = player.Entity.UID,
+                                TextsCount = 1,
+                                Type = 10
+                            };
+                            str.Texts.Add("sports_victory");
+                            player.SendScreen(str);
+                            player.Entity.WinnerWaiting = Time32.Now;
+                            player.Entity.aWinner = true;
+                        }
+                        else //loser 
+                        {
+                            player.Entity.Teleport(1002, 311, 290);
+                            var str = new _String(true) {
+                                UID = player.Entity.UID,
+                                TextsCount = 1,
+                                Type = 10
+                            };
+                            str.Texts.Add("sports_failure");
+                            player.SendScreen(str);
+                            player.Entity.Action = Enums.ConquerAction.None;
+                            player.ReviveStamp = Time32.Now;
+                            player.Attackable = false;
+
+                            player.Entity.TransformationID = 0;
+                            player.Entity.RemoveFlag(Update.Flags.Dead);
+                            player.Entity.RemoveFlag(Update.Flags.Ghost);
+                            player.Entity.Hitpoints = player.Entity.MaxHitpoints;
+
+                            player.Entity.Ressurect();
+                        }
+                    }
+            }
+        }
+
+        #endregion
+
+        #endregion
+    }
+
+    private static void AuthServer_OnClientReceive(byte[] buffer, int length, ClientWrapper arg3) {
+        var player = arg3.Connector as AuthClient;
+
+        player?.Cryptographer.Decrypt(buffer, length);
+        player?.Queue.Enqueue(buffer, length);
+        while (player != null && player.Queue.CanDequeue()) {
+            var packet = player.Queue.Dequeue();
+
+            var len = BitConverter.ToUInt16(packet, 0);
+            BitConverter.ToUInt16(packet, 2);
+            if (len != 312) continue;
+            player.Info = new Authentication();
+            player.Info.Deserialize(packet);
+
+            player.Account = new AccountTable(player.Info.Username);
+            msvcrt.msvcrt.srand(player.PasswordSeed);
+
+            var fw = new Forward();
+            Console.WriteLine("[LOGIN] Username: " + player.Info.Username + ", Password: " +
+                              player.Info.Password);
+            if (player.Info.Password == player.Account.Password && player.Account.exists)
+                fw.Type = Forward.ForwardType.Ready;
+            else
+                fw.Type = Forward.ForwardType.InvalidInfo;
+
+            if (IPBan.IsBanned(arg3.IP)) {
+                fw.Type = Forward.ForwardType.Banned;
+                player.Send(fw);
+                return;
+            }
+
+            if (!MainServer) {
+                if ((ServerTransfer && Kernel.TransferdPlayers.Contains(player.Account.EntityID)) ||
+                    GameServer == null) {
+                    if (fw.Type == Forward.ForwardType.Ready) {
+                        var fClient = new GameState(null) {
+                            Fake = false
+                        };
+                        fClient.FakeLoad(player.Account.EntityID, false);
+                        fClient.Account = player.Account;
+                        if (fClient.FakeLoaded) {
+                            if (Transfer(fClient)) {
+                                // if (Program.World.DelayedTask == null)
+                                //     Program.World.DelayedTask = new MaTrix.DelayedTask();
+                                // Program.World.DelayedTask.StartDelayedTask(() =>
+                                // {
+                                fw.Identifier = player.Account.EntityID + ServerKey;
+                                fw.IP = ServerIp;
+                                fw.Port = ServerGamePort;
+                                player.Send(fw);
+                                if (Kernel.TransferdPlayers.Contains(player.Account.EntityID))
+                                    Kernel.TransferdPlayers.Remove(player.Account.EntityID);
+                                Console.WriteLine("[" + (player.Account.EntityID + ServerKey) + "] " +
+                                                  player.Account.Username + " has been redirected to " +
+                                                  ServerIp + " : " + ServerGamePort + " .");
+                                // }, 100);
+
+                                return;
+                            }
+
+                            fw.Type = (Forward.ForwardType)56;
                         }
                         else {
-                            if (Fw.Type == Forward.ForwardType.Ready) {
-                                Fw.Identifier = player.Account.GenerateKey();
-                                Kernel.AwaitingPool[Fw.Identifier] = player.Account;
-                                Fw.IP = GameIP;
-                                Fw.Port = GamePort;
-                            }
+                            fw.Type = (Forward.ForwardType)56;
                         }
                     }
-                    else {
-                        if (Fw.Type == Forward.ForwardType.Ready) {
-                            Fw.Identifier = player.Account.GenerateKey();
-                            Kernel.AwaitingPool[Fw.Identifier] = player.Account;
-                            Fw.IP = GameIP;
-                            Fw.Port = GamePort;
-                        }
-                    }
-
-                    player.Send(Fw);
                 }
-            }
-        }
-
-        static void AuthServer_OnClientDisconnect(ClientWrapper obj) {
-            obj.Disconnect();
-        }
-
-        static void AuthServer_OnClientConnect(ClientWrapper obj) {
-            AuthClient authState;
-            obj.Connector = (authState = new AuthClient(obj));
-            authState.Cryptographer = new AuthCryptography();
-            PasswordCryptographySeed pcs = new PasswordCryptographySeed();
-            pcs.Seed = Kernel.Random.Next();
-            authState.PasswordSeed = pcs.Seed;
-            authState.Send(pcs);
-        }
-
-        internal static GameState FindClient(string name) {
-            return Values.FirstOrDefault(p => p.Entity.Name == name);
-        }
-
-
-        public static void NextItemUID() {
-            using (var cmd = new Database.MySqlCommand(MySqlCommandType.SELECT).Select("items"))
-            using (var reader = new MySqlReader(cmd)) {
-                while (reader.Read()) {
-                    uint UID = reader.ReadUInt32("UID");
-                    if ((UID > 0) && (UID > _NextItemID)) {
-                        _NextItemID = UID;
+                else {
+                    if (fw.Type == Forward.ForwardType.Ready) {
+                        fw.Identifier = player.Account.GenerateKey();
+                        Kernel.AwaitingPool[fw.Identifier] = player.Account;
+                        fw.IP = GameIp;
+                        fw.Port = GamePort;
                     }
                 }
             }
-        }
-
-        #region Rooms
-
-        public static uint Room1Price = 0;
-        public static uint Room2Price = 0;
-        public static uint Room3Price = 0;
-        public static uint Room4Price = 0;
-        public static uint Room5Price = 0;
-        public static uint Room6Price = 0;
-        public static bool Room1 = false;
-        public static bool Room2 = false;
-        public static bool Room3 = false;
-        public static bool Room4 = false;
-        public static bool Room5 = false;
-        public static bool Room6 = false;
-        public static bool Onctf = false;
-        public static Thread GHRooms = new Thread(1000);
-
-        #endregion Rooms
-
-        #region Cyclone War
-
-        public static bool cycolne = false;
-        public static bool cycolne1 = false;
-
-        #endregion Cyclone War
-
-        #region Closing Events
-
-        [DllImport("Kernel32")]
-        private static extern bool SetConsoleCtrlHandler(EventHandler handler, bool add);
-
-        private delegate bool EventHandler(CtrlType sig);
-
-        static EventHandler _handler;
-
-        enum CtrlType {
-            CTRL_C_EVENT = 0,
-            CTRL_BREAK_EVENT = 1,
-            CTRL_CLOSE_EVENT = 2,
-            CTRL_LOGOFF_EVENT = 5,
-            CTRL_SHUTDOWN_EVENT = 6
-        }
-
-        private static bool Handler(CtrlType sig) {
-            if (MessageBox.Show("Are you sure you want to Exit  ?", "MTA", MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question) == DialogResult.Yes) {
-                Console.WriteLine("Saving Before Exiting ...");
-                return !Save();
-            }
-
-            return true;
-        }
-
-        public static bool Save() {
-            try {
-                using (var conn = DataHolder.MySqlConnection) {
-                    conn.Open();
-                    Parallel.ForEach(Values, client => //)
-                        //   foreach (Client.GameState client in Program.Values)
-                    {
-                        // client.Account.Save();
-                        EntityTable.SaveEntity(client, conn);
-                        SkillTable.SaveProficiencies(client);
-                        SkillTable.SaveSpells(client);
-                        ArenaTable.SaveArenaStatistics(client.ArenaStatistic, conn);
-                        TeamArenaTable.SaveArenaStatistics(client.TeamArenaStatistic, conn);
-                        //    Database.ChampionTable.SaveStatistics(client.ChampionStats, conn);
-                    });
-                }
-
-                Flowers.SaveFlowers();
-                new Database.MySqlCommand(MySqlCommandType.UPDATE).Update("configuration")
-                    .Set("ItemUID", ConquerItem.ItemUID.Now).Where("Server", Constants.ServerName).Execute();
-                ClanWarArena.Save();
-                Console.WriteLine("Saving CMD Done Thanks ,");
-            }
-            catch (Exception e) {
-                Console.WriteLine(e.ToString());
-                return false;
-            }
-
-            return true;
-        }
-
-        #endregion
-
-        #region Exceptions & Logs
-
-        public static void AddVendorLog(String vendor, string buying, string moneyamount, ConquerItem Item) {
-            String folderN = DateTime.Now.Year + "-" + DateTime.Now.Month,
-                Path = "gmlogs\\VendorLogs\\",
-                NewPath = System.IO.Path.Combine(Path, folderN);
-            if (!File.Exists(NewPath + folderN)) {
-                Directory.CreateDirectory(System.IO.Path.Combine(Path, folderN));
-            }
-
-            if (!File.Exists(NewPath + "\\" + DateTime.Now.Day + ".txt")) {
-                using (FileStream fs = File.Create(NewPath + "\\" + DateTime.Now.Day + ".txt")) {
-                    fs.Close();
+            else {
+                if (fw.Type == Forward.ForwardType.Ready) {
+                    fw.Identifier = player.Account.GenerateKey();
+                    Kernel.AwaitingPool[fw.Identifier] = player.Account;
+                    fw.IP = GameIp;
+                    fw.Port = GamePort;
                 }
             }
 
-            using (StreamWriter file = new StreamWriter(NewPath + "\\" + DateTime.Now.Day + ".txt", true)) {
-                file.WriteLine("------------------------------------------------------------------------------------");
-                file.WriteLine("{0} HAS BOUGHT AN ITEM : {2} FROM {1} SHOP - for {3}", vendor, buying, Item.ToLog(),
-                    moneyamount);
-                file.WriteLine("------------------------------------------------------------------------------------");
+            player.Send(fw);
+        }
+    }
+
+    private static void AuthServer_OnClientDisconnect(ClientWrapper obj) {
+        obj.Disconnect();
+    }
+
+    private static void AuthServer_OnClientConnect(ClientWrapper obj) {
+        AuthClient authState;
+        obj.Connector = authState = new AuthClient(obj);
+        authState.Cryptographer = new AuthCryptography();
+        var pcs = new PasswordCryptographySeed {
+            Seed = Kernel.Random.Next()
+        };
+        authState.PasswordSeed = pcs.Seed;
+        authState.Send(pcs);
+    }
+
+    internal static GameState? FindClient(string name) {
+        return Values.FirstOrDefault(p => p.Entity.Name == name);
+    }
+
+
+    public static void NextItemUid() {
+        using var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("items");
+        using var reader = new MySqlReader(cmd);
+        while (reader.Read()) {
+            var uid = reader.ReadUInt32("UID");
+            if (uid > 0 && uid > NextItemId) NextItemId = uid;
+        }
+    }
+
+    #region Rooms
+
+    public static uint Room1Price;
+    public static uint Room2Price;
+    public static uint Room3Price;
+    public static uint Room4Price;
+    public static uint Room5Price;
+    public static uint Room6Price;
+    public static bool Room1;
+    public static bool Room2;
+    public static bool Room3;
+    public static bool Room4;
+    public static bool Room5;
+    public static bool Room6;
+    public static Thread GhRooms = new(1000);
+
+    #endregion Rooms
+
+
+    #region Closing Events
+
+    [DllImport("Kernel32")]
+    private static extern bool SetConsoleCtrlHandler(EventHandler handler, bool add);
+
+    private delegate bool EventHandler(CtrlType sig);
+
+    private static EventHandler? _handler;
+
+    // Enum values are required by Windows API SetConsoleCtrlHandler contract
+    private enum CtrlType { }
+
+    private static bool Handler(CtrlType sig) {
+        // Suppress unused parameter warning - sig is required by API delegate signature
+        _ = sig;
+        if (MessageBox.Show("Are you sure you want to Exit  ?", "MTA", MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question) != DialogResult.Yes) return true;
+        Console.WriteLine("Saving Before Exiting ...");
+        return !Save();
+    }
+
+    public static bool Save() {
+        try {
+            using (var conn = DataHolder.MySqlConnection) {
+                conn.Open();
+                var connection = conn; // Capture connection in local variable to avoid disposal warning
+                Parallel.ForEach(Values, client => {
+                    EntityTable.SaveEntity(client, connection);
+                    SkillTable.SaveProficiencies(client);
+                    SkillTable.SaveSpells(client);
+                    ArenaTable.SaveArenaStatistics(client.ArenaStatistic, connection);
+                    TeamArenaTable.SaveArenaStatistics(client.TeamArenaStatistic, connection);
+                });
             }
+
+            Flowers.SaveFlowers();
+            if (ServerName != null)
+                new MySqlCommand(MySqlCommandType.UPDATE).Update("configuration")
+                    .Set("ItemUID", ConquerItem.ItemUID.Now).Where("Server", ServerName).Execute();
+            ClanWarArena.Save();
+            Console.WriteLine("Saving CMD Done Thanks ,");
+        }
+        catch (Exception e) {
+            Console.WriteLine(e.ToString());
+            return false;
         }
 
-        public static void SaveException(Exception e, bool dont = false) {
-            if (e.TargetSite.Name == "ThrowInvalidOperationException") return;
-            if (e.Message.Contains("String reference not set")) return;
-            if (!dont)
-                Console.WriteLine(e);
-            var dt = DateTime.Now;
-            string date = dt.Month + "-" + dt.Day + "//";
-            if (!Directory.Exists(Application.StartupPath + Constants.UnhandledExceptionsPath))
-                Directory.CreateDirectory(Application.StartupPath + "\\" + Constants.UnhandledExceptionsPath);
-            if (!Directory.Exists(Application.StartupPath + "\\" + Constants.UnhandledExceptionsPath + date))
-                Directory.CreateDirectory(Application.StartupPath + "\\" + Constants.UnhandledExceptionsPath + date);
-            if (!Directory.Exists(Application.StartupPath + "\\" + Constants.UnhandledExceptionsPath + date +
-                                  e.TargetSite.Name))
-                Directory.CreateDirectory(Application.StartupPath + "\\" + Constants.UnhandledExceptionsPath + date +
-                                          e.TargetSite.Name);
-            string fullPath = Application.StartupPath + "\\" + Constants.UnhandledExceptionsPath + date +
-                              e.TargetSite.Name + "\\";
-            string date2 = dt.Hour + "-" + dt.Minute;
-            List<string> Lines = new List<string>();
-            Lines.Add("----Exception message----");
-            Lines.Add(e.Message);
-            Lines.Add("----End of exception message----\r\n");
-            Lines.Add("----Stack trace----");
-            Lines.Add(e.StackTrace);
-            Lines.Add("----End of stack trace----\r\n");
-            File.WriteAllLines(fullPath + date2 + ".txt", Lines.ToArray());
+        return true;
+    }
+
+    #endregion
+
+    #region Exceptions & Logs
+
+    public static void AddVendorLog(string vendor, string buying, string moneyamount, ConquerItem item) {
+        string folderN = DateTime.Now.Year + "-" + DateTime.Now.Month,
+            path = "gmlogs\\VendorLogs\\",
+            newPath = Path.Combine(path, folderN);
+        if (!File.Exists(newPath + folderN)) Directory.CreateDirectory(Path.Combine(path, folderN));
+
+        if (!File.Exists(newPath + "\\" + DateTime.Now.Day + ".txt")) {
+            using var fs = File.Create(newPath + "\\" + DateTime.Now.Day + ".txt");
+            fs.Close();
         }
 
-        public static void AddDropLog(String Name, ConquerItem Item) {
-            String folderN = DateTime.Now.Year + "-" + DateTime.Now.Month,
-                Path = "gmlogs\\droplogs\\",
-                NewPath = System.IO.Path.Combine(Path, folderN);
-            if (!File.Exists(NewPath + folderN)) {
-                Directory.CreateDirectory(System.IO.Path.Combine(Path, folderN));
-            }
+        using var file = new StreamWriter(newPath + "\\" + DateTime.Now.Day + ".txt", true);
+        file.WriteLine("------------------------------------------------------------------------------------");
+        file.WriteLine("{0} HAS BOUGHT AN ITEM : {2} FROM {1} SHOP - for {3}", vendor, buying, item.ToLog(),
+            moneyamount);
+        file.WriteLine("------------------------------------------------------------------------------------");
+    }
 
-            string path = NewPath + "\\" + DateTime.Now.Day + ".txt";
-            if (!File.Exists(path)) File.AppendAllText(path, "");
-
-            string text = "------------------------------------------------------------------------------------"
-                          + Environment.NewLine +
-                          string.Format("Player {0} HAS DROPPED AN ITEM : {1} -", Name, Item.ToLog())
-                          + Environment.NewLine +
-                          "------------------------------------------------------------------------------------";
-            File.AppendAllText(path, text);
-        }
-
-        public static void AddTradeLog(Trade first, String firstN, Trade second, String secondN) {
-            String folderN = DateTime.Now.Year + "-" + DateTime.Now.Month,
-                Path = "gmlogs\\tradelogs\\",
-                NewPath = System.IO.Path.Combine(Path, folderN);
-            if (!File.Exists(NewPath + folderN)) {
-                Directory.CreateDirectory(System.IO.Path.Combine(Path, folderN));
-            }
-
-            if (!File.Exists(NewPath + "\\" + DateTime.Now.Day + ".txt")) {
-                using (FileStream fs = File.Create(NewPath + "\\" + DateTime.Now.Day + ".txt")) {
-                    fs.Close();
-                }
-            }
-
-            using (StreamWriter file = new StreamWriter(NewPath + "\\" + DateTime.Now.Day + ".txt", true)) {
-                file.WriteLine("************************************************************************************");
-                file.WriteLine("First Person TradeLog ( {0} ) -", firstN);
-                file.WriteLine("Gold Traded: " + first.Money);
-                file.WriteLine("Conquer Points Traded: " + first.ConquerPoints);
-
-                for (int i = 0; i < first.Items.Count; i++) {
-                    file.WriteLine(
-                        "------------------------------------------------------------------------------------");
-                    file.WriteLine("Item : " + first.Items[i].ToLog());
-                    file.WriteLine(
-                        "------------------------------------------------------------------------------------");
-                }
-
-                file.WriteLine("Second Person TradeLog ( {0} ) -", secondN);
-                file.WriteLine("Gold Traded: " + second.Money);
-                file.WriteLine("Conquer Points Traded: " + second.ConquerPoints);
-
-                for (int i = 0; i < second.Items.Count; i++) {
-                    file.WriteLine(
-                        "------------------------------------------------------------------------------------");
-                    file.WriteLine("Item : " + second.Items[i].ToLog());
-                    file.WriteLine(
-                        "------------------------------------------------------------------------------------");
-                }
-
-                file.WriteLine("************************************************************************************");
-            }
-        }
-
-        public static void AddMobLog(string War, string name, uint CPs = 0, uint item = 0) {
-            String folderN = DateTime.Now.Year + "-" + DateTime.Now.Month,
-                Path = "gmlogs\\MobLogs\\",
-                NewPath = System.IO.Path.Combine(Path, folderN);
-            if (!File.Exists(NewPath + folderN)) {
-                Directory.CreateDirectory(System.IO.Path.Combine(Path, folderN));
-            }
-
-            if (!File.Exists(NewPath + "\\" + DateTime.Now.Day + ".txt")) {
-                using (FileStream fs = File.Create(NewPath + "\\" + DateTime.Now.Day + ".txt")) {
-                    fs.Close();
-                }
-            }
-
-            using (StreamWriter file = new StreamWriter(NewPath + "\\" + DateTime.Now.Day + ".txt", true)) {
-                if (CPs != 0)
-                    file.WriteLine(name + " got " + CPs + " CPs from the [" + War + "] as prize at " +
-                                   DateTime.Now.Hour + ":" + DateTime.Now.Minute + ":" + DateTime.Now.Second);
-                else
-                    file.WriteLine(name + " got " + item + " Item from the [" + War + "] as prize at " +
-                                   DateTime.Now.Hour + ":" + DateTime.Now.Minute + ":" + DateTime.Now.Second);
-            }
-        }
-
-        public static void AddWarLog(string War, string CPs, string name) {
-            String folderN = DateTime.Now.Year + "-" + DateTime.Now.Month,
-                Path = "gmlogs\\Warlogs\\",
-                NewPath = System.IO.Path.Combine(Path, folderN);
-            if (!File.Exists(NewPath + folderN)) {
-                Directory.CreateDirectory(System.IO.Path.Combine(Path, folderN));
-            }
-
-            if (!File.Exists(NewPath + "\\" + DateTime.Now.Day + ".txt")) {
-                using (FileStream fs = File.Create(NewPath + "\\" + DateTime.Now.Day + ".txt")) {
-                    fs.Close();
-                }
-            }
-
-            using (StreamWriter file = new StreamWriter(NewPath + "\\" + DateTime.Now.Day + ".txt", true)) {
-                file.WriteLine(name + " got " + CPs + " CPs from the [" + War + "] as prize at " + DateTime.Now.Hour +
-                               ":" + DateTime.Now.Minute + ":" + DateTime.Now.Second);
-            }
-        }
-
-        static void Application_ThreadException(object sender, UnhandledExceptionEventArgs e) {
-            SaveException(e.ExceptionObject as Exception);
-        }
-
-        public static void SaveException(Exception e) {
-            if (e.TargetSite.Name == "ThrowInvalidOperationException")
-                return;
-            if (e.Message.Contains("String reference not set"))
-                return;
-
+    public static void SaveException(InClassName inClassName) {
+        var e = inClassName.E;
+        var dont = inClassName.Dont;
+        if (e.TargetSite?.Name == "ThrowInvalidOperationException") return;
+        if (e.Message.Contains("String reference not set")) return;
+        if (!dont)
             Console.WriteLine(e);
-
-            var dt = DateTime.Now;
-            string date = dt.Month + "-" + dt.Day + "//";
-
-            if (!Directory.Exists(Application.StartupPath + Constants.UnhandledExceptionsPath))
-                Directory.CreateDirectory(Application.StartupPath + "\\" + Constants.UnhandledExceptionsPath);
-            if (!Directory.Exists(Application.StartupPath + "\\" + Constants.UnhandledExceptionsPath + date))
-                Directory.CreateDirectory(Application.StartupPath + "\\" + Constants.UnhandledExceptionsPath + date);
-            if (!Directory.Exists(Application.StartupPath + "\\" + Constants.UnhandledExceptionsPath + date +
-                                  e.TargetSite.Name))
-                Directory.CreateDirectory(Application.StartupPath + "\\" + Constants.UnhandledExceptionsPath + date +
-                                          e.TargetSite.Name);
-
-            string fullPath = Application.StartupPath + "\\" + Constants.UnhandledExceptionsPath + date +
-                              e.TargetSite.Name + "\\";
-
-            string date2 = dt.Hour + "-" + dt.Minute;
-            List<string> Lines = new List<string>();
-
-            Lines.Add("----Exception message----");
-            Lines.Add(e.Message);
-            Lines.Add("----End of exception message----\r\n");
-
-            Lines.Add("----Stack trace----");
-            Lines.Add(e.StackTrace);
-            Lines.Add("----End of stack trace----\r\n");
-
-            //Lines.Add("----Data from exception----");
-            //foreach (KeyValuePair<object, object> data in e.Data)
-            //    Lines.Add(data.Key.ToString() + "->" + data.Value.ToString());
-            //Lines.Add("----End of data from exception----\r\n");
-
-            File.WriteAllLines(fullPath + date2 + ".txt", Lines.ToArray());
-        }
-
-        #endregion
-
-        #region Matrix Style
-
-        static Random r = new Random();
-        public static DateTime KingsTime;
-
-        static char R {
-            get {
-                int t = r.Next(10);
-                if (t <= 2)
-                    return (char)('0' + r.Next(10));
-                else if (t <= 4)
-                    return (char)('a' + r.Next(27));
-                else if (t <= 6)
-                    return (char)('A' + r.Next(27));
-                else
-                    return (char)(r.Next(32, 255));
-            }
-        }
-
-        public static int inBoxY(int n, int height) {
-            n = n % height;
-            if (n < 0)
-                return n + height;
-            else
-                return n;
-        }
-
-        #endregion Matrix Style
+        var dt = DateTime.Now;
+        var date = dt.Month + "-" + dt.Day + "//";
+        if (!Directory.Exists(Application.StartupPath + UnhandledExceptionsPath))
+            Directory.CreateDirectory(Application.StartupPath + "\\" + UnhandledExceptionsPath);
+        if (!Directory.Exists(Application.StartupPath + "\\" + UnhandledExceptionsPath + date))
+            Directory.CreateDirectory(Application.StartupPath + "\\" + UnhandledExceptionsPath + date);
+        if (!Directory.Exists(Application.StartupPath + "\\" + UnhandledExceptionsPath + date +
+                              e.TargetSite?.Name))
+            Directory.CreateDirectory(Application.StartupPath + "\\" + UnhandledExceptionsPath + date +
+                                      e.TargetSite?.Name);
+        var fullPath = Application.StartupPath + "\\" + UnhandledExceptionsPath + date +
+                       e.TargetSite?.Name + "\\";
+        var date2 = dt.Hour + "-" + dt.Minute;
+        var lines = new List<string> {
+            "----Exception message----",
+            e.Message,
+            "----End of exception message----\r\n",
+            "----Stack trace----"
+        };
+        if (e.StackTrace != null) lines.Add(e.StackTrace);
+        lines.Add("----End of stack trace----\r\n");
+        File.WriteAllLines(fullPath + date2 + ".txt", lines.ToArray());
     }
 
-    public class Matrix_Times {
-        public static DateTime now {
-            get { return DateTime.Now; }
-        }
+    public static void AddDropLog(string name, ConquerItem item) {
+        string folderN = DateTime.Now.Year + "-" + DateTime.Now.Month,
+            path = "gmlogs\\droplogs\\",
+            newPath = Path.Combine(path, folderN);
+        if (!File.Exists(newPath + folderN)) Directory.CreateDirectory(Path.Combine(path, folderN));
 
-        public class Start {
-            public static int hunterthief = 42;
-            public static int dashbash = 46;
+        path = newPath + "\\" + DateTime.Now.Day + ".txt";
+        if (!File.Exists(path)) File.AppendAllText(path, "");
 
-            public static int chase = 45;
-
-            public static int dizzy = 49;
-
-
-            public static bool TheTeam {
-                get { return (now.Hour == 14 || now.Hour == 2) && now.Minute == 10 && now.Second == 1; }
-            }
-
-
-            public static bool ClanWar {
-                get { return now.Hour == 14 || now.Hour == 2; }
-            }
-
-            public static bool EliteGW {
-                get { return (now.Minute == 14); }
-            }
-
-            public static bool SkillTeam {
-                get { return (now.Hour == 21) && now.Minute == 1; }
-            }
-
-            public static bool TeamPK {
-                get { return (now.Hour == 20) && now.Minute == 1; }
-            }
-
-            public static bool CTF {
-                get { return now.Hour == 15 || now.Hour == 3; }
-            }
-
-
-            public static bool CrossServer {
-                get { return now.Hour == 22 || now.Hour == 10; }
-            }
-
-            public static bool PoleDomnation {
-                get { return (now.Hour == 5 || now.Hour == 17); }
-            }
-
-            public static bool ClanWarArena2 {
-                get { return (now.Hour == 22 && now.Minute == 25) || (now.Hour == 10 && now.Minute == 25); }
-            }
-
-            public static bool ClanWarArena {
-                get { return (now.Hour == 22 && now.Minute == 30) || (now.Hour == 10 && now.Minute == 30); }
-            }
-
-            public static bool Flashwar {
-                get { return (now.Hour == 13 && now.Minute == 4) || (now.Hour == 19 && now.Minute == 4); }
-            }
-
-            public static bool ClassWar {
-                get { return (now.Hour == 21 && now.Minute == 3) || (now.Hour == 9 && now.Minute == 0); }
-            }
-
-
-            ///////////////////////////////////////////////
-
-            public static bool HeroOfGame {
-                get { return now.Minute == 30; }
-            }
-
-            public static bool FBSS {
-                get { return now.Minute == 5; }
-            }
-
-            public static bool FBSS2 {
-                get { return now.Minute >= 21 && now.Minute < 23; }
-            }
-
-            public static bool Cyclone {
-                get { return now.Minute == 57; }
-            }
-
-            public static bool Cyclone1 {
-                get { return now.Minute == 58; }
-            }
-
-            public static bool Nobilty {
-                get { return now.Minute >= 20 && now.Minute <= 23; }
-            }
-        }
-
-        public class End {
-            public static int hunterthief = 45;
-            public static int dashbash = 48;
-
-            public static int chase = 45;
-
-            public static int dizzy2 = 50;
-
-            public static bool FBSS {
-                get { return now.Minute >= 23; }
-            }
-
-            public static bool Cyclone {
-                get { return now.Minute == 59; }
-            }
-
-            public static bool Nobilty {
-                get { return now.Minute >= 24 && now.Minute <= 30; }
-            }
-            /////////////////////
-
-            public static bool EliteGW {
-                get { return now.Minute == 30; }
-            }
-
-            public static bool ClanWar {
-                get { return now.Hour == 15 || now.Hour == 3; }
-            }
-        }
+        var text = "------------------------------------------------------------------------------------"
+                   + Environment.NewLine +
+                   $"Player {name} HAS DROPPED AN ITEM : {item.ToLog()} -"
+                   + Environment.NewLine +
+                   "------------------------------------------------------------------------------------";
+        File.AppendAllText(path, text);
     }
 
-    public class rates {
-        public static uint GuildWar;
-        public static uint ChangeName;
-        public static uint king;
-        public static uint prince;
-        public static uint duke;
+    public static void AddTradeLog(Trade first, string firstN, Trade second, string secondN) {
+        var folderN = DateTime.Now.Year + "-" + DateTime.Now.Month;
+        const string path = @"gmlogs\tradelogs\";
+        var newPath = Path.Combine(path, folderN);
+        if (!File.Exists(newPath + folderN)) Directory.CreateDirectory(Path.Combine(path, folderN));
 
-        public static uint EliteGw;
-        public static uint SkillTeam1;
-        public static uint SkillTeam2;
-        public static uint SkillTeam3;
-        public static uint SkillTeam4;
-        public static uint WeeklyPk;
-        public static uint topguild;
-        public static uint mrconquer;
-        public static uint uniquepk;
-        public static uint Portals;
-        public static uint heroofgame;
-        public static uint NobilityPrize;
-        public static uint lastman;
-        public static uint Daily;
-        public static uint fbss;
-        public static uint Poles;
-        public static uint Clanwarday;
-        public static uint soulp6;
-        public static uint soulp7;
-        public static uint changebody;
-        public static uint ref6;
-        public static uint Twar;
-        public static uint stwar;
-        public static uint ctf;
-        public static uint cps;
-        public static uint ClanwarCity;
-        public static uint ClassPk;
-        public static uint DeathMatchs;
-        public static uint lobby;
-        public static uint hunter;
-        public static uint thief;
-        public static uint housepromete;
-        public static uint itembox;
-        public static uint houseupgrade;
-        public static uint MonthlyPk;
-        public static uint TopSpouse;
-        public static uint Bosses;
-        public static uint Night;
-        public static uint Broadcast;
-        public static uint GuildFee;
-        public static uint TeleportFee;
-        public static uint DragonBall;
-        public static uint Meteor;
-        public static string VoteUrl;
-        public static uint Reincarnation;
-        public static uint donationrate;
-        public static uint Shit;
-
-        public static string servername {
-            get { return Constants.ServerName; }
+        if (!File.Exists(newPath + "\\" + DateTime.Now.Day + ".txt")) {
+            using var fs = File.Create(newPath + "\\" + DateTime.Now.Day + ".txt");
+            fs.Close();
         }
 
-        public static void Load(IniFile IniFile) {
-            DragonBall = IniFile.ReadUInt32("Rates", "DragonBall");
-            Meteor = IniFile.ReadUInt32("Rates", "Meteor");
-            GuildWar = IniFile.ReadUInt32("Rates", "GuildWar");
-            EliteGw = IniFile.ReadUInt32("Rates", "questday");
-            Bosses = IniFile.ReadUInt32("Rates", "Bosses");
-            Broadcast = IniFile.ReadUInt32("Rates", "Broadcast");
-            TeleportFee = IniFile.ReadUInt32("Rates", "TeleportFee");
-            GuildFee = IniFile.ReadUInt32("Rates", "GuildFee");
-            king = IniFile.ReadUInt32("Rates", "king");
-            prince = IniFile.ReadUInt32("Rates", "prince");
-            duke = IniFile.ReadUInt32("Rates", "duke");
-            Reincarnation = IniFile.ReadUInt32("Rates", "Reincarnation");
-            MonthlyPk = IniFile.ReadUInt32("Rates", "MonthlyPk");
-            TopSpouse = IniFile.ReadUInt32("Rates", "TopSpouse");
-            ChangeName = IniFile.ReadUInt32("Rates", "ChangeName");
-            housepromete = IniFile.ReadUInt32("Rates", "housepromete");
-            itembox = IniFile.ReadUInt32("Rates", "itembox");
-            Night = IniFile.ReadUInt32("Rates", "Night");
-            VoteUrl = IniFile.ReadString("Rates", "VoteUrl");
-            Portals = IniFile.ReadUInt32("Rates", "Portals");
-            SkillTeam1 = IniFile.ReadUInt32("Rates", "SkillTeam1");
-            SkillTeam2 = IniFile.ReadUInt32("Rates", "SkillTeam2");
-            SkillTeam3 = IniFile.ReadUInt32("Rates", "SkillTeam3");
-            SkillTeam4 = IniFile.ReadUInt32("Rates", "SkillTeam4");
-            soulp6 = IniFile.ReadUInt32("Rates", "soulp6");
-            soulp7 = IniFile.ReadUInt32("Rates", "soulp7");
-            ref6 = IniFile.ReadUInt32("Rates", "ref6");
-            changebody = IniFile.ReadUInt32("Rates", "changebody");
-            uniquepk = IniFile.ReadUInt32("Rates", "uniquepk");
-            WeeklyPk = IniFile.ReadUInt32("Rates", "WeeklyPk");
-            fbss = IniFile.ReadUInt32("Rates", "fbss");
-            Poles = IniFile.ReadUInt32("Rates", "Poles");
-            Clanwarday = IniFile.ReadUInt32("Rates", "Clanwarday");
-            lastman = IniFile.ReadUInt32("Rates", "lastman");
-            Daily = IniFile.ReadUInt32("Rates", "Daily");
-            topguild = IniFile.ReadUInt32("Rates", "topguild");
-            mrconquer = IniFile.ReadUInt32("Rates", "mrconquer");
-            NobilityPrize = IniFile.ReadUInt32("Rates", "NobilityPrize");
-            heroofgame = IniFile.ReadUInt32("Rates", "heroofgame");
-            Twar = IniFile.ReadUInt32("Rates", "Twar");
-            stwar = IniFile.ReadUInt32("Rates", "stwar");
-            ctf = IniFile.ReadUInt32("Rates", "ctf");
-            cps = IniFile.ReadUInt32("Rates", "cps");
-            ClanwarCity = IniFile.ReadUInt32("Rates", "ClanwarCity");
-            ClassPk = IniFile.ReadUInt32("Rates", "ClassPk");
-            DeathMatchs = IniFile.ReadUInt32("Rates", "DeathMatchs");
-            lobby = IniFile.ReadUInt32("Rates", "lobby");
-            hunter = IniFile.ReadUInt32("Rates", "hunter");
-            thief = IniFile.ReadUInt32("Rates", "thief");
-            donationrate = IniFile.ReadUInt32("Rates", "donationrate");
-            Shit = IniFile.ReadUInt32("Rates", "Shit");
+        using var file = new StreamWriter(newPath + "\\" + DateTime.Now.Day + ".txt", true);
+        file.WriteLine("************************************************************************************");
+        file.WriteLine("First Person TradeLog ( {0} ) -", firstN);
+        file.WriteLine("Gold Traded: " + first.Money);
+        file.WriteLine("Conquer Points Traded: " + first.ConquerPoints);
+
+        foreach (var t in first.Items) {
+            file.WriteLine(
+                "------------------------------------------------------------------------------------");
+            file.WriteLine("Item : " + t.ToLog());
+            file.WriteLine(
+                "------------------------------------------------------------------------------------");
         }
+
+        file.WriteLine("Second Person TradeLog ( {0} ) -", secondN);
+        file.WriteLine("Gold Traded: " + second.Money);
+        file.WriteLine("Conquer Points Traded: " + second.ConquerPoints);
+
+        foreach (var t in second.Items) {
+            file.WriteLine(
+                "------------------------------------------------------------------------------------");
+            file.WriteLine("Item : " + t.ToLog());
+            file.WriteLine(
+                "------------------------------------------------------------------------------------");
+        }
+
+        file.WriteLine("************************************************************************************");
+    }
+
+    public static void AddMobLog(string war, string name, uint cPs = 0, uint item = 0) {
+        string folderN = DateTime.Now.Year + "-" + DateTime.Now.Month,
+            path = "gmlogs\\MobLogs\\",
+            newPath = Path.Combine(path, folderN);
+        if (!File.Exists(newPath + folderN)) Directory.CreateDirectory(Path.Combine(path, folderN));
+
+        if (!File.Exists(newPath + "\\" + DateTime.Now.Day + ".txt")) {
+            using var fs = File.Create(newPath + "\\" + DateTime.Now.Day + ".txt");
+            fs.Close();
+        }
+
+        using var file = new StreamWriter(newPath + "\\" + DateTime.Now.Day + ".txt", true);
+        if (cPs != 0)
+            file.WriteLine(name + " got " + cPs + " CPs from the [" + war + "] as prize at " +
+                           DateTime.Now.Hour + ":" + DateTime.Now.Minute + ":" + DateTime.Now.Second);
+        else
+            file.WriteLine(name + " got " + item + " Item from the [" + war + "] as prize at " +
+                           DateTime.Now.Hour + ":" + DateTime.Now.Minute + ":" + DateTime.Now.Second);
+    }
+
+    public static void AddWarLog(string war, string cPs, string name) {
+        var folderN = DateTime.Now.Year + "-" + DateTime.Now.Month;
+        const string path = @"gmlogs\Warlogs\";
+        var newPath = Path.Combine(path, folderN);
+        if (!File.Exists(newPath + folderN)) Directory.CreateDirectory(Path.Combine(path, folderN));
+
+        if (!File.Exists(newPath + "\\" + DateTime.Now.Day + ".txt")) {
+            using var fs = File.Create(newPath + "\\" + DateTime.Now.Day + ".txt");
+            fs.Close();
+        }
+
+        using var file = new StreamWriter(newPath + "\\" + DateTime.Now.Day + ".txt", true);
+        file.WriteLine(name + " got " + cPs + " CPs from the [" + war + "] as prize at " + DateTime.Now.Hour +
+                       ":" + DateTime.Now.Minute + ":" + DateTime.Now.Second);
+    }
+
+    private static void Application_ThreadException(object sender, UnhandledExceptionEventArgs e) {
+        SaveException(e.ExceptionObject as Exception);
+    }
+
+    public static void SaveException(Exception? e) {
+        if (e?.TargetSite?.Name == "ThrowInvalidOperationException")
+            return;
+        if (e != null && e.Message.Contains("String reference not set"))
+            return;
+
+        if (e == null) return;
+        Console.WriteLine(e);
+
+        var dt = DateTime.Now;
+        var date = dt.Month + "-" + dt.Day + "//";
+
+        if (!Directory.Exists(Application.StartupPath + UnhandledExceptionsPath))
+            Directory.CreateDirectory(Application.StartupPath + "\\" + UnhandledExceptionsPath);
+        if (!Directory.Exists(Application.StartupPath + "\\" + UnhandledExceptionsPath + date))
+            Directory.CreateDirectory(Application.StartupPath + "\\" + UnhandledExceptionsPath + date);
+        if (!Directory.Exists(Application.StartupPath + "\\" + UnhandledExceptionsPath + date +
+                              e.TargetSite?.Name))
+            Directory.CreateDirectory(Application.StartupPath + "\\" + UnhandledExceptionsPath + date +
+                                      e.TargetSite?.Name);
+
+        var fullPath = Application.StartupPath + "\\" + UnhandledExceptionsPath + date +
+                       e.TargetSite?.Name + "\\";
+
+        var date2 = dt.Hour + "-" + dt.Minute;
+        var lines = new List<string> {
+            "----Exception message----",
+            e.Message,
+            "----End of exception message----\r\n",
+            "----Stack trace----"
+        };
+
+        if (e.StackTrace != null) lines.Add(e.StackTrace);
+        lines.Add("----End of stack trace----\r\n");
+
+        //Lines.Add("----Data from exception----");
+        //foreach (KeyValuePair<object, object> data in e.Data)
+        //    Lines.Add(data.Key.ToString() + "->" + data.Value.ToString());
+        //Lines.Add("----End of data from exception----\r\n");
+
+        File.WriteAllLines(fullPath + date2 + ".txt", lines.ToArray());
+    }
+
+    #endregion
+}
+
+internal class MatrixTimes {
+    public static DateTime Now => DateTime.Now;
+
+    public class Start {
+        public static int Dizzy = 49;
+
+        public static bool SkillTeam => Now is { Hour: 21, Minute: 1 };
+
+        public static bool TeamPk => Now is { Hour: 20, Minute: 1 };
+
+        public static bool PoleDomination => Now.Hour is 5 or 17;
+
+        public static bool ClanWarArena2 => Now is { Hour: 22, Minute: 25 } or { Hour: 10, Minute: 25 };
+
+        public static bool ClanWarArena => Now is { Hour: 22, Minute: 30 } || Now is { Hour: 10, Minute: 30 };
+
+        public static bool HeroOfGame => Now.Minute == 30;
+
+        public static bool Fbss2 => Now.Minute is >= 21 and < 23;
+
+        public static bool Nobilty => Now.Minute is >= 20 and <= 23;
+    }
+
+    public class End {
+        public static bool Fbss => Now.Minute >= 23;
+
+        public static bool Nobility => Now.Minute is >= 24 and <= 30;
+    }
+}
+
+public class Rates {
+    public static uint GuildWar;
+    public static uint ChangeName;
+    public static uint King;
+    public static uint Prince;
+    public static uint Duke;
+    public static uint EliteGw;
+    public static uint SkillTeam1;
+    public static uint SkillTeam2;
+    public static uint SkillTeam3;
+    public static uint SkillTeam4;
+    public static uint WeeklyPk;
+    public static uint TopGuild;
+    public static uint MrConquer;
+    public static uint UniquePk;
+    public static uint Portals;
+    public static uint HeroOfGame;
+    public static uint NobilityPrize;
+    public static uint LastMan;
+    public static uint Daily;
+    public static uint Fbss;
+    public static uint Poles;
+    public static uint ClanWarDay;
+    public static uint SoulP6;
+    public static uint SoulP7;
+    public static uint ChangeBody;
+    public static uint Refinery6;
+    public static uint Twar;
+    public static uint StWar;
+    public static uint Ctf;
+    public static uint Cps;
+    public static uint ClanWarCity;
+    public static uint ClassPk;
+    public static uint DeathMatches;
+    public static uint Lobby;
+    public static uint Hunter;
+    public static uint Thief;
+    public static uint HousePromote;
+    public static uint ItemBox;
+    public static uint HouseUpgrade;
+    public static uint MonthlyPk;
+    public static uint TopSpouse;
+    public static uint Bosses;
+    public static uint Night;
+    public static uint Broadcast;
+    public static uint GuildFee;
+    public static uint TeleportFee;
+    public static uint DragonBall;
+    public static uint Meteor;
+    public static string? VoteUrl;
+    public static uint Reincarnation;
+    public static uint DonationRate;
+
+    public static string? Servername => ServerName;
+
+    public static void Load(IniFile iniFile) {
+        DragonBall = iniFile.ReadUInt32("Rates", "DragonBall");
+        Meteor = iniFile.ReadUInt32("Rates", "Meteor");
+        GuildWar = iniFile.ReadUInt32("Rates", "GuildWar");
+        EliteGw = iniFile.ReadUInt32("Rates", "EliteGw");
+        Bosses = iniFile.ReadUInt32("Rates", "Bosses");
+        Broadcast = iniFile.ReadUInt32("Rates", "Broadcast");
+        TeleportFee = iniFile.ReadUInt32("Rates", "TeleportFee");
+        GuildFee = iniFile.ReadUInt32("Rates", "GuildFee");
+        King = iniFile.ReadUInt32("Rates", "King");
+        Prince = iniFile.ReadUInt32("Rates", "Prince");
+        Duke = iniFile.ReadUInt32("Rates", "Duke");
+        Reincarnation = iniFile.ReadUInt32("Rates", "Reincarnation");
+        MonthlyPk = iniFile.ReadUInt32("Rates", "MonthlyPk");
+        TopSpouse = iniFile.ReadUInt32("Rates", "TopSpouse");
+        ChangeName = iniFile.ReadUInt32("Rates", "ChangeName");
+        HousePromote = iniFile.ReadUInt32("Rates", "HousePromote");
+        ItemBox = iniFile.ReadUInt32("Rates", "ItemBox");
+        Night = iniFile.ReadUInt32("Rates", "Night");
+        VoteUrl = iniFile.ReadString("Rates", "VoteUrl");
+        Portals = iniFile.ReadUInt32("Rates", "Portals");
+        SkillTeam1 = iniFile.ReadUInt32("Rates", "SkillTeam1");
+        SkillTeam2 = iniFile.ReadUInt32("Rates", "SkillTeam2");
+        SkillTeam3 = iniFile.ReadUInt32("Rates", "SkillTeam3");
+        SkillTeam4 = iniFile.ReadUInt32("Rates", "SkillTeam4");
+        SoulP6 = iniFile.ReadUInt32("Rates", "SoulP6");
+        SoulP7 = iniFile.ReadUInt32("Rates", "SoulP7");
+        Refinery6 = iniFile.ReadUInt32("Rates", "Refinery6");
+        ChangeBody = iniFile.ReadUInt32("Rates", "ChangeBody");
+        UniquePk = iniFile.ReadUInt32("Rates", "UniquePk");
+        WeeklyPk = iniFile.ReadUInt32("Rates", "WeeklyPk");
+        Fbss = iniFile.ReadUInt32("Rates", "Fbss");
+        Poles = iniFile.ReadUInt32("Rates", "Poles");
+        ClanWarDay = iniFile.ReadUInt32("Rates", "ClanWarDay");
+        LastMan = iniFile.ReadUInt32("Rates", "LastMan");
+        Daily = iniFile.ReadUInt32("Rates", "Daily");
+        TopGuild = iniFile.ReadUInt32("Rates", "TopGuild");
+        MrConquer = iniFile.ReadUInt32("Rates", "MrConquer");
+        NobilityPrize = iniFile.ReadUInt32("Rates", "NobilityPrize");
+        HeroOfGame = iniFile.ReadUInt32("Rates", "HeroOfGame");
+        Twar = iniFile.ReadUInt32("Rates", "Twar");
+        StWar = iniFile.ReadUInt32("Rates", "StWar");
+        Ctf = iniFile.ReadUInt32("Rates", "Ctf");
+        Cps = iniFile.ReadUInt32("Rates", "Cps");
+        ClanWarCity = iniFile.ReadUInt32("Rates", "ClanWarCity");
+        ClassPk = iniFile.ReadUInt32("Rates", "ClassPk");
+        DeathMatches = iniFile.ReadUInt32("Rates", "DeathMatches");
+        Lobby = iniFile.ReadUInt32("Rates", "Lobby");
+        Hunter = iniFile.ReadUInt32("Rates", "Hunter");
+        Thief = iniFile.ReadUInt32("Rates", "Thief");
+        DonationRate = iniFile.ReadUInt32("Rates", "DonationRate");
     }
 }

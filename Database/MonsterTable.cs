@@ -906,8 +906,7 @@ namespace MTA.Database {
                             floorItem.Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                             floorItem.Item.ID = Uid;
                             floorItem.Item.MaximDurability = floorItem.Item.Durability = 65535;
-                            floorItem.Item.UID = Program.NextItemID;
-                            ;
+                            floorItem.Item.UID = Program.GetNextItemId();
                             floorItem.ValueType = FloorItem.FloorValueType.Item;
                             floorItem.ItemID = Uid;
                             floorItem.MapID = Owner.MapID;

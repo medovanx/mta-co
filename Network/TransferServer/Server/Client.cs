@@ -325,7 +325,7 @@ namespace MTA.TransferServer
                                     var item = Client.Inventory.Objects[ii];
                                     if (item == null)
                                         continue;
-                                    item.UID = Program.NextItemID;
+                                    item.UID = Program.GetNextItemId();
                                     var pur = item.Purification;
                                     pur.ItemUID = item.UID;
                                     item.Purification = pur;
@@ -343,7 +343,7 @@ namespace MTA.TransferServer
                                     var item = Client.Equipment.Objects[ii];
                                     if (item == null)
                                         continue;
-                                    item.UID = Program.NextItemID;
+                                    item.UID = Program.GetNextItemId();
                                     var pur = item.Purification;
                                     pur.ItemUID = item.UID;
                                     item.Purification = pur;
@@ -365,7 +365,7 @@ namespace MTA.TransferServer
                                             var item = ware.Objects[ii];
                                             if (item == null)
                                                 continue;
-                                            item.UID = Program.NextItemID;
+                                            item.UID = Program.GetNextItemId();
                                             var pur = item.Purification;
                                             pur.ItemUID = item.UID;
                                             item.Purification = pur;

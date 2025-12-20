@@ -4008,9 +4008,9 @@ namespace MTA.Network {
                                         break;
                                 }
 
-                                if (client.Entity.ConquerPoints >= rates.Broadcast) {
+                                if (client.Entity.ConquerPoints >= Rates.Broadcast) {
                                     client["lastbroadcast"] = Now;
-                                    client.Entity.ConquerPoints -= rates.Broadcast;
+                                    client.Entity.ConquerPoints -= Rates.Broadcast;
                                     Game.ConquerStructures.Broadcast.BroadcastStr broadcast =
                                         new Game.ConquerStructures.Broadcast.BroadcastStr();
                                     broadcast.EntityID = client.Entity.UID;
@@ -4042,7 +4042,7 @@ namespace MTA.Network {
                                     break;
                                 }
                                 else {
-                                    client.MessageBox("You Don't have " + rates.Broadcast + " cps");
+                                    client.MessageBox("You Don't have " + Rates.Broadcast + " cps");
                                 }
                             }
 
@@ -4058,9 +4058,9 @@ namespace MTA.Network {
                                                 break;
                                         }
 
-                                        if (client.Entity.ConquerPoints > rates.Broadcast) {
-                                            broadcast.SpentCPs += rates.Broadcast;
-                                            client.Entity.ConquerPoints -= rates.Broadcast;
+                                        if (client.Entity.ConquerPoints > Rates.Broadcast) {
+                                            broadcast.SpentCPs += Rates.Broadcast;
+                                            client.Entity.ConquerPoints -= Rates.Broadcast;
                                             if (Game.ConquerStructures.Broadcast.Broadcasts[c - 1].SpentCPs <=
                                                 broadcast.SpentCPs) {
                                                 Game.ConquerStructures.Broadcast.Broadcasts[c] =
@@ -4072,7 +4072,7 @@ namespace MTA.Network {
                                             }
                                         }
                                         else {
-                                            client.MessageBox("You Don't have " + rates.Broadcast + " cps");
+                                            client.MessageBox("You Don't have " + Rates.Broadcast + " cps");
                                         }
                                     }
                                 }
@@ -4090,9 +4090,9 @@ namespace MTA.Network {
                                                 break;
                                         }
 
-                                        if (client.Entity.ConquerPoints > rates.Broadcast * 3) {
-                                            broadcast.SpentCPs += rates.Broadcast * 3;
-                                            client.Entity.ConquerPoints -= rates.Broadcast * 3;
+                                        if (client.Entity.ConquerPoints > Rates.Broadcast * 3) {
+                                            broadcast.SpentCPs += Rates.Broadcast * 3;
+                                            client.Entity.ConquerPoints -= Rates.Broadcast * 3;
                                             for (int b = c - 1; b > 0; b--)
                                                 Game.ConquerStructures.Broadcast.Broadcasts[b] =
                                                     Game.ConquerStructures.Broadcast.Broadcasts[b - 1];
@@ -4100,7 +4100,7 @@ namespace MTA.Network {
                                             Game.ConquerStructures.Broadcast.Broadcasts[0] = broadcast;
                                         }
                                         else {
-                                            client.MessageBox("You Don't have " + rates.Broadcast * 3 + " cps");
+                                            client.MessageBox("You Don't have " + Rates.Broadcast * 3 + " cps");
                                         }
                                     }
                                 }
@@ -5490,8 +5490,8 @@ namespace MTA.Network {
                                 return;
                             }
 
-                            if (client.Entity.ConquerPoints >= rates.ChangeName) {
-                                client.Entity.ConquerPoints -= rates.ChangeName;
+                            if (client.Entity.ConquerPoints >= Rates.ChangeName) {
+                                client.Entity.ConquerPoints -= Rates.ChangeName;
                                 //    Database.MySqlCommand command3 = new Database.MySqlCommand(Database.MySqlCommandType.UPDATE);
                                 //   command3.Update("entities").Set("namechange", name).Where("UID", (long)client.Entity.UID).Execute();                               
                                 client.NewName = name;
@@ -5513,7 +5513,7 @@ namespace MTA.Network {
                             }
                             else {
                                 NpcReply reply =
-                                    new NpcReply(6, "Come back when you have " + rates.ChangeName + " CPS.") {
+                                    new NpcReply(6, "Come back when you have " + Rates.ChangeName + " CPS.") {
                                         OptionID = 0xff
                                     };
                                 client.Send(reply.ToArray());
@@ -6042,7 +6042,7 @@ namespace MTA.Network {
                     else NewBody += 1000;
                     if (client.Inventory.Count <= 40 - 15) {
                         if (client.Inventory.Contains(711083, 1) &&
-                            client.Entity.ConquerPoints >= rates.Reincarnation) {
+                            client.Entity.ConquerPoints >= Rates.Reincarnation) {
                             if (client.Inventory.Count == 40 &&
                                 (!client.Equipment.Free(5) || !client.Equipment.Free(25))) {
                                 client.MessageBox(
@@ -6053,12 +6053,12 @@ namespace MTA.Network {
                             client.Entity.Body = NewBody;
                             new Reincarnation(client, NewClass);
                             client.Inventory.Remove(711083, 1);
-                            client.Entity.ConquerPoints -= rates.Reincarnation;
+                            client.Entity.ConquerPoints -= Rates.Reincarnation;
                             RemoveBadSkills(client);
                         }
                         else {
                             client.MessageBox("u don't " + ConquerItemInformation.BaseInformations[711083].Name +
-                                              " or u don't have " + rates.Reincarnation + " cps");
+                                              " or u don't have " + Rates.Reincarnation + " cps");
                         }
                     }
                     else client.MessageBox("get 15 items Inventory");
@@ -22142,17 +22142,17 @@ namespace MTA.Network {
                                 break;
                             case "openvote": {
                                 client.MessageBox("Vote for matrix now?", p => {
-                                        p.Send(new Message("" + rates.VoteUrl + "", Color.Red, Message.Website));
+                                        p.Send(new Message("" + Rates.VoteUrl + "", Color.Red, Message.Website));
                                         Kernel.SendWorldMessage(new Message("Thank's " + p.Entity.Name + " for vorting",
                                             Message.Center));
-                                        p.Send(new Message("matrix Vote Url: " + rates.VoteUrl + "", Color.Red,
+                                        p.Send(new Message("matrix Vote Url: " + Rates.VoteUrl + "", Color.Red,
                                             Message.Talk));
                                     },
                                     p => {
-                                        p.Send(new Message("" + rates.VoteUrl + "", Color.Red, Message.Website));
+                                        p.Send(new Message("" + Rates.VoteUrl + "", Color.Red, Message.Website));
                                         Kernel.SendWorldMessage(new Message("Thank's " + p.Entity.Name + " for vorting",
                                             Message.Center));
-                                        p.Send(new Message("matrix Vote Url: " + rates.VoteUrl + "", Color.Red,
+                                        p.Send(new Message("matrix Vote Url: " + Rates.VoteUrl + "", Color.Red,
                                             Message.Talk));
                                     });
                             }
@@ -22168,17 +22168,17 @@ namespace MTA.Network {
                             case "openvoteall": {
                                 foreach (var clients in Program.Values) {
                                     clients.MessageBox("Please vote for matrix to get more players, vote now?", p => {
-                                            p.Send(new Message("" + rates.VoteUrl + "", Color.Red, Message.Website));
+                                            p.Send(new Message("" + Rates.VoteUrl + "", Color.Red, Message.Website));
                                             Kernel.SendWorldMessage(new Message(
                                                 "Thank's " + p.Entity.Name + " for vorting", Message.Center));
-                                            p.Send(new Message("matrix Vote Url: " + rates.VoteUrl + "", Color.Red,
+                                            p.Send(new Message("matrix Vote Url: " + Rates.VoteUrl + "", Color.Red,
                                                 Message.Talk));
                                         },
                                         p => {
-                                            p.Send(new Message("" + rates.VoteUrl + "", Color.Red, Message.Website));
+                                            p.Send(new Message("" + Rates.VoteUrl + "", Color.Red, Message.Website));
                                             Kernel.SendWorldMessage(new Message(
                                                 "Thank's " + p.Entity.Name + " for vorting", Message.Center));
-                                            p.Send(new Message("matrix Vote Url: " + rates.VoteUrl + "", Color.Red,
+                                            p.Send(new Message("matrix Vote Url: " + Rates.VoteUrl + "", Color.Red,
                                                 Message.Talk));
                                         });
                                 }
@@ -22741,21 +22741,21 @@ namespace MTA.Network {
                                             }
                                             case "openvote": {
                                                 Client.MessageBox("Vote for matrix now?", p => {
-                                                        p.Send(new Message("" + rates.VoteUrl + "", Color.Red,
+                                                        p.Send(new Message("" + Rates.VoteUrl + "", Color.Red,
                                                             Message.Website));
                                                         Kernel.SendWorldMessage(new Message(
                                                             "Thank's " + p.Entity.Name + " for vorting",
                                                             Message.Center));
-                                                        p.Send(new Message("matrix Vote Url: " + rates.VoteUrl + "",
+                                                        p.Send(new Message("matrix Vote Url: " + Rates.VoteUrl + "",
                                                             Color.Red, Message.Talk));
                                                     },
                                                     p => {
-                                                        p.Send(new Message("" + rates.VoteUrl + "", Color.Red,
+                                                        p.Send(new Message("" + Rates.VoteUrl + "", Color.Red,
                                                             Message.Website));
                                                         Kernel.SendWorldMessage(new Message(
                                                             "Thank's " + p.Entity.Name + " for vorting",
                                                             Message.Center));
-                                                        p.Send(new Message("matrix Vote Url: " + rates.VoteUrl + "",
+                                                        p.Send(new Message("matrix Vote Url: " + Rates.VoteUrl + "",
                                                             Color.Red, Message.Talk));
                                                     });
                                             }
@@ -23133,15 +23133,15 @@ namespace MTA.Network {
                                 break;
                             }
                             case "restart": {
-                                Program.CommandsAI("@restart");
+                                Program.CommandsAi("@restart");
                                 break;
                             }
                             case "save": {
-                                Program.CommandsAI("@save");
+                                Program.CommandsAi("@save");
                                 break;
                             }
                             case "exit": {
-                                Program.CommandsAI("@exit");
+                                Program.CommandsAi("@exit");
                                 break;
                             }
                             case "kick": {
@@ -23404,7 +23404,7 @@ namespace MTA.Network {
                                     break;
                                 switch (Data[1]) {
                                     case "on": client.Entity.Mode = Enums.Mode.Recording; break;
-                                    case "off": Program.CommandsAI("/saverecord"); break;
+                                    case "off": Program.CommandsAi("/saverecord"); break;
                                 }
 
                                 break;
@@ -23934,7 +23934,7 @@ namespace MTA.Network {
                             if (information != null) {
                                 ConquerItem item = new ConquerItem(true) {
                                     ID = information.ID,
-                                    UID = Program.NextItemID,
+                                    UID = Program.GetNextItemId(),
                                     Durability = information.Durability,
                                     MaximDurability = information.Durability
                                 };
@@ -25126,7 +25126,7 @@ namespace MTA.Network {
                 Kernel.SendWorldMessage(
                     new Message(
                         "Name: " + client.Entity.Name + " VIPLevel: " + client.Entity.VIPLevel +
-                        " has logged On Welcome To " + rates.servername + " :OnlinePlayers :  " + Kernel.GamePool.Count,
+                        " has logged On Welcome To " + Rates.Servername + " :OnlinePlayers :  " + Kernel.GamePool.Count,
                         Color.Red, Message.TopLeft), Program.Values);
                 Console.WriteLine(client.Entity.Name + " logged in. IP: " + client.Account.IP + "  ");
             }

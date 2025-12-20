@@ -68,7 +68,7 @@ namespace MTA.Game
             DateTime time64 = DateTime.Now;
             //  if (time64.DayOfWeek == DayOfWeek.Tuesday)
             {
-                if (Matrix_Times.Start.PoleDomnation/*time64.Hour == 00*/)
+                if (MatrixTimes.Start.PoleDomination/*time64.Hour == 00*/)
                 //if (time64.Hour == 17)
                 {
                     if (time64.Minute % 12 == 0)

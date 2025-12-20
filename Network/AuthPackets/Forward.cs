@@ -34,7 +34,7 @@ namespace MTA.Network.AuthPackets
                 Network.Writer.WriteUInt32((uint)value, 8, Buffer);
             }
         }
-        public string IP
+        public string? IP
         {
             get
             {

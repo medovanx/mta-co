@@ -790,7 +790,7 @@ namespace MTA.Database
                            .Where("uid", client.Entity.UID);
                 using var reader = cmd.CreateReader();
                 if (reader.Read())
-                    client.Entity.UID = Program.EntityUID.Next;
+                    client.Entity.UID = Program.EntityUid.Next;
                 else
                     break;
             }
@@ -819,7 +819,7 @@ namespace MTA.Database
                 }
                 catch
                 {
-                    client.Entity.UID = Program.EntityUID.Next;
+                    client.Entity.UID = Program.EntityUid.Next;
                 }
             }
 
@@ -905,7 +905,7 @@ namespace MTA.Database
                 client.Entity.Face = (ushort)Kernel.Random.Next(201, 250);
             byte Color = (byte)Kernel.Random.Next(4, 8);
             client.Entity.HairStyle = (ushort)(Color * 100 + 10 + (byte)Kernel.Random.Next(4, 9));
-            client.Entity.UID = Program.EntityUID.Next;
+            client.Entity.UID = Program.EntityUid.Next;
             client.Entity.JustCreated = true;
 
             while (true)
@@ -915,7 +915,7 @@ namespace MTA.Database
                            .Where("uid", client.Entity.UID);
                 using var reader = cmd.CreateReader();
                 if (reader.Read())
-                    client.Entity.UID = Program.EntityUID.Next;
+                    client.Entity.UID = Program.EntityUid.Next;
                 else
                     break;
             }
@@ -948,7 +948,7 @@ namespace MTA.Database
             catch (Exception ex)
             {
                 Console.WriteLine($"Character creation failed: {ex.Message}");
-                client.Entity.UID = Program.EntityUID.Next;
+                client.Entity.UID = Program.EntityUid.Next;
             }
 
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("configuration")

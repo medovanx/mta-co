@@ -521,7 +521,7 @@ namespace MTA.Game.ConquerStructures
                     switch (use)
                     {
                         case Enums.ItemUse.CreateAndAdd:
-                            item.UID = Program.NextItemID; //Program.NextItemID++;
+                            item.UID = Program.GetNextItemId(); //Program.NextItemID++;
                             Database.ConquerItemTable.AddItem(ref item, Owner);
                             Database.ConquerItemTable.Update_Free(item, Owner);
                             item.MobDropped = false;

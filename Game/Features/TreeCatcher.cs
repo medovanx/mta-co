@@ -105,7 +105,7 @@ namespace MTA.MaTrix.New_Quests {
 
         public static void Catched(GameState client) {
             ReSpwan();
-            client.Entity.ConquerPoints += rates.Shit;
+            client.Entity.ConquerPoints += 20000;
             Kernel.SendWorldMessage(
                 new Message("Player " + client.Entity.Name + " Have Catched the Tree and claimed 50k cps", Color.Red,
                     Message.TopLeft), Program.Values);

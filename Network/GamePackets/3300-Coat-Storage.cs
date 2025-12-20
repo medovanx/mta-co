@@ -85,7 +85,7 @@ namespace MTA.Network.GamePackets {
                                     client.Equipment.Add(myItem);
                             }
                             catch (Exception ex) {
-                                Program.SaveException(ex, true);
+                                Program.SaveException(new InClassName(ex, true));
                             }
                         }
 

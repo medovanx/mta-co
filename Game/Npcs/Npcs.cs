@@ -935,7 +935,7 @@ namespace MTA {
                                             client.Inventory.Add(720020, 0, 1);
                                         }
                                         else {
-                                            dialog.Text("Sorry you don't have 2" + rates.Daily + " CPs");
+                                            dialog.Text("Sorry you don't have 2" + Rates.Daily + " CPs");
                                             dialog.Option("Ahh.", 255);
                                             dialog.Send();
                                         }
@@ -1007,7 +1007,7 @@ namespace MTA {
                                     if (client.Guild != null) {
                                         if (client.AsMember != null) {
                                             if (client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader) {
-                                                uint Reaward = (uint)(client.Guild.CTFReward * rates.ctf);
+                                                uint Reaward = (uint)(client.Guild.CTFReward * Rates.Ctf);
                                                 if (Reaward != 0) {
                                                     byte[] messaje =
                                                         new Message(
@@ -1134,7 +1134,7 @@ namespace MTA {
                                         client.Entity.Teleport(Map, X, Y);
                                     }
                                     else {
-                                        dialog.Text("Hey! You don't have " + rates.TeleportFee +
+                                        dialog.Text("Hey! You don't have " + Rates.TeleportFee +
                                                     " do you?\nDon't you dare try to cheat me or I'll call the guards!");
                                         dialog.Option("Oh i'm crazy!", 255);
                                         dialog.Send();
@@ -1279,10 +1279,10 @@ namespace MTA {
                                 #region dialog create
 
                                 case 2: {
-                                    if (client.Entity.ConquerPoints < rates.GuildFee) {
+                                    if (client.Entity.ConquerPoints < Rates.GuildFee) {
                                         dialog.Text(
                                             "You don`t have enough money to create a Clan. Creating a Clan needs");
-                                        dialog.Text("" + rates.GuildFee +
+                                        dialog.Text("" + Rates.GuildFee +
                                                     " Money. Half of which will be the Clan Fund. A Clan has to have money");
                                         dialog.Text(
                                             "if you want to survive, you know. Can`t have a war without money!");
@@ -1292,7 +1292,7 @@ namespace MTA {
                                         return;
                                     }
 
-                                    dialog.Text("Remember i will charge the cost of " + rates.GuildFee +
+                                    dialog.Text("Remember i will charge the cost of " + Rates.GuildFee +
                                                 " Money, to Create this Clan.");
                                     dialog.Input("My Clan name will be...", 8, 16);
                                     dialog.Avatar(60);
@@ -1335,7 +1335,7 @@ namespace MTA {
                                                 dialog.Option("Alright,", 255);
                                             }
                                             else {
-                                                dialog.Text("You don't have " + rates.ref6 +
+                                                dialog.Text("You don't have " + Rates.Refinery6 +
                                                             " cps, i can't create your clan!");
                                                 dialog.Option("Alright,", 255);
                                                 goto Jump;
@@ -2989,7 +2989,7 @@ namespace MTA {
                                 case 0: {
                                     dialog.Text("Hello " + client.Entity.Name +
                                                 ", I can send you on your way for just 100 silvers and " +
-                                                rates.TeleportFee + " cps for Market.");
+                                                Rates.TeleportFee + " cps for Market.");
                                     dialog.Text("\nWhere would you like to go?");
                                     dialog.Option("Twin City", 1);
                                     dialog.Option("Market", 2);
@@ -4649,7 +4649,7 @@ namespace MTA {
                                         "Greetings, here you can exchange either a DragonBall or a DragonScroll or MeteorScroll for cps. ");
                                     dialog.Text(
                                         "One DragonBall will get you 800 Points Chi and a DragonScroll will get you 8,000 Points Chi and Meteor for " +
-                                        rates.Meteor + " and MeteorScroll for " + rates.Meteor * 10 + ". ");
+                                        Rates.Meteor + " and MeteorScroll for " + Rates.Meteor * 10 + ". ");
                                     dialog.Text("What would you like to trade? Or would you rather not?");
                                     dialog.Option("Make DragonBallScroll", 5);
                                     dialog.Option("Make MeteorScroll", 6);
@@ -4676,7 +4676,7 @@ namespace MTA {
                                 case 3: {
                                     if (client.Inventory.Contains(1088001, 1)) {
                                         client.Inventory.Remove(1088001, 1);
-                                        client.Entity.ConquerPoints += rates.Meteor;
+                                        client.Entity.ConquerPoints += Rates.Meteor;
                                     }
                                     else {
                                         dialog.Text("You do not have a Meteor");
@@ -4688,7 +4688,7 @@ namespace MTA {
                                 case 4: {
                                     if (client.Inventory.Contains(720027, 1)) {
                                         client.Inventory.Remove(720027, 1);
-                                        client.Entity.ConquerPoints += rates.Meteor * 10;
+                                        client.Entity.ConquerPoints += Rates.Meteor * 10;
                                     }
                                     else {
                                         dialog.Text("You do not have a MeteorScroll");
@@ -13212,8 +13212,8 @@ namespace MTA {
                                             MySqlReader r2 = new MySqlReader(cmd3);
                                             if (!r2.Read()) //wait
                                             {
-                                                if (client.Entity.ConquerPoints >= rates.ChangeName) {
-                                                    client.Entity.ConquerPoints -= rates.ChangeName;
+                                                if (client.Entity.ConquerPoints >= Rates.ChangeName) {
+                                                    client.Entity.ConquerPoints -= Rates.ChangeName;
 
                                                     MySqlCommand cmd = new MySqlCommand(MySqlCommandType.UPDATE);
                                                     cmd.Update("entities").Set("namechange", newname)
@@ -13225,7 +13225,7 @@ namespace MTA {
                                                                       newname);
                                                     Kernel.SendWorldMessage(new Message(
                                                         client.Entity.Name + ", Changed He's/Hers Name to " + newname +
-                                                        " , it's for " + rates.ChangeName + " CPs.",
+                                                        " , it's for " + Rates.ChangeName + " CPs.",
                                                         Color.Red, Message.Talk), Program.Values);
 
                                                     dialog.Text("Your new name is : " + newname + ".");
@@ -13233,7 +13233,7 @@ namespace MTA {
                                                     dialog.Send();
                                                 }
                                                 else {
-                                                    dialog.Text("Come back when you have " + rates.ChangeName +
+                                                    dialog.Text("Come back when you have " + Rates.ChangeName +
                                                                 " CPS.");
                                                     dialog.Option("Have a good day.", 255);
                                                     dialog.Send();
@@ -13610,15 +13610,15 @@ namespace MTA {
                         #region Change Name
 
                         case 2: {
-                            if (client.Entity.ConquerPoints < rates.ChangeName) {
-                                dialog.Text("i can't change your name you maust have " + rates.ChangeName + " cps.");
+                            if (client.Entity.ConquerPoints < Rates.ChangeName) {
+                                dialog.Text("i can't change your name you maust have " + Rates.ChangeName + " cps.");
                                 dialog.Option("I see.", 255);
                                 dialog.Avatar(116);
                                 dialog.Send();
                                 break;
                             }
 
-                            if (client.Entity.Name != "" && client.Entity.ConquerPoints >= rates.ChangeName) {
+                            if (client.Entity.Name != "" && client.Entity.ConquerPoints >= Rates.ChangeName) {
                                 dialog.Text("Please insert the old name you have now.");
                                 dialog.Input("Here:", 6, 14);
                                 dialog.Option("Forget it.", 255);
@@ -13632,7 +13632,7 @@ namespace MTA {
                             break;
                         }
                         case 6: {
-                            if (client.Entity.Name != "" && client.Entity.ConquerPoints >= rates.ChangeName) {
+                            if (client.Entity.Name != "" && client.Entity.ConquerPoints >= Rates.ChangeName) {
                                 if (InvalidCharacters(npcRequest.Input) && npcRequest.Input.Length <= 14) {
                                     if (client.Entity.Name == npcRequest.Input) {
                                         dialog.Text("Please insert the New Name again.");
@@ -13662,7 +13662,7 @@ namespace MTA {
                         case 7: {
                             if (client.Entity.Name != "" && client.Entity.ConquerPoints >= 50000) {
                                 if (InvalidCharacters(npcRequest.Input) && npcRequest.Input.Length <= 14 &&
-                                    client.Entity.ConquerPoints >= rates.ChangeName) {
+                                    client.Entity.ConquerPoints >= Rates.ChangeName) {
                                     client.TempPassword = npcRequest.Input;
                                     dialog.Text("Please insert the New Name again.");
                                     dialog.Input("Here:", 8, 14);
@@ -13684,13 +13684,13 @@ namespace MTA {
                         }
                         case 8: {
                             if (InvalidCharacters2(npcRequest.Input) &&
-                                client.Entity.ConquerPoints >= rates.ChangeName) {
+                                client.Entity.ConquerPoints >= Rates.ChangeName) {
                                 if (client.Entity.Name != "") {
                                     if (InvalidCharacters(npcRequest.Input) && npcRequest.Input.Length <= 14) {
                                         if (client.TempPassword == npcRequest.Input) {
-                                            if (client.Entity.ConquerPoints >= rates.ChangeName) {
+                                            if (client.Entity.ConquerPoints >= Rates.ChangeName) {
                                                 //client.TempPassword = "";
-                                                client.Entity.ConquerPoints -= rates.ChangeName;
+                                                client.Entity.ConquerPoints -= Rates.ChangeName;
                                                 //client.Account.Save();
                                                 client.Entity.Name = npcRequest.Input;
                                                 EntityTable.SaveEntity(client);
@@ -17020,9 +17020,9 @@ namespace MTA {
                             break;
 
                         case 1:
-                            if ((DateTime.Now.Minute >= Matrix_Times.Start.dizzy) ||
-                                (DateTime.Now.Minute <= Matrix_Times.Start.dizzy + 3)) {
-                                dialog.Text("DizzyLand War is held during xx:" + Matrix_Times.Start.dizzy +
+                            if ((DateTime.Now.Minute >= MatrixTimes.Start.Dizzy) ||
+                                (DateTime.Now.Minute <= MatrixTimes.Start.Dizzy + 3)) {
+                                dialog.Text("DizzyLand War is held during xx:" + MatrixTimes.Start.Dizzy +
                                             " in every Hour");
                                 dialog.Option("I don't care.", 0xff);
                                 dialog.Send();
@@ -19698,22 +19698,22 @@ namespace MTA {
                         }
                         case 10: //MonsterSaber
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(800020, 0, 1);
                                     dialog.Text("Congratulations you got P7 MonsterSaber");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -19722,22 +19722,22 @@ namespace MTA {
                         }
                         case 11: //SkyHammer
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(800111, 0, 1);
                                     dialog.Text("Congratulations you got P7 SkyHammer");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -19746,22 +19746,22 @@ namespace MTA {
                         }
                         case 12: //FrankoKatana
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(800142, 0, 1);
                                     dialog.Text("Congratulations you got P7 FrankoKatana");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -19770,22 +19770,22 @@ namespace MTA {
                         }
                         case 13: //SkyHalberd
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(800215, 0, 1);
                                     dialog.Text("Congratulations you got P7 SkyHalberd");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -19794,22 +19794,22 @@ namespace MTA {
                         }
                         case 14: //DemonScythe
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(800255, 0, 1);
                                     dialog.Text("Congratulations you got P7 DemonScythe");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -19818,22 +19818,22 @@ namespace MTA {
                         }
                         case 15: //SpiritShield
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(800422, 0, 1);
                                     dialog.Text("Congratulations you got P7 SpiritShield");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -19842,22 +19842,22 @@ namespace MTA {
                         }
                         case 16: //TimeBacksword
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(800522, 0, 1);
                                     dialog.Text("Congratulations you got P7 TimeBacksword");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -19866,22 +19866,22 @@ namespace MTA {
                         }
                         case 17: //SunBow
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(800618, 0, 1);
                                     dialog.Text("Congratulations you got P7 SunBow");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -19890,22 +19890,22 @@ namespace MTA {
                         }
                         case 18: //BuddaBeads
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(800725, 0, 1);
                                     dialog.Text("Congratulations you got P7 BuddaBeads");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -19914,22 +19914,22 @@ namespace MTA {
                         }
                         case 19: //DeathPistol
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(800810, 0, 1);
                                     dialog.Text("Congratulations you got P7 DeathPistol");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -19938,22 +19938,22 @@ namespace MTA {
                         }
                         case 20: //RepentRapier
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(800811, 0, 1);
                                     dialog.Text("Congratulations you got P7 RepentRapier");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -19962,22 +19962,22 @@ namespace MTA {
                         }
                         case 21: //GhostKnife
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(800917, 0, 1);
                                     dialog.Text("Congratulations you got P7 GhostKnife");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -19986,22 +19986,22 @@ namespace MTA {
                         }
                         case 22: //WarCraze
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(801004, 0, 1);
                                     dialog.Text("Congratulations you got P7 WarCraze");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20010,22 +20010,22 @@ namespace MTA {
                         }
                         case 23: //NetherArmor
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(822071, 0, 1);
                                     dialog.Text("Congratulations you got P7 NetherArmor");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20034,22 +20034,22 @@ namespace MTA {
                         }
                         case 24: //EclipseArmor
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(822072, 0, 1);
                                     dialog.Text("Congratulations you got P7 EclipseArmor");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20058,22 +20058,22 @@ namespace MTA {
                         }
                         case 25: //CraneRing
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(823058, 0, 1);
                                     dialog.Text("Congratulations you got P7 CraneRing");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20082,22 +20082,22 @@ namespace MTA {
                         }
                         case 26: //DragonRing
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(823059, 0, 1);
                                     dialog.Text("Congratulations you got P7 DragonRing");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20106,22 +20106,22 @@ namespace MTA {
                         }
                         case 27: //RainbowBracelet
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(823060, 0, 1);
                                     dialog.Text("Congratulations you got P7 RainbowBracelet");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20130,22 +20130,22 @@ namespace MTA {
                         }
                         case 28: //LionHeavyRing
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(823061, 0, 1);
                                     dialog.Text("Congratulations you got P7 LionHeavyRing");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20154,22 +20154,22 @@ namespace MTA {
                         }
                         case 29: //TigerHeavyRing
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(823062, 0, 1);
                                     dialog.Text("Congratulations you got P7 TigerHeavyRing");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20178,22 +20178,22 @@ namespace MTA {
                         }
                         case 30: //FoxBoots
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(824018, 0, 1);
                                     dialog.Text("Congratulations you got P7 FoxBoots");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20202,22 +20202,22 @@ namespace MTA {
                         }
                         case 31: //DragonBoots
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(824019, 0, 1);
                                     dialog.Text("Congratulations you got P7 DragonBoots");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20226,22 +20226,22 @@ namespace MTA {
                         }
                         case 32: //CraneBoots
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(824020, 0, 1);
                                     dialog.Text("Congratulations you got P7 CraneBoots");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20250,22 +20250,22 @@ namespace MTA {
                         }
                         case 33: //HeavenNecklace
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(821033, 0, 1);
                                     dialog.Text("Congratulations you got P7 HeavenNecklace");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20274,22 +20274,22 @@ namespace MTA {
                         }
                         case 34: //FervorBag
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(821034, 0, 1);
                                     dialog.Text("Congratulations you got P7 FervorBag");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20298,22 +20298,22 @@ namespace MTA {
                         }
                         case 35: //MoonHeadgear
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(820073, 0, 1);
                                     dialog.Text("Congratulations you got P7 MoonHeadgear");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20322,22 +20322,22 @@ namespace MTA {
                         }
                         case 36: //SunHeadgear
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(820074, 0, 1);
                                     dialog.Text("Congratulations you got P7 SunHeadgear");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20346,22 +20346,22 @@ namespace MTA {
                         }
                         case 37: //StarHeadgear
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(820075, 0, 1);
                                     dialog.Text("Congratulations you got P7 StarHeadgear");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20370,22 +20370,22 @@ namespace MTA {
                         }
                         case 38: //IceHeadgear
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                if (client.Entity.ConquerPoints >= rates.soulp7) {
-                                    client.Entity.ConquerPoints -= rates.soulp7;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP7) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP7;
                                     client.Inventory.Add(820076, 0, 1);
                                     dialog.Text("Congratulations you got P7 IceHeadgear");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp7 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP7 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20464,22 +20464,22 @@ namespace MTA {
                         }
                         case 45: //TombBlade
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                    client.Entity.ConquerPoints -= rates.soulp6;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP6;
                                     client.Inventory.Add(800000, 0, 1);
                                     dialog.Text("Congratulations you got P6 TombBlade");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20488,22 +20488,22 @@ namespace MTA {
                         }
                         case 46: //StealthKatana
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                    client.Entity.ConquerPoints -= rates.soulp6;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP6;
                                     client.Inventory.Add(800017, 0, 1);
                                     dialog.Text("Congratulations you got P6 StealthKatana");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20512,22 +20512,22 @@ namespace MTA {
                         }
                         case 47: //GrimHammer
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                    client.Entity.ConquerPoints -= rates.soulp6;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP6;
                                     client.Inventory.Add(800110, 0, 1);
                                     dialog.Text("Congratulations you got P6 GrimHammer");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20536,22 +20536,22 @@ namespace MTA {
                         }
                         case 48: //SufferingScythe
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                    client.Entity.ConquerPoints -= rates.soulp6;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP6;
                                     client.Inventory.Add(800254, 0, 1);
                                     dialog.Text("Congratulations you got P6 SufferingScythe");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20560,22 +20560,22 @@ namespace MTA {
                         }
                         case 49: //ArchonWand
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                    client.Entity.ConquerPoints -= rates.soulp6;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP6;
                                     client.Inventory.Add(800320, 0, 1);
                                     dialog.Text("Congratulations you got P6 ArchonWand");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20584,22 +20584,22 @@ namespace MTA {
                         }
                         case 50: //SaintShield
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                    client.Entity.ConquerPoints -= rates.soulp6;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP6;
                                     client.Inventory.Add(800421, 0, 1);
                                     dialog.Text("Congratulations you got P6 SaintShield");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20608,22 +20608,22 @@ namespace MTA {
                         }
                         case 51: //PneumaBacksword
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                    client.Entity.ConquerPoints -= rates.soulp6;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP6;
                                     client.Inventory.Add(800513, 0, 1);
                                     dialog.Text("Congratulations you got P6 PneumaBacksword");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20632,22 +20632,22 @@ namespace MTA {
                         }
                         case 52: //WingedBow
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                    client.Entity.ConquerPoints -= rates.soulp6;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP6;
                                     client.Inventory.Add(800616, 0, 1);
                                     dialog.Text("Congratulations you got P6 WingedBow");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20656,22 +20656,22 @@ namespace MTA {
                         }
                         case 53: //HolyBeadsOfConsciousness
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                    client.Entity.ConquerPoints -= rates.soulp6;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP6;
                                     client.Inventory.Add(800722, 0, 1);
                                     dialog.Text("Congratulations you got P6 HolyBeadsOfConsciousness");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20680,22 +20680,22 @@ namespace MTA {
                         }
                         case 54: //TimePistol
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                    client.Entity.ConquerPoints -= rates.soulp6;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP6;
                                     client.Inventory.Add(800804, 0, 1);
                                     dialog.Text("Congratulations you got P6 TimePistol");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20704,22 +20704,22 @@ namespace MTA {
                         }
                         case 55: //DestinyRapier
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                    client.Entity.ConquerPoints -= rates.soulp6;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP6;
                                     client.Inventory.Add(800809, 0, 1);
                                     dialog.Text("Congratulations you got P6 DestinyRapier");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20728,22 +20728,22 @@ namespace MTA {
                         }
                         case 56: //DominantKnifeSoul
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                    client.Entity.ConquerPoints -= rates.soulp6;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP6;
                                     client.Inventory.Add(800916, 0, 1);
                                     dialog.Text("Congratulations you got P6 DominantKnifeSoul");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20752,22 +20752,22 @@ namespace MTA {
                         }
                         case 57: //DragonChant
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                    client.Entity.ConquerPoints -= rates.soulp6;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP6;
                                     client.Inventory.Add(801003, 0, 1);
                                     dialog.Text("Congratulations you got P6 DragonChant");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20776,22 +20776,22 @@ namespace MTA {
                         }
                         case 58: //WhirlpoolArmor
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                    client.Entity.ConquerPoints -= rates.soulp6;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP6;
                                     client.Inventory.Add(822053, 0, 1);
                                     dialog.Text("Congratulations you got P6 WhirlpoolArmor");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20800,22 +20800,22 @@ namespace MTA {
                         }
                         case 59: //WaterflowArmor
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                    client.Entity.ConquerPoints -= rates.soulp6;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP6;
                                     client.Inventory.Add(822055, 0, 1);
                                     dialog.Text("Congratulations you got P6 WaterflowArmor");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20824,22 +20824,22 @@ namespace MTA {
                         }
                         case 60: //SaintRing
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                    client.Entity.ConquerPoints -= rates.soulp6;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP6;
                                     client.Inventory.Add(823055, 0, 1);
                                     dialog.Text("Congratulations you got P6 SaintRing");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20848,22 +20848,22 @@ namespace MTA {
                         }
                         case 61: //SaintBracelet
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                    client.Entity.ConquerPoints -= rates.soulp6;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP6;
                                     client.Inventory.Add(823056, 0, 1);
                                     dialog.Text("Congratulations you got P6 SaintBracelet");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20872,22 +20872,22 @@ namespace MTA {
                         }
                         case 62: //SaintHeavyRing
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                    client.Entity.ConquerPoints -= rates.soulp6;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP6;
                                     client.Inventory.Add(823057, 0, 1);
                                     dialog.Text("Congratulations you got P6 SaintHeavyRing");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20896,22 +20896,22 @@ namespace MTA {
                         }
                         case 63: //SaintBoots
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                    client.Entity.ConquerPoints -= rates.soulp6;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP6;
                                     client.Inventory.Add(824017, 0, 1);
                                     dialog.Text("Congratulations you got P6 SaintBoots");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20920,16 +20920,16 @@ namespace MTA {
                         }
                         case 64: //SaintNecklace
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                    client.Entity.ConquerPoints -= rates.soulp6;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP6;
                                     client.Inventory.Add(821031, 0, 1);
                                     dialog.Text("Congratulations you got P6 SaintNecklace");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
@@ -20944,22 +20944,22 @@ namespace MTA {
                         }
                         case 65: //SaintBag
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                    client.Entity.ConquerPoints -= rates.soulp6;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP6;
                                     client.Inventory.Add(821032, 0, 1);
                                     dialog.Text("Congratulations you got P6 SaintBag");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20968,22 +20968,22 @@ namespace MTA {
                         }
                         case 66: //SaintHeadgear
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                    client.Entity.ConquerPoints -= rates.soulp6;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP6;
                                     client.Inventory.Add(820071, 0, 1);
                                     dialog.Text("Congratulations you got P6 SaintHeadgear");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -20992,22 +20992,22 @@ namespace MTA {
                         }
                         case 67: //HolyHeadgear
                         {
-                            if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                if (client.Entity.ConquerPoints >= rates.soulp6) {
-                                    client.Entity.ConquerPoints -= rates.soulp6;
+                            if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                if (client.Entity.ConquerPoints >= Rates.SoulP6) {
+                                    client.Entity.ConquerPoints -= Rates.SoulP6;
                                     client.Inventory.Add(820072, 0, 1);
                                     dialog.Text("Congratulations you got P6 HolyHeadgear");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.soulp6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.SoulP6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21117,22 +21117,22 @@ namespace MTA {
                         }
                         case 78: //M-Defense(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004136, 0, 1);
                                     dialog.Text("Congratulations you got P6 M-Defense(Sacred)Material [Necklace]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21141,22 +21141,22 @@ namespace MTA {
                         }
                         case 79: //M-Defense(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004146, 0, 1);
                                     dialog.Text("Congratulations you got P6 M-Defense(Sacred)Material [Bag]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21165,22 +21165,22 @@ namespace MTA {
                         }
                         case 80: //M-Defense(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004155, 0, 1);
                                     dialog.Text("Congratulations you got P6 M-Defense(Sacred)Material [Ring]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21189,22 +21189,22 @@ namespace MTA {
                         }
                         case 81: //M-Defense(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004157, 0, 1);
                                     dialog.Text("Congratulations you got P6 M-Defense(Sacred)Material [Bracelet]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21213,22 +21213,22 @@ namespace MTA {
                         }
                         case 82: //CriticalStrike(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004137, 0, 1);
                                     dialog.Text("Congratulations you got P6 CriticalStrike(Sacred)Material [1-handed]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21237,22 +21237,22 @@ namespace MTA {
                         }
                         case 84: //CriticalStrike(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004156, 0, 1);
                                     dialog.Text("Congratulations you got P6 CriticalStrike(Sacred)Material [2-handed]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21261,22 +21261,22 @@ namespace MTA {
                         }
                         case 86: //CriticalStrike(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004147, 0, 1);
                                     dialog.Text("Congratulations you got P6 CriticalStrike(Sacred)Material [Bow]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21285,22 +21285,22 @@ namespace MTA {
                         }
                         case 88: //CriticalStrike(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004158, 0, 1);
                                     dialog.Text("Congratulations you got P6 CriticalStrike(Sacred)Material [Ring]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21309,22 +21309,22 @@ namespace MTA {
                         }
                         case 89: //SkillC.Strike(Sacred)Material(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004138, 0, 1);
                                     dialog.Text("Congratulations you got P6 SkillC.Strike(Sacred)Material [Backsword]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21333,22 +21333,22 @@ namespace MTA {
                         }
                         case 90: //SkillC.Strike(Sacred)Material(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004148, 0, 1);
                                     dialog.Text("Congratulations you got P6 SkillC.Strike(Sacred)Material [Bracelet]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21357,22 +21357,22 @@ namespace MTA {
                         }
                         case 91: //Immunity(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004139, 0, 1);
                                     dialog.Text("Congratulations you got P6 Immunity(Sacred)Material [Armor]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21381,22 +21381,22 @@ namespace MTA {
                         }
                         case 92: //Immunity(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004149, 0, 1);
                                     dialog.Text("Congratulations you got P6 Immunity(Sacred)Material [Boots]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21405,9 +21405,9 @@ namespace MTA {
                         }
                         case 93: //Intensification(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004140, 0, 1);
                                     dialog.Text(
                                         "Congratulations you got P6 Intensification(Sacred)Material [Headgear]");
@@ -21415,13 +21415,13 @@ namespace MTA {
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21430,22 +21430,22 @@ namespace MTA {
                         }
                         case 94: //Breakthrough(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004141, 0, 1);
                                     dialog.Text("Congratulations you got P6 Breakthrough(Sacred)Material [1-handed]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21454,22 +21454,22 @@ namespace MTA {
                         }
                         case 95: //Breakthrough(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004150, 0, 1);
                                     dialog.Text("Congratulations you got P6 Breakthrough(Sacred)Material [Bow]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21478,22 +21478,22 @@ namespace MTA {
                         }
                         case 96: //Breakthrough(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004159, 0, 1);
                                     dialog.Text("Congratulations you got P6 Breakthrough(Sacred)Material [2-handed]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21502,22 +21502,22 @@ namespace MTA {
                         }
                         case 97: //Breakthrough(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004163, 0, 1);
                                     dialog.Text("Congratulations you got P6 Breakthrough(Sacred)Material [Ring]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21526,22 +21526,22 @@ namespace MTA {
                         }
                         case 98: //Breakthrough(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004164, 0, 1);
                                     dialog.Text("Congratulations you got P6 Breakthrough(Sacred)Material [Bracelet]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21550,22 +21550,22 @@ namespace MTA {
                         }
                         case 99: //Counteraction(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004142, 0, 1);
                                     dialog.Text("Congratulations you got P6 Counteraction(Sacred)Material  [Armor]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21574,22 +21574,22 @@ namespace MTA {
                         }
                         case 100: //Counteraction(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004151, 0, 1);
                                     dialog.Text("Congratulations you got P6 Counteraction(Sacred)Material  [Bag]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21598,22 +21598,22 @@ namespace MTA {
                         }
                         case 101: //Counteraction(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004160, 0, 1);
                                     dialog.Text("Congratulations you got P6 Counteraction(Sacred)Material [Necklace]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21622,22 +21622,22 @@ namespace MTA {
                         }
                         case 102: //Detoxication(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004143, 0, 1);
                                     dialog.Text("Congratulations you got P6 Detoxication(Sacred)Material [Headgear]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21646,22 +21646,22 @@ namespace MTA {
                         }
                         case 103: //Detoxication(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004152, 0, 1);
                                     dialog.Text("Congratulations you got P6 Detoxication(Sacred)Material [Boots]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21670,22 +21670,22 @@ namespace MTA {
                         }
                         case 104: //Detoxication(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004161, 0, 1);
                                     dialog.Text("Congratulations you got P6 Detoxication(Sacred)Material [Armor]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21694,22 +21694,22 @@ namespace MTA {
                         }
                         case 105: //Detoxication(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004165, 0, 1);
                                     dialog.Text("Congratulations you got P6 Detoxication(Sacred)Material [Necklace]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21718,22 +21718,22 @@ namespace MTA {
                         }
                         case 106: //Detoxication(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004166, 0, 1);
                                     dialog.Text("Congratulations you got P6 Detoxication(Sacred)Material [Bag]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21742,22 +21742,22 @@ namespace MTA {
                         }
                         case 107: //Block(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004144, 0, 1);
                                     dialog.Text("Congratulations you got P6 Block(Sacred)Material [Headgear]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21766,22 +21766,22 @@ namespace MTA {
                         }
                         case 108: //Block(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004153, 0, 1);
                                     dialog.Text("Congratulations you got P6 Block(Sacred)Material [Shield]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21790,22 +21790,22 @@ namespace MTA {
                         }
                         case 109: //Penetration(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004145, 0, 1);
                                     dialog.Text("Congratulations you got P6 Penetration(Sacred)Material [Headgear]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21814,22 +21814,22 @@ namespace MTA {
                         }
                         case 110: //Penetration(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004154, 0, 1);
                                     dialog.Text("Congratulations you got P6 Penetration(Sacred)Material [Bag]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21838,22 +21838,22 @@ namespace MTA {
                         }
                         case 111: //Penetration(Sacred)Material
                         {
-                            if (client.Entity.ConquerPoints >= rates.ref6) {
-                                if (client.Entity.ConquerPoints >= rates.ref6) {
-                                    client.Entity.ConquerPoints -= rates.ref6;
+                            if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                if (client.Entity.ConquerPoints >= Rates.Refinery6) {
+                                    client.Entity.ConquerPoints -= Rates.Refinery6;
                                     client.Inventory.Add(3004162, 0, 1);
                                     dialog.Text("Congratulations you got P6 Penetration(Sacred)Material [Bracelet]");
                                     dialog.Option("Thanks.", 255);
                                     dialog.Send();
                                 }
                                 else {
-                                    dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points.");
+                                    dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points.");
                                     dialog.Option("Ahh sorry.", 255);
                                     dialog.Send();
                                 }
                             }
                             else {
-                                dialog.Text("Please come back to me with " + rates.ref6 + " Conquer Points..");
+                                dialog.Text("Please come back to me with " + Rates.Refinery6 + " Conquer Points..");
                                 dialog.Option("Ahh sorry.", 255);
                                 dialog.Send();
                             }
@@ -21875,7 +21875,7 @@ namespace MTA {
                     switch (npcRequest.OptionID) {
                         case 0: {
                             dialog.Text("Hello my friend " + client.Entity.Name +
-                                        " . I can help you to Change your Sex , this change for " + rates.changebody +
+                                        " . I can help you to Change your Sex , this change for " + Rates.ChangeBody +
                                         " CPs , need to change ?");
                             dialog.Option("Yes Please.", 1);
                             dialog.Option("I don't care..", 255);
@@ -21908,7 +21908,7 @@ namespace MTA {
                             break;
                         }
                         case 4: {
-                            if (client.Entity.ConquerPoints >= rates.changebody) {
+                            if (client.Entity.ConquerPoints >= Rates.ChangeBody) {
                                 if (client.Entity.Body == 2001 || client.Entity.Body == 2002) {
                                     client.Equipment.Remove(9);
                                     if (client.Equipment.Objects[9] != null)
@@ -21919,7 +21919,7 @@ namespace MTA {
                                     client.NobilityInformation.Gender = 1;
 
                                     client.Entity.Spouse = "None";
-                                    client.Entity.ConquerPoints -= rates.changebody;
+                                    client.Entity.ConquerPoints -= Rates.ChangeBody;
                                     client.Entity.Body = 1004;
                                     client.NobilityInformation.Mesh = client.Entity.Mesh;
                                     client.Equipment.UpdateEntityPacket();
@@ -21931,14 +21931,14 @@ namespace MTA {
                                 }
                             }
                             else {
-                                dialog.Text("Sorry you Don't Have " + rates.changebody + " Cps?");
+                                dialog.Text("Sorry you Don't Have " + Rates.ChangeBody + " Cps?");
                                 dialog.Option("Alright, Thank you.", 255);
                             }
 
                             break;
                         }
                         case 5: {
-                            if (client.Entity.ConquerPoints >= rates.changebody) {
+                            if (client.Entity.ConquerPoints >= Rates.ChangeBody) {
                                 if (client.Entity.Body == 2001 || client.Entity.Body == 2002) {
                                     client.Equipment.Remove(9);
                                     if (client.Equipment.Objects[9] != null)
@@ -21948,7 +21948,7 @@ namespace MTA {
                                     client.Send(equips);
                                     client.NobilityInformation.Gender = 1;
                                     client.Entity.Spouse = "None";
-                                    client.Entity.ConquerPoints -= rates.changebody;
+                                    client.Entity.ConquerPoints -= Rates.ChangeBody;
                                     client.Entity.Body = 1003;
                                     client.NobilityInformation.Mesh = client.Entity.Mesh;
                                     client.Equipment.UpdateEntityPacket();
@@ -21960,14 +21960,14 @@ namespace MTA {
                                 }
                             }
                             else {
-                                dialog.Text("Sorry you Don't Have " + rates.changebody + " Cps?");
+                                dialog.Text("Sorry you Don't Have " + Rates.ChangeBody + " Cps?");
                                 dialog.Option("Alright, Thank you.", 255);
                             }
 
                             break;
                         }
                         case 6: {
-                            if (client.Entity.ConquerPoints >= rates.changebody) {
+                            if (client.Entity.ConquerPoints >= Rates.ChangeBody) {
                                 if (client.Entity.Body == 1003 || client.Entity.Body == 1004) {
                                     client.Equipment.Remove(9);
                                     if (client.Equipment.Objects[9] != null)
@@ -21977,7 +21977,7 @@ namespace MTA {
                                     client.Send(equips);
                                     client.NobilityInformation.Gender = 0;
                                     client.Entity.Spouse = "None";
-                                    client.Entity.ConquerPoints -= rates.changebody;
+                                    client.Entity.ConquerPoints -= Rates.ChangeBody;
                                     client.Entity.Body = 2002;
                                     client.NobilityInformation.Mesh = client.Entity.Mesh;
                                     client.Equipment.UpdateEntityPacket();
@@ -21989,14 +21989,14 @@ namespace MTA {
                                 }
                             }
                             else {
-                                dialog.Text("Sorry you Don't Have " + rates.changebody + " Cps?");
+                                dialog.Text("Sorry you Don't Have " + Rates.ChangeBody + " Cps?");
                                 dialog.Option("Alright, Thank you.", 255);
                             }
 
                             break;
                         }
                         case 7: {
-                            if (client.Entity.ConquerPoints >= rates.changebody) {
+                            if (client.Entity.ConquerPoints >= Rates.ChangeBody) {
                                 if (client.Entity.Body == 1003 || client.Entity.Body == 1004) {
                                     client.Equipment.Remove(9);
                                     if (client.Equipment.Objects[9] != null)
@@ -22006,7 +22006,7 @@ namespace MTA {
                                     client.Send(equips);
                                     client.NobilityInformation.Gender = 0;
                                     client.Entity.Spouse = "None";
-                                    client.Entity.ConquerPoints -= rates.changebody;
+                                    client.Entity.ConquerPoints -= Rates.ChangeBody;
                                     client.Entity.Body = 2002;
                                     client.NobilityInformation.Mesh = client.Entity.Mesh;
                                     client.Equipment.UpdateEntityPacket();
@@ -22018,7 +22018,7 @@ namespace MTA {
                                 }
                             }
                             else {
-                                dialog.Text("Sorry you Don't Have " + rates.changebody + " Cps?");
+                                dialog.Text("Sorry you Don't Have " + Rates.ChangeBody + " Cps?");
                                 dialog.Option("Alright, Thank you.", 255);
                             }
 
@@ -24076,7 +24076,7 @@ namespace MTA {
                                     Kernel.SendWorldMessage(
                                         new Message(
                                             "Congratulations! " + client.Entity.Name + " claimed the prize " +
-                                            rates.Daily +
+                                            Rates.Daily +
                                             " ConquerPoints .winning the Weekly Pk War and Receive Weekly PkWar Halo.",
                                             Color.Black, Message.Talk), Program.Values);
                                     client.Entity.AddTopStatus(Update.Flags.WeeklyPKChampion, 1,
@@ -24184,7 +24184,7 @@ namespace MTA {
                                     Kernel.SendWorldMessage(
                                         new Message(
                                             "Congratulations! " + client.Entity.Name + " claimed the prize (( " +
-                                            rates.MonthlyPk +
+                                            Rates.MonthlyPk +
                                             " )) ConquerPoints + 1000 Vip Point's for winning the Monthly Pk War and Receive Monthly PkWar Halo.",
                                             Color.Black, Message.Talk), Program.Values);
                                     client.Entity.AddTopStatus(Update.Flags.MonthlyPKChampion, 1,
@@ -24522,7 +24522,7 @@ namespace MTA {
                                     Kernel.SendWorldMessage(
                                         new Message(
                                             "Congratulations! " + client.Entity.Name + " claimed the prize " +
-                                            rates.lastman +
+                                            Rates.LastMan +
                                             " ConquerPoints for winning the LastManStanding for this Hour.",
                                             Color.Black, Message.Center), Program.Values);
                                     client.Entity.SendSpawn(client, true);
@@ -24612,16 +24612,16 @@ namespace MTA {
                                         Kernel.SendWorldMessage(
                                             new Message(
                                                 "Congratulations! " + client.Entity.Name + " Claimed The Prize " +
-                                                rates.Daily + " ConquerPoints!, As He Won DailyPk", Color.Black,
+                                                Rates.Daily + " ConquerPoints!, As He Won DailyPk", Color.Black,
                                                 Message.Center), Program.Values);
                                     }
                                     else {
-                                        client.Entity.ConquerPoints += rates.Daily * 2;
+                                        client.Entity.ConquerPoints += Rates.Daily * 2;
                                         //client.Entity.Status3 = 1;
                                         Kernel.SendWorldMessage(
                                             new Message(
                                                 "Congratulations! " + client.Entity.Name + " claimed the prize " +
-                                                rates.Daily * 2 + " ConquerPoints! as he is VIP, He won DailyPk",
+                                                Rates.Daily * 2 + " ConquerPoints! as he is VIP, He won DailyPk",
                                                 Color.Black, Message.Center), Program.Values);
                                     }
 
@@ -25066,14 +25066,14 @@ namespace MTA {
                                 if (alive == 1) {
                                     // client.Entity.Effect = "";
 
-                                    client.Entity.ConquerPoints += rates.mrconquer;
+                                    client.Entity.ConquerPoints += Rates.MrConquer;
                                     client.Entity.killerpoints += 5000000;
                                     client.Entity.AddTopStatus(Update.Flags3.MrConquer, 3, DateTime.Now.AddDays(1));
 
                                     Kernel.SendWorldMessage(
                                         new Message(
                                             "Congratulations! Player " + client.Entity.Name + " claimed the prize " +
-                                            rates.mrconquer +
+                                            Rates.MrConquer +
                                             " ConquerPoints + 100 Vip Point's for winning the Top Mr Conquer  . ",
                                             Color.Black, Message.Center), Program.Values);
                                     client.Entity.Teleport(1002, 428, 380);
@@ -25172,14 +25172,14 @@ namespace MTA {
                             client.Send(new Message("there are in map" + alive + "", Color.Azure, Message.TopLeft));
                             if (DateTime.Now.Hour == 19 && DateTime.Now.Minute >= 34 && DateTime.Now.Minute <= 40) {
                                 if (alive == 1) {
-                                    client.Entity.ConquerPoints += rates.mrconquer;
+                                    client.Entity.ConquerPoints += Rates.MrConquer;
                                     client.Entity.killerpoints += 5000000;
                                     client.Entity.AddTopStatus(Update.Flags3.MsConquerHostess, 3,
                                         DateTime.Now.AddDays(1));
                                     Kernel.SendWorldMessage(
                                         new Message(
                                             "Congratulations! Player " + client.Entity.Name + " claimed the prize " +
-                                            rates.mrconquer +
+                                            Rates.MrConquer +
                                             " ConquerPoints + 100 Vip Point's for winning the Top Miss Conquer  . ",
                                             Color.Black, Message.Center), Program.Values);
                                     client.Entity.Teleport(1002, 428, 380);
@@ -25253,7 +25253,7 @@ namespace MTA {
                             break;
                         }
                         case 1: {
-                            if (Matrix_Times.Start.FBSS2) {
+                            if (MatrixTimes.Start.Fbss2) {
                                 client.Entity.RemoveFlag(Update.Flags.Ride);
                                 //client.Entity.Hitpoints = 1;
                                 client.Entity.Teleport(1707, 55, 63);
@@ -25295,7 +25295,7 @@ namespace MTA {
                             foreach (GameState players in Kernel.GamePool.Values)
                                 if (players.Entity.MapID == 1707 && (!players.Entity.Dead))
                                     alive++;
-                            if (Matrix_Times.End.FBSS) {
+                            if (MatrixTimes.End.Fbss) {
                                 if (alive == 1) {
                                     client.Entity.ConquerPoints += 4000000;
                                     client.Entity.killerpoints += 100;
@@ -25364,7 +25364,7 @@ namespace MTA {
                         case 1: {
                             DateTime Now64 = DateTime.Now;
                             if (client.Entity.NobilityRank == NobilityRank.King) {
-                                if (Matrix_Times.Start.Nobilty) {
+                                if (MatrixTimes.Start.Nobilty) {
                                     client.Entity.Teleport(3691, 51, 51);
                                     client.Entity.PKMode = Enums.PkMode.PK;
                                     client.Send(new Data(true) {
@@ -25396,7 +25396,7 @@ namespace MTA {
                         case 2: {
                             DateTime Now64 = DateTime.Now;
                             if (client.Entity.NobilityRank == NobilityRank.Prince) {
-                                if (Matrix_Times.Start.Nobilty) {
+                                if (MatrixTimes.Start.Nobilty) {
                                     client.Entity.Teleport(3692, 51, 51);
                                     client.Entity.PKMode = Enums.PkMode.PK;
                                     client.Send(new Data(true) {
@@ -25429,7 +25429,7 @@ namespace MTA {
                         case 3: {
                             DateTime Now64 = DateTime.Now;
                             if (client.Entity.NobilityRank == NobilityRank.Duke) {
-                                if (Matrix_Times.Start.Nobilty) {
+                                if (MatrixTimes.Start.Nobilty) {
                                     client.Entity.Teleport(3693, 51, 51);
                                     client.Entity.PKMode = Enums.PkMode.PK;
                                     client.Send(new Data(true) {
@@ -25462,7 +25462,7 @@ namespace MTA {
                         case 4: {
                             DateTime Now64 = DateTime.Now;
                             if (client.Entity.NobilityRank == NobilityRank.Earl) {
-                                if (Matrix_Times.Start.Nobilty) {
+                                if (MatrixTimes.Start.Nobilty) {
                                     client.Entity.Teleport(3694, 51, 51);
                                     client.Entity.PKMode = Enums.PkMode.PK;
                                     client.Send(new Data(true) {
@@ -25512,7 +25512,7 @@ namespace MTA {
                             break;
                         }
                         case 1: {
-                            if (Matrix_Times.End.Nobilty) {
+                            if (MatrixTimes.End.Nobility) {
                                 Daily.CheackAlive22();
                                 if (Daily.howmanyinmap22 == 1) {
                                     client.Entity.AddTopStatus(Update.Flags.MonthlyPKChampion, 1,
@@ -25562,7 +25562,7 @@ namespace MTA {
                             break;
                         }
                         case 1: {
-                            if (Matrix_Times.End.Nobilty) {
+                            if (MatrixTimes.End.Nobility) {
                                 Daily.CheackAlive23();
                                 if (Daily.howmanyinmap23 == 1) {
                                     client.Entity.ConquerPoints += 6000000;
@@ -25627,7 +25627,7 @@ namespace MTA {
                             break;
                         }
                         case 1: {
-                            if (Matrix_Times.End.Nobilty) {
+                            if (MatrixTimes.End.Nobility) {
                                 Daily.CheackAlive24();
                                 if (Daily.howmanyinmap24 == 1) {
                                     client.Entity.ConquerPoints += 3000000;
@@ -25691,14 +25691,14 @@ namespace MTA {
                             break;
                         }
                         case 1: {
-                            if (Matrix_Times.End.Nobilty) {
+                            if (MatrixTimes.End.Nobility) {
                                 Daily.CheackAlive29();
                                 if (Daily.howmanyinmap29 == 1) {
-                                    client.Entity.ConquerPoints += rates.NobilityPrize;
+                                    client.Entity.ConquerPoints += Rates.NobilityPrize;
                                     Kernel.SendWorldMessage(
                                         new Message(
                                             "Congratulations! " + client.Entity.Name + " has Claimed Earl Prize " +
-                                            rates.NobilityPrize + " Conquerpoint .", Color.Black, Message.Center),
+                                            Rates.NobilityPrize + " Conquerpoint .", Color.Black, Message.Center),
                                         Program.Values);
                                     client.Entity.SendSpawn(client, true);
                                     client.Entity.Teleport(1002, 303, 278);
@@ -25838,7 +25838,7 @@ namespace MTA {
                         }
                         case 1: {
                             //  if (DateTime.Now.Hour == 17 && DateTime.Now.Minute >= 24 && DateTime.Now.Minute <= 29)
-                            if (Program.uniquepk == true) {
+                            if (Program.UniquePk == true) {
                                 Random R = new Random();
                                 int Nr = R.Next(1, 5);
                                 if (Nr == 1) client.Entity.Teleport(2014, 150, 162);
@@ -25881,7 +25881,7 @@ namespace MTA {
                         }
                         case 1: {
                             if (client.uniquepoints >= 20) {
-                                client.Entity.ConquerPoints += rates.uniquepk;
+                                client.Entity.ConquerPoints += Rates.UniquePk;
                                 client.Entity.killerpoints += 100;
                                 client.Entity.AddTopStatus((ulong)(((int)Titles.UniquePk)), 0,
                                     DateTime.Now.AddHours(22));
@@ -25890,12 +25890,12 @@ namespace MTA {
                                     new Message(
                                         "Congratulations ! " + client.Entity.Name +
                                         " Won UniquePk War + 100 Vip point's For This Day And Claimed " +
-                                        rates.uniquepk + "  CPS And UniquePk Title + 50 KPT . #05 ", Color.White,
+                                        Rates.UniquePk + "  CPS And UniquePk Title + 50 KPT . #05 ", Color.White,
                                         Message.Center), Program.Values);
                                 client.Entity.killerpoints += 50;
                                 client.Entity.SendSpawn(client, true);
                                 client.Entity.Teleport(1002, 303, 278);
-                                Program.uniquepk = false;
+                                Program.UniquePk = false;
                                 foreach (GameState clients in Kernel.GamePool.Values) {
                                     if (clients.Entity.MapID == 2014) {
                                         // killer.Teleport(8886, 130, 130);
@@ -26605,7 +26605,7 @@ namespace MTA {
                         }
                         case 2: {
                             if (!GuildPoleWar.IsWar) {
-                                GuildPoleWar.GetReward(client, rates.Twar);
+                                GuildPoleWar.GetReward(client, Rates.Twar);
                                 client.Entity.killerpoints += 100;
 
                                 //MTA.Kernel.SendWorldMessage(new Message("Congratulations! " + client.Entity.Name +  " The winner ClassPoleWar Prize [ 50 kk ] cps!", System.Drawing.Color.White, Message.BroadcastMessage), Program.Values);
@@ -26654,7 +26654,7 @@ namespace MTA {
                         }
                         case 2: {
                             if (!GuildScoreWar.IsWar) {
-                                GuildScoreWar.GetReward(client, rates.EliteGw);
+                                GuildScoreWar.GetReward(client, Rates.EliteGw);
                                 client.Entity.killerpoints += 100;
 
                                 //MTA.Kernel.SendWorldMessage(new Message("Congratulations! " + client.Entity.Name +  " The winner ClassPoleWar Prize [ 50 kk ] cps!", System.Drawing.Color.White, Message.BroadcastMessage), Program.Values);
@@ -27027,7 +27027,7 @@ namespace MTA {
                             break;
                         }
                         case 120: {
-                            if (Program.uniquepk == true) {
+                            if (Program.UniquePk == true) {
                                 Random R = new Random();
                                 int Nr = R.Next(1, 5);
                                 if (Nr == 1) client.Entity.Teleport(2014, 150, 162);
@@ -28978,7 +28978,7 @@ namespace MTA {
                         case 0: {
                             dialog.Text("Hey there " + client.Entity.Name +
                                         " Would you like to claim TopSpouse PKWar reward?.");
-                            dialog.Text("you should be the only man here your claim 6" + rates.Daily +
+                            dialog.Text("you should be the only man here your claim 6" + Rates.Daily +
                                         " CPs and 2 lover book dont forget to give?.");
                             dialog.Text(" A loveBook to your Spouse and claim halo from here?.");
                             dialog.Option("ClaimPrize", 1);
@@ -31195,19 +31195,19 @@ namespace MTA {
                                         }
                                         case 20: {
                                             if (client.LobbySignup) {
-                                                dialog.Text("Hello friend. You already signed at lobby challenge");
+                                                dialog.Text("Hello friend. You already signed at Lobby challenge");
                                                 dialog.Option("ok", 255);
                                             }
                                             else {
                                                 if (client.Entity.ConquerPoints >= Lobby.cpsFee) {
                                                     client.Entity.ConquerPoints -= Lobby.cpsFee;
                                                     client.LobbySignup = true;
-                                                    dialog.Text("Hello friend. You have Signup lobby challenge");
+                                                    dialog.Text("Hello friend. You have Signup Lobby challenge");
                                                     dialog.Option("ok", 255);
                                                 }
                                                 else {
                                                     dialog.Text("Hello friend. You dont have " + Lobby.cpsFee +
-                                                                "cps. lobby challenge fee");
+                                                                "cps. Lobby challenge fee");
                                                     dialog.Option("ok", 255);
                                                 }
                                             }
@@ -31217,11 +31217,11 @@ namespace MTA {
                                         case 21: {
                                             if (client.LobbySignup) {
                                                 client.LobbySignup = false;
-                                                dialog.Text("Hello friend. You have quit lobby challenge");
+                                                dialog.Text("Hello friend. You have quit Lobby challenge");
                                                 dialog.Option("ok", 255);
                                             }
                                             else {
-                                                dialog.Text("Hello friend. You already quited lobby challenge");
+                                                dialog.Text("Hello friend. You already quited Lobby challenge");
                                                 dialog.Option("ok", 255);
                                             }
 

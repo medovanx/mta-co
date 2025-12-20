@@ -171,13 +171,13 @@ namespace MTA.Game
         {
             DateTime Now64 = DateTime.Now;
             #region Clan War
-            if (Matrix_Times.Start.ClanWarArena2 && Now64.Second <= 0)
+            if (MatrixTimes.Start.ClanWarArena2 && Now64.Second <= 0)
             {
                 var name = new object[] { "ClanLeader Go to every map to ClanWar npc to Apply 5 Minute And closed Apply !?" };
                 Kernel.SendWorldMessage(new Message(string.Concat(name), "ALLUSERS", "[ClanWar]", System.Drawing.Color.Red, 2500), Program.Values);
 
             }
-            if (Matrix_Times.Start.ClanWarArena && Now64.Second <= 0)
+            if (MatrixTimes.Start.ClanWarArena && Now64.Second <= 0)
             {
 
                 ClanWarArena.Start();
@@ -334,7 +334,7 @@ namespace MTA.Game
             private void GetClientReward(Client.GameState obj)
             {
 
-                uint Reward = rates.ClanwarCity;
+                uint Reward = Rates.ClanWarCity;
                 if (Map != ClanArena.TwinCityClan)
                     Reward /= 2;
                 if (obj.Entity.ClanRank == Clan.Ranks.ClanLeader)

@@ -12,7 +12,7 @@ namespace MTA.Game.ConquerStructures
             this.Cost = item.Cost;
             this.Item = new ConquerItem(true);
             this.Item.ID = item.Item.ID;
-            this.Item.UID = Program.NextItemID;
+            this.Item.UID = Program.GetNextItemId();
             this.Item.Plus = item.Item.Plus;
             this.Item.Enchant = item.Item.Enchant;
             this.Item.Bless = item.Item.Bless;

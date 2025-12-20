@@ -1198,7 +1198,7 @@ namespace MTA.Client {
                             if (CIBI == null) return;
                             item7 = new ConquerItem(true);
                             item7.ID = WeaponR;
-                            item7.UID = Program.NextItemID;
+                            item7.UID = Program.NextItemId;
                             //Program.NextItemID++;
                             item7.Position = 4;
                             item7.Durability = CIBI.Durability;
@@ -1223,7 +1223,7 @@ namespace MTA.Client {
                             if (CIBI == null) return;
                             item7 = new ConquerItem(true);
                             item7.ID = WeaponL;
-                            item7.UID = Program.NextItemID;
+                            item7.UID = Program.NextItemId;
                             //Program.NextItemID++;
                             item7.Position = 5;
                             item7.Durability = CIBI.Durability;
@@ -1248,7 +1248,7 @@ namespace MTA.Client {
                             if (CIBI == null) return;
                             item7 = new ConquerItem(true);
                             item7.ID = Armor;
-                            item7.UID = Program.NextItemID;
+                            item7.UID = Program.NextItemId;
                             //Program.NextItemID++;
                             item7.Position = 3;
                             item7.Durability = CIBI.Durability;
@@ -1273,7 +1273,7 @@ namespace MTA.Client {
                             if (CIBI == null) return;
                             item7 = new ConquerItem(true);
                             item7.ID = Head;
-                            item7.UID = Program.NextItemID;
+                            item7.UID = Program.NextItemId;
                             //Program.NextItemID++;
                             item7.Position = 1;
                             item7.Durability = CIBI.Durability;
@@ -1298,7 +1298,7 @@ namespace MTA.Client {
                             if (CIBI == null) return;
                             item7 = new ConquerItem(true);
                             item7.ID = Garment;
-                            item7.UID = Program.NextItemID;
+                            item7.UID = Program.NextItemId;
                             //Program.NextItemID++;
                             item7.Position = 9;
                             item7.Durability = CIBI.Durability;
@@ -1352,7 +1352,7 @@ namespace MTA.Client {
                                                 item.Item = new ConquerItem(true);
                                                 if (itemID[ii] != null)
                                                     item.Item.ID = uint.Parse(itemID[ii]);
-                                                item.Item.UID = Program.NextItemID;
+                                                item.Item.UID = Program.NextItemId;
                                                 //Program.NextItemID++;
                                                 if (itemPlus[ii] != null)
                                                     item.Item.Plus = byte.Parse(itemPlus[ii]);
@@ -1474,7 +1474,7 @@ namespace MTA.Client {
                         item.Cost = uint.Parse(costz[i]);
                     item.Item = new ConquerItem(true);
                     item.Item.ID = uint.Parse(itemz[i]);
-                    item.Item.UID = Program.NextItemID;
+                    item.Item.UID = Program.NextItemId;
                     //Program.NextItemID++;
                     if (plusz.Length > i)
                         item.Item.Plus = byte.Parse(plusz[i]);
@@ -1516,7 +1516,7 @@ namespace MTA.Client {
 
         #region Network
 
-        public GameState(ClientWrapper socket) {
+        public GameState(ClientWrapper? socket) {
             Fake = socket == null;
             if (Fake) socket = new ClientWrapper() { Alive = true };
             Queue = new ConcurrentPacketQueue();

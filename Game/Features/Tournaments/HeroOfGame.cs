@@ -16,7 +16,7 @@ namespace MTA.Game.Features.Tournaments {
         }
 
         public void CheakUp() {
-            if (Matrix_Times.Start.HeroOfGame && !open) {
+            if (MatrixTimes.Start.HeroOfGame && !open) {
                 Start();
             }
         }

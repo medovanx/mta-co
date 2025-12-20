@@ -228,7 +228,7 @@ namespace MTA.Game.ConquerStructures
                             if (Place < 3)//serverrank
                             {
                                 Rank = NobilityRank.King;
-                                if (Place < (rates.king - (rates.king - 1)))
+                                if (Place < (Rates.King - (Rates.King - 1)))
                                 {
                                     MaxDonation = entry.Donation;
                                 }
@@ -236,7 +236,7 @@ namespace MTA.Game.ConquerStructures
                             else if (Place < 15)
                             {
                                 Rank = NobilityRank.Prince;
-                                if (Place < (rates.prince + 2))
+                                if (Place < (Rates.Prince + 2))
                                 {
                                     MaxDonation1 = entry.Donation;
                                 }
@@ -244,7 +244,7 @@ namespace MTA.Game.ConquerStructures
                             else if (Place < 50)
                             {
                                 Rank = NobilityRank.Duke;
-                                if (Place < (rates.duke + 2))
+                                if (Place < (Rates.Duke + 2))
                                 {
                                     MaxDonation2 = entry.Donation;
                                 }

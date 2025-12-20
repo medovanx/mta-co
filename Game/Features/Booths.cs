@@ -152,8 +152,7 @@ namespace MTA.MrNiTro.Systems {
                         if (CIBI == null) return;
                         item7 = new ConquerItem(true) {
                             ID = WeaponR,
-                            UID = Program.NextItemID,
-                            //Program.NextItemID++;
+                            UID = Program.GetNextItemId(),
                             Position = 4,
                             Durability = CIBI.Durability,
                             MaximDurability = CIBI.Durability
@@ -162,7 +161,6 @@ namespace MTA.MrNiTro.Systems {
                         if (c.Equipment.Objects[3] != null) {
                             c.Equipment.Objects[3] = null;
                         }
-
                         c.Equipment.Add(item7);
                         item7.Mode = Enums.ItemMode.Update;
                         item7.Send(c);
@@ -177,7 +175,7 @@ namespace MTA.MrNiTro.Systems {
                         if (CIBI == null) return;
                         item7 = new ConquerItem(true) {
                             ID = WeaponL,
-                            UID = Program.NextItemID,
+                            UID = Program.GetNextItemId(),
                             Position = 5,
                             Durability = CIBI.Durability,
                             MaximDurability = CIBI.Durability
@@ -186,7 +184,6 @@ namespace MTA.MrNiTro.Systems {
                         if (c.Equipment.Objects[4] != null) {
                             c.Equipment.Objects[4] = null;
                         }
-
                         c.Equipment.Add(item7);
                         item7.Mode = Enums.ItemMode.Update;
                         item7.Send(c);
@@ -201,8 +198,7 @@ namespace MTA.MrNiTro.Systems {
                         if (CIBI == null) return;
                         item7 = new ConquerItem(true) {
                             ID = Armor,
-                            UID = Program.NextItemID,
-                            //Program.NextItemID++;
+                            UID = Program.GetNextItemId(),
                             Position = 3,
                             Durability = CIBI.Durability,
                             MaximDurability = CIBI.Durability
@@ -211,7 +207,6 @@ namespace MTA.MrNiTro.Systems {
                         if (c.Equipment.Objects[2] != null) {
                             c.Equipment.Objects[2] = null;
                         }
-
                         c.Equipment.Add(item7);
                         item7.Mode = Enums.ItemMode.Update;
                         item7.Send(c);
@@ -226,8 +221,7 @@ namespace MTA.MrNiTro.Systems {
                         if (CIBI == null) return;
                         item7 = new ConquerItem(true) {
                             ID = Head,
-                            UID = Program.NextItemID,
-                            //Program.NextItemID++;
+                            UID = Program.GetNextItemId(),
                             Position = 1,
                             Durability = CIBI.Durability,
                             MaximDurability = CIBI.Durability
@@ -236,7 +230,6 @@ namespace MTA.MrNiTro.Systems {
                         if (c.Equipment.Objects[0] != null) {
                             c.Equipment.Objects[0] = null;
                         }
-
                         c.Equipment.Add(item7);
                         item7.Mode = Enums.ItemMode.Update;
                         item7.Send(c);
@@ -251,8 +244,7 @@ namespace MTA.MrNiTro.Systems {
                         if (CIBI == null) return;
                         item7 = new ConquerItem(true) {
                             ID = Garment,
-                            UID = Program.NextItemID,
-                            //Program.NextItemID++;
+                            UID = Program.GetNextItemId(),
                             Position = 9,
                             Durability = CIBI.Durability,
                             MaximDurability = CIBI.Durability
@@ -261,7 +253,6 @@ namespace MTA.MrNiTro.Systems {
                         if (c.Equipment.Objects[8] != null) {
                             c.Equipment.Objects[8] = null;
                         }
-
                         c.Equipment.Add(item7);
                         item7.Mode = Enums.ItemMode.Update;
                         item7.Send(c);
@@ -312,9 +303,8 @@ namespace MTA.MrNiTro.Systems {
 
                     Booth booth1 = new();
                     item.Item = new ConquerItem(true) {
-                        UID = Program.NextItemID,
+                        UID = Program.GetNextItemId(),
 
-                        //Program.NextItemID++;
                         ID = uint.Parse(line[0])
                     };
                     if (line.Length >= 2)

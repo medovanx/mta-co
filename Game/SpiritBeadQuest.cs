@@ -98,7 +98,7 @@ namespace MTA.Game.Features {
                     if (ConquerItemInformation.BaseInformations.TryGetValue(_Bead, out CIBI)) {
                         ConquerItem i = new ConquerItem(true);
                         i.ID = CIBI.ID;
-                        i.UID = Program.NextItemID; //Program.NextItemID++;
+                        i.UID = Program.GetNextItemId(); //Program.NextItemID++;
                         i.Durability = CIBI.Durability;
                         i.MaximDurability = CIBI.Durability;
                         i.Color = (Enums.Color)Kernel.Random.Next(4, 8);

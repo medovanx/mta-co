@@ -1943,7 +1943,7 @@ namespace MTA
                 }
                 #endregion
                 #region Night
-                if (rates.Night == 1)
+                if (Rates.Night == 1)
                 {
                     if (client.Entity.MapID == 701)
                     {
@@ -2111,7 +2111,7 @@ namespace MTA
             #endregion
 
             HeroOFGame.CheakUp();
-            if (Matrix_Times.Start.SkillTeam && !Game.Features.Tournaments.TeamElitePk.SkillTeamTournament.Opened)
+            if (MatrixTimes.Start.SkillTeam && !Game.Features.Tournaments.TeamElitePk.SkillTeamTournament.Opened)
             {
                 Game.Features.Tournaments.TeamElitePk.SkillTeamTournament.Open();
                 foreach (Client.GameState client in Kernel.GamePool.Values)
@@ -2131,7 +2131,7 @@ namespace MTA
                     }
                 }
             }
-            if (Matrix_Times.Start.TeamPK && !Game.Features.Tournaments.TeamElitePk.TeamTournament.Opened)
+            if (MatrixTimes.Start.TeamPk && !Game.Features.Tournaments.TeamElitePk.TeamTournament.Opened)
             {
                 Game.Features.Tournaments.TeamElitePk.TeamTournament.Open();
                 foreach (Client.GameState client in Kernel.GamePool.Values)
@@ -2336,7 +2336,7 @@ namespace MTA
             //   if ()
             //      if (DateTime.Now.Hour == 18 && DateTime.Now.Minute == 19 && DateTime.Now.Second == 59)
             //      {
-            //          Program.uniquepk = true;
+            //          Program.UniquePk = true;
             //           Kernel.SendWorldMessage(new Message("UniqueKiller War began!", Color.Red, Message.Center), Program.Values);
             //          foreach (var client in Program.Values)
 
@@ -2577,14 +2577,14 @@ namespace MTA
             }
             #endregion
             #region Team & SKill PK
-            if (Matrix_Times.Start.TeamPK && !Game.Features.Tournaments.TeamElitePk.TeamTournament.Opened)
+            if (MatrixTimes.Start.TeamPk && !Game.Features.Tournaments.TeamElitePk.TeamTournament.Opened)
             {
                 Kernel.SendWorldMessage(new Message("The Team PK Tournament has start at 19:00. Prepare yourself and sign up for it as a team!", Color.White, Message.BroadcastMessage), Program.Values);
                 foreach (var client in Program.Values)
                     client.MessageBox("The Team PK Tournament began! Would you like to join Prize [100kk] First Rank?",
                     p => { p.Entity.Teleport(1002, 440, 249); }, null, 60);
             }
-            if (Matrix_Times.Start.SkillTeam && !Game.Features.Tournaments.TeamElitePk.SkillTeamTournament.Opened)
+            if (MatrixTimes.Start.SkillTeam && !Game.Features.Tournaments.TeamElitePk.SkillTeamTournament.Opened)
             {
                 Kernel.SendWorldMessage(new Message("The Skill Team PK Tournament will start at 10:00. Prepare yourself and sign up for it as a team!", Color.White, Message.BroadcastMessage), Program.Values);
                 foreach (var client in Program.Values)
@@ -2843,7 +2843,7 @@ namespace MTA
                 Program.MaxOn = Kernel.GamePool.Count;
             }
             Console.Title = Constants.ServerName + " - Online : " + Kernel.GamePool.Count + "/" + Program.PlayerCap + " (Peak: " + Program.MaxOn + ")";
-            new Database.MySqlCommand(Database.MySqlCommandType.UPDATE).Update("configuration").Set("GuildID", Game.ConquerStructures.Society.Guild.GuildCounter.Now).Set("MaxOnline", Program.MaxOn).Set("ItemUID", Program._NextItemID).Where("Server", Constants.ServerName).Execute();
+            new Database.MySqlCommand(Database.MySqlCommandType.UPDATE).Update("configuration").Set("GuildID", Game.ConquerStructures.Society.Guild.GuildCounter.Now).Set("MaxOnline", Program.MaxOn).Set("ItemUID", Program.NextItemId).Where("Server", Constants.ServerName).Execute();
             Database.EntityVariableTable.Save(0, Program.Vars);
             if (Kernel.BlackSpoted.Values.Count > 0)
             {

@@ -81,7 +81,7 @@ namespace MTA.Game
         {
             if (PoleKeeper != null)
             {
-                Kernel.SendWorldMessage(new Message("The clan, " + PoleKeeper.Name + ", owned by " + PoleKeeper.LeaderName + " has won " + rates.Clanwarday + " cps!---Clan war has ended!", System.Drawing.Color.White, Message.Center), Program.Values);
+                Kernel.SendWorldMessage(new Message("The clan, " + PoleKeeper.Name + ", owned by " + PoleKeeper.LeaderName + " has won " + Rates.ClanWarDay + " cps!---Clan war has ended!", System.Drawing.Color.White, Message.Center), Program.Values);
 
                 PoleKeeper.PoleKeeper = true;
             }

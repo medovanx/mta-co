@@ -11,7 +11,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
         public static void Handle(GameState client, NpcRequest npcRequest, MTA.Npcs dialog) {
             switch (npcRequest.OptionID) {
                 case 0: {
-                    dialog.Text("Greetings, adventurer! Welcome to " + rates.servername +
+                    dialog.Text("Greetings, adventurer! Welcome to " + Rates.Servername +
                                 ". Where would you like to go?");
                     dialog.Option("Elite Guild War Arena", 2);
                     dialog.Option("Guild Wars & Super Guild War", 3);
