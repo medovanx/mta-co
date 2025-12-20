@@ -10,7 +10,7 @@ namespace MTA.Database
         public static void Kill()
         {
             string command = "SHOW processlist";
-            List<ulong> processes = new List<ulong>();
+            List<ulong> processes = [];
 
             MySqlConnection conn = new MySqlConnection(DataHolder.ConnectionString);
             MySql.Data.MySqlClient.MySqlCommand cmd = new MySql.Data.MySqlClient.MySqlCommand(command, conn);

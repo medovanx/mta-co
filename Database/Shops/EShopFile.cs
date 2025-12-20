@@ -12,7 +12,7 @@ namespace MTA.Database
         {
             string[] text = File.ReadAllLines(Constants.EShopsPath);
             ShopFile.Shop shop = new ShopFile.Shop();
-            shop.Items = new List<uint>();
+            shop.Items = [];
             Shops = new Dictionary<uint, ShopFile.Shop>();
             for (int x = 0; x < text.Length; x++)
             {
@@ -28,7 +28,7 @@ namespace MTA.Database
                         {
                             Shops.Add(shop.UID, shop);
                             shop = new ShopFile.Shop();
-                            shop.Items = new List<uint>();
+                            shop.Items = [];
                             shop.UID = uint.Parse(split[1]);
                         }
                     }
@@ -39,7 +39,7 @@ namespace MTA.Database
                 }
                 else if (split[0].Contains("Item") && split[0] != "ItemAmount")
                 {
-                    uint ID = uint.Parse(split[1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[0]);
+                    uint ID = uint.Parse(split[1].Split([' '], StringSplitOptions.RemoveEmptyEntries)[0]);
                     if (!shop.Items.Contains(ID))
                         shop.Items.Add(ID);
                 }

@@ -14,7 +14,7 @@ namespace MTA.Game.ConquerStructures
             InTrade = Accepted = false;
             ConquerPoints = TraderUID = 0;
             Money = TraderUID = 0;
-            Items = new List<ConquerItem>();
+            Items = [];
         }
     }
 }

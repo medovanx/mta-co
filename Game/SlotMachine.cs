@@ -6,8 +6,7 @@ namespace MTA.Game.ConquerStructures
 {
     public class SlotMachine
     {
-        public static readonly int[] Rates = new int[8]
-        {
+        public static readonly int[] Rates = [
             80, //Stancher
             340, //Meteor
             120, //Sword
@@ -15,8 +14,8 @@ namespace MTA.Game.ConquerStructures
             210, //SwordAndShield
             180, //ExpBall
             600, //DragonBall
-            200, //3s line
-        };
+            200 //3s line
+        ];
 
         public SlotMachineItems[] Wheels = new SlotMachineItems[3];
 
@@ -54,7 +53,9 @@ namespace MTA.Game.ConquerStructures
             if (GetAmount(SlotMachineItems.DragonBall) == 3)
             {
                 Kernel.SendWorldMessage(new Message("Congratulations to " + client.Entity.Name + "! He/She has won the jackpot from the 1-Arm Bandit!", Message.Center));
-                client.SendScreen(new _String(true) { UID = client.Entity.UID, Type = _String.Effect, Texts = new List<string>() { "accession5" } });
+                client.SendScreen(new _String(true) { UID = client.Entity.UID, Type = _String.Effect, Texts =
+                    ["accession5"]
+                });
                 if (Cps) return BetAmount * 3000;
                 else return BetAmount * 1000;
             }

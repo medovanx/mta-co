@@ -14,7 +14,7 @@ namespace MTA.Game.Attacking
         }
         public List<Coords> MoveCoords(ushort X, ushort Y, ushort XX, ushort YY)
         {
-            List<Coords> lis = new List<Coords>();
+            List<Coords> lis = [];
 
             Enums.ConquerAngle angle = GetAngle(X, Y, XX, YY);
             byte distance = (byte)GetDistance(X, Y, XX, YY);

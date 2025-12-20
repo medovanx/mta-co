@@ -290,7 +290,7 @@ namespace MTA.Game
                         client.Entity.Teleport(1005, dynamicMap.ID, (ushort)Kernel.Random.Next(35, 70), (ushort)Kernel.Random.Next(35, 70));
                     }
                 }
-                public List<GameState> Watchers = new List<GameState>();
+                public List<GameState> Watchers = [];
                 #endregion
 
                 public Time32 CreateTime;
@@ -299,7 +299,7 @@ namespace MTA.Game
                 public uint Player1Damage, Player2Damage;
                 public uint Player1Cheers, Player2Cheers;
 
-                public List<uint> Cheerers = new List<uint>();
+                public List<uint> Cheerers = [];
 
                 public bool Inside;
                 public bool Done, Finished;
@@ -870,7 +870,7 @@ namespace MTA.Game
             public ushort Subtype;
             public ushort PageNumber;
             public Enums.ArenaIDs ID;
-            public List<TeamArenaStatistic> Players = new List<TeamArenaStatistic>();
+            public List<TeamArenaStatistic> Players = [];
             public ArenaList(int PageIndex, ushort type = 2243)
             {
                 Type = type;

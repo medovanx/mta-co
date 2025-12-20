@@ -121,8 +121,8 @@ namespace MTA.Database
                     spell.NeedExperience = reader.ReadUInt32("need_exp");
                     spell.NeedLevel = reader.ReadByte("need_level");
 
-                    spell.WeaponSubtype = new List<ushort>();
-                    spell.OnlyWithThisWeaponSubtype = new List<ushort>();
+                    spell.WeaponSubtype = [];
+                    spell.OnlyWithThisWeaponSubtype = [];
                     var WeaponSubtype = reader.ReadUInt32("weapon_subtype");
 
                     var subtype1 = (ushort)(WeaponSubtype % 1000);
@@ -148,7 +148,7 @@ namespace MTA.Database
                     }
 
                     if (WeaponSubtype == 50000)
-                        spell.WeaponSubtype = spell.OnlyWithThisWeaponSubtype = new List<ushort>();
+                        spell.WeaponSubtype = spell.OnlyWithThisWeaponSubtype = [];
 
                     spell.NextSpellID = reader.ReadUInt16("next_magic");
                     spell.NeedXP = reader.ReadByte("use_xp");
@@ -209,7 +209,7 @@ namespace MTA.Database
                                 {
                                     var subtype = spell.WeaponSubtype[i];
                                     if (!WeaponSpells.ContainsKey(subtype))
-                                        WeaponSpells.Add(subtype, new List<ushort>());
+                                        WeaponSpells.Add(subtype, []);
                                     if (!WeaponSpells[subtype].Contains(spell.ID))
                                         WeaponSpells[subtype].Add(spell.ID);
                                 }
@@ -242,9 +242,8 @@ namespace MTA.Database
             }
             else return null;
         }
-        public static readonly List<ushort> AllowSkillSoul = new List<ushort>()
-        {
-           1115,
+        public static readonly List<ushort> AllowSkillSoul = [
+            1115,
             11980,
             11005,
             1165,
@@ -273,6 +272,6 @@ namespace MTA.Database
             11070,
             12070,
             12080
-        };
+        ];
     }
 }

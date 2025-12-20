@@ -48,8 +48,9 @@ namespace MTA.Game.Attacking
 
             xincrement = dx / (float)steps;
             yincrement = dy / (float)steps;
-            List<coords> ThisLine = new List<coords>();
-            ThisLine.Add(new coords(Math.Round(x), Math.Round(y)));
+            List<coords> ThisLine = [
+                new coords(Math.Round(x), Math.Round(y))
+            ];
 
             for (k = 0; k < MaxDistance; k++)
             {

@@ -25,7 +25,7 @@ namespace MTA.Game.Attacking {
         public uint damage { get; set; }
 
         public static List<Location> GetLocation(int X, int Y) {
-            List<Location> myList = new List<Location>();
+            List<Location> myList = [];
             var distance = 6;
 
             myList.Add(new Location() { X = (short)(X + -distance), Y = (short)(Y + -distance) });
@@ -36,7 +36,7 @@ namespace MTA.Game.Attacking {
         }
 
         public static List<Location> GetLocation2(int X, int Y) {
-            List<Location> myList = new List<Location>();
+            List<Location> myList = [];
             var distance = 6;
 
             myList.Add(new Location() { X = (short)(X + -distance), Y = (short)(Y + -distance) });
@@ -317,30 +317,30 @@ namespace MTA.Game.Attacking {
                         return;
 
                     if (attacker.Mesh == 952) {
-                        attacker.MonstersSpells = new List<ushort>() {
+                        attacker.MonstersSpells = [
                             10363, // ca scateru cred
                             10364, //doar attack
                             10360, //range 10
                             10362, //range 13
-                            10361 //range 6
-                        };
+                            10361
+                        ];
 
                         //this.Timer = Map.MonsterTimers.Add(this);
                     }
 
                     if (attacker.Mesh == 951) {
-                        attacker.MonstersSpells = new List<ushort>() {
+                        attacker.MonstersSpells = [
                             10372,
                             10373,
                             30012,
                             30014,
                             30013,
                             30011
-                        };
+                        ];
                     }
 
                     if (attacker.Mesh == 984) {
-                        attacker.MonstersSpells = new List<ushort>() {
+                        attacker.MonstersSpells = [
                             7,
                             20,
                             21,
@@ -350,7 +350,7 @@ namespace MTA.Game.Attacking {
                             30014,
                             30013,
                             30011
-                        };
+                        ];
                     }
 
                     if (attacker.MonstersSpells != null) {
@@ -2396,7 +2396,7 @@ namespace MTA.Game.Attacking {
                                             attacker.SendSpawn(attacker.Owner);
                                         }
 
-                                        List<IMapObject> objects = new List<IMapObject>();
+                                        List<IMapObject> objects = [];
                                         if (attacker.Owner.Screen.Objects.Count() > 0)
                                             objects = GetObjects(ox, oy, attacker.Owner);
                                         if (objects != null) {
@@ -5872,7 +5872,7 @@ namespace MTA.Game.Attacking {
                                             attacker.Owner.Screen.Reload(npacket);
                                         }
 
-                                        List<IMapObject> objects = new List<IMapObject>();
+                                        List<IMapObject> objects = [];
                                         if (attacker.Owner.Screen.Objects.Count() > 0)
                                             objects = GetObjects(ox, oy, attacker.Owner);
                                         if (objects != null) {
@@ -7498,7 +7498,7 @@ namespace MTA.Game.Attacking {
                                             case 5: {
                                                 var area2 = GetLocation2(attacker.X, attacker.Y);
                                                 int count = 3;
-                                                List<Point> Area = new List<Point>();
+                                                List<Point> Area = [];
                                                 for (int i = 0; i < 360; i += spell.Sector) {
                                                     if (Area.Count >= count) {
                                                         break;
@@ -7597,7 +7597,7 @@ namespace MTA.Game.Attacking {
                                             case 6: {
                                                 var area2 = GetLocation(attacker.X, attacker.Y);
                                                 int count = 4;
-                                                List<Point> Area = new List<Point>();
+                                                List<Point> Area = [];
                                                 for (int i = 0; i < 360; i += spell.Sector) {
                                                     if (Area.Count >= count) {
                                                         break;

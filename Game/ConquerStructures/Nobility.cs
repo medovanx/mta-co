@@ -79,8 +79,7 @@ namespace MTA.Game.ConquerStructures
                             last = BoardList.Where(x => x.Rank == NobilityRank.King && x.Donation >= client.NobilityInformation.Donation).LastOrDefault();
                             if (last != null)
                                 king = last.Donation;
-                            ulong[] Contributions = new ulong[]
-                              {
+                            ulong[] Contributions = [
                                 0,
                                 30000000,
                                 0,
@@ -93,14 +92,14 @@ namespace MTA.Game.ConquerStructures
                                 (byte)client.NobilityInformation.Rank > 9 || !BoardList.Any(x => x.Rank == NobilityRank.Prince) ? 0 : price - client.NobilityInformation.Donation,
                                 0,
                                 0,
-                                (byte)client.NobilityInformation.Position == 1 || !BoardList.Any(x => x.Rank == NobilityRank.King) ? 0 : king - client.NobilityInformation.Donation,
-                              };
+                                (byte)client.NobilityInformation.Position == 1 || !BoardList.Any(x => x.Rank == NobilityRank.King) ? 0 : king - client.NobilityInformation.Donation
+                            ];
                             MemoryStream strm = new MemoryStream();
                             BinaryWriter wtr = new BinaryWriter(strm);
                             wtr.Write((ushort)0);
                             wtr.Write((ushort)2064);
                             wtr.Write((uint)4);
-                            byte[] Ranks = { 1, 3, 5, 7, 9, 12 };
+                            byte[] Ranks = [1, 3, 5, 7, 9, 12];
                             foreach (var Rank in Ranks)
                             {
                                 wtr.Write(Contributions[Rank]);

@@ -20,6 +20,6 @@ namespace MTA.Game.ConquerStructures
 
         public static BroadcastStr CurrentBroadcast = new BroadcastStr() { EntityID = 1 };
 
-        public static List<BroadcastStr> Broadcasts = new List<BroadcastStr>();
+        public static List<BroadcastStr> Broadcasts = [];
     }
 }

@@ -18,7 +18,7 @@ namespace MTA.Database
             string[] data = File.ReadAllLines(Constants.SoulGearInformation);
             foreach (var line in data)
             {
-                string[] datas = line.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                string[] datas = line.Split([" "], StringSplitOptions.RemoveEmptyEntries);
                 SoulGearInformation info = new SoulGearInformation();
                 info.ID = uint.Parse(datas[0]);
                 info.ItemIdentifier = int.Parse(datas[1]);

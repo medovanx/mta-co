@@ -16,7 +16,7 @@ namespace MTA.Game.ConquerStructures
             inventory = new Dictionary<uint, ConquerItem>(40);
             //if (client != null)
             //    inventory = new Dictionary<uint, ConquerItem>(40 + (int)client.SashSlots);
-            objects = new ConquerItem[0];
+            objects = [];
         }
         public bool AddPer(uint id, uint soulitem, uint purfylevel, uint timeofpurfy, byte plus, byte times, bool purfystabliz = false, bool bound = false)
         {
@@ -744,7 +744,7 @@ namespace MTA.Game.ConquerStructures
         {
             if (ID == 0)
                 return true;
-            List<ConquerItem> items = new List<ConquerItem>();
+            List<ConquerItem> items = [];
             byte has = 0;
             foreach (ConquerItem item in Objects)
                 if (item.ID == ID)

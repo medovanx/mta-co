@@ -393,7 +393,7 @@ namespace MTA.Client.Commands
                         }
                     case "reward":
                         {
-                            byte[] ids = new byte[] { 9, 10, 15, 16, 17, 11, 14, 19, 24, 22 };
+                            byte[] ids = [9, 10, 15, 16, 17, 11, 14, 19, 24, 22];
                             byte[] Buffer = new byte[8 + 8 + 12 * ids.Length];
                             Writer.WriteUInt16((ushort)(Buffer.Length - 8), 0, Buffer);
                             Writer.WriteUInt16(1316, 2, Buffer);

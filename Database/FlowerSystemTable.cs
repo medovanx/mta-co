@@ -8,7 +8,7 @@ namespace MTA.Database
     {
         public static uint[] TopLilies = new uint[2];
         public static uint[] TopOrchids = new uint[2];
-        public static List<MTA.Game.Features.Flowers.Flowers> flowertoday = new List<MTA.Game.Features.Flowers.Flowers>();
+        public static List<MTA.Game.Features.Flowers.Flowers> flowertoday = [];
         public static uint[] TopRedRoses = new uint[2];
         public static uint[] TopTulips = new uint[2];
         private static bool Exists(uint id)
@@ -93,7 +93,7 @@ namespace MTA.Database
             public uint Lilies;
             public short Body;
         }
-        public static List<Flowerss> FlowerList = new List<Flowerss>();
+        public static List<Flowerss> FlowerList = [];
         public static void Load()
         {
 

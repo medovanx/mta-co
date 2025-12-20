@@ -192,7 +192,7 @@ namespace MTA.Game
                 {
                     if (!client.Entity.Dead && client.WatchingGroup == null && client.QualifierGroup == null)
                     {
-                        client.Send(BuildWatcherList(new List<GameState>(), 0));
+                        client.Send(BuildWatcherList([], 0));
                         client.Send(match.BuildPacket());
 
                         Watchers.Add(client);
@@ -205,7 +205,7 @@ namespace MTA.Game
                         client.Entity.Teleport(1005, dynamicMap.ID, (ushort)Kernel.Random.Next(35, 70), (ushort)Kernel.Random.Next(35, 70));
                     }
                 }
-                public List<GameState> Watchers = new List<GameState>();
+                public List<GameState> Watchers = [];
                 #endregion
 
                 public Time32 CreateTime;
@@ -214,7 +214,7 @@ namespace MTA.Game
                 public uint Player1Damage, Player2Damage;
                 public uint Player1Cheers, Player2Cheers;
 
-                public List<uint> Cheerers = new List<uint>();
+                public List<uint> Cheerers = [];
 
                 public bool Done;
 
@@ -524,7 +524,7 @@ namespace MTA.Game
                     byte[] packet = client.WatchingGroup.BuildWatcherList(client.WatchingGroup.Watchers, 2);
                     foreach (GameState client2 in client.WatchingGroup.Watchers)
                         client2.Send(packet);
-                    byte[] p2 = client.WatchingGroup.BuildWatcherList(new List<GameState>(), 3);
+                    byte[] p2 = client.WatchingGroup.BuildWatcherList([], 3);
                     client.Send(p2);
                     client.WatchingGroup.Player1.Send(packet);
                     client.WatchingGroup.Player2.Send(packet);
@@ -650,7 +650,7 @@ namespace MTA.Game
             public ushort Subtype;
             public ushort PageNumber;
             public Enums.ArenaIDs ID;
-            public List<ArenaStatistic> Players = new List<ArenaStatistic>();
+            public List<ArenaStatistic> Players = [];
             public ArenaList(int PageIndex, ushort type = 2207)
             {
                 Type = type;

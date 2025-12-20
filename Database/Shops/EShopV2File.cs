@@ -15,7 +15,7 @@ namespace MTA.Database
                 string line = text[x].Trim().Replace("_", " ");
                 if (line == "")
                     continue;
-                string[] split = line.Split(new string[] { " ", "=" }, StringSplitOptions.RemoveEmptyEntries);
+                string[] split = line.Split([" ", "="], StringSplitOptions.RemoveEmptyEntries);
 
                 if (split[0] == "ID")
                 {
@@ -25,7 +25,7 @@ namespace MTA.Database
                     else
                     {
                         shop = new ShopFile.Shop();
-                        shop.Items = new List<uint>();
+                        shop.Items = [];
                         shop.UID = id;
                         EShopFile.Shops.Add(id, shop);
                     }
@@ -38,18 +38,18 @@ namespace MTA.Database
                 {
                     if (split[0].StartsWith("Item") || split[0].StartsWith("item"))
                     {
-                        uint ID = uint.Parse(split[1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[0]);
+                        uint ID = uint.Parse(split[1].Split([' '], StringSplitOptions.RemoveEmptyEntries)[0]);
                         if (!shop.Items.Contains(ID)) shop.Items.Add(ID);
                     }
                     else
                     {
-                        uint ID = uint.Parse(split[0].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[0]);
+                        uint ID = uint.Parse(split[0].Split([' '], StringSplitOptions.RemoveEmptyEntries)[0]);
                         if (!shop.Items.Contains(ID)) shop.Items.Add(ID);
                     }
                 }
                 else if (split[0].Length != 0 && split[0] != "[recommend]" && split[0] != "Amount")
                 {
-                    uint ID = uint.Parse(split[0].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[0]);
+                    uint ID = uint.Parse(split[0].Split([' '], StringSplitOptions.RemoveEmptyEntries)[0]);
                     if (!shop.Items.Contains(ID)) shop.Items.Add(ID);
                 }
             }

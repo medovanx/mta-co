@@ -182,7 +182,7 @@ namespace MTA.Game
         public static void SendScores()
         {
             if (scoreMessages == null)
-                scoreMessages = new string[0];
+                scoreMessages = [];
             if (Scores.Count == 0)
                 return;
             if (changed)
@@ -199,7 +199,7 @@ namespace MTA.Game
         private static void SortScores(out Guild winner)
         {
             winner = null;
-            List<string> ret = new List<string>();
+            List<string> ret = [];
 
             int Place = 0;
             foreach (Guild guild in Scores.Values.OrderByDescending((p) => p.sWarScore))

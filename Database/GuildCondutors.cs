@@ -5,9 +5,8 @@ using MTA.Network.GamePackets;
 
 namespace MTA.Database {
     public class GuildCondutors {
-        public static List<ushort> AllowMaps = new List<ushort>() {
-            1000, 1002, 1001, 1015, 1020, 1011, 700, 1216, 1214, 1217, 1028, 7007, 8892, 8893, 8894, 1762, 2056
-        };
+        public static List<ushort> AllowMaps =
+            [1000, 1002, 1001, 1015, 1020, 1011, 700, 1216, 1214, 1217, 1028, 7007, 8892, 8893, 8894, 1762, 2056];
 
         public static SafeDictionary<uint, Conductor> GuildConductors = new SafeDictionary<uint, Conductor>();
 

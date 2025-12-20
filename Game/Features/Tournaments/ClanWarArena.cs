@@ -282,7 +282,7 @@ namespace MTA.Game
             }
             private int ClansOnMap(Client.GameState[] clients)
             {
-                List<uint> ClansIDs = new List<uint>();
+                List<uint> ClansIDs = [];
                 foreach (var obj in clients)
                 {
                     if (obj.Entity.ClanId != 0)

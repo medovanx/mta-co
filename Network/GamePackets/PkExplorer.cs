@@ -9,7 +9,7 @@ namespace MTA.Network.GamePackets {
     public class PkExplorer {
         public GameState client;
         public uint MaxCount;
-        PkExpeliate[] PkValues = new PkExpeliate[0];
+        PkExpeliate[] PkValues = [];
         public ushort Size;
         public uint SubType;
         public ushort Type;

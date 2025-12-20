@@ -5,14 +5,14 @@ namespace MTA.Game.Features.Kisses
     public class Kisses
     {
         public SafeDictionary<uint, Kisses> Kiss = new SafeDictionary<uint, Kisses>(1000);
-        public static List<ListKissRank> Kiss2 = new List<ListKissRank>();
-        public static List<ListKissRank> Wine2 = new List<ListKissRank>();
-        public static List<ListKissRank> Letters2 = new List<ListKissRank>();
-        public static List<ListKissRank> Jades2 = new List<ListKissRank>();
-        public static List<ListKissRank> KissesToday = new List<ListKissRank>();
-        public static List<ListKissRank> WineToday = new List<ListKissRank>();
-        public static List<ListKissRank> LetterToday = new List<ListKissRank>();
-        public static List<ListKissRank> JadeToday = new List<ListKissRank>();
+        public static List<ListKissRank> Kiss2 = [];
+        public static List<ListKissRank> Wine2 = [];
+        public static List<ListKissRank> Letters2 = [];
+        public static List<ListKissRank> Jades2 = [];
+        public static List<ListKissRank> KissesToday = [];
+        public static List<ListKissRank> WineToday = [];
+        public static List<ListKissRank> LetterToday = [];
+        public static List<ListKissRank> JadeToday = [];
         public bool letterstoday = false;
         public bool winetoday = false;
         public bool Jadestoday = false;

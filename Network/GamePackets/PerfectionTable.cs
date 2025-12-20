@@ -15,7 +15,7 @@ using MySqlCommand = MTA.Database.MySqlCommand;
 namespace MTA.Network.GamePackets {
     public class PerfectionTable {
         public static Dictionary<uint, S> CostList = new Dictionary<uint, S>();
-        public static List<U> UpgradeList = new List<U>();
+        public static List<U> UpgradeList = [];
         public static Dictionary<uint, A> AbilitiesList = new Dictionary<uint, A>();
         public static Dictionary<uint, St> Garments = new Dictionary<uint, St>();
         public static Dictionary<uint, St> Mounts = new Dictionary<uint, St>();
@@ -81,7 +81,7 @@ namespace MTA.Network.GamePackets {
             if (File.Exists(Cost)) {
                 string[] L = File.ReadAllLines(Cost);
                 foreach (var l in L) {
-                    var S = l.Split(new string[] { "@@", " " }, StringSplitOptions.RemoveEmptyEntries);
+                    var S = l.Split(["@@", " "], StringSplitOptions.RemoveEmptyEntries);
                     S A = new S();
                     A.ID = Convert.ToUInt32(S[0]);
                     A.Prog = Convert.ToUInt16(S[1]);
@@ -92,7 +92,7 @@ namespace MTA.Network.GamePackets {
             if (File.Exists(Upgrade)) {
                 string[] L = File.ReadAllLines(Upgrade);
                 foreach (var l in L) {
-                    var S = l.Split(new string[] { "@@", " " }, StringSplitOptions.RemoveEmptyEntries);
+                    var S = l.Split(["@@", " "], StringSplitOptions.RemoveEmptyEntries);
                     U A = new U();
                     A.Po = Convert.ToByte(S[0]);
                     A.Le = Convert.ToUInt16(S[1]);
@@ -104,7 +104,7 @@ namespace MTA.Network.GamePackets {
             if (File.Exists(Ability)) {
                 string[] L = File.ReadAllLines(Ability);
                 foreach (var l in L) {
-                    var S = l.Split(new string[] { "@@", " " }, StringSplitOptions.RemoveEmptyEntries);
+                    var S = l.Split(["@@", " "], StringSplitOptions.RemoveEmptyEntries);
                     A AA = new A();
                     AA.Id = Convert.ToUInt32(S[0]);
                     AA.Sort = (A.AbilitiesSort)Convert.ToByte(S[1]);
@@ -118,7 +118,7 @@ namespace MTA.Network.GamePackets {
             if (File.Exists(Storage)) {
                 string[] L = File.ReadAllLines(Storage);
                 foreach (var l in L) {
-                    var S = l.Split(new string[] { "@@", " " }, StringSplitOptions.RemoveEmptyEntries);
+                    var S = l.Split(["@@", " "], StringSplitOptions.RemoveEmptyEntries);
                     St SS = new St();
                     SS.ID = uint.Parse(S[0]);
                     SS.Unknown = uint.Parse(S[1]);
@@ -545,7 +545,7 @@ namespace MTA.Network.GamePackets {
         public PerfectionScore() { }
 
         public void GetRankingList() {
-            RankingList = new List<Entity>();
+            RankingList = [];
             using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("entities"))
             using (var reader = new MySqlReader(cmd)) {
                 while (reader.Read()) {
@@ -1036,11 +1036,11 @@ namespace MTA.Network.GamePackets {
         }
 
         public void UpdateRanking() {
-            AllItemsRanking = new List<ConquerItem>();
+            AllItemsRanking = [];
             MainRank = new Dictionary<byte, ConquerItem>();
             for (byte i = 0; i < 11; i++) {
                 byte z = GetRealyPosition((byte)(i + 1));
-                List<ConquerItem> items = new List<ConquerItem>();
+                List<ConquerItem> items = [];
                 using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("items").Where("Position", z)
                            .And("Perfectionlevel", 0, true))
                 using (var reader = new MySqlReader(cmd)) {
@@ -1301,10 +1301,10 @@ namespace MTA.Network.GamePackets {
 
     class PrestigeRank {
         public static byte[] S;
-        static List<byte> Classs = new List<byte>() { 15, 25, 45, 55, 65, 75, 85, 135, 145, 165 };
+        static List<byte> Classs = [15, 25, 45, 55, 65, 75, 85, 135, 145, 165];
 
         public static byte[] Offline =
-            { 13, 0, 185, 12, 8, 1, 18, 5, 24, 245, 179, 186, 2, 84, 81, 83, 69, 82, 118, 101, 7 };
+            [13, 0, 185, 12, 8, 1, 18, 5, 24, 245, 179, 186, 2, 84, 81, 83, 69, 82, 118, 101, 7];
 
         public static Dictionary<byte, List<Data>> SR = new Dictionary<byte, List<Data>>();
         public static Dictionary<byte, Data> Topers = new Dictionary<byte, Data>();
@@ -1418,7 +1418,7 @@ namespace MTA.Network.GamePackets {
                                 }
 
                                 if (!SR.ContainsKey(C)) {
-                                    SR.Add(C, new List<Data>());
+                                    SR.Add(C, []);
                                     SR[C].Add(D);
                                 }
                                 else {
@@ -1501,7 +1501,7 @@ namespace MTA.Network.GamePackets {
         }
 
         public static uint[] R(byte[] Buffer) {
-            List<uint> ptr2 = new List<uint>();
+            List<uint> ptr2 = [];
 
             for (int i = 0; i < Buffer.Length;) {
                 if (i + 2 <= Buffer.Length) {

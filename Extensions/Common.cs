@@ -49,14 +49,14 @@ namespace Albetros.Core
         private static readonly int[] _taoistManaBonus;
         static Common()
         {
-            RebornItemLevels = new uint[] { 0, 0, 0, 0, 2, 2, 1, 0, 1, 0, 0, 0, 0, 0, 0 };
-            DeltaX = new sbyte[] { 0, -1, -1, -1, 0, 1, 1, 1, 0 };
-            DeltaY = new sbyte[] { 1, 1, 0, -1, -1, -1, 0, 1, 0 };
-            DeltaMountX = new sbyte[] { 0, -2, -2, -2, 0, 2, 2, 2, 1, 0, -2, 0, 1, 0, 2, 0, 0, -2, 0, -1, 0, 2, 0, 1, 0 };
-            DeltaMountY = new sbyte[] { 2, 2, 0, -2, -2, -2, 0, 2, 2, 0, -1, 0, -2, 0, 1, 0, 0, 1, 0, -2, 0, -1, 0, 2, 0 };
+            RebornItemLevels = [0, 0, 0, 0, 2, 2, 1, 0, 1, 0, 0, 0, 0, 0, 0];
+            DeltaX = [0, -1, -1, -1, 0, 1, 1, 1, 0];
+            DeltaY = [1, 1, 0, -1, -1, -1, 0, 1, 0];
+            DeltaMountX = [0, -2, -2, -2, 0, 2, 2, 2, 1, 0, -2, 0, 1, 0, 2, 0, 0, -2, 0, -1, 0, 2, 0, 1, 0];
+            DeltaMountY = [2, 2, 0, -2, -2, -2, 0, 2, 2, 0, -1, 0, -2, 0, 1, 0, 0, 1, 0, -2, 0, -1, 0, 2, 0];
             UnixEpoch = new DateTime(1970, 1, 1);
-            _trojanLifeBonus = new[] { 100, 105, 108, 110, 112, 115 };
-            _taoistManaBonus = new[] { 100, 100, 300, 400, 500, 600 };
+            _trojanLifeBonus = [100, 105, 108, 110, 112, 115];
+            _taoistManaBonus = [100, 100, 300, 400, 500, 600];
         }
         public static uint UnixTimestamp
         {

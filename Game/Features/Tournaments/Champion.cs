@@ -44,7 +44,7 @@ namespace MTA.Game
                         stats[(int)i].Rank = (byte)(i + 1);
                     ChampionStatsList[j] = stats;
                 }
-                catch { ChampionStatsList[j] = new List<ChampionStatistic>(); }
+                catch { ChampionStatsList[j] = []; }
             }
         }
         public static void YesterdaySort()
@@ -343,7 +343,7 @@ namespace MTA.Game
                 IEnumerable<ChampionStatistic> ienum = null;
                 if (type == 2603)
                 {
-                    list = new List<ChampionStatistic>();
+                    list = [];
                     for (int i = 7; i > 0; i--)
                         if (ChampionStatsList[i].Count != 0)
                             list.Add(ChampionStatsList[i][0]);
@@ -511,14 +511,14 @@ namespace MTA.Game
 
         public static uint[][] ChampionPoints = new uint[][]
         {
-            new uint[] {0,0,0,0,0,0},
-            new uint[] {6,10,13,16,19,22},
-            new uint[] {8,14,20,23,26,29},
-            new uint[] {10,18,27,30,33,36},
-            new uint[] {20,30,42,45,48,51},
-            new uint[] {35,50,65,68,71,74},
-            new uint[] {50,80,98,101,104,107 },
-            new uint[] {60,100,121,124,127,130 }
+            [0,0,0,0,0,0],
+            [6,10,13,16,19,22],
+            [8,14,20,23,26,29],
+            [10,18,27,30,33,36],
+            [20,30,42,45,48,51],
+            [35,50,65,68,71,74],
+            [50,80,98,101,104,107],
+            [60,100,121,124,127,130]
         };
 
         public static void Win(GameState winner, GameState loser)

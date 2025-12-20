@@ -11,7 +11,7 @@ namespace MTA.Game.ConquerStructures
     #region PokerPlayer
     public class PokerPlayer
     {
-        public List<Enums.SeatAttributeEnum> SeatAttributes = new List<Enums.SeatAttributeEnum>();
+        public List<Enums.SeatAttributeEnum> SeatAttributes = [];
         public Entity Entity
         {
             get
@@ -41,7 +41,7 @@ namespace MTA.Game.ConquerStructures
         public bool Online = true;
         public uint TableUID;
         public uint UID;
-        public List<PokerCard> Cards = new List<PokerCard>();
+        public List<PokerCard> Cards = [];
         public ulong TotalBet;
         public ulong Bet;
         public byte CurrentState = 1;
@@ -178,8 +178,8 @@ namespace MTA.Game.ConquerStructures
         private uint BigBlind;
         private uint SmallBlind;
         private Stack<PokerCard> _ShuffleDeckCards;
-        public List<PokerCard> TableCards = new List<PokerCard>();
-        protected readonly List<MoneyPot> m_Pots = new List<MoneyPot>();
+        public List<PokerCard> TableCards = [];
+        protected readonly List<MoneyPot> m_Pots = [];
         private int m_CurrPotId;
         public List<MoneyPot> Pots
         {
@@ -208,7 +208,7 @@ namespace MTA.Game.ConquerStructures
         /// </summary>
         public int NbPlayed { get; set; }
 
-        private readonly List<ulong> m_AllInCaps = new List<ulong>(); // All the distincts ALL_IN CAPS of the ROUND
+        private readonly List<ulong> m_AllInCaps = []; // All the distincts ALL_IN CAPS of the ROUND
         private bool NewGame;
         /// <summary>
         /// How many players are All In
@@ -1003,7 +1003,7 @@ namespace MTA.Game.ConquerStructures
         }
         public static List<PokerCard> GetSortedDeck(bool crazy, bool showhand)
         {
-            List<PokerCard> list = new List<PokerCard>();
+            List<PokerCard> list = [];
             for (byte i = (byte)Enums.PokerCardsType.Hearts; i < 4; i++)
             {
                 if (showhand)
@@ -1583,7 +1583,7 @@ namespace MTA.Game.ConquerStructures
     public class MoneyPot
     {
         #region Fields
-        private readonly List<PokerPlayer> m_AttachedPlayers = new List<PokerPlayer>();
+        private readonly List<PokerPlayer> m_AttachedPlayers = [];
         #endregion Fields
 
         #region Properties

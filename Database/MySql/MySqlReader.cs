@@ -166,13 +166,13 @@ namespace MTA.Database
 
         public byte[] ReadBlob(string columnName)
         {
-            if (_datarow.IsNull(columnName)) return new byte[0];
+            if (_datarow.IsNull(columnName)) return [];
             return (byte[])_datarow[columnName];
         }
 
         public uint[] ReadUIntArray(string columnName, string[] separator)
         {
-            if (_datarow.IsNull(columnName)) return new uint[0];
+            if (_datarow.IsNull(columnName)) return [];
             var str = _datarow[columnName].ToString().Split(separator, StringSplitOptions.RemoveEmptyEntries);
             uint[] array = new uint[str.Length];
             for (int i = 0; i < str.Length; i++)

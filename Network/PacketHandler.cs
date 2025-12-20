@@ -78,7 +78,7 @@ namespace MTA.Network {
             }
 
             if (Msg.Contains("http:") || Msg.Contains("www.") || Msg.Contains(".com")) {
-                var words = Msg.Split(new string[] { " " }, StringSplitOptions.None);
+                var words = Msg.Split([" "], StringSplitOptions.None);
                 for (int i = 0; i < words.Length; i++) {
                     var word = words[i];
                     if (word.EndsWith(".com") || word.EndsWith(".net") || word.StartsWith("www.") ||
@@ -270,7 +270,7 @@ namespace MTA.Network {
                 case 2900: {
                     switch (packet[4]) {
                         case 0: {
-                            uint[] array = new uint[] { 37, 43 };
+                            uint[] array = [37, 43];
                             byte[] Buffer = new byte[6 + 8 + 5 * array.Length];
                             Writer.Ushort((ushort)(Buffer.Length - 8), 0, Buffer);
                             Writer.Ushort(2901, 2, Buffer);
@@ -455,7 +455,7 @@ namespace MTA.Network {
 
                 case 2204: {
                     byte count = packet[4];
-                    List<uint> item_uids = new List<uint>();
+                    List<uint> item_uids = [];
                     int offset = 5;
                     for (int i = 0; i < count; i++) {
                         item_uids.Add(BitConverter.ReadUint(packet, offset));
@@ -1441,10 +1441,10 @@ namespace MTA.Network {
                     Message message = new Message();
                     message.Deserialize(packet);
                     message.__Message = Filter(message.__Message, client);
-                    if (message.__Message.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries).Length >
+                    if (message.__Message.Split(["\\n"], StringSplitOptions.RemoveEmptyEntries).Length >
                         0)
                         message.__Message =
-                            message.__Message.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries)[0];
+                            message.__Message.Split(["\\n"], StringSplitOptions.RemoveEmptyEntries)[0];
                     Chat(message, client);
                     break;
                 }
@@ -4473,8 +4473,8 @@ namespace MTA.Network {
                                         .ThenBy(x => x.UID).FirstOrDefault();
                             }
 
-                            Entity[] array = new Entity[10]
-                                { Trojan, Warrior, Archer, Ninja, Monk, Pirate, Dragon, Water, Fire, WindWalker };
+                            Entity[] array = [Trojan, Warrior, Archer, Ninja, Monk, Pirate, Dragon, Water, Fire, WindWalker
+                            ];
                             byte count = 0;
                             if (Trojan != null) count++;
                             if (Warrior != null) count++;
@@ -5045,11 +5045,11 @@ namespace MTA.Network {
                         client.Send(Program.World.CTF.generateCTFRanking());
 
                     if (CaptureTheFlag.IsWar) {
-                        byte[] p773 = new byte[] {
+                        byte[] p773 = [
                             60, 0, 176, 8, 11, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                             84, 81, 83, 101, 114, 118, 101, 114
-                        };
+                        ];
                         client.Send(p773);
                     }
                     else
@@ -5124,7 +5124,7 @@ namespace MTA.Network {
                     if (Receive_count != 0 && Receive_count % 4 != 0)
                         return;
 
-                    List<Guild> AdvGuilds = new List<Guild>();
+                    List<Guild> AdvGuilds = [];
                     for (ushort x = 0; x < 4; x++) {
                         ushort getposition = (ushort)(Receive_count + x);
                         if (Guild.Advertise.AdvertiseRanks.Length <= getposition)
@@ -7174,10 +7174,10 @@ namespace MTA.Network {
 
                     GetSurroundings(client);
                     if (client.ChampionGroup != null) {
-                        byte[] p5442 = new byte[] {
+                        byte[] p5442 = [
                             20, 0, 86, 4, 40, 128, 14, 0, 160, 187, 13, 0, 103, 0, 21, 64, 12, 49, 0, 0, 84, 81, 83,
                             101, 114, 118, 101, 114
-                        };
+                        ];
                         client.Send(p5442);
                     }
                     else
@@ -8162,14 +8162,14 @@ namespace MTA.Network {
                 if (guild.Name == name && client.Guild.Name != name) {
                     if (guild.Leader != null) {
                         if (guild.Leader.IsOnline) {
-                            guild.Leader.Client.OnMessageBoxEventParams = new object[] {
+                            guild.Leader.Client.OnMessageBoxEventParams = [
                                 guild,
                                 client.Guild
-                            };
-                            client.OnMessageBoxEventParams = new object[] {
+                            ];
+                            client.OnMessageBoxEventParams = [
                                 guild,
                                 client.Guild
-                            };
+                            ];
                             GameState Leader = guild.Leader.Client;
                             Leader.MessageOK = delegate {
                                 Guild Guild1 =
@@ -14475,7 +14475,7 @@ namespace MTA.Network {
                 case 729087: {
                     Npcs dialog = new Npcs(client) {
                         Client = client,
-                        Replies = new List<NpcReply>()
+                        Replies = []
                     };
                     var quest = client.Quests.GetQuest(QuestID.Eth_has_price);
                     dialog.Text("************************");
@@ -19506,7 +19506,7 @@ namespace MTA.Network {
         public static void GainRefineryItem(ConquerItem item, GameState c) {
             Refinery.RefineryBoxes RefineryB = null;
             if (Kernel.DatabaseRefineryBoxes.TryGetValue(item.ID, out RefineryB)) {
-                List<Refinery.RefineryItem> Possible = new List<Refinery.RefineryItem>();
+                List<Refinery.RefineryItem> Possible = [];
                 foreach (Refinery.RefineryItem RefineryI in Kernel.DatabaseRefinery.Values) {
                     if (RefineryI.Type == RefineryB.Type) {
                         if (RefineryI.Position == RefineryB.Position) {
@@ -21320,7 +21320,7 @@ namespace MTA.Network {
                                         client.Send(new Message("Message sent!", Color.Green, Message.TopLeft));
                                     };
                                 client.MessageCancel =
-                                    delegate { client.OnMessageBoxEventParams = new object[0]; };
+                                    delegate { client.OnMessageBoxEventParams = []; };
                                 client.Send(new NpcReply(NpcReply.MessageBox,
                                     "To " + friend.Name + ": \r\n" + message.__Message +
                                     "\r\n\r\nSend? (It will replace other messages.)"));
@@ -23007,12 +23007,12 @@ namespace MTA.Network {
                                 break;
                             }
                             case "testsinf": {
-                                byte[] mazen = new byte[] {
+                                byte[] mazen = [
                                     0x2C, 0x00, 0x21, 0x27, 0x58, 0xD8, 0x3B, 0x09, 0x7D, 0x92, 0x54, 0x00, 0x01, 0x00,
                                     0x00, 0x00, 0x19, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x02, 0x00, 0x00, 0x00,
                                     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                                     0x00, 0x00, 0x54, 0x51, 0x53, 0x65, 0x72, 0x76, 0x65, 0x72
-                                };
+                                ];
                                 Writer.WriteUInt32(client.Entity.UID, 8, mazen);
                                 Writer.WriteUInt32((uint)Time32.timeGetTime().GetHashCode(), 4, mazen);
                                 client.Send(mazen);
@@ -23020,12 +23020,12 @@ namespace MTA.Network {
                                 break;
                             }
                             case "testsinf1": {
-                                byte[] mazen = new byte[] {
+                                byte[] mazen = [
                                     0x2C, 0x00, 0x21, 0x27, 0x4E, 0x9E, 0x48, 0x09, 0x7D, 0x92, 0x54, 0x00, 0x01, 0x00,
                                     0x00, 0x00, 0x19, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00,
                                     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                                     0x00, 0x00, 0x54, 0x51, 0x53, 0x65, 0x72, 0x76, 0x65, 0x72
-                                };
+                                ];
                                 Writer.WriteUInt32(client.Entity.UID, 8, mazen);
                                 Writer.WriteUInt32((uint)Time32.timeGetTime().GetHashCode(), 4, mazen);
                                 client.Send(mazen);
@@ -23105,7 +23105,7 @@ namespace MTA.Network {
                                         client.Map.Entities.Remove(mob.UID);
                                     }
 
-                                Clone = new Entity[0];
+                                Clone = [];
                                 client.Map.EntityUIDCounter.Now = 400000;
                                 client.Map.LoadMonsters();
                                 client.Map.FreezeMonsters = false;
@@ -24206,7 +24206,7 @@ namespace MTA.Network {
                 packet.Type = 16;
                 packet.UID = client.Entity.UID;
                 packet.TextsCount = 1;
-                packet.Texts = new List<string>() { Observee.Entity.Spouse };
+                packet.Texts = [Observee.Entity.Spouse];
                 Observer.Send(packet);
                 if (generalData.ID == 117) {
                     packet.Type = 10;
@@ -24308,7 +24308,7 @@ namespace MTA.Network {
 
                 if (successful) {
                     client.SendScreen(new _String(true) {
-                        Texts = new List<string>() { "eidolon" },
+                        Texts = ["eidolon"],
                         UID = client.Entity.UID,
                         Type = _String.Effect
                     });
@@ -25139,7 +25139,7 @@ namespace MTA.Network {
 
         #region Water Skills
 
-        public static readonly List<ushort> Water_skills = new List<ushort>() {
+        public static readonly List<ushort> Water_skills = [
             1195,
             10309,
             1050,
@@ -25158,7 +25158,7 @@ namespace MTA.Network {
             3090,
             1350,
             30000
-        };
+        ];
 
         #endregion
 
@@ -26031,16 +26031,19 @@ namespace MTA.Network {
         }
 
         public static uint CreateMyRank(GameState client, out int rank) {
-            List<ClientRank> FRanks = new List<ClientRank>() {
+            List<ClientRank> FRanks = [
                 new ClientRank()
                     { Rank = (uint)client.Entity.MyFlowers.RankLilies, Amount = client.Entity.MyFlowers.Lilies },
+
                 new ClientRank()
                     { Rank = (uint)client.Entity.MyFlowers.RankOrchids, Amount = client.Entity.MyFlowers.Orchads },
+
                 new ClientRank()
                     { Rank = (uint)client.Entity.MyFlowers.RankRoses, Amount = client.Entity.MyFlowers.RedRoses },
+
                 new ClientRank()
                     { Rank = (uint)client.Entity.MyFlowers.RankTuilps, Amount = client.Entity.MyFlowers.Tulips }
-            };
+            ];
             var array = FRanks.Where((f1) => f1.Rank != 0).ToArray();
             Array.Sort(array, (f1, f2) => {
                 int n_rank = f1.Rank.CompareTo(f2.Rank);

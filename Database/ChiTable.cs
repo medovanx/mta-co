@@ -102,7 +102,7 @@ namespace MTA.Database
                         ChiData chiData = new ChiData();
                         chiData.UID = rdr.ReadUInt32("uid");
                         chiData.Name = rdr.ReadString("name");
-                        chiData.Powers = new List<ChiPowerStructure>();
+                        chiData.Powers = [];
                         byte[] data = rdr.ReadBlob("chipowers");
                         if (data.Length > 0)
                         {

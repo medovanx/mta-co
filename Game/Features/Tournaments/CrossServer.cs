@@ -174,7 +174,7 @@ namespace MTA.Game {
 
         public static void SendScores() {
             if (scoreMessages == null)
-                scoreMessages = new string[0];
+                scoreMessages = [];
             if (Countrys.Count == 0)
                 return;
             if (changed)
@@ -189,7 +189,7 @@ namespace MTA.Game {
 
         private static void SortScores(out Countrys winner) {
             winner = null;
-            List<string> ret = new List<string>();
+            List<string> ret = [];
             int Place = 0;
             foreach (var C in Countrys.Values.OrderByDescending((p) => p.Score)) {
                 if (Place == 0)

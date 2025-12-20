@@ -17,8 +17,8 @@ using ProtoBuf;
 namespace MTA {
     public class Kernel {
         public static SafeDictionary<string, string> Translated = new SafeDictionary<string, string>();
-        public static List<uint> Members30Guilds = new List<uint>();
-        public static List<string> WarLegendsJoin = new List<string>();
+        public static List<uint> Members30Guilds = [];
+        public static List<string> WarLegendsJoin = [];
 
         public static ConcurrentDictionary<uint, TransferPlayer> TransferPool2 =
             new ConcurrentDictionary<uint, TransferPlayer>();
@@ -125,7 +125,7 @@ namespace MTA {
         }
 
         public static uint[] Read7BitEncodedInt(byte[] buffer) {
-            List<uint> ptr2 = new List<uint>();
+            List<uint> ptr2 = [];
 
             for (int i = 0; i < buffer.Length;) {
                 if (i + 2 <= buffer.Length) {

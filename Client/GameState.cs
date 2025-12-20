@@ -898,7 +898,7 @@ namespace MTA.Client {
                 Friends = new SafeDictionary<uint, Friend>();
                 Enemy = new SafeDictionary<uint, Enemy>();
                 ChiData = new ChiTable.ChiData();
-                ChiPowers = new List<ChiPowerStructure>();
+                ChiPowers = [];
 
 
                 NobilityInformation = new NobilityInformation();
@@ -938,7 +938,7 @@ namespace MTA.Client {
                 ChampionStats.Model = Entity.Mesh;
                 ChampionStats.Points = 0;
                 ChampionStats.LastReset = DateTime.Now;
-                ChiPowers = new List<ChiPowerStructure>();
+                ChiPowers = [];
                 Retretead_ChiPowers = new ChiPowerStructure[4];
                 ChiData = new ChiTable.ChiData()
                     { Name = Entity.Name, UID = Entity.UID, Powers = ChiPowers };
@@ -1010,19 +1010,19 @@ namespace MTA.Client {
                     Entity.MyAchievement = new Achievement(Entity);
 
                     int count = reader.ReadInt32("BItemCount");
-                    string[] itemCost = reader.ReadString("BItemCost").Split(new string[] { "~", "@@", " " },
+                    string[] itemCost = reader.ReadString("BItemCost").Split(["~", "@@", " "],
                         StringSplitOptions.RemoveEmptyEntries);
-                    string[] itemID = reader.ReadString("BItemID").Split(new string[] { "~", "@@", " " },
+                    string[] itemID = reader.ReadString("BItemID").Split(["~", "@@", " "],
                         StringSplitOptions.RemoveEmptyEntries);
-                    string[] itemPlus = reader.ReadString("BItemPlus").Split(new string[] { "~", "@@", " " },
+                    string[] itemPlus = reader.ReadString("BItemPlus").Split(["~", "@@", " "],
                         StringSplitOptions.RemoveEmptyEntries);
-                    string[] itemEnchant = reader.ReadString("BItemEnchant").Split(new string[] { "~", "@@", " " },
+                    string[] itemEnchant = reader.ReadString("BItemEnchant").Split(["~", "@@", " "],
                         StringSplitOptions.RemoveEmptyEntries);
-                    string[] itemBless = reader.ReadString("BItemBless").Split(new string[] { "~", "@@", " " },
+                    string[] itemBless = reader.ReadString("BItemBless").Split(["~", "@@", " "],
                         StringSplitOptions.RemoveEmptyEntries);
-                    string[] itemSocketOne = reader.ReadString("BItemSoc1").Split(new string[] { "~", "@@", " " },
+                    string[] itemSocketOne = reader.ReadString("BItemSoc1").Split(["~", "@@", " "],
                         StringSplitOptions.RemoveEmptyEntries);
-                    string[] itemSocketTwo = reader.ReadString("BItemSoc2").Split(new string[] { "~", "@@", " " },
+                    string[] itemSocketTwo = reader.ReadString("BItemSoc2").Split(["~", "@@", " "],
                         StringSplitOptions.RemoveEmptyEntries);
 
                     ElitePKStats = new ElitePK.FighterStats(Entity.UID, Entity.Name, Entity.Mesh);
@@ -1436,19 +1436,19 @@ namespace MTA.Client {
                 var X = Reader.ReadUInt16("BotMapx");
                 var Y = Reader.ReadUInt16("BotMapy");
                 var itemz = Reader.ReadString("BItemID")
-                    .Split(new string[] { "~", "@@", " " }, StringSplitOptions.RemoveEmptyEntries);
+                    .Split(["~", "@@", " "], StringSplitOptions.RemoveEmptyEntries);
                 var costz = Reader.ReadString("BItemCost")
-                    .Split(new string[] { "~", "@@", " " }, StringSplitOptions.RemoveEmptyEntries);
+                    .Split(["~", "@@", " "], StringSplitOptions.RemoveEmptyEntries);
                 var plusz = Reader.ReadString("BItemPlus")
-                    .Split(new string[] { "~", "@@", " " }, StringSplitOptions.RemoveEmptyEntries);
+                    .Split(["~", "@@", " "], StringSplitOptions.RemoveEmptyEntries);
                 var blessz = Reader.ReadString("BItemBless")
-                    .Split(new string[] { "~", "@@", " " }, StringSplitOptions.RemoveEmptyEntries);
+                    .Split(["~", "@@", " "], StringSplitOptions.RemoveEmptyEntries);
                 var hpz = Reader.ReadString("BItemEnchant")
-                    .Split(new string[] { "~", "@@", " " }, StringSplitOptions.RemoveEmptyEntries);
+                    .Split(["~", "@@", " "], StringSplitOptions.RemoveEmptyEntries);
                 var soc1z = Reader.ReadString("BItemSoc1")
-                    .Split(new string[] { "~", "@@", " " }, StringSplitOptions.RemoveEmptyEntries);
+                    .Split(["~", "@@", " "], StringSplitOptions.RemoveEmptyEntries);
                 var soc2z = Reader.ReadString("BItemSoc2")
-                    .Split(new string[] { "~", "@@", " " }, StringSplitOptions.RemoveEmptyEntries);
+                    .Split(["~", "@@", " "], StringSplitOptions.RemoveEmptyEntries);
                 Booth booth = new Booth();
                 SobNpcSpawn Base = new SobNpcSpawn();
                 Base.UID = ID;
@@ -1528,7 +1528,7 @@ namespace MTA.Client {
             Cryptography = new GameCryptography(Program.Encoding.GetBytes(Constants.GameCryptographyKey));
             DHKeyExchange = new DHKeyExchange.ServerKeyExchange();
             SpiritBeadQ = new SpiritBeadQuest(this);
-            ChiPowers = new List<ChiPowerStructure>();
+            ChiPowers = [];
             Retretead_ChiPowers = new ChiPowerStructure[4];
         }
 
@@ -1601,7 +1601,7 @@ namespace MTA.Client {
 
                 Trade = new Game.ConquerStructures.Trade();
                 ArenaStatistic = new ArenaStatistic(true);
-                Prayers = new List<GameState>();
+                Prayers = [];
                 map = null;
                 SpiritBeadQ = new SpiritBeadQuest(this);
                 Quests = new Quests(this);
@@ -2021,7 +2021,7 @@ namespace MTA.Client {
         public ushort OnlineTrainingPoints = 0;
         public Time32 LastTrainingPointsUp, LastTreasurePoints = Time32.Now.AddMinutes(1);
 
-        public List<string> GuildNamesSpawned = new List<string>();
+        public List<string> GuildNamesSpawned = [];
 
         public byte KylinUpgradeCount = 0;
 
@@ -5221,13 +5221,13 @@ namespace MTA.Client {
         }
 
         public int[][] ChampionAllowedStats = new int[][] {
-            new int[] { 1, 0, 0, 0, 0, 0, 0, 30, 0, 0 },
-            new int[] { 2, 0, 0, 0, 0, 0, 0, 40, 1, 1 },
-            new int[] { 3, 1, 0, 0, 0, 0, 50, 50, 2, 3 },
-            new int[] { 4, 3, 1, 1, 0, 0, 100, 60, 5, 4 },
-            new int[] { 5, 5, 1, 1, 1, 0, 150, 70, 7, 5 },
-            new int[] { 6, 5, 1, 1, 1, 0, 200, 80, 9, 7 },
-            new int[] { 12, 7, 2, 2, 1, 1, 255, 100, 12, 9 }
+            [1, 0, 0, 0, 0, 0, 0, 30, 0, 0],
+            [2, 0, 0, 0, 0, 0, 0, 40, 1, 1],
+            [3, 1, 0, 0, 0, 0, 50, 50, 2, 3],
+            [4, 3, 1, 1, 0, 0, 100, 60, 5, 4],
+            [5, 5, 1, 1, 1, 0, 150, 70, 7, 5],
+            [6, 5, 1, 1, 1, 0, 200, 80, 9, 7],
+            [12, 7, 2, 2, 1, 1, 255, 100, 12, 9]
         };
 
         public bool DoChampStats {
@@ -6044,7 +6044,7 @@ namespace MTA.Client {
 
         public void Summon2() {
             try {
-                List<Point> DestructionAreas = new List<Point>();
+                List<Point> DestructionAreas = [];
                 for (int i = 0; i < 360; i++) {
                     ushort x = (ushort)(Circle_Center.X + (Circle_Level * Math.Cos(i)));
                     ushort y = (ushort)(Circle_Center.Y + (Circle_Level * Math.Sin(i)));

@@ -30,14 +30,13 @@ namespace MTA.Game
         };
 
         private IDisposable Subscriber;
-        private Coordinate[] Locations = new[]
-        {
+        private Coordinate[] Locations = [
             new Coordinate(1002, 300, 288),
             new Coordinate(1011, 286, 310),
             new Coordinate(1020, 622, 592),
             new Coordinate(1000, 507, 711),
             new Coordinate(1015, 737, 641)
-        };
+        ];
         private int currentLocation;
         private bool poleKilled;
         private Map currentMap;
@@ -54,7 +53,7 @@ namespace MTA.Game
             currentLocation = -1;
             this.prize = prize;
             damages = new ConcurrentDictionary<Guild, ulong>();
-            winners = new List<string>();
+            winners = [];
             File.Open(Constants.PoleDominationPath, FileMode.OpenOrCreate).Close();
             foreach (var name in File.ReadAllLines(Constants.PoleDominationPath))
                 if (name.Length != 0)

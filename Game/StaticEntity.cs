@@ -87,9 +87,8 @@ namespace MTA.Game
             }
         }
 
-        private static Tuple<uint, string, ushort>[] raceItems = new[]
-            {
-                new  Tuple<uint, string, ushort>(760,"GuardPotion",1),
+        private static Tuple<uint, string, ushort>[] raceItems = [
+            new  Tuple<uint, string, ushort>(760,"GuardPotion",1),
 //                new  Tuple<uint, string, ushort>(761,"FrozenTrap",1),
                 new  Tuple<uint, string, ushort>(762,"SluggishPotion",3),
                 new  Tuple<uint, string, ushort>(763,"DizzyHammer",1),
@@ -100,7 +99,7 @@ namespace MTA.Game
                 new  Tuple<uint, string, ushort>(768,"SpiritPotion",1),
                 new  Tuple<uint, string, ushort>(769,"ExcitementPotion",1),
                 new  Tuple<uint, string, ushort>(770,"ChaosBomb",1)
-            };
+        ];
 
 
         public void Pick()

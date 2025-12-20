@@ -138,12 +138,12 @@ namespace MTA.Network.GamePackets
             private const Int32 TITLE_SIZE = 44;
             private const Int32 LIST_SIZE = 10;
 
-            private static List<MessageInfo> TradeBoard = new List<MessageInfo>();
-            private static List<MessageInfo> FriendBoard = new List<MessageInfo>();
-            private static List<MessageInfo> TeamBoard = new List<MessageInfo>();
-            private static List<MessageInfo> SynBoard = new List<MessageInfo>();
-            private static List<MessageInfo> OtherBoard = new List<MessageInfo>();
-            private static List<MessageInfo> SystemBoard = new List<MessageInfo>();
+            private static List<MessageInfo> TradeBoard = [];
+            private static List<MessageInfo> FriendBoard = [];
+            private static List<MessageInfo> TeamBoard = [];
+            private static List<MessageInfo> SynBoard = [];
+            private static List<MessageInfo> OtherBoard = [];
+            private static List<MessageInfo> SystemBoard = [];
 
             public struct MessageInfo
             {

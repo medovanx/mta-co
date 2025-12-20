@@ -24,7 +24,7 @@ namespace MTA.Game.ConquerStructures.House
             string[] lines = File.ReadAllLines(Constants.FurniturePath);
             foreach (var item in lines)
             {
-                var coloums = item.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                var coloums = item.Split([" "], StringSplitOptions.RemoveEmptyEntries);
                 FurInfo info = new FurInfo();
                 info.npcid = uint.Parse(coloums[0]);
                 info.type = (Enums.NpcType)uint.Parse(coloums[1]);

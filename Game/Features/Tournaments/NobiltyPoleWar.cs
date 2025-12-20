@@ -298,11 +298,11 @@ namespace MTA.Game {
 
         private static string[] SortScores(out Entity winner, int i) {
             winner = null;
-            List<string> ret = new List<string>();
+            List<string> ret = [];
             int Place = 0;
 
             var Scores = AllScores[i];
-            if (Scores == null) return new string[0];
+            if (Scores == null) return [];
             foreach (var e in Scores.Values.OrderByDescending((p) => p.WarScore)) {
                 if (Place == 0)
                     winner = e;

@@ -13,7 +13,7 @@ namespace MTA.Database
             public byte Sockets;
             public byte Plus;
         }
-        public static List<LotteryItem> LotteryItems = new List<LotteryItem>();
+        public static List<LotteryItem> LotteryItems = [];
         public static void Load()
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("lottery"))

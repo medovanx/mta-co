@@ -5,39 +5,48 @@ namespace MTA.Game
 {
     public class SteedRace
     {
-        public uint[][] RaceSettings = new[]
-        {
-            new uint[]{ (uint)Enums.Maps.MarketRace, 88, 149,
+        public uint[][] RaceSettings = [
+            [
+                (uint)Enums.Maps.MarketRace, 88, 149,
                 420, 431, 4,
                 65, 174, 621,
                 123, 243, 60,
                 214, 334, 70,
-                346, 459, 100},
-            new uint[]{ (uint)Enums.Maps.IceRace, 175, 250,
+                346, 459, 100
+            ],
+            [
+                (uint)Enums.Maps.IceRace, 175, 250,
                 200, 153, 6, //255, 535*
                 154, 267, 621,
                 146, 392, 70,
                 283, 351, 100,
-                295, 079, 100},
-            new uint[]{ (uint)Enums.Maps.IslandRace, 60, 400,
+                295, 079, 100
+            ],
+            [
+                (uint)Enums.Maps.IslandRace, 60, 400,
                 899, 816, 10,
                 96, 392, 621,
                 220, 234, 200,
                 472, 160, 200,
-                777, 464, 300},
-            new uint[]{ (uint)Enums.Maps.DungeonRace, 450, 520,
+                777, 464, 300
+            ],
+            [
+                (uint)Enums.Maps.DungeonRace, 450, 520,
                 682, 484 , 10,
                 435, 559, 621,
                 471, 759, 200,
                 714, 598, 250,
-                489, 679, 20},
-            new uint[]{ (uint)Enums.Maps.LavaRace, 150, 350,
+                489, 679, 20
+            ],
+            [
+                (uint)Enums.Maps.LavaRace, 150, 350,
                 330, 170, 6,
                 101, 397, 623,
                 327, 553, 100,
                 526, 477, 200,
-                283, 275, 100}
-        };
+                283, 275, 100
+            ]
+        ];
         public static ushort MAPID = 1950;
         public static uint[] Settings;
         public static uint RaceRecord;
@@ -127,12 +136,11 @@ namespace MTA.Game
         {
             uint count = 100;
             ushort x, y;
-            Tuple<ushort, ushort, int>[] limits = new[]
-            {
+            Tuple<ushort, ushort, int>[] limits = [
                 new  Tuple<ushort,ushort,int>( (ushort)Settings[9], (ushort)Settings[10], (int)Settings[11] ),
                 new  Tuple<ushort,ushort,int>( (ushort)Settings[12], (ushort)Settings[13], (int)Settings[14] ),
                 new  Tuple<ushort,ushort,int>( (ushort)Settings[15], (ushort)Settings[16], (int)Settings[17] )
-            };
+            ];
 
             while (count > 0)
             {

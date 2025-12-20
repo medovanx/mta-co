@@ -80,7 +80,7 @@ namespace MTA.Game.ConquerStructures.Society
         {
             public static System.Collections.Concurrent.ConcurrentDictionary<uint, Guild> AGuilds = new System.Collections.Concurrent.ConcurrentDictionary<uint, Guild>();
 
-            public static Guild[] AdvertiseRanks = new Guild[0];
+            public static Guild[] AdvertiseRanks = [];
             public static void Add(Guild obj)
             {
                 if (!AGuilds.ContainsKey(obj.ID))
@@ -93,7 +93,7 @@ namespace MTA.Game.ConquerStructures.Society
                 {
                     Guild[] array = AGuilds.Values.ToArray();
                     array = (from guil in array orderby guil.AdvertiseRecruit.Donations descending select guil).ToArray();
-                    List<Guild> listarray = new List<Guild>();
+                    List<Guild> listarray = [];
                     for (ushort x = 0; x < array.Length; x++)
                     {
                         listarray.Add(array[x]);
@@ -237,16 +237,16 @@ namespace MTA.Game.ConquerStructures.Society
 
 
 
-        public Member[] RankSilversDonations = new Member[0];
-        public Member[] RankArsenalDonations = new Member[0];
-        public Member[] RankCPDonations = new Member[0];
-        public Member[] RankPkDonations = new Member[0];
-        public Member[] RankLiliesDonations = new Member[0];
-        public Member[] RankOrchidsDonations = new Member[0];
-        public Member[] RankRosseDonations = new Member[0];
-        public Member[] RankTulipsDonations = new Member[0];
-        public Member[] RankGuideDonations = new Member[0];
-        public Member[] RankTotalDonations = new Member[0];
+        public Member[] RankSilversDonations = [];
+        public Member[] RankArsenalDonations = [];
+        public Member[] RankCPDonations = [];
+        public Member[] RankPkDonations = [];
+        public Member[] RankLiliesDonations = [];
+        public Member[] RankOrchidsDonations = [];
+        public Member[] RankRosseDonations = [];
+        public Member[] RankTulipsDonations = [];
+        public Member[] RankGuideDonations = [];
+        public Member[] RankTotalDonations = [];
 
         public ushort[] RanksCounts = new ushort[(ushort)Enums.GuildMemberRank.GuildLeader + 1];
 
@@ -263,7 +263,7 @@ namespace MTA.Game.ConquerStructures.Society
         }
 
         public Arsenal[] Arsenals;
-        public List<uint> BlackList = new List<uint>();
+        public List<uint> BlackList = [];
         public bool ArsenalBPChanged = true;
         public int UnlockedArsenals
         {
@@ -1704,7 +1704,8 @@ namespace MTA.Game.ConquerStructures.Society
         public static bool ValidName(string Name)
         {
             if (Name.Length < 4 && Name.Length > 15) return false;
-            else if (Name.IndexOfAny(new char[20] { ' ', '#', '%', '^', '&', '*', '(', ')', ';', ':', '\'', '\"', '/', '\\', ',', '.', '{', '}', '[', ']' }) > 0) return false;
+            else if (Name.IndexOfAny([' ', '#', '%', '^', '&', '*', '(', ')', ';', ':', '\'', '\"', '/', '\\', ',', '.', '{', '}', '[', ']'
+                     ]) > 0) return false;
             else return true;
         }
     }

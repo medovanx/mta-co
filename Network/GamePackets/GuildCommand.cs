@@ -64,7 +64,7 @@ namespace MTA.Network.GamePackets
         {
             if (client == null) return;
             if (client.AsMember == null) return;
-            List<string> list = new List<string>();
+            List<string> list = [];
             StringBuilder builder = new StringBuilder();
             #region Guild Leader
             if (client.AsMember.Rank == Game.Enums.GuildMemberRank.GuildLeader)

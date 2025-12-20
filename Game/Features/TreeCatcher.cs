@@ -14,14 +14,14 @@ namespace MTA.MaTrix.New_Quests {
         public static Map Map;
         public static INpc Npc;
 
-        private static List<ushort> Maps = new List<ushort>() {
+        private static List<ushort> Maps = [
             (ushort)Enums.Maps.TwinCity,
             (ushort)Enums.Maps.ApeMoutain,
             (ushort)Enums.Maps.PhoenixCastle,
             (ushort)Enums.Maps.DesertCity,
             (ushort)Enums.Maps.BirdIsland,
             (ushort)Enums.Maps.Market
-        };
+        ];
 
         public bool Move;
         private IDisposable Subscriber;

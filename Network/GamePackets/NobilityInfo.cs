@@ -20,7 +20,7 @@ namespace MTA.Network.GamePackets
                 WriteUInt16(33, 0, Buffer);
                 WriteUInt16(2064, 2, Buffer);
             }
-            Strings = new List<string>();
+            Strings = [];
         }
 
         public uint Type

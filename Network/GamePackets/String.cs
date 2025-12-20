@@ -42,7 +42,7 @@ namespace MTA.Network.GamePackets
                 WriteUInt16(15, 0, Buffer);
                 WriteUInt16(1015, 2, Buffer);
                 WriteUInt32((uint)Time32.timeGetTime().GetHashCode(), 4, Buffer);
-                Texts = new List<string>();
+                Texts = [];
             }
         }
         public uint UID

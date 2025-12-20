@@ -662,9 +662,8 @@ namespace MTA
             First = Phoenix,
             Last = Glory + 1;
 
-        public static readonly string[] Animation = new string[]
-                {
-                    "phoenix",
+        public static readonly string[] Animation = [
+            "phoenix",
                     "goldendragon",
                     "fastflash",
                     "rainbow",
@@ -672,24 +671,23 @@ namespace MTA
                     "purpleray",
                     "moon",
                     "recovery"
-                };
+        ];
 
-        public static readonly int[][] Effects = new[]
-                {
-                    new[] { 0, 5, 10, 15 },
-                    new[] { 0, 5, 10, 15 },
-                    new[] { 0, 5, 10, 15 },
-                    new[] { 0, 10, 15, 25 },
-                    new[] { 0, 50, 100, 200 },
-                    new[] { 0, 30, 50, 100 },
-                    new[] { 0, 15, 30, 50 },
-                    new[] { 0, 2, 4, 6 },
-                    new[] { 0, 0, 0, 0 },
-                    new[] { 0, 0, 0, 0 },
-                    new[] { 0, 100, 300, 500 },
-                    new[] { 0, 0, 0, 0 },
-                    new[] { 0, 100, 300, 500 }
-                };
+        public static readonly int[][] Effects = [
+            [0, 5, 10, 15],
+            [0, 5, 10, 15],
+            [0, 5, 10, 15],
+            [0, 10, 15, 25],
+            [0, 50, 100, 200],
+            [0, 30, 50, 100],
+            [0, 15, 30, 50],
+            [0, 2, 4, 6],
+            [0, 0, 0, 0],
+            [0, 0, 0, 0],
+            [0, 100, 300, 500],
+            [0, 0, 0, 0],
+            [0, 100, 300, 500]
+        ];
     }
 }
 

@@ -550,7 +550,7 @@ namespace MTA.Network.GamePackets
         {
             get
             {
-                List<UpdateStruct> structs = new List<UpdateStruct>();
+                List<UpdateStruct> structs = [];
                 ushort offset = 16;
                 if (UpdateCount > 0)
                 {

@@ -25,10 +25,10 @@ namespace MTA.Game.Features.Tournaments {
             Elite_PK_Top_8_High_ = 19
         }
 
-        public static byte[] BlockOpenArena = new byte[] {
+        public static byte[] BlockOpenArena = [
             20, 0, 86, 4, 255, 87, 14, 0, 160, 187, 13, 0, 103, 0, 21, 64, 204, 17, 0, 0, 84, 81, 83, 101, 114, 118,
             101, 114
-        };
+        ];
 
         public void GetSkillElitePkReward(GameState client, byte Rank) {
             uint ITEM_ID = 0;
@@ -116,7 +116,7 @@ namespace MTA.Game.Features.Tournaments {
             TeamElitePKMatchUI = 2230,
         }
 
-        public static List<AI> Ais = new List<AI>();
+        public static List<AI> Ais = [];
 
         public bool Alive = false;
         private bool AllowJoin = false;
@@ -139,7 +139,7 @@ namespace MTA.Game.Features.Tournaments {
         public ConcurrentDictionary<uint, Team> Teams;
         private Match[] Top4MatchArray;
 
-        public FighterStats[] Top8 = new FighterStats[0];
+        public FighterStats[] Top8 = [];
         public Map WaitingArea;
         private bool willAdvance;
 
@@ -419,7 +419,7 @@ namespace MTA.Game.Features.Tournaments {
                             }
 
                             if (GroupID == 3) {
-                                Ais = new List<AI>();
+                                Ais = [];
                                 int count = 8 - Teams.Count;
                                 for (int i = 0; i < count; i++) {
                                     var ai = new AI(WaitingArea.ID, 50,
@@ -1085,7 +1085,7 @@ namespace MTA.Game.Features.Tournaments {
         private TeamElitePkBrackets[] CreateBrackets(Match[] matches, int page = 0, byte type = 0) {
             try {
                 int lim = 0, count = 0;
-                if (matches == null) return new TeamElitePkBrackets[0];
+                if (matches == null) return [];
                 if (State == States.GUI_Knockout) {
                     const int max = 5;
                     int offset = page * max;
@@ -1177,7 +1177,7 @@ namespace MTA.Game.Features.Tournaments {
                     count = Math.Min(lim, MatchArray.Length - page * lim);
                     TeamElitePkBrackets[] buffer = new TeamElitePkBrackets[2];
                     if (Top4MatchArray == null)
-                        return new TeamElitePkBrackets[0];
+                        return [];
                     TeamElitePkBrackets qbrackets =
                         new TeamElitePkBrackets(ID, count);
                     {
@@ -1254,7 +1254,7 @@ namespace MTA.Game.Features.Tournaments {
             }
             catch (Exception e) {
                 Console.WriteLine(e.ToString());
-                return new TeamElitePkBrackets[0];
+                return [];
             }
         }
 

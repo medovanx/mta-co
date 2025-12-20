@@ -64,7 +64,7 @@ namespace MTA.Game.ConquerStructures
             _ID = ID;
             MaxCount = maxCount;
             items = new Dictionary<uint, ConquerItem>(MaxCount);
-            objects = new ConquerItem[0];
+            objects = [];
         }
 
         public bool Add(ConquerItem item)

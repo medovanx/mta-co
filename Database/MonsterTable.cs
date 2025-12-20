@@ -12,7 +12,7 @@ using MTA.Network.GamePackets;
 namespace MTA.Database {
     public class MonsterInformation {
         public const int ReviverID = 9879;
-        private static List<SpecialItemDrop> SpecialItemDropList = new List<SpecialItemDrop>();
+        private static List<SpecialItemDrop> SpecialItemDropList = [];
         public static bool ItemsInInventory = false;
 
         public static SafeDictionary<uint, MonsterInformation> MonsterInformations =

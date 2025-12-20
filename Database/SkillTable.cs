@@ -13,7 +13,7 @@
         #region Main
         public void GetProf(System.IO.BinaryReader reader, out List<Proficiency> profscolletion)
         {
-            profscolletion = new List<Proficiency>();
+            profscolletion = [];
             uint count = reader.ReadUInt32();
             for (uint x = 0; x < count; x++)
             {
@@ -29,7 +29,7 @@
         }
         public void GetSkill(System.IO.BinaryReader reader, out List<ISkill> spellscollection)
         {
-            spellscollection = new List<ISkill>();
+            spellscollection = [];
             uint count = reader.ReadUInt32();
             for (uint x = 0; x < count; x++)
             {

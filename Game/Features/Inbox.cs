@@ -15,7 +15,7 @@ namespace MTA.MaTrix {
 
         byte[] Buffer;
 
-        List<PrizeInfo> list = new List<PrizeInfo>();
+        List<PrizeInfo> list = [];
         ushort offset = 16;
         Random R = new Random();
 

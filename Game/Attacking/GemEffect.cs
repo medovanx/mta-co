@@ -8,7 +8,7 @@ namespace MTA.Game.Attacking
 
         public static void Effect(Entity client)
         {
-            List<int> setGem = new List<int>();
+            List<int> setGem = [];
             int nGem = 0;
             for (uint i = 1; i < 12; i++)
             {

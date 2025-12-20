@@ -167,10 +167,10 @@ namespace MTA.Database
                         client.Entity.Windwalker = reader.ReadByte("Windwalker");
                     client.Entity.Reborn = reader.ReadByte("Reborn");
                     client.Entity.Level = reader.ReadByte("Level");
-                    client.Entity.BlackList = new List<string>();
+                    client.Entity.BlackList = [];
 
                     var BlackList = reader.ReadString("BlackList")
-                        .Split(new string[] { "@@" }, StringSplitOptions.RemoveEmptyEntries);
+                        .Split(["@@"], StringSplitOptions.RemoveEmptyEntries);
                     foreach (var person in BlackList)
                     {
                         if (person != null && person != "" && person != "@@")

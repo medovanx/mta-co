@@ -32,18 +32,16 @@ namespace MTA.Database {
         }
 
         public class NumberInformation {
-            public List<byte> Black = new List<byte>()
-                { 2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35 };
+            public List<byte> Black = [2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35];
 
-            public List<byte> Line1 = new List<byte>() { 1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34 };
-            public List<byte> Line2 = new List<byte>() { 2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35 };
+            public List<byte> Line1 = [1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34];
+            public List<byte> Line2 = [2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35];
 
-            public List<byte> Line3 = new List<byte>() { 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36 };
+            public List<byte> Line3 = [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36];
 
             //Number 37 is 00
             //Number 0 is 0
-            public List<byte> Red = new List<byte>()
-                { 1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36 };
+            public List<byte> Red = [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36];
 
             public bool IsOdd(byte Number) {
                 if (Number == 0 || Number >= 37)
@@ -263,7 +261,7 @@ namespace MTA.Database {
                 GuiPacket.TimerStamp = (byte)TimerStamp;
                 GuiPacket.PlayerColor = Entity.Color;
                 if (RegistredPlayers.Count == 1)
-                    GuiPacket.FinalizePacket(Entity.Owner, new Member[0]);
+                    GuiPacket.FinalizePacket(Entity.Owner, []);
                 else
                     GuiPacket.FinalizePacket(Entity.Owner,
                         RegistredPlayers.Values.Where(p => p.Owner.Entity.UID != Entity.Owner.Entity.UID).ToArray());

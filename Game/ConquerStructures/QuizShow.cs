@@ -40,7 +40,7 @@ namespace MTA.Game.ConquerStructures
 
         public QuizShow()
         {
-            Questions = new List<Question>();
+            Questions = [];
             RegisteredUsers = new ConcurrentDictionary<uint, QuizClient>();
             Database.QuizData.Load(this);
         }

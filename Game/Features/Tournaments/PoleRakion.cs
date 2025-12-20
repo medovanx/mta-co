@@ -53,7 +53,7 @@ namespace MTA.Game
             StartTime = DateTime.Now;
             LeftGate.Mesh = (ushort)(240 + LeftGate.Mesh % 10);
             RightGate.Mesh = (ushort)(270 + LeftGate.Mesh % 10);
-            name = new object[] { "Quest PoleRakion Has Started Go To Guild Controller At TwinCity (249,215)" };
+            name = ["Quest PoleRakion Has Started Go To Guild Controller At TwinCity (249,215)"];
             Kernel.SendWorldMessage(new Message(string.Concat(name), "ALLUSERS", "PoleRakion", System.Drawing.Color.Red, 2500), Program.Values);
             Kernel.SendWorldMessage(new Message("PoleRakion has began!", System.Drawing.Color.Red, Message.Center), Program.Values);
             FirstRound = true;
@@ -179,7 +179,7 @@ namespace MTA.Game
         public static void SendScores()
         {
             if (scoreMessages == null)
-                scoreMessages = new string[0];
+                scoreMessages = [];
             if (Scores.Count == 0)
                 return;
             if (changed)
@@ -196,7 +196,7 @@ namespace MTA.Game
         private static void SortScores(out Guild winner)
         {
             winner = null;
-            List<string> ret = new List<string>();
+            List<string> ret = [];
 
             int Place = 0;
             foreach (Guild guild in Scores.Values.OrderByDescending((p) => p.RaScore))

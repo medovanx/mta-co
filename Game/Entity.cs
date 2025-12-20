@@ -3264,7 +3264,7 @@ namespace MTA.Game
                 case EntityFlag.Monster: MapObjType = MapObjectType.Monster; break;
             }
 
-            SpawnPacket = new byte[0];
+            SpawnPacket = [];
         }
 
         public void Ressurect()
@@ -4619,14 +4619,14 @@ namespace MTA.Game
                 .Where("UID", UID).Execute();
         }
 
-        public static sbyte[] XDir = new sbyte[] { 0, -1, -1, -1, 0, 1, 1, 1 };
-        public static sbyte[] YDir = new sbyte[] { 1, 1, 0, -1, -1, -1, 0, 1 };
+        public static sbyte[] XDir = [0, -1, -1, -1, 0, 1, 1, 1];
+        public static sbyte[] YDir = [1, 1, 0, -1, -1, -1, 0, 1];
 
-        public static sbyte[] XDir2 = new sbyte[]
-            { 0, -2, -2, -2, 0, 2, 2, 2, -1, -2, -2, -1, 1, 2, 2, 1, -1, -2, -2, -1, 1, 2, 2, 1 };
+        public static sbyte[] XDir2 = [0, -2, -2, -2, 0, 2, 2, 2, -1, -2, -2, -1, 1, 2, 2, 1, -1, -2, -2, -1, 1, 2, 2, 1
+        ];
 
-        public static sbyte[] YDir2 = new sbyte[]
-            { 2, 2, 0, -2, -2, -2, 0, 2, 2, 1, -1, -2, -2, -1, 1, 2, 2, 1, -1, -2, -2, -1, 1, 2 };
+        public static sbyte[] YDir2 = [2, 2, 0, -2, -2, -2, 0, 2, 2, 1, -1, -2, -2, -1, 1, 2, 2, 1, -1, -2, -2, -1, 1, 2
+        ];
 
         public bool Move(Enums.ConquerAngle Direction, int teleport = 1)
         {

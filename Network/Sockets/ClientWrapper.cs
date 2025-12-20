@@ -44,12 +44,11 @@ namespace MTA.Network.Sockets
             OverrideTiming = false;
             SendQueue = new Queue<byte[]>();
             SendSyncRoot = new object();
-            TimerSubscriptions = new[]
-            {
+            TimerSubscriptions = [
                 World.Subscribe<ClientWrapper>(Program.World.ConnectionReview, this, World.GenericThreadPool),
                 World.Subscribe<ClientWrapper>(Program.World.ConnectionReceive, this, World.ReceivePool),
                 World.Subscribe<ClientWrapper>(Program.World.ConnectionSend, this, World.SendPool)
-            };
+            ];
         }
 
         /// <summary>
@@ -115,12 +114,11 @@ namespace MTA.Network.Sockets
             {
                 if (TimerSubscriptions == null)
                 {
-                    TimerSubscriptions = new[]
-                    {
-                World.Subscribe<ClientWrapper>(Program.World.ConnectionReview, this, World.GenericThreadPool),
+                    TimerSubscriptions = [
+                        World.Subscribe<ClientWrapper>(Program.World.ConnectionReview, this, World.GenericThreadPool),
                 World.Subscribe<ClientWrapper>(Program.World.ConnectionReceive, this, World.ReceivePool),
                 World.Subscribe<ClientWrapper>(Program.World.ConnectionSend, this, World.SendPool)
-                    };
+                    ];
                     return false;
 
                 }

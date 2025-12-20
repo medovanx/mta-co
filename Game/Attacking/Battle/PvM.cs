@@ -113,11 +113,10 @@ namespace MTA
 
             Double Damage = 0;
 
-            List<ushort> spells = new List<ushort>()
-            {
+            List<ushort> spells = [
                 11190,
                 10315
-            };
+            ];
             if (Info.ID == 1115 || spells.Contains(Info.ID) || (Info.WeaponSubtype.Count > 0 && !Info.WeaponSubtype.Contains(500) && !Info.WeaponSubtype.Contains(613)))
             {
                 Damage = Generate((int)Attacker.MinAttack, (int)Attacker.MaxAttack);

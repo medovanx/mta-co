@@ -11,7 +11,7 @@ namespace Pathfinding.AStar
         }
         public static List<Coordonates> FindWay(ushort myX, ushort myY, ushort toX, ushort toY, MTA.Game.Map map)
         {
-            List<Coordonates> SolutionPathList = new List<Coordonates>();
+            List<Coordonates> SolutionPathList = [];
 
             Node node_goal = new Node(null, null, 1, toX, toY, map);
 

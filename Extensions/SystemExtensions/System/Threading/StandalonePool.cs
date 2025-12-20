@@ -29,7 +29,7 @@
             object_0 = new object();
             dictionary_0 = new Dictionary<int, Class2>();
             queue_0 = new Queue<Class2>();
-            list_0 = new List<Thread>();
+            list_0 = [];
             int_3 = minimumPoolSize;
             int_4 = maximumPoolSize;
         }

@@ -14,10 +14,9 @@ namespace MTA.Network.GamePackets {
         public const byte Join = 9;
         public const byte Pro = 10;
 
-        public static uint[] ItemsPromote = new uint[]
-            { 0, 721259, 721261, 711188, 723087, 1088001, 711679, 0, 0, 723903 };
+        public static uint[] ItemsPromote = [0, 721259, 721261, 711188, 723087, 1088001, 711679, 0, 0, 723903];
 
-        public static byte[] ItemsCount = new byte[] { 0, 5, 10, 1, 20, 10, 1, 0, 0, 40 };
+        public static byte[] ItemsCount = [0, 5, 10, 1, 20, 10, 1, 0, 0, 40];
 
 
         private byte[] packet;

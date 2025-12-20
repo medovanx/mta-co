@@ -185,15 +185,14 @@ namespace MTA
             Dodge -= (Double)Target.Dodge / 1000;
             Dodge += (Double)Target.Weight / 100;
 
-            List<ushort> spells = new List<ushort>()
-            {
+            List<ushort> spells = [
                 11190,
                 11070,
                 11030,
                 1115,
                 6010,
                 10315
-            };
+            ];
             bool magic = false;
             if ((spells.Contains(Info.ID) || (Info.WeaponSubtype.Count > 0)) && !Info.WeaponSubtype.Contains(500) && !Info.WeaponSubtype.Contains(613))
             {

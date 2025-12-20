@@ -9,7 +9,7 @@ namespace MTA.Game.Events
     /// </summary>
     public static class EventScheduler
     {
-        private static readonly List<IEvent> _events = new List<IEvent>();
+        private static readonly List<IEvent> _events = [];
         private static DateTime _lastCheck = DateTime.Now;
 
         /// <summary>

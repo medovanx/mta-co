@@ -123,7 +123,7 @@ namespace MTA.Game.Features.Flowers
         {
             if (aLine == "" || aLine == null)
                 return;
-            string[] line = aLine.Split(new string[] { "[]" }, StringSplitOptions.RemoveEmptyEntries);
+            string[] line = aLine.Split(["[]"], StringSplitOptions.RemoveEmptyEntries);
             UID = uint.Parse(line[0]);
             Name = line[1];
             RedRoses = uint.Parse(line[2]);
@@ -154,15 +154,15 @@ namespace MTA.Game.Features.Flowers
 
         public static ConcurrentDictionary<uint, Flowers> BoyFlowers = new ConcurrentDictionary<uint, Flowers>();
 
-        public static Flowers[] KissTop100 = new Flowers[0];
-        public static Flowers[] LoveTop100 = new Flowers[0];
-        public static Flowers[] TineTop100 = new Flowers[0];
-        public static Flowers[] JadeTop100 = new Flowers[0];
+        public static Flowers[] KissTop100 = [];
+        public static Flowers[] LoveTop100 = [];
+        public static Flowers[] TineTop100 = [];
+        public static Flowers[] JadeTop100 = [];
 
-        public static Flowers[] RedRousesTop100 = new Flowers[0];
-        public static Flowers[] LiliesTop100 = new Flowers[0];
-        public static Flowers[] OrchidsTop100 = new Flowers[0];
-        public static Flowers[] TulipsTop100 = new Flowers[0];
+        public static Flowers[] RedRousesTop100 = [];
+        public static Flowers[] LiliesTop100 = [];
+        public static Flowers[] OrchidsTop100 = [];
+        public static Flowers[] TulipsTop100 = [];
 
         public static object RouseLock = new object();
         public static object LilisLock = new object();
@@ -174,15 +174,15 @@ namespace MTA.Game.Features.Flowers
         public static object TineLock = new object();
         public static object JadeLock = new object();
 
-        public static List<Flowers> RankKiss = new List<Flowers>();
-        public static List<Flowers> RankLove = new List<Flowers>();
-        public static List<Flowers> RankTine = new List<Flowers>();
-        public static List<Flowers> RankJade = new List<Flowers>();
+        public static List<Flowers> RankKiss = [];
+        public static List<Flowers> RankLove = [];
+        public static List<Flowers> RankTine = [];
+        public static List<Flowers> RankJade = [];
 
-        public static List<Flowers> Rankrose = new List<Flowers>();
-        public static List<Flowers> Ranklili = new List<Flowers>();
-        public static List<Flowers> Rankorchid = new List<Flowers>();
-        public static List<Flowers> RankTulips = new List<Flowers>();
+        public static List<Flowers> Rankrose = [];
+        public static List<Flowers> Ranklili = [];
+        public static List<Flowers> Rankorchid = [];
+        public static List<Flowers> RankTulips = [];
 
         public static void CulculateRankJade(Flowers afflow)
         {
@@ -198,7 +198,7 @@ namespace MTA.Game.Features.Flowers
 
                     var room = data.ToArray();
 
-                    List<Flowers> backUpd = new List<Flowers>();
+                    List<Flowers> backUpd = [];
 
                     int x = 1;
                     foreach (Flowers flow in room)
@@ -236,7 +236,7 @@ namespace MTA.Game.Features.Flowers
 
                     var room = data.ToArray();
 
-                    List<Flowers> backUpd = new List<Flowers>();
+                    List<Flowers> backUpd = [];
 
                     int x = 1;
                     foreach (Flowers flow in room)
@@ -274,7 +274,7 @@ namespace MTA.Game.Features.Flowers
 
                     var room = data.ToArray();
 
-                    List<Flowers> backUpd = new List<Flowers>();
+                    List<Flowers> backUpd = [];
 
                     int x = 1;
                     foreach (Flowers flow in room)
@@ -313,7 +313,7 @@ namespace MTA.Game.Features.Flowers
 
                     var room = data.ToArray();
 
-                    List<Flowers> backUpd = new List<Flowers>();
+                    List<Flowers> backUpd = [];
 
                     int x = 1;
                     foreach (Flowers flow in room)
@@ -352,7 +352,7 @@ namespace MTA.Game.Features.Flowers
 
                     var room = data.ToArray();
 
-                    List<Flowers> backUpd = new List<Flowers>();
+                    List<Flowers> backUpd = [];
 
                     int x = 1;
                     foreach (Flowers flow in room)
@@ -390,7 +390,7 @@ namespace MTA.Game.Features.Flowers
                 Array.Sort(data, (c1, c2) => { return c2.Lilies.CompareTo(c1.Lilies); });
 
                 var room = data.ToArray();
-                List<Flowers> backUpd = new List<Flowers>();
+                List<Flowers> backUpd = [];
 
                 int x = 1;
                 foreach (Flowers flow in room)
@@ -428,7 +428,7 @@ namespace MTA.Game.Features.Flowers
 
                 var room = data.ToArray();
 
-                List<Flowers> backUpd = new List<Flowers>();
+                List<Flowers> backUpd = [];
 
                 int x = 1;
                 foreach (Flowers flow in room)
@@ -466,7 +466,7 @@ namespace MTA.Game.Features.Flowers
 
                 var room = data.ToArray();
 
-                List<Flowers> backUpd = new List<Flowers>();
+                List<Flowers> backUpd = [];
 
                 int x = 1;
                 foreach (Flowers flow in room)
@@ -494,14 +494,14 @@ namespace MTA.Game.Features.Flowers
 
         // Legacy members for compatibility
         public SafeDictionary<uint, Flowers> flower = new SafeDictionary<uint, Flowers>(1000);
-        public static List<ListFlowerRank> Redrosse = new List<ListFlowerRank>();
-        public static List<ListFlowerRank> Orchides = new List<ListFlowerRank>();
-        public static List<ListFlowerRank> Lilise = new List<ListFlowerRank>();
-        public static List<ListFlowerRank> Tuplise = new List<ListFlowerRank>();
-        public static List<ListFlowerRank> RedrosseToday = new List<ListFlowerRank>();
-        public static List<ListFlowerRank> OrchidesToday = new List<ListFlowerRank>();
-        public static List<ListFlowerRank> LiliseToday = new List<ListFlowerRank>();
-        public static List<ListFlowerRank> TupliseToday = new List<ListFlowerRank>();
+        public static List<ListFlowerRank> Redrosse = [];
+        public static List<ListFlowerRank> Orchides = [];
+        public static List<ListFlowerRank> Lilise = [];
+        public static List<ListFlowerRank> Tuplise = [];
+        public static List<ListFlowerRank> RedrosseToday = [];
+        public static List<ListFlowerRank> OrchidesToday = [];
+        public static List<ListFlowerRank> LiliseToday = [];
+        public static List<ListFlowerRank> TupliseToday = [];
         public bool liliestoday = false;
         public bool orchadstoday = false;
         public bool tulpistoday = false;

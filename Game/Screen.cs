@@ -29,16 +29,16 @@ namespace MTA.Game {
 
         public Screen(GameState client) {
             Owner = client;
-            _objects = new IMapObject[0];
+            _objects = [];
             _objectDictionary = new ConcurrentDictionary<uint, IMapObject>();
             PokerTables = new ConcurrentDictionary<uint, PokerTable>();
-            TimerSubscriptions = new IDisposable[] {
+            TimerSubscriptions = [
                 MonsterBuffers.Add(client),
                 Guards.Add(client),
                 AliveMonsters.Add(client),
                 Items.Add(client),
                 MatrixMobs.Add(client)
-            };
+            ];
             DisposalSyncRoot = new object();
         }
 
@@ -1304,7 +1304,7 @@ namespace MTA.Game {
         public void Clear() {
             PokerTables.Clear();
             _objectDictionary.Clear();
-            _objects = new IMapObject[0];
+            _objects = [];
         }
 
         public void Reload(IPacket spawnWith = null) {

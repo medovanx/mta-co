@@ -9,7 +9,7 @@ namespace MTA.Database
     {
         public static uint[] TopLetters = new uint[2];
         public static uint[] TopWine = new uint[2];
-        public static List<Kisses> kisstoday = new List<Kisses>();
+        public static List<Kisses> kisstoday = [];
         public static uint[] TopKisses = new uint[2];
         public static uint[] TopJades = new uint[2];
         private static bool Exists(uint id)
@@ -91,7 +91,7 @@ namespace MTA.Database
             public uint Letters;
             public short Body;
         }
-        public static List<Kissess> KissList = new List<Kissess>();
+        public static List<Kissess> KissList = [];
         public static void Load()
         {
             Kissess kiss = new Kissess();

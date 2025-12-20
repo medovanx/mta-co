@@ -148,7 +148,7 @@ namespace MTA.Game {
         }
 
         private static string[] SortScores() {
-            List<string> ret = new List<string>();
+            List<string> ret = [];
             int Place = 0;
 
             foreach (var e in Scores.Values.OrderByDescending((p) => p.GuildScoreWar)) {
@@ -164,7 +164,7 @@ namespace MTA.Game {
 
         private static string[] SortScores(out Guild winner) {
             winner = null;
-            List<string> ret = new List<string>();
+            List<string> ret = [];
             int Place = 0;
 
 

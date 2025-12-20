@@ -105,7 +105,7 @@ namespace MTA.WebServer
         public SafeDictionary<ushort, IProf> Proficiencies = new SafeDictionary<ushort, IProf>();
         public SafeDictionary<ushort, ISkill> Spells = new SafeDictionary<ushort, ISkill>();
         public Dictionary<uint, ConquerItem> Items = new Dictionary<uint, ConquerItem>();
-        public List<ChiPowerStructure> ChiPowers = new List<ChiPowerStructure>();
+        public List<ChiPowerStructure> ChiPowers = [];
         public Client.TranServer Server;
         public void Clone(ref MTA.Client.GameState client)
         {
@@ -166,7 +166,7 @@ namespace MTA.WebServer
             client.Variables = new VariableVault();
             client.Friends = new SafeDictionary<uint, Game.ConquerStructures.Society.Friend>();
             client.Enemy = new SafeDictionary<uint, Game.ConquerStructures.Society.Enemy>();
-            client.ChiPowers = new List<ChiPowerStructure>();
+            client.ChiPowers = [];
             if (ChiPowers != null)
                 client.ChiPowers = ChiPowers;
             client.ChiData = new Database.ChiTable.ChiData() { UID = client.Entity.UID, Name = client.Entity.Name, Powers = client.ChiPowers };

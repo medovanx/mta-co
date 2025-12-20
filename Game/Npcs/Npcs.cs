@@ -28,7 +28,7 @@ namespace MTA {
 
         #region SkillSoul_Allowed
 
-        public static readonly List<ushort> SkillSoul_Allowed = new List<ushort>() {
+        public static readonly List<ushort> SkillSoul_Allowed = [
             1115,
             11980,
             11005,
@@ -58,7 +58,7 @@ namespace MTA {
             11070,
             12070,
             12080
-        };
+        ];
 
         #endregion SkillSoul_Allowed
 
@@ -69,7 +69,7 @@ namespace MTA {
 
         public Npcs(GameState client) {
             Client = client;
-            Replies = new List<NpcReply>();
+            Replies = [];
         }
 
         public Npcs() { }
@@ -2759,7 +2759,7 @@ namespace MTA {
                             switch (npcRequest.OptionID) {
                                 case 0: {
                                     string[] Tactics =
-                                        { "Peace", "Chaos", "Deserted", "Disturbed", "Prosperous", "Calmed" };
+                                        ["Peace", "Chaos", "Deserted", "Disturbed", "Prosperous", "Calmed"];
                                     uint almostid = client.ActiveNpc / 2;
                                     uint baseId = 721010;
                                     uint tactic = almostid - 300002;

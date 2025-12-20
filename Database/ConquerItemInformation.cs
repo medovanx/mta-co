@@ -512,7 +512,7 @@ namespace MTA.Database
         public uint Time;
         public void Parse(string Line)
         {
-            string[] data = Line.Split(new string[] { "@@" }, StringSplitOptions.RemoveEmptyEntries);
+            string[] data = Line.Split(["@@"], StringSplitOptions.RemoveEmptyEntries);
             ID = Convert.ToUInt32(data[0]);
             Name = data[1].Trim();
             LowerName = Name.ToLower();

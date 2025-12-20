@@ -42,7 +42,7 @@ namespace MTA.Network.GamePackets
             set { Buffer[12] = value; }
         }
 
-        public List<String> List = new List<string>();
+        public List<String> List = [];
 
         public void Send(Client.GameState client)
         {

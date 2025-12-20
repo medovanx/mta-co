@@ -195,7 +195,7 @@ End Namespace";
 
             var compilation = CSharpCompilation.Create(
                 "ScriptAssembly",
-                new[] { syntaxTree },
+                [syntaxTree],
                 references,
                 new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 

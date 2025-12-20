@@ -46,11 +46,10 @@ namespace MTA
             return fullPath;
         }
 
-        public static readonly List<ushort> RideForbiddenMaps = new List<ushort>()
-        {
+        public static readonly List<ushort> RideForbiddenMaps = [
             1004,
             1511
-        };
+        ];
 
         public static readonly Message FullInventory = new Message("There is not enough room in your inventory!", System.Drawing.Color.Red, Message.TopLeft),
             OneFlowerADay = new Message("You may only send 1 flower a day", System.Drawing.Color.Red, Message.TopLeft),
@@ -73,21 +72,17 @@ namespace MTA
             vipteleport = new Message("You can't teleport in this map.", System.Drawing.Color.Red, Message.World),
         Noteleport = new Message("You can't teleport to this map.", System.Drawing.Color.Red, Message.World);
 
-        public static List<ushort> QuestsMaps = new List<ushort> {
-           6752
-        };
-        public static readonly List<ulong> ActiveNPC = new List<ulong>()
-        {
+        public static List<ushort> QuestsMaps = [6752];
+        public static readonly List<ulong> ActiveNPC = [
             10081,
             10082,
             2031,
             140
-        };
-        public static readonly List<ushort> NoRevHere = new List<ushort>()
-        {
-            1090,1559,1518,4021,12345,12346,1707,14785,3333,3935,
-            6412,1844,4025,3071,2527,2522,1655,2090,2091,1002,2014
-        };
+        ];
+        public static readonly List<ushort> NoRevHere = [
+            1090, 1559, 1518, 4021, 12345, 12346, 1707, 14785, 3333, 3935,
+            6412, 1844, 4025, 3071, 2527, 2522, 1655, 2090, 2091, 1002, 2014
+        ];
         public static Message VIPRemaining(string days, string hours)
         {
             return new Message("You have " + days + " day(s) and " + hours + " hour(s) of VIP service remaining.", System.Drawing.Color.Red, Message.World);
@@ -241,45 +236,37 @@ namespace MTA
 
         public const ushort SocketOneProgress = 100,
             SocketTwoProgress = 300;
-        public static readonly List<ushort> revnomap = new List<ushort> {
+        public static readonly List<ushort> revnomap = [
             1, 2, 3, 0x80c, 0x1b61, 0x80c, 0x79e, 0x3ed, 0x1b5d, 0x1b5e, 0x1b60, 0x1770, 0x1774, 0x1771, 0x1772, 0x1773,
             0x734, 0x1b59, 0x709, 0x5e4, 0x5ee, 0x1e61, 0x22ad, 0xd05, 0x442, 0x4c9, 1860, 700, 3073
-         };
-        public static readonly List<ushort> MemoryAgateNotAllowedMap = new List<ushort>
-        {
+        ];
+        public static readonly List<ushort> MemoryAgateNotAllowedMap = [];
 
-        };
+        public static readonly List<ulong> NoVipTele = [
+            1645, 1, 2, 3, 0x80c, 0x1b61, 0x40e, 0x3ed, 0x80c, 0x1770, 0x1774, 0x1771, 0x1772, 0x1773, 0x1b5d, 0x1b5e,
+            0x1b60,
+            0x734, 8892, 1645, 0x1b59, 0x817, 0x709, 0x5e4, 0x5ee, 0x1e61, 0x22ad, 0xd05, 0x442, 0x4c9, 0x5e5, 0x79e,
+            1860, 700, 3070, 3071, 3691, 3692, 3693, 3694, 1730, 1731, 1732, 1733, 1734, 1735, 3073, 3072
+        ];
 
-        public static readonly List<ulong> NoVipTele = new List<ulong> {
-            1645, 1, 2, 3, 0x80c, 0x1b61, 0x40e, 0x3ed, 0x80c, 0x1770, 0x1774, 0x1771, 0x1772, 0x1773, 0x1b5d, 0x1b5e, 0x1b60,
-            0x734, 8892, 1645, 0x1b59, 0x817, 0x709, 0x5e4, 0x5ee, 0x1e61, 0x22ad, 0xd05, 0x442, 0x4c9, 0x5e5, 0x79e, 1860, 700, 3070, 3071, 3691, 3692, 3693, 3694, 1730, 1731, 1732, 1733, 1734, 1735, 3073, 3072
-         };
-
-        public static readonly List<ulong> novip = new List<ulong>()
-        {
+        public static readonly List<ulong> novip = [
             3090,
             8892,
             1645
-        };
-        public static readonly List<ulong> fbss = new List<ulong>()
-        {
+        ];
+        public static readonly List<ulong> fbss = [
             1707,
             1238
-        };
-        public static readonly List<ulong> horsepk = new List<ulong>()
-        {
-            3707
-        };
-        public static readonly List<string> NoFog = new List<string>()
-        {
+        ];
+        public static readonly List<ulong> horsepk = [3707];
+        public static readonly List<string> NoFog = [
             "Clannad",
             "Btooom",
             "Cyclops",
             "Hades",
-            "Centar",
-        };
-        public static readonly List<ushort> PKForbiddenMaps = new List<ushort>()
-        {
+            "Centar"
+        ];
+        public static readonly List<ushort> PKForbiddenMaps = [
             1036,
             1002,
             700,
@@ -308,8 +295,8 @@ namespace MTA
             Game.MapConstants.HOUSE_LV2,
             Game.MapConstants.HOUSE_LV3,
             Game.MapConstants.HOUSE_LV4,
-            Game.MapConstants.HOUSE_LV5,
-        };
+            Game.MapConstants.HOUSE_LV5
+        ];
 
         /// <summary>
         /// Checks if a map is PK forbidden. For dynamic maps (like houses), checks both MapID and BaseID.
@@ -335,7 +322,7 @@ namespace MTA
             return false;
         }
 
-        public static readonly List<ushort> NoHp = new List<ushort> {
+        public static readonly List<ushort> NoHp = [
             1707,
             3070,
             1238,
@@ -346,41 +333,33 @@ namespace MTA
             1546,
             1547,
             1548
-         };
-        public static readonly List<ulong> blackname = new List<ulong>()
-        {
-            3071
-        };
-        public static readonly List<ulong> FBandSSEvent = new List<ulong>()
-        {
+        ];
+        public static readonly List<ulong> blackname = [3071];
+        public static readonly List<ulong> FBandSSEvent = [
             1543,
             1544,
             1545,
             1546,
             1547,
             1548
-        };
-        public static readonly List<ulong> EtaleMaps = new List<ulong>()
-        {
-        1543,
-        1544,
-        1545,
-        1546,
-        1547,
-        1548,
-        };
-        public static readonly List<ulong> SSFB = new List<ulong>()
-        {
-
-        1543,
-        1544,
-        1545,
-        1546,
-        1547,
-        1548
-        };
-        public static readonly List<ushort> PKFreeMaps = new List<ushort>()
-        {
+        ];
+        public static readonly List<ulong> EtaleMaps = [
+            1543,
+            1544,
+            1545,
+            1546,
+            1547,
+            1548
+        ];
+        public static readonly List<ulong> SSFB = [
+            1543,
+            1544,
+            1545,
+            1546,
+            1547,
+            1548
+        ];
+        public static readonly List<ushort> PKFreeMaps = [
             3073,
             3691,
             3692,
@@ -388,7 +367,7 @@ namespace MTA
             2057,
             2072,
             2076,
-             11225,
+            11225,
             11224,
             2073,
             2075,
@@ -447,14 +426,10 @@ namespace MTA
             3990,
             3995,
             1509
-        };
+        ];
 
-        public static readonly List<int> SoulList = new List<int>()
-        {
-            80032000
-        };
-        public static readonly List<int> MaxItems = new List<int>()
-        {
+        public static readonly List<int> SoulList = [80032000];
+        public static readonly List<int> MaxItems = [
             410439,
             420439,
             480439,
@@ -472,33 +447,31 @@ namespace MTA
             820056,
             800110,
             800320
-        };
-        public static readonly List<string> monsters = new List<string>()
-        {
-             "CaptainCook",
-             "PirateTurner",
-             "DukeArena",
-             "EarlArena",
-             "BaronArena",
-             "KnightArena",
-             "KingArena",
-             "EidArenaking",
-             "EidArena"
-        };
-        public static readonly List<ushort> twinskill = new List<ushort>()
-        {
-                       8001 ,
-           1165 ,
-           7011 ,
-           7012 ,
-            7014 ,
-            7015 ,
-            7017 ,
-            10309 ,
-            11660 ,
-            11610 ,
-            11590 ,
-            11600 ,
+        ];
+        public static readonly List<string> monsters = [
+            "CaptainCook",
+            "PirateTurner",
+            "DukeArena",
+            "EarlArena",
+            "BaronArena",
+            "KnightArena",
+            "KingArena",
+            "EidArenaking",
+            "EidArena"
+        ];
+        public static readonly List<ushort> twinskill = [
+            8001,
+            1165,
+            7011,
+            7012,
+            7014,
+            7015,
+            7017,
+            10309,
+            11660,
+            11610,
+            11590,
+            11600,
             8030,
             1120,
             1000,
@@ -509,20 +482,17 @@ namespace MTA
             11040,
             11070,
             11650
-        };
-        public static readonly List<int> AvaibleSpells = new List<int>()
-        {
-           1045,
-           12020,
-           12030,
-           12040,
-           12050,
-           8001,
-           1046
-
-        };
-        public static readonly List<ushort> Damage1Map = new List<ushort>()
-        {
+        ];
+        public static readonly List<int> AvaibleSpells = [
+            1045,
+            12020,
+            12030,
+            12040,
+            12050,
+            8001,
+            1046
+        ];
+        public static readonly List<ushort> Damage1Map = [
             12470,
             1844,
             1801,
@@ -538,6 +508,6 @@ namespace MTA
             12040,
             12050,
             9876
-        };
+        ];
     }
 }

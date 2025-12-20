@@ -78,24 +78,40 @@ namespace MTA
         public void CreateTournaments()
         {
             var map = Kernel.Maps[700];
-            Tournaments = new List<KillTournament>();
+            Tournaments = [
+                new KillTournament(map.MakeDynamicMap().ID, WeekDay.Everyday, 1, 05,
+                    (client) => { client.Entity.ConquerPoints += 1000000; }, "Nobility Tournament (Kings)",
+                    (p) => { return p.Entity.NobilityRank == NobilityRank.King; }),
 
-            Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Everyday, 1, 05,
-                (client) => { client.Entity.ConquerPoints += 1000000; }, "Nobility Tournament (Kings)", (p) => { return p.Entity.NobilityRank == NobilityRank.King; }));
-            Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Everyday, 1, 05,
-                (client) => { client.Entity.ConquerPoints += 1000000; }, "Nobility Tournament (Princes)", (p) => { return p.Entity.NobilityRank == NobilityRank.Prince; }));
-            Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Everyday, 1, 05,
-                (client) => { client.Entity.ConquerPoints += 1000000; }, "Nobility Tournament (Dukes)", (p) => { return p.Entity.NobilityRank == NobilityRank.Duke; }));
-            Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Everyday, 1, 05,
-                (client) => { client.Entity.ConquerPoints += 1000000; }, "Nobility Tournament (Earl)", (p) => { return p.Entity.NobilityRank == NobilityRank.Earl; }));
-            Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Everyday, 14, 0,
-                (client) => { client.Entity.ConquerPoints += 1000000; }, "Nobility Tournament (Kings)", (p) => { return p.Entity.NobilityRank == NobilityRank.King; }));
-            Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Everyday, 14, 0,
-                (client) => { client.Entity.ConquerPoints += 1000000; }, "Nobility Tournament (Princes)", (p) => { return p.Entity.NobilityRank == NobilityRank.Prince; }));
-            Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Everyday, 14, 0,
-                (client) => { client.Entity.ConquerPoints += 1000000; }, "Nobility Tournament (Dukes)", (p) => { return p.Entity.NobilityRank == NobilityRank.Duke; }));
-            Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Everyday, 14, 0,
-                (client) => { client.Entity.ConquerPoints += 1000000; }, "Nobility Tournament (Earl)", (p) => { return p.Entity.NobilityRank == NobilityRank.Earl; }));
+                new KillTournament(map.MakeDynamicMap().ID, WeekDay.Everyday, 1, 05,
+                    (client) => { client.Entity.ConquerPoints += 1000000; }, "Nobility Tournament (Princes)",
+                    (p) => { return p.Entity.NobilityRank == NobilityRank.Prince; }),
+
+                new KillTournament(map.MakeDynamicMap().ID, WeekDay.Everyday, 1, 05,
+                    (client) => { client.Entity.ConquerPoints += 1000000; }, "Nobility Tournament (Dukes)",
+                    (p) => { return p.Entity.NobilityRank == NobilityRank.Duke; }),
+
+                new KillTournament(map.MakeDynamicMap().ID, WeekDay.Everyday, 1, 05,
+                    (client) => { client.Entity.ConquerPoints += 1000000; }, "Nobility Tournament (Earl)",
+                    (p) => { return p.Entity.NobilityRank == NobilityRank.Earl; }),
+
+                new KillTournament(map.MakeDynamicMap().ID, WeekDay.Everyday, 14, 0,
+                    (client) => { client.Entity.ConquerPoints += 1000000; }, "Nobility Tournament (Kings)",
+                    (p) => { return p.Entity.NobilityRank == NobilityRank.King; }),
+
+                new KillTournament(map.MakeDynamicMap().ID, WeekDay.Everyday, 14, 0,
+                    (client) => { client.Entity.ConquerPoints += 1000000; }, "Nobility Tournament (Princes)",
+                    (p) => { return p.Entity.NobilityRank == NobilityRank.Prince; }),
+
+                new KillTournament(map.MakeDynamicMap().ID, WeekDay.Everyday, 14, 0,
+                    (client) => { client.Entity.ConquerPoints += 1000000; }, "Nobility Tournament (Dukes)",
+                    (p) => { return p.Entity.NobilityRank == NobilityRank.Duke; }),
+
+                new KillTournament(map.MakeDynamicMap().ID, WeekDay.Everyday, 14, 0,
+                    (client) => { client.Entity.ConquerPoints += 1000000; }, "Nobility Tournament (Earl)",
+                    (p) => { return p.Entity.NobilityRank == NobilityRank.Earl; })
+
+            ];
 
             #region Class PK Tournament
             map = Kernel.Maps[1730];
@@ -308,13 +324,12 @@ namespace MTA
             if (client.TimerSubscriptions == null)
             {
                 client.TimerSyncRoot = new object();
-                client.TimerSubscriptions = new IDisposable[]
-                {
+                client.TimerSubscriptions = [
                     Buffers.Add(client),
                     Characters.Add(client),
                     AutoAttack.Add(client),
-                    Prayer.Add(client),
-                };
+                    Prayer.Add(client)
+                ];
                 return true;
             }
             return false;

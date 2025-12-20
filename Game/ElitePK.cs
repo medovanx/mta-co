@@ -31,7 +31,7 @@ namespace MTA.Game
                 T_ReOrganize = 5;
         }
 
-        public FighterStats[] Top8 = new FighterStats[0];
+        public FighterStats[] Top8 = [];
 
         public ConcurrentDictionary<uint, GameState> Players;
         public ConcurrentDictionary<uint, Match> Matches;
@@ -746,7 +746,7 @@ namespace MTA.Game
                     {
                         Program.Vars["epk_" + GroupID + "_edt"] = EndDateTime = DateTime.Now;
                         State = States.GUI_Top8Ranking;
-                        var brackets = CreateBrackets(new Match[0], 0, ElitePKBrackets.RequestInformation);
+                        var brackets = CreateBrackets([], 0, ElitePKBrackets.RequestInformation);
                         Kernel.SendWorldMessage(brackets);
 
                         //foreach (var clients in Kernel.GamePool.Values)

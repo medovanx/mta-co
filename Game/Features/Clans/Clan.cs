@@ -74,7 +74,7 @@ namespace MTA
         }
         public String Offset18String
         {
-            get { return Program.Encoding.GetString(mData, 18, mData[17]).Trim(new Char[] { '\0' }); }
+            get { return Program.Encoding.GetString(mData, 18, mData[17]).Trim(['\0']); }
             set { WriteString(value, 18, mData); }
         }
         public String Name

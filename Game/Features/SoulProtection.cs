@@ -11,7 +11,7 @@ namespace MTA.MaTrix {
             string[] lines = File.ReadAllLines(Constants.SoulProtectionPath);
             foreach (var item in lines) {
                 try {
-                    var coloums = item.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                    var coloums = item.Split([" "], StringSplitOptions.RemoveEmptyEntries);
                     SOulInfo info = new SOulInfo();
                     info.UID = uint.Parse(coloums[0]);
                     info.ItemType = uint.Parse(coloums[1]);

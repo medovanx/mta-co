@@ -25,9 +25,9 @@ namespace MTA.MaTrix {
         public Pet(GameState client) {
             Owner = client;
             Pets = new SafeConcurrentDictionary<PetType, PetInfo>();
-            TimerSubscriptions = new IDisposable[] {
+            TimerSubscriptions = [
                 PetsAction.Add(client)
-            };
+            ];
             DisposalSyncRoot = new object();
         }
 

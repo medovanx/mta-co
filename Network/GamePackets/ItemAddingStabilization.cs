@@ -30,7 +30,7 @@ namespace MTA.Network.GamePackets
         {
             get
             {
-                List<uint> items = new List<uint>();
+                List<uint> items = [];
                 for (int count = 16; count <= 12 + PurificationItemCount * 4; count += 4)
                 {
                     items.Add(BitConverter.ToUInt32(Buffer, count));

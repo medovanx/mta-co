@@ -123,9 +123,9 @@ namespace MTA.MaTrix {
         }
 
         public void Join(GameState client) {
-            TimerSubscriptions = new IDisposable[] {
+            TimerSubscriptions = [
                 AIAction.Add(client)
-            };
+            ];
             DisposalSyncRoot = new object();
         }
 
@@ -183,7 +183,7 @@ namespace MTA.MaTrix {
             Bot.Friends = new SafeDictionary<uint, Friend>();
             Bot.Enemy = new SafeDictionary<uint, Enemy>();
             Bot.ChiData = new ChiTable.ChiData();
-            Bot.ChiPowers = new List<ChiPowerStructure>();
+            Bot.ChiPowers = [];
             Bot.Entity.Vitality = 537;
             if (Target != null) {
                 Target.OnDeath = p => {
@@ -767,7 +767,7 @@ namespace MTA.MaTrix {
                 }
 
                 if (Ais.Count > 0) {
-                    List<AI> array = new List<AI>();
+                    List<AI> array = [];
                     foreach (var item in Ais.Values) {
                         if (item.Bot == null)
                             array.Add(item);

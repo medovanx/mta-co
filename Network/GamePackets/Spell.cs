@@ -7,7 +7,10 @@ namespace MTA.Network.GamePackets
     public class Spell : Writer, Interfaces.IPacket, Interfaces.ISkill
     {
 
-        public static List<Soul_Level> SkillSoul_values = new List<Soul_Level> { Soul_Level.Default, Soul_Level.Level_One, Soul_Level.Level_Two, Soul_Level.Level_Three, Soul_Level.Level_Four };
+        public static List<Soul_Level> SkillSoul_values = [
+            Soul_Level.Default, Soul_Level.Level_One, Soul_Level.Level_Two, Soul_Level.Level_Three,
+            Soul_Level.Level_Four
+        ];
         public enum Soul_Level : byte
         {
             Default = 1 << 0,

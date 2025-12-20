@@ -57,7 +57,7 @@ namespace MTA.Game
                 0
         };
 
-        public static Enums.ConquerAngle[] Angles = new Enums.ConquerAngle[] {
+        public static Enums.ConquerAngle[] Angles = [
             Enums.ConquerAngle.SouthWest,
             Enums.ConquerAngle.West,
             Enums.ConquerAngle.NorthWest,
@@ -65,12 +65,13 @@ namespace MTA.Game
             Enums.ConquerAngle.NorthEast,
             Enums.ConquerAngle.East,
             Enums.ConquerAngle.SouthEast,
-            Enums.ConquerAngle.South };
+            Enums.ConquerAngle.South
+        ];
         public static Floor ArenaBaseFloor = null;
         public Counter EntityUIDCounter = new Counter(400000);
         public Counter EntityUIDCounter2 = new Counter(100000);
         public Counter CloneCounter = new Counter(0);
-        public List<Zoning.Zone> Zones = new List<Zoning.Zone>();
+        public List<Zoning.Zone> Zones = [];
         public ushort ID;
         public ushort BaseID;
         public bool WasPKFree = false;
@@ -496,7 +497,7 @@ namespace MTA.Game
                         //    BR.BaseStream.Seek(amount * 12, SeekOrigin.Current);
 
                         int num = BR.ReadInt32();
-                        List<SceneFile> list = new List<SceneFile>();
+                        List<SceneFile> list = [];
                         for (int i = 0; i < num; i++)
                         {
                             switch (BR.ReadInt32())
@@ -578,7 +579,7 @@ namespace MTA.Game
         private void LoadMapObjects(BinaryReader Reader)
         {
             int num = Reader.ReadInt32();
-            List<SceneFile> list = new List<SceneFile>();
+            List<SceneFile> list = [];
             for (int i = 0; i < num; i++)
             {
                 int id = Reader.ReadInt32();
@@ -629,23 +630,21 @@ namespace MTA.Game
                 Portals.Add(portal);
             }
         }
-        public List<Portal> Portals = new List<Portal>();
+        public List<Portal> Portals = [];
         private IDisposable Timer;
 
-        public static sbyte[] XDir = new sbyte[]
-        {
+        public static sbyte[] XDir = [
             -1, -2, -2, -1, 1, 2, 2, 1,
              0, -2, -2, -2, 0, 2, 2, 2,
             -1, -2, -2, -1, 1, 2, 2, 1,
-             0, -1, -1, -1, 0, 1, 1, 1,
-        };
-        public static sbyte[] YDir = new sbyte[]
-        {
+             0, -1, -1, -1, 0, 1, 1, 1
+        ];
+        public static sbyte[] YDir = [
             2,  1, -1, -2, -2, -1, 1, 2,
             2,  2,  0, -2, -2, -2, 0, 2,
             2,  1, -1, -2, -2, -1, 1, 2,
             1,  1,  0, -1, -1, -1, 0, 1
-        };
+        ];
         public SafeConcurrentDictionary<uint, StaticEntity> StaticEntities = new SafeConcurrentDictionary<uint, StaticEntity>();
         public void AddStaticEntity(StaticEntity item)
         {

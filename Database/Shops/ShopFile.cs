@@ -32,7 +32,7 @@ namespace MTA.Database
                     else
                     {
                         shop = new Shop();
-                        shop.Items = new List<uint>();
+                        shop.Items = [];
                         shop.UID = id;
                         Shops.Add(id, shop);
                     }
@@ -58,7 +58,7 @@ namespace MTA.Database
                 }
                 else if (split[0].Contains("Item") && split[0] != "ItemAmount")
                 {
-                    uint ID = uint.Parse(split[1].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[0]);
+                    uint ID = uint.Parse(split[1].Split([' '], StringSplitOptions.RemoveEmptyEntries)[0]);
                     if (!shop.Items.Contains(ID))
                         shop.Items.Add(ID);
                 }

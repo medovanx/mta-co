@@ -261,7 +261,7 @@ namespace MTA.Game.Npcs.Handlers.Subclasses {
 
                     break;
                 case 20: {
-                    ushort[] danceSpells = { 1380, 1385, 1390, 1395, 1400, 1405, 1410 };
+                    ushort[] danceSpells = [1380, 1385, 1390, 1395, 1400, 1405, 1410];
                     foreach (var spellId in danceSpells) {
                         client.AddSpell(new Spell(true) { ID = spellId });
                     }

@@ -184,7 +184,7 @@ namespace MTA.Game.ConquerStructures.Society
         {
             Unlocked = false;
             ItemDictionary = new ConcurrentDictionary<uint, ArsenalItem>();
-            OrderedList = new List<ArsenalItem>();
+            OrderedList = [];
             Super = super;
         }
 

@@ -31,9 +31,9 @@ namespace MTA.MaTrix {
             this.X = X;
             this.Y = Y;
             this.Minute = Minute;
-            TimerSubscriptions = new IDisposable[] {
-                Buffers.Add(this),
-            };
+            TimerSubscriptions = [
+                Buffers.Add(this)
+            ];
             DisposalSyncRoot = new object();
         }
 
@@ -47,13 +47,13 @@ namespace MTA.MaTrix {
             using (var reader = cmd.CreateReader()) {
                 while (reader.Read()) {
                     var monsterID = reader.ReadUInt32("monster");
-                    var MapID = reader.ReadUIntArray("map", new string[] { "|" });
+                    var MapID = reader.ReadUIntArray("map", ["|"]);
                     var x = reader.ReadUInt16("x");
                     var y = reader.ReadUInt16("y");
                     var minute = reader.ReadUInt16("minute");
                     MatrixMob MatrixMob = new MatrixMob(monsterID, MapID, x, y, minute);
-                    MatrixMob.cpsarray = reader.ReadUIntArray("cps", new string[] { "|" });
-                    MatrixMob.itemsarray = reader.ReadUIntArray("items", new string[] { "|" });
+                    MatrixMob.cpsarray = reader.ReadUIntArray("cps", ["|"]);
+                    MatrixMob.itemsarray = reader.ReadUIntArray("items", ["|"]);
                 }
             }
 

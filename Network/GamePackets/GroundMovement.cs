@@ -31,8 +31,9 @@ namespace MTA.Network.GamePackets
         }
         public static byte[] CreateProtocolBuffer(params uint[] values)
         {
-            List<byte> ptr = new List<byte>();
-            ptr.Add(8);
+            List<byte> ptr = [
+                8
+            ];
             for (int x = 0; x < values.Length; x++)
             {
                 uint value = values[x];
@@ -64,7 +65,7 @@ namespace MTA.Network.GamePackets
         }
         public static uint[] Read7BitEncodedInt(byte[] buffer)
         {
-            List<uint> ptr2 = new List<uint>();
+            List<uint> ptr2 = [];
 
             for (int i = 0; i < buffer.Length;)
             {
