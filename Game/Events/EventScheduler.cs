@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MTA.Database;
-using MTA.Game.Events.CpCastle;
+using MTA.Game.Events.CaptainsCastleConquest;
 using MTA.Game.Events.DizzyLand;
 using MTA.Game.Events.SteedRace;
 using MTA.Game.Events.TreasureInTheBlue;
@@ -106,7 +106,7 @@ public static class EventScheduler {
     ///     Initialize and register all events (called on server startup)
     /// </summary>
     public static void Initialize() {
-        RegisterEvent(new CpCastleEvent());
+        RegisterEvent(new CaptainsCastleConquestEvent());
         RegisterEvent(new SteedRaceEvent());
         RegisterEvent(new DizzyLandEvent());
         RegisterEvent(new TreasureInTheBlueEvent());

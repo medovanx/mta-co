@@ -2139,8 +2139,8 @@ namespace MTA {
             // Update all scheduled events
             Game.Events.EventScheduler.Update(DateTime.Now);
 
-            // Send pre-event warnings for CP Castle
-            Game.Events.CpCastle.CpCastleEvent.SendPreEventWarnings(DateTime.Now);
+            // Send pre-event warnings for Captain's Castle Conquest
+            Game.Events.CaptainsCastleConquest.CaptainsCastleConquestEvent.SendPreEventWarnings(DateTime.Now);
 
             #endregion
 

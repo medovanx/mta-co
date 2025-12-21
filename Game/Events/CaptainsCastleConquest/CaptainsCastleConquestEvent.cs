@@ -4,12 +4,12 @@ using System.Drawing;
 using MTA.Database;
 using MTA.Network.GamePackets;
 
-namespace MTA.Game.Events.CpCastle;
+namespace MTA.Game.Events.CaptainsCastleConquest;
 
 /// <summary>
-///     CP Castle Event
+///     Captain's Castle Conquest Event
 /// </summary>
-public class CpCastleEvent : BaseEvent {
+public class CaptainsCastleConquestEvent : BaseEvent {
     private const int EventStartHour1 = 14;
     private const int EventStartHour2 = 20;
     private const int WarningTime10Min = 10;
@@ -24,8 +24,8 @@ public class CpCastleEvent : BaseEvent {
 
     private DateTime? _lastWarning10Min;
     private DateTime? _lastWarning5Min;
-    public override string EventId => "CP_CASTLE";
-    public override string EventName => "CP Castle Event";
+    public override string EventId => "CAPTAINS_CASTLE_CONQUEST";
+    public override string EventName => "Captain's Castle Conquest";
     public override int? EventDurationMinutes => 30;
 
     /// <inheritdoc />
@@ -39,10 +39,10 @@ public class CpCastleEvent : BaseEvent {
     public override void OnStart() {
         base.OnStart();
 
-        AutoInviteAllPlayers("The CP Castle event has begun! Would you like to join?", MapConstants.TWIN_CITY, 288,
+        AutoInviteAllPlayers("The Captain's Castle Conquest has begun! Would you like to join?", MapConstants.TWIN_CITY, 288,
             280);
 
-        Kernel.SendWorldMessage(new Message("The CP Castle event has begun!", Color.White, Message.Center),
+        Kernel.SendWorldMessage(new Message("The Captain's Castle Conquest has begun!", Color.White, Message.Center),
             Program.Values);
 
         EnsureMonsterRespawns([MapConstants.CP_CASTLE_BEGINNER, MapConstants.CP_CASTLE_ADVANCED], ["Captain"], 10);
@@ -52,7 +52,7 @@ public class CpCastleEvent : BaseEvent {
     public override void OnEnd() {
         base.OnEnd();
 
-        BroadcastMessage("The CP Castle event has ended. See you next time!", Color.White);
+        BroadcastMessage("The Captain's Castle Conquest has ended. See you next time!", Color.White);
 
         // Teleport all players out of castle maps
         TeleportPlayersFromMaps(CastleMaps, MapConstants.TWIN_CITY, TwinCityX, TwinCityY);
@@ -72,27 +72,27 @@ public class CpCastleEvent : BaseEvent {
         switch (remainingMinutes) {
             // Warning messages (only show once per event)
             case <= WarningTime10Min when _lastWarning10Min != EventStartTime:
-                BroadcastMessage("The CP Castle event will end in 10 minutes. Hurry to get your rewards!", Color.White);
+                BroadcastMessage("The Captain's Castle Conquest will end in 10 minutes. Hurry to get your rewards!", Color.White);
                 _lastWarning10Min = EventStartTime;
                 break;
             case <= WarningTime5Min when _lastWarning5Min != EventStartTime:
-                BroadcastMessage("The CP Castle event will end in 5 minutes. Hurry to get your rewards!", Color.White);
+                BroadcastMessage("The Captain's Castle Conquest will end in 5 minutes. Hurry to get your rewards!", Color.White);
                 _lastWarning5Min = EventStartTime;
                 break;
         }
     }
 
     /// <summary>
-    ///     Handle monster death for CP Castle event
+    ///     Handle monster death for Captain's Castle Conquest event
     /// </summary>
     /// <param name="monster">The monster that was killed</param>
     /// <param name="killer">The entity that killed the monster</param>
     public override void OnMonsterKilled(MonsterInformation monster, Entity killer) {
-        // Only handle Captain monsters in CP Castle maps (3030, 3031, 3032, 3033) during active event
+        // Only handle Captain monsters in Captain's Castle Conquest maps (3030, 3031, 3032, 3033) during active event
         if (!IsActive)
             return;
 
-        // Check if monster is in any CP Castle map
+        // Check if monster is in any Captain's Castle Conquest map
         var mapId = monster.Owner.MapID;
         if (mapId != MapConstants.CP_CASTLE_BEGINNER && mapId != MapConstants.CP_CASTLE_ADVANCED)
             return;
@@ -100,17 +100,17 @@ public class CpCastleEvent : BaseEvent {
         if (monster.Name != "Captain")
             return;
 
-        CpCastleRewards.OnMonsterKilled(killer.Owner, monster.Name, monster.Owner.MapID);
+        CaptainsCastleConquestRewards.OnMonsterKilled(killer.Owner, monster.Name, monster.Owner.MapID);
     }
 
     /// <summary>
-    ///     Skip normal drop for Captain in CP Castle map when event is active
+    ///     Skip normal drop for Captain in Captain's Castle Conquest map when event is active
     ///     Event system handles rewards
     /// </summary>
     /// <param name="monster">The monster that was killed</param>
     /// <param name="mapId">The map ID of the monster</param>
     public override bool ShouldSkipNormalDrop(MonsterInformation monster, ushort mapId) {
-        // Skip normal CP drop for Captain in any CP Castle map when event is active
+        // Skip normal CP drop for Captain in any Captain's Castle Conquest map when event is active
         if (!IsActive)
             return false;
 
@@ -128,17 +128,18 @@ public class CpCastleEvent : BaseEvent {
         if (now is { Hour: EventStartHour1 - 1, Minute: 55, Second: 0 } ||
             now is { Hour: EventStartHour2 - 1, Minute: 55, Second: 0 })
             foreach (var client in Program.Values)
-                client.Send(new Message("The CP Castle Event will begin in 5 minutes. Get ready!", Message.System));
+                client.Send(new Message("The Captain's Castle Conquest will begin in 5 minutes. Get ready!", Message.System));
 
         switch (now) {
             // 10 seconds before (13:59:50 / 19:59:50)
             case { Hour: EventStartHour1 - 1, Minute: 59, Second: 50 }:
             case { Hour: EventStartHour2 - 1, Minute: 59, Second: 50 }: {
                 foreach (var client in Program.Values)
-                    client.Send(new Message("The CP Castle Event will begin in 10 seconds. Get ready!",
+                    client.Send(new Message("The Captain's Castle Conquest will begin in 10 seconds. Get ready!",
                         Message.System));
                 break;
             }
         }
     }
 }
+

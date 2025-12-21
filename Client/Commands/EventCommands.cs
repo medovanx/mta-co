@@ -35,7 +35,7 @@ namespace MTA.Client.Commands
             if (data.Length < 3)
             {
                 client.Send(new Message("Usage: @event <eventId> <start|stop|clear>", Color.Yellow, Message.TopLeft));
-                client.Send(new Message("Example: @event CP_CASTLE start", Color.Yellow, Message.TopLeft));
+                client.Send(new Message("Example: @event CAPTAINS_CASTLE_CONQUEST start", Color.Yellow, Message.TopLeft));
                 client.Send(new Message("List events: @event -l", Color.Yellow, Message.TopLeft));
                 return true;
             }

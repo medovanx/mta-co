@@ -318,8 +318,8 @@ See `SteedRace/` folder for complete implementation:
 - Custom update logic (invitations, gate opening)
 - Shared constants in `SteedRaceConstants.cs`
 
-### CpCastle Event
-See `CpCastle/` folder for complete implementation:
+### Captain's Castle Conquest
+See `CaptainsCastleConquest/` folder for complete implementation:
 - Multiple scheduled times per day (14:00 and 20:00)
 - Duration-based ending (30 minutes)
 - Warning messages (10 min and 5 min warnings)

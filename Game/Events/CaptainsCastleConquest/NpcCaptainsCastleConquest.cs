@@ -2,29 +2,29 @@ using MTA.Client;
 using MTA.Game.Npcs;
 using MTA.Network.GamePackets;
 
-namespace MTA.Game.Events.CpCastle;
+namespace MTA.Game.Events.CaptainsCastleConquest;
 
 /// <summary>
-///     CP Castle - Handles CP Castle event entry and exit
+///     Captain's Castle Conquest - Handles Captain's Castle Conquest event entry and exit
 /// </summary>
 [NpcHandler(115522005)]
-public static class NpcCpCastle {
+public static class NpcCaptainsCastleConquest {
     public static void Handle(GameState client, NpcRequest npcRequest, MTA.Npcs dialog) {
         switch (npcRequest.OptionID) {
             case 0: {
-                var cpEvent = (BaseEvent)EventScheduler.GetEvent("CP_CASTLE")!;
+                var cpEvent = (BaseEvent)EventScheduler.GetEvent("CAPTAINS_CASTLE_CONQUEST")!;
                 var scheduleDesc = cpEvent.GetScheduleDescription();
                 var duration = cpEvent.EventDurationMinutes ?? 30;
                 var durationText = duration == 30 ? "30 minutes" : $"{duration} minutes";
 
                 dialog.Text(
-                    $"Greetings, brave warrior! The CP Castle Event begins {scheduleDesc}, lasting for {durationText}.\n\n" +
+                    $"Greetings, brave warrior! The Captain's Castle Conquest begins {scheduleDesc}, lasting for {durationText}.\n\n" +
                     "Choose your path wisely:\n" + 
                     "- Beginner's Path (Safe Zone, No PvP): Earn 500 CPs per Captain slain\n" +
                     "- Champion's Path (PvP Enabled): Earn 2,000 CPs per Captain slain");
 
                 if (cpEvent.IsActive)
-                    dialog.Option("Enter the CP Castle", 5);
+                    dialog.Option("Enter the Captain's Castle Conquest", 5);
                 else
                     dialog.Option("I understand.", 255);
 
@@ -45,7 +45,7 @@ public static class NpcCpCastle {
 
             case 10: // Beginner Level (Safe)
             {
-                var cpEvent = (BaseEvent)EventScheduler.GetEvent("CP_CASTLE")!;
+                var cpEvent = (BaseEvent)EventScheduler.GetEvent("CAPTAINS_CASTLE_CONQUEST")!;
                 if (cpEvent.IsActive) {
                     client.Entity.Teleport(MapConstants.CP_CASTLE_BEGINNER, 53, 78);
                     client.Entity.Update(_String.Effect, "accession4", true);
@@ -57,7 +57,7 @@ public static class NpcCpCastle {
                     var duration = cpEvent.EventDurationMinutes ?? 30;
                     var durationText = duration == 30 ? "30 minutes" : $"{duration} minutes";
                     dialog.Text(
-                        $"The event begins {scheduleDesc}, lasting for {durationText}. Please return when the battle commences.");
+                        $"The Captain's Castle Conquest begins {scheduleDesc}, lasting for {durationText}. Please return when the battle commences.");
                     dialog.Option("I understand.", 255);
                     dialog.Avatar(31);
                     dialog.Send();
@@ -68,7 +68,7 @@ public static class NpcCpCastle {
 
             case 11: // Advanced Level (PvP)
             {
-                var cpEvent = (BaseEvent)EventScheduler.GetEvent("CP_CASTLE")!;
+                var cpEvent = (BaseEvent)EventScheduler.GetEvent("CAPTAINS_CASTLE_CONQUEST")!;
                 if (cpEvent.IsActive) {
                     client.Entity.Teleport(MapConstants.CP_CASTLE_ADVANCED, 325, 335);
                     client.Entity.Update(_String.Effect, "accession4", true);
@@ -80,7 +80,7 @@ public static class NpcCpCastle {
                     var duration = cpEvent.EventDurationMinutes ?? 30;
                     var durationText = duration == 30 ? "30 minutes" : $"{duration} minutes";
                     dialog.Text(
-                        $"The event begins {scheduleDesc}, lasting for {durationText}. Please return when the battle commences.");
+                        $"The Captain's Castle Conquest begins {scheduleDesc}, lasting for {durationText}. Please return when the battle commences.");
                     dialog.Option("I understand.", 255);
                     dialog.Avatar(31);
                     dialog.Send();
@@ -93,11 +93,11 @@ public static class NpcCpCastle {
 }
 
 /// <summary>
-///     CP Castle Exit NPC - Teleports players back to Twin City
+///     Captain's Castle Conquest Exit NPC - Teleports players back to Twin City
 ///     Exit NPC for map 3030
 /// </summary>
 [NpcHandler(5501)]
-public static class NpcCpCastleExit {
+public static class NpcCaptainsCastleConquestExit {
     public static void Handle(GameState client, NpcRequest npcRequest, MTA.Npcs dialog) {
         switch (npcRequest.OptionID) {
             case 0: {
@@ -115,3 +115,4 @@ public static class NpcCpCastleExit {
         }
     }
 }
+

@@ -2,12 +2,12 @@ using System.Drawing;
 using MTA.Client;
 using MTA.Network.GamePackets;
 
-namespace MTA.Game.Events.CpCastle;
+namespace MTA.Game.Events.CaptainsCastleConquest;
 
 /// <summary>
-///     Handles rewards for CP Castle event
+///     Handles rewards for Captain's Castle Conquest event
 /// </summary>
-public static class CpCastleRewards {
+public static class CaptainsCastleConquestRewards {
     /// <summary>
     ///     Give reward to a player
     /// </summary>
@@ -25,7 +25,7 @@ public static class CpCastleRewards {
     }
 
     /// <summary>
-    ///     Handle monster kill rewards for CP Castle event
+    ///     Handle monster kill rewards for Captain's Castle Conquest event
     /// </summary>
     public static void OnMonsterKilled(GameState client, string monsterName, ushort mapId) {
         if (monsterName != "Captain")
@@ -41,9 +41,10 @@ public static class CpCastleRewards {
     }
 
     /// <summary>
-    ///     Reward type constants for CP Castle event
+    ///     Reward type constants for Captain's Castle Conquest event
     /// </summary>
     private static class RewardTypes {
         public const string ConquerPoints = "ConquerPoints";
     }
 }
+
