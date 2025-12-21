@@ -1503,8 +1503,8 @@ namespace MTA.Game
 
         public ushort KOCount = 0;
         public bool CounterKillSwitch = false;
-        public Attack AttackPacket;
-        public Attack VortexPacket;
+        public Attack? AttackPacket;
+        public Attack? VortexPacket;
         public byte[] SpawnPacket;
         private string _Name, _Spouse;
         private ushort _MDefence, _MDefencePercent;

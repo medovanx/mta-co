@@ -1703,7 +1703,7 @@ namespace MTA.Game.ConquerStructures.Society
         }
         public static bool ValidName(string Name)
         {
-            if (Name.Length is < 4 and > 15) return false;
+            if (Name.Length is < 4 or > 15) return false;
             else if (Name.IndexOfAny([' ', '#', '%', '^', '&', '*', '(', ')', ';', ':', '\'', '\"', '/', '\\', ',', '.', '{', '}', '[', ']'
                      ]) > 0) return false;
             else return true;

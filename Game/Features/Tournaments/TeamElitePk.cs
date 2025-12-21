@@ -1313,7 +1313,7 @@ namespace MTA.Game.Features.Tournaments {
                         Tournaments[x].AllowJoin = true;
                     }
                     //The Team PK Tournament has start at 20:00. Prepare yourself and sign up for it as a team!");
-                    //Program.World.SendServerMessaj("The Team PK Tournament has start at 20:00. Prepare yourself and sign up for it as a team!");
+                    //Program.World.SendServerMessage("The Team PK Tournament has start at 20:00. Prepare yourself and sign up for it as a team!");
                 }
             }
 
@@ -1380,7 +1380,7 @@ namespace MTA.Game.Features.Tournaments {
                         Tournaments[x].SubscribeTimer(1);
                         Tournaments[x].AllowJoin = true;
                     }
-                    //Program.World.SendServerMessaj("The Skill Team PK Tournament will start at 20:00. Prepare yourself and sign up for it as a team!");
+                    //Program.World.SendServerMessage("The Skill Team PK Tournament will start at 20:00. Prepare yourself and sign up for it as a team!");
                 }
             }
 

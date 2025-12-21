@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using MTA.Client;
 using MTA.Game;
 using MTA.Game.Events;
@@ -122,30 +123,31 @@ namespace MTA.Database {
                     var infos = ConquerItemInformation.BaseInformations[ItemID];
                     ushort X = Owner.X, Y = Owner.Y;
                     Map Map = Kernel.Maps[Owner.MapID];
-                    if (Map.SelectCoordonates(ref X, ref Y)) {
-                        FloorItem floorItem = new FloorItem(true);
-                        floorItem.Item = new ConquerItem(true);
-                        floorItem.Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
-                        floorItem.Item.ID = ItemID;
-                        floorItem.Item.Plus = floorItem.Item.Plus;
-                        floorItem.Item.MaximDurability = infos.Durability;
-                        floorItem.Item.Durability = infos.Durability;
-                        floorItem.Item.MobDropped = true;
-                        floorItem.ValueType = FloorItem.FloorValueType.Item;
-                        floorItem.ItemID = ItemID;
-                        floorItem.MapID = Owner.MapID;
-                        floorItem.MapObjType = MapObjectType.Item;
-                        floorItem.X = X;
-                        floorItem.Y = Y;
-                        floorItem.Type = FloorItem.Drop;
-                        floorItem.OnFloor = Time32.Now;
-                        floorItem.ItemColor = floorItem.Item.Color;
+                    if (!Map.SelectCoordonates(ref X, ref Y)) continue;
+                    var floorItem = new FloorItem(true) {
+                        Item = new ConquerItem(true) {
+                            Color = (Enums.Color)Kernel.Random.Next(4, 8),
+                            ID = ItemID
+                        }
+                    };
+                    floorItem.Item.Plus = floorItem.Item.Plus;
+                    floorItem.Item.MaximDurability = infos.Durability;
+                    floorItem.Item.Durability = infos.Durability;
+                    floorItem.Item.MobDropped = true;
+                    floorItem.ValueType = FloorItem.FloorValueType.Item;
+                    floorItem.ItemID = ItemID;
+                    floorItem.MapID = Owner.MapID;
+                    floorItem.MapObjType = MapObjectType.Item;
+                    floorItem.X = X;
+                    floorItem.Y = Y;
+                    floorItem.Type = FloorItem.Drop;
+                    floorItem.OnFloor = Time32.Now;
+                    floorItem.ItemColor = floorItem.Item.Color;
+                    floorItem.UID = FloorItem.FloorUID.Next;
+                    while (Map.Npcs.ContainsKey(floorItem.UID))
                         floorItem.UID = FloorItem.FloorUID.Next;
-                        while (Map.Npcs.ContainsKey(floorItem.UID))
-                            floorItem.UID = FloorItem.FloorUID.Next;
-                        Map.AddFloorItem(floorItem);
-                        SendScreenSpawn(floorItem);
-                    }
+                    Map.AddFloorItem(floorItem);
+                    SendScreenSpawn(floorItem);
                 }
 
                 return;
@@ -816,50 +818,45 @@ namespace MTA.Database {
 
             #region SpecialItemDrop
 
-            foreach (SpecialItemDrop sitem in SpecialItemDropList) {
-                if (sitem.Map != 0 && Owner.MapID != sitem.Map)
-                    continue;
-                if (Kernel.Rate(sitem.Rate, sitem.Discriminant)) {
-                    if (killer is { VIPLevel: < 0, Owner.Inventory.Count: <= 39 }) {
-                        killer.Owner.Inventory.Add((uint)sitem.ItemID, 0, 1);
-                        return;
-                    }
-
-                    if (sitem.ItemID == 0 || !ConquerItemInformation.BaseInformations.ContainsKey((uint)sitem.ItemID))
-                        return;
-                    var infos = ConquerItemInformation.BaseInformations[(uint)sitem.ItemID];
-                    ushort X = Owner.X, Y = Owner.Y;
-                    Map Map = Kernel.Maps[Owner.MapID];
-                    if (Map.SelectCoordonates(ref X, ref Y)) {
-                        FloorItem floorItem = new FloorItem(true);
-                        floorItem.Item = new ConquerItem(true);
-                        floorItem.Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
-                        floorItem.Item.ID = (uint)sitem.ItemID;
-                        floorItem.Item.MaximDurability = infos.Durability;
-                        floorItem.Item.MobDropped = true;
-                        if (!PacketHandler.IsEquipment(sitem.ItemID) && infos.ConquerPointsWorth == 0) {
-                            floorItem.Item.StackSize = 1;
-                            floorItem.Item.MaxStackSize = infos.StackSize;
-                        }
-
-                        floorItem.ValueType = FloorItem.FloorValueType.Item;
-                        floorItem.ItemID = (uint)sitem.ItemID;
-                        floorItem.MapID = Owner.MapID;
-                        floorItem.MapObjType = MapObjectType.Item;
-                        floorItem.X = X;
-                        floorItem.Y = Y;
-                        floorItem.Type = FloorItem.Drop;
-                        floorItem.OnFloor = Time32.Now;
-                        floorItem.ItemColor = floorItem.Item.Color;
-                        floorItem.Owner = killer.Owner;
-                        floorItem.UID = FloorItem.FloorUID.Next;
-                        while (Map.Npcs.ContainsKey(floorItem.UID))
-                            floorItem.UID = FloorItem.FloorUID.Next;
-                        Map.AddFloorItem(floorItem);
-                        SendScreenSpawn(floorItem);
-                        break;
-                    }
+            foreach (var sitem in SpecialItemDropList.Where(sitem => sitem.Map == 0 || Owner.MapID == sitem.Map).Where(sitem => Kernel.Rate(sitem.Rate, sitem.Discriminant))) {
+                if (killer is { VIPLevel: 0, Owner.Inventory.Count: <= 39 }) {
+                    killer.Owner.Inventory.Add((uint)sitem.ItemID, 0, 1);
+                    return;
                 }
+
+                if (sitem.ItemID == 0 || !ConquerItemInformation.BaseInformations.ContainsKey((uint)sitem.ItemID))
+                    return;
+                var infos = ConquerItemInformation.BaseInformations[(uint)sitem.ItemID];
+                ushort X = Owner.X, Y = Owner.Y;
+                Map Map = Kernel.Maps[Owner.MapID];
+                if (!Map.SelectCoordonates(ref X, ref Y)) continue;
+                FloorItem floorItem = new FloorItem(true);
+                floorItem.Item = new ConquerItem(true);
+                floorItem.Item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
+                floorItem.Item.ID = (uint)sitem.ItemID;
+                floorItem.Item.MaximDurability = infos.Durability;
+                floorItem.Item.MobDropped = true;
+                if (!PacketHandler.IsEquipment(sitem.ItemID) && infos.ConquerPointsWorth == 0) {
+                    floorItem.Item.StackSize = 1;
+                    floorItem.Item.MaxStackSize = infos.StackSize;
+                }
+
+                floorItem.ValueType = FloorItem.FloorValueType.Item;
+                floorItem.ItemID = (uint)sitem.ItemID;
+                floorItem.MapID = Owner.MapID;
+                floorItem.MapObjType = MapObjectType.Item;
+                floorItem.X = X;
+                floorItem.Y = Y;
+                floorItem.Type = FloorItem.Drop;
+                floorItem.OnFloor = Time32.Now;
+                floorItem.ItemColor = floorItem.Item.Color;
+                floorItem.Owner = killer.Owner;
+                floorItem.UID = FloorItem.FloorUID.Next;
+                while (Map.Npcs.ContainsKey(floorItem.UID))
+                    floorItem.UID = FloorItem.FloorUID.Next;
+                Map.AddFloorItem(floorItem);
+                SendScreenSpawn(floorItem);
+                break;
             }
 
             #endregion
@@ -1132,12 +1129,7 @@ namespace MTA.Database {
         }
 
         public static ushort GetMeshFromName(string Name) {
-            foreach (var item in MonsterInformations.Values) {
-                if (item.Name == Name)
-                    return item.Mesh;
-            }
-
-            return 0;
+            return (from item in MonsterInformations.Values where item.Name == Name select item.Mesh).FirstOrDefault();
         }
 
         public static void Load() {
@@ -1145,19 +1137,20 @@ namespace MTA.Database {
                 command.Select("monsterinfos");
                 using (var reader = command.CreateReader()) {
                     while (reader.Read()) {
-                        MonsterInformation mf = new MonsterInformation();
-                        mf.ID = reader.ReadUInt32("id");
-                        mf.Name = reader.ReadString("name");
-                        mf.Mesh = reader.ReadUInt16("lookface");
-                        mf.Level = reader.ReadByte("level");
-                        mf.Hitpoints = reader.ReadUInt32("life");
-                        mf.Type = reader.ReadUInt32("type");
-                        mf.helmet_type = reader.ReadUInt32("helmet_type");
-                        mf.armor_type = reader.ReadUInt32("armor_type");
-                        mf.weaponr_type = reader.ReadUInt32("weaponr_type");
-                        mf.weaponl_type = reader.ReadUInt32("weaponl_type");
-                        mf.Boss = reader.ReadBoolean("Boss");
-                        mf.SuperBoss = reader.ReadBoolean("SuperBoss");
+                        var mf = new MonsterInformation {
+                            ID = reader.ReadUInt32("id"),
+                            Name = reader.ReadString("name"),
+                            Mesh = reader.ReadUInt16("lookface"),
+                            Level = reader.ReadByte("level"),
+                            Hitpoints = reader.ReadUInt32("life"),
+                            Type = reader.ReadUInt32("type"),
+                            helmet_type = reader.ReadUInt32("helmet_type"),
+                            armor_type = reader.ReadUInt32("armor_type"),
+                            weaponr_type = reader.ReadUInt32("weaponr_type"),
+                            weaponl_type = reader.ReadUInt32("weaponl_type"),
+                            Boss = reader.ReadBoolean("Boss"),
+                            SuperBoss = reader.ReadBoolean("SuperBoss")
+                        };
                         mf.Guard = mf.Name.Contains("Guard");
                         mf.Reviver = mf.ID == ReviverID;
                         mf.ViewRange = reader.ReadUInt16("view_range");
@@ -1208,45 +1201,45 @@ namespace MTA.Database {
             }
 
             Console.WriteLine("Monster information loaded.");
-            //Console.WriteLine("Monster drops generated.");
         }
 
         public MonsterInformation Copy() {
-            MonsterInformation mf = new MonsterInformation();
-            mf.ID = ID;
-            mf.Name = Name;
-            mf.Name2 = Name2;
-            mf.Mesh = Mesh;
-            mf.Level = Level;
-            mf.Hitpoints = Hitpoints;
-            mf.ViewRange = ViewRange;
-            mf.AttackRange = AttackRange;
-            mf.AttackType = AttackType;
-            mf.MinAttack = MinAttack;
-            mf.MaxAttack = MaxAttack;
-            mf.SpellID = SpellID;
-            mf.MoveSpeed = MoveSpeed;
-            mf.RunSpeed = RunSpeed;
-            mf.AttackSpeed = AttackSpeed;
-            mf.BoundX = BoundX;
-            mf.BoundY = BoundY;
-            mf.BoundCX = BoundCX;
-            mf.BoundCY = BoundCY;
-            mf.RespawnTime = RespawnTime;
-            mf.IsRespawnAble = IsRespawnAble;
-            mf.ExtraExperience = ExtraExperience;
-            mf.MaxMoneyDropAmount = MaxMoneyDropAmount;
-            mf.MinMoneyDropAmount = MinMoneyDropAmount;
-            // mf.OwnItemID = this.OwnItemID;
-            mf.HPPotionID = HPPotionID;
-            mf.MPPotionID = MPPotionID;
-            //mf.OwnItemRate = this.OwnItemRate;
-            mf.LabirinthDrop = LabirinthDrop;
-            mf.Boss = Boss;
-            mf.SuperBoss = SuperBoss;
-            mf.Guard = Guard;
-            mf.Defence = Defence;
-            mf.Reviver = Reviver;
+            MonsterInformation mf = new MonsterInformation {
+                ID = ID,
+                Name = Name,
+                Name2 = Name2,
+                Mesh = Mesh,
+                Level = Level,
+                Hitpoints = Hitpoints,
+                ViewRange = ViewRange,
+                AttackRange = AttackRange,
+                AttackType = AttackType,
+                MinAttack = MinAttack,
+                MaxAttack = MaxAttack,
+                SpellID = SpellID,
+                MoveSpeed = MoveSpeed,
+                RunSpeed = RunSpeed,
+                AttackSpeed = AttackSpeed,
+                BoundX = BoundX,
+                BoundY = BoundY,
+                BoundCX = BoundCX,
+                BoundCY = BoundCY,
+                RespawnTime = RespawnTime,
+                IsRespawnAble = IsRespawnAble,
+                ExtraExperience = ExtraExperience,
+                MaxMoneyDropAmount = MaxMoneyDropAmount,
+                MinMoneyDropAmount = MinMoneyDropAmount,
+                // mf.OwnItemID = this.OwnItemID;
+                HPPotionID = HPPotionID,
+                MPPotionID = MPPotionID,
+                //mf.OwnItemRate = this.OwnItemRate;
+                LabirinthDrop = LabirinthDrop,
+                Boss = Boss,
+                SuperBoss = SuperBoss,
+                Guard = Guard,
+                Defence = Defence,
+                Reviver = Reviver
+            };
             return mf;
         }
 

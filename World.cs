@@ -9,6 +9,7 @@ using MTA.Network.Sockets;
 using MTA.Game.ConquerStructures;
 using MTA.Client;
 using System.Drawing;
+using MTA.Franko;
 using MTA.Game.Features.Tournaments;
 using MTA.Game.Npcs.ScriptEngine;
 using MTA.Network.GamePackets.EventAlert;
@@ -25,17 +26,19 @@ namespace MTA {
 
         #region Cyclone War
 
-        public static bool Cycolne3;
-        public static bool Cycolne1;
-        public static bool Cycolne = false;
+        public static bool _cyclone3;
+        public static bool _cyclone1;
+        public static bool Cyclone = false;
 
         public static bool LastTeam = false;
 
         #endregion Cyclone War
 
-        public static StaticPool GenericThreadPool;
-        public static StaticPool ReceivePool, SendPool;
-        public TimerRule<GameState> Buffers, Characters, AutoAttack, Prayer;
+        public static StaticPool? GenericThreadPool;
+        public static StaticPool? ReceivePool;
+        public static StaticPool? SendPool;
+        private TimerRule<GameState> _buffers;
+        public TimerRule<GameState> Characters, AutoAttack, Prayer;
         public TimerRule<ClientWrapper> ConnectionReceive, ConnectionReview, ConnectionSend;
 
         public const uint
@@ -45,16 +48,39 @@ namespace MTA {
         public List<KillTournament> Tournaments;
 
         public PoleDomination PoleDomination;
-
-        //public SteedRace SteedRace;
         public CaptureTheFlag Ctf;
         private bool _clanWarAi;
         public bool PureLand, MonthlyPkWar;
         public HeroOfGame HeroOfGame;
-        public Franko.DelayedTask DelayedTask;
+        public DelayedTask DelayedTask;
+        public SteedRace SteedRace;
+        public DateTime MonthlyPkDate;
+        public DateTime NextMonthlyPkDate;
 
-        public World(HeroOfGame heroOfGame) {
+        public World() {
+            GenericThreadPool = new StaticPool().Run();
+            ReceivePool = new StaticPool(128).Run();
+            SendPool = new StaticPool().Run();
+        }
+
+        public World(HeroOfGame heroOfGame, bool monthlyPkWar, TimerRule<GameState> buffers,
+            TimerRule<GameState> characters, TimerRule<GameState> autoAttack, TimerRule<GameState> prayer,
+            TimerRule<ClientWrapper> connectionReceive, TimerRule<ClientWrapper> connectionReview,
+            TimerRule<ClientWrapper> connectionSend, List<KillTournament> tournaments, PoleDomination poleDomination,
+            CaptureTheFlag ctf, DelayedTask delayedTask) {
             HeroOfGame = heroOfGame;
+            MonthlyPkWar = monthlyPkWar;
+            _buffers = buffers;
+            Characters = characters;
+            AutoAttack = autoAttack;
+            Prayer = prayer;
+            ConnectionReceive = connectionReceive;
+            ConnectionReview = connectionReview;
+            ConnectionSend = connectionSend;
+            Tournaments = tournaments;
+            PoleDomination = poleDomination;
+            Ctf = ctf;
+            DelayedTask = delayedTask;
             GenericThreadPool = new StaticPool().Run();
             ReceivePool = new StaticPool(128).Run();
             SendPool = new StaticPool().Run();
@@ -65,7 +91,7 @@ namespace MTA {
                 // Initialize event system
                 Game.Events.EventScheduler.Initialize();
 
-                Buffers = new TimerRule<GameState>(BuffersCallback, 1000, ThreadPriority.BelowNormal);
+                _buffers = new TimerRule<GameState>(BuffersCallback, 1000, ThreadPriority.BelowNormal);
                 Characters = new TimerRule<GameState>(CharactersCallback, 1000, ThreadPriority.BelowNormal);
                 AutoAttack = new TimerRule<GameState>(AutoAttackCallback, 1000, ThreadPriority.BelowNormal);
                 Prayer = new TimerRule<GameState>(PrayerCallback, 1000, ThreadPriority.BelowNormal);
@@ -76,9 +102,9 @@ namespace MTA {
                 Subscribe(ChampionFunctions, 1000, ThreadPriority.AboveNormal);
             }
 
-            ConnectionReview = new TimerRule<ClientWrapper>(connectionReview, 60000, ThreadPriority.Lowest);
-            ConnectionReceive = new TimerRule<ClientWrapper>(connectionReceive, 1);
-            ConnectionSend = new TimerRule<ClientWrapper>(connectionSend, 1);
+            ConnectionReview = new TimerRule<ClientWrapper>(ConnectionReviewCallback, 60000, ThreadPriority.Lowest);
+            ConnectionReceive = new TimerRule<ClientWrapper>(ConnectionReceiveCallback, 1);
+            ConnectionSend = new TimerRule<ClientWrapper>(ConnectionSendCallback, 1);
         }
 
         public void CreateTournaments() {
@@ -86,35 +112,35 @@ namespace MTA {
             Tournaments = [
                 new KillTournament(map.MakeDynamicMap().ID, WeekDay.Everyday, 1, 05,
                     (client) => { client.Entity.ConquerPoints += 1000000; }, "Nobility Tournament (Kings)",
-                    (p) => { return p.Entity.NobilityRank == NobilityRank.King; }),
+                    (p) => p.Entity.NobilityRank == NobilityRank.King),
 
                 new KillTournament(map.MakeDynamicMap().ID, WeekDay.Everyday, 1, 05,
                     (client) => { client.Entity.ConquerPoints += 1000000; }, "Nobility Tournament (Princes)",
-                    (p) => { return p.Entity.NobilityRank == NobilityRank.Prince; }),
+                    (p) => p.Entity.NobilityRank == NobilityRank.Prince),
 
                 new KillTournament(map.MakeDynamicMap().ID, WeekDay.Everyday, 1, 05,
                     (client) => { client.Entity.ConquerPoints += 1000000; }, "Nobility Tournament (Dukes)",
-                    (p) => { return p.Entity.NobilityRank == NobilityRank.Duke; }),
+                    (p) => p.Entity.NobilityRank == NobilityRank.Duke),
 
                 new KillTournament(map.MakeDynamicMap().ID, WeekDay.Everyday, 1, 05,
                     (client) => { client.Entity.ConquerPoints += 1000000; }, "Nobility Tournament (Earl)",
-                    (p) => { return p.Entity.NobilityRank == NobilityRank.Earl; }),
+                    (p) => p.Entity.NobilityRank == NobilityRank.Earl),
 
                 new KillTournament(map.MakeDynamicMap().ID, WeekDay.Everyday, 14, 0,
                     (client) => { client.Entity.ConquerPoints += 1000000; }, "Nobility Tournament (Kings)",
-                    (p) => { return p.Entity.NobilityRank == NobilityRank.King; }),
+                    (p) => p.Entity.NobilityRank == NobilityRank.King),
 
                 new KillTournament(map.MakeDynamicMap().ID, WeekDay.Everyday, 14, 0,
                     (client) => { client.Entity.ConquerPoints += 1000000; }, "Nobility Tournament (Princes)",
-                    (p) => { return p.Entity.NobilityRank == NobilityRank.Prince; }),
+                    (p) => p.Entity.NobilityRank == NobilityRank.Prince),
 
                 new KillTournament(map.MakeDynamicMap().ID, WeekDay.Everyday, 14, 0,
                     (client) => { client.Entity.ConquerPoints += 1000000; }, "Nobility Tournament (Dukes)",
-                    (p) => { return p.Entity.NobilityRank == NobilityRank.Duke; }),
+                    (p) => p.Entity.NobilityRank == NobilityRank.Duke),
 
                 new KillTournament(map.MakeDynamicMap().ID, WeekDay.Everyday, 14, 0,
                     (client) => { client.Entity.ConquerPoints += 1000000; }, "Nobility Tournament (Earl)",
-                    (p) => { return p.Entity.NobilityRank == NobilityRank.Earl; })
+                    (p) => p.Entity.NobilityRank == NobilityRank.Earl)
             ];
 
             #region Class PK Tournament
@@ -124,56 +150,56 @@ namespace MTA {
                 (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags.TopTrojan, 1, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Trojan)", (p) => { return p.Entity.Class is >= 10 and <= 15; },
+                }, "Class PK War (Trojan)", (p) => p.Entity.Class is >= 10 and <= 15,
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 20, 30,
                 (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags.TopWarrior, 1, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Warrior)", (p) => { return p.Entity.Class is >= 20 and <= 25; },
+                }, "Class PK War (Warrior)", (p) => p.Entity.Class is >= 20 and <= 25,
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 20, 30,
                 (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags.TopArcher, 1, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Archer)", (p) => { return p.Entity.Class is >= 40 and <= 45; },
+                }, "Class PK War (Archer)", (p) => p.Entity.Class is >= 40 and <= 45,
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 20, 30,
                 (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags.TopNinja, 1, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Ninja)", (p) => { return p.Entity.Class is >= 50 and <= 55; },
+                }, "Class PK War (Ninja)", (p) => p.Entity.Class is >= 50 and <= 55,
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 20, 30,
                 (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags2.TopMonk, 2, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Monk)", (p) => { return p.Entity.Class is >= 60 and <= 65; },
+                }, "Class PK War (Monk)", (p) => p.Entity.Class is >= 60 and <= 65,
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 20, 30,
                 (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags2.TopPirate, 2, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Pirate)", (p) => { return p.Entity.Class is >= 70 and <= 75; },
+                }, "Class PK War (Pirate)", (p) => p.Entity.Class is >= 70 and <= 75,
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 20, 30,
                 (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags3.DragonWarriorTop, 3, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (LeeLong)", (p) => { return p.Entity.Class is >= 80 and <= 85; },
+                }, "Class PK War (LeeLong)", (p) => p.Entity.Class is >= 80 and <= 85,
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 20, 30,
                 (client) => {
                     client.Entity.ConquerPoints += 1000000;
 
                     client.Entity.AddTopStatus(Update.Flags.TopWaterTaoist, 1, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Water Taoist)", (p) => { return p.Entity.Class is >= 130 and <= 135; },
+                }, "Class PK War (Water Taoist)", (p) => p.Entity.Class is >= 130 and <= 135,
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 20, 30,
                 (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags.TopFireTaoist, 1, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Fire Taoist)", (p) => { return p.Entity.Class is >= 140 and <= 145; },
+                }, "Class PK War (Fire Taoist)", (p) => p.Entity.Class is >= 140 and <= 145,
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
 
             #endregion
@@ -185,55 +211,55 @@ namespace MTA {
                 (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags.TopTrojan, 1, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Trojan)", (p) => { return p.Entity.Class is >= 10 and <= 15; },
+                }, "Class PK War (Trojan)", (p) => p.Entity.Class is >= 10 and <= 15,
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 8, 30,
                 (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags.TopWarrior, 1, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Warrior)", (p) => { return p.Entity.Class is >= 20 and <= 25; },
+                }, "Class PK War (Warrior)", (p) => p.Entity.Class is >= 20 and <= 25,
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 8, 30,
                 (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags.TopArcher, 1, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Archer)", (p) => { return p.Entity.Class is >= 40 and <= 45; },
+                }, "Class PK War (Archer)", (p) => p.Entity.Class is >= 40 and <= 45,
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 8, 30,
                 (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags.TopNinja, 1, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Ninja)", (p) => { return p.Entity.Class is >= 50 and <= 55; },
+                }, "Class PK War (Ninja)", (p) => p.Entity.Class is >= 50 and <= 55,
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 8, 30,
                 (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags2.TopMonk, 2, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Monk)", (p) => { return p.Entity.Class is >= 60 and <= 65; },
+                }, "Class PK War (Monk)", (p) => p.Entity.Class is >= 60 and <= 65,
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 8, 30,
                 (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags2.TopPirate, 2, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Pirate)", (p) => { return p.Entity.Class is >= 70 and <= 75; },
+                }, "Class PK War (Pirate)", (p) => p.Entity.Class is >= 70 and <= 75,
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 8, 30,
                 (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags3.DragonWarriorTop, 3, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (LeeLong)", (p) => { return p.Entity.Class is >= 80 and <= 85; },
+                }, "Class PK War (LeeLong)", (p) => p.Entity.Class is >= 80 and <= 85,
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 8, 30,
                 (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags.TopWaterTaoist, 1, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Water Taoist)", (p) => { return p.Entity.Class is >= 130 and <= 135; },
+                }, "Class PK War (Water Taoist)", (p) => p.Entity.Class is >= 130 and <= 135,
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
             Tournaments.Add(new KillTournament(map.MakeDynamicMap().ID, WeekDay.Monday, 8, 30,
                 (client) => {
                     client.Entity.ConquerPoints += 1000000;
                     client.Entity.AddTopStatus(Update.Flags.TopFireTaoist, 1, DateTime.Now.AddDays(7).AddHours(-1));
-                }, "Class PK War (Fire Taoist)", (p) => { return p.Entity.Class is >= 140 and <= 145; },
+                }, "Class PK War (Fire Taoist)", (p) => p.Entity.Class is >= 140 and <= 145,
                 "You may join from ClassPkEnvoy. You can win CPs and a Top halo."));
 
             #endregion
@@ -243,44 +269,44 @@ namespace MTA {
             TeamElitePk.TeamTournament.Create();
             TeamElitePk.SkillTeamTournament.Create();
             //new ClassPoleWar();
-            //new NobiltyPoleWar();
+            //new NobilityPoleWar();
 
             _ = new GuildScoreWar();
             _ = new MaTrix.Lobby();
             _ = new MaTrix.GuildPoleWar();
-            //SteedRace = new SteedRace();
+            SteedRace = new SteedRace();
             HeroOfGame = new HeroOfGame();
             ElitePKTournament.Create();
 
             Ctf = new CaptureTheFlag();
 
-            DelayedTask = new Franko.DelayedTask();
+            DelayedTask = new DelayedTask();
         }
-        
-        private void connectionReview(ClientWrapper wrapper, int time) {
+
+        private void ConnectionReviewCallback(ClientWrapper wrapper, int time) {
             ClientWrapper.TryReview(wrapper);
         }
 
-        private void connectionReceive(ClientWrapper wrapper, int time) {
+        private void ConnectionReceiveCallback(ClientWrapper wrapper, int time) {
             ClientWrapper.TryReceive(wrapper);
         }
 
-        private void connectionSend(ClientWrapper wrapper, int time) {
+        private void ConnectionSendCallback(ClientWrapper wrapper, int time) {
             ClientWrapper.TrySend(wrapper);
         }
 
-        public bool tele, tele1, tele2, tele3, tele4, tele5, tele6, tele7;
+        public bool Tele, Tele1, Tele2, Tele3, Tele4, Tele5, Tele6, Tele7;
 
         static World() {
-            Cycolne1 = false;
+            _cyclone1 = false;
         }
 
-        public static void TeleEffect(GameState client, ushort x, ushort y, ushort Map, uint id) {
-            var map = Kernel.Maps[Map];
+        private static void TeleEffect(GameState client, ushort x, ushort y, ushort mapId, uint id) {
+            var map = Kernel.Maps[mapId];
 
             var floorItem1 = new FloorItem(true) {
                 ItemID = id,
-                MapID = Map,
+                MapID = mapId,
                 ItemColor = Enums.Color.Black,
                 Type = FloorItem.Effect,
                 X = x,
@@ -298,7 +324,7 @@ namespace MTA {
             if (client.TimerSubscriptions == null) {
                 client.TimerSyncRoot = new object();
                 client.TimerSubscriptions = [
-                    Buffers.Add(client),
+                    _buffers.Add(client),
                     Characters.Add(client),
                     AutoAttack.Add(client),
                     Prayer.Add(client)
@@ -320,13 +346,10 @@ namespace MTA {
             }
         }
 
-        private bool Valid(GameState client) {
-            if (!client.Socket.Alive || client.Entity == null) {
-                client.Disconnect();
-                return false;
-            }
-
-            return true;
+        private static bool Valid(GameState client) {
+            if (client.Socket.Alive) return true;
+            client.Disconnect();
+            return false;
         }
 
         private void BuffersCallback(GameState c, int time) {
@@ -480,11 +503,9 @@ namespace MTA {
                 if (now > c.XPCountStamp.AddSeconds(3)) {
                     #region Frankos
 
-                    if (c.Equipment != null) {
-                        if (!c.Equipment.Free(5)) {
-                            if (Network.PacketHandler.IsFranko(c.Equipment.TryGetItem(5).ID)) {
-                                Database.ConquerItemTable.UpdateDurabilityItem(c.Equipment.TryGetItem(5));
-                            }
+                    if (!c.Equipment.Free(5)) {
+                        if (Network.PacketHandler.IsFranko(c.Equipment.TryGetItem(5).ID)) {
+                            Database.ConquerItemTable.UpdateDurabilityItem(c.Equipment.TryGetItem(5));
                         }
                     }
 
@@ -677,8 +698,8 @@ namespace MTA {
                 if (now >= c.Entity.ToxicFogStamp.AddSeconds(2)) {
                     float percent = c.Entity.ToxicFogPercent;
                     if (c.Entity.Detoxication != 0) {
-                        float immu = 1 - c.Entity.Detoxication / 100F;
-                        percent = percent * immu;
+                        float immunity = 1 - c.Entity.Detoxication / 100F;
+                        percent = percent * immunity;
                     }
 
                     c.Entity.ToxicFogLeft--;
@@ -707,9 +728,10 @@ namespace MTA {
                         else
                             c.Entity.Hitpoints -= damage;
 
-                        SpellUse suse = new SpellUse(true);
-                        suse.Attacker = c.Entity.UID;
-                        suse.SpellID = 10010;
+                        SpellUse suse = new SpellUse(true) {
+                            Attacker = c.Entity.UID,
+                            SpellID = 10010
+                        };
                         suse.AddTarget(c.Entity, damage, null);
                         c.SendScreen(suse);
                         c.UpdateQualifier(c.ArenaStatistic.PlayWith, c, damage);
@@ -841,54 +863,54 @@ namespace MTA {
                 TeleEffect(c, 38, 55, 2222, 1050);
                 TeleEffect(c, 38, 60, 2222, 24);
                 if (c.Entity is { X: 38, Y: 40 }) {
-                    if (!tele) {
+                    if (!Tele) {
                         c.Entity.Teleport(1002, 428, 379);
-                        tele = true;
+                        Tele = true;
                     }
                     else {
                         c.Entity.Teleport(2323, 50, 50);
-                        tele = false;
+                        Tele = false;
                     }
                 }
                 else if (c.Entity is { X: 38, Y: 45 }) {
-                    if (!tele1) {
+                    if (!Tele1) {
                         c.Entity.Teleport(2323, 50, 50);
-                        tele1 = true;
+                        Tele1 = true;
                     }
                     else {
                         c.Entity.Teleport(1002, 428, 379);
-                        tele1 = false;
+                        Tele1 = false;
                     }
                 }
                 else if (c.Entity is { X: 38, Y: 50 }) {
-                    if (!tele2) {
+                    if (!Tele2) {
                         c.Entity.Teleport(1002, 428, 379);
-                        tele2 = true;
+                        Tele2 = true;
                     }
                     else {
                         c.Entity.Teleport(2323, 50, 50);
-                        tele2 = false;
+                        Tele2 = false;
                     }
                 }
                 else if (c.Entity is { X: 38, Y: 55 }) {
-                    if (!tele3) {
+                    if (!Tele3) {
                         c.Entity.Teleport(2323, 50, 50);
 
-                        tele3 = true;
+                        Tele3 = true;
                     }
                     else {
                         c.Entity.Teleport(1002, 428, 379);
-                        tele3 = false;
+                        Tele3 = false;
                     }
                 }
                 else if (c.Entity is { X: 38, Y: 60 }) {
-                    if (!tele4) {
+                    if (!Tele4) {
                         c.Entity.Teleport(1002, 428, 379);
-                        tele4 = true;
+                        Tele4 = true;
                     }
                     else {
                         c.Entity.Teleport(2323, 50, 50);
-                        tele4 = false;
+                        Tele4 = false;
                     }
                 }
 
@@ -902,33 +924,33 @@ namespace MTA {
                 TeleEffect(c, 38, 50, 2323, 1050);
                 TeleEffect(c, 38, 60, 2323, 24);
                 if (c.Entity is { X: 38, Y: 40 }) {
-                    if (!tele5) {
+                    if (!Tele5) {
                         c.Entity.Teleport(1002, 428, 379);
-                        tele5 = true;
+                        Tele5 = true;
                     }
                     else {
                         c.Entity.Teleport(2121, 50, 50);
-                        tele5 = false;
+                        Tele5 = false;
                     }
                 }
                 else if (c.Entity is { X: 38, Y: 50 }) {
-                    if (!tele6) {
+                    if (!Tele6) {
                         c.Entity.Teleport(2121, 50, 50);
-                        tele6 = true;
+                        Tele6 = true;
                     }
                     else {
                         c.Entity.Teleport(1002, 428, 379);
-                        tele6 = false;
+                        Tele6 = false;
                     }
                 }
                 else if (c.Entity is { X: 38, Y: 60 }) {
-                    if (!tele7) {
+                    if (!Tele7) {
                         c.Entity.Teleport(1002, 428, 379);
-                        tele7 = true;
+                        Tele7 = true;
                     }
                     else {
                         c.Entity.Teleport(2121, 50, 50);
-                        tele7 = false;
+                        Tele7 = false;
                     }
                 }
 
@@ -984,18 +1006,18 @@ namespace MTA {
                     if (now > c.FrightenStamp.AddSeconds(20)) {
                         c.RaceFrightened = false;
                         {
-                            GameCharacterUpdates update = new GameCharacterUpdates(true);
-                            update.UID = c.Entity.UID;
+                            GameCharacterUpdates update = new GameCharacterUpdates(true) {
+                                UID = c.Entity.UID
+                            };
                             update.Remove(GameCharacterUpdates.Flustered);
                             c.SendScreen(update);
                         }
                         c.Entity.RemoveFlag(Update.Flags.Frightened);
                     }
                     else {
-                        int rand;
                         ushort x, y;
                         do {
-                            rand = Kernel.Random.Next(Map.XDir.Length);
+                            var rand = Kernel.Random.Next(Map.XDir.Length);
                             x = (ushort)(c.Entity.X + Map.XDir[rand]);
                             y = (ushort)(c.Entity.Y + Map.YDir[rand]);
                         } while (!c.Map.Floor[x, y, MapObjectType.Player]);
@@ -1039,8 +1061,9 @@ namespace MTA {
                     c.Entity.FrozenTime = 0;
                     c.Entity.RemoveFlag(Update.Flags.Freeze);
 
-                    GameCharacterUpdates update = new GameCharacterUpdates(true);
-                    update.UID = c.Entity.UID;
+                    GameCharacterUpdates update = new GameCharacterUpdates(true) {
+                        UID = c.Entity.UID
+                    };
                     update.Remove(GameCharacterUpdates.Freeze);
                     c.SendScreen(update);
                 }
@@ -1052,17 +1075,17 @@ namespace MTA {
 
             if (c.Entity.ContainsFlag(Update.Flags.FreezeSmall)) {
                 if (now > c.FrightenStamp.AddSeconds(c.Entity.Fright)) {
-                    GameCharacterUpdates update = new GameCharacterUpdates(true);
-                    update.UID = c.Entity.UID;
+                    var update = new GameCharacterUpdates(true) {
+                        UID = c.Entity.UID
+                    };
                     update.Remove(GameCharacterUpdates.Dizzy);
                     c.SendScreen(update);
                     c.Entity.RemoveFlag(Update.Flags.FreezeSmall);
                 }
                 else {
-                    int rand;
                     ushort x, y;
                     do {
-                        rand = Kernel.Random.Next(Map.XDir.Length);
+                        var rand = Kernel.Random.Next(Map.XDir.Length);
                         x = (ushort)(c.Entity.X + Map.XDir[rand]);
                         y = (ushort)(c.Entity.Y + Map.YDir[rand]);
                     } while (!c.Map.Floor[x, y, MapObjectType.Player]);
@@ -1091,8 +1114,9 @@ namespace MTA {
                     if (now > c.DizzyStamp.AddSeconds(5)) {
                         c.RaceDizzy = false;
                         {
-                            GameCharacterUpdates update = new GameCharacterUpdates(true);
-                            update.UID = c.Entity.UID;
+                            GameCharacterUpdates update = new GameCharacterUpdates(true) {
+                                UID = c.Entity.UID
+                            };
                             update.Remove(GameCharacterUpdates.Dizzy);
                             c.SendScreen(update);
                         }
@@ -1109,8 +1133,9 @@ namespace MTA {
                 if (now > c.FrightenStamp.AddSeconds(15)) {
                     c.RaceFrightened = false;
                     {
-                        GameCharacterUpdates update = new GameCharacterUpdates(true);
-                        update.UID = c.Entity.UID;
+                        GameCharacterUpdates update = new GameCharacterUpdates(true) {
+                            UID = c.Entity.UID
+                        };
                         update.Remove(GameCharacterUpdates.Flustered);
                         c.SendScreen(update);
                     }
@@ -1126,8 +1151,9 @@ namespace MTA {
                 if (now > c.GuardStamp.AddSeconds(10)) {
                     c.RaceGuard = false;
                     {
-                        GameCharacterUpdates update = new GameCharacterUpdates(true);
-                        update.UID = c.Entity.UID;
+                        GameCharacterUpdates update = new GameCharacterUpdates(true) {
+                            UID = c.Entity.UID
+                        };
                         update.Remove(GameCharacterUpdates.DivineShield);
                         c.SendScreen(update);
                     }
@@ -1188,8 +1214,9 @@ namespace MTA {
                 if (now > c.FrightenStamp.AddSeconds(5)) {
                     c.RaceFrightened = false;
                     {
-                        GameCharacterUpdates update = new GameCharacterUpdates(true);
-                        update.UID = c.Entity.UID;
+                        GameCharacterUpdates update = new GameCharacterUpdates(true) {
+                            UID = c.Entity.UID
+                        };
                         update.Remove(GameCharacterUpdates.Flustered);
                         c.SendScreen(update);
                     }
@@ -1206,18 +1233,18 @@ namespace MTA {
                     if (now > c.FrightenStamp.AddSeconds(20)) {
                         c.RaceFrightened = false;
                         {
-                            GameCharacterUpdates update = new GameCharacterUpdates(true);
-                            update.UID = c.Entity.UID;
+                            GameCharacterUpdates update = new GameCharacterUpdates(true) {
+                                UID = c.Entity.UID
+                            };
                             update.Remove(GameCharacterUpdates.Flustered);
                             c.SendScreen(update);
                         }
                         c.Entity.RemoveFlag(Update.Flags.FreezeSmall);
                     }
                     else {
-                        int rand;
                         ushort x, y;
                         do {
-                            rand = Kernel.Random.Next(Map.XDir.Length);
+                            var rand = Kernel.Random.Next(Map.XDir.Length);
                             x = (ushort)(c.Entity.X + Map.XDir[rand]);
                             y = (ushort)(c.Entity.Y + Map.YDir[rand]);
                         } while (!c.Map.Floor[x, y, MapObjectType.Player]);
@@ -1296,8 +1323,9 @@ namespace MTA {
                 if (Time32.Now > c.Entity.DragonFuryStamp.AddSeconds(c.Entity.DragonFuryTime)) {
                     c.Entity.RemoveFlag3(Update.Flags3.DragonFury);
 
-                    Update upgrade = new Update(true);
-                    upgrade.UID = c.Entity.UID;
+                    Update upgrade = new Update(true) {
+                        UID = c.Entity.UID
+                    };
                     upgrade.Append(74
                         , 0
                         , 0, 0, 0);
@@ -1312,18 +1340,16 @@ namespace MTA {
             if (c.Entity.ContainsFlag3(Update.Flags3.DragonFlow) &&
                 !c.Entity.ContainsFlag3(Update.Flags3.DragonCyclone)) {
                 if (Time32.Now > c.Entity.DragonFlowStamp.AddSeconds(8)) {
-                    if (c != null && c.Spells.TryGetValue(12270, out Interfaces.ISkill? value)) {
+                    if (c.Spells.TryGetValue(12270, out Interfaces.ISkill? value)) {
                         var spell = Database.SpellTable.GetSpell(value.ID, value.Level);
                         {
                             int stamina = 100;
                             if (c.Entity.HeavenBlessing > 0)
                                 stamina += 50;
-                            if (c.Spells != null) {
-                                if (c.Spells.ContainsKey(12560)) {
-                                    var spells = c.Spells[12560];
-                                    var skill = Database.SpellTable.SpellInformations[12560][spells.Level];
-                                    stamina += skill.Power;
-                                }
+                            if (c.Spells.ContainsKey(12560)) {
+                                var spells = c.Spells[12560];
+                                var skill = Database.SpellTable.SpellInformations[12560][spells.Level];
+                                stamina += skill.Power;
                             }
 
                             if (c.Entity.Stamina != stamina) {
@@ -1331,10 +1357,11 @@ namespace MTA {
                                 if (c.Entity.ContainsFlag3(Update.Flags3.DragonCyclone))
                                     if (c.Entity.Stamina != stamina)
                                         c.Entity.Stamina += (byte)spell.Power;
-                                _String str = new _String(true);
-                                str.UID = c.Entity.UID;
-                                str.TextsCount = 1;
-                                str.Type = _String.Effect;
+                                _String str = new _String(true) {
+                                    UID = c.Entity.UID,
+                                    TextsCount = 1,
+                                    Type = _String.Effect
+                                };
                                 str.Texts.Add("leedragonblood");
                                 c.SendScreen(str);
                             }
@@ -1353,8 +1380,9 @@ namespace MTA {
                 if (Time32.Now > c.Entity.DragonSwingStamp.AddSeconds(160)) {
                     c.Entity.RemoveFlag3(Update.Flags3.DragonSwing);
                     c.Entity.OnDragonSwing = false;
-                    Update upgrade = new Update(true);
-                    upgrade.UID = c.Entity.UID;
+                    Update upgrade = new Update(true) {
+                        UID = c.Entity.UID
+                    };
                     upgrade.Append(Update.DragonSwing, 0, 0, 0, 0);
                     c.Entity.Owner.Send(upgrade.ToArray());
                 }
@@ -1362,20 +1390,26 @@ namespace MTA {
 
             #endregion
 
-            if (c.Entity.race == 1 && Cycolne1) {
+            if (c.Entity.race == 1 && _cyclone1) {
                 c.Entity.RemoveFlag(Update.Flags.Ride);
 
                 c.Entity.CycloneStamp = Time32.Now;
                 c.Entity.CycloneTime = 180;
                 c.Entity.AddFlag(Update.Flags.Cyclone);
                 c.Entity.race = 0;
-                Random R = new Random();
-                int Nr = R.Next(1, 2);
-                if (Nr == 1) c.Entity.Teleport(1645, 309, 238);
-                if (Nr == 2) c.Entity.Teleport(1645, 305, 231);
+                var r = new Random();
+                var nr = r.Next(1, 2);
+                switch (nr) {
+                    case 1:
+                        c.Entity.Teleport(1645, 309, 238);
+                        break;
+                    case 2:
+                        c.Entity.Teleport(1645, 305, 231);
+                        break;
+                }
             }
 
-            if (!Cycolne3 && c.Entity.MapID == 1645) {
+            if (!_cyclone3 && c.Entity.MapID == 1645) {
                 c.Entity.Teleport(1002, 435 - 128, 378 - 100);
             }
 
@@ -1388,7 +1422,6 @@ namespace MTA {
             #region lacb
 
             if (client.Entity.lacb >= 10 & client.Entity.lacb <= 300) {
-                //MenaMagice 
                 client.Entity.Update(Update.mantos, 1, true);
             }
 
@@ -1495,12 +1528,12 @@ namespace MTA {
 
                 #endregion
 
-                Time32 Now32 = new Time32(time);
-                DateTime Now64 = DateTime.Now;
+                var now32 = new Time32(time);
+                var now64 = DateTime.Now;
 
-                if (client.Entity.Titles.Count > 0) {
+                if (!client.Entity.Titles.IsEmpty) {
                     foreach (var titles in client.Entity.Titles) {
-                        if (Now64 > titles.Value) {
+                        if (now64 > titles.Value) {
                             client.Entity.RemoveTopStatus((UInt64)titles.Key);
                         }
                     }
@@ -1508,10 +1541,10 @@ namespace MTA {
 
                 if (client.OnDonation) {
                     if (DateTime.Now >= client.matrixtime.AddHours(1.0)) {
-                        SafeDictionary<uint, NobilityInformation> Board =
+                        SafeDictionary<uint, NobilityInformation> board =
                             new SafeDictionary<uint, NobilityInformation>(10000);
                         client.NobilityInformation.Donation -= client.Donationx;
-                        Board.Add(client.Entity.UID, client.NobilityInformation);
+                        board.Add(client.Entity.UID, client.NobilityInformation);
                         Database.NobilityTable.UpdateNobilityInformation(client.NobilityInformation);
                         Nobility.Sort(client.Entity.UID);
                         client.OnDonation = false;
@@ -1586,14 +1619,14 @@ namespace MTA {
                 #region Training points
 
                 if (client.Entity is { HeavenBlessing: > 0, Dead: false }) {
-                    if (Now32 > client.LastTrainingPointsUp.AddMinutes(10)) {
+                    if (now32 > client.LastTrainingPointsUp.AddMinutes(10)) {
                         client.OnlineTrainingPoints += 10;
                         if (client.OnlineTrainingPoints >= 30) {
                             client.OnlineTrainingPoints -= 30;
                             client.IncreaseExperience(client.ExpBall / 100, false);
                         }
 
-                        client.LastTrainingPointsUp = Now32;
+                        client.LastTrainingPointsUp = now32;
                         client.Entity.Update(Update.OnlineTraining, client.OnlineTrainingPoints, false);
                     }
                 }
@@ -1603,7 +1636,7 @@ namespace MTA {
                 #region Extra treasure points
 
                 if (client.AllowedTreasurePoints) {
-                    if (Now32 > client.LastTreasurePoints.AddMinutes(1)) {
+                    if (now32 > client.LastTreasurePoints.AddMinutes(1)) {
                         client.Entity.TreasuerPoints++;
                         client.LastTreasurePoints = Time32.Now;
                     }
@@ -1614,8 +1647,8 @@ namespace MTA {
                 #region Minning
 
                 if (client is { Mining: true, Entity.Dead: false }) {
-                    if (Now32 >= client.MiningStamp.AddSeconds(2)) {
-                        client.MiningStamp = Now32;
+                    if (now32 >= client.MiningStamp.AddSeconds(2)) {
+                        client.MiningStamp = now32;
                         Mining.Mine(client);
                     }
                 }
@@ -1708,9 +1741,9 @@ namespace MTA {
 
                 #region MentorPrizeSave
 
-                if (Now32 > client.LastMentorSave.AddSeconds(5)) {
+                if (now32 > client.LastMentorSave.AddSeconds(5)) {
                     Database.KnownPersons.SaveApprenticeInfo(client.AsApprentice);
-                    client.LastMentorSave = Now32;
+                    client.LastMentorSave = now32;
                 }
 
                 #endregion
@@ -1719,11 +1752,11 @@ namespace MTA {
 
                 if (client.JustLoggedOn) {
                     client.JustLoggedOn = false;
-                    client.ReviveStamp = Now32;
+                    client.ReviveStamp = now32;
                 }
 
                 if (!client.Attackable) {
-                    if (Now32 > client.ReviveStamp.AddSeconds(5)) {
+                    if (now32 > client.ReviveStamp.AddSeconds(5)) {
                         client.Attackable = true;
                     }
                 }
@@ -1737,8 +1770,8 @@ namespace MTA {
                 }
 
                 if (client.Entity.DoubleExperienceTime > 0) {
-                    if (Now32 >= client.Entity.DoubleExpStamp.AddMilliseconds(1000)) {
-                        client.Entity.DoubleExpStamp = Now32;
+                    if (now32 >= client.Entity.DoubleExpStamp.AddMilliseconds(1000)) {
+                        client.Entity.DoubleExpStamp = now32;
                         client.Entity.DoubleExperienceTime--;
                     }
                 }
@@ -1748,8 +1781,8 @@ namespace MTA {
                 #region HeavenBlessing
 
                 if (client.Entity.HeavenBlessing > 0) {
-                    if (Now32 > client.Entity.HeavenBlessingStamp.AddMilliseconds(1000)) {
-                        client.Entity.HeavenBlessingStamp = Now32;
+                    if (now32 > client.Entity.HeavenBlessingStamp.AddMilliseconds(1000)) {
+                        client.Entity.HeavenBlessingStamp = now32;
                         client.Entity.HeavenBlessing--;
                     }
                 }
@@ -1759,8 +1792,8 @@ namespace MTA {
                 #region Enlightment
 
                 if (client.Entity.EnlightmentTime > 0) {
-                    if (Now32 >= client.Entity.EnlightmentStamp.AddMinutes(1)) {
-                        client.Entity.EnlightmentStamp = Now32;
+                    if (now32 >= client.Entity.EnlightmentStamp.AddMinutes(1)) {
+                        client.Entity.EnlightmentStamp = now32;
                         client.Entity.EnlightmentTime--;
                         if (client.Entity.EnlightmentTime % 10 == 0 && client.Entity.EnlightmentTime > 0)
                             client.IncreaseExperience(Game.Attacking.Calculate.Percent((int)client.ExpBall, .10F),
@@ -1772,15 +1805,16 @@ namespace MTA {
 
                 #region starTeam
 
-                if (client.Team != null) {
+                if (client is { Team: not null }) {
                     if (client.Entity.MapID == client.Team.Leader.Entity.MapID) {
-                        Data Data = new Data(true);
-                        Data.UID = client.Team.Leader.Entity.UID;
-                        Data.dwParam = client.Team.Leader.Entity.MapID;
-                        Data.ID = Data.TeamMemberPos;
-                        Data.wParam1 = client.Team.Leader.Entity.X;
-                        Data.wParam2 = client.Team.Leader.Entity.Y;
-                        Data.Send(client);
+                        var data = new Data(true) {
+                            UID = client.Team.Leader.Entity.UID,
+                            dwParam = client.Team.Leader.Entity.MapID,
+                            ID = Data.TeamMemberPos,
+                            wParam1 = client.Team.Leader.Entity.X,
+                            wParam2 = client.Team.Leader.Entity.Y
+                        };
+                        data.Send(client);
                     }
                 }
 
@@ -1788,8 +1822,8 @@ namespace MTA {
 
                 #region PKPoints
 
-                if (Now32 >= client.Entity.PKPointDecreaseStamp.AddMinutes(5)) {
-                    client.Entity.PKPointDecreaseStamp = Now32;
+                if (now32 >= client.Entity.PKPointDecreaseStamp.AddMinutes(5)) {
+                    client.Entity.PKPointDecreaseStamp = now32;
                     if (client.Entity.PKPoints > 0) {
                         client.Entity.PKPoints--;
                     }
@@ -1884,12 +1918,9 @@ namespace MTA {
 
                 if (client.Entity.Hitpoints == 0 && client.Entity.ContainsFlag(Update.Flags.Dead) &&
                     !client.Entity.ContainsFlag(Update.Flags.Ghost)) {
-                    if (Now32 > client.Entity.DeathStamp.AddSeconds(2)) {
+                    if (now32 > client.Entity.DeathStamp.AddSeconds(2)) {
                         client.Entity.AddFlag(Update.Flags.Ghost);
-                        if (client.Entity.Body % 10 < 3)
-                            client.Entity.TransformationID = 99;
-                        else
-                            client.Entity.TransformationID = 98;
+                        client.Entity.TransformationID = client.Entity.Body % 10 < 3 ? (ushort)99 : (ushort)98;
 
                         client.SendScreenSpawn(client.Entity, true);
                     }
@@ -1912,30 +1943,30 @@ namespace MTA {
                 #region ChainBolt
 
                 if (client.Entity.ContainsFlag2(Update.Flags2.ChainBoltActive))
-                    if (Now32 > client.Entity.ChainboltStamp.AddSeconds(client.Entity.ChainboltTime))
+                    if (now32 > client.Entity.ChainboltStamp.AddSeconds(client.Entity.ChainboltTime))
                         client.Entity.RemoveFlag2(Update.Flags2.ChainBoltActive);
 
                 #endregion
 
                 if (client.Entity.HasMagicDefender &&
-                    Now32 >= client.Entity.MagicDefenderStamp.AddSeconds(client.Entity.MagicDefenderSecs)) {
+                    now32 >= client.Entity.MagicDefenderStamp.AddSeconds(client.Entity.MagicDefenderSecs)) {
                     client.Entity.RemoveMagicDefender();
                 }
 
-                if (Now32 >= client.Entity.BlackbeardsRageStamp.AddSeconds(60)) {
+                if (now32 >= client.Entity.BlackbeardsRageStamp.AddSeconds(60)) {
                     client.Entity.RemoveFlag2(Update.Flags2.BlackbeardsRage);
                 }
 
-                if (Now32 >= client.Entity.CannonBarrageStamp.AddSeconds(60)) {
+                if (now32 >= client.Entity.CannonBarrageStamp.AddSeconds(60)) {
                     client.Entity.RemoveFlag2(Update.Flags2.CannonBarrage);
                 }
 
-                if (Now32 >= client.Entity.FatigueStamp.AddSeconds(client.Entity.FatigueSecs)) {
+                if (now32 >= client.Entity.FatigueStamp.AddSeconds(client.Entity.FatigueSecs)) {
                     client.Entity.RemoveFlag2(Update.Flags2.Fatigue);
                     client.Entity.IsDefensiveStance = false;
                 }
 
-                if (Now32 > client.Entity.GuildRequest.AddSeconds(30)) {
+                if (now32 > client.Entity.GuildRequest.AddSeconds(30)) {
                     client.GuildJoinTarget = 0;
                 }
 
@@ -1946,12 +1977,13 @@ namespace MTA {
                     if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, 184, 205) < 17 && !client.Effect) {
                         client.Effect = true;
                         if (client.Entity.MapID == 1036) {
-                            FloorItem floorItem = new FloorItem(true);
-                            floorItem.ItemID = 812;
-                            floorItem.MapID = 1036;
-                            floorItem.X = 184;
-                            floorItem.Y = 205;
-                            floorItem.Type = FloorItem.Effect;
+                            FloorItem floorItem = new FloorItem(true) {
+                                ItemID = 812,
+                                MapID = 1036,
+                                X = 184,
+                                Y = 205,
+                                Type = FloorItem.Effect
+                            };
                             client.Send(floorItem);
                         }
                     }
@@ -1966,9 +1998,9 @@ namespace MTA {
 
                 #region Team Qualifier
 
-                if ((Now64.Hour == 11 || Now64.Hour == 19) && Now64 is { Minute: 19, Second: 2 }) {
+                if ((now64.Hour == 11 || now64.Hour == 19) && now64 is { Minute: 19, Second: 2 }) {
                     client.MessageBox("TeamArena has started! It will open for two hours! Would you like to sign up?",
-                        (p) => { TeamArena.QualifyEngine.DoSignup(p); },
+                        TeamArena.QualifyEngine.DoSignup,
                         (p) => { p.Send("You can still join from the team arena interface!"); });
                 }
 
@@ -1976,7 +2008,7 @@ namespace MTA {
 
                 #region Weekly PK
 
-                if (Now64 is { Second: <= 2, DayOfWeek: DayOfWeek.Saturday, Hour: 20, Minute: 00 }) {
+                if (now64 is { Second: <= 2, DayOfWeek: DayOfWeek.Saturday, Hour: 20, Minute: 00 }) {
                     client.MessageBox("Weekly PK has begun! Would you like to join? Prize [ TOP And Cps]",
                         (p) => { p.Entity.Teleport(1002, 327, 194); }, null, 60);
                 }
@@ -1989,25 +2021,28 @@ namespace MTA {
                     if (client.Entity.MapID == 701) {
                         Random disco = new Random();
                         uint discocolor = (uint)disco.Next(50000, 999999999);
-                        Data datas = new Data(true);
-                        datas.UID = client.Entity.UID;
-                        datas.ID = 104;
-                        datas.dwParam = discocolor;
+                        Data datas = new Data(true) {
+                            UID = client.Entity.UID,
+                            ID = 104,
+                            dwParam = discocolor
+                        };
                         client.Send(datas);
                     }
                     else {
                         if (DateTime.Now.Minute >= 40 && DateTime.Now.Minute <= 45) {
-                            Data datas = new Data(true);
-                            datas.UID = client.Entity.UID;
-                            datas.ID = 104;
-                            datas.dwParam = 5855577;
+                            Data datas = new Data(true) {
+                                UID = client.Entity.UID,
+                                ID = 104,
+                                dwParam = 5855577
+                            };
                             client.Send(datas);
                         }
                         else {
-                            Data datas = new Data(true);
-                            datas.UID = client.Entity.UID;
-                            datas.ID = 104;
-                            datas.dwParam = 0;
+                            Data datas = new Data(true) {
+                                UID = client.Entity.UID,
+                                ID = 104,
+                                dwParam = 0
+                            };
                             client.Send(datas);
                         }
                     }
@@ -2019,57 +2054,53 @@ namespace MTA {
 
         private void AutoAttackCallback(GameState client, int time) {
             if (!Valid(client)) return;
-            Time32 Now = new Time32(time);
-            if (client.Entity.AttackPacket != null || client.Entity.VortexPacket != null) {
-                try {
-                    if (client.Entity.ContainsFlag(Update.Flags.ShurikenVortex)) {
-                        if (client.Entity.VortexPacket != null && client.Entity.VortexPacket.ToArray() != null) {
-                            if (Now > client.Entity.VortexAttackStamp.AddMilliseconds(1400)) {
-                                client.Entity.VortexAttackStamp = Now;
-                                client.Entity.VortexPacket.AttackType = Attack.Magic;
-                                new Game.Attacking.Handle(client.Entity.VortexPacket, client.Entity, null);
-                            }
-                        }
+            var now = new Time32(time);
+            if (client.Entity.AttackPacket == null && client.Entity.VortexPacket == null) return;
+            try {
+                if (client.Entity.ContainsFlag(Update.Flags.ShurikenVortex)) {
+                    if (client.Entity.VortexPacket?.ToArray() == null) return;
+                    if (now <= client.Entity.VortexAttackStamp.AddMilliseconds(1400)) return;
+                    client.Entity.VortexAttackStamp = now;
+                    client.Entity.VortexPacket.AttackType = Attack.Magic;
+                    _ = new Game.Attacking.Handle(client.Entity.VortexPacket, client.Entity, null);
+                }
+                else {
+                    var attackPacket = client.Entity.AttackPacket;
+                    attackPacket?.ToArray();
+                    if (attackPacket == null) return;
+                    var attackType = attackPacket.AttackType;
+                    if (attackType != Attack.Magic && attackType != Attack.Melee &&
+                        attackType != Attack.Ranged) return;
+                    _ = new Game.Attacking.Handle(attackPacket, client.Entity, null);
+                    if (attackType == Attack.Magic) {
+                        if (now <= client.Entity.AttackStamp.AddSeconds(1)) return;
+                        if (attackPacket.Damage != 12160 &&
+                            attackPacket.Damage != 12170 &&
+                            attackPacket.Damage != 12120 &&
+                            attackPacket.Damage != 12130 &&
+                            attackPacket.Damage != 12140 &&
+                            attackPacket.Damage != 12320 &&
+                            attackPacket.Damage != 12330 &&
+                            attackPacket.Damage != 12340 &&
+                            attackPacket.Damage != 12570 &&
+                            attackPacket.Damage != 12210) { }
                     }
-                    else {
-                        var attackPacket = client.Entity.AttackPacket;
-                        var array = attackPacket?.ToArray();
-                        if (attackPacket == null) return;
-                        var attackType = attackPacket.AttackType;
-                        if (attackType != Attack.Magic && attackType != Attack.Melee &&
-                            attackType != Attack.Ranged) return;
-                        var handle = new Game.Attacking.Handle(attackPacket, client.Entity, null);
-                        if (attackType == Attack.Magic) {
-                            if (Now > client.Entity.AttackStamp.AddSeconds(1)) {
-                                if (attackPacket.Damage != 12160 &&
-                                    attackPacket.Damage != 12170 &&
-                                    attackPacket.Damage != 12120 &&
-                                    attackPacket.Damage != 12130 &&
-                                    attackPacket.Damage != 12140 &&
-                                    attackPacket.Damage != 12320 &&
-                                    attackPacket.Damage != 12330 &&
-                                    attackPacket.Damage != 12340 &&
-                                    attackPacket.Damage != 12570 &&
-                                    attackPacket.Damage != 12210) { }
-                            }
-                        }
 
-                        else {
-                            int decrease = 300;
-                            if (client.Entity.OnCyclone())
-                                decrease = 700;
-                            if (client.Entity.OnSuperman())
-                                decrease = 200;
-                            if (Now > client.Entity.AttackStamp.AddMilliseconds(
-                                    (1000 - client.Entity.Agility - decrease) * (1))) { }
-                        }
+                    else {
+                        var decrease = 300;
+                        if (client.Entity.OnCyclone())
+                            decrease = 700;
+                        if (client.Entity.OnSuperman())
+                            decrease = 200;
+                        if (now > client.Entity.AttackStamp.AddMilliseconds(
+                                (1000 - client.Entity.Agility - decrease) * (1))) { }
                     }
                 }
-                catch (Exception e) {
-                    Program.SaveException(e);
-                    client.Entity.AttackPacket = null;
-                    client.Entity.VortexPacket = null;
-                }
+            }
+            catch (Exception e) {
+                Program.SaveException(e);
+                client.Entity.AttackPacket = null;
+                client.Entity.VortexPacket = null;
             }
         }
 
@@ -2093,10 +2124,11 @@ namespace MTA {
                 }
             }
             else {
-                if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, client.PrayLead.Entity.X,
+                if (client.PrayLead != null && Kernel.GetDistance(client.Entity.X, client.Entity.Y,
+                        client.PrayLead.Entity.X,
                         client.PrayLead.Entity.Y) <= 4) return;
                 client.Entity.RemoveFlag(Update.Flags.Praying);
-                client.PrayLead.Prayers.Remove(client);
+                client.PrayLead?.Prayers.Remove(client);
                 client.PrayLead = null;
             }
         }
@@ -2167,20 +2199,20 @@ namespace MTA {
             #region cycolne race
 
             if (DateTime.Now.Minute == 57 && DateTime.Now.Second == 1) {
-                Cycolne3 = true;
+                _cyclone3 = true;
                 Entity.Speed = 0;
                 foreach (var client in Program.Values)
-                    client.MessageBox("Cycolne Race Start U Like To Join And Get " + 100000 + " CPS ",
+                    client.MessageBox("Cyclone Race Start U Like To Join And Get " + 100000 + " CPS ",
                         p => { p.Entity.Teleport(1002, 308, 235); });
             }
 
             if (DateTime.Now.Minute == 58 && DateTime.Now.Second == 1) {
-                Cycolne1 = true;
+                _cyclone1 = true;
             }
 
-            if (DateTime.Now.Minute == 59 && Cycolne3) {
-                Cycolne3 = false;
-                Cycolne1 = false;
+            if (DateTime.Now.Minute == 59 && _cyclone3) {
+                _cyclone3 = false;
+                _cyclone1 = false;
             }
 
             #endregion
@@ -2750,9 +2782,10 @@ namespace MTA {
             if ((now64.Hour == ElitePK.EventTime) && now64.Minute >= 55 && !ElitePKTournament.TimersRegistered) {
                 ElitePK.EventTime = DateTime.Now.Hour;
                 ElitePKTournament.RegisterTimers();
-                ElitePKBrackets brackets = new ElitePKBrackets(true);
-                brackets.Type = ElitePKBrackets.EPK_State;
-                brackets.OnGoing = true;
+                ElitePKBrackets brackets = new ElitePKBrackets(true) {
+                    Type = ElitePKBrackets.EPK_State,
+                    OnGoing = true
+                };
                 foreach (var client in Program.Values) {
                     client.ClaimedElitePk = 0;
                     client.Send(brackets);
@@ -2773,7 +2806,7 @@ namespace MTA {
                     var eliteSecond = TitlePacket.Titles.ElitePK2ndPlace_High;
                     var eliteThird = TitlePacket.Titles.ElitePK3ndPlace_High;
                     var eliteEightChampion = TitlePacket.Titles.ElitePKChamption_Low;
-                    var EliteEightSecond = TitlePacket.Titles.ElitePK2ndPlace_Low;
+                    var eliteEightSecond = TitlePacket.Titles.ElitePK2ndPlace_Low;
                     var eliteEightThird = TitlePacket.Titles.ElitePK3ndPlace_Low;
                     var eliteEight = TitlePacket.Titles.ElitePKTopEight_Low;
                     if (client.Entity.Titles.ContainsKey(eliteChampion))
@@ -2784,8 +2817,8 @@ namespace MTA {
                         client.Entity.RemoveTopStatus((ulong)eliteThird);
                     if (client.Entity.Titles.ContainsKey(eliteEightChampion))
                         client.Entity.RemoveTopStatus((ulong)eliteEightChampion);
-                    if (client.Entity.Titles.ContainsKey(EliteEightSecond))
-                        client.Entity.RemoveTopStatus((ulong)EliteEightSecond);
+                    if (client.Entity.Titles.ContainsKey(eliteEightSecond))
+                        client.Entity.RemoveTopStatus((ulong)eliteEightSecond);
                     if (client.Entity.Titles.ContainsKey(eliteEightThird))
                         client.Entity.RemoveTopStatus((ulong)eliteEightThird);
                     if (client.Entity.Titles.ContainsKey(eliteEight))
@@ -2802,9 +2835,10 @@ namespace MTA {
                         done = false;
                 if (done) {
                     ElitePKTournament.TimersRegistered = false;
-                    ElitePKBrackets brackets = new ElitePKBrackets(true);
-                    brackets.Type = ElitePKBrackets.EPK_State;
-                    brackets.OnGoing = false;
+                    ElitePKBrackets brackets = new ElitePKBrackets(true) {
+                        Type = ElitePKBrackets.EPK_State,
+                        OnGoing = false
+                    };
                     foreach (var client in Program.Values)
                         client.Send(brackets);
                 }
@@ -2933,7 +2967,7 @@ namespace MTA {
                     .Set("GuildID", Game.ConquerStructures.Society.Guild.GuildCounter.Now)
                     .Set("MaxOnline", Program.MaxOn).Set("ItemUID", Program.NextItemId)
                     .Where("Server", Constants.ServerName).Execute();
-            Database.EntityVariableTable.Save(0, Program.Vars);
+            if (Program.Vars != null) Database.EntityVariableTable.Save(0, Program.Vars);
             if (Kernel.BlackSpoted.Values.Count > 0) {
                 foreach (var spot in Kernel.BlackSpoted.Values) {
                     if (Time32.Now >= spot.BlackSpotStamp.AddSeconds(spot.BlackSpotStepSecs)) {
@@ -3008,22 +3042,22 @@ namespace MTA {
 
         public static void Execute(Action<int> action, int timeOut = 0,
             ThreadPriority priority = ThreadPriority.Normal) {
-            GenericThreadPool.Subscribe(new LazyDelegate(action, timeOut, priority));
+            GenericThreadPool?.Subscribe(new LazyDelegate(action, timeOut, priority));
         }
 
         public static void Execute<T>(Action<T, int> action, T param, int timeOut = 0,
             ThreadPriority priority = ThreadPriority.Normal) {
-            GenericThreadPool.Subscribe(new LazyDelegate<T>(action, timeOut, priority), param);
+            GenericThreadPool?.Subscribe(new LazyDelegate<T>(action, timeOut, priority), param);
         }
 
-        public static IDisposable Subscribe(Action<int> action, int period = 1,
+        public static IDisposable? Subscribe(Action<int> action, int period = 1,
             ThreadPriority priority = ThreadPriority.Normal) {
-            return GenericThreadPool.Subscribe(new TimerRule(action, period, priority));
+            return GenericThreadPool?.Subscribe(new TimerRule(action, period, priority));
         }
 
-        public static IDisposable Subscribe<T>(Action<T, int> action, T param, int timeOut = 0,
+        public static IDisposable? Subscribe<T>(Action<T, int> action, T param, int timeOut = 0,
             ThreadPriority priority = ThreadPriority.Normal) {
-            return GenericThreadPool.Subscribe(new TimerRule<T>(action, timeOut, priority), param);
+            return GenericThreadPool?.Subscribe(new TimerRule<T>(action, timeOut, priority), param);
         }
 
         public static IDisposable Subscribe<T>(TimerRule<T> rule, T param, StandalonePool pool) {
@@ -3034,13 +3068,13 @@ namespace MTA {
             return pool.Subscribe(rule, param);
         }
 
-        public static IDisposable Subscribe<T>(TimerRule<T> rule, T param) {
-            return GenericThreadPool.Subscribe(rule, param);
+        public static IDisposable? Subscribe<T>(TimerRule<T> rule, T param) {
+            return GenericThreadPool?.Subscribe(rule, param);
         }
 
         #endregion
 
-        internal void SendServerMessaj(string p) {
+        internal static void SendServerMessage(string p) {
             Kernel.SendWorldMessage(new Message(p, Color.Red, Message.TopLeft), Program.Values);
         }
     }

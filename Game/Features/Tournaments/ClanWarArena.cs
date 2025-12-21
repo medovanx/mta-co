@@ -202,7 +202,7 @@ namespace MTA.Game
 
             for (byte x = 0; x < (byte)ClanArena.Count; x++)
                 Tournaments[x].Start();
-            Program.World.SendServerMessaj("ClanWar has begun! Go to every map to ClanWar npc to join !");
+            World.SendServerMessage("ClanWar has begun! Go to every map to ClanWar npc to join !");
         }
         public static void Save()
         {

@@ -162,7 +162,7 @@ namespace MTA.Game.ConquerStructures
 
             }
         }
-        public static void CheackAlive()
+        public static void CheckAlive()
         {
             howmanyinmap = 0;
             foreach (Client.GameState client in Program.Values)
