@@ -19,7 +19,7 @@ public static class NpcCaptainsCastleConquest {
 
                 dialog.Text(
                     $"Greetings, brave warrior! The Captain's Castle Conquest begins {scheduleDesc}, lasting for {durationText}.\n\n" +
-                    "Choose your path wisely:\n" + 
+                    "Choose your path wisely:\n" +
                     "- Beginner's Path (Safe Zone, No PvP): Earn 500 CPs per Captain slain\n" +
                     "- Champion's Path (PvP Enabled): Earn 2,000 CPs per Captain slain");
 
@@ -115,4 +115,3 @@ public static class NpcCaptainsCastleConquestExit {
         }
     }
 }
-

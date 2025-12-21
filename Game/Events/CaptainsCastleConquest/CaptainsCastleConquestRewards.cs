@@ -47,4 +47,3 @@ public static class CaptainsCastleConquestRewards {
         public const string ConquerPoints = "ConquerPoints";
     }
 }
-

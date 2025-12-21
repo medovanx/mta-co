@@ -39,7 +39,8 @@ public class CaptainsCastleConquestEvent : BaseEvent {
     public override void OnStart() {
         base.OnStart();
 
-        AutoInviteAllPlayers("The Captain's Castle Conquest has begun! Would you like to join?", MapConstants.TWIN_CITY, 288,
+        AutoInviteAllPlayers("The Captain's Castle Conquest has begun! Would you like to join?", MapConstants.TWIN_CITY,
+            288,
             280);
 
         Kernel.SendWorldMessage(new Message("The Captain's Castle Conquest has begun!", Color.White, Message.Center),
@@ -72,11 +73,13 @@ public class CaptainsCastleConquestEvent : BaseEvent {
         switch (remainingMinutes) {
             // Warning messages (only show once per event)
             case <= WarningTime10Min when _lastWarning10Min != EventStartTime:
-                BroadcastMessage("The Captain's Castle Conquest will end in 10 minutes. Hurry to get your rewards!", Color.White);
+                BroadcastMessage("The Captain's Castle Conquest will end in 10 minutes. Hurry to get your rewards!",
+                    Color.White);
                 _lastWarning10Min = EventStartTime;
                 break;
             case <= WarningTime5Min when _lastWarning5Min != EventStartTime:
-                BroadcastMessage("The Captain's Castle Conquest will end in 5 minutes. Hurry to get your rewards!", Color.White);
+                BroadcastMessage("The Captain's Castle Conquest will end in 5 minutes. Hurry to get your rewards!",
+                    Color.White);
                 _lastWarning5Min = EventStartTime;
                 break;
         }
@@ -128,7 +131,8 @@ public class CaptainsCastleConquestEvent : BaseEvent {
         if (now is { Hour: EventStartHour1 - 1, Minute: 55, Second: 0 } ||
             now is { Hour: EventStartHour2 - 1, Minute: 55, Second: 0 })
             foreach (var client in Program.Values)
-                client.Send(new Message("The Captain's Castle Conquest will begin in 5 minutes. Get ready!", Message.System));
+                client.Send(new Message("The Captain's Castle Conquest will begin in 5 minutes. Get ready!",
+                    Message.System));
 
         switch (now) {
             // 10 seconds before (13:59:50 / 19:59:50)
@@ -142,4 +146,3 @@ public class CaptainsCastleConquestEvent : BaseEvent {
         }
     }
 }
-
