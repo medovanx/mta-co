@@ -97,7 +97,7 @@ public static class EventScheduleFormatter {
     /// </summary>
     /// <param name="days">List of days to format</param>
     /// <returns>Formatted string (e.g., "Monday-Friday" or "Monday-Wednesday, Friday")</returns>
-    public static string FormatDayRange(List<DayOfWeek> days) {
+    private static string FormatDayRange(List<DayOfWeek> days) {
         switch (days.Count) {
             case 0:
                 return string.Empty;
