@@ -44,11 +44,7 @@ public abstract class BaseEvent : IEvent {
     ///     Default implementation checks if the current time matches any of the scheduled times.
     /// </remarks>
     public virtual bool ShouldTrigger(DateTime now) {
-        foreach (var schedule in GetSchedules())
-            if (schedule.Matches(now))
-                return true;
-
-        return false;
+        return GetSchedules().Any(schedule => schedule.Matches(now));
     }
 
     /// <inheritdoc />
@@ -76,10 +72,9 @@ public abstract class BaseEvent : IEvent {
     /// </remarks>
     public virtual void OnUpdate(DateTime now) {
         // Check duration-based ending
-        if (IsActive && EventStartTime.HasValue && EventDurationMinutes.HasValue) {
-            var elapsed = now - EventStartTime.Value;
-            if (elapsed.TotalMinutes >= EventDurationMinutes.Value) OnEnd();
-        }
+        if (!IsActive || !EventStartTime.HasValue || !EventDurationMinutes.HasValue) return;
+        var elapsed = now - EventStartTime.Value;
+        if (elapsed.TotalMinutes >= EventDurationMinutes.Value) OnEnd();
     }
 
     /// <inheritdoc />
@@ -116,22 +111,20 @@ public abstract class BaseEvent : IEvent {
     ///     Force start the event (GM override)
     /// </summary>
     public virtual void ForceStart() {
-        if (!IsActive) {
-            IsManuallyOverridden = true;
-            IsForcedActive = true;
-            OnStart();
-        }
+        if (IsActive) return;
+        IsManuallyOverridden = true;
+        IsForcedActive = true;
+        OnStart();
     }
 
     /// <summary>
     ///     Force stop the event (GM override)
     /// </summary>
     public virtual void ForceStop() {
-        if (IsActive) {
-            IsManuallyOverridden = true;
-            IsForcedActive = false;
-            OnEnd();
-        }
+        if (!IsActive) return;
+        IsManuallyOverridden = true;
+        IsForcedActive = false;
+        OnEnd();
     }
 
     /// <summary>
@@ -146,14 +139,14 @@ public abstract class BaseEvent : IEvent {
     /// <summary>
     ///     Send message to all online players
     /// </summary>
-    protected void BroadcastMessage(string message, Color color, uint position = Message.System) {
+    protected static void BroadcastMessage(string message, Color color, uint position = Message.System) {
         Kernel.SendWorldMessage(new Message(message, color, position), Program.Values);
     }
 
     /// <summary>
     ///     Send message to specific players
     /// </summary>
-    protected void SendMessageToPlayers(IEnumerable<GameState> players, string message,
+    protected static void SendMessageToPlayers(IEnumerable<GameState> players, string message,
         uint position = Message.System) {
         foreach (var client in players) client.Send(new Message(message, position));
     }
@@ -161,7 +154,7 @@ public abstract class BaseEvent : IEvent {
     /// <summary>
     ///     Teleport all players from specified maps
     /// </summary>
-    protected void TeleportPlayersFromMaps(IEnumerable<ushort> mapIds, ushort targetMapId, ushort targetX,
+    protected static void TeleportPlayersFromMaps(IEnumerable<ushort> mapIds, ushort targetMapId, ushort targetX,
         ushort targetY) {
         var materializedMapIds = mapIds as ushort[] ?? mapIds.ToArray();
         foreach (var client in Program.Values)
@@ -177,7 +170,7 @@ public abstract class BaseEvent : IEvent {
     /// <param name="targetX">X coordinate to teleport player to when they accept</param>
     /// <param name="targetY">Y coordinate to teleport player to when they accept</param>
     /// <param name="timeoutSeconds">Timeout in seconds before the message box expires (default: 60)</param>
-    protected void AutoInviteAllPlayers(string message, ushort targetMapId, ushort targetX, ushort targetY,
+    protected static void AutoInviteAllPlayers(string message, ushort targetMapId, ushort targetX, ushort targetY,
         uint timeoutSeconds = 60) {
         foreach (var client in Program.Values) {
             client.MessageBox(message, p => { p.Entity.Teleport(targetMapId, targetX, targetY); }, null,
@@ -189,42 +182,7 @@ public abstract class BaseEvent : IEvent {
     ///     Get a formatted string describing when this event runs (for NPC dialogs)
     /// </summary>
     public string GetScheduleDescription() {
-        var schedules = GetSchedules().ToList();
-        if (schedules.Count == 0)
-            return "Schedule not available.";
-
-        // Group schedules by pattern
-        var timeGroups = schedules.GroupBy(s => new { s.Hour, s.Minute, s.Second }).ToList();
-
-        if (timeGroups.Count == 1) {
-            var schedule = schedules[0];
-            var timeStr = $"{schedule.Hour:D2}:{schedule.Minute:D2}";
-
-            // Check if it's every hour (same minute across all hours)
-            if (schedules.Count == 24 && schedules.All(s => s.Minute == schedule.Minute && !s.DayOfWeek.HasValue))
-                return $"at :{schedule.Minute:D2} of every hour";
-
-            // Check if it's every day
-            if (!schedule.DayOfWeek.HasValue) return $"daily at {timeStr}";
-
-            // Specific day(s)
-            var days = schedules.Where(s => s.DayOfWeek.HasValue).Select(s => s.DayOfWeek!.Value).Distinct()
-                .ToList();
-            return days.Count == 1 ? $"every {days[0]} at {timeStr}" : $"at {timeStr} on {string.Join(", ", days)}";
-        }
-
-        // Multiple different times
-        var timeStrings = timeGroups.Select(g => {
-            var s = g.First();
-            var timeStr = $"{s.Hour:D2}:{s.Minute:D2}";
-            if (s.DayOfWeek.HasValue) return $"{timeStr} on {s.DayOfWeek.Value}";
-
-            return timeStr;
-        }).ToList();
-
-        if (timeStrings.Count == 2) return $"daily at {timeStrings[0]} and {timeStrings[1]}";
-
-        return $"at {string.Join(", ", timeStrings.Take(timeStrings.Count - 1))}, and {timeStrings.Last()}";
+        return EventScheduleFormatter.FormatScheduleDescription(GetSchedules());
     }
 
     /// <summary>
@@ -250,26 +208,25 @@ public abstract class BaseEvent : IEvent {
                 entity.MonsterInfo.RespawnTime = respawnTimeSeconds;
 
                 // Revive dead monsters immediately
-                if (entity.Dead) {
-                    entity.Hitpoints = entity.MonsterInfo.Hitpoints;
-                    entity.RemoveFlag(entity.StatusFlag);
-                    entity.StatusFlag = 0;
-                    entity.CauseOfDeathIsMagic = false;
+                if (!entity.Dead) continue;
+                entity.Hitpoints = entity.MonsterInfo.Hitpoints;
+                entity.RemoveFlag(entity.StatusFlag);
+                entity.StatusFlag = 0;
+                entity.CauseOfDeathIsMagic = false;
 
-                    // Send spawn to nearby players
-                    foreach (var client in Program.Values)
-                        if (client.Map.ID == mapId)
-                            if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, entity.X, entity.Y) <
-                                Constants.nScreenDistance) {
-                                entity.SendSpawn(client, false);
-                                var stringPacket = new _String(true) {
-                                    UID = entity.UID,
-                                    Type = _String.Effect
-                                };
-                                stringPacket.Texts.Add("MBStandard");
-                                client.Send(stringPacket);
-                            }
-                }
+                // Send spawn to nearby players
+                foreach (var client in Program.Values)
+                    if (client.Map.ID == mapId)
+                        if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, entity.X, entity.Y) <
+                            Constants.nScreenDistance) {
+                            entity.SendSpawn(client, false);
+                            var stringPacket = new _String(true) {
+                                UID = entity.UID,
+                                Type = _String.Effect
+                            };
+                            stringPacket.Texts.Add("MBStandard");
+                            client.Send(stringPacket);
+                        }
             }
         }
     }
