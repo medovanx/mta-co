@@ -1,107 +1,75 @@
 ﻿using System;
+using MTA.Client;
 
-namespace MTA.Network.GamePackets
-{
-    public class NpcSpawn : Writer, Interfaces.IPacket, Interfaces.INpc, Interfaces.IMapObject
-    {
-        private byte[] Buffer;
-        private ushort _MapID;
+namespace MTA.Network.GamePackets {
+    public class NpcSpawn : Writer, Interfaces.IPacket, Interfaces.INpc, Interfaces.IMapObject {
+        private byte[] _buffer;
 
-        public NpcSpawn(bool Created = true)
-        {
-            if (Created)
-            {
-                Buffer = new byte[36];
-                WriteUInt16(28, 0, Buffer);
-                WriteUInt16(2030, 2, Buffer);
-                WriteUInt32((uint)Time32.timeGetTime().GetHashCode(), 4, Buffer);
-            }
+        public NpcSpawn(bool created = true) {
+            if (!created) return;
+            _buffer = new byte[36];
+            WriteUInt16(28, 0, _buffer);
+            WriteUInt16(2030, 2, _buffer);
+            WriteUInt32((uint)Time32.timeGetTime().GetHashCode(), 4, _buffer);
             // WriteUInt16(1, 22, Buffer);
         }
-        public uint UID
-        {
-            get { return BitConverter.ToUInt32(Buffer, 8); }
-            set { WriteUInt32(value, 8, Buffer); }
+
+        public uint UID {
+            get => BitConverter.ToUInt32(_buffer, 8);
+            set => WriteUInt32(value, 8, _buffer);
         }
 
-        public ushort X
-        {
-            get { return BitConverter.ToUInt16(Buffer, 16); }
-            set { WriteUInt16(value, 16, Buffer); }
+        public ushort X {
+            get => BitConverter.ToUInt16(_buffer, 16);
+            set => WriteUInt16(value, 16, _buffer);
         }
 
-        public ushort Y
-        {
-            get { return BitConverter.ToUInt16(Buffer, 18); }
-            set { WriteUInt16(value, 18, Buffer); }
+        public ushort Y {
+            get => BitConverter.ToUInt16(_buffer, 18);
+            set => WriteUInt16(value, 18, _buffer);
         }
 
-        public ushort Mesh
-        {
-            get { return BitConverter.ToUInt16(Buffer, 20); }
-            set { WriteUInt16(value, 20, Buffer); }
+        public ushort Mesh {
+            get => BitConverter.ToUInt16(_buffer, 20);
+            set => WriteUInt16(value, 20, _buffer);
         }
 
-        public Game.Enums.NpcType Type
-        {
-            get { return (Game.Enums.NpcType)Buffer[22]; }
-            set { Buffer[22] = (byte)value; }
+        public Game.Enums.NpcType Type {
+            get => (Game.Enums.NpcType)_buffer[22];
+            set => _buffer[22] = (byte)value;
         }
 
-        public string Name
-        {
-            get
-            {
-                return _Name;
-            }
-            set
-            {
-                _Name = value;
+        public string Name {
+            get => _name;
+            set {
+                _name = value;
 
                 byte[] buffer = new byte[90];
-                Buffer.CopyTo(buffer, 0);
+                _buffer.CopyTo(buffer, 0);
                 WriteUInt16((ushort)(buffer.Length - 8), 0, buffer);
                 buffer[32] = 1;
                 WriteStringWithLength(value, 33, buffer);
-                Buffer = buffer;
+                _buffer = buffer;
             }
         }
 
         public _String Effect { get; set; }
 
-        public ushort MapID { get { return _MapID; } set { _MapID = value; } }
+        public ushort MapID { get; set; }
 
-        public Game.MapObjectType MapObjType { get { return Game.MapObjectType.Npc; } }
+        public Game.MapObjectType MapObjType => Game.MapObjectType.Npc;
 
-        public Client.GameState Owner { get { return null; } }
+        public GameState Owner => null;
 
         public byte[] SpawnPacket;
-        private string _Name;
+        private string _name;
         public string effect { get; set; }
-        public void SendSpawn(Client.GameState client, bool checkScreen)
-        {
-            if (client.Screen.Add(this) || !checkScreen)
-            {
-                client.Send(Buffer);
-                if (effect != "" && effect != null)
-                {
-                    client.SendScreen(new _String(true)
-                    {
-                        UID = UID,
-                        TextsCount = 22,
-                        Type = 10,
-                        Texts = { effect }
-                    });
-                }
-            }
-        }
-        public void SendSpawn(Client.GameState client)
-        {
-            SendSpawn(client, false);
-            if (effect != "" && effect != null)
-            {
-                client.SendScreen(new _String(true)
-                {
+
+        public void SendSpawn(GameState client, bool checkScreen) {
+            if (!client.Screen.Add(this) && checkScreen) return;
+            client.Send(_buffer);
+            if (effect != "") {
+                client.SendScreen(new _String(true) {
                     UID = UID,
                     TextsCount = 22,
                     Type = 10,
@@ -110,16 +78,27 @@ namespace MTA.Network.GamePackets
             }
         }
 
-        public byte[] ToArray()
-        {
-            return Buffer;
+        public void SendSpawn(GameState client) {
+            SendSpawn(client, false);
+            if (effect != "") {
+                client.SendScreen(new _String(true) {
+                    UID = UID,
+                    TextsCount = 22,
+                    Type = 10,
+                    Texts = { effect }
+                });
+            }
         }
-        public void Deserialize(byte[] buffer)
-        {
-            Buffer = buffer;
+
+        public byte[] ToArray() {
+            return _buffer;
         }
-        public void Send(Client.GameState client)
-        {
+
+        public void Deserialize(byte[] buffer) {
+            _buffer = buffer;
+        }
+
+        public void Send(GameState client) {
             SendSpawn(client, false);
         }
     }

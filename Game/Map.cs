@@ -9,50 +9,35 @@ using MTA.Client;
 using System.Collections.Concurrent;
 using MTA.Database;
 
-namespace MTA.Game
-{
-    public class Map
-    {
+namespace MTA.Game {
+    public class Map {
         public DMapPortal[] portals;
+
         [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
-        public struct DMapPortal
-        {
+        public struct DMapPortal {
             private ushort xCord;
             private ushort yCord;
-            public ushort XCord
-            {
-                get
-                {
-                    return xCord;
-                }
-                set
-                {
-                    xCord = value;
-                }
+
+            public ushort XCord {
+                get { return xCord; }
+                set { xCord = value; }
             }
-            public ushort YCord
-            {
-                get
-                {
-                    return yCord;
-                }
-                set
-                {
-                    yCord = value;
-                }
+
+            public ushort YCord {
+                get { return yCord; }
+                set { yCord = value; }
             }
         }
-        public void PopulatePortals(uint amount)
-        {
+
+        public void PopulatePortals(uint amount) {
             portals = new DMapPortal[amount];
         }
-        public void SetPortal(int Position, DMapPortal portal)
-        {
+
+        public void SetPortal(int Position, DMapPortal portal) {
             portals[Position] = portal;
         }
 
-        public static Counter DynamicIDs = new Counter(11000)
-        {
+        public static Counter DynamicIDs = new Counter(11000) {
             Finish =
                 0
         };
@@ -67,6 +52,7 @@ namespace MTA.Game
             Enums.ConquerAngle.SouthEast,
             Enums.ConquerAngle.South
         ];
+
         public static Floor ArenaBaseFloor;
         public Counter EntityUIDCounter = new Counter(400000);
         public Counter EntityUIDCounter2 = new Counter(100000);
@@ -77,58 +63,60 @@ namespace MTA.Game
         public bool WasPKFree = false;
         public Floor Floor;
         public string Path;
-        public bool IsDynamic()
-        {
+
+        public bool IsDynamic() {
             return BaseID != ID;
         }
+
         public SafeDictionary<uint, Entity> Entities;
+
         //  public SafeDictionary<uint, Entity> Companions;
         public Dictionary<uint, INpc> Npcs;
         public Dictionary<uint, INpc> Statues = new Dictionary<uint, INpc>();
+
         public Dictionary<uint, INpc> TempNpcs = new Dictionary<uint, INpc>();
+
         //   public Dictionary<uint, SobNpcSpawn> Furniture = new Dictionary<uint, SobNpcSpawn>();  
         public ConcurrentDictionary<uint, FloorItem> FloorItems;
-        public void AddPole(INpc npc)
-        {
+
+        public void AddPole(INpc npc) {
             Npcs[npc.UID] = npc;
             Floor[npc.X, npc.Y, MapObjectType.InvalidCast, npc] = false;
         }
-        public void AddMonesterTimer()
-        {
+
+        public void AddMonesterTimer() {
             Timer = MonsterTimers.Add(this);
         }
-        public void RemovePole(INpc npc)
-        {
+
+        public void RemovePole(INpc npc) {
             Npcs.Remove(npc.UID);
             Floor[npc.X, npc.Y, MapObjectType.InvalidCast] = true;
         }
-        public void AddNpc(INpc npc, bool addquery = false)
-        {
-            if (!Npcs.ContainsKey(npc.UID) || addquery)
-            {
+
+        public void AddNpc(INpc npc, bool addquery = false) {
+            if (!Npcs.ContainsKey(npc.UID) || addquery) {
                 if (!addquery)
                     Npcs.Add(npc.UID, npc);
+
                 #region Setting the near coords invalid to avoid unpickable items.
+
                 Floor[npc.X, npc.Y, MapObjectType.InvalidCast, npc] = false;
-                if (npc.Mesh / 10 != 108 && (byte)npc.Type < 10)
-                {
+                if (npc.Mesh / 10 != 108 && (byte)npc.Type < 10) {
                     ushort X = npc.X, Y = npc.Y;
-                    foreach (Enums.ConquerAngle angle in Angles)
-                    {
+                    foreach (Enums.ConquerAngle angle in Angles) {
                         ushort xX = X, yY = Y;
                         UpdateCoordonatesForAngle(ref xX, ref yY, angle);
                         Floor[xX, yY, MapObjectType.InvalidCast] = false;
                     }
                 }
+
                 #endregion
             }
         }
-        public void AddEntity(Entity entity)
-        {
-            if (entity.UID < 800000 || entity.Body == 1003)
-            {
-                if (!Entities.ContainsKey(entity.UID))
-                {
+
+        public void AddEntity(Entity entity) {
+            if (entity.UID < 800000 || entity.Body == 1003) {
+                if (!Entities.ContainsKey(entity.UID)) {
                     Entities.Add(entity.UID, entity);
                     Floor[entity.X, entity.Y, MapObjectType.Monster, entity] = false;
                 }
@@ -142,10 +130,9 @@ namespace MTA.Game
             //    }
             //}
         }
-        public void RemoveEntity(Entity entity)
-        {
-            if (Entities.ContainsKey(entity.UID))
-            {
+
+        public void RemoveEntity(Entity entity) {
+            if (Entities.ContainsKey(entity.UID)) {
                 Entities.Remove(entity.UID);
                 Floor[entity.X, entity.Y, MapObjectType.Monster, entity] = true;
             }
@@ -155,154 +142,163 @@ namespace MTA.Game
             //    Floor[entity.X, entity.Y, MapObjectType.Monster, entity] = true;
             //}
         }
-        public void AddFloorItem(FloorItem floorItem)
-        {
+
+        public void AddFloorItem(FloorItem floorItem) {
             FloorItems.Add(floorItem.UID, floorItem);
             Floor[floorItem.X, floorItem.Y, MapObjectType.Item, floorItem] = false;
         }
-        public void RemoveFloorItem(FloorItem floorItem)
-        {
+
+        public void RemoveFloorItem(FloorItem floorItem) {
             FloorItems.Remove(floorItem.UID);
             Floor[floorItem.X, floorItem.Y, MapObjectType.Item, floorItem] = true;
         }
 
-        public bool SelectCoordonates(ref ushort X, ref ushort Y)
-        {
-            if (Floor[X, Y, MapObjectType.Item])
-            {
+        public bool SelectCoordonates(ref ushort X, ref ushort Y) {
+            if (Floor[X, Y, MapObjectType.Item]) {
                 bool can = true;
-                if (Zones.Count != 0)
-                {
-                    foreach (Zoning.Zone z in Zones)
-                    {
-                        if (z.IsPartOfRectangle(new Point() { X = X, Y = Y }))
-                        {
+                if (Zones.Count != 0) {
+                    foreach (Zoning.Zone z in Zones) {
+                        if (z.IsPartOfRectangle(new Point() { X = X, Y = Y })) {
                             can = false;
                             break;
                         }
                     }
                 }
+
                 if (can)
                     return true;
             }
 
-            foreach (Enums.ConquerAngle angle in Angles)
-            {
+            foreach (Enums.ConquerAngle angle in Angles) {
                 ushort xX = X, yY = Y;
                 UpdateCoordonatesForAngle(ref xX, ref yY, angle);
-                if (Floor[xX, yY, MapObjectType.Item])
-                {
-                    if (Zones.Count != 0)
-                    {
+                if (Floor[xX, yY, MapObjectType.Item]) {
+                    if (Zones.Count != 0) {
                         bool can = true;
-                        foreach (Zoning.Zone z in Zones)
-                        {
-                            if (z.IsPartOfRectangle(new Point() { X = xX, Y = yY })) { can = false; break; }
+                        foreach (Zoning.Zone z in Zones) {
+                            if (z.IsPartOfRectangle(new Point() { X = xX, Y = yY })) {
+                                can = false;
+                                break;
+                            }
                         }
+
                         if (!can)
                             continue;
                     }
+
                     X = xX;
                     Y = yY;
                     return true;
                 }
             }
+
             return false;
         }
-        public static void UpdateCoordonatesForAngle(ref ushort X, ref ushort Y, Enums.ConquerAngle angle)
-        {
+
+        public static void UpdateCoordonatesForAngle(ref ushort X, ref ushort Y, Enums.ConquerAngle angle) {
             sbyte xi = 0, yi = 0;
-            switch (angle)
-            {
-                case Enums.ConquerAngle.North: xi = -1; yi = -1; break;
-                case Enums.ConquerAngle.South: xi = 1; yi = 1; break;
-                case Enums.ConquerAngle.East: xi = 1; yi = -1; break;
-                case Enums.ConquerAngle.West: xi = -1; yi = 1; break;
+            switch (angle) {
+                case Enums.ConquerAngle.North:
+                    xi = -1;
+                    yi = -1;
+                    break;
+                case Enums.ConquerAngle.South:
+                    xi = 1;
+                    yi = 1;
+                    break;
+                case Enums.ConquerAngle.East:
+                    xi = 1;
+                    yi = -1;
+                    break;
+                case Enums.ConquerAngle.West:
+                    xi = -1;
+                    yi = 1;
+                    break;
                 case Enums.ConquerAngle.NorthWest: xi = -1; break;
                 case Enums.ConquerAngle.SouthWest: yi = 1; break;
                 case Enums.ConquerAngle.NorthEast: yi = -1; break;
                 case Enums.ConquerAngle.SouthEast: xi = 1; break;
             }
+
             X = (ushort)(X + xi);
             Y = (ushort)(Y + yi);
         }
 
-        public static void Pushback(ref ushort x, ref ushort y, Enums.ConquerAngle angle, int paces)
-        {
+        public static void Pushback(ref ushort x, ref ushort y, Enums.ConquerAngle angle, int paces) {
             sbyte xi = 0, yi = 0;
-            for (int i = 0; i < paces; i++)
-            {
-                switch (angle)
-                {
-                    case Enums.ConquerAngle.North: xi = -1; yi = -1; break;
-                    case Enums.ConquerAngle.South: xi = 1; yi = 1; break;
-                    case Enums.ConquerAngle.East: xi = 1; yi = -1; break;
-                    case Enums.ConquerAngle.West: xi = -1; yi = 1; break;
+            for (int i = 0; i < paces; i++) {
+                switch (angle) {
+                    case Enums.ConquerAngle.North:
+                        xi = -1;
+                        yi = -1;
+                        break;
+                    case Enums.ConquerAngle.South:
+                        xi = 1;
+                        yi = 1;
+                        break;
+                    case Enums.ConquerAngle.East:
+                        xi = 1;
+                        yi = -1;
+                        break;
+                    case Enums.ConquerAngle.West:
+                        xi = -1;
+                        yi = 1;
+                        break;
                     case Enums.ConquerAngle.NorthWest: xi = -1; break;
                     case Enums.ConquerAngle.SouthWest: yi = 1; break;
                     case Enums.ConquerAngle.NorthEast: yi = -1; break;
                     case Enums.ConquerAngle.SouthEast: xi = 1; break;
                 }
+
                 x = (ushort)(x + xi);
                 y = (ushort)(y + yi);
             }
         }
+
         #region Scenes
+
         private SceneFile[] Scenes;
-        private static string NTString(string value)
-        {
+
+        private static string NTString(string value) {
             value = value.Remove(value.IndexOf("\0"));
             return value;
         }
-        private SceneFile CreateSceneFile(BinaryReader Reader)
-        {
+
+        private SceneFile CreateSceneFile(BinaryReader Reader) {
             SceneFile file = new SceneFile();
             file.SceneFileName = NTString(Program.Encoding.GetString(Reader.ReadBytes(260)));
             file.Location = new Point(Reader.ReadInt32(), Reader.ReadInt32());
-            using (BinaryReader reader = new BinaryReader(new FileStream(Constants.DataHolderPath + file.SceneFileName, FileMode.Open)))
-            {
+            using (BinaryReader reader =
+                   new BinaryReader(new FileStream(Constants.DataHolderPath + file.SceneFileName, FileMode.Open))) {
                 ScenePart[] partArray = new ScenePart[reader.ReadInt32()];
-                for (int i = 0; i < partArray.Length; i++)
-                {
+                for (int i = 0; i < partArray.Length; i++) {
                     reader.BaseStream.Seek(0x14cL, SeekOrigin.Current);
                     partArray[i].Size = new Size(reader.ReadInt32(), reader.ReadInt32());
                     reader.BaseStream.Seek(4L, SeekOrigin.Current);
                     partArray[i].StartPosition = new Point(reader.ReadInt32(), reader.ReadInt32());
                     reader.BaseStream.Seek(4L, SeekOrigin.Current);
                     partArray[i].NoAccess = new bool[partArray[i].Size.Width, partArray[i].Size.Height];
-                    for (int j = 0; j < partArray[i].Size.Height; j++)
-                    {
-                        for (int k = 0; k < partArray[i].Size.Width; k++)
-                        {
+                    for (int j = 0; j < partArray[i].Size.Height; j++) {
+                        for (int k = 0; k < partArray[i].Size.Width; k++) {
                             partArray[i].NoAccess[k, j] = reader.ReadInt32() == 0;
                             reader.BaseStream.Seek(8L, SeekOrigin.Current);
                         }
                     }
                 }
+
                 file.Parts = partArray;
             }
+
             return file;
         }
-        public struct SceneFile
-        {
-            public string SceneFileName
-            {
-                get;
-                set;
-            }
-            public Point Location
-            {
-                get;
-                set;
-            }
-            public ScenePart[] Parts
-            {
-                get;
-                set;
-            }
+
+        public struct SceneFile {
+            public string SceneFileName { get; set; }
+            public Point Location { get; set; }
+            public ScenePart[] Parts { get; set; }
         }
-        public struct ScenePart
-        {
+
+        public struct ScenePart {
             public string Animation;
             public string PartFile;
             public Point Offset;
@@ -312,10 +308,10 @@ namespace MTA.Game
             public Point StartPosition;
             public bool[,] NoAccess;
         }
+
         #endregion
 
-        public Map(ushort id, string path)
-        {
+        public Map(ushort id, string path) {
             if (!Kernel.Maps.ContainsKey(id))
                 Kernel.Maps.Add(id, this);
             Npcs = new Dictionary<uint, INpc>();
@@ -327,9 +323,10 @@ namespace MTA.Game
             BaseID = id;
             if (path == "") path = DMaps.MapPaths[id];
             Path = path;
+
             #region Loading floor.
-            if (File.Exists(Constants.DMapsPath + "\\maps\\" + id.ToString() + ".map"))
-            {
+
+            if (File.Exists(Constants.DMapsPath + "\\maps\\" + id.ToString() + ".map")) {
                 //   Console.WriteLine("Loading " + ID + " DMap : maps\\" + id.ToString() + ".map");
                 byte[] buff = File.ReadAllBytes(Constants.DMapsPath + "\\maps\\" + id.ToString() + ".map");
                 MemoryStream FS = new MemoryStream(buff);
@@ -339,10 +336,8 @@ namespace MTA.Game
                 Floor = new Floor(Width, Height, ID);
                 if (id == 700)
                     ArenaBaseFloor = new Floor(Width, Height, ID);
-                for (ushort y = 0; y < Height; y = (ushort)(y + 1))
-                {
-                    for (ushort x = 0; x < Width; x = (ushort)(x + 1))
-                    {
+                for (ushort y = 0; y < Height; y = (ushort)(y + 1)) {
+                    for (ushort x = 0; x < Width; x = (ushort)(x + 1)) {
                         bool walkable = !(BR.ReadByte() == 1 ? true : false);
                         Floor[x, y, MapObjectType.InvalidCast] = walkable;
                         if (id == 700)
@@ -353,10 +348,8 @@ namespace MTA.Game
                 BR.Close();
                 FS.Close();
             }
-            else
-            {
-                if (File.Exists(Constants.DMapsPath + Path))
-                {
+            else {
+                if (File.Exists(Constants.DMapsPath + Path)) {
                     //      Console.WriteLine("Loading " + ID + " DMap : " + Path);
                     byte[] buff = File.ReadAllBytes(Constants.DMapsPath + Path);
                     MemoryStream FS = new MemoryStream(buff);
@@ -367,30 +360,29 @@ namespace MTA.Game
                     Floor = new Floor(Width, Height, ID);
                     if (id == 700)
                         ArenaBaseFloor = new Floor(Width, Height, ID);
-                    for (ushort y = 0; y < Height; y = (ushort)(y + 1))
-                    {
-                        for (ushort x = 0; x < Width; x = (ushort)(x + 1))
-                        {
+                    for (ushort y = 0; y < Height; y = (ushort)(y + 1)) {
+                        for (ushort x = 0; x < Width; x = (ushort)(x + 1)) {
                             bool walkable = !Convert.ToBoolean(BR.ReadUInt16());
                             Floor[x, y, MapObjectType.InvalidCast] = walkable;
                             if (id == 700)
                                 ArenaBaseFloor[x, y, MapObjectType.InvalidCast] = walkable;
                             BR.BaseStream.Seek(4L, SeekOrigin.Current);
                         }
+
                         BR.BaseStream.Seek(4L, SeekOrigin.Current);
                     }
+
                     uint amount = BR.ReadUInt32();
                     PopulatePortals(amount);
-                    for (ushort j = 0; j < amount; j = (ushort)(j + 1))
-                    {
-                        DMapPortal portal = new DMapPortal
-                        {
+                    for (ushort j = 0; j < amount; j = (ushort)(j + 1)) {
+                        DMapPortal portal = new DMapPortal {
                             XCord = (ushort)BR.ReadUInt32(),
                             YCord = (ushort)BR.ReadUInt32()
                         };
                         SetPortal(j, portal);
                         BR.BaseStream.Seek(4L, SeekOrigin.Current);
                     }
+
                     // BR.BaseStream.Seek(amount * 12, SeekOrigin.Current);
                     LoadMapObjects(BR);
                     MergeSceneToTextureArea();
@@ -400,15 +392,16 @@ namespace MTA.Game
                     SavePortals();
                 }
             }
+
             #endregion
+
             LoadNpcs();
 
             LoadMonsters();
             LoadPortals();
-
         }
-        public Map(ushort id, ushort baseid, string path)
-        {
+
+        public Map(ushort id, ushort baseid, string path) {
             if (!Kernel.Maps.ContainsKey(id))
                 Kernel.Maps.Add(id, this);
             else
@@ -425,21 +418,17 @@ namespace MTA.Game
             Floor = new Floor(0, 0, id);
 
             #region Loading floor.
-            if (id != baseid && baseid == 700 && ArenaBaseFloor != null)
-            {
+
+            if (id != baseid && baseid == 700 && ArenaBaseFloor != null) {
                 Floor = new Floor(ArenaBaseFloor.Bounds.Width, ArenaBaseFloor.Bounds.Height, ID);
-                for (ushort y = 0; y < ArenaBaseFloor.Bounds.Height; y = (ushort)(y + 1))
-                {
-                    for (ushort x = 0; x < ArenaBaseFloor.Bounds.Width; x = (ushort)(x + 1))
-                    {
+                for (ushort y = 0; y < ArenaBaseFloor.Bounds.Height; y = (ushort)(y + 1)) {
+                    for (ushort x = 0; x < ArenaBaseFloor.Bounds.Width; x = (ushort)(x + 1)) {
                         Floor[x, y, MapObjectType.InvalidCast] = !ArenaBaseFloor[x, y, MapObjectType.InvalidCast];
                     }
                 }
             }
-            else
-            {
-                if (File.Exists(Constants.DMapsPath + "\\maps\\" + baseid.ToString() + ".map"))
-                {
+            else {
+                if (File.Exists(Constants.DMapsPath + "\\maps\\" + baseid.ToString() + ".map")) {
                     // Console.WriteLine("Loading " + ID + " DMap : maps\\" + id.ToString() + ".map");
                     byte[] buff = File.ReadAllBytes(Constants.DMapsPath + "\\maps\\" + baseid.ToString() + ".map");
                     MemoryStream FS = new MemoryStream(buff);
@@ -449,20 +438,17 @@ namespace MTA.Game
 
                     Floor = new Floor(Width, Height, ID);
 
-                    for (ushort y = 0; y < Height; y = (ushort)(y + 1))
-                    {
-                        for (ushort x = 0; x < Width; x = (ushort)(x + 1))
-                        {
+                    for (ushort y = 0; y < Height; y = (ushort)(y + 1)) {
+                        for (ushort x = 0; x < Width; x = (ushort)(x + 1)) {
                             Floor[x, y, MapObjectType.InvalidCast] = !(BR.ReadByte() == 1 ? true : false);
                         }
                     }
+
                     BR.Close();
                     FS.Close();
                 }
-                else
-                {
-                    if (File.Exists(Constants.DMapsPath + Path))
-                    {
+                else {
+                    if (File.Exists(Constants.DMapsPath + Path)) {
                         //     Console.WriteLine("Loading "+ID+" DMap : " + Path);
                         FileStream FS = new FileStream(Constants.DMapsPath + Path, FileMode.Open);
                         BinaryReader BR = new BinaryReader(FS);
@@ -472,22 +458,20 @@ namespace MTA.Game
 
                         Floor = new Floor(Width, Height, ID);
 
-                        for (ushort y = 0; y < Height; y = (ushort)(y + 1))
-                        {
-                            for (ushort x = 0; x < Width; x = (ushort)(x + 1))
-                            {
+                        for (ushort y = 0; y < Height; y = (ushort)(y + 1)) {
+                            for (ushort x = 0; x < Width; x = (ushort)(x + 1)) {
                                 Floor[x, y, MapObjectType.InvalidCast] = !Convert.ToBoolean(BR.ReadUInt16());
 
                                 BR.BaseStream.Seek(4L, SeekOrigin.Current);
                             }
+
                             BR.BaseStream.Seek(4L, SeekOrigin.Current);
                         }
+
                         uint amount = BR.ReadUInt32();
                         PopulatePortals(amount);
-                        for (ushort j = 0; j < amount; j = (ushort)(j + 1))
-                        {
-                            DMapPortal portal = new DMapPortal
-                            {
+                        for (ushort j = 0; j < amount; j = (ushort)(j + 1)) {
+                            DMapPortal portal = new DMapPortal {
                                 XCord = (ushort)BR.ReadUInt32(),
                                 YCord = (ushort)BR.ReadUInt32()
                             };
@@ -498,10 +482,8 @@ namespace MTA.Game
 
                         int num = BR.ReadInt32();
                         List<SceneFile> list = [];
-                        for (int i = 0; i < num; i++)
-                        {
-                            switch (BR.ReadInt32())
-                            {
+                        for (int i = 0; i < num; i++) {
+                            switch (BR.ReadInt32()) {
                                 case 10:
                                     BR.BaseStream.Seek(0x48L, SeekOrigin.Current);
                                     break;
@@ -519,20 +501,19 @@ namespace MTA.Game
                                     break;
                             }
                         }
+
                         Scenes = list.ToArray();
 
-                        for (int i = 0; i < Scenes.Length; i++)
-                        {
-                            foreach (ScenePart part in Scenes[i].Parts)
-                            {
-                                for (int j = 0; j < part.Size.Width; j++)
-                                {
-                                    for (int k = 0; k < part.Size.Height; k++)
-                                    {
+                        for (int i = 0; i < Scenes.Length; i++) {
+                            foreach (ScenePart part in Scenes[i].Parts) {
+                                for (int j = 0; j < part.Size.Width; j++) {
+                                    for (int k = 0; k < part.Size.Height; k++) {
                                         Point point = new Point();
                                         point.X = ((Scenes[i].Location.X + part.StartPosition.X) + j) - part.Size.Width;
-                                        point.Y = ((Scenes[i].Location.Y + part.StartPosition.Y) + k) - part.Size.Height;
-                                        Floor[(ushort)point.X, (ushort)point.Y, MapObjectType.InvalidCast] = part.NoAccess[j, k];
+                                        point.Y = ((Scenes[i].Location.Y + part.StartPosition.Y) + k) -
+                                                  part.Size.Height;
+                                        Floor[(ushort)point.X, (ushort)point.Y, MapObjectType.InvalidCast] =
+                                            part.NoAccess[j, k];
                                     }
                                 }
                             }
@@ -545,28 +526,22 @@ namespace MTA.Game
                     }
                 }
             }
+
             #endregion
+
             LoadNpcs();
 
             LoadMonsters();
             LoadPortals();
-
-
         }
 
-        private void MergeSceneToTextureArea()
-        {
-            for (int i = 0; i < Scenes.Length; i++)
-            {
+        private void MergeSceneToTextureArea() {
+            for (int i = 0; i < Scenes.Length; i++) {
                 if (Scenes[i].Parts == null) return;
-                foreach (ScenePart part in Scenes[i].Parts)
-                {
-                    for (int j = 0; j < part.Size.Width; j++)
-                    {
-                        for (int k = 0; k < part.Size.Height; k++)
-                        {
-                            Point point = new Point
-                            {
+                foreach (ScenePart part in Scenes[i].Parts) {
+                    for (int j = 0; j < part.Size.Width; j++) {
+                        for (int k = 0; k < part.Size.Height; k++) {
+                            Point point = new Point {
                                 X = ((Scenes[i].Location.X + part.StartPosition.X) - j),
                                 Y = ((Scenes[i].Location.Y + part.StartPosition.Y) - k)
                             };
@@ -576,16 +551,14 @@ namespace MTA.Game
                 }
             }
         }
-        private void LoadMapObjects(BinaryReader Reader)
-        {
+
+        private void LoadMapObjects(BinaryReader Reader) {
             int num = Reader.ReadInt32();
             List<SceneFile> list = [];
-            for (int i = 0; i < num; i++)
-            {
+            for (int i = 0; i < num; i++) {
                 int id = Reader.ReadInt32();
                 id = (byte)id;
-                switch (id)
-                {
+                switch (id) {
                     case 10:
                         Reader.BaseStream.Seek(0x48L, SeekOrigin.Current);
                         break;
@@ -603,15 +576,15 @@ namespace MTA.Game
                         break;
                 }
             }
+
             Scenes = list.ToArray();
         }
-        private void LoadPortals()
-        {
+
+        private void LoadPortals() {
             IniFile file = new IniFile(Constants.PortalsPath);
             ushort portalCount = file.ReadUInt16(BaseID.ToString(), "Count");
 
-            for (int i = 0; i < portalCount; i++)
-            {
+            for (int i = 0; i < portalCount; i++) {
                 string _PortalEnter = file.ReadString(BaseID.ToString(), "PortalEnter" + i.ToString());
                 string _PortalExit = file.ReadString(BaseID.ToString(), "PortalExit" + i.ToString());
                 string[] PortalEnter = _PortalEnter.Split(' ');
@@ -621,86 +594,84 @@ namespace MTA.Game
                 portal.CurrentX = Convert.ToUInt16(PortalEnter[1]);
                 portal.CurrentY = Convert.ToUInt16(PortalEnter[2]);
 
-                if (PortalExit.Length == 3)
-                {
+                if (PortalExit.Length == 3) {
                     portal.DestinationMapID = Convert.ToUInt16(PortalExit[0]);
                     portal.DestinationX = Convert.ToUInt16(PortalExit[1]);
                     portal.DestinationY = Convert.ToUInt16(PortalExit[2]);
                 }
+
                 Portals.Add(portal);
             }
         }
+
         public List<Portal> Portals = [];
         private IDisposable Timer;
 
         public static sbyte[] XDir = [
             -1, -2, -2, -1, 1, 2, 2, 1,
-             0, -2, -2, -2, 0, 2, 2, 2,
+            0, -2, -2, -2, 0, 2, 2, 2,
             -1, -2, -2, -1, 1, 2, 2, 1,
-             0, -1, -1, -1, 0, 1, 1, 1
+            0, -1, -1, -1, 0, 1, 1, 1
         ];
+
         public static sbyte[] YDir = [
-            2,  1, -1, -2, -2, -1, 1, 2,
-            2,  2,  0, -2, -2, -2, 0, 2,
-            2,  1, -1, -2, -2, -1, 1, 2,
-            1,  1,  0, -1, -1, -1, 0, 1
+            2, 1, -1, -2, -2, -1, 1, 2,
+            2, 2, 0, -2, -2, -2, 0, 2,
+            2, 1, -1, -2, -2, -1, 1, 2,
+            1, 1, 0, -1, -1, -1, 0, 1
         ];
-        public SafeConcurrentDictionary<uint, StaticEntity> StaticEntities = new SafeConcurrentDictionary<uint, StaticEntity>();
-        public void AddStaticEntity(StaticEntity item)
-        {
+
+        public SafeConcurrentDictionary<uint, StaticEntity> StaticEntities =
+            new SafeConcurrentDictionary<uint, StaticEntity>();
+
+        public void AddStaticEntity(StaticEntity item) {
             Floor[item.X, item.Y, MapObjectType.StaticEntity] = false;
             StaticEntities[item.UID] = item;
         }
-        public void RemoveStaticItem(StaticEntity item)
-        {
+
+        public void RemoveStaticItem(StaticEntity item) {
             Floor[item.X, item.Y, MapObjectType.StaticEntity] = true;
             StaticEntities.Remove(item.UID);
         }
-        private void SaveMap()
-        {
-            if (!File.Exists(Constants.DMapsPath + "\\maps\\" + BaseID.ToString() + ".map"))
-            {
-                FileStream stream = new FileStream(Constants.DMapsPath + "\\maps\\" + BaseID.ToString() + ".map", FileMode.Create);
+
+        private void SaveMap() {
+            if (!File.Exists(Constants.DMapsPath + "\\maps\\" + BaseID.ToString() + ".map")) {
+                FileStream stream = new FileStream(Constants.DMapsPath + "\\maps\\" + BaseID.ToString() + ".map",
+                    FileMode.Create);
                 BinaryWriter writer = new BinaryWriter(stream);
                 writer.Write((uint)Floor.Bounds.Width);
                 writer.Write((uint)Floor.Bounds.Height);
-                for (int y = 0; y < Floor.Bounds.Height; y++)
-                {
-                    for (int x = 0; x < Floor.Bounds.Width; x++)
-                    {
+                for (int y = 0; y < Floor.Bounds.Height; y++) {
+                    for (int x = 0; x < Floor.Bounds.Width; x++) {
                         writer.Write((byte)(Floor[x, y, MapObjectType.InvalidCast] ? 1 : 0));
                     }
                 }
+
                 writer.Close();
                 stream.Close();
             }
         }
-        private void SavePortals()
-        {
-            if (!File.Exists("portals.txt"))
-            {
+
+        private void SavePortals() {
+            if (!File.Exists("portals.txt")) {
                 File.Create("portals.txt");
             }
+
             string ConfigFileName = "portals.txt";
             IniFile IniFile = new IniFile(ConfigFileName);
             var id = ID.ToString();
-            for (int i = 0; i < portals.Length; i++)
-            {
+            for (int i = 0; i < portals.Length; i++) {
                 IniFile.Write(id, "Count", portals.Length.ToString());
-                IniFile.Write(id, i.ToString(), string.Format("{0} {1} {2}", id, portals[i].XCord.ToString(), portals[i].YCord.ToString()));
+                IniFile.Write(id, i.ToString(),
+                    string.Format("{0} {1} {2}", id, portals[i].XCord.ToString(), portals[i].YCord.ToString()));
             }
-
         }
 
-        private void LoadNpcs()
-        {
-            using (var command = new MySqlCommand(MySqlCommandType.SELECT))
-            {
+        private void LoadNpcs() {
+            using (var command = new MySqlCommand(MySqlCommandType.SELECT)) {
                 command.Select("npcs").Where("mapid", ID);
-                using (var reader = new MySqlReader(command))
-                {
-                    while (reader.Read())
-                    {
+                using (var reader = new MySqlReader(command)) {
+                    while (reader.Read()) {
                         INpc npc = new NpcSpawn();
                         npc.UID = reader.ReadUInt32("id");
                         npc.Name = reader.ReadString("name");
@@ -715,30 +686,28 @@ namespace MTA.Game
                     }
                 }
             }
-            using (var command = new MySqlCommand(MySqlCommandType.SELECT))
-            {
+
+            using (var command = new MySqlCommand(MySqlCommandType.SELECT)) {
                 command.Select("sobnpcs").Where("mapid", ID);
-                using (var reader = new MySqlReader(command))
-                {
-                    while (reader.Read())
-                    {
-                        SobNpcSpawn npc = new SobNpcSpawn();
-                        npc.UID = reader.ReadUInt32("id");
-                        npc.Mesh = reader.ReadUInt16("lookface");
+                using (var reader = new MySqlReader(command)) {
+                    while (reader.Read()) {
+                        var npc = new SobNpcSpawn {
+                            UID = reader.ReadUInt32("id"),
+                            Mesh = reader.ReadUInt16("lookface")
+                        };
                         if (ID == 1039)
                             npc.Mesh = (ushort)(npc.Mesh - npc.Mesh % 10 + 7);
                         npc.Type = (Enums.NpcType)reader.ReadByte("type");
-                        npc.X = reader.ReadUInt16("cellx"); ;
+                        npc.X = reader.ReadUInt16("cellx");
                         npc.Y = reader.ReadUInt16("celly");
                         npc.MapID = reader.ReadUInt16("mapid");
                         npc.Sort = reader.ReadUInt16("sort");
-                        npc.ShowName = true;
+                        npc.ShowName = reader.ReadBoolean("showname");
                         npc.Name = reader.ReadString("name");
                         npc.Hitpoints = reader.ReadUInt32("life");
                         npc.MaxHitpoints = reader.ReadUInt32("maxlife");
                         npc._isprize = reader.ReadBoolean("prize");
-                        if (npc.UID is >= 9994 and <= 9997)
-                        {
+                        if (npc.UID is >= 9994 and <= 9997) {
                             GuildCondutors.GuildConductors.Add(npc.UID, new GuildCondutors.Conductor() { npc = npc });
                             GuildCondutors.MoveNpc(npc.UID, npc.MapID, npc.X, npc.Y);
                             AddNpc(npc, true);
@@ -748,23 +717,21 @@ namespace MTA.Game
                     }
                 }
             }
+
             uint nextid = 100000;
             EntityUIDCounter2 = new Counter(nextid);
         }
+
         public bool FreezeMonsters = false;
-        public void LoadMonsters()
-        {
+
+        public void LoadMonsters() {
             //Companions = new SafeDictionary<uint, Entity>();
-            using (var command = new MySqlCommand(MySqlCommandType.SELECT))
-            {
+            using (var command = new MySqlCommand(MySqlCommandType.SELECT)) {
                 command.Select("monsterspawns").Where("mapid", ID);
-                using (var reader = new MySqlReader(command))
-                {
+                using (var reader = new MySqlReader(command)) {
                     int mycount = 0;
-                    try
-                    {
-                        while (reader.Read())
-                        {
+                    try {
+                        while (reader.Read()) {
                             uint monsterID = reader.ReadUInt32("npctype");
                             ushort CircleDiameter = reader.ReadUInt16("maxnpc");
                             ushort X = reader.ReadUInt16("bound_x");
@@ -773,8 +740,7 @@ namespace MTA.Game
                             ushort YPlus = reader.ReadUInt16("bound_cy");
                             ushort Amount = reader.ReadUInt16("max_per_gen");
                             int respawn = reader.ReadInt32("rest_secs");
-                            if (MonsterInformation.MonsterInformations.ContainsKey(monsterID))
-                            {
+                            if (MonsterInformation.MonsterInformations.ContainsKey(monsterID)) {
                                 MonsterInformation mt = MonsterInformation.MonsterInformations[monsterID];
                                 mt.RespawnTime = respawn + 5;
                                 mt.BoundX = X;
@@ -783,8 +749,7 @@ namespace MTA.Game
                                 mt.BoundCY = YPlus;
 
                                 bool more = true;
-                                for (int count = 0; count < Amount; count++)
-                                {
+                                for (int count = 0; count < Amount; count++) {
                                     if (!more)
                                         break;
                                     Entity entity = new Entity(EntityFlag.Monster, false);
@@ -849,10 +814,8 @@ namespace MTA.Game
                                     //}
                                     entity.X = (ushort)(X + Kernel.Random.Next(0, XPlus));
                                     entity.Y = (ushort)(Y + Kernel.Random.Next(0, YPlus));
-                                    for (int count2 = 0; count2 < 50; count2++)
-                                    {
-                                        if (!Floor[entity.X, entity.Y, MapObjectType.Monster])
-                                        {
+                                    for (int count2 = 0; count2 < 50; count2++) {
+                                        if (!Floor[entity.X, entity.Y, MapObjectType.Monster]) {
                                             entity.X = (ushort)(X + Kernel.Random.Next(0, XPlus));
                                             entity.Y = (ushort)(Y + Kernel.Random.Next(0, YPlus));
                                             if (count2 == 50)
@@ -861,10 +824,9 @@ namespace MTA.Game
                                         else
                                             break;
                                     }
-                                    if (more)
-                                    {
-                                        if (Floor[entity.X, entity.Y, MapObjectType.Monster])
-                                        {
+
+                                    if (more) {
+                                        if (Floor[entity.X, entity.Y, MapObjectType.Monster]) {
                                             mycount++;
                                             AddEntity(entity);
                                         }
@@ -872,56 +834,55 @@ namespace MTA.Game
                                 }
                             }
                         }
-
                     }
-                    catch (Exception e) { Program.SaveException(e); }
+                    catch (Exception e) {
+                        Program.SaveException(e);
+                    }
+
                     if (mycount != 0)
                         Timer = MonsterTimers.Add(this);
                 }
             }
         }
 
-        public Tuple<ushort, ushort> RandomCoordinates()
-        {
+        public Tuple<ushort, ushort> RandomCoordinates() {
             int times = 10000;
             int x = Kernel.Random.Next(Floor.Bounds.Width), y = Kernel.Random.Next(Floor.Bounds.Height);
-            while (times-- > 0)
-            {
-                if (!Floor[x, y, MapObjectType.Player])
-                {
+            while (times-- > 0) {
+                if (!Floor[x, y, MapObjectType.Player]) {
                     x = Kernel.Random.Next(Floor.Bounds.Width);
                     y = Kernel.Random.Next(Floor.Bounds.Height);
                 }
                 else break;
             }
+
             return new Tuple<ushort, ushort>((ushort)x, (ushort)y);
         }
-        public Tuple<ushort, ushort> RandomCoordinates(int _x, int _y, int radius)
-        {
+
+        public Tuple<ushort, ushort> RandomCoordinates(int _x, int _y, int radius) {
             int times = 10000;
             int x = _x + Kernel.Random.Sign() * Kernel.Random.Next(radius),
                 y = _y + Kernel.Random.Sign() * Kernel.Random.Next(radius);
-            while (times-- > 0)
-            {
-                if (!Floor[x, y, MapObjectType.Player])
-                {
+            while (times-- > 0) {
+                if (!Floor[x, y, MapObjectType.Player]) {
                     x = _x + Kernel.Random.Sign() * Kernel.Random.Next(radius);
                     y = _y + Kernel.Random.Sign() * Kernel.Random.Next(radius);
                 }
                 else break;
             }
+
             return new Tuple<ushort, ushort>((ushort)x, (ushort)y);
         }
 
         private static TimerRule<Map> MonsterTimers;
-        public static void CreateTimerFactories()
-        {
+
+        public static void CreateTimerFactories() {
             MonsterTimers = new TimerRule<Map>(_timerCallBack, 500);
         }
 
         public Time32 LastReload = Time32.Now;
-        private static void _timerCallBack(Map map, int time)
-        {
+
+        private static void _timerCallBack(Map map, int time) {
             //foreach (Entity monster in map.Companions.Values)
             //{
             //    if (!monster.Owner.Socket.Alive)
@@ -931,26 +892,28 @@ namespace MTA.Game
             //    }
             //}
             Time32 now = new Time32(time);
-            foreach (Entity monster in map.Entities.Values)
-            {
-                if (monster.Dead)
-                {
-                    if (now > monster.DeathStamp.AddSeconds(monster.MonsterInfo.RespawnTime))
-                    {
-                        monster.X = (ushort)(monster.MonsterInfo.BoundX + Kernel.Random.Next(0, monster.MonsterInfo.BoundCX));
-                        monster.Y = (ushort)(monster.MonsterInfo.BoundY + Kernel.Random.Next(0, monster.MonsterInfo.BoundCY));
-                        for (int count = 0; count < monster.MonsterInfo.BoundCX * monster.MonsterInfo.BoundCY; count++)
-                        {
-                            if (!map.Floor[monster.X, monster.Y, MapObjectType.Monster])
-                            {
-                                monster.X = (ushort)(monster.MonsterInfo.BoundX + Kernel.Random.Next(0, monster.MonsterInfo.BoundCX));
-                                monster.Y = (ushort)(monster.MonsterInfo.BoundY + Kernel.Random.Next(0, monster.MonsterInfo.BoundCY));
+            foreach (Entity monster in map.Entities.Values) {
+                if (monster.Dead) {
+                    if (now > monster.DeathStamp.AddSeconds(monster.MonsterInfo.RespawnTime)) {
+                        monster.X = (ushort)(monster.MonsterInfo.BoundX +
+                                             Kernel.Random.Next(0, monster.MonsterInfo.BoundCX));
+                        monster.Y = (ushort)(monster.MonsterInfo.BoundY +
+                                             Kernel.Random.Next(0, monster.MonsterInfo.BoundCY));
+                        for (int count = 0;
+                             count < monster.MonsterInfo.BoundCX * monster.MonsterInfo.BoundCY;
+                             count++) {
+                            if (!map.Floor[monster.X, monster.Y, MapObjectType.Monster]) {
+                                monster.X = (ushort)(monster.MonsterInfo.BoundX +
+                                                     Kernel.Random.Next(0, monster.MonsterInfo.BoundCX));
+                                monster.Y = (ushort)(monster.MonsterInfo.BoundY +
+                                                     Kernel.Random.Next(0, monster.MonsterInfo.BoundCY));
                             }
                             else
                                 break;
                         }
-                        if (map.Floor[monster.X, monster.Y, MapObjectType.Monster] || monster.X == monster.MonsterInfo.BoundX && monster.Y == monster.MonsterInfo.BoundY)
-                        {
+
+                        if (map.Floor[monster.X, monster.Y, MapObjectType.Monster] ||
+                            monster.X == monster.MonsterInfo.BoundX && monster.Y == monster.MonsterInfo.BoundY) {
                             monster.Hitpoints = monster.MonsterInfo.Hitpoints;
                             monster.RemoveFlag(monster.StatusFlag);
                             var stringPacket = new _String(true);
@@ -976,17 +939,14 @@ namespace MTA.Game
                                 }
                                 MTA.Kernel.SendWorldMessage(new MTA.Network.GamePackets.Message("Warrning " + monster.Name + " has Apeared in [" + monster.MapID.ToString() + "] at " + monster.X + ", " + monster.Y + " Who will Defeat it and get 50 MonsterPoints !", System.Drawing.Color.White, MTA.Network.GamePackets.Message.Center), Program.Values);
                             }*/
-                            foreach (GameState client in Program.Values)
-                            {
-                                if (client.Map.ID == map.ID)
-                                {
-                                    if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, monster.X, monster.Y) < Constants.nScreenDistance)
-                                    {
+                            foreach (GameState client in Program.Values) {
+                                if (client.Map.ID == map.ID) {
+                                    if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, monster.X, monster.Y) <
+                                        Constants.nScreenDistance) {
                                         monster.CauseOfDeathIsMagic = false;
                                         monster.SendSpawn(client, false);
                                         client.Send(stringPacket);
-                                        if (monster.MaxHitpoints > 65535)
-                                        {
+                                        if (monster.MaxHitpoints > 65535) {
                                             Update upd = new Update(true) { UID = monster.UID };
                                             // upd.Append(Update.MaxHitpoints, monster.MaxHitpoints);
                                             upd.Append(Update.Hitpoints, monster.Hitpoints);
@@ -998,21 +958,17 @@ namespace MTA.Game
                         }
                     }
                 }
-                else
-                {
-                    if (monster.ToxicFogLeft > 0)
-                    {
-                        if (monster.MonsterInfo.Boss)
-                        {
+                else {
+                    if (monster.ToxicFogLeft > 0) {
+                        if (monster.MonsterInfo.Boss) {
                             monster.ToxicFogLeft = 0;
                             continue;
                         }
-                        if (now > monster.ToxicFogStamp.AddSeconds(2))
-                        {
+
+                        if (now > monster.ToxicFogStamp.AddSeconds(2)) {
                             monster.ToxicFogLeft--;
                             monster.ToxicFogStamp = now;
-                            if (monster.Hitpoints > 1)
-                            {
+                            if (monster.Hitpoints > 1) {
                                 uint damage = Attacking.Calculate.Percent(monster, monster.ToxicFogPercent);
                                 monster.Hitpoints -= damage;
                                 var suse = new SpellUse(true);
@@ -1026,8 +982,8 @@ namespace MTA.Game
                 }
             }
         }
-        public void SpawnMonsterNearToHero(MonsterInformation mt, GameState client)
-        {
+
+        public void SpawnMonsterNearToHero(MonsterInformation mt, GameState client) {
             if (mt == null) return;
             mt.RespawnTime = 36000;
             Entity entity = new Entity(EntityFlag.Monster, false);
@@ -1048,12 +1004,12 @@ namespace MTA.Game
             AddEntity(entity);
             entity.SendSpawn(client);
         }
-        public void Spawnthis(MonsterInformation mt, GameState client, ushort ID, ushort x, ushort y)
-        {
-            if (mt == null)
-            {
+
+        public void Spawnthis(MonsterInformation mt, GameState client, ushort ID, ushort x, ushort y) {
+            if (mt == null) {
                 return;
             }
+
             mt.RespawnTime = 36000;
             Entity entity = new Entity(EntityFlag.Monster, false);
             entity.MapObjType = MapObjectType.Monster;
@@ -1073,82 +1029,80 @@ namespace MTA.Game
             AddEntity(entity);
             entity.SendSpawn(client);
         }
-        public Map MakeDynamicMap()
-        {
+
+        public Map MakeDynamicMap() {
             ushort id = (ushort)DynamicIDs.Next;
             Map myDynamic = new Map(id, ID, Path);
             return myDynamic;
         }
+
         bool disposed;
-        public void Dispose()
-        {
+
+        public void Dispose() {
             if (!disposed)
                 Kernel.Maps.Remove(ID);
 
             disposed = true;
         }
 
-        public void RemoveNpc(INpc npc, bool query = false)
-        {
-            if (Npcs.ContainsKey(npc.UID) || query)
-            {
+        public void RemoveNpc(INpc npc, bool query = false) {
+            if (Npcs.ContainsKey(npc.UID) || query) {
                 if (!query)
                     Npcs.Remove(npc.UID);
+
                 #region Setting the near coords invalid to avoid unpickable items.
+
                 Floor[npc.X, npc.Y, MapObjectType.InvalidCast] = true;
-                if (npc.Mesh / 10 != 108 && (byte)npc.Type < 10)
-                {
+                if (npc.Mesh / 10 != 108 && (byte)npc.Type < 10) {
                     ushort x = npc.X, Y = npc.Y;
-                    foreach (Enums.ConquerAngle angle in Angles)
-                    {
+                    foreach (Enums.ConquerAngle angle in Angles) {
                         ushort xX = x, yY = Y;
                         UpdateCoordonatesForAngle(ref xX, ref yY, angle);
                         Floor[xX, yY, MapObjectType.InvalidCast] = true;
                     }
                 }
+
                 #endregion
             }
         }
-
     }
-    public class Floor
-    {
+
+    public class Floor {
         [Flags]
-        public enum DMapPointFlag : byte
-        {
+        public enum DMapPointFlag : byte {
             Invalid = 1,
             Monster = 2,
             Npc,
             Item = 4,
             RaceItem = 8
         }
-        public class Size
-        {
+
+        public class Size {
             public int Width, Height;
-            public Size(int width, int height)
-            {
+
+            public Size(int width, int height) {
                 Width = width;
                 Height = height;
             }
-            public Size()
-            {
+
+            public Size() {
                 Width = 0;
                 Height = 0;
             }
         }
+
         public Size Bounds;
         public DMapPointFlag[,] Locations;
         public uint FloorMapId;
-        public Floor(int width, int height, uint mapId)
-        {
+
+        public Floor(int width, int height, uint mapId) {
             FloorMapId = mapId;
             Bounds = new Size(width, height);
             Locations = new DMapPointFlag[width, height];
         }
-        public bool this[int x, int y, MapObjectType type, object obj = null]
-        {
-            get
-            {
+
+        public bool this[int x, int y, MapObjectType type, object obj = null] {
+            get {
                 if (y >= Bounds.Height || x >= Bounds.Width || x < 0 || y < 0)
                     return false;
 
@@ -1160,8 +1114,7 @@ namespace MTA.Game
                     return false;
                 if (type == MapObjectType.Player)
                     return true;
-                else
-                {
+                else {
                     if (type == MapObjectType.Npc)
                         return (filltype & DMapPointFlag.Npc) != DMapPointFlag.Npc;
                     if (type == MapObjectType.Monster)
@@ -1171,16 +1124,15 @@ namespace MTA.Game
                     if (type == MapObjectType.StaticEntity)
                         return (filltype & DMapPointFlag.RaceItem) != DMapPointFlag.RaceItem;
                 }
+
                 return false;
             }
-            set
-            {
+            set {
                 if (y >= Bounds.Height || x >= Bounds.Width || x < 0 || y < 0)
                     return;
                 DMapPointFlag filltype = Locations[x, y];
 
-                if (value)
-                {
+                if (value) {
                     if (type == MapObjectType.InvalidCast)
                         TakeFlag(x, y, DMapPointFlag.Invalid);
                     if (type == MapObjectType.Item)
@@ -1192,8 +1144,7 @@ namespace MTA.Game
                     if (type == MapObjectType.StaticEntity)
                         TakeFlag(x, y, DMapPointFlag.RaceItem);
                 }
-                else
-                {
+                else {
                     if (type == MapObjectType.InvalidCast)
                         AddFlag(x, y, DMapPointFlag.Invalid);
                     if (type == MapObjectType.Npc)
@@ -1207,25 +1158,32 @@ namespace MTA.Game
                 }
             }
         }
-        public DMapPointFlag AddFlag(int x, int y, DMapPointFlag extraFlag)
-        {
+
+        public DMapPointFlag AddFlag(int x, int y, DMapPointFlag extraFlag) {
             Locations[x, y] |= extraFlag;
             return Locations[x, y];
         }
-        public DMapPointFlag TakeFlag(int x, int y, DMapPointFlag extraFlag)
-        {
+
+        public DMapPointFlag TakeFlag(int x, int y, DMapPointFlag extraFlag) {
             Locations[x, y] &= ~extraFlag;
             return Locations[x, y];
         }
     }
-    public enum MapObjectType
-    {
-        SobNpc, Npc, Item, Monster, Player, Nothing, InvalidCast, StaticEntity
+
+    public enum MapObjectType {
+        SobNpc,
+        Npc,
+        Item,
+        Monster,
+        Player,
+        Nothing,
+        InvalidCast,
+        StaticEntity
     }
-    public class Portal
-    {
-        public Portal(ushort currentMapId, ushort currentX, ushort currentY, ushort destinationMapId, ushort destinationX, ushort destinationY)
-        {
+
+    public class Portal {
+        public Portal(ushort currentMapId, ushort currentX, ushort currentY, ushort destinationMapId,
+            ushort destinationX, ushort destinationY) {
             CurrentMapID = currentMapId;
             CurrentX = currentX;
             CurrentY = currentY;
@@ -1233,39 +1191,13 @@ namespace MTA.Game
             DestinationX = destinationX;
             DestinationY = destinationY;
         }
-        public Portal()
-        {
 
-        }
-        public ushort CurrentMapID
-        {
-            get;
-            set;
-        }
-        public ushort CurrentX
-        {
-            get;
-            set;
-        }
-        public ushort CurrentY
-        {
-            get;
-            set;
-        }
-        public ushort DestinationMapID
-        {
-            get;
-            set;
-        }
-        public ushort DestinationX
-        {
-            get;
-            set;
-        }
-        public ushort DestinationY
-        {
-            get;
-            set;
-        }
+        public Portal() { }
+        public ushort CurrentMapID { get; set; }
+        public ushort CurrentX { get; set; }
+        public ushort CurrentY { get; set; }
+        public ushort DestinationMapID { get; set; }
+        public ushort DestinationX { get; set; }
+        public ushort DestinationY { get; set; }
     }
 }
