@@ -5,7 +5,7 @@ using MTA.Database;
 using MTA.Game.Events.CpCastle;
 using MTA.Game.Events.DizzyLand;
 using MTA.Game.Events.SteedRace;
-using MTA.Game.Events.TreasureHunt;
+using MTA.Game.Events.TreasureInTheBlue;
 
 namespace MTA.Game.Events;
 
@@ -109,7 +109,7 @@ public static class EventScheduler {
         RegisterEvent(new CpCastleEvent());
         RegisterEvent(new SteedRaceEvent());
         RegisterEvent(new DizzyLandEvent());
-        RegisterEvent(new TreasureHuntEvent());
+        RegisterEvent(new TreasureInTheBlueEvent());
     }
 
     /// <summary>
