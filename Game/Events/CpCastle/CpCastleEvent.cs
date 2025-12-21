@@ -1,202 +1,144 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using MTA.Database;
 using MTA.Network.GamePackets;
 
-namespace MTA.Game.Events.CpCastle
-{
-    /// <summary>
-    /// CP Castle Event
-    /// </summary>
-    public class CpCastleEvent : BaseEvent
-    {
-        public override string EventId => "CP_CASTLE";
-        public override string EventName => "CP Castle Event";
+namespace MTA.Game.Events.CpCastle;
 
-        private const int EVENT_START_HOUR_1 = 14;
-        private const int EVENT_START_HOUR_2 = 20;
-        private const int EVENT_DURATION_MINUTES = 30;
-        private const int WARNING_TIME_10_MIN = 10;
-        private const int WARNING_TIME_5_MIN = 5;
+/// <summary>
+///     CP Castle Event
+/// </summary>
+public class CpCastleEvent : BaseEvent {
+    private const int EventStartHour1 = 14;
+    private const int EventStartHour2 = 20;
+    private const int WarningTime10Min = 10;
+    private const int WarningTime5Min = 5;
 
-        // Castle map IDs
-        private static readonly ushort[] CASTLE_MAPS = [MapConstants.CP_CASTLE_BEGINNER, MapConstants.CP_CASTLE_ADVANCED];
-        private const ushort TWIN_CITY_X = 300;
-        private const ushort TWIN_CITY_Y = 280;
+    private const ushort TwinCityX = 300;
+    private const ushort TwinCityY = 280;
 
-        private DateTime? _lastWarning10Min;
-        private DateTime? _lastWarning5Min;
+    // Castle map IDs
+    private static readonly ushort[] CastleMaps =
+        [MapConstants.CP_CASTLE_BEGINNER, MapConstants.CP_CASTLE_ADVANCED];
 
-        public override IEnumerable<EventSchedule> GetSchedules()
-        {
-            // Event start times
-            yield return new EventSchedule(EVENT_START_HOUR_1, 0);
-            yield return new EventSchedule(EVENT_START_HOUR_2, 0);
-        }
+    private DateTime? _lastWarning10Min;
+    private DateTime? _lastWarning5Min;
+    public override string EventId => "CP_CASTLE";
+    public override string EventName => "CP Castle Event";
+    public override int? EventDurationMinutes => 30;
 
-        public override bool ShouldTrigger(DateTime now)
-        {
-            // Check if event should start
-            if ((now.Hour == EVENT_START_HOUR_1 || now.Hour == EVENT_START_HOUR_2) && now is { Minute: 0, Second: 0 })
-            {
-                return true;
-            }
+    /// <inheritdoc />
+    public override IEnumerable<EventSchedule> GetSchedules() {
+        // Event start times
+        yield return new EventSchedule(EventStartHour1, 0);
+        yield return new EventSchedule(EventStartHour2, 0);
+    }
 
-            // Check if event should end
-            if (IsActive)
-            {
-                if (EventStartTime.HasValue)
-                {
-                    var elapsed = now - EventStartTime.Value;
-                    if (elapsed.TotalMinutes >= EVENT_DURATION_MINUTES)
-                    {
-                        return true; // Trigger end
-                    }
-                }
-            }
+    /// <inheritdoc />
+    public override void OnStart() {
+        base.OnStart();
 
-            return false;
-        }
+        AutoInviteAllPlayers("The CP Castle event has begun! Would you like to join?", MapConstants.TWIN_CITY, 288,
+            280);
 
-        public override void OnStart()
-        {
-            base.OnStart();
+        Kernel.SendWorldMessage(new Message("The CP Castle event has begun!", Color.White, Message.Center),
+            Program.Values);
 
-            BroadcastMessage("Hurry! The CP Castle Event has begun! Log in now to participate!", Color.White, Message.Service);
+        EnsureMonsterRespawns([MapConstants.CP_CASTLE_BEGINNER, MapConstants.CP_CASTLE_ADVANCED], ["Captain"], 10);
+    }
 
-            // Auto-invite all players
-            foreach (var client in Program.Values)
-            {
-                client.MessageBox("The CP Castle Event has begun! Would you like to join?",
-                   p => { p.Entity.Teleport(MapConstants.TWIN_CITY, 288, 280); }, null, 60);
-            }
+    /// <inheritdoc />
+    public override void OnEnd() {
+        base.OnEnd();
 
-            Kernel.SendWorldMessage(new Message("The CP Castle War has begun!", Color.White, Message.Center), Program.Values);
+        BroadcastMessage("The CP Castle event has ended. See you next time!", Color.White);
 
-            EnsureMonsterRespawns([MapConstants.CP_CASTLE_BEGINNER, MapConstants.CP_CASTLE_ADVANCED], ["Captain"], 10);
-        }
+        // Teleport all players out of castle maps
+        TeleportPlayersFromMaps(CastleMaps, MapConstants.TWIN_CITY, TwinCityX, TwinCityY);
+    }
 
-        public override void OnEnd()
-        {
-            base.OnEnd();
+    /// <inheritdoc />
+    public override void OnUpdate(DateTime now) {
+        // Check duration and end event if needed
+        base.OnUpdate(now);
 
-            BroadcastMessage("The CP Castle Event has ended. See you next time!", Color.White);
+        if (!IsActive || !EventStartTime.HasValue)
+            return;
 
-            // Teleport all players out of castle maps
-            TeleportPlayersFromMaps(CASTLE_MAPS, MapConstants.TWIN_CITY, TWIN_CITY_X, TWIN_CITY_Y);
-        }
+        var elapsed = now - EventStartTime.Value;
+        var remainingMinutes = EventDurationMinutes!.Value - elapsed.TotalMinutes;
 
-        public override void OnUpdate(DateTime now)
-        {
-            if (!IsActive || !EventStartTime.HasValue)
-                return;
-
-            var elapsed = now - EventStartTime.Value;
-            var remainingMinutes = EVENT_DURATION_MINUTES - elapsed.TotalMinutes;
-
-            // Check for end condition
-            if (remainingMinutes <= 0)
-            {
-                OnEnd();
-                return;
-            }
-
+        switch (remainingMinutes) {
             // Warning messages (only show once per event)
-            if (remainingMinutes <= WARNING_TIME_10_MIN && _lastWarning10Min != EventStartTime)
-            {
-                BroadcastMessage("The CP Castle Event will end in 10 minutes. Hurry to get your rewards!", Color.White);
+            case <= WarningTime10Min when _lastWarning10Min != EventStartTime:
+                BroadcastMessage("The CP Castle event will end in 10 minutes. Hurry to get your rewards!", Color.White);
                 _lastWarning10Min = EventStartTime;
-            }
-            else if (remainingMinutes <= WARNING_TIME_5_MIN && _lastWarning5Min != EventStartTime)
-            {
-                BroadcastMessage("The CP Castle Event will end in 5 minutes. Hurry to get your rewards!", Color.White);
+                break;
+            case <= WarningTime5Min when _lastWarning5Min != EventStartTime:
+                BroadcastMessage("The CP Castle event will end in 5 minutes. Hurry to get your rewards!", Color.White);
                 _lastWarning5Min = EventStartTime;
-            }
+                break;
         }
+    }
 
-        /// <summary>
-        /// Check if event is currently active (for NPC checks)
-        /// </summary>
-        public static bool IsEventActive()
-        {
-            var gameEvent = EventScheduler.GetEvent("CP_CASTLE");
-            if (gameEvent == null || gameEvent is not CpCastleEvent cpCastleEvent || !cpCastleEvent.IsActive)
-                return false;
+    /// <summary>
+    ///     Handle monster death for CP Castle event
+    /// </summary>
+    /// <param name="monster">The monster that was killed</param>
+    /// <param name="killer">The entity that killed the monster</param>
+    public override void OnMonsterKilled(MonsterInformation monster, Entity killer) {
+        // Only handle Captain monsters in CP Castle maps (3030, 3031, 3032, 3033) during active event
+        if (!IsActive)
+            return;
 
-            var now = DateTime.Now;
-            if (!cpCastleEvent.EventStartTime.HasValue)
-                return false;
+        // Check if monster is in any CP Castle map
+        var mapId = monster.Owner.MapID;
+        if (mapId != MapConstants.CP_CASTLE_BEGINNER && mapId != MapConstants.CP_CASTLE_ADVANCED)
+            return;
 
-            var elapsed = now - cpCastleEvent.EventStartTime.Value;
-            return elapsed.TotalMinutes < EVENT_DURATION_MINUTES;
-        }
+        if (monster.Name != "Captain")
+            return;
 
-        /// <summary>
-        /// Handle monster death for CP Castle event
-        /// </summary>
-        public override void OnMonsterKilled(Database.MonsterInformation monster, Entity killer)
-        {
-            // Only handle Captain monsters in CP Castle maps (3030, 3031, 3032, 3033) during active event
-            if (!IsActive)
-                return;
+        CpCastleRewards.OnMonsterKilled(killer.Owner, monster.Name, monster.Owner.MapID);
+    }
 
-            if (monster.Owner == null)
-                return;
+    /// <summary>
+    ///     Skip normal drop for Captain in CP Castle map when event is active
+    ///     Event system handles rewards
+    /// </summary>
+    /// <param name="monster">The monster that was killed</param>
+    /// <param name="mapId">The map ID of the monster</param>
+    public override bool ShouldSkipNormalDrop(MonsterInformation monster, ushort mapId) {
+        // Skip normal CP drop for Captain in any CP Castle map when event is active
+        if (!IsActive)
+            return false;
 
-            // Check if monster is in any CP Castle map
-            ushort mapId = monster.Owner.MapID;
-            if (mapId != MapConstants.CP_CASTLE_BEGINNER && mapId != MapConstants.CP_CASTLE_ADVANCED)
-                return;
+        var ownerMapId = monster.Owner.MapID;
+        return ownerMapId is MapConstants.CP_CASTLE_BEGINNER or MapConstants.CP_CASTLE_ADVANCED &&
+               monster.Name == "Captain";
+    }
 
-            if (monster.Name != "Captain")
-                return;
+    /// <summary>
+    ///     Send pre-event warnings (called from World.cs for timing before event starts)
+    /// </summary>
+    /// <param name="now">The current date and time</param>
+    public static void SendPreEventWarnings(DateTime now) {
+        // 5 minutes before (13:55 / 19:55)
+        if (now is { Hour: EventStartHour1 - 1, Minute: 55, Second: 0 } ||
+            now is { Hour: EventStartHour2 - 1, Minute: 55, Second: 0 })
+            foreach (var client in Program.Values)
+                client.Send(new Message("The CP Castle Event will begin in 5 minutes. Get ready!", Message.System));
 
-            if (killer.Owner != null)
-            {
-                // Give rewards for killing Captain during CP Castle event
-                CpCastleRewards.OnMonsterKilled(killer.Owner, monster.Name, monster.Owner.MapID);
-            }
-        }
-
-        /// <summary>
-        /// Skip normal drop for Captain in CP Castle map when event is active
-        /// Event system handles rewards
-        /// </summary>
-        public override bool ShouldSkipNormalDrop(Database.MonsterInformation monster, ushort mapId)
-        {
-            // Skip normal CP drop for Captain in any CP Castle map when event is active
-            if (!IsActive || monster.Owner == null)
-                return false;
-
-            ushort ownerMapId = monster.Owner.MapID;
-            return (ownerMapId == MapConstants.CP_CASTLE_BEGINNER || ownerMapId == MapConstants.CP_CASTLE_ADVANCED) && monster.Name == "Captain";
-        }
-
-        /// <summary>
-        /// Send pre-event warnings (called from World.cs for timing before event starts)
-        /// </summary>
-        public static void SendPreEventWarnings(DateTime now)
-        {
-            // 5 minutes before (13:55 / 19:55)
-            if (now is { Hour: EVENT_START_HOUR_1 - 1, Minute: 55, Second: 0 } ||
-                now is { Hour: EVENT_START_HOUR_2 - 1, Minute: 55, Second: 0 })
-            {
-                foreach (var client in Program.Values)
-                {
-                    client.Send(new Message("The CP Castle Event will begin in 5 minutes. Get ready!", Message.System));
-                }
-            }
-
+        switch (now) {
             // 10 seconds before (13:59:50 / 19:59:50)
-            if (now is { Hour: EVENT_START_HOUR_1 - 1, Minute: 59, Second: 50 } ||
-                now is { Hour: EVENT_START_HOUR_2 - 1, Minute: 59, Second: 50 })
-            {
+            case { Hour: EventStartHour1 - 1, Minute: 59, Second: 50 }:
+            case { Hour: EventStartHour2 - 1, Minute: 59, Second: 50 }: {
                 foreach (var client in Program.Values)
-                {
-                    client.Send(new Message("The CP Castle Event will begin in 10 seconds. Get ready!", Message.System));
-                }
+                    client.Send(new Message("The CP Castle Event will begin in 10 seconds. Get ready!",
+                        Message.System));
+                break;
             }
         }
     }
 }
-

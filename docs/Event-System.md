@@ -9,8 +9,27 @@ Centralized scheduled event management framework. All event logic, timing, and r
 | Component | Purpose |
 |-----------|---------|
 | `IEvent.cs` | Interface defining event contract |
-| `BaseEvent.cs` | Base class with common functionality (GM overrides, helpers) |
+| `BaseEvent.cs` | Base class with common functionality (GM overrides, helpers, automatic scheduling) |
 | `EventScheduler.cs` | Central manager - registers events, handles timing, monster kills |
+
+### Architecture Flow
+
+```
+GetSchedules() → Define when event starts (once)
+    ↓
+Base.ShouldTrigger() → Automatically checks schedules
+    ↓
+OnStart() → Event begins
+    ↓
+OnUpdate() → base.OnUpdate() checks EventDurationMinutes
+    ↓
+OnEnd() → Event ends (called automatically if duration exceeded)
+```
+
+**Key Benefits:**
+- **No Redundancy**: Define schedules once, use automatically
+- **Automatic Ending**: Set `EventDurationMinutes`, base class handles it
+- **Self-Contained**: Events handle their own packets via `HandlePacket()`
 
 ### Folder Structure
 
@@ -41,26 +60,21 @@ namespace MTA.Game.Events.MyNewEvent
         private const int EVENT_START_HOUR = 12;
         private const int EVENT_DURATION_MINUTES = 60;
 
+        /// <summary>
+        /// Event duration in minutes. Set to null for events without automatic duration-based ending.
+        /// </summary>
+        protected override int? EventDurationMinutes => EVENT_DURATION_MINUTES;
+
+        /// <summary>
+        /// Define when the event should start. Base class automatically handles triggering.
+        /// </summary>
         public override IEnumerable<EventSchedule> GetSchedules()
         {
+            // Event runs every day at 12:00:00
             yield return new EventSchedule(EVENT_START_HOUR, 0, 0);
         }
 
-        public override bool ShouldTrigger(DateTime now)
-        {
-            // Start check
-            if (now.Hour == EVENT_START_HOUR && now.Minute == 0 && now.Second == 0)
-                return true;
-
-            // End check
-            if (IsActive && EventStartTime.HasValue)
-            {
-                var elapsed = now - EventStartTime.Value;
-                if (elapsed.TotalMinutes >= EVENT_DURATION_MINUTES)
-                    return true;
-            }
-            return false;
-        }
+        // No need to override ShouldTrigger() - base class automatically checks GetSchedules()
 
         public override void OnStart()
         {
@@ -78,6 +92,9 @@ namespace MTA.Game.Events.MyNewEvent
 
         public override void OnUpdate(DateTime now)
         {
+            // Always call base.OnUpdate() first to preserve automatic duration checking
+            base.OnUpdate(now);
+            
             if (!IsActive || !EventStartTime.HasValue) return;
 
             var elapsed = now - EventStartTime.Value;
@@ -86,9 +103,8 @@ namespace MTA.Game.Events.MyNewEvent
             // Warnings
             if (remaining <= 10 && remaining > 9.9)
                 BroadcastMessage("Ending in 10 minutes!", Color.White, Message.System);
-
-            // Auto-end
-            if (remaining <= 0) OnEnd();
+            
+            // Note: Duration-based ending is handled automatically by base.OnUpdate()
         }
 
         // Optional: Handle monster kills
@@ -103,6 +119,17 @@ namespace MTA.Game.Events.MyNewEvent
         public override bool ShouldSkipNormalDrop(Database.MonsterInformation monster, ushort mapId)
         {
             return IsActive && mapId == MapConstants.MY_MAP && monster.Name == "SpecialMonster";
+        }
+
+        // Optional: Handle packets
+        public override bool HandlePacket(Client.GameState client, byte[] packet, ushort packetId)
+        {
+            if (packetId == Data.MyCustomPacket && IsActive)
+            {
+                // Handle the packet
+                return true; // Packet was handled
+            }
+            return false; // Let packet fall through to normal processing
         }
     }
 }
@@ -140,6 +167,8 @@ RegisterEvent(new MTA.Game.Events.MyNewEvent.MyNewEvent());
 
 ## Event Scheduling
 
+**Key Principle:** Define schedules once in `GetSchedules()`. The base `ShouldTrigger()` automatically checks these schedules - no need to override it!
+
 ```csharp
 // Every day at 14:00
 yield return new EventSchedule(14, 0, 0);
@@ -149,10 +178,46 @@ yield return new EventSchedule(20, 0, 0, DayOfWeek.Monday);
 
 // Every day at 12:30:45
 yield return new EventSchedule(12, 30, 45);
+
+// Multiple times per day
+yield return new EventSchedule(14, 0, 0);  // 2:00 PM
+yield return new EventSchedule(20, 0, 0);  // 8:00 PM
+
+// Weekdays only (Monday-Friday)
+yield return new EventSchedule(15, 0, 0, DayOfWeek.Monday);
+yield return new EventSchedule(15, 0, 0, DayOfWeek.Tuesday);
+yield return new EventSchedule(15, 0, 0, DayOfWeek.Wednesday);
+yield return new EventSchedule(15, 0, 0, DayOfWeek.Thursday);
+yield return new EventSchedule(15, 0, 0, DayOfWeek.Friday);
 ```
 
-## BaseEvent Helper Methods
+## Duration-Based Ending
 
+Events can automatically end after a specified duration using the `EventDurationMinutes` property:
+
+```csharp
+/// <summary>
+/// Event duration in minutes. Set to null for events without automatic ending.
+/// </summary>
+protected override int? EventDurationMinutes => 30; // Event ends 30 minutes after start
+```
+
+**How it works:**
+- Base `OnUpdate()` automatically checks duration
+- If duration exceeded, calls `OnEnd()` automatically
+- Always call `base.OnUpdate(now)` first in your override to preserve this behavior
+
+## BaseEvent Properties & Methods
+
+### Properties
+| Property | Purpose |
+|----------|---------|
+| `EventDurationMinutes` | Override to set event duration (null = no automatic ending) |
+| `IsActive` | Whether event is currently running |
+| `EventStartTime` | When the event started (protected) |
+| `EventEndTime` | When the event ended (protected) |
+
+### Helper Methods
 | Method | Purpose |
 |--------|---------|
 | `BroadcastMessage()` | Send message to all players |
@@ -185,13 +250,55 @@ yield return new EventSchedule(12, 30, 45);
 |--------|----------|---------|
 | `EventId` | Yes | Unique identifier |
 | `EventName` | Yes | Display name |
-| `GetSchedules()` | Yes | Return scheduled times |
-| `ShouldTrigger()` | Yes | Check if event should start/end |
+| `GetSchedules()` | Yes | Return scheduled start times |
+| `ShouldTrigger()` | **No** | **Base class handles automatically** - checks `GetSchedules()` |
 | `OnStart()` | Yes | Called when event begins |
 | `OnEnd()` | Yes | Called when event ends |
-| `OnUpdate()` | No | Called every second while active |
+| `OnUpdate()` | No | Called every second while active. **Always call `base.OnUpdate(now)` first** |
 | `OnMonsterKilled()` | No | Handle monster death rewards |
 | `ShouldSkipNormalDrop()` | No | Skip normal drops for event monsters |
+| `HandlePacket()` | No | Handle incoming packets (self-contained integration) |
+
+**Important:** You should **NOT** override `ShouldTrigger()` unless you have a very specific reason. The base implementation automatically checks your `GetSchedules()` and handles start times. For end times, use `EventDurationMinutes` and let `base.OnUpdate()` handle it.
+
+## Packet Handling (Self-Contained Integration)
+
+Events can handle their own packets without modifying `PacketHandler.cs`. This keeps events completely self-contained.
+
+### How It Works
+
+1. **Override `HandlePacket()`**: Implement packet handling directly in your event class
+2. **Check packet ID**: Return `true` if handled, `false` to let it fall through
+3. **No registration needed**: The system automatically calls `HandlePacket()` for all active events
+
+### Example
+
+```csharp
+/// <summary>
+/// Handle incoming packets - self-contained event integration
+/// </summary>
+public override bool HandlePacket(Client.GameState client, byte[] packet, ushort packetId)
+{
+    // Only handle specific packet when event is active
+    if (packetId == Data.FinishSteedRace && IsActive)
+    {
+        if (client.Entity.MapID == _currentMapId)
+        {
+            FinishRace(client);
+            return true; // Packet was handled
+        }
+    }
+    
+    return false; // Let packet fall through to normal processing
+}
+```
+
+**Important:** 
+- Always check `IsActive` before handling packets
+- Return `true` only if you actually handled the packet
+- Return `false` to let the packet continue to normal processing
+- Packet handlers are checked **before** the normal switch statement, so they take priority
+- For Data packets (packet type 10010), the `packetId` parameter contains the command ID (e.g., `Data.FinishSteedRace = 402`), not the packet type
 
 ## Integration Points
 
@@ -199,21 +306,47 @@ yield return new EventSchedule(12, 30, 45);
 - **MonsterTable.cs**: Calls `EventScheduler.OnMonsterKilled()`, checks `EventScheduler.ShouldSkipNormalDrop()`
 - **NPC Handlers**: Check status via `EventScheduler.GetEvent()` and `IsActive` property
 - **GM Commands**: `EventCommands.cs` handles event control
+- **PacketHandler.cs**: Automatically calls `HandlePacket()` on all active events before normal processing
 
-## Example
+## Examples
 
+### SteedRace Event
+See `SteedRace/` folder for complete implementation:
+- Weekday-only scheduling (Monday-Friday at 15:00)
+- Duration-based ending (31 minutes)
+- Packet handling via `HandlePacket()`
+- Custom update logic (invitations, gate opening)
+- Shared constants in `SteedRaceConstants.cs`
+
+### CpCastle Event
 See `CpCastle/` folder for complete implementation:
-- Multiple scheduled times per day
-- Duration-based ending
-- Warning messages
+- Multiple scheduled times per day (14:00 and 20:00)
+- Duration-based ending (30 minutes)
+- Warning messages (10 min and 5 min warnings)
 - Map-specific monster rewards
 - Monster respawn configuration
+
+## Architecture Principles
+
+### Single Source of Truth
+- **Define schedules once** in `GetSchedules()` - base class automatically uses them
+- **No redundancy** - don't override `ShouldTrigger()` to re-check the same times
+- **Duration-based ending** - use `EventDurationMinutes` instead of time-based end checks
+
+### Automatic Handling
+- Base `ShouldTrigger()` automatically checks `GetSchedules()` for start times
+- Base `OnUpdate()` automatically checks `EventDurationMinutes` for end times
+- Only override when you need custom behavior
 
 ## Best Practices
 
 1. **Centralize**: Keep all event code in the event's folder
 2. **Constants**: Define map IDs, times, durations as constants
-3. **Override selectively**: Only override methods you need
-4. **Null checks**: Always check `IsActive` and null values
-5. **Clear messages**: Use descriptive broadcast messages
-6. **Monster respawns**: Call `EnsureMonsterRespawns()` in `OnStart()` if needed
+3. **Don't override `ShouldTrigger()`**: Use `GetSchedules()` - base class handles it automatically
+4. **Use `EventDurationMinutes`**: For duration-based ending instead of time checks
+5. **Always call `base.OnUpdate(now)`**: First in your override to preserve duration checking
+6. **Null checks**: Always check `IsActive` and null values
+7. **Clear messages**: Use descriptive broadcast messages
+8. **Monster respawns**: Call `EnsureMonsterRespawns()` in `OnStart()` if needed
+9. **Packet handling**: Override `HandlePacket()` for self-contained integration
+10. **No PacketHandler modifications**: Never add event-specific code to `PacketHandler.cs` - use `HandlePacket()` instead

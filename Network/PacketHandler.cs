@@ -13,6 +13,7 @@ using MTA.Client.Commands;
 using MTA.Database;
 using MTA.Game;
 using MTA.Game.Attacking;
+using MTA.Game.Events;
 using MTA.Game.ConquerStructures;
 using MTA.Game.ConquerStructures.House;
 using MTA.Game.ConquerStructures.Society;
@@ -159,6 +160,18 @@ namespace MTA.Network {
             }
 
             #endregion
+
+            // Check if any active event wants to handle this packet
+            // Only intercept if the handler actually processes it (returns true)
+            // For Data packets (10010), pass the command ID (gData.ID) instead of the packet type
+            ushort packetIdForEvent = (ID == 10010) ? (ushort)gData.ID : ID;
+            foreach (var gameEvent in EventScheduler.GetAllEvents())
+            {
+                if (gameEvent.IsActive && gameEvent.HandlePacket(client, packet, packetIdForEvent))
+                {
+                    return; // Packet was handled by event
+                }
+            }
 
             var _stream = new BinaryReader(new MemoryStream(packet));
             switch (ID) {
@@ -6811,10 +6824,6 @@ namespace MTA.Network {
                     client.JustOpenedDetain = !client.JustOpenedDetain;
                     break;
                 }
-                    //case Data.FinishSteedRace:
-                    if (client.Entity.MapID == SteedRace.MAPID)
-                        //Program.World.SteedRace.FinishRace(client);
-                        break;
                 case 440: //AddPersonToBlackList
                 {
                     var targetname = UnicodeEncoding.UTF8.GetString(packet, 43, packet[42]).Replace("/0", "");
@@ -24535,19 +24544,14 @@ namespace MTA.Network {
             if (!client.Entity.Move(groundMovement.Direction,
                     groundMovement.GroundMovementType == GroundMovement.Slide)) return;
 
-            if (client.Entity.MapID == SteedRace.MAPID) {
-                // if (!Program.World.SteedRace.IsOn)
-                {
-                    // if (client.Entity.X <= Program.World.SteedRace.GateX + 1)
-                    {
-                        client.Entity.Teleport(client.Entity.PX, client.Entity.PY);
-                        return;
-                    }
+            var raceEvent = Game.Events.EventScheduler.GetEvent("STEED_RACE") as Game.Events.SteedRace.SteedRaceEvent;
+            if (raceEvent != null && client.Entity.MapID == raceEvent.CurrentMapId) {
+                if (!raceEvent.IsActive) {
+                    client.Entity.Teleport(client.Entity.PX, client.Entity.PY);
+                    return;
                 }
-            }
-
-            if (client.Entity.MapID == SteedRace.MAPID)
                 CheckForRaceItems(client);
+            }
             if (client.Entity.MapID == CaptureTheFlag.MapID)
                 CheckForFlag(client);
 

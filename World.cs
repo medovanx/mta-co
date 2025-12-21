@@ -53,7 +53,6 @@ namespace MTA {
         public bool PureLand, MonthlyPkWar;
         public HeroOfGame HeroOfGame;
         public DelayedTask DelayedTask;
-        public SteedRace SteedRace;
         public DateTime MonthlyPkDate;
         public DateTime NextMonthlyPkDate;
 
@@ -274,7 +273,6 @@ namespace MTA {
             _ = new GuildScoreWar();
             _ = new MaTrix.Lobby();
             _ = new MaTrix.GuildPoleWar();
-            SteedRace = new SteedRace();
             HeroOfGame = new HeroOfGame();
             ElitePKTournament.Create();
 

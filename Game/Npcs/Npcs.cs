@@ -11,6 +11,7 @@ using MTA.Game;
 using MTA.Game.Attacking;
 using MTA.Game.ConquerStructures;
 using MTA.Game.ConquerStructures.House;
+using MTA.Game.Events;
 using MTA.Game.Features;
 using MTA.Game.Features.Tournaments;
 using MTA.Game.Npcs;
@@ -14259,127 +14260,6 @@ namespace MTA {
 
                 #endregion
 
-                #region HorseRace
-
-                #region HorseRaceIn
-
-                case 4488521: {
-                    switch (npcRequest.OptionID) {
-                        case 0: {
-                            dialog.Text("Hey there " + client.Entity.Name +
-                                        "! The race is held every two hours, on even hours(0,2,4,..). Are you interested in joining the race? You might receive amazing gifts upon reaching the finish line!");
-                            dialog.Option("Yes, please.", 1);
-                            dialog.Option("Open the shop.", 2);
-                            dialog.Option("I don't care.", 255);
-                            dialog.Send();
-                            break;
-                        }
-                        case 1: {
-                            DateTime now = DateTime.Now;
-                            //bool rightHour = now.Hour == 8 || now.Hour == 12 || now.Hour == 18;
-                            bool rightHour = now.Hour == 1 || now.Hour == 2 || now.Hour == 3 ||
-                                             now.Hour == 4 || now.Hour == 5 || now.Hour == 6 || now.Hour == 7 ||
-                                             now.Hour == 8 || now.Hour == 9 || now.Hour == 10 || now.Hour == 11 ||
-                                             now.Hour == 12 || now.Hour == 13 || now.Hour == 14 || now.Hour == 15 ||
-                                             now.Hour == 16 || now.Hour == 17 || now.Hour == 18 || now.Hour == 19 ||
-                                             now.Hour == 20 || now.Hour == 21 || now.Hour == 22 || now.Hour == 23 ||
-                                             now.Hour == 24;
-                            if (rightHour) {
-                                if (now.Minute == 0) {
-                                    if (client.Equipment.Free(ConquerItem.Steed)) {
-                                        dialog.Text("You need a horse first.");
-                                        dialog.Option("I don't care.", 255);
-                                        dialog.Send();
-                                        return;
-                                    }
-
-                                    if (!client.Spells.ContainsKey(7001)) {
-                                        dialog.Text("You need to learn the ride spell first!");
-                                        dialog.Option("I don't care.", 255);
-                                        dialog.Send();
-                                        return;
-                                    }
-                                    //Program.World.SteedRace.Join(client);
-                                }
-                            }
-                            else {
-                                dialog.Text("HorseRace is held during HH:44 in every two hours.");
-                                dialog.Option("I don't care.", 255);
-                                dialog.Send();
-                                break;
-                            }
-
-                            break;
-                        }
-                        case 2: {
-                            INpc npc = null;
-                            if (client.Map.Npcs.TryGetValue(client.ActiveNpc, out npc)) {
-                                Data data = new Data(true);
-                                data.ID = Data.OpenWindow;
-                                data.UID = client.Entity.UID;
-                                data.TimeStamp = Time32.Now;
-                                data.dwParam = 464;
-                                data.wParam1 = npc.X;
-                                data.wParam2 = npc.Y;
-                                client.Send(data);
-                            }
-
-                            break;
-                        }
-                    }
-
-                    break;
-                }
-
-                #endregion
-
-                #region Winner of HorseRace
-
-                case 4488522: {
-                    switch (npcRequest.OptionID) {
-                        case 0: {
-                            dialog.Text("Hey there " + client.Entity.Name + " Would you like to claim your Prize?.");
-                            dialog.Option("Yes Please", 1);
-                            dialog.Option("I don't care.", 255);
-                            dialog.Send();
-                            break;
-                        }
-                        case 1: {
-                            //Program.World.SteedRace.FinishRace(client);
-                            client.Entity.ConquerPoints += 200;
-                            //Daily.CheackAlive();
-                            /*if (DateTime.Now.Minute >= 45 && DateTime.Now.Minute <= 59)
-                            {
-                                if (Game.Tournaments.SteedRace.IsRace)
-                                {
-                                    Game.Tournaments.SteedRace.GiveReward(client);
-                                    client.Entity.Teleport(1002, 302, 278);
-                                }
-                                else
-                                {
-                                    dialog.Text("Sorry SteedRace not running Atm so u cant claim any shit!");
-                                    dialog.Option("okay", 255);
-                                    dialog.Send();
-                                    break;
-                                }
-                            }
-                            else
-                            {
-                                dialog.Text("Hey there " + client.Entity.Name + "You can only claim the prize when the Tourment Online");
-                                dialog.Option("okay", 255);
-                                dialog.Send();
-                                break;
-                            }*/
-                            break;
-                        }
-                    }
-
-                    break;
-                }
-
-                #endregion
-
-                #endregion
 
                 #region Seller/moonbox/emerald 422 395
 
@@ -16978,41 +16858,6 @@ namespace MTA {
 
                 /////////////////
 
-                #region DizzyLand war
-
-                case 2314001:
-                    switch (npcRequest.OptionID) {
-                        case 0:
-                            dialog.Text("Hey there " + client.Entity.Name +
-                                        " Would you like to join the DizzyLand War?.");
-                            dialog.Option("Yes Please", 1);
-                            dialog.Option("I don't care.", 0xff);
-                            dialog.Send();
-                            break;
-
-                        case 1:
-                            if ((DateTime.Now.Minute >= MatrixTimes.Start.Dizzy) ||
-                                (DateTime.Now.Minute <= MatrixTimes.Start.Dizzy + 3)) {
-                                dialog.Text("DizzyLand War is held during xx:" + MatrixTimes.Start.Dizzy +
-                                            " in every Hour");
-                                dialog.Option("I don't care.", 0xff);
-                                dialog.Send();
-                            }
-                            else {
-                                client.Entity.RemoveFlag(Update.Flags.Ride);
-                                client.Entity.Teleport(0x22ad, 50, 50);
-                                if (!client.Entity.ContainsFlag(Update.Flags.Confused)) {
-                                    client.Entity.AddFlag(Update.Flags.Confused);
-                                }
-                            }
-
-                            break;
-                    }
-
-                    break;
-
-                #endregion
-
                 #region PrizeNPC
 
                 case 47: {
@@ -18959,7 +18804,7 @@ namespace MTA {
 
                 //////////
 
-                #region Cycolne Race
+                #region Cyclone Race
 
                 case 6520: {
                     switch (npcRequest.OptionID) {
@@ -18969,7 +18814,7 @@ namespace MTA {
                             break;
                         }
                         case 1:
-                            if (World.Cycolne3 && Entity.Speed == 0) {
+                            if (World._cyclone3 && Entity.Speed == 0) {
                                 //client.Entity.killerpoints += 50;
                                 client.Entity.race = 0;
                                 Entity.Speed++;
@@ -18979,11 +18824,11 @@ namespace MTA {
 
                                 Kernel.SendWorldMessage(
                                     new Message(
-                                        "Grtzz " + client.Entity.Name + " has Finesh Cycolne Speed Abd Won " + 2000000 +
+                                        "Grtzz " + client.Entity.Name + " has Finesh Cyclone Speed Abd Won " + 2000000 +
                                         " ConquerPoints AnD Soon Fast Won  Top in Server", Color.Red, Message.Center),
                                     Program.Values);
                                 client.Entity.RemoveFlag(Update.Flags.Cyclone);
-                                World.Cycolne3 = false;
+                                World._cyclone3 = false;
                             }
                             else {
                                 dialog.Text("Speed Finesh  " + client.Entity.Name + "U Most Not Be here");
@@ -18997,7 +18842,7 @@ namespace MTA {
 
                 #endregion soul Fight
 
-                #region Cycolne Fight
+                #region Cyclone Fight
 
                 case 36542: {
                     switch (npcRequest.OptionID) {
@@ -19008,7 +18853,7 @@ namespace MTA {
                             break;
                         }
                         case 1:
-                            if (World.Cycolne3) {
+                            if (World._cyclone3) {
                                 client.Entity.race = 1;
                                 dialog.Text("You Have Signed Up Wait 1 min ");
                                 dialog.Send();
@@ -19025,7 +18870,7 @@ namespace MTA {
                     break;
                 }
 
-                #endregion Cycolne Fight
+                #endregion Cyclone Fight
 
                 //////////
 
@@ -24112,9 +23957,9 @@ namespace MTA {
                             else {
                                 dialog.Text(
                                     "You may sign up during the first 5 minutes of the event! Monthly Pk War is held during the first Sunday of each month! This month's is held on " +
-                                    Program.World.MonthlyPKDate.ToString("dd MMMM yyyy") +
+                                    Program.World.MonthlyPkDate.ToString("dd MMMM yyyy") +
                                     " at 22:00. Next month is held on " +
-                                    Program.World.NextMonthlyPKDate.ToString("dd MMMM yyyy") + ".");
+                                    Program.World.NextMonthlyPkDate.ToString("dd MMMM yyyy") + ".");
                                 dialog.Option("I don't care.", 255);
                                 dialog.Send();
                                 break;
@@ -24571,7 +24416,7 @@ namespace MTA {
                             break;
                         }
                         case 1: {
-                            Daily.CheackAlive();
+                            Daily.CheckAlive();
                             var Now64 = DateTime.Now;
                             if (Now64.Minute is >= 47 and <= 48) {
                                 if (Daily.howmanyinmap == 1) {
