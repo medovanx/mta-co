@@ -17,7 +17,7 @@ public static class NpcPrizeCenterTeleporter {
     private const int CooldownMinutes = 3;
 
     // Track last teleport time per player (UID -> last teleport time)
-    private static readonly Dictionary<uint, DateTime> _lastTeleportTimes = new();
+    private static readonly Dictionary<uint, DateTime> LastTeleportTimes = new();
 
     public static void Handle(GameState client, NpcRequest npcRequest, MTA.Npcs dialog) {
         switch (npcRequest.OptionID) {
@@ -38,7 +38,7 @@ public static class NpcPrizeCenterTeleporter {
                 var playerId = client.Entity.UID;
 
                 // Check cooldown
-                if (_lastTeleportTimes.TryGetValue(playerId, out var lastTeleport)) {
+                if (LastTeleportTimes.TryGetValue(playerId, out var lastTeleport)) {
                     var timeSinceLastTeleport = DateTime.Now - lastTeleport;
                     if (timeSinceLastTeleport.TotalMinutes < CooldownMinutes) {
                         var remainingMinutes = CooldownMinutes - (int)timeSinceLastTeleport.TotalMinutes;
@@ -56,10 +56,10 @@ public static class NpcPrizeCenterTeleporter {
                 }
 
                 // Update last teleport time
-                _lastTeleportTimes[playerId] = DateTime.Now;
+                LastTeleportTimes[playerId] = DateTime.Now;
 
-                // Teleport to Prize Center (map 7010)
-                client.Entity.Teleport(MapConstants.JOB_CENTER, MapConstants.TreasureInTheBlue_PrizeCenter, 50, 50);
+                // Teleport to Prize Center
+                client.Entity.Teleport(MapConstants.JOB_CENTER, MapConstants.TreasureInTheBlue_PrizeCenter, 57, 49);
                 client.Entity.Update(_String.Effect, "accession4", true);
                 client.Send("You have been teleported to the Prize Center! Exchange your coins for rewards!");
 

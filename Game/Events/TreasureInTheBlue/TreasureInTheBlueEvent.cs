@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using MTA.Client;
 using MTA.Database;
 using MTA.Network.GamePackets;
@@ -13,18 +12,7 @@ namespace MTA.Game.Events.TreasureInTheBlue;
 ///     Based on official event: https://co.99.com/guide/quests/2012/blue_treasure.shtml
 /// </summary>
 public class TreasureInTheBlueEvent : BaseEvent {
-    // Coin item IDs
-    private const uint GoldCoin = 711609;
-    private const uint SilverCoin = 711610;
-    private const uint CopperCoin = 711611;
-
-    // Limited rewards per round
-    private int _copperCoinRewardsRemaining = 400;
-    private int _silverCoinRewardsRemaining = 200;
-    private int _goldCoinRewardsRemaining = 100;
-
-    // Track coin acquisition times (player UID -> coin type -> acquisition time)
-    private readonly Dictionary<uint, Dictionary<uint, DateTime>> _coinAcquisitionTimes = new();
+    public readonly TreasureInTheBlueCoinTracker CoinTracker = new();
 
     public override string EventId => "TREASURE_IN_THE_BLUE";
     public override string EventName => "Treasure in the Blue";
@@ -47,13 +35,7 @@ public class TreasureInTheBlueEvent : BaseEvent {
     public override void OnStart() {
         base.OnStart();
 
-        // Reset reward counters
-        _copperCoinRewardsRemaining = 400;
-        _silverCoinRewardsRemaining = 200;
-        _goldCoinRewardsRemaining = 100;
-
-        // Clear coin tracking
-        _coinAcquisitionTimes.Clear();
+        CoinTracker.Reset();
 
         AutoInviteAllPlayers("The Treasure in the Blue has begun! Would you like to join the Proud Sea?",
             MapConstants.TWIN_CITY,
@@ -78,8 +60,6 @@ public class TreasureInTheBlueEvent : BaseEvent {
             client.Entity.Teleport(MapConstants.TWIN_CITY, 304, 287);
             client.Send("Treasure in the Blue has Ended and You have teleported to tc");
         }
-        // Clear coin tracking
-        _coinAcquisitionTimes.Clear();
     }
 
     /// <inheritdoc />
@@ -102,39 +82,7 @@ public class TreasureInTheBlueEvent : BaseEvent {
             return;
         }
 
-        // Check for expired coins (60 minutes)
-        CheckExpiredCoins(now);
-
-        // Check if all rewards are claimed - end event early
-        if (_copperCoinRewardsRemaining > 0 || _silverCoinRewardsRemaining > 0 || _goldCoinRewardsRemaining > 0) return;
-        BroadcastMessage(
-            "All rewards have been claimed! The Treasure in the Blue event is ending early. The ship will return shortly.",
-            Color.White, Message.Center);
-        OnEnd();
-    }
-
-    /// <summary>
-    ///     Check if a reward can be claimed for the given coin type
-    /// </summary>
-    public bool CanClaimReward(uint coinType) {
-        return coinType switch {
-            CopperCoin => _copperCoinRewardsRemaining > 0,
-            SilverCoin => _silverCoinRewardsRemaining > 0,
-            GoldCoin => _goldCoinRewardsRemaining > 0,
-            _ => false
-        };
-    }
-
-    /// <summary>
-    ///     Claim a reward for the given coin type. Returns true if successful.
-    /// </summary>
-    public bool ClaimReward(uint coinType) {
-        return coinType switch {
-            CopperCoin when _copperCoinRewardsRemaining > 0 => --_copperCoinRewardsRemaining >= 0,
-            SilverCoin when _silverCoinRewardsRemaining > 0 => --_silverCoinRewardsRemaining >= 0,
-            GoldCoin when _goldCoinRewardsRemaining > 0 => --_goldCoinRewardsRemaining >= 0,
-            _ => false
-        };
+        CoinTracker.CheckExpiredCoins(now);
     }
 
     /// <summary>
@@ -142,72 +90,7 @@ public class TreasureInTheBlueEvent : BaseEvent {
     /// </summary>
     public void RecordCoinAcquisition(GameState client, uint coinType) {
         if (!IsActive) return;
-
-        var playerId = client.Entity.UID;
-        if (!_coinAcquisitionTimes.ContainsKey(playerId))
-            _coinAcquisitionTimes[playerId] = new Dictionary<uint, DateTime>();
-
-        _coinAcquisitionTimes[playerId][coinType] = DateTime.Now;
-    }
-
-    /// <summary>
-    ///     Check for expired coins and remove them from player inventories
-    /// </summary>
-    private void CheckExpiredCoins(DateTime now) {
-        var expiredCoins = new List<(uint playerId, uint coinType)>();
-
-        foreach (var (playerId, coinTimes) in _coinAcquisitionTimes) {
-            foreach (var coinType in from coinEntry in coinTimes
-                     let coinType = coinEntry.Key
-                     let acquisitionTime = coinEntry.Value
-                     let elapsed = now - acquisitionTime
-                     where elapsed.TotalMinutes >= 60
-                     select coinType) {
-                expiredCoins.Add((playerId, coinType));
-
-                // Find the client and remove the coin
-                var client = Program.Values.FirstOrDefault(c => c.Entity.UID == playerId);
-                if (client == null || !client.Inventory.Contains(coinType, 1)) continue;
-                // Remove coin from inventory (remove 1 of the coin type)
-                client.Inventory.Remove(coinType, 1);
-                client.Send(
-                    $"Your {GetCoinName(coinType)} has expired! Remember to exchange coins within 60 minutes!");
-            }
-        }
-
-        // Remove expired coins from tracking
-        foreach (var (playerId, coinType) in expiredCoins) {
-            if (!_coinAcquisitionTimes.TryGetValue(playerId, out var time)) continue;
-            time.Remove(coinType);
-            if (_coinAcquisitionTimes[playerId].Count == 0) _coinAcquisitionTimes.Remove(playerId);
-        }
-    }
-
-    /// <summary>
-    ///     Get the name of a coin type
-    /// </summary>
-    private static string GetCoinName(uint coinType) {
-        return coinType switch {
-            CopperCoin => "Copper Coin",
-            SilverCoin => "Silver Coin",
-            GoldCoin => "Gold Coin",
-            _ => "Coin"
-        };
-    }
-
-    /// <summary>
-    ///     Get remaining rewards count for display
-    /// </summary>
-    public (int Copper, int Silver, int Gold) GetRemainingRewards() {
-        return (_copperCoinRewardsRemaining, _silverCoinRewardsRemaining, _goldCoinRewardsRemaining);
-    }
-
-    /// <summary>
-    ///     Check if a player is in the Proud Sea (event map)
-    ///     Used by combat system to apply PvP rules: no PK points, no exp loss on death
-    /// </summary>
-    private bool IsPlayerInEventMap(ushort mapId) {
-        return IsActive && mapId == MapConstants.ProudSea;
+        CoinTracker.RecordCoinAcquisition(client, coinType);
     }
 
     /// <summary>
@@ -215,12 +98,11 @@ public class TreasureInTheBlueEvent : BaseEvent {
     ///     This should be checked by the combat/death handling system
     /// </summary>
     /// <remarks>
-    ///     According to the event guide, in the Proud Sea:
+    ///     In the Proud Sea:
     ///     - No PK points are gained for kills
     ///     - No experience is lost on death
-    ///     This method can be called by the combat system to determine if these rules apply.
     /// </remarks>
     public bool ShouldApplyPvPRules(ushort mapId) {
-        return IsPlayerInEventMap(mapId);
+        return IsActive && mapId == MapConstants.ProudSea;
     }
 }
