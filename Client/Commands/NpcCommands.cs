@@ -610,12 +610,11 @@ namespace MTA.Client.Commands
         {
             try
             {
-                int mapsReloaded = 0;
-                int npcsReloaded = 0;
-
-                // Reload NPCs for all maps
-                foreach (var map in Kernel.Maps.Values)
+                if (data.Length > 1 && (data[1].ToLower() == "-m" || data[1].ToLower() == "-map"))
                 {
+                    // Reload only current map
+                    var map = client.Map;
+
                     // Clear all NPCs from this map
                     var npcsToRemove = new List<INpc>(map.Npcs.Values);
                     foreach (var npc in npcsToRemove)
@@ -626,21 +625,55 @@ namespace MTA.Client.Commands
 
                     // Reload NPCs from database
                     map.LoadNpcs();
-                    mapsReloaded++;
-                    npcsReloaded += map.Npcs.Count;
-                }
+                    int npcsReloaded = map.Npcs.Count;
 
-                // Reload screens for all players on all maps
-                foreach (var player in Kernel.GamePool.Values)
+                    // Reload screens for all players on this map
+                    foreach (var player in Kernel.GamePool.Values)
+                    {
+                        if (player.Entity == null || player.Entity.MapID != map.ID) continue;
+                        player.Screen.FullWipe();
+                        player.Screen.Reload();
+                    }
+
+                    client.Send(new Message(
+                        $"NPCs reloaded for current map (Map ID: {map.ID})! {npcsReloaded} NPC(s) loaded from database.",
+                        System.Drawing.Color.Green, Message.Tip));
+                }
+                else
                 {
-                    if (player.Entity == null) continue;
-                    player.Screen.FullWipe();
-                    player.Screen.Reload();
-                }
+                    // Reload all maps
+                    int mapsReloaded = 0;
+                    int npcsReloaded = 0;
 
-                client.Send(new Message(
-                    $"NPCs reloaded successfully! {mapsReloaded} map(s) reloaded, {npcsReloaded} NPC(s) loaded from database.",
-                    System.Drawing.Color.Green, Message.Tip));
+                    // Reload NPCs for all maps
+                    foreach (var map in Kernel.Maps.Values)
+                    {
+                        // Clear all NPCs from this map
+                        var npcsToRemove = new List<INpc>(map.Npcs.Values);
+                        foreach (var npc in npcsToRemove)
+                        {
+                            map.RemoveNpc(npc);
+                        }
+                        map.Npcs.Clear();
+
+                        // Reload NPCs from database
+                        map.LoadNpcs();
+                        mapsReloaded++;
+                        npcsReloaded += map.Npcs.Count;
+                    }
+
+                    // Reload screens for all players on all maps
+                    foreach (var player in Kernel.GamePool.Values)
+                    {
+                        if (player.Entity == null) continue;
+                        player.Screen.FullWipe();
+                        player.Screen.Reload();
+                    }
+
+                    client.Send(new Message(
+                        $"NPCs reloaded successfully! {mapsReloaded} map(s) reloaded, {npcsReloaded} NPC(s) loaded from database.",
+                        System.Drawing.Color.Green, Message.Tip));
+                }
             }
             catch (Exception ex)
             {
