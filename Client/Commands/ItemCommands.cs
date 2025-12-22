@@ -117,19 +117,29 @@ namespace MTA.Client.Commands
         {
             if (data.Length < 2)
             {
-                client.Send(new Message("Usage: @item <item id or name> [quality] [plus] [bless] [enchant] [socket1] [socket2] [R] [G] [B]", System.Drawing.Color.Red, Message.Tip));
+                client.Send(new Message("Usage: @item <item id or name> [quantity] [quality] [plus] [bless] [enchant] [socket1] [socket2] [R] [G] [B]", System.Drawing.Color.Red, Message.Tip));
                 return true;
             }
 
             ConquerItemBaseInformation? CIBI = null;
+            bool isNumericId = false;
 
             // Check if first parameter is a numeric ID
             if (uint.TryParse(data[1], out uint itemId))
             {
+                isNumericId = true;
                 // Direct item ID lookup
                 if (!ConquerItemInformation.BaseInformations.TryGetValue(itemId, out CIBI))
                 {
                     client.Send(new Message($"Item ID {itemId} not found.", System.Drawing.Color.Red, Message.Tip));
+                    return true;
+                }
+
+                // Check if second parameter is quantity (when using numeric ID)
+                if (data.Length > 2 && byte.TryParse(data[2], out byte qty))
+                {
+                    // If quantity is provided, use simple Add method and return early
+                    client.Inventory.Add(itemId, 0, qty);
                     return true;
                 }
             }
@@ -181,7 +191,9 @@ namespace MTA.Client.Commands
             };
 
             // Handle optional parameters (plus, bless, enchant, sockets, etc.)
-            int paramOffset = uint.TryParse(data[1], out _) ? 2 : 3; // Offset depends on whether we used ID or name
+            // If we used numeric ID and quantity was already handled, we wouldn't reach here
+            // So paramOffset is: 2 for numeric ID (skip ID), 3 for name (skip name + quality)
+            int paramOffset = isNumericId ? 2 : 3;
             if (data.Length > paramOffset)
             {
                 byte.TryParse(data[paramOffset], out byte plus);
