@@ -667,7 +667,7 @@ namespace MTA.Game {
             }
         }
 
-        private void LoadNpcs() {
+        public void LoadNpcs() {
             using (var command = new MySqlCommand(MySqlCommandType.SELECT)) {
                 command.Select("npcs").Where("mapid", ID);
                 using (var reader = new MySqlReader(command)) {

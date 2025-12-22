@@ -20,6 +20,7 @@ namespace MTA.Client.Commands
                 "movenpc" => HandleMoveNpcCommand(client, data, mess),
                 "deletenpc" => HandleDeleteNpcCommand(client, data, mess),
                 "addnpc" => HandleAddNpcCommand(client, data, mess),
+                "reloadnpcs" => HandleReloadNpcsCommand(client, data, mess),
                 _ => false,
             };
         }
@@ -87,6 +88,13 @@ namespace MTA.Client.Commands
                 args["n"] = nameMatch.Groups[2].Value;
             }
 
+            // For effect parameter (-e), extract quoted value directly from original message
+            Match effectMatch = Regex.Match(mess, @"-e\s+(['""])(.*?)\1", RegexOptions.IgnoreCase);
+            if (effectMatch.Success)
+            {
+                args["e"] = effectMatch.Groups[2].Value;
+            }
+
             // Parse other arguments normally
             for (int i = startIndex; i < data.Length; i++)
             {
@@ -123,9 +131,44 @@ namespace MTA.Client.Commands
                         continue;
                     }
 
+                    // Skip -e if we already extracted it from the quoted string
+                    if (key == "e" && effectMatch.Success)
+                    {
+                        // Skip the value tokens for -e
+                        if (i + 1 < data.Length && !data[i + 1].StartsWith("-"))
+                        {
+                            // Check if it's a quoted value that spans multiple tokens
+                            string firstValue = data[i + 1];
+                            if (firstValue.StartsWith("'") || firstValue.StartsWith("\""))
+                            {
+                                char quoteChar = firstValue[0];
+                                // Count tokens until closing quote
+                                int tokensToSkip = 1;
+                                for (int j = i + 2; j < data.Length; j++)
+                                {
+                                    tokensToSkip++;
+                                    if (data[j].EndsWith(quoteChar.ToString()))
+                                        break;
+                                }
+                                i += tokensToSkip;
+                            }
+                            else
+                            {
+                                i++; // Skip single token value
+                            }
+                        }
+                        continue;
+                    }
+
                     if (i + 1 < data.Length && !data[i + 1].StartsWith("-"))
                     {
                         string value = data[i + 1];
+                        // Strip quotes from value if present (for parameters not handled by regex)
+                        if ((value.StartsWith("'") && value.EndsWith("'")) || 
+                            (value.StartsWith("\"") && value.EndsWith("\"")))
+                        {
+                            value = value.Substring(1, value.Length - 2);
+                        }
                         args[key] = value;
                         i++; // Skip the value in next iteration
                     }
@@ -558,6 +601,51 @@ namespace MTA.Client.Commands
                 client.Map.RemoveNpc(npc);
                 client.Send(new Message("Error saving NPC to database: " + ex.Message, System.Drawing.Color.Yellow,
                     Message.Tip));
+            }
+
+            return true;
+        }
+
+        private static bool HandleReloadNpcsCommand(GameState client, string[] data, string mess)
+        {
+            try
+            {
+                int mapsReloaded = 0;
+                int npcsReloaded = 0;
+
+                // Reload NPCs for all maps
+                foreach (var map in Kernel.Maps.Values)
+                {
+                    // Clear all NPCs from this map
+                    var npcsToRemove = new List<INpc>(map.Npcs.Values);
+                    foreach (var npc in npcsToRemove)
+                    {
+                        map.RemoveNpc(npc);
+                    }
+                    map.Npcs.Clear();
+
+                    // Reload NPCs from database
+                    map.LoadNpcs();
+                    mapsReloaded++;
+                    npcsReloaded += map.Npcs.Count;
+                }
+
+                // Reload screens for all players on all maps
+                foreach (var player in Kernel.GamePool.Values)
+                {
+                    if (player.Entity == null) continue;
+                    player.Screen.FullWipe();
+                    player.Screen.Reload();
+                }
+
+                client.Send(new Message(
+                    $"NPCs reloaded successfully! {mapsReloaded} map(s) reloaded, {npcsReloaded} NPC(s) loaded from database.",
+                    System.Drawing.Color.Green, Message.Tip));
+            }
+            catch (Exception ex)
+            {
+                client.Send(new Message("Error reloading NPCs: " + ex.Message,
+                    System.Drawing.Color.Yellow, Message.Tip));
             }
 
             return true;
