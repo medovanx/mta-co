@@ -1,3 +1,5 @@
+// ReSharper disable InconsistentNaming
+
 namespace MTA.Game {
     /// <summary>
     /// Map ID constants for the game
@@ -6,6 +8,7 @@ namespace MTA.Game {
         #region Twin City
 
         public const ushort TWIN_CITY = 1002;
+        public const ushort JOB_CENTER = 1004;
 
         #endregion Twin City
 
@@ -27,10 +30,13 @@ namespace MTA.Game {
         #endregion House Maps
 
         #region Event Maps
-        public const ushort CP_CASTLE_BEGINNER = 3033;  
+
+        public const ushort CP_CASTLE_BEGINNER = 3033;
         public const ushort CP_CASTLE_ADVANCED = 3030;
         public const ushort DIZZY_LAND = 5528;
-        public const ushort TREASURE_IN_THE_BLUE = 3056; // Proud Sea map
+        public const ushort ProudSea = 3056;
+        public const ushort TreasureInTheBlue_PrizeCenter = 7010;
+
         #endregion Event Maps
     }
 }

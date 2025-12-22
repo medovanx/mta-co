@@ -5,7 +5,6 @@ using System.Linq;
 using MTA.Client;
 using MTA.Database;
 using MTA.Network.GamePackets;
-using static MTA.Game.MapConstants;
 
 namespace MTA.Game.Events.TreasureInTheBlue;
 
@@ -14,16 +13,6 @@ namespace MTA.Game.Events.TreasureInTheBlue;
 ///     Based on official event: https://co.99.com/guide/quests/2012/blue_treasure.shtml
 /// </summary>
 public class TreasureInTheBlueEvent : BaseEvent {
-    public const ushort CoinsMap = MapConstants.TREASURE_IN_THE_BLUE; // Proud Sea map
-    public const ushort CoinsX = 60;
-    public const ushort CoinsY = 60;
-    private const ushort TradeMap = 7010;
-    private const ushort TradeX = 59;
-    private const ushort TradeY = 59;
-    private const ushort TwinCityMap = 1002;
-    private const ushort TwinCityX = 429;
-    private const ushort TwinCityY = 378;
-
     // Coin item IDs
     private const uint GoldCoin = 711609;
     private const uint SilverCoin = 711610;
@@ -36,6 +25,9 @@ public class TreasureInTheBlueEvent : BaseEvent {
 
     // Track coin acquisition times (player UID -> coin type -> acquisition time)
     private readonly Dictionary<uint, Dictionary<uint, DateTime>> _coinAcquisitionTimes = new();
+
+    // Dynamic trade map instance
+    private Map? _tradeMap;
 
     public override string EventId => "TREASURE_IN_THE_BLUE";
     public override string EventName => "Treasure in the Blue";
@@ -66,7 +58,11 @@ public class TreasureInTheBlueEvent : BaseEvent {
         // Clear coin tracking
         _coinAcquisitionTimes.Clear();
 
-        AutoInviteAllPlayers("The Treasure in the Blue has begun! Would you like to join the Proud Sea?", TWIN_CITY,
+        var baseMap = Kernel.Maps[MapConstants.JOB_CENTER];
+        _tradeMap = baseMap.MakeDynamicMap();
+
+        AutoInviteAllPlayers("The Treasure in the Blue has begun! Would you like to join the Proud Sea?",
+            MapConstants.TWIN_CITY,
             301, 529);
 
         BroadcastMessage(
@@ -83,10 +79,16 @@ public class TreasureInTheBlueEvent : BaseEvent {
 
         // Teleport all players out of coins map
         foreach (var client in Program.Values) {
-            if (client.Entity.MapID != CoinsMap) continue;
+            if (client.Entity.MapID != MapConstants.ProudSea) continue;
             client.Entity.BringToLife();
-            client.Entity.Teleport(TradeMap, TradeX, TradeY);
+            client.Entity.Teleport(MapConstants.TWIN_CITY, 304, 287);
             client.Send("Treasure in the Blue has Ended and You have teleported to tc");
+        }
+
+        // Dispose dynamic trade map
+        if (_tradeMap != null) {
+            _tradeMap.Dispose();
+            _tradeMap = null;
         }
 
         // Clear coin tracking
@@ -104,8 +106,9 @@ public class TreasureInTheBlueEvent : BaseEvent {
         if (!IsActive) {
             // Teleport players if event ended
             foreach (var client in Program.Values) {
-                if (client.Entity.MapID != CoinsMap || client.Account.State == AccountTable.AccountState.GM) continue;
-                client.Entity.Teleport(TwinCityMap, TwinCityX, TwinCityY);
+                if (client.Entity.MapID != MapConstants.ProudSea ||
+                    client.Account.State == AccountTable.AccountState.GM) continue;
+                client.Entity.Teleport(MapConstants.TWIN_CITY, 304, 287);
                 client.Send("Treasure in the Blue has Ended and You have teleported to tc");
             }
 
@@ -116,12 +119,11 @@ public class TreasureInTheBlueEvent : BaseEvent {
         CheckExpiredCoins(now);
 
         // Check if all rewards are claimed - end event early
-        if (_copperCoinRewardsRemaining <= 0 && _silverCoinRewardsRemaining <= 0 && _goldCoinRewardsRemaining <= 0) {
-            BroadcastMessage(
-                "All rewards have been claimed! The Treasure in the Blue event is ending early. The ship will return shortly.",
-                Color.White, Message.Center);
-            OnEnd();
-        }
+        if (_copperCoinRewardsRemaining > 0 || _silverCoinRewardsRemaining > 0 || _goldCoinRewardsRemaining > 0) return;
+        BroadcastMessage(
+            "All rewards have been claimed! The Treasure in the Blue event is ending early. The ship will return shortly.",
+            Color.White, Message.Center);
+        OnEnd();
     }
 
     /// <summary>
@@ -214,11 +216,19 @@ public class TreasureInTheBlueEvent : BaseEvent {
     }
 
     /// <summary>
+    ///     Get the trade map ID for teleporting to the Prize Center
+    ///     Returns null if the trade map is not available
+    /// </summary>
+    public ushort? GetTradeMapId() {
+        return _tradeMap?.ID;
+    }
+
+    /// <summary>
     ///     Check if a player is in the Proud Sea (event map)
     ///     Used by combat system to apply PvP rules: no PK points, no exp loss on death
     /// </summary>
     private bool IsPlayerInEventMap(ushort mapId) {
-        return IsActive && mapId == CoinsMap;
+        return IsActive && mapId == MapConstants.ProudSea;
     }
 
     /// <summary>

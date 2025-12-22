@@ -1,16 +1,17 @@
 using MTA.Client;
-using MTA.Game.Events;
 using MTA.Game.Npcs;
 using MTA.Network.GamePackets;
 
 namespace MTA.Game.Events.TreasureInTheBlue;
 
 /// <summary>
-///     Treasure in the Blue Event Entry NPC - Squid ward Tentacles
-///     NPC should be placed in Twin City at coordinates (301, 529)
+/// Entry point for the Treasure in the Blue event
 /// </summary>
+/// <event>Treasure in the Blue</event>
+/// <npc>Squidward Octopus</npc>
+/// <description>Provides information and teleportation to the Proud Sea for the Treasure in the Blue event.</description>
 [NpcHandler(115522009)]
-public static class NpcTreasureInTheBlue {
+public static class NpcSquidwardOctopus {
     private const int RequiredLevel = 80;
 
     public static void Handle(GameState client, NpcRequest npcRequest, MTA.Npcs dialog) {
@@ -63,8 +64,7 @@ public static class NpcTreasureInTheBlue {
                 }
 
                 // Teleport to Proud Sea
-                client.Entity.Teleport(TreasureInTheBlueEvent.CoinsMap, TreasureInTheBlueEvent.CoinsX,
-                    TreasureInTheBlueEvent.CoinsY);
+                client.Entity.Teleport(MapConstants.ProudSea, 200, 067);
                 client.Entity.Update(_String.Effect, "accession4", true);
                 client.Send(
                     "Welcome to the Proud Sea! The Treasure in the Blue awaits! Collect ancient coins from monsters, but remember: they expire after 60 minutes. Exchange them quickly with the Mammon Envoy at the Prize Center!");
@@ -74,4 +74,3 @@ public static class NpcTreasureInTheBlue {
         }
     }
 }
-
