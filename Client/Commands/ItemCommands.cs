@@ -3,59 +3,49 @@ using System.Linq;
 using MTA.Game;
 using MTA.Network.GamePackets;
 using MTA.Database;
+using static System.Byte;
 
-namespace MTA.Client.Commands
-{
-    public static class ItemCommands
-    {
-        public static bool HandleCommand(GameState client, string[] data, string mess)
-        {
-            return (System.String)data[0] switch
-            {
-                "refinery" => HandleRefineryCommand(client, data, mess),
-                "jar" => HandleJarCommand(client, data, mess),
-                "soulp" => HandleSoulpCommand(client, data, mess),
-                "effectitem" => HandleEffectItemCommand(client, data, mess),
-                "item" => HandleItemCommand(client, data, mess),
+namespace MTA.Client.Commands {
+    public static class ItemCommands {
+        public static bool HandleCommand(GameState client, string[] data, string mess) {
+            return data[0] switch {
+                "refinery" => HandleRefineryCommand(client, data),
+                "jar" => HandleJarCommand(client, data),
+                "soulp" => HandleSoulpCommand(client, data),
+                "effectitem" => HandleEffectItemCommand(client, data),
+                "item" => HandleItemCommand(client, data),
                 _ => false,
             };
         }
 
-        private static bool HandleRefineryCommand(GameState client, string[] data, string mess)
-        {
-            if (data.Length < 2)
-            {
+        private static bool HandleRefineryCommand(GameState client, string[] data) {
+            if (data.Length < 2) {
                 client.Send(new Message("Usage: @refinery <level>", System.Drawing.Color.Red, Message.Tip));
                 return true;
             }
 
             var level = uint.Parse(data[1]);
             var baseInformations = new SafeDictionary<uint, Refinery.RefineryItem>();
-            foreach (var item in Kernel.DatabaseRefinery.Values.Where(item => item.Level == level))
-            {
+            foreach (var item in Kernel.DatabaseRefinery.Values.Where(item => item.Level == level)) {
                 baseInformations.Add(item.Identifier, item);
             }
 
             var itemarray = baseInformations.Values.ToArray();
-            foreach (var item in itemarray)
-            {
+            foreach (var item in itemarray) {
                 client.Inventory.Add(item.Identifier, 0, 1);
             }
 
             return true;
         }
 
-        private static bool HandleJarCommand(GameState client, string[] data, string mess)
-        {
-            if (data.Length < 3)
-            {
+        private static bool HandleJarCommand(GameState client, string[] data) {
+            if (data.Length < 3) {
                 client.Send(new Message("Usage: @jar <durability> <max durability>", System.Drawing.Color.Red,
                     Message.Tip));
                 return true;
             }
 
-            var item = new ConquerItem(true)
-            {
+            var item = new ConquerItem(true) {
                 ID = 750000,
                 Durability = ushort.Parse(data[1]),
                 MaximDurability = ushort.Parse(data[2])
@@ -64,10 +54,8 @@ namespace MTA.Client.Commands
             return true;
         }
 
-        private static bool HandleSoulpCommand(GameState client, string[] data, string mess)
-        {
-            if (data.Length < 2)
-            {
+        private static bool HandleSoulpCommand(GameState client, string[] data) {
+            if (data.Length < 2) {
                 client.Send(new Message("Usage: @soulp <level>", System.Drawing.Color.Red, Message.Tip));
                 return true;
             }
@@ -75,36 +63,29 @@ namespace MTA.Client.Commands
             var level = uint.Parse(data[1]);
             var baseInformations = new SafeDictionary<uint, ConquerItemBaseInformation>();
             foreach (var item in ConquerItemInformation.BaseInformations.Values.Where(item =>
-                         item.PurificationLevel == level))
-            {
+                         item.PurificationLevel == level)) {
                 baseInformations.Add(item.ID, item);
             }
 
             var itemarray = baseInformations.Values.ToArray();
-            foreach (var item in itemarray)
-            {
+            foreach (var item in itemarray) {
                 client.Inventory.Add(item.ID, 0, 1);
             }
 
             return true;
         }
 
-        private static bool HandleEffectItemCommand(GameState client, string[] data, string mess)
-        {
-            if (data.Length < 3)
-            {
+        private static bool HandleEffectItemCommand(GameState client, string[] data) {
+            if (data.Length < 3) {
                 client.Send(new Message("Usage: @effectitem <item id> <effect id>", System.Drawing.Color.Red,
                     Message.Tip));
                 return true;
             }
 
-            var newItem = new ConquerItem(true)
-            {
+            var newItem = new ConquerItem(true) {
                 ID = uint.Parse(data[1])
             };
             var cibi = ConquerItemInformation.BaseInformations[newItem.ID];
-            if (cibi == null)
-                return true;
             newItem.Effect = (Enums.ItemEffect)uint.Parse(data[2]);
             newItem.Durability = cibi.Durability;
             newItem.MaximDurability = cibi.Durability;
@@ -113,131 +94,138 @@ namespace MTA.Client.Commands
             return true;
         }
 
-        private static bool HandleItemCommand(GameState client, string[] data, string mess)
-        {
-            if (data.Length < 2)
-            {
-                client.Send(new Message("Usage: @item <item id or name> [quantity] [quality] [plus] [bless] [enchant] [socket1] [socket2] [R] [G] [B]", System.Drawing.Color.Red, Message.Tip));
+        private static bool HandleItemCommand(GameState client, string[] data) {
+            if (data.Length < 2) {
+                client.Send(new Message(
+                    "Usage: @item <item id or name> [quantity] [quality] [plus] [bless] [enchant] [socket1] [socket2] [R] [G] [B]",
+                    System.Drawing.Color.Red, Message.Tip));
                 return true;
             }
 
-            ConquerItemBaseInformation? CIBI = null;
-            bool isNumericId = false;
+            ConquerItemBaseInformation? cibi = null;
+            var isNumericId = false;
+            byte quantity = 1;
+            var paramOffset = 0;
 
             // Check if first parameter is a numeric ID
-            if (uint.TryParse(data[1], out uint itemId))
-            {
+            if (uint.TryParse(data[1], out var itemId)) {
                 isNumericId = true;
                 // Direct item ID lookup
-                if (!ConquerItemInformation.BaseInformations.TryGetValue(itemId, out CIBI))
-                {
+                if (!ConquerItemInformation.BaseInformations.TryGetValue(itemId, out cibi)) {
                     client.Send(new Message($"Item ID {itemId} not found.", System.Drawing.Color.Red, Message.Tip));
                     return true;
                 }
 
                 // Check if second parameter is quantity (when using numeric ID)
-                if (data.Length > 2 && byte.TryParse(data[2], out byte qty))
-                {
-                    // If quantity is provided, use simple Add method and return early
-                    client.Inventory.Add(itemId, 0, qty);
-                    return true;
+                if (data.Length > 2 && TryParse(data[2], out byte qty)) {
+                    quantity = qty;
+                    paramOffset = 3; // Skip: ID, quantity
+                }
+                else {
+                    paramOffset = 2; // Skip: ID only
                 }
             }
-            else if (data.Length > 2)
-            {
+            else if (data.Length > 2) {
                 // Item name lookup (original behavior)
-                string ItemName = data[1].ToLower();
-                Enums.ItemQuality Quality = Enums.ItemQuality.Fixed;
-                switch (data[2].ToLower())
-                {
-                    case "fixed": Quality = Enums.ItemQuality.Fixed; break;
-                    case "normal": Quality = Enums.ItemQuality.Normal; break;
-                    case "normalv1": Quality = Enums.ItemQuality.NormalV1; break;
-                    case "normalv2": Quality = Enums.ItemQuality.NormalV2; break;
-                    case "normalv3": Quality = Enums.ItemQuality.NormalV3; break;
-                    case "refined": Quality = Enums.ItemQuality.Refined; break;
-                    case "unique": Quality = Enums.ItemQuality.Unique; break;
-                    case "elite": Quality = Enums.ItemQuality.Elite; break;
-                    case "super": Quality = Enums.ItemQuality.Super; break;
-                    case "other": Quality = Enums.ItemQuality.Other; break;
-                    default:
-                        {
-                            Quality = (Enums.ItemQuality)int.Parse(data[2]);
-                            break;
-                        }
-                }
-                foreach (ConquerItemBaseInformation infos in ConquerItemInformation.BaseInformations.Values)
-                {
-                    if (infos.LowerName == ItemName && Quality == (Enums.ItemQuality)(infos.ID % 10))
-                    {
-                        CIBI = infos;
-                    }
+                var itemName = data[1].ToLower();
+                var quality = data[2].ToLower() switch {
+                    "fixed" => Enums.ItemQuality.Fixed,
+                    "normal" => Enums.ItemQuality.Normal,
+                    "normalv1" => Enums.ItemQuality.NormalV1,
+                    "normalv2" => Enums.ItemQuality.NormalV2,
+                    "normalv3" => Enums.ItemQuality.NormalV3,
+                    "refined" => Enums.ItemQuality.Refined,
+                    "unique" => Enums.ItemQuality.Unique,
+                    "elite" => Enums.ItemQuality.Elite,
+                    "super" => Enums.ItemQuality.Super,
+                    "other" => Enums.ItemQuality.Other,
+                    _ => (Enums.ItemQuality)int.Parse(data[2])
+                };
+
+                foreach (var infos in ConquerItemInformation.BaseInformations.Values.Where(infos =>
+                             infos.LowerName == itemName && quality == (Enums.ItemQuality)(infos.ID % 10))) {
+                    cibi = infos;
                 }
             }
-            else
-            {
-                client.Send(new Message("Usage: @item <item id or name> [quality] [plus] [bless] [enchant] [socket1] [socket2] [R] [G] [B]", System.Drawing.Color.Red, Message.Tip));
+            else {
+                client.Send(new Message(
+                    "Usage: @item <item id or name> [quality] [plus] [bless] [enchant] [socket1] [socket2] [R] [G] [B]",
+                    System.Drawing.Color.Red, Message.Tip));
                 return true;
             }
 
-            if (CIBI == null)
+            if (cibi == null)
                 return true;
 
-            ConquerItem newItem = new ConquerItem(true)
-            {
-                ID = CIBI.ID,
-                Durability = CIBI.Durability,
-                MaximDurability = CIBI.Durability
-            };
+            switch (isNumericId) {
+                // If using numeric ID with quantity and no customization, use simple Add
+                case true when quantity > 1 && data.Length <= paramOffset:
+                    client.Inventory.Add(itemId, 0, quantity);
+                    return true;
+                // Handle optional parameters (plus, bless, enchant, sockets, etc.)
+                case false:
+                    paramOffset = 3; // For name: skip name + quality
+                    break;
+            }
 
-            // Handle optional parameters (plus, bless, enchant, sockets, etc.)
-            // If we used numeric ID and quantity was already handled, we wouldn't reach here
-            // So paramOffset is: 2 for numeric ID (skip ID), 3 for name (skip name + quality)
-            int paramOffset = isNumericId ? 2 : 3;
-            if (data.Length > paramOffset)
-            {
-                byte.TryParse(data[paramOffset], out byte plus);
-                newItem.Plus = System.Math.Min((byte)12, plus);
-                if (data.Length > paramOffset + 1)
-                {
-                    byte.TryParse(data[paramOffset + 1], out byte bless);
-                    newItem.Bless = System.Math.Min((byte)7, bless);
-                    if (data.Length > paramOffset + 2)
-                    {
-                        byte.TryParse(data[paramOffset + 2], out byte ench);
-                        newItem.Enchant = System.Math.Min((byte)255, ench);
-                        if (data.Length > paramOffset + 3)
-                        {
-                            byte.TryParse(data[paramOffset + 3], out byte soc1);
-                            if (System.Enum.IsDefined(typeof(Enums.Gem), soc1))
-                            {
-                                newItem.SocketOne = (Enums.Gem)soc1;
+            // For numeric ID, paramOffset is already set (2 or 3 depending on quantity)
+
+            // Parse customization parameters
+            byte plus = 0, bless = 0, ench = 0, soc1 = 0, soc2 = 0, r = 0, g = 0, b = 0;
+            if (data.Length > paramOffset) {
+                TryParse(data[paramOffset], out plus);
+                if (data.Length <= paramOffset + 1) { }
+                else {
+                    TryParse(data[paramOffset + 1], out bless);
+                    if (data.Length > paramOffset + 2) {
+                        TryParse(data[paramOffset + 2], out ench);
+                        if (data.Length > paramOffset + 3) {
+                            TryParse(data[paramOffset + 3], out soc1);
+                            if (data.Length > paramOffset + 4) {
+                                TryParse(data[paramOffset + 4], out soc2);
                             }
-                            if (data.Length > paramOffset + 4)
-                            {
-                                byte.TryParse(data[paramOffset + 4], out byte soc2);
-                                if (System.Enum.IsDefined(typeof(Enums.Gem), soc2))
-                                {
-                                    newItem.SocketTwo = (Enums.Gem)soc2;
-                                }
-                            }
-                            if (data.Length > paramOffset + 7)
-                            {
-                                byte.TryParse(data[paramOffset + 5], out byte R);
-                                byte.TryParse(data[paramOffset + 6], out byte G);
-                                byte.TryParse(data[paramOffset + 7], out byte B);
-                                newItem.SocketProgress = (uint)(B | (G << 8) | (R << 16));
+
+                            if (data.Length > paramOffset + 7) {
+                                TryParse(data[paramOffset + 5], out r);
+                                TryParse(data[paramOffset + 6], out g);
+                                TryParse(data[paramOffset + 7], out b);
                             }
                         }
                     }
                 }
             }
-            newItem.Color = (Enums.Color)Kernel.Random.Next(4, 8);
-            if (client.Account.State == AccountTable.AccountState.GM)
-                newItem.Bound = true;
-            client.Inventory.Add(newItem, Enums.ItemUse.CreateAndAdd);
+
+            // Add item quantity times (create new instance for each)
+            for (var i = 0; i < quantity; i++) {
+                var newItem = new ConquerItem(true) {
+                    ID = cibi.ID,
+                    Durability = cibi.Durability,
+                    MaximDurability = cibi.Durability,
+                    Plus = System.Math.Min((byte)12, plus),
+                    Bless = System.Math.Min((byte)7, bless),
+                    Enchant = System.Math.Min((byte)255, ench),
+                    Color = (Enums.Color)Kernel.Random.Next(4, 8)
+                };
+
+                if (System.Enum.IsDefined(typeof(Enums.Gem), soc1)) {
+                    newItem.SocketOne = (Enums.Gem)soc1;
+                }
+
+                if (System.Enum.IsDefined(typeof(Enums.Gem), soc2)) {
+                    newItem.SocketTwo = (Enums.Gem)soc2;
+                }
+
+                if (data.Length > paramOffset + 7) {
+                    newItem.SocketProgress = (uint)(b | (g << 8) | (r << 16));
+                }
+
+                if (client.Account.State == AccountTable.AccountState.GM)
+                    newItem.Bound = true;
+
+                client.Inventory.Add(newItem, Enums.ItemUse.CreateAndAdd);
+            }
+
             return true;
         }
     }
 }
-
