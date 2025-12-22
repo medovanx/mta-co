@@ -16,27 +16,27 @@ namespace MTA.Game.Events.TreasureInTheBlue;
 public static class NpcMammonEnvoy {
     private static readonly Random Random = new();
 
-    // Reward item IDs per coin type
-    private static readonly uint[] CopperCoinRewards = [
-        ItemConstants.Meteor,
-        ItemConstants.Class1MoneyBag,
-        ItemConstants.SmallJoyStone,
-        ItemConstants.ExpBallScrap
+    // Reward item IDs and odds per coin type
+    private static readonly (uint itemId, double weight)[] CopperCoinRewards = [
+        (ItemConstants.Meteor, 0.50),        
+        (ItemConstants.Class1MoneyBag, 0.25),
+        (ItemConstants.SmallJoyStone, 0.60),
+        (ItemConstants.ExpBallScrap, 0.60)   
     ];
 
-    private static readonly uint[] SilverCoinRewards = [
-        ItemConstants.EnduranceBook,
-        ItemConstants.Class2MoneyBag,
-        ItemConstants.HorseRacingPointsPack3K,
-        ItemConstants.ExpBallScrap,
-        ItemConstants.SmallJoyStone
+    private static readonly (uint itemId, double weight)[] SilverCoinRewards = [
+        (ItemConstants.EnduranceBook, 0.35),
+        (ItemConstants.Class2MoneyBag, 0.15),
+        (ItemConstants.HorseRacingPointsPack3K, 0.40),
+        (ItemConstants.ExpBallScrap, 0.50),  
+        (ItemConstants.SmallJoyStone, 0.80)  
     ];
 
-    private static readonly uint[] GoldCoinRewards = [
-        ItemConstants.SmallLotteryTicket,
-        ItemConstants.JadeHare,
-        ItemConstants.CelestialBird,
-        ItemConstants.GreenEyedBeast
+    private static readonly (uint itemId, double weight)[] GoldCoinRewards = [
+        (ItemConstants.SmallLotteryTicket, 0.60),
+        (ItemConstants.JadeHare, 0.05),
+        (ItemConstants.CelestialBird, 0.25),    
+        (ItemConstants.GreenEyedBeast, 0.25)    
     ];
 
     public static void Handle(GameState client, NpcRequest npcRequest, MTA.Npcs dialog) {
@@ -76,30 +76,14 @@ public static class NpcMammonEnvoy {
                 ExchangeCoin(client, dialog, coinTracker, ItemConstants.GoldCoin, GoldCoinRewards);
                 break;
             }
-
-            case 4: {
-                // Temporary testing: Claim All - give all possible rewards without checks
-                foreach (var reward in CopperCoinRewards) {
-                    client.Inventory.Add(reward, 0, 1);
-                }
-
-                foreach (var reward in SilverCoinRewards) {
-                    client.Inventory.Add(reward, 0, 1);
-                }
-
-                foreach (var reward in GoldCoinRewards) {
-                    client.Inventory.Add(reward, 0, 1);
-                }
-
-                client.MessageBox("Claimed all rewards!");
-
-                break;
-            }
         }
     }
 
+    /// <summary>
+    /// Check if the player has the coin and if they can claim the reward
+    /// </summary>
     private static void ExchangeCoin(GameState client, MTA.Npcs dialog, TreasureInTheBlueCoinTracker coinTracker,
-        uint coinType, uint[] rewards) {
+        uint coinType, (uint itemId, double weight)[] rewards) {
         var coinName = ConquerItemInformation.BaseInformations[coinType].Name;
 
         if (!client.Inventory.Contains(coinType, 1)) {
@@ -120,12 +104,49 @@ public static class NpcMammonEnvoy {
         client.Inventory.Remove(coinType, 1);
         coinTracker.ClaimReward(coinType);
 
-        // Give random reward
-        var randomReward = rewards[Random.Next(rewards.Length)];
+        // Give weighted random reward
+        var randomReward = SelectWeightedReward(rewards);
         client.Inventory.Add(randomReward, 0, 1);
 
         // Get item name and show message
         var itemName = ConquerItemInformation.BaseInformations[randomReward].Name;
         client.MessageBox($"You received a {itemName}!");
+    }
+
+    /// <summary>
+    /// Select a weighted random reward from the given rewards
+    /// 
+    /// How it works:
+    /// 1. Calculate total weight (sum of all weights)
+    /// 2. Normalize weights to sum to 1.0
+    /// 3. Generate random number 0.0 to 1.0
+    /// 4. Find which normalized cumulative range contains the random number
+    /// 
+    /// Example with weights [0.5, 0.5]:
+    /// - Total = 1.0, normalized = [0.5, 0.5] = 50% each
+    /// - Ranges: [0.0-0.5), [0.5-1.0)
+    /// 
+    /// Example with weights [1.0, 1.0, 1.0]:
+    /// - Total = 3.0, normalized = [0.33, 0.33, 0.33] = 33.3% each
+    /// </summary>
+    private static uint SelectWeightedReward((uint itemId, double weight)[] rewards) {
+        // Calculate total weight
+        var totalWeight = 0.0;
+        foreach (var (_, weight) in rewards) {
+            totalWeight += weight;
+        }
+
+        // Generate random number and find which item it falls into
+        var random = Random.NextDouble() * totalWeight; // 0.0 to totalWeight
+        var cumulative = 0.0;
+
+        foreach (var (itemId, weight) in rewards) {
+            cumulative += weight;
+            if (random < cumulative) {
+                return itemId;
+            }
+        }
+
+        return rewards[^1].itemId; // Fallback to last item
     }
 }
