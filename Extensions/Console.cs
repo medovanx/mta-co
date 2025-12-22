@@ -76,7 +76,7 @@ namespace MTA {
         }
 
         public static string TimeStamp() {
-            return "[" + NOW.AddMilliseconds((Time32.Now - NOW32).GetHashCode()).ToString("yyyy-MM-dd HH:mm:ss") + "]";
+            return "[" + NOW.AddMilliseconds((Time32.Now - NOW32).GetHashCode()).ToString("ddd dd MMM HH:mm:ss yyyy") + "]";
         }
     }
 }
