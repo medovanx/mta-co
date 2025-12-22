@@ -53,10 +53,6 @@ public static class NpcMammonEnvoy {
                 dialog.Option($"Exchange Copper Coin [{copperLeft} left]", 1);
                 dialog.Option($"Exchange Silver Coin [{silverLeft} left]", 2);
                 dialog.Option($"Exchange Gold Coin [{goldLeft} left]", 3);
-
-                // Temporary testing option
-                dialog.Option("Claim All", 4);
-
                 dialog.Option("Not now.", 255);
                 dialog.Send();
                 break;
