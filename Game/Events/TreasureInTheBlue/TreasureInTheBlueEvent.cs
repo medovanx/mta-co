@@ -26,9 +26,6 @@ public class TreasureInTheBlueEvent : BaseEvent {
     // Track coin acquisition times (player UID -> coin type -> acquisition time)
     private readonly Dictionary<uint, Dictionary<uint, DateTime>> _coinAcquisitionTimes = new();
 
-    // Dynamic trade map instance
-    private Map? _tradeMap;
-
     public override string EventId => "TREASURE_IN_THE_BLUE";
     public override string EventName => "Treasure in the Blue";
 
@@ -58,12 +55,9 @@ public class TreasureInTheBlueEvent : BaseEvent {
         // Clear coin tracking
         _coinAcquisitionTimes.Clear();
 
-        var baseMap = Kernel.Maps[MapConstants.JOB_CENTER];
-        _tradeMap = baseMap.MakeDynamicMap();
-
         AutoInviteAllPlayers("The Treasure in the Blue has begun! Would you like to join the Proud Sea?",
             MapConstants.TWIN_CITY,
-            301, 529);
+            323, 269);
 
         BroadcastMessage(
             "The Treasure in the Blue has begun! Venture into the Proud Sea and collect ancient coins! Remember: coins expire after 60 minutes!",
@@ -84,13 +78,6 @@ public class TreasureInTheBlueEvent : BaseEvent {
             client.Entity.Teleport(MapConstants.TWIN_CITY, 304, 287);
             client.Send("Treasure in the Blue has Ended and You have teleported to tc");
         }
-
-        // Dispose dynamic trade map
-        if (_tradeMap != null) {
-            _tradeMap.Dispose();
-            _tradeMap = null;
-        }
-
         // Clear coin tracking
         _coinAcquisitionTimes.Clear();
     }
@@ -213,14 +200,6 @@ public class TreasureInTheBlueEvent : BaseEvent {
     /// </summary>
     public (int Copper, int Silver, int Gold) GetRemainingRewards() {
         return (_copperCoinRewardsRemaining, _silverCoinRewardsRemaining, _goldCoinRewardsRemaining);
-    }
-
-    /// <summary>
-    ///     Get the trade map ID for teleporting to the Prize Center
-    ///     Returns null if the trade map is not available
-    /// </summary>
-    public ushort? GetTradeMapId() {
-        return _tradeMap?.ID;
     }
 
     /// <summary>
