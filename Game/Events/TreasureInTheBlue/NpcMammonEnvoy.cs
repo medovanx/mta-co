@@ -106,6 +106,7 @@ public static class NpcMammonEnvoy {
 
         // Get item name and show message
         var itemName = ConquerItemInformation.BaseInformations[randomReward].Name;
+        client.Entity.Update(_String.Effect, "angelwing", true);
         client.MessageBox($"You received a {itemName}!");
     }
 

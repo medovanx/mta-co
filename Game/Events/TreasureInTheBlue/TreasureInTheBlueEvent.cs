@@ -58,8 +58,11 @@ public class TreasureInTheBlueEvent : BaseEvent {
             if (client.Entity.MapID != MapConstants.ProudSea) continue;
             client.Entity.BringToLife();
             client.Entity.Teleport(MapConstants.TWIN_CITY, 304, 287);
-            client.Send("Treasure in the Blue has Ended and You have teleported to tc");
         }
+
+        BroadcastMessage(
+            "The Treasure in the Blue has ended! All adventurers have been returned to Twin City. Thank you for participating!",
+            Color.White, Message.Center);
     }
 
     /// <inheritdoc />
@@ -76,8 +79,11 @@ public class TreasureInTheBlueEvent : BaseEvent {
                 if (client.Entity.MapID != MapConstants.ProudSea ||
                     client.Account.State == AccountTable.AccountState.GM) continue;
                 client.Entity.Teleport(MapConstants.TWIN_CITY, 304, 287);
-                client.Send("Treasure in the Blue has Ended and You have teleported to tc");
             }
+
+            BroadcastMessage(
+                "The Treasure in the Blue has ended! All adventurers have been returned to Twin City. Thank you for participating!",
+                Color.White, Message.Center);
 
             return;
         }
@@ -103,6 +109,6 @@ public class TreasureInTheBlueEvent : BaseEvent {
     ///     - No experience is lost on death
     /// </remarks>
     public bool ShouldApplyPvPRules(ushort mapId) {
-        return IsActive && mapId == MapConstants.ProudSea;
+        return IsActive && mapId == MapConstants.TreasureInTheBlue;
     }
 }
