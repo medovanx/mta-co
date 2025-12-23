@@ -43,7 +43,7 @@ namespace MTA.Client.Commands.TestCommands
                 // Parse amount (first parameter after spawnmeshes)
                 if (data.Length < 2 || !int.TryParse(data[1], out amount) || amount < 1)
                 {
-                    client.Send(new Message("Usage: @test npc spawnmeshes <amount> [-p <page>] [-spacing <value>]\nExample: @test npc spawnmeshes 200 -p 2 -spacing 3",
+                    client.Send(new Message("Usage: @spawnmeshes <amount> [-p <page>] [-spacing <value>]\nExample: @spawnmeshes 200 -p 2 -spacing 3",
                         System.Drawing.Color.Yellow, Message.Tip));
                     return true;
                 }
