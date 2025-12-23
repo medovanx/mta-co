@@ -52,11 +52,10 @@ public class CaptainsCastleConquestEvent : BaseEvent {
     /// <inheritdoc />
     public override void OnEnd() {
         base.OnEnd();
-
-        BroadcastMessage("The Captain's Castle Conquest has ended. See you next time!", Color.White);
-
-        // Teleport all players out of castle maps
         TeleportPlayersFromMaps(CastleMaps, MapConstants.TWIN_CITY, TwinCityX, TwinCityY);
+        BroadcastMessage(
+            "The Captain's Castle Conquest has ended. See you next time!",
+            Color.White, Message.Center);
     }
 
     /// <inheritdoc />
