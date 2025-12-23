@@ -15,9 +15,8 @@ namespace MTA.Game.Events.TreasureInTheBlue;
 public class TreasureInTheBlueEvent : BaseEvent {
     public readonly TreasureInTheBlueCoinTracker CoinTracker = new();
 
-    // Drop rate constants
-    private const double CopperCoinDropRate = 0.50; // 50% chance
-    private const double SilverCoinDropRate = 0.50; // 50% chance
+    private const double CopperCoinDropRate = 0.25;
+    private const double SilverCoinDropRate = 0.15;
 
     private static readonly Random Random = new();
 
