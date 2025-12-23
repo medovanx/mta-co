@@ -86,9 +86,7 @@ namespace MTA.Client.Commands.TestCommands {
                 foreach (var npctype in npctypesToSpawn) {
                     // Get monster information
                     if (!MonsterInformation.MonsterInformations.ContainsKey(npctype)) {
-                        client.Send(new Message($"Monster npctype {npctype} not found. Skipping.",
-                            Color.Yellow, Message.Tip));
-                        continue;
+                        continue; // Skip silently if not found
                     }
 
                     var mt = MonsterInformation.MonsterInformations[npctype];
