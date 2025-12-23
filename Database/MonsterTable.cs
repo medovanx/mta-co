@@ -268,19 +268,23 @@ namespace MTA.Database {
             else {
                 // Check if any event wants to skip normal drop (event handles rewards instead)
                 if (!EventScheduler.ShouldSkipNormalDrop(this, Owner.MapID)) {
+                    // Include npctype in message for all monsters
+                    var monsterId = $" (ID: {ID})";
+
                     // Monster Cps Drop with AutoHunting Flag
                     if (killer.ContainsFlag3(Update.Flags3.AutoHunting)) {
-                        killer.ConquerPoints += 150;
+                        var autoHuntingCps = (uint)50;
+                        killer.ConquerPoints += autoHuntingCps;
                         killer.Owner.Send(new Message(
-                            "Congratulations! You defeated [" + Owner.Name +
-                            "] and earned [150 CPs] while using AutoHunting! #37", Color.Red, 2005));
+                            $"You defeated [{Owner.Name}{monsterId}] and earned [{autoHuntingCps} CPs] while using AutoHunting! #37",
+                            Color.Red, 2005));
                     }
 
                     else {
-                        killer.ConquerPoints += 150;
+                        var cps = (uint)150;
+                        killer.ConquerPoints += cps;
                         killer.Owner.Send(new Message(
-                            "Congratulations! You defeated [" + Owner.Name + "] and earned [150 CPs]! #37",
-                            Color.Yellow, 2005));
+                            $"You defeated [{Owner.Name}{monsterId}] and earned [{cps} CPs]! #37", Color.Yellow, 2005));
                     }
                 }
             }
@@ -818,7 +822,8 @@ namespace MTA.Database {
 
             #region SpecialItemDrop
 
-            foreach (var sitem in SpecialItemDropList.Where(sitem => sitem.Map == 0 || Owner.MapID == sitem.Map).Where(sitem => Kernel.Rate(sitem.Rate, sitem.Discriminant))) {
+            foreach (var sitem in SpecialItemDropList.Where(sitem => sitem.Map == 0 || Owner.MapID == sitem.Map)
+                         .Where(sitem => Kernel.Rate(sitem.Rate, sitem.Discriminant))) {
                 if (killer is { VIPLevel: 0, Owner.Inventory.Count: <= 39 }) {
                     killer.Owner.Inventory.Add((uint)sitem.ItemID, 0, 1);
                     return;
