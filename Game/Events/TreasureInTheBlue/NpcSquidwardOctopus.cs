@@ -27,6 +27,8 @@ public static class NpcSquidwardOctopus {
                     "Have you heard of the Proud Sea? It's a place where lots of pirate ships sank and lost their stolen treasure. " +
                     "Venture into the depths and collect ancient coins from the monsters that roam these waters. " +
                     "Remember: coins expire after 60 minutes, so exchange them quickly with the Mammon Envoy!\n\n" +
+                    "Beware! The fearsome Blackbeard appears 5 minutes after the event starts and respawns every 15 minutes. " +
+                    "Defeat him to claim Gold Coins!\n\n" +
                     $"Requirement: Level {RequiredLevel} or above");
 
                 if (treasureEvent.IsActive)

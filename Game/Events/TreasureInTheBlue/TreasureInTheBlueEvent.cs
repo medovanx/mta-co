@@ -168,7 +168,7 @@ public class TreasureInTheBlueEvent : BaseEvent {
             if (client.Entity.MapID != MapConstants.ProudSea) continue;
 
             client.MessageBox(
-                "Blackbeard has appeared! Would you like to teleport to it?",
+                "BLACKBEARD HAS APPEARED! Defeat the pirate boss to claim Gold Coins! Teleport to battle?",
                 p => { p.Entity.Teleport(MapConstants.ProudSea, bossX, bossY); },
                 null,
                 30 // 30 second timeout
@@ -231,9 +231,9 @@ public class TreasureInTheBlueEvent : BaseEvent {
 
                 return true; // Skip normal drop
 
-            // Blackbeard - Always drops 1-9 Gold Coins (random)
+            // Blackbeard - Always drops 4-9 Gold Coins (random)
             case MonsterConstants.Blackbeard: {
-                var coinCount = Random.Next(1, 10);
+                var coinCount = Random.Next(4, 10);
                 for (var i = 0; i < coinCount; i++) {
                     DropCoinOnGround(monster, ItemConstants.GoldCoin);
                 }
