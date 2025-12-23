@@ -4,6 +4,7 @@ using System.Drawing;
 using MTA.Client;
 using MTA.Database;
 using MTA.Network.GamePackets;
+using static MTA.Kernel;
 
 namespace MTA.Game.Events.TreasureInTheBlue;
 
@@ -13,6 +14,12 @@ namespace MTA.Game.Events.TreasureInTheBlue;
 /// </summary>
 public class TreasureInTheBlueEvent : BaseEvent {
     public readonly TreasureInTheBlueCoinTracker CoinTracker = new();
+
+    // Drop rate constants
+    private const double CopperCoinDropRate = 0.50; // 50% chance
+    private const double SilverCoinDropRate = 0.50; // 50% chance
+
+    private static readonly Random Random = new();
 
     public override string EventId => "TREASURE_IN_THE_BLUE";
     public override string EventName => "Treasure in the Blue";
@@ -53,9 +60,10 @@ public class TreasureInTheBlueEvent : BaseEvent {
     public override void OnEnd() {
         base.OnEnd();
 
-        // Teleport all players out of coins map
+        // Teleport all players out of event maps (ProudSea and PrizeCenter)
         foreach (var client in Program.Values) {
-            if (client.Entity.MapID != MapConstants.ProudSea) continue;
+            var mapId = client.Entity.MapID;
+            if (mapId != MapConstants.ProudSea && mapId != MapConstants.TreasureInTheBlue_PrizeCenter) continue;
             client.Entity.BringToLife();
             client.Entity.Teleport(MapConstants.TWIN_CITY, 304, 287);
         }
@@ -76,7 +84,8 @@ public class TreasureInTheBlueEvent : BaseEvent {
         if (!IsActive) {
             // Teleport players if event ended
             foreach (var client in Program.Values) {
-                if (client.Entity.MapID != MapConstants.ProudSea ||
+                var mapId = client.Entity.MapID;
+                if ((mapId != MapConstants.ProudSea && mapId != MapConstants.TreasureInTheBlue_PrizeCenter) ||
                     client.Account.State == AccountTable.AccountState.GM) continue;
                 client.Entity.Teleport(MapConstants.TWIN_CITY, 304, 287);
             }
@@ -109,6 +118,98 @@ public class TreasureInTheBlueEvent : BaseEvent {
     ///     - No experience is lost on death
     /// </remarks>
     public bool ShouldApplyPvPRules(ushort mapId) {
-        return IsActive && mapId == MapConstants.TreasureInTheBlue;
+        return IsActive && mapId == MapConstants.ProudSea;
+    }
+
+    /// <inheritdoc />
+    /// <remarks>
+    ///     Skip normal drop for event monsters in ProudSea map when event is active
+    ///     Event system handles coin drops instead
+    /// </remarks>
+    public override bool ShouldSkipNormalDrop(MonsterInformation monster, ushort mapId) {
+        if (!IsActive) return false;
+        if (mapId != MapConstants.ProudSea) return false;
+
+        var npctype = monster.ID;
+        return npctype == MonsterConstants.CoinsStealer ||
+               npctype == MonsterConstants.GoldenOctopus ||
+               npctype == MonsterConstants.SilverOctopus;
+    }
+
+    /// <inheritdoc />
+    /// <remarks>
+    ///     Handle coin drops when event monsters are killed
+    /// </remarks>
+    public override void OnMonsterKilled(MonsterInformation monster, Entity killer) {
+        if (!IsActive) return;
+        if (monster.Owner.MapID != MapConstants.ProudSea) return;
+
+        var npctype = monster.ID;
+
+        switch (npctype) {
+            // Golden Octopus - Always drops Gold Coin (100% chance)
+            case MonsterConstants.GoldenOctopus:
+                DropCoinOnGround(monster, ItemConstants.GoldCoin);
+                return;
+
+            // Coins Stealer - Randomly drops Copper Coin (50% chance)
+            case MonsterConstants.CoinsStealer: {
+                if (Random.NextDouble() < CopperCoinDropRate) {
+                    DropCoinOnGround(monster, ItemConstants.CopperCoin);
+                }
+
+                return;
+            }
+
+            // Silver Octopus - Randomly drops Silver Coin (50% chance)
+            case MonsterConstants.SilverOctopus:
+                if (Random.NextDouble() < SilverCoinDropRate) {
+                    DropCoinOnGround(monster, ItemConstants.SilverCoin);
+                }
+
+                return;
+        }
+    }
+
+    /// <summary>
+    ///     Drop a coin on the ground at the monster's location
+    /// </summary>
+    /// <param name="monster">The monster that was killed</param>
+    /// <param name="coinId">The coin item ID to drop</param>
+    private static void DropCoinOnGround(MonsterInformation monster, uint coinId) {
+        if (!ConquerItemInformation.BaseInformations.TryGetValue(coinId, out var infos)) return;
+        if (!Maps.TryGetValue(monster.Owner.MapID, out var map)) return;
+        var x = monster.Owner.X;
+        var y = monster.Owner.Y;
+
+        // Find valid drop coordinates
+        if (!map.SelectCoordonates(ref x, ref y)) return;
+
+        // Create floor item
+        var floorItem = new FloorItem(true) {
+            Item = new ConquerItem(true) {
+                Color = (Enums.Color)Kernel.Random.Next(4, 8),
+                ID = coinId,
+                MaximDurability = infos.Durability,
+                Durability = infos.Durability,
+                MobDropped = true
+            },
+            ValueType = FloorItem.FloorValueType.Item,
+            ItemID = coinId,
+            MapID = monster.Owner.MapID,
+            MapObjType = MapObjectType.Item,
+            X = x,
+            Y = y,
+            Type = FloorItem.Drop,
+            OnFloor = Time32.Now
+        };
+        floorItem.ItemColor = floorItem.Item.Color;
+        floorItem.UID = FloorItem.FloorUID.Next;
+        while (map.Npcs.ContainsKey(floorItem.UID))
+            floorItem.UID = FloorItem.FloorUID.Next;
+
+        // Add to map and notify nearby players
+        map.AddFloorItem(floorItem);
+        monster.SendScreenSpawn(floorItem);
     }
 }

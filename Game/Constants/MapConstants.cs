@@ -34,8 +34,8 @@ namespace MTA.Game {
         public const ushort CP_CASTLE_BEGINNER = 3033;
         public const ushort CP_CASTLE_ADVANCED = 3030;
         public const ushort DIZZY_LAND = 5528;
-        public const ushort ProudSea = 3056;
-        public const ushort TreasureInTheBlue = 3071;
+        public const ushort SeaOfDeath = 3056;
+        public const ushort ProudSea = 3071;
         public const ushort TreasureInTheBlue_PrizeCenter = 7010;
 
         #endregion Event Maps
