@@ -24792,7 +24792,7 @@ namespace MTA {
                                     clients.Entity.SendScoreLAstTeam(clients);
                             }
 
-                            dialog.Text("Hello " + client.Entity.Name + " There Are : " + Entity.Leadrinmap +
+                            dialog.Text("Hello " + client.Entity.Name + " There Are : " + Entity.Leaderinmap +
                                         " Team Leader In Map  And  " + Entity.Memberrinmap + " Normal Player In Map");
                             dialog.Option("Give ME My Prize", 1);
                             dialog.Send();
