@@ -4084,7 +4084,10 @@ namespace MTA.Game
             {
                 if (killer.EntityFlag == EntityFlag.Player)
                 {
-                    if (Constants.PKFreeMaps.Contains(killer.MapID))
+                    int[] dropAllowedMaps = [MapConstants.ProudSea];
+                    bool allowDrops = dropAllowedMaps.Contains(killer.MapID);
+                    
+                    if (Constants.PKFreeMaps.Contains(killer.MapID) && !allowDrops)
                         goto Over;
                     if (Constants.Damage1Map.Contains(killer.MapID))
                         goto Over;
@@ -4093,54 +4096,57 @@ namespace MTA.Game
                     if (killer.Owner.Challenge != null)
                         goto Over;
 
-
-                    if (!ContainsFlag(Network.GamePackets.Update.Flags.FlashingName) &&
-                        !ContainsFlag(Network.GamePackets.Update.Flags.BlackName))
+                    // Skip PK points for ProudSea (even though we allow drops)
+                    if (!allowDrops)
                     {
-                        killer.AddFlag(Network.GamePackets.Update.Flags.FlashingName);
-                        killer.FlashingNameStamp = Time32.Now;
-                        killer.FlashingNameTime = 60;
-                        if (killer.GuildID != 0)
+                        if (!ContainsFlag(Network.GamePackets.Update.Flags.FlashingName) &&
+                            !ContainsFlag(Network.GamePackets.Update.Flags.BlackName))
                         {
-                            if (killer.Owner.Guild.Enemy.ContainsKey(GuildID))
+                            killer.AddFlag(Network.GamePackets.Update.Flags.FlashingName);
+                            killer.FlashingNameStamp = Time32.Now;
+                            killer.FlashingNameTime = 60;
+                            if (killer.GuildID != 0)
                             {
-                                killer.PKPoints += 3;
-                                if (killer.Owner.AsMember != null)
-                                    killer.Owner.AsMember.PkDonation += 3;
+                                if (killer.Owner.Guild.Enemy.ContainsKey(GuildID))
+                                {
+                                    killer.PKPoints += 3;
+                                    if (killer.Owner.AsMember != null)
+                                        killer.Owner.AsMember.PkDonation += 3;
+                                }
+                                else
+                                {
+                                    if (!killer.Owner.Enemy.ContainsKey(UID))
+                                    {
+                                        killer.PKPoints += 10;
+                                        if (killer.Owner.AsMember != null)
+                                            killer.Owner.AsMember.PkDonation += 10;
+                                    }
+                                    else
+                                    {
+                                        killer.PKPoints += 5;
+                                        if (killer.Owner.AsMember != null)
+                                            killer.Owner.AsMember.PkDonation += 5;
+                                    }
+                                }
                             }
                             else
                             {
                                 if (!killer.Owner.Enemy.ContainsKey(UID))
-                                {
                                     killer.PKPoints += 10;
-                                    if (killer.Owner.AsMember != null)
-                                        killer.Owner.AsMember.PkDonation += 10;
-                                }
                                 else
-                                {
                                     killer.PKPoints += 5;
-                                    if (killer.Owner.AsMember != null)
-                                        killer.Owner.AsMember.PkDonation += 5;
+                            }
+
+                            if (HeavenBlessing > 0)
+                            {
+                                if (killer.HeavenBlessing == 0)
+                                {
+                                    PacketHandler.Cursed(500, killer.Owner);
                                 }
                             }
-                        }
-                        else
-                        {
-                            if (!killer.Owner.Enemy.ContainsKey(UID))
-                                killer.PKPoints += 10;
-                            else
-                                killer.PKPoints += 5;
-                        }
 
-                        if (HeavenBlessing > 0)
-                        {
-                            if (killer.HeavenBlessing == 0)
-                            {
-                                PacketHandler.Cursed(500, killer.Owner);
-                            }
+                            PacketHandler.AddEnemy(Owner, killer.Owner);
                         }
-
-                        PacketHandler.AddEnemy(Owner, killer.Owner);
                     }
 
 

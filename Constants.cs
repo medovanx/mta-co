@@ -2,6 +2,7 @@
 using System.IO;
 using MTA.Network.GamePackets;
 using System.Collections.Generic;
+using MTA.Game;
 
 namespace MTA
 {
@@ -359,6 +360,10 @@ namespace MTA
             1547,
             1548
         ];
+
+        // <summary>
+        // Maps that are free from PK, killing players here will not give you PK points.
+        // </summary>
         public static readonly List<ushort> PKFreeMaps = [
             3073,
             3691,
@@ -374,14 +379,13 @@ namespace MTA
             3694,
             1702,
             8892,
-            //3090,
             16414,
             7015,
             1458,
             1459,
             1460,
             3693,
-            3071,
+            MapConstants.ProudSea,
             3070,
             1707,
             2065,

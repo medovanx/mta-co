@@ -190,19 +190,6 @@ public class TreasureInTheBlueEvent : BaseEvent {
         CoinTracker.RecordCoinAcquisition(client, coinType);
     }
 
-    /// <summary>
-    ///     Check if PvP rules should apply (no PK points, no exp loss)
-    ///     This should be checked by the combat/death handling system
-    /// </summary>
-    /// <remarks>
-    ///     In the Proud Sea:
-    ///     - No PK points are gained for kills
-    ///     - No experience is lost on death
-    /// </remarks>
-    public bool ShouldApplyPvPRules(ushort mapId) {
-        return IsActive && mapId == MapConstants.ProudSea;
-    }
-
     /// <inheritdoc />
     /// <remarks>
     ///     Handle coin drops when event monsters are killed
