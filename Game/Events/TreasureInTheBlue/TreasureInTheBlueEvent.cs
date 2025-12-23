@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Linq;
 using MTA.Client;
 using MTA.Database;
-using MTA.Game;
 using MTA.Network.GamePackets;
 using static MTA.Kernel;
 
@@ -25,6 +24,7 @@ public class TreasureInTheBlueEvent : BaseEvent {
     // Boss spawn tracking
     private uint? _lastBossUid;
     private bool _lastBossWasAlive;
+    private bool _bossInitialSpawnDone;
 
     public override string EventId => "TREASURE_IN_THE_BLUE";
     public override string EventName => "Treasure in the Blue";
@@ -48,8 +48,7 @@ public class TreasureInTheBlueEvent : BaseEvent {
         base.OnStart();
 
         CoinTracker.Reset();
-
-        EnsureMonsterSpawn([MapConstants.ProudSea], MonsterConstants.Blackbeard, 900, 129, 178, isBoss: true);
+        _bossInitialSpawnDone = false;
 
         AutoInviteAllPlayers("The Treasure in the Blue has begun! Would you like to join the Proud Sea?",
             MapConstants.TwinCity,
@@ -105,6 +104,16 @@ public class TreasureInTheBlueEvent : BaseEvent {
         }
 
         CoinTracker.CheckExpiredCoins(now);
+
+        // Spawn Blackbeard 5 minutes after event starts
+        if (!_bossInitialSpawnDone && EventStartTime.HasValue) {
+            var elapsed = now - EventStartTime.Value;
+            if (elapsed.TotalMinutes >= 5) {
+                EnsureMonsterSpawn([MapConstants.ProudSea], MonsterConstants.Blackbeard, respawnTimeSeconds: 900,
+                    x: 129, y: 178, isBoss: true);
+                _bossInitialSpawnDone = true;
+            }
+        }
 
         CheckBossSpawn();
     }
