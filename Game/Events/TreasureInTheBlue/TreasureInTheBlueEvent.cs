@@ -118,6 +118,8 @@ public class TreasureInTheBlueEvent : BaseEvent {
     /// </summary>
     public override void OnUpdateWhenInactive(DateTime now) {
         RemoveEventCoinsFromAllPlayers();
+        TeleportPlayersFromMaps([MapConstants.ProudSea, MapConstants.TreasureInTheBlue_PrizeCenter],
+            MapConstants.TwinCity, 304, 287);
     }
 
     /// <summary>
