@@ -10,6 +10,7 @@ namespace MTA.Game {
         public const uint CoinsStealer = 7022;
         public const uint GoldenOctopus = 2700;
         public const uint SilverOctopus = 2699;
+        public const uint Blackbeard = 51234513;
 
         #endregion Treasure in the Blue Event
 

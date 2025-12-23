@@ -46,7 +46,8 @@ public class CaptainsCastleConquestEvent : BaseEvent {
         Kernel.SendWorldMessage(new Message("The Captain's Castle Conquest has begun!", Color.White, Message.Center),
             Program.Values);
 
-        EnsureMonsterRespawns([MapConstants.CAPTAIN_CASTLE_BEGINNER, MapConstants.CAPTAIN_CASTLE_ADVANCED], ["Captain"], 10);
+        EnsureMonsterSpawn([MapConstants.CAPTAIN_CASTLE_BEGINNER, MapConstants.CAPTAIN_CASTLE_ADVANCED],
+            MonsterConstants.Captain, 10);
     }
 
     /// <inheritdoc />

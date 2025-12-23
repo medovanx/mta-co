@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using MTA.Client;
 using MTA.Database;
+using MTA.Game;
 using MTA.Network.GamePackets;
 using static MTA.Kernel;
 
@@ -19,6 +21,10 @@ public class TreasureInTheBlueEvent : BaseEvent {
     private const double SilverCoinDropRate = 0.15;
 
     private static readonly Random Random = new();
+
+    // Boss spawn tracking
+    private uint? _lastBossUid;
+    private bool _lastBossWasAlive;
 
     public override string EventId => "TREASURE_IN_THE_BLUE";
     public override string EventName => "Treasure in the Blue";
@@ -42,6 +48,8 @@ public class TreasureInTheBlueEvent : BaseEvent {
         base.OnStart();
 
         CoinTracker.Reset();
+
+        EnsureMonsterSpawn([MapConstants.ProudSea], MonsterConstants.Blackbeard, 900, 129, 178, isBoss: true);
 
         AutoInviteAllPlayers("The Treasure in the Blue has begun! Would you like to join the Proud Sea?",
             MapConstants.TwinCity,
@@ -97,6 +105,49 @@ public class TreasureInTheBlueEvent : BaseEvent {
         }
 
         CoinTracker.CheckExpiredCoins(now);
+
+        CheckBossSpawn();
+    }
+
+    /// <summary>
+    ///     Check if the Blackbeard boss has spawned and notify players in the map
+    /// </summary>
+    private void CheckBossSpawn() {
+        if (!Maps.TryGetValue(MapConstants.ProudSea, out var map)) return;
+
+        // Find the boss monster (Blackbeard)
+        var boss = map.Entities.Values.FirstOrDefault(entity => entity.MonsterInfo.ID == MonsterConstants.Blackbeard);
+
+        if (boss == null) {
+            _lastBossWasAlive = false;
+            _lastBossUid = null;
+            return;
+        }
+
+        // Check if boss just spawned (was dead, now alive)
+        var isAlive = !boss.Dead;
+        if (isAlive && !_lastBossWasAlive && _lastBossUid != boss.UID) {
+            NotifyBossSpawn(boss.X, boss.Y);
+            _lastBossUid = boss.UID;
+        }
+
+        _lastBossWasAlive = isAlive;
+    }
+
+    /// <summary>
+    ///     Notify all players in ProudSea map that the boss has spawned
+    /// </summary>
+    private static void NotifyBossSpawn(ushort bossX, ushort bossY) {
+        foreach (var client in Program.Values) {
+            if (client.Entity.MapID != MapConstants.ProudSea) continue;
+
+            client.MessageBox(
+                "Blackbeard has appeared! Would you like to teleport to it?",
+                p => { p.Entity.Teleport(MapConstants.ProudSea, bossX, bossY); },
+                null,
+                30 // 30 second timeout
+            );
+        }
     }
 
     /// <summary>
@@ -153,6 +204,16 @@ public class TreasureInTheBlueEvent : BaseEvent {
                 }
 
                 return true; // Skip normal drop
+
+            // Blackbeard - Always drops 1-9 Gold Coins (random)
+            case MonsterConstants.Blackbeard: {
+                var coinCount = Random.Next(1, 10);
+                for (var i = 0; i < coinCount; i++) {
+                    DropCoinOnGround(monster, ItemConstants.GoldCoin);
+                }
+
+                return true; // Skip normal drop
+            }
         }
 
         return false; // Not handled by this event, keep normal drop
