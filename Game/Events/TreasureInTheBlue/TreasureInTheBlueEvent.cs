@@ -16,15 +16,30 @@ namespace MTA.Game.Events.TreasureInTheBlue;
 public class TreasureInTheBlueEvent : BaseEvent {
     public readonly TreasureInTheBlueCoinTracker CoinTracker = new();
 
-    private const double CopperCoinDropRate = 0.25;
-    private const double SilverCoinDropRate = 0.15;
+    private const double CopperCoinDropRate = 0.35;
+    private const double SilverCoinDropRate = 0.25;
+    private const double GoldenOctopusDropRate = 0.10;
 
     private static readonly Random Random = new();
+
+    // Golden Octopus drop rewards with weighted odds (Gold Coin has the lowest probability)
+    private static readonly (uint itemId, double weight)[] GoldenOctopusRewards = [
+        (ItemConstants.LotteryTicket, 0.30),
+        (ItemConstants.QuestChanceB, 0.30),
+        (ItemConstants.PenitenceAmulet, 0.50),
+        (ItemConstants.DragonSoulTicket, 0.20),
+        (ItemConstants.HorseRacingPointsPack5K, 0.15),
+        (ItemConstants.ExpBall, 0.18),
+        (ItemConstants.EnduranceBook, 0.15),
+        (ItemConstants.Meteor, 0.30),
+        (ItemConstants.GoldCoin, 0.10)
+    ];
 
     // Boss spawn tracking
     private uint? _lastBossUid;
     private bool _lastBossWasAlive;
     private bool _bossInitialSpawnDone;
+    private const int BossInitialSpawnTimeMinutes = 1;
 
     public override string EventId => "TREASURE_IN_THE_BLUE";
     public override string EventName => "Treasure in the Blue";
@@ -102,7 +117,7 @@ public class TreasureInTheBlueEvent : BaseEvent {
         // Spawn Blackbeard 5 minutes after event starts
         if (!_bossInitialSpawnDone && EventStartTime.HasValue) {
             var elapsed = now - EventStartTime.Value;
-            if (elapsed.TotalMinutes >= 5) {
+            if (elapsed.TotalMinutes >= BossInitialSpawnTimeMinutes) {
                 EnsureMonsterSpawn([MapConstants.ProudSea], MonsterConstants.Blackbeard, respawnTimeSeconds: 900,
                     x: 129, y: 178, isBoss: true);
                 _bossInitialSpawnDone = true;
@@ -117,10 +132,6 @@ public class TreasureInTheBlueEvent : BaseEvent {
     /// </summary>
     private static void RemoveEventCoinsFromAllPlayers() {
         foreach (var client in Program.Values) {
-            if (client.Entity == null) continue;
-
-            // Remove all coins of each type from inventory
-            // Keep removing until none are left (handles multiple stacks)
             while (client.Inventory.Contains(ItemConstants.CopperCoin, 1)) {
                 client.Inventory.Remove(ItemConstants.CopperCoin, 1);
             }
@@ -209,15 +220,20 @@ public class TreasureInTheBlueEvent : BaseEvent {
         var npctype = monster.ID;
 
         switch (npctype) {
-            // Golden Octopus - Always drops Gold Coin (100% chance)
-            case MonsterConstants.GoldenOctopus:
-                DropCoinOnGround(monster, ItemConstants.GoldCoin);
+            // Golden Octopus - Randomly drops weighted random reward
+            case MonsterConstants.GoldenOctopus: {
+                if (Random.NextDouble() < GoldenOctopusDropRate) {
+                    var rewardItemId = TreasureInTheBlueHelpers.SelectWeightedReward(GoldenOctopusRewards);
+                    DropItemOnGround(monster, rewardItemId);
+                }
+
                 return true; // Skip normal drop
+            }
 
             // Coins Stealer - Randomly drops Copper Coin (50% chance)
             case MonsterConstants.CoinsStealer: {
                 if (Random.NextDouble() < CopperCoinDropRate) {
-                    DropCoinOnGround(monster, ItemConstants.CopperCoin);
+                    DropItemOnGround(monster, ItemConstants.CopperCoin);
                 }
 
                 return true; // Skip normal drop
@@ -226,7 +242,7 @@ public class TreasureInTheBlueEvent : BaseEvent {
             // Silver Octopus - Randomly drops Silver Coin (50% chance)
             case MonsterConstants.SilverOctopus:
                 if (Random.NextDouble() < SilverCoinDropRate) {
-                    DropCoinOnGround(monster, ItemConstants.SilverCoin);
+                    DropItemOnGround(monster, ItemConstants.SilverCoin);
                 }
 
                 return true; // Skip normal drop
@@ -235,7 +251,7 @@ public class TreasureInTheBlueEvent : BaseEvent {
             case MonsterConstants.Blackbeard: {
                 var coinCount = Random.Next(4, 10);
                 for (var i = 0; i < coinCount; i++) {
-                    DropCoinOnGround(monster, ItemConstants.GoldCoin);
+                    DropItemOnGround(monster, ItemConstants.GoldCoin);
                 }
 
                 return true; // Skip normal drop
@@ -245,12 +261,13 @@ public class TreasureInTheBlueEvent : BaseEvent {
         return false; // Not handled by this event, keep normal drop
     }
 
+
     /// <summary>
-    ///     Drop a coin on the ground at the monster's location
+    ///     Drop an item on the ground at the monster's location
     /// </summary>
     /// <param name="monster">The monster that was killed</param>
-    /// <param name="coinId">The coin item ID to drop</param>
-    private static void DropCoinOnGround(MonsterInformation monster, uint coinId) {
+    /// <param name="coinId">The item ID to drop</param>
+    private static void DropItemOnGround(MonsterInformation monster, uint coinId) {
         if (!ConquerItemInformation.BaseInformations.TryGetValue(coinId, out var infos)) return;
         if (!Maps.TryGetValue(monster.Owner.MapID, out var map)) return;
         var x = monster.Owner.X;

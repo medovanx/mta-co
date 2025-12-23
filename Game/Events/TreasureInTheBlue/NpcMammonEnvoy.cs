@@ -101,49 +101,12 @@ public static class NpcMammonEnvoy {
         coinTracker.ClaimReward(coinType);
 
         // Give weighted random reward
-        var randomReward = SelectWeightedReward(rewards);
+        var randomReward = TreasureInTheBlueHelpers.SelectWeightedReward(rewards);
         client.Inventory.Add(randomReward, 0, 1);
 
         // Get item name and show message
         var itemName = ConquerItemInformation.BaseInformations[randomReward].Name;
         client.Entity.Update(_String.Effect, "angelwing", true);
         client.MessageBox($"You received a {itemName}!");
-    }
-
-    /// <summary>
-    /// Select a weighted random reward from the given rewards
-    /// 
-    /// How it works:
-    /// 1. Calculate total weight (sum of all weights)
-    /// 2. Normalize weights to sum to 1.0
-    /// 3. Generate random number 0.0 to 1.0
-    /// 4. Find which normalized cumulative range contains the random number
-    /// 
-    /// Example with weights [0.5, 0.5]:
-    /// - Total = 1.0, normalized = [0.5, 0.5] = 50% each
-    /// - Ranges: [0.0-0.5), [0.5-1.0)
-    /// 
-    /// Example with weights [1.0, 1.0, 1.0]:
-    /// - Total = 3.0, normalized = [0.33, 0.33, 0.33] = 33.3% each
-    /// </summary>
-    private static uint SelectWeightedReward((uint itemId, double weight)[] rewards) {
-        // Calculate total weight
-        var totalWeight = 0.0;
-        foreach (var (_, weight) in rewards) {
-            totalWeight += weight;
-        }
-
-        // Generate random number and find which item it falls into
-        var random = Random.NextDouble() * totalWeight; // 0.0 to totalWeight
-        var cumulative = 0.0;
-
-        foreach (var (itemId, weight) in rewards) {
-            cumulative += weight;
-            if (random < cumulative) {
-                return itemId;
-            }
-        }
-
-        return rewards[^1].itemId; // Fallback to last item
     }
 }
