@@ -80,7 +80,10 @@ namespace MTA.Game.Events.MyNewEvent
         {
             base.OnStart();
             BroadcastMessage("Event started!", Color.White, Message.System);
-            EnsureMonsterRespawns([MapConstants.MY_MAP], ["MonsterName"], 30);
+            // Spawn a boss at specific coordinates with 15 minute respawn
+            EnsureMonsterSpawn([MapConstants.MY_MAP], MonsterConstants.BossMonster, 900, 100, 200, isBoss: true);
+            // Or update existing monsters' respawn settings (no coordinates = update all of that type)
+            EnsureMonsterSpawn([MapConstants.MY_MAP], MonsterConstants.RegularMonster, 30);
         }
 
         public override void OnEnd()
@@ -198,6 +201,37 @@ yield return new EventSchedule(15, 0, 0, DayOfWeek.Thursday);
 yield return new EventSchedule(15, 0, 0, DayOfWeek.Friday);
 ```
 
+## Monster Spawning
+
+Use `EnsureMonsterSpawn()` to spawn monsters programmatically or update existing monsters' respawn settings:
+
+```csharp
+// Spawn a boss at specific coordinates with custom name and respawn time
+EnsureMonsterSpawn(
+    [MapConstants.ProudSea],           // Map IDs (array)
+    MonsterConstants.Blackbeard,        // Monster npctype (from MonsterConstants)
+    900,                                // Respawn time in seconds (15 minutes)
+    129,                                // X coordinate (optional - null = update existing)
+    178,                                // Y coordinate (optional - null = update existing)
+    "Blackbeard",                       // Custom name (optional)
+    isBoss: true                        // Mark as boss (optional)
+);
+
+// Update all existing monsters of a type (no coordinates = update all)
+EnsureMonsterSpawn(
+    [MapConstants.CAPTAIN_CASTLE_BEGINNER, MapConstants.CAPTAIN_CASTLE_ADVANCED],
+    MonsterConstants.Captain,
+    10                                  // Respawn time in seconds
+);
+```
+
+**Key Features:**
+- **Specific location spawn**: Provide `x` and `y` coordinates to spawn at that exact location
+- **Update existing monsters**: Omit `x` and `y` to update all existing monsters of that type in the specified maps
+- **Uses monster constants**: Uses `npctype` (from `MonsterConstants`) instead of names for reliability
+- **Automatic respawn**: Sets `RespawnTime` which is automatically handled by the game's respawn system
+- **Boss flag**: Can mark monsters as bosses using the `isBoss` parameter
+
 ## Duration-Based Ending
 
 Events can automatically end after a specified duration using the `EventDurationMinutes` property:
@@ -230,7 +264,7 @@ protected override int? EventDurationMinutes => 30; // Event ends 30 minutes aft
 | `BroadcastMessage()` | Send message to all players |
 | `SendMessageToPlayers()` | Send to specific players |
 | `TeleportPlayersFromMaps()` | Teleport players out of event maps |
-| `EnsureMonsterRespawns()` | Configure respawns and revive dead monsters |
+| `EnsureMonsterSpawn()` | Spawn or update monsters at specific locations, or update existing monsters' respawn settings |
 | `ForceStart()` / `ForceStop()` | GM override controls |
 | `ClearOverride()` | Return to scheduled timing |
 
@@ -355,7 +389,7 @@ See `CaptainsCastleConquest/` folder for complete implementation:
 5. **Always call `base.OnUpdate(now)`**: First in your override to preserve duration checking
 6. **Null checks**: Always check `IsActive` and null values
 7. **Clear messages**: Use descriptive broadcast messages
-8. **Monster respawns**: Call `EnsureMonsterRespawns()` in `OnStart()` if needed
+8. **Monster spawning**: Use `EnsureMonsterSpawn()` to spawn monsters at specific locations or update existing monsters' respawn settings
 9. **Monster kills**: Return `true` from `OnMonsterKilled()` to skip normal drops when event handles rewards
 10. **Pre-event warnings**: Override `OnPreEventWarning()` for warnings before event starts (optional)
 11. **Packet handling**: Override `HandlePacket()` for self-contained integration
