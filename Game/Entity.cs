@@ -4084,19 +4084,6 @@ namespace MTA.Game
             {
                 if (killer.EntityFlag == EntityFlag.Player)
                 {
-                    #region Cheack Pk Map
-
-                    if (Owner.Entity.MapID == 2555 || Owner.Entity.MapID == 5530 || Owner.Entity.MapID == 5531 ||
-                        Owner.Entity.MapID == 5532 || Owner.Entity.MapID == 1452 || Owner.Entity.MapID == 5560 ||
-                        Owner.Entity.MapID == 5570 || Owner.Entity.MapID == 5580 || Owner.Entity.MapID == 1707 ||
-                        Owner.Entity.MapID == 3070 || Owner.Entity.MapID == 3071)
-                    {
-                        Owner.Entity.Teleport(1002, 438, 382);
-                        // MTA.Console.WriteLine("Done");
-                    }
-
-                    #endregion Cheack Pk Map
-
                     if (Constants.PKFreeMaps.Contains(killer.MapID))
                         goto Over;
                     if (Constants.Damage1Map.Contains(killer.MapID))
