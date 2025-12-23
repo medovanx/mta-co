@@ -99,21 +99,6 @@ public class TreasureInTheBlueEvent : BaseEvent {
         // Check duration and end event if needed
         base.OnUpdate(now);
 
-        if (!IsActive) {
-            RemoveEventCoinsFromAllPlayers();
-
-            TeleportPlayersFromMaps([MapConstants.ProudSea, MapConstants.TreasureInTheBlue_PrizeCenter],
-                MapConstants.TwinCity, 304, 287);
-
-            BroadcastMessage(
-                "The Treasure in the Blue has ended! All adventurers have been returned to Twin City. Thank you for participating!",
-                Color.White, Message.Center);
-
-            return;
-        }
-
-        CoinTracker.CheckExpiredCoins(now);
-
         // Spawn Blackbeard 5 minutes after event starts
         if (!_bossInitialSpawnDone && EventStartTime.HasValue) {
             var elapsed = now - EventStartTime.Value;
@@ -125,6 +110,14 @@ public class TreasureInTheBlueEvent : BaseEvent {
         }
 
         CheckBossSpawn();
+    }
+
+    /// <summary>
+    ///     Called when event is inactive to clean up (remove coins from players who log in after event ends)
+    ///     This is called by EventScheduler even when the event is inactive
+    /// </summary>
+    public override void OnUpdateWhenInactive(DateTime now) {
+        RemoveEventCoinsFromAllPlayers();
     }
 
     /// <summary>

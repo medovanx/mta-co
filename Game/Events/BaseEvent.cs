@@ -94,6 +94,12 @@ public abstract class BaseEvent : IEvent {
 
     /// <inheritdoc />
     /// <remarks>
+    ///     Default implementation does nothing. Override in derived classes if they need to perform cleanup when inactive.
+    /// </remarks>
+    public virtual void OnUpdateWhenInactive(DateTime now) { }
+
+    /// <inheritdoc />
+    /// <remarks>
     ///     Default implementation does nothing. Override in derived classes if they need to handle player actions.
     /// </remarks>
     public virtual void OnPlayerAction(GameState client, string action) { }

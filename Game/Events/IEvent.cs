@@ -88,6 +88,12 @@ public interface IEvent {
     void OnPreEventWarning(DateTime now);
 
     /// <summary>
+    ///     Called every second when the event is inactive (optional)
+    ///     This allows events to perform cleanup tasks (e.g., remove items from players) even when inactive
+    /// </summary>
+    void OnUpdateWhenInactive(DateTime now);
+
+    /// <summary>
     ///     Handle player action/event (optional - events can implement if they need to handle player actions like finishing a
     ///     race)
     /// </summary>

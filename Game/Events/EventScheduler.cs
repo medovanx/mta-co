@@ -65,7 +65,13 @@ public static class EventScheduler {
                     gameEvent.OnStart();
 
             // Update active events
-            if (gameEvent.IsActive) gameEvent.OnUpdate(now);
+            if (gameEvent.IsActive) {
+                gameEvent.OnUpdate(now);
+            }
+            else {
+                // Call OnUpdateWhenInactive for inactive events (allows cleanup tasks)
+                gameEvent.OnUpdateWhenInactive(now);
+            }
         }
     }
 
