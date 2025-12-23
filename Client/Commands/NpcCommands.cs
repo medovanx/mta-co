@@ -113,15 +113,23 @@ namespace MTA.Client.Commands
                             if (firstValue.StartsWith("'") || firstValue.StartsWith("\""))
                             {
                                 char quoteChar = firstValue[0];
-                                // Count tokens until closing quote
-                                int tokensToSkip = 1;
-                                for (int j = i + 2; j < data.Length; j++)
+                                // Check if the quote is closed in the same token
+                                if (firstValue.EndsWith(quoteChar.ToString()) && firstValue.Length > 1)
                                 {
-                                    tokensToSkip++;
-                                    if (data[j].EndsWith(quoteChar.ToString()))
-                                        break;
+                                    i++; // Skip single token with quoted value
                                 }
-                                i += tokensToSkip;
+                                else
+                                {
+                                    // Count tokens until closing quote
+                                    int tokensToSkip = 1;
+                                    for (int j = i + 2; j < data.Length; j++)
+                                    {
+                                        tokensToSkip++;
+                                        if (data[j].EndsWith(quoteChar.ToString()))
+                                            break;
+                                    }
+                                    i += tokensToSkip;
+                                }
                             }
                             else
                             {
@@ -142,15 +150,23 @@ namespace MTA.Client.Commands
                             if (firstValue.StartsWith("'") || firstValue.StartsWith("\""))
                             {
                                 char quoteChar = firstValue[0];
-                                // Count tokens until closing quote
-                                int tokensToSkip = 1;
-                                for (int j = i + 2; j < data.Length; j++)
+                                // Check if the quote is closed in the same token
+                                if (firstValue.EndsWith(quoteChar.ToString()) && firstValue.Length > 1)
                                 {
-                                    tokensToSkip++;
-                                    if (data[j].EndsWith(quoteChar.ToString()))
-                                        break;
+                                    i++; // Skip single token with quoted value
                                 }
-                                i += tokensToSkip;
+                                else
+                                {
+                                    // Count tokens until closing quote
+                                    int tokensToSkip = 1;
+                                    for (int j = i + 2; j < data.Length; j++)
+                                    {
+                                        tokensToSkip++;
+                                        if (data[j].EndsWith(quoteChar.ToString()))
+                                            break;
+                                    }
+                                    i += tokensToSkip;
+                                }
                             }
                             else
                             {
@@ -458,16 +474,19 @@ namespace MTA.Client.Commands
         {
             if (data.Length < 2)
             {
-                client.Send(new Message("Usage: @addnpc -n <name> -s <skin> [-e <effect>]", System.Drawing.Color.Yellow,
+                client.Send(new Message("Usage: @addnpc -n <name> -s <skin> [-e <effect>] [-t]", System.Drawing.Color.Yellow,
                     Message.Tip));
                 client.Send(new Message("Example: @addnpc -n test -s 1002 -e ninjapk_third", System.Drawing.Color.Yellow,
                     Message.Tip));
                 client.Send(new Message("Use quotes for values with spaces: @addnpc -n \"Some Name\" -s 1002 -e \"effect name\"", System.Drawing.Color.Yellow,
                     Message.Tip));
+                client.Send(new Message("Use -t to create temporary NPC (not saved to database): @addnpc -n test -s 1002 -t", System.Drawing.Color.Yellow,
+                    Message.Tip));
                 return true;
             }
 
             var args = ParseArguments(data, mess);
+            bool isTemporary = args.ContainsKey("t");
 
             // Get name
             string name = "NPC";
@@ -509,43 +528,45 @@ namespace MTA.Client.Commands
 
             // Generate a unique NPC ID
             uint npcId = 100000; // Start from 100000
-            try
+            
+            if (!isTemporary)
             {
-                using (var cmd = new Database.MySqlCommand(Database.MySqlCommandType.SELECT))
+                // For permanent NPCs, check database to avoid conflicts
+                try
                 {
-                    cmd.Select("npcs");
-                    using var reader = new Database.MySqlReader(cmd);
-                    while (reader.Read())
+                    using (var cmd = new Database.MySqlCommand(Database.MySqlCommandType.SELECT))
                     {
-                        uint existingId = reader.ReadUInt32("id");
-                        if (existingId >= npcId)
-                            npcId = existingId + 1;
+                        cmd.Select("npcs");
+                        using var reader = new Database.MySqlReader(cmd);
+                        while (reader.Read())
+                        {
+                            uint existingId = reader.ReadUInt32("id");
+                            if (existingId >= npcId)
+                                npcId = existingId + 1;
 
+                        }
                     }
                 }
-
-                // Check if ID exists in memory
-                while (true)
+                catch
                 {
-                    var exists = Kernel.Maps.Values.Any(map => map.Npcs.ContainsKey(npcId));
-
-                    if (!exists)
-                        break;
-                    npcId++;
+                    // If query fails, use a high starting number
+                    npcId = 1000000;
                 }
             }
-            catch
+            else
             {
-                // If query fails, use a high starting number
+                // For temporary NPCs, start from a high number to avoid conflicts with database IDs
                 npcId = 1000000;
-                foreach (var map in Kernel.Maps.Values)
-                {
-                    foreach (var existingNpc in map.Npcs.Values)
-                    {
-                        if (existingNpc.UID >= npcId)
-                            npcId = existingNpc.UID + 1;
-                    }
-                }
+            }
+
+            // Check if ID exists in memory (for both temporary and permanent NPCs)
+            while (true)
+            {
+                var exists = Kernel.Maps.Values.Any(map => map.Npcs.ContainsKey(npcId));
+
+                if (!exists)
+                    break;
+                npcId++;
             }
 
             // Create new NPC
@@ -557,30 +578,58 @@ namespace MTA.Client.Commands
                 X = client.Entity.X,
                 Y = client.Entity.Y,
                 MapID = client.Entity.MapID,
-                Name = name
+                Name = name,
+                effect = effect
             };
 
             // Add to map
             client.Map.AddNpc(npc);
 
-            // Insert into database
-            try
+            // Insert into database only if not temporary
+            if (!isTemporary)
             {
-                using (var cmd = new Database.MySqlCommand(Database.MySqlCommandType.INSERT))
+                try
                 {
-                    cmd.Insert("npcs")
-                        .Insert("id", npc.UID)
-                        .Insert("name", npc.Name)
-                        .Insert("type", (int)npc.Type)
-                        .Insert("lookface", npc.Mesh)
-                        .Insert("mapid", npc.MapID)
-                        .Insert("cellx", npc.X)
-                        .Insert("celly", npc.Y)
-                        .Insert("effect", effect)
-                        .Execute();
-                }
+                    using (var cmd = new Database.MySqlCommand(Database.MySqlCommandType.INSERT))
+                    {
+                        cmd.Insert("npcs")
+                            .Insert("id", npc.UID)
+                            .Insert("name", npc.Name)
+                            .Insert("type", (int)npc.Type)
+                            .Insert("lookface", npc.Mesh)
+                            .Insert("mapid", npc.MapID)
+                            .Insert("cellx", npc.X)
+                            .Insert("celly", npc.Y)
+                            .Insert("effect", effect)
+                            .Execute();
+                    }
 
-                // Reload screens for all players on the map
+                    // Reload screens for all players on the map
+                    foreach (var player in Kernel.GamePool.Values)
+                    {
+                        if (player.Entity == null || player.Entity.MapID != client.Entity.MapID) continue;
+                        player.Screen.FullWipe();
+                        player.Screen.Reload();
+                    }
+
+                    var successMsg = "NPC [" + name + "] created with ID " + npcId + " (skin: " + mesh + ")";
+                    if (!string.IsNullOrEmpty(effect))
+                    {
+                        successMsg += " (effect: " + effect + ")";
+                    }
+                    client.Send(new Message(successMsg, System.Drawing.Color.Green, Message.Tip));
+                }
+                catch (Exception ex)
+                {
+                    // Remove from map if database insert failed
+                    client.Map.RemoveNpc(npc);
+                    client.Send(new Message("Error saving NPC to database: " + ex.Message, System.Drawing.Color.Yellow,
+                        Message.Tip));
+                }
+            }
+            else
+            {
+                // Temporary NPC - just reload screens
                 foreach (var player in Kernel.GamePool.Values)
                 {
                     if (player.Entity == null || player.Entity.MapID != client.Entity.MapID) continue;
@@ -588,19 +637,13 @@ namespace MTA.Client.Commands
                     player.Screen.Reload();
                 }
 
-                var successMsg = "NPC [" + name + "] created with ID " + npcId + " (skin: " + mesh + ")";
+                var successMsg = "Temporary NPC [" + name + "] created with ID " + npcId + " (skin: " + mesh + ")";
                 if (!string.IsNullOrEmpty(effect))
                 {
                     successMsg += " (effect: " + effect + ")";
                 }
+                successMsg += " [Not saved to database]";
                 client.Send(new Message(successMsg, System.Drawing.Color.Green, Message.Tip));
-            }
-            catch (Exception ex)
-            {
-                // Remove from map if database insert failed
-                client.Map.RemoveNpc(npc);
-                client.Send(new Message("Error saving NPC to database: " + ex.Message, System.Drawing.Color.Yellow,
-                    Message.Tip));
             }
 
             return true;
