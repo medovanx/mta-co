@@ -152,14 +152,16 @@ public abstract class BaseEvent : IEvent {
     }
 
     /// <summary>
-    ///     Teleport all players from specified maps
+    ///     Teleport all players from specified maps to a specific location
     /// </summary>
     protected static void TeleportPlayersFromMaps(IEnumerable<ushort> mapIds, ushort targetMapId, ushort targetX,
         ushort targetY) {
         var materializedMapIds = mapIds as ushort[] ?? mapIds.ToArray();
-        foreach (var client in Program.Values)
-            if (materializedMapIds.Any(mapId => client.Entity.MapID == mapId))
+        foreach (var client in Program.Values) {
+            if (materializedMapIds.Any(mapId => client.Entity.MapID == mapId)) {
                 client.Entity.Teleport(targetMapId, targetX, targetY);
+            }
+        }
     }
 
     /// <summary>

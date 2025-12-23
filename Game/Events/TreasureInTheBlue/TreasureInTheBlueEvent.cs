@@ -66,13 +66,10 @@ public class TreasureInTheBlueEvent : BaseEvent {
     public override void OnEnd() {
         base.OnEnd();
 
-        // Teleport all players out of event maps (ProudSea and PrizeCenter)
-        foreach (var client in Program.Values) {
-            var mapId = client.Entity.MapID;
-            if (mapId != MapConstants.ProudSea && mapId != MapConstants.TreasureInTheBlue_PrizeCenter) continue;
-            client.Entity.BringToLife();
-            client.Entity.Teleport(MapConstants.TwinCity, 304, 287);
-        }
+        RemoveEventCoinsFromAllPlayers();
+
+        TeleportPlayersFromMaps([MapConstants.ProudSea, MapConstants.TreasureInTheBlue_PrizeCenter],
+            MapConstants.TwinCity, 304, 287);
 
         BroadcastMessage(
             "The Treasure in the Blue has ended! All adventurers have been returned to Twin City. Thank you for participating!",
@@ -88,13 +85,10 @@ public class TreasureInTheBlueEvent : BaseEvent {
         base.OnUpdate(now);
 
         if (!IsActive) {
-            // Teleport players if event ended
-            foreach (var client in Program.Values) {
-                var mapId = client.Entity.MapID;
-                if ((mapId != MapConstants.ProudSea && mapId != MapConstants.TreasureInTheBlue_PrizeCenter) ||
-                    client.Account.State == AccountTable.AccountState.GM) continue;
-                client.Entity.Teleport(MapConstants.TwinCity, 304, 287);
-            }
+            RemoveEventCoinsFromAllPlayers();
+
+            TeleportPlayersFromMaps([MapConstants.ProudSea, MapConstants.TreasureInTheBlue_PrizeCenter],
+                MapConstants.TwinCity, 304, 287);
 
             BroadcastMessage(
                 "The Treasure in the Blue has ended! All adventurers have been returned to Twin City. Thank you for participating!",
@@ -116,6 +110,29 @@ public class TreasureInTheBlueEvent : BaseEvent {
         }
 
         CheckBossSpawn();
+    }
+
+    /// <summary>
+    ///     Remove all event coins from all player inventories (called when event ends or is inactive)
+    /// </summary>
+    private static void RemoveEventCoinsFromAllPlayers() {
+        foreach (var client in Program.Values) {
+            if (client.Entity == null) continue;
+
+            // Remove all coins of each type from inventory
+            // Keep removing until none are left (handles multiple stacks)
+            while (client.Inventory.Contains(ItemConstants.CopperCoin, 1)) {
+                client.Inventory.Remove(ItemConstants.CopperCoin, 1);
+            }
+
+            while (client.Inventory.Contains(ItemConstants.SilverCoin, 1)) {
+                client.Inventory.Remove(ItemConstants.SilverCoin, 1);
+            }
+
+            while (client.Inventory.Contains(ItemConstants.GoldCoin, 1)) {
+                client.Inventory.Remove(ItemConstants.GoldCoin, 1);
+            }
+        }
     }
 
     /// <summary>
