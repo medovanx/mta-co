@@ -71,7 +71,7 @@ namespace MTA.Network.GamePackets
         {
             ushort entirelength = 23;
             foreach (string list in Texts)
-                entirelength += (ushort)list.Length;
+                entirelength += (ushort)(list?.Length ?? 0);
             byte[] buffer = new byte[entirelength];
             WriteUInt16((ushort)(entirelength - 8), 0, buffer);
             WriteUInt16(1015, 2, buffer);

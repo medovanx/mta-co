@@ -68,7 +68,7 @@ namespace MTA.Network.GamePackets {
         public void SendSpawn(GameState client, bool checkScreen) {
             if (!client.Screen.Add(this) && checkScreen) return;
             client.Send(_buffer);
-            if (effect != "") {
+            if (!string.IsNullOrEmpty(effect)) {
                 client.SendScreen(new _String(true) {
                     UID = UID,
                     TextsCount = 22,
@@ -80,7 +80,7 @@ namespace MTA.Network.GamePackets {
 
         public void SendSpawn(GameState client) {
             SendSpawn(client, false);
-            if (effect != "") {
+            if (!string.IsNullOrEmpty(effect)) {
                 client.SendScreen(new _String(true) {
                     UID = UID,
                     TextsCount = 22,

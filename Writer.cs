@@ -248,9 +248,10 @@ namespace MTA.Network
             offset++;
             foreach (string str in arg)
             {
-                buffer[offset] = (byte)str.Length;
-                WriteString(str, offset + 1, buffer);
-                offset += str.Length + 1;
+                string safeStr = str ?? "";
+                buffer[offset] = (byte)safeStr.Length;
+                WriteString(safeStr, offset + 1, buffer);
+                offset += safeStr.Length + 1;
             }
         }
         public static void WriteStringList(string[] arg, int offset, byte[] buffer)
@@ -265,9 +266,10 @@ namespace MTA.Network
             offset++;
             foreach (string str in arg)
             {
-                buffer[offset] = (byte)str.Length;
-                WriteString(str, offset + 1, buffer);
-                offset += str.Length + 1;
+                string safeStr = str ?? "";
+                buffer[offset] = (byte)safeStr.Length;
+                WriteString(safeStr, offset + 1, buffer);
+                offset += safeStr.Length + 1;
             }
         }
 
