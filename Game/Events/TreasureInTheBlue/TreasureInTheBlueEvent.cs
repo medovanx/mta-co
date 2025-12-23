@@ -18,7 +18,7 @@ public class TreasureInTheBlueEvent : BaseEvent {
 
     private const double CopperCoinDropRate = 0.35;
     private const double SilverCoinDropRate = 0.25;
-    private const double GoldenOctopusDropRate = 0.10;
+    private const double GoldenOctopusDropRate = 0.25;
 
     private static readonly Random Random = new();
 
@@ -39,7 +39,7 @@ public class TreasureInTheBlueEvent : BaseEvent {
     private uint? _lastBossUid;
     private bool _lastBossWasAlive;
     private bool _bossInitialSpawnDone;
-    private const int BossInitialSpawnTimeMinutes = 1;
+    private const int BossInitialSpawnTimeMinutes = 5;
 
     public override string EventId => "TREASURE_IN_THE_BLUE";
     public override string EventName => "Treasure in the Blue";
@@ -222,10 +222,9 @@ public class TreasureInTheBlueEvent : BaseEvent {
         switch (npctype) {
             // Golden Octopus - Randomly drops weighted random reward
             case MonsterConstants.GoldenOctopus: {
-                if (Random.NextDouble() < GoldenOctopusDropRate) {
-                    var rewardItemId = TreasureInTheBlueHelpers.SelectWeightedReward(GoldenOctopusRewards);
-                    DropItemOnGround(monster, rewardItemId);
-                }
+                if (!(Random.NextDouble() < GoldenOctopusDropRate)) return true; // Skip drop
+                var rewardItemId = TreasureInTheBlueHelpers.SelectWeightedReward(GoldenOctopusRewards);
+                DropItemOnGround(monster, rewardItemId);
 
                 return true; // Skip normal drop
             }
