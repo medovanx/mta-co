@@ -79,18 +79,18 @@ public abstract class BaseEvent : IEvent {
 
     /// <inheritdoc />
     /// <remarks>
-    ///     Default implementation does nothing. Override in derived classes if they need to handle monster deaths.
+    ///     Default implementation returns false (don't skip normal drops). Override in derived classes if they need to handle
+    ///     monster deaths and skip normal drops. Return true to skip normal drop, false to keep it.
     /// </remarks>
-    public virtual void OnMonsterKilled(MonsterInformation monster, Entity killer) { }
+    public virtual bool OnMonsterKilled(MonsterInformation monster, Entity killer) {
+        return false;
+    }
 
     /// <inheritdoc />
     /// <remarks>
-    ///     Default implementation returns false (don't skip normal drops). Override in derived classes if the event handles
-    ///     rewards for specific monsters.
+    ///     Default implementation does nothing. Override in derived classes if they need to send pre-event warnings.
     /// </remarks>
-    public virtual bool ShouldSkipNormalDrop(MonsterInformation monster, ushort mapId) {
-        return false;
-    }
+    public virtual void OnPreEventWarning(DateTime now) { }
 
     /// <inheritdoc />
     /// <remarks>

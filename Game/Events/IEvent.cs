@@ -77,13 +77,15 @@ public interface IEvent {
 
     /// <summary>
     ///     Called when a monster is killed (optional - events can implement if they need to handle monster deaths)
+    ///     Returns true if normal drop should be skipped (event handles rewards), false otherwise
     /// </summary>
-    void OnMonsterKilled(MonsterInformation monster, Entity killer);
+    bool OnMonsterKilled(MonsterInformation monster, Entity killer);
 
     /// <summary>
-    ///     Check if normal monster drop should be skipped for this monster (event handles rewards instead)
+    ///     Called every second to allow events to send pre-event warnings (optional)
+    ///     This is called for all events, even inactive ones, so they can send warnings before the event starts
     /// </summary>
-    bool ShouldSkipNormalDrop(MonsterInformation monster, ushort mapId);
+    void OnPreEventWarning(DateTime now);
 
     /// <summary>
     ///     Handle player action/event (optional - events can implement if they need to handle player actions like finishing a

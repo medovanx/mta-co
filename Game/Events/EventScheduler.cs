@@ -49,6 +49,9 @@ public static class EventScheduler {
     public static void Update(DateTime now) {
         // Check for events that should trigger
         foreach (var gameEvent in Events) {
+            // Call pre-event warnings for all events (even inactive ones, so they can send warnings before start)
+            gameEvent.OnPreEventWarning(now);
+
             // Skip scheduled triggers if event is manually overridden
             if (gameEvent is BaseEvent { IsManuallyOverridden: true }) {
                 // Only update active events that are manually overridden
@@ -113,20 +116,15 @@ public static class EventScheduler {
     }
 
     /// <summary>
-    ///     Notify all events of a monster death
+    ///     Notify all events of a monster death and check if normal drop should be skipped
+    ///     Returns true if any event wants to skip normal drop (OR logic)
     /// </summary>
-    public static void OnMonsterKilled(MonsterInformation monster, Entity killer) {
-        foreach (var gameEvent in Events) gameEvent.OnMonsterKilled(monster, killer);
-    }
+    public static bool OnMonsterKilled(MonsterInformation monster, Entity killer) {
+        var shouldSkip = false;
+        foreach (var unused in Events.Where(gameEvent => gameEvent.OnMonsterKilled(monster, killer))) {
+            shouldSkip = true; // OR logic: if any event says skip, skip
+        }
 
-    /// <summary>
-    ///     Check if any active event wants to skip normal drop for this monster
-    /// </summary>
-    public static bool ShouldSkipNormalDrop(MonsterInformation monster, ushort mapId) {
-        foreach (var gameEvent in Events)
-            if (gameEvent.ShouldSkipNormalDrop(monster, mapId))
-                return true;
-
-        return false;
+        return shouldSkip;
     }
 }

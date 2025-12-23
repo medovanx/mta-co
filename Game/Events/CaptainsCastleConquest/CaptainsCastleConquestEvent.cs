@@ -85,48 +85,33 @@ public class CaptainsCastleConquestEvent : BaseEvent {
         }
     }
 
-    /// <summary>
+    /// <inheritdoc />
+    /// <remarks>
     ///     Handle monster death for Captain's Castle Conquest event
-    /// </summary>
-    /// <param name="monster">The monster that was killed</param>
-    /// <param name="killer">The entity that killed the monster</param>
-    public override void OnMonsterKilled(MonsterInformation monster, Entity killer) {
-        // Only handle Captain monsters in Captain's Castle Conquest maps (3030, 3031, 3032, 3033) during active event
+    ///     Returns true to skip normal drop, false to keep it
+    /// </remarks>
+    public override bool OnMonsterKilled(MonsterInformation monster, Entity killer) {
+        // Only handle Captain monsters in Captain's Castle Conquest maps during active event
         if (!IsActive)
-            return;
+            return false;
 
         // Check if monster is in any Captain's Castle Conquest map
         var mapId = monster.Owner.MapID;
         if (mapId != MapConstants.CP_CASTLE_BEGINNER && mapId != MapConstants.CP_CASTLE_ADVANCED)
-            return;
-
-        if (monster.Name != "Captain")
-            return;
-
-        CaptainsCastleConquestRewards.OnMonsterKilled(killer.Owner, monster.Name, monster.Owner.MapID);
-    }
-
-    /// <summary>
-    ///     Skip normal drop for Captain in Captain's Castle Conquest map when event is active
-    ///     Event system handles rewards
-    /// </summary>
-    /// <param name="monster">The monster that was killed</param>
-    /// <param name="mapId">The map ID of the monster</param>
-    public override bool ShouldSkipNormalDrop(MonsterInformation monster, ushort mapId) {
-        // Skip normal CP drop for Captain in any Captain's Castle Conquest map when event is active
-        if (!IsActive)
             return false;
 
-        var ownerMapId = monster.Owner.MapID;
-        return ownerMapId is MapConstants.CP_CASTLE_BEGINNER or MapConstants.CP_CASTLE_ADVANCED &&
-               monster.Name == "Captain";
+        if (monster.ID != MonsterConstants.Captain)
+            return false;
+
+        CaptainsCastleConquestRewards.OnMonsterKilled(killer.Owner, monster.Name, monster.Owner.MapID);
+        return true; // Skip normal drop
     }
 
-    /// <summary>
-    ///     Send pre-event warnings (called from World.cs for timing before event starts)
-    /// </summary>
-    /// <param name="now">The current date and time</param>
-    public static void SendPreEventWarnings(DateTime now) {
+    /// <inheritdoc />
+    /// <remarks>
+    ///     Send pre-event warnings before the event starts
+    /// </remarks>
+    public override void OnPreEventWarning(DateTime now) {
         // 5 minutes before (13:55 / 19:55)
         if (now is { Hour: EventStartHour1 - 1, Minute: 55, Second: 0 } ||
             now is { Hour: EventStartHour2 - 1, Minute: 55, Second: 0 })

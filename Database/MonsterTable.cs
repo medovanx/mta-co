@@ -102,7 +102,8 @@ namespace MTA.Database {
 
         public void Drop(Entity killer) {
             // Notify event system of monster death (for event-specific monsters)
-            EventScheduler.OnMonsterKilled(this, killer);
+            // Returns true if normal drop should be skipped (event handles rewards)
+            bool shouldSkipNormalDrop = EventScheduler.OnMonsterKilled(this, killer);
 
             #region Ramadan kareem
 
@@ -267,7 +268,7 @@ namespace MTA.Database {
 
             else {
                 // Check if any event wants to skip normal drop (event handles rewards instead)
-                if (!EventScheduler.ShouldSkipNormalDrop(this, Owner.MapID)) {
+                if (!shouldSkipNormalDrop) {
                     // Include npctype in message for all monsters
                     var monsterId = $" (ID: {ID})";
 

@@ -123,26 +123,12 @@ public class TreasureInTheBlueEvent : BaseEvent {
 
     /// <inheritdoc />
     /// <remarks>
-    ///     Skip normal drop for event monsters in ProudSea map when event is active
-    ///     Event system handles coin drops instead
-    /// </remarks>
-    public override bool ShouldSkipNormalDrop(MonsterInformation monster, ushort mapId) {
-        if (!IsActive) return false;
-        if (mapId != MapConstants.ProudSea) return false;
-
-        var npctype = monster.ID;
-        return npctype == MonsterConstants.CoinsStealer ||
-               npctype == MonsterConstants.GoldenOctopus ||
-               npctype == MonsterConstants.SilverOctopus;
-    }
-
-    /// <inheritdoc />
-    /// <remarks>
     ///     Handle coin drops when event monsters are killed
+    ///     Returns true to skip normal drop, false to keep it
     /// </remarks>
-    public override void OnMonsterKilled(MonsterInformation monster, Entity killer) {
-        if (!IsActive) return;
-        if (monster.Owner.MapID != MapConstants.ProudSea) return;
+    public override bool OnMonsterKilled(MonsterInformation monster, Entity killer) {
+        if (!IsActive) return false;
+        if (monster.Owner.MapID != MapConstants.ProudSea) return false;
 
         var npctype = monster.ID;
 
@@ -150,7 +136,7 @@ public class TreasureInTheBlueEvent : BaseEvent {
             // Golden Octopus - Always drops Gold Coin (100% chance)
             case MonsterConstants.GoldenOctopus:
                 DropCoinOnGround(monster, ItemConstants.GoldCoin);
-                return;
+                return true; // Skip normal drop
 
             // Coins Stealer - Randomly drops Copper Coin (50% chance)
             case MonsterConstants.CoinsStealer: {
@@ -158,7 +144,7 @@ public class TreasureInTheBlueEvent : BaseEvent {
                     DropCoinOnGround(monster, ItemConstants.CopperCoin);
                 }
 
-                return;
+                return true; // Skip normal drop
             }
 
             // Silver Octopus - Randomly drops Silver Coin (50% chance)
@@ -167,8 +153,10 @@ public class TreasureInTheBlueEvent : BaseEvent {
                     DropCoinOnGround(monster, ItemConstants.SilverCoin);
                 }
 
-                return;
+                return true; // Skip normal drop
         }
+
+        return false; // Not handled by this event, keep normal drop
     }
 
     /// <summary>

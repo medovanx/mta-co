@@ -12,5 +12,9 @@ namespace MTA.Game {
         public const uint SilverOctopus = 2699;
 
         #endregion Treasure in the Blue Event
+
+        #region Captain's Castle Conquest Event
+        public const uint Captain = 75630;
+        #endregion Captain's Castle Conquest Event
     }
 }

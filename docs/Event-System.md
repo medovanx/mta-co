@@ -108,17 +108,24 @@ namespace MTA.Game.Events.MyNewEvent
         }
 
         // Optional: Handle monster kills
-        public override void OnMonsterKilled(Database.MonsterInformation monster, Game.Entity killer)
+        // Returns true to skip normal drop, false to keep it
+        public override bool OnMonsterKilled(Database.MonsterInformation monster, Game.Entity killer)
         {
-            if (!IsActive || monster.Name != "SpecialMonster") return;
+            if (!IsActive || monster.Name != "SpecialMonster") return false;
+            if (monster.Owner.MapID != MapConstants.MY_MAP) return false;
+            
             if (killer.Owner != null)
                 MyNewEventRewards.OnMonsterKilled(killer.Owner, monster.Name, monster.Owner.MapID);
+            
+            return true; // Skip normal drop since we handled it
         }
 
-        // Optional: Skip normal drops
-        public override bool ShouldSkipNormalDrop(Database.MonsterInformation monster, ushort mapId)
+        // Optional: Send pre-event warnings
+        public override void OnPreEventWarning(DateTime now)
         {
-            return IsActive && mapId == MapConstants.MY_MAP && monster.Name == "SpecialMonster";
+            // 5 minutes before event starts
+            if (now is { Hour: 11, Minute: 55, Second: 0 })
+                BroadcastMessage("My New Event will begin in 5 minutes!", Color.White);
         }
 
         // Optional: Handle packets
@@ -240,9 +247,10 @@ protected override int? EventDurationMinutes => 30; // Event ends 30 minutes aft
 1. `MonsterTable.Drop()` → `EventScheduler.OnMonsterKilled()`
 2. All events receive notification via `OnMonsterKilled()`
 3. Events check if monster is relevant and handle rewards
-4. `EventScheduler.ShouldSkipNormalDrop()` checked before normal drops
+4. Events return `true` to skip normal drop, `false` to keep it
+5. If any event returns `true`, normal drop is skipped (OR logic)
 
-**Important:** Override `ShouldSkipNormalDrop()` to return `true` for event monsters, otherwise players get both event rewards AND normal drops.
+**Important:** Return `true` from `OnMonsterKilled()` for event monsters to skip normal drops, otherwise players get both event rewards AND normal drops. Events check their own maps, so conflicts are unlikely.
 
 ## IEvent Interface Methods
 
@@ -255,8 +263,8 @@ protected override int? EventDurationMinutes => 30; // Event ends 30 minutes aft
 | `OnStart()` | Yes | Called when event begins |
 | `OnEnd()` | Yes | Called when event ends |
 | `OnUpdate()` | No | Called every second while active. **Always call `base.OnUpdate(now)` first** |
-| `OnMonsterKilled()` | No | Handle monster death rewards |
-| `ShouldSkipNormalDrop()` | No | Skip normal drops for event monsters |
+| `OnMonsterKilled()` | No | Handle monster death rewards. Returns `bool`: `true` = skip normal drop, `false` = keep it |
+| `OnPreEventWarning()` | No | Send pre-event warnings (called for all events, even inactive ones) |
 | `HandlePacket()` | No | Handle incoming packets (self-contained integration) |
 
 **Important:** You should **NOT** override `ShouldTrigger()` unless you have a very specific reason. The base implementation automatically checks your `GetSchedules()` and handles start times. For end times, use `EventDurationMinutes` and let `base.OnUpdate()` handle it.
@@ -303,7 +311,7 @@ public override bool HandlePacket(Client.GameState client, byte[] packet, ushort
 ## Integration Points
 
 - **World.cs**: Calls `EventScheduler.Initialize()` on startup, `EventScheduler.Update()` every second
-- **MonsterTable.cs**: Calls `EventScheduler.OnMonsterKilled()`, checks `EventScheduler.ShouldSkipNormalDrop()`
+- **MonsterTable.cs**: Calls `EventScheduler.OnMonsterKilled()` and uses return value to determine if normal drop should be skipped
 - **NPC Handlers**: Check status via `EventScheduler.GetEvent()` and `IsActive` property
 - **GM Commands**: `EventCommands.cs` handles event control
 - **PacketHandler.cs**: Automatically calls `HandlePacket()` on all active events before normal processing
@@ -348,5 +356,8 @@ See `CaptainsCastleConquest/` folder for complete implementation:
 6. **Null checks**: Always check `IsActive` and null values
 7. **Clear messages**: Use descriptive broadcast messages
 8. **Monster respawns**: Call `EnsureMonsterRespawns()` in `OnStart()` if needed
-9. **Packet handling**: Override `HandlePacket()` for self-contained integration
-10. **No PacketHandler modifications**: Never add event-specific code to `PacketHandler.cs` - use `HandlePacket()` instead
+9. **Monster kills**: Return `true` from `OnMonsterKilled()` to skip normal drops when event handles rewards
+10. **Pre-event warnings**: Override `OnPreEventWarning()` for warnings before event starts (optional)
+11. **Packet handling**: Override `HandlePacket()` for self-contained integration
+12. **No external calls**: Events are self-contained - no need to call event methods from `World.cs` or elsewhere
+13. **No PacketHandler modifications**: Never add event-specific code to `PacketHandler.cs` - use `HandlePacket()` instead
