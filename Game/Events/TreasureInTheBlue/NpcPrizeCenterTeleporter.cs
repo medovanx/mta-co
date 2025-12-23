@@ -59,14 +59,14 @@ public static class NpcPrizeCenterTeleporter {
                 LastTeleportTimes[playerId] = DateTime.Now;
 
                 // Teleport to Prize Center
-                client.Entity.Teleport(MapConstants.JOB_CENTER, MapConstants.TreasureInTheBlue_PrizeCenter, 57, 49);
+                client.Entity.Teleport(MapConstants.JobCenter, MapConstants.TreasureInTheBlue_PrizeCenter, 57, 49);
                 client.Entity.Update(_String.Effect, "accession4", true);
                 client.Send("You have been teleported to the Prize Center! Exchange your coins for rewards!");
 
                 break;
             }
             case 2: {
-                client.Entity.Teleport(MapConstants.TWIN_CITY, 304, 287);
+                client.Entity.Teleport(MapConstants.TwinCity, 304, 287);
                 break;
             }
         }

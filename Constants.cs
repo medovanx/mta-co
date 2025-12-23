@@ -290,7 +290,7 @@ namespace MTA
             1024,
             2351,
             601,
-            Game.MapConstants.CP_CASTLE_BEGINNER,
+            Game.MapConstants.CAPTAIN_CASTLE_BEGINNER,
             Game.MapConstants.HOUSE_LV1,
             Game.MapConstants.HOUSE_LV2,
             Game.MapConstants.HOUSE_LV3,

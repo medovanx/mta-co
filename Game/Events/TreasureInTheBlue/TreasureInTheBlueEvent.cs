@@ -44,7 +44,7 @@ public class TreasureInTheBlueEvent : BaseEvent {
         CoinTracker.Reset();
 
         AutoInviteAllPlayers("The Treasure in the Blue has begun! Would you like to join the Proud Sea?",
-            MapConstants.TWIN_CITY,
+            MapConstants.TwinCity,
             323, 269);
 
         BroadcastMessage(
@@ -64,7 +64,7 @@ public class TreasureInTheBlueEvent : BaseEvent {
             var mapId = client.Entity.MapID;
             if (mapId != MapConstants.ProudSea && mapId != MapConstants.TreasureInTheBlue_PrizeCenter) continue;
             client.Entity.BringToLife();
-            client.Entity.Teleport(MapConstants.TWIN_CITY, 304, 287);
+            client.Entity.Teleport(MapConstants.TwinCity, 304, 287);
         }
 
         BroadcastMessage(
@@ -86,7 +86,7 @@ public class TreasureInTheBlueEvent : BaseEvent {
                 var mapId = client.Entity.MapID;
                 if ((mapId != MapConstants.ProudSea && mapId != MapConstants.TreasureInTheBlue_PrizeCenter) ||
                     client.Account.State == AccountTable.AccountState.GM) continue;
-                client.Entity.Teleport(MapConstants.TWIN_CITY, 304, 287);
+                client.Entity.Teleport(MapConstants.TwinCity, 304, 287);
             }
 
             BroadcastMessage(

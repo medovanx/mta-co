@@ -25,7 +25,7 @@ public static class NpcDizzyLand {
                 var dizzyEvent = (BaseEvent)EventScheduler.GetEvent("DIZZY_LAND")!;
                 if (dizzyEvent.IsActive) {
                     client.Entity.RemoveFlag(Update.Flags.Ride);
-                    client.Entity.Teleport(DIZZY_LAND, 105, 159);
+                    client.Entity.Teleport(MapConstants.DizzyLand, 105, 159);
                     if (!client.Entity.ContainsFlag(Update.Flags.Confused))
                         client.Entity.AddFlag(Update.Flags.Confused);
 

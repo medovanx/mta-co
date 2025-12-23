@@ -7,8 +7,8 @@ namespace MTA.Game {
     public static class MapConstants {
         #region Twin City
 
-        public const ushort TWIN_CITY = 1002;
-        public const ushort JOB_CENTER = 1004;
+        public const ushort TwinCity = 1002;
+        public const ushort JobCenter = 1004;
 
         #endregion Twin City
 
@@ -31,9 +31,9 @@ namespace MTA.Game {
 
         #region Event Maps
 
-        public const ushort CP_CASTLE_BEGINNER = 3033;
-        public const ushort CP_CASTLE_ADVANCED = 3030;
-        public const ushort DIZZY_LAND = 5528;
+        public const ushort CAPTAIN_CASTLE_BEGINNER = 3033;
+        public const ushort CAPTAIN_CASTLE_ADVANCED = 3030;
+        public const ushort DizzyLand = 5528;
         public const ushort SeaOfDeath = 3056;
         public const ushort ProudSea = 3071;
         public const ushort TreasureInTheBlue_PrizeCenter = 7010;

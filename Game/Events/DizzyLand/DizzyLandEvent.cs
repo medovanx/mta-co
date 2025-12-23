@@ -31,7 +31,7 @@ public class DizzyLandEvent : BaseEvent {
     public override void OnStart() {
         base.OnStart();
 
-        AutoInviteAllPlayers("The Dizzy Land event has begun! Would you like to join?", TWIN_CITY, 328,
+        AutoInviteAllPlayers("The Dizzy Land event has begun! Would you like to join?", TwinCity, 328,
             248);
 
         CheckAlive();
@@ -65,7 +65,7 @@ public class DizzyLandEvent : BaseEvent {
     private void CheckAlive() {
         AliveCount = 0;
         foreach (var client in Kernel.GamePool.Values) {
-            if (client.Entity.MapID != DIZZY_LAND ||
+            if (client.Entity.MapID != MapConstants.DizzyLand ||
                 client.Entity is not { Hitpoints: >= 1, Dead: false }) continue;
             AliveCount++;
 

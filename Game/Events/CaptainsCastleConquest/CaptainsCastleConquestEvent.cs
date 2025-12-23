@@ -20,7 +20,7 @@ public class CaptainsCastleConquestEvent : BaseEvent {
 
     // Castle map IDs
     private static readonly ushort[] CastleMaps =
-        [MapConstants.CP_CASTLE_BEGINNER, MapConstants.CP_CASTLE_ADVANCED];
+        [MapConstants.CAPTAIN_CASTLE_BEGINNER, MapConstants.CAPTAIN_CASTLE_ADVANCED];
 
     private DateTime? _lastWarning10Min;
     private DateTime? _lastWarning5Min;
@@ -39,20 +39,20 @@ public class CaptainsCastleConquestEvent : BaseEvent {
     public override void OnStart() {
         base.OnStart();
 
-        AutoInviteAllPlayers("The Captain's Castle Conquest has begun! Would you like to join?", MapConstants.TWIN_CITY,
+        AutoInviteAllPlayers("The Captain's Castle Conquest has begun! Would you like to join?", MapConstants.TwinCity,
             288,
             280);
 
         Kernel.SendWorldMessage(new Message("The Captain's Castle Conquest has begun!", Color.White, Message.Center),
             Program.Values);
 
-        EnsureMonsterRespawns([MapConstants.CP_CASTLE_BEGINNER, MapConstants.CP_CASTLE_ADVANCED], ["Captain"], 10);
+        EnsureMonsterRespawns([MapConstants.CAPTAIN_CASTLE_BEGINNER, MapConstants.CAPTAIN_CASTLE_ADVANCED], ["Captain"], 10);
     }
 
     /// <inheritdoc />
     public override void OnEnd() {
         base.OnEnd();
-        TeleportPlayersFromMaps(CastleMaps, MapConstants.TWIN_CITY, TwinCityX, TwinCityY);
+        TeleportPlayersFromMaps(CastleMaps, MapConstants.TwinCity, TwinCityX, TwinCityY);
         BroadcastMessage(
             "The Captain's Castle Conquest has ended. See you next time!",
             Color.White, Message.Center);
@@ -96,7 +96,7 @@ public class CaptainsCastleConquestEvent : BaseEvent {
 
         // Check if monster is in any Captain's Castle Conquest map
         var mapId = monster.Owner.MapID;
-        if (mapId != MapConstants.CP_CASTLE_BEGINNER && mapId != MapConstants.CP_CASTLE_ADVANCED)
+        if (mapId != MapConstants.CAPTAIN_CASTLE_BEGINNER && mapId != MapConstants.CAPTAIN_CASTLE_ADVANCED)
             return false;
 
         if (monster.ID != MonsterConstants.Captain)

@@ -32,10 +32,10 @@ public static class CaptainsCastleConquestRewards {
             return;
 
         // Different rewards based on map
-        if (mapId == MapConstants.CP_CASTLE_BEGINNER)
+        if (mapId == MapConstants.CAPTAIN_CASTLE_BEGINNER)
             // Beginner Map: 500 CPs per Captain kill
             GiveReward(client, RewardTypes.ConquerPoints, 500u);
-        else if (mapId == MapConstants.CP_CASTLE_ADVANCED)
+        else if (mapId == MapConstants.CAPTAIN_CASTLE_ADVANCED)
             // Advanced Map: 2,000 CPs per Captain kill
             GiveReward(client, RewardTypes.ConquerPoints, 2000u);
     }
