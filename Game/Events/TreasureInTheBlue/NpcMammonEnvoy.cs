@@ -53,6 +53,7 @@ public static class NpcMammonEnvoy {
                 dialog.Option($"Exchange Copper Coin [{copperLeft} left]", 1);
                 dialog.Option($"Exchange Silver Coin [{silverLeft} left]", 2);
                 dialog.Option($"Exchange Gold Coin [{goldLeft} left]", 3);
+                dialog.Option("Teleport me back to the Proud Sea", 4);
                 dialog.Option("Not now.", 255);
                 dialog.Send();
                 break;
@@ -70,6 +71,12 @@ public static class NpcMammonEnvoy {
 
             case 3: {
                 ExchangeCoin(client, dialog, coinTracker, ItemConstants.GoldCoin, GoldCoinRewards);
+                break;
+            }
+
+            case 4: {
+                client.Entity.Teleport(MapConstants.ProudSea, 200, 067);
+                client.Entity.Update(_String.Effect, "accession3", true);
                 break;
             }
         }

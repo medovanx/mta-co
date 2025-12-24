@@ -60,7 +60,7 @@ public static class NpcPrizeCenterTeleporter {
 
                 // Teleport to Prize Center
                 client.Entity.Teleport(MapConstants.JobCenter, MapConstants.TreasureInTheBlue_PrizeCenter, 57, 49);
-                client.Entity.Update(_String.Effect, "accession4", true);
+                client.Entity.Update(_String.Effect, "accession3", true);
                 client.Send("You have been teleported to the Prize Center! Exchange your coins for rewards!");
 
                 break;

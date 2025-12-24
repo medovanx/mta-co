@@ -10,7 +10,7 @@ namespace MTA.Game.Events.TreasureInTheBlue;
 /// <event>Treasure in the Blue</event>
 /// <npc>Squidward Octopus</npc>
 /// <description>Provides information and teleportation to the Proud Sea for the Treasure in the Blue event.</description>
-[NpcHandler(12)]
+[NpcHandler(18)]
 public static class NpcSquidwardOctopus {
     private const int RequiredLevel = 80;
 
@@ -67,7 +67,7 @@ public static class NpcSquidwardOctopus {
 
                 // Teleport to Proud Sea
                 client.Entity.Teleport(MapConstants.ProudSea, 200, 067);
-                client.Entity.Update(_String.Effect, "accession4", true);
+                client.Entity.Update(_String.Effect, "accession3", true);
                 client.Send(
                     "Welcome to the Proud Sea! The Treasure in the Blue awaits! Collect ancient coins from monsters, but remember: they expire after 60 minutes. Exchange them quickly with the Mammon Envoy at the Prize Center!");
 
