@@ -39,7 +39,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                 case 2: {
                     if (client.Entity.Money >= entryFee) {
                         client.Entity.Money -= entryFee;
-                        client.Entity.Teleport(2056, 417, 571);
+                        client.Entity.Teleport(2056, 635, 392);
                     }
                     else {
                         dialog.Text("You don't have enough money.");
