@@ -39,5 +39,7 @@ namespace MTA.Game {
         public const ushort TreasureInTheBlue_PrizeCenter = 7010;
 
         #endregion Event Maps
+
+        public const ushort TrainingGround = 1039;
     }
 }
