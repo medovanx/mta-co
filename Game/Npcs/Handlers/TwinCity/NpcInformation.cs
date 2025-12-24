@@ -6,7 +6,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
     /// <summary>
     /// Information - Provides teleportation services to various event areas
     /// </summary>
-    [NpcHandler(115522004)]
+    [NpcHandler(6)]
     public static class NpcInformation {
         public static void Handle(GameState client, NpcRequest npcRequest, MTA.Npcs dialog) {
             switch (npcRequest.OptionID) {

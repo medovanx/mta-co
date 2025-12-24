@@ -8,7 +8,7 @@ namespace MTA.Game.Events.DizzyLand;
 /// <summary>
 ///     DizzyLand Event Entry NPC - Handles player entry to DizzyLand event
 /// </summary>
-[NpcHandler(115522010)]
+[NpcHandler(13)]
 public static class NpcDizzyLand {
     public static void Handle(GameState client, NpcRequest npcRequest, MTA.Npcs dialog) {
         switch (npcRequest.OptionID) {

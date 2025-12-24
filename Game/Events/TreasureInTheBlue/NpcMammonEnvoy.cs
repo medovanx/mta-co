@@ -12,7 +12,7 @@ namespace MTA.Game.Events.TreasureInTheBlue;
 /// <event>Treasure in the Blue</event>
 /// <npc>Mammon Envoy</npc>
 /// <description>Exchanges event coins for rewards</description>
-[NpcHandler(115522011)]
+[NpcHandler(15)]
 public static class NpcMammonEnvoy {
     private static readonly Random Random = new();
 

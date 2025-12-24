@@ -7,7 +7,7 @@ namespace MTA.Game.Events.CaptainsCastleConquest;
 /// <summary>
 ///     Captain's Castle Conquest - Handles Captain's Castle Conquest event entry and exit
 /// </summary>
-[NpcHandler(115522005)]
+[NpcHandler(7)]
 public static class NpcCaptainsCastleConquest {
     public static void Handle(GameState client, NpcRequest npcRequest, MTA.Npcs dialog) {
         switch (npcRequest.OptionID) {

@@ -12,7 +12,7 @@ namespace MTA.Game.Events.TreasureInTheBlue;
 /// <npc>Prize Center Teleporter</npc>
 /// <description>Teleports players to the Prize Center with a 3-minute cooldown</description>
 /// </summary>
-[NpcHandler(115522012)]
+[NpcHandler(14)]
 public static class NpcPrizeCenterTeleporter {
     private const int CooldownMinutes = 3;
 

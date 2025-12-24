@@ -10,7 +10,7 @@ namespace MTA.Game.Events.TreasureInTheBlue;
 /// <event>Treasure in the Blue</event>
 /// <npc>Squidward Octopus</npc>
 /// <description>Provides information and teleportation to the Proud Sea for the Treasure in the Blue event.</description>
-[NpcHandler(115522009)]
+[NpcHandler(12)]
 public static class NpcSquidwardOctopus {
     private const int RequiredLevel = 80;
 

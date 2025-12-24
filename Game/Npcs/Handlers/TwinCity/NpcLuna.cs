@@ -32,7 +32,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
     /// <summary>
     /// Luna - Exit NPC for Moon Platform
     /// </summary>
-    [NpcHandler(115522002)] // Replace with Luna's actual NPC ID in Moon Platform
+    [NpcHandler(16)] // Replace with Luna's actual NPC ID in Moon Platform
     public static class NpcLunaMoonPlatform {
         public static void Handle(GameState client, NpcRequest npcRequest, MTA.Npcs dialog) {
             switch (npcRequest.OptionID) {
@@ -54,7 +54,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
     /// <summary>
     /// Luna - Exit NPC for Dream Land
     /// </summary>
-    [NpcHandler(115522003)] // Replace with Luna's actual NPC ID in Dream Land
+    [NpcHandler(17)] // Replace with Luna's actual NPC ID in Dream Land
     public static class NpcLunaDreamLand {
         public static void Handle(GameState client, NpcRequest npcRequest, MTA.Npcs dialog) {
             switch (npcRequest.OptionID) {
