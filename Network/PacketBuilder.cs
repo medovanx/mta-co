@@ -2,14 +2,14 @@
 
 namespace MTA.Network {
     public class PacketBuilder {
-        protected byte[] _buffer = new byte[1024];
+        protected byte[] Buffer = new byte[1024];
         protected int Len;
         protected int Position;
-        protected byte[] TQ_SERVER = Program.Encoding.GetBytes("TQServer");
+        protected byte[] TqServer = Program.Encoding.GetBytes("TQServer");
 
-        public PacketBuilder(int T, int L) {
-            Len = L;
-            Length(L);
+        public PacketBuilder(int T, int l) {
+            Len = l;
+            Length(l);
             Type(T);
         }
 
@@ -17,222 +17,218 @@ namespace MTA.Network {
             return Position;
         }
 
-        public void SetPosition(int Pos) {
-            Position = Pos;
+        public void SetPosition(int pos) {
+            Position = pos;
         }
 
         public void Short(int value) {
-            _buffer[Position] = ((byte)(value & 0xff));
+            Buffer[Position] = ((byte)(value & 0xff));
             Position++;
-            _buffer[Position] = ((byte)((value >> 8) & 0xff));
+            Buffer[Position] = ((byte)((value >> 8) & 0xff));
             Position++;
         }
 
         public void Short(uint value) {
-            _buffer[Position] = ((byte)(value & 0xff));
+            Buffer[Position] = ((byte)(value & 0xff));
             Position++;
-            _buffer[Position] = ((byte)((value >> 8) & 0xff));
+            Buffer[Position] = ((byte)((value >> 8) & 0xff));
             Position++;
         }
 
         public void Length(int value) {
-            _buffer[Position] = ((byte)(value & 0xff));
+            Buffer[Position] = ((byte)(value & 0xff));
             Position++;
-            _buffer[Position] = ((byte)((value >> 8) & 0xff));
+            Buffer[Position] = ((byte)((value >> 8) & 0xff));
             Position++;
         }
 
         public void Type(int value) {
-            _buffer[Position] = ((byte)(value & 0xff));
+            Buffer[Position] = ((byte)(value & 0xff));
             Position++;
-            _buffer[Position] = ((byte)((value >> 8) & 0xff));
+            Buffer[Position] = ((byte)((value >> 8) & 0xff));
             Position++;
         }
 
         public void Long(int value) {
-            _buffer[Position] = ((byte)(value & 0xff));
+            Buffer[Position] = ((byte)(value & 0xff));
             Position++;
-            _buffer[Position] = ((byte)(value >> 8 & 0xff));
+            Buffer[Position] = ((byte)(value >> 8 & 0xff));
             Position++;
-            _buffer[Position] = (byte)(value >> 16 & 0xff);
+            Buffer[Position] = (byte)(value >> 16 & 0xff);
             Position++;
-            _buffer[Position] = ((byte)(value >> 24 & 0xff));
+            Buffer[Position] = ((byte)(value >> 24 & 0xff));
             Position++;
         }
 
         public void Long(ulong value) {
-            _buffer[Position] = ((byte)(value & 0xffL));
+            Buffer[Position] = ((byte)(value & 0xffL));
             Position++;
-            _buffer[Position] = ((byte)(value >> 8 & 0xff));
+            Buffer[Position] = ((byte)(value >> 8 & 0xff));
             Position++;
-            _buffer[Position] = (byte)(value >> 16 & 0xff);
+            Buffer[Position] = (byte)(value >> 16 & 0xff);
             Position++;
-            _buffer[Position] = ((byte)(value >> 24 & 0xff));
+            Buffer[Position] = ((byte)(value >> 24 & 0xff));
             Position++;
         }
 
         public void ULong(ulong value) {
-            _buffer[Position] = (byte)(value);
+            Buffer[Position] = (byte)(value);
             Position++;
-            _buffer[Position] = (byte)(value >> 8);
+            Buffer[Position] = (byte)(value >> 8);
             Position++;
-            _buffer[Position] = (byte)(value >> 16);
+            Buffer[Position] = (byte)(value >> 16);
             Position++;
-            _buffer[Position] = (byte)(value >> 24);
+            Buffer[Position] = (byte)(value >> 24);
             Position++;
-            _buffer[Position] = (byte)(value >> 32);
+            Buffer[Position] = (byte)(value >> 32);
             Position++;
-            _buffer[Position] = (byte)(value >> 40);
+            Buffer[Position] = (byte)(value >> 40);
             Position++;
-            _buffer[Position] = (byte)(value >> 48);
+            Buffer[Position] = (byte)(value >> 48);
             Position++;
-            _buffer[Position] = (byte)(value >> 56);
+            Buffer[Position] = (byte)(value >> 56);
             Position++;
         }
 
         public void Int(int value) {
-            _buffer[Position] = (Convert.ToByte(value & 0xff));
+            Buffer[Position] = (Convert.ToByte(value & 0xff));
             Position++;
         }
 
         public void Int(uint value) {
-            _buffer[Position] = (Convert.ToByte(value & 0xff));
+            Buffer[Position] = (Convert.ToByte(value & 0xff));
             Position++;
         }
 
         public void Long(uint value) {
-            _buffer[Position] = ((byte)(value & 0xff));
+            Buffer[Position] = ((byte)(value & 0xff));
             Position++;
-            _buffer[Position] = ((byte)(value >> 8 & 0xff));
+            Buffer[Position] = ((byte)(value >> 8 & 0xff));
             Position++;
-            _buffer[Position] = (byte)(value >> 16 & 0xff);
+            Buffer[Position] = (byte)(value >> 16 & 0xff);
             Position++;
-            _buffer[Position] = ((byte)(value >> 24 & 0xff));
+            Buffer[Position] = ((byte)(value >> 24 & 0xff));
             Position++;
         }
 
         public void Move(int value) {
-            for (int x = 0; x < value; x++) {
-                _buffer[Position] = 0;
+            for (var x = 0; x < value; x++) {
+                Buffer[Position] = 0;
                 Position++;
             }
         }
 
         public void Text(string value) {
-            byte[] nvalue = Program.Encoding.GetBytes(value);
-            Array.Copy(nvalue, 0, _buffer, Position, nvalue.Length);
+            var nvalue = Program.Encoding.GetBytes(value);
+            Array.Copy(nvalue, 0, Buffer, Position, nvalue.Length);
             Position += nvalue.Length;
         }
 
         protected void Seal() {
-            Array.Copy(TQ_SERVER, 0, _buffer, Position, TQ_SERVER.Length);
-            Position += TQ_SERVER.Length + 1;
-            byte[] x = new byte[Position - 1];
-            Array.Copy(_buffer, x, Position - 1);
-            _buffer = new byte[x.Length];
-            Array.Copy(x, _buffer, x.Length);
-            x = null;
+            Array.Copy(TqServer, 0, Buffer, Position, TqServer.Length);
+            Position += TqServer.Length + 1;
+            var x = new byte[Position - 1];
+            Array.Copy(Buffer, x, Position - 1);
+            Buffer = new byte[x.Length];
+            Array.Copy(x, Buffer, x.Length);
         }
 
-        public byte[] getFinal() {
+        public byte[] GetFinal() {
             Seal();
-            return _buffer;
+            return Buffer;
         }
 
-        internal void Fill(int End) {
-            for (int x = Position; x < End; x++)
+        internal void Fill(int end) {
+            for (var x = Position; x < end; x++)
                 Int(0);
         }
 
         internal void PrintThis() {
-            string Dat = "";
-            for (int x = 0; x < Position; x++)
-                Dat += _buffer[x].ToString("X") + " ";
-            System.Console.WriteLine(Dat);
+            var dat = "";
+            for (var x = 0; x < Position; x++)
+                dat += Buffer[x].ToString("X") + " ";
+            System.Console.WriteLine(dat);
         }
 
         #region Add from offset
 
-        public void Short(int value, int Offset) {
-            _buffer[Offset] = ((byte)(value & 0xff));
-            _buffer[Offset + 1] = ((byte)((value >> 8) & 0xff));
+        public void Short(int value, int offset) {
+            Buffer[offset] = ((byte)(value & 0xff));
+            Buffer[offset + 1] = ((byte)((value >> 8) & 0xff));
         }
 
-        public void Short(uint value, int Offset) {
-            _buffer[Offset] = ((byte)(value & 0xff));
-            Offset++;
-            _buffer[Offset] = ((byte)((value >> 8) & 0xff));
+        public void Short(uint value, int offset) {
+            Buffer[offset] = ((byte)(value & 0xff));
+            offset++;
+            Buffer[offset] = ((byte)((value >> 8) & 0xff));
         }
 
-        public void Length(int value, int Offset) {
-            _buffer[Offset] = ((byte)(value & 0xff));
-            Offset++;
-            _buffer[Offset] = ((byte)((value >> 8) & 0xff));
+        public void Length(int value, int offset) {
+            Buffer[offset] = ((byte)(value & 0xff));
+            offset++;
+            Buffer[offset] = ((byte)((value >> 8) & 0xff));
         }
 
-        public void Type(int value, int Offset) {
-            _buffer[Offset] = ((byte)(value & 0xff));
-            Offset++;
-            _buffer[Offset] = ((byte)((value >> 8) & 0xff));
+        public void Type(int value, int offset) {
+            Buffer[offset] = ((byte)(value & 0xff));
+            offset++;
+            Buffer[offset] = ((byte)((value >> 8) & 0xff));
         }
 
-        public void Long(int value, int Offset) {
-            _buffer[Offset] = ((byte)(value & 0xff));
-            Offset++;
-            _buffer[Offset] = ((byte)(value >> 8 & 0xff));
-            Offset++;
-            _buffer[Offset] = (byte)(value >> 16 & 0xff);
-            Offset++;
-            _buffer[Offset] = ((byte)(value >> 24 & 0xff));
+        public void Long(int value, int offset) {
+            Buffer[offset] = ((byte)(value & 0xff));
+            offset++;
+            Buffer[offset] = ((byte)(value >> 8 & 0xff));
+            offset++;
+            Buffer[offset] = (byte)(value >> 16 & 0xff);
+            offset++;
+            Buffer[offset] = ((byte)(value >> 24 & 0xff));
         }
 
-        public void Long(ulong value, int Offset) {
-            _buffer[Offset] = ((byte)(value & 0xffL));
-            Offset++;
-            _buffer[Offset] = ((byte)(value >> 8 & 0xff));
-            Offset++;
-            _buffer[Offset] = (byte)(value >> 16 & 0xff);
-            Offset++;
-            _buffer[Offset] = ((byte)(value >> 24 & 0xff));
+        public void Long(ulong value, int offset) {
+            Buffer[offset] = ((byte)(value & 0xffL));
+            offset++;
+            Buffer[offset] = ((byte)(value >> 8 & 0xff));
+            offset++;
+            Buffer[offset] = (byte)(value >> 16 & 0xff);
+            offset++;
+            Buffer[offset] = ((byte)(value >> 24 & 0xff));
         }
 
-        public void ULong(ulong value, int Offset) {
-            _buffer[Offset] = (byte)(value);
-            Offset++;
-            _buffer[Offset] = (byte)(value >> 8);
-            Offset++;
-            _buffer[Offset] = (byte)(value >> 16);
-            Offset++;
-            _buffer[Offset] = (byte)(value >> 24);
-            Offset++;
-            _buffer[Offset] = (byte)(value >> 32);
-            Offset++;
-            _buffer[Offset] = (byte)(value >> 40);
-            Offset++;
-            _buffer[Offset] = (byte)(value >> 48);
-            Offset++;
-            _buffer[Offset] = (byte)(value >> 56);
+        public void ULong(ulong value, int offset) {
+            Buffer[offset] = (byte)(value);
+            offset++;
+            Buffer[offset] = (byte)(value >> 8);
+            offset++;
+            Buffer[offset] = (byte)(value >> 16);
+            offset++;
+            Buffer[offset] = (byte)(value >> 24);
+            offset++;
+            Buffer[offset] = (byte)(value >> 32);
+            offset++;
+            Buffer[offset] = (byte)(value >> 40);
+            offset++;
+            Buffer[offset] = (byte)(value >> 48);
+            offset++;
+            Buffer[offset] = (byte)(value >> 56);
         }
 
-        public void Int(int value, int Offset) {
-            _buffer[Offset] = (Convert.ToByte(value & 0xff));
-            Offset++;
+        public void Int(int value, int offset) {
+            Buffer[offset] = (Convert.ToByte(value & 0xff));
         }
 
-        public void Int(uint value, int Offset) {
-            _buffer[Offset] = (Convert.ToByte(value & 0xff));
-            Offset++;
+        public void Int(uint value, int offset) {
+            Buffer[offset] = (Convert.ToByte(value & 0xff));
         }
 
-        public void Long(uint value, int Offset) {
-            _buffer[Offset] = ((byte)(value & 0xff));
-            Offset++;
-            _buffer[Offset] = ((byte)(value >> 8 & 0xff));
-            Offset++;
-            _buffer[Offset] = (byte)(value >> 16 & 0xff);
-            Offset++;
-            _buffer[Offset] = ((byte)(value >> 24 & 0xff));
-            Offset++;
+        public void Long(uint value, int offset) {
+            Buffer[offset] = ((byte)(value & 0xff));
+            offset++;
+            Buffer[offset] = ((byte)(value >> 8 & 0xff));
+            offset++;
+            Buffer[offset] = (byte)(value >> 16 & 0xff);
+            offset++;
+            Buffer[offset] = ((byte)(value >> 24 & 0xff));
         }
 
         #endregion

@@ -688,7 +688,7 @@ namespace MTA.Game.ConquerStructures
                     P.Short(0xffff);
                 }
             }
-            return P.getFinal();
+            return P.GetFinal();
         }
         public void EndRound(uint WinnerId)
         {
