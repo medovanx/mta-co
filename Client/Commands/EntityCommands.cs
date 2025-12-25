@@ -692,38 +692,7 @@ namespace MTA.Client.Commands
 
         private static bool HandleDieCommand(GameState client, string[] data, string mess)
         {
-            if (client.Entity.Dead)
-            {
-                client.Send(new Network.GamePackets.Message("You are already dead.",
-                    System.Drawing.Color.Red, Network.GamePackets.Message.Tip));
-                return true;
-            }
-
-            client.Entity.Hitpoints = 0;
-            client.Entity.DeathStamp = Time32.Now;
-
-            var update = new Network.GamePackets.Update(true)
-            {
-                UID = client.Entity.UID,
-                UpdateCount = 1
-            };
-            update.Append(Network.GamePackets.Update.Hitpoints, 0);
-            client.Send(update);
-
-            client.Entity.AddFlag(Network.GamePackets.Update.Flags.Dead);
-            client.Entity.RemoveFlag(Network.GamePackets.Update.Flags.Fly);
-            client.Entity.RemoveFlag(Network.GamePackets.Update.Flags.Ride);
-
-            var str = new Network.GamePackets._String(true)
-            {
-                UID = client.Entity.UID,
-                TextsCount = 1,
-                Type = Network.GamePackets._String.Effect
-            };
-            str.Texts.Add("endureXPdeath");
-            client.Entity.SendScreen(str);
-
-            client.Send(new Network.GamePackets.Message("You have died.", System.Drawing.Color.Red, Network.GamePackets.Message.Tip));
+            client.Entity.Die(0);
             return true;
         }
 
