@@ -24006,6 +24006,10 @@ namespace MTA.Network {
                 client.Entity.Hitpoints = client.Entity.MaxHitpoints;
                 if (client.Entity.VIPLevel > 7)
                     client.Entity.AddFlag(Update.Flags.DivineShield);
+                // Set Attackable to true and notify other players about the state change
+                client.Attackable = true;
+                client.Entity.Update(client.Entity.StatusFlag, client.Entity.StatusFlag2, 
+                    client.Entity.StatusFlag3, 0, 0, 0, 0, true);
                 if (client.Entity.MapID == 1518) {
                     client.Entity.Teleport(1002, 301, 281);
                     return;

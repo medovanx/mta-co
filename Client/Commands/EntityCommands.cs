@@ -794,6 +794,10 @@ namespace MTA.Client.Commands
             targetClient.Entity.RemoveFlag(Network.GamePackets.Update.Flags.Dead);
             targetClient.Entity.RemoveFlag(Network.GamePackets.Update.Flags.Ghost);
             targetClient.Entity.Hitpoints = targetClient.Entity.MaxHitpoints;
+            // Set Attackable to true and notify other players about the state change
+            targetClient.Attackable = true;
+            targetClient.Entity.Update(targetClient.Entity.StatusFlag, targetClient.Entity.StatusFlag2, 
+                targetClient.Entity.StatusFlag3, 0, 0, 0, 0, true);
 
             // Send notification to target if reviving someone else
             if (targetClient != client)
