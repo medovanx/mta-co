@@ -112,11 +112,4 @@ namespace MTA
             return v1[t.Length];
         }
     }
-
-
-    public class SortEntry<Key, Value>
-    {
-        public Dictionary<Key, Value> Values;
-    }
-
 }

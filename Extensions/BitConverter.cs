@@ -13,11 +13,6 @@ namespace MTA
             }
         }
 
-        internal static ushort ToUInt16(object packet, int v)
-        {
-            throw new NotImplementedException();
-        }
-
         public static Boolean ToBoolean(byte[] buffer, int offset)
         {
             if (offset > buffer.Length - 4) return false;

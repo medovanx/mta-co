@@ -4,7 +4,6 @@ namespace MTA {
     public static class Console {
         private static DateTime NOW = DateTime.Now;
         private static Time32 NOW32 = Time32.Now;
-        private static Random _random = new Random();
 
         public static string Title {
             get { return System.Console.Title; }
@@ -51,21 +50,12 @@ namespace MTA {
             System.Console.WriteLine();
         }
 
-        internal static void WriteLine(string v1, string v2) {
-            throw new NotImplementedException();
-        }
-
         public static string ReadLine() {
             return System.Console.ReadLine();
         }
 
         public static void Clear() {
             System.Console.Clear();
-        }
-
-        private static ConsoleColor GetRandomConsoleColor() {
-            var consoleColors = Enum.GetValues(typeof(ConsoleColor));
-            return (ConsoleColor)consoleColors.GetValue(_random.Next(consoleColors.Length));
         }
 
         public static void WriteLine(string text, ConsoleColor color = ConsoleColor.White) {
