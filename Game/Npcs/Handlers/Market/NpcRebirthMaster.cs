@@ -1,6 +1,8 @@
 using MTA.Client;
 using MTA.Database;
 using MTA.Network.GamePackets;
+using static MTA.Game.EntityClassConstants;
+using static MTA.Game.ItemConstants;
 
 namespace MTA.Game.Npcs.Handlers.Market {
     /// <summary>
@@ -8,17 +10,9 @@ namespace MTA.Game.Npcs.Handlers.Market {
     /// </summary>
     [NpcHandler(59558)]
     public static class NpcRebirthMaster {
-        private const byte MasterClassType = 5; // Classes ending in 5 are master classes
-        private const byte WaterSaintClassId = 135;
         private const byte WaterSaintRequiredLevel = 110;
         private const byte OtherClassesRequiredLevel = 120;
-
-        // Item IDs
-        private const uint CelestialStoneId = 721259;
-        private const uint OblivionDewId = 711083;
         private const uint OblivionDewPrice = 1500;
-        private const uint DragonBallId = 1088000;
-        private const uint ExemptionTokenId = 723701;
         private const uint SuperGemBaseId = 700000;
 
         public static void Handle(GameState client, NpcRequest npcRequest, MTA.Npcs dialog) {
@@ -40,8 +34,8 @@ namespace MTA.Game.Npcs.Handlers.Market {
 
                 case 1: {
                     if (client.Entity.Reborn == 0) {
-                        if (client.Entity.Class % 10 == MasterClassType &&
-                            client.Entity.Level >= (client.Entity.Class == WaterSaintClassId
+                        if (IsMaster(client.Entity.Class) &&
+                            client.Entity.Level >= (client.Entity.Class == WaterTaoist_Master
                                 ? WaterSaintRequiredLevel
                                 : OtherClassesRequiredLevel)) {
                             dialog.Text(
@@ -81,16 +75,16 @@ namespace MTA.Game.Npcs.Handlers.Market {
                 }
                 case 13: {
                     dialog.Text("Select the class you want to be reborn as.");
-                    dialog.Option("Trojan.", (byte)(10 + npcRequest.OptionID));
-                    dialog.Option("Warrior.", (byte)(20 + npcRequest.OptionID));
-                    dialog.Option("Archer.", (byte)(40 + npcRequest.OptionID));
-                    dialog.Option("Water Taoist.", (byte)(132 + npcRequest.OptionID));
-                    dialog.Option("Fire Taoist.", (byte)(142 + npcRequest.OptionID));
-                    dialog.Option("Ninja.", (byte)(50 + npcRequest.OptionID));
-                    dialog.Option("Monk.", (byte)(60 + npcRequest.OptionID));
-                    dialog.Option("Pirate.", (byte)(70 + npcRequest.OptionID));
-                    dialog.Option("Dragon Warrior.", (byte)(80 + npcRequest.OptionID));
-                    dialog.Option("Windwalker.", (byte)(160 + npcRequest.OptionID));
+                    dialog.Option("Trojan.", (byte)(Trojan_1 + npcRequest.OptionID));
+                    dialog.Option("Warrior.", (byte)(Warrior_1 + npcRequest.OptionID));
+                    dialog.Option("Archer.", (byte)(Archer_1 + npcRequest.OptionID));
+                    dialog.Option("Water Taoist.", (byte)(WaterTaoist_3 + npcRequest.OptionID));
+                    dialog.Option("Fire Taoist.", (byte)(FireTaoist_3 + npcRequest.OptionID));
+                    dialog.Option("Ninja.", (byte)(Ninja_1 + npcRequest.OptionID));
+                    dialog.Option("Monk.", (byte)(Monk_1 + npcRequest.OptionID));
+                    dialog.Option("Pirate.", (byte)(Pirate_1 + npcRequest.OptionID));
+                    dialog.Option("Dragon Warrior.", (byte)(DragonWarrior_1 + npcRequest.OptionID));
+                    dialog.Option("Windwalker.", (byte)(Windwalker_1 + npcRequest.OptionID));
                     dialog.Send();
                     break;
                 }
@@ -118,37 +112,37 @@ namespace MTA.Game.Npcs.Handlers.Market {
                 case 173: // Windwalker (blessed rebirth)
                 {
                     if (client.Entity.Reborn == 0) {
-                        if (client.Entity.Class % 10 == MasterClassType &&
-                            client.Entity.Level >= (client.Entity.Class == WaterSaintClassId
+                        if (IsMaster(client.Entity.Class) &&
+                            client.Entity.Level >= (client.Entity.Class == WaterTaoist_Master
                                 ? WaterSaintRequiredLevel
                                 : OtherClassesRequiredLevel)) {
-                            if (client.Inventory.Contains(CelestialStoneId, 1)) {
-                                byte _class = (byte)(npcRequest.OptionID - npcRequest.OptionID % 10);
-                                if (_class > 100)
-                                    _class += 2;
-                                byte type = (byte)(npcRequest.OptionID - _class);
-                                if (_class < 100)
-                                    _class++;
+                            if (client.Inventory.Contains(CelestialStone, 1)) {
+                                var @class = (byte)(npcRequest.OptionID - npcRequest.OptionID % 10);
+                                if (@class > 100)
+                                    @class += 2;
+                                var type = (byte)(npcRequest.OptionID - @class);
+                                if (@class < 100)
+                                    @class++;
                                 if (type != 4) {
-                                    _class -= 10;
+                                    @class -= 10;
                                 }
 
-                                if (client.Reborn(_class)) {
-                                    client.Inventory.Remove(CelestialStoneId, 1);
+                                if (client.Reborn(@class)) {
+                                    client.Inventory.Remove(CelestialStone, 1);
                                     if (type == 4) {
                                         if (client.SelectedGem != 0) {
-                                            uint gemId = client.SelectedGem + SuperGemBaseId;
+                                            var gemId = client.SelectedGem + SuperGemBaseId;
                                             client.Inventory.Add(gemId, 0, 1);
                                         }
                                     }
                                     else {
-                                        int availableshots = 0;
+                                        var availableshots = 0;
                                         for (byte count = 0; count < 12; count++)
                                             if (!client.Equipment.Free(count))
                                                 if (client.Equipment.TryGetItem(count).Bless == 0)
                                                     availableshots++;
                                         if (availableshots != 0) {
-                                            byte ex = (byte)Kernel.Random.Next(12);
+                                            var ex = (byte)Kernel.Random.Next(12);
                                             if (!client.Equipment.Free(ex))
                                                 if (client.Equipment.TryGetItem(ex).Bless == 0) {
                                                     var item = client.Equipment.TryGetItem(ex);
@@ -225,11 +219,11 @@ namespace MTA.Game.Npcs.Handlers.Market {
 
                 case 2: {
                     if (client.Entity.Reborn == 1) {
-                        if (client.Entity.Class % 10 == MasterClassType && client.Entity.Level >=
-                            (client.Entity.Class == WaterSaintClassId
+                        if (IsMaster(client.Entity.Class) && client.Entity.Level >=
+                            (client.Entity.Class == WaterTaoist_Master
                                 ? WaterSaintRequiredLevel
                                 : OtherClassesRequiredLevel)) {
-                            if (client.Inventory.Contains(ExemptionTokenId, 1)) {
+                            if (client.Inventory.Contains(ExemptionToken, 1)) {
                                 dialog.Text("Select the class you want to be reborn as.");
                                 dialog.Option("Trojan.", 11);
                                 dialog.Option("Warrior.", 21);
@@ -254,7 +248,6 @@ namespace MTA.Game.Npcs.Handlers.Market {
                                 "You need to be a master in your class and your level is 110+ for Water Saints or 120+ for other classes.");
                             dialog.Option("I'll just leave.", 255);
                             dialog.Send();
-                            break;
                         }
                     }
                     else {
@@ -278,47 +271,43 @@ namespace MTA.Game.Npcs.Handlers.Market {
                     if (npcRequest.OptionID == 255)
                         return;
                     if (client.Entity.Reborn == 1) {
-                        if (client.Entity.Class % 10 == MasterClassType &&
-                            client.Entity.Level >= (client.Entity.Class == WaterSaintClassId
+                        if (IsMaster(client.Entity.Class) &&
+                            client.Entity.Level >= (client.Entity.Class == WaterTaoist_Master
                                 ? WaterSaintRequiredLevel
                                 : OtherClassesRequiredLevel)) {
-                            if (client.Inventory.Contains(ExemptionTokenId, 1)) {
+                            if (client.Inventory.Contains(ExemptionToken, 1)) {
                                 // Calculate the actual class ID from the option ID (same logic as first rebirth)
-                                byte _class = (byte)(npcRequest.OptionID - npcRequest.OptionID % 10);
-                                if (_class > 100)
-                                    _class += 2;
-                                if (_class < 100)
-                                    _class++;
+                                var @class = (byte)(npcRequest.OptionID - npcRequest.OptionID % 10);
+                                if (@class > 100)
+                                    @class += 2;
+                                if (@class < 100)
+                                    @class++;
 
-                                if (client.Reborn(_class)) {
-                                    client.Inventory.Remove(ExemptionTokenId, 1);
+                                if (client.Reborn(@class)) {
+                                    client.Inventory.Remove(ExemptionToken, 1);
                                 }
                                 else {
                                     dialog.Text("You need two free slots in your inventory.");
                                     dialog.Option("I'll just leave.", 255);
                                     dialog.Send();
-                                    break;
                                 }
                             }
                             else {
                                 dialog.Text("You need an Exemption Token to perform second rebirth.");
                                 dialog.Option("I understand.", 255);
                                 dialog.Send();
-                                break;
                             }
                         }
                         else {
                             dialog.Text("If you are a water saint, you need level 110+. Otherwise, you need 120+.");
                             dialog.Option("I'll just leave.", 255);
                             dialog.Send();
-                            break;
                         }
                     }
                     else {
                         dialog.Text("You need to be in the second life to be able to get the third life.");
                         dialog.Option("I'll just leave.", 255);
                         dialog.Send();
-                        break;
                     }
 
                     break;
@@ -335,18 +324,18 @@ namespace MTA.Game.Npcs.Handlers.Market {
                         dialog.Option("Here is the Oblivion Dew.", 5);
                         dialog.Option("I want to buy an Oblivion Dew.", 6);
                         dialog.Option("Wait a minute.", 255);
-                        dialog.Send();
                     }
                     else {
                         dialog.Text("Sorry, you need to be second reborn and level 120+.");
                         dialog.Option("All right.", 255);
-                        dialog.Send();
                     }
+
+                    dialog.Send();
 
                     break;
                 }
                 case 5: {
-                    if (client.Inventory.Contains(OblivionDewId, 1)) {
+                    if (client.Inventory.Contains(OblivionDew, 1)) {
                         client.Send(new Data(true) {
                             UID = client.Entity.UID,
                             ID = Data.OpenWindow,
@@ -354,7 +343,7 @@ namespace MTA.Game.Npcs.Handlers.Market {
                             wParam1 = client.Entity.X,
                             wParam2 = client.Entity.Y
                         });
-                        client.Inventory.Remove(OblivionDewId, 1);
+                        client.Inventory.Remove(OblivionDew, 1);
                     }
                     else {
                         dialog.Text("Sorry, you don't have an Oblivion Dew in your inventory.");
@@ -369,29 +358,29 @@ namespace MTA.Game.Npcs.Handlers.Market {
                         dialog.Text($"Do you really want to buy Oblivion Dew? It costs {OblivionDewPrice} CPs.");
                         dialog.Option("Yes.", 7);
                         dialog.Option("Wait a minute.", 255);
-                        dialog.Send();
                     }
                     else {
                         dialog.Text($"Sorry, you don't have {OblivionDewPrice} CPs.");
                         dialog.Option("All right.", 255);
-                        dialog.Send();
                     }
+
+                    dialog.Send();
 
                     break;
                 }
                 case 7: {
                     if (client.Entity.ConquerPoints >= OblivionDewPrice) {
                         client.Entity.ConquerPoints -= OblivionDewPrice;
-                        client.Inventory.Add(OblivionDewId, 0, 1);
+                        client.Inventory.Add(OblivionDew, 0, 1);
                         dialog.Text("Here is your Oblivion Dew. You can now change your class.");
                         dialog.Option("Thank you!", 255);
-                        dialog.Send();
                     }
                     else {
                         dialog.Text($"Sorry, you don't have {OblivionDewPrice} CPs in your bag.");
                         dialog.Option("I understand.", 255);
-                        dialog.Send();
                     }
+
+                    dialog.Send();
 
                     break;
                 }
@@ -410,8 +399,8 @@ namespace MTA.Game.Npcs.Handlers.Market {
                 }
                 case 8: {
                     if (client.Entity is { Reborn: > 0, Level: >= 70 }) {
-                        if (client.Inventory.Contains(DragonBallId, 1)) {
-                            client.Inventory.Remove(DragonBallId, 1);
+                        if (client.Inventory.Contains(DragonBall, 1)) {
+                            client.Inventory.Remove(DragonBall, 1);
                             client.Entity.Agility = 0;
                             client.Entity.Strength = 0;
                             client.Entity.Vitality = 1;

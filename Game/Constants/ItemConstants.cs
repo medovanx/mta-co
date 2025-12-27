@@ -31,6 +31,9 @@ namespace MTA.Game {
         public const uint DragonSoulTicket = 728917;
         public const uint ExpBall = 3001283;
         public const uint DragonBall = 1088000;
+        public const uint CelestialStone = 721259;
+        public const uint OblivionDew = 711083;
+        public const uint ExemptionToken = 723701;
         public const uint DragonBallPack = 727100;
         public const uint Firework = 720030;
         public const uint EndlessLoveFirework = 720031;
@@ -71,6 +74,8 @@ namespace MTA.Game {
         public const uint BrownDye = 1060070;
         public const uint RedDye = 1060080;
         public const uint WhiteDye = 1060090;
+        
+        #region Gear
         public const uint SuperTaoistsCapPack = 721231;
         public const uint SuperArchersCoatPack = 721232;
         public const uint SuperArchersHatPack = 721233;
@@ -86,7 +91,6 @@ namespace MTA.Game {
         public const uint SuperKatanaPack = 721243;
         public const uint SuperBackswordPack = 721244;
         public const uint SuperBowPack = 721245;
-        #region Gear
         public const uint GooseBow_Super = 500129;
         public const uint GreatBacksword_Super = 421139;
         public const uint RainKatana_Super = 601139;
@@ -103,7 +107,6 @@ namespace MTA.Game {
         public const uint ApeCoat_Super = 133049;
         public const uint SharkCap_Super = 114069;
         #endregion Gear
-
         #region Skills Books
         public const uint Thunder = 725000;
         public const uint Fire = 725001;
