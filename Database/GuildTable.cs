@@ -33,7 +33,7 @@ namespace MTA.Database
                     member.ConquerPointDonation = reader.ReadUInt64("GuildConquerPointDonation");
                     member.ArsenalDonation = reader.ReadUInt32("GuildArsenalDonation");
                     member.Class = reader.ReadByte("Class");
-                    member.VirtutePointes = reader.ReadUInt32("VirtuePoints");
+                    member.VirtuePoints = reader.ReadUInt32("VirtuePoints");
 
                     member.Lilies = reader.ReadUInt32("GuildLilies");
                     member.Rouses = reader.ReadUInt32("GuildRouses");
@@ -119,7 +119,7 @@ namespace MTA.Database
                 guild.CreateMembersRank();
                 if (guild.AdvertiseRecruit.WasLoad)
                     Guild.Advertise.Add(guild);
-                guild.CalculateCTFRANK();
+                guild.CalculateCtfrank();
             }
             Guild.Advertise.FixedRank();
             //create leader spouse

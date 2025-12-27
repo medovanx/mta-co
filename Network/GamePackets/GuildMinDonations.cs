@@ -232,21 +232,21 @@ namespace MTA.Network.GamePackets {
 
             if (guild.RankGuideDonations.Length >= 3) {
                 var obj = guild.RankGuideDonations[2];
-                Aprend(Enums.GuildMemberRank.GSupervisor, obj.VirtutePointes);
+                Aprend(Enums.GuildMemberRank.GSupervisor, obj.VirtuePoints);
             }
             else
                 Aprend(Enums.GuildMemberRank.GSupervisor, 0);
 
             if (guild.RankGuideDonations.Length >= 5) {
                 var obj = guild.RankGuideDonations[4];
-                Aprend(Enums.GuildMemberRank.GuideAgent, obj.VirtutePointes);
+                Aprend(Enums.GuildMemberRank.GuideAgent, obj.VirtuePoints);
             }
             else
                 Aprend(Enums.GuildMemberRank.GuideAgent, 0);
 
             if (guild.RankGuideDonations.Length >= 7) {
                 var obj = guild.RankGuideDonations[6];
-                Aprend(Enums.GuildMemberRank.GuideFollower, obj.VirtutePointes);
+                Aprend(Enums.GuildMemberRank.GuideFollower, obj.VirtuePoints);
             }
             else
                 Aprend(Enums.GuildMemberRank.GuideFollower, 0);

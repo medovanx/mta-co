@@ -566,7 +566,7 @@ namespace MTA.Network {
                                 if (rank_members.Length < offset + x)
                                     break;
                                 var element = rank_members[offset + x];
-                                ranks.Aprend(element, element.VirtutePointes);
+                                ranks.Aprend(element, element.VirtuePoints);
                             }
 
                             client.Send(ranks.ToArray());
@@ -10764,7 +10764,7 @@ namespace MTA.Network {
                                 }
 
                                 Arsenal.RemoveItem(item, client);
-                                client.Guild.ArsenalBPChanged = true;
+                                client.Guild.ArsenalBpChanged = true;
                                 client.Guild.GetMaxSharedBattlepower();
                                 client.Guild.SaveArsenal();
                             }
@@ -10789,7 +10789,7 @@ namespace MTA.Network {
                 Guild.Arsenals[command.dwParam].Unlocked = true;
                 Guild.SendGuild(client);
 
-                Guild.ArsenalBPChanged = true;
+                Guild.ArsenalBpChanged = true;
                 Guild.GetMaxSharedBattlepower();
                 client.Guild.SaveArsenal();
             }
@@ -10833,7 +10833,7 @@ namespace MTA.Network {
                 if (item.Inscribed)
                     UninscribeItem(item, client);
 
-            client.Guild.ArsenalBPChanged = true;
+            client.Guild.ArsenalBpChanged = true;
             client.Guild.GetMaxSharedBattlepower();
             client.Guild.SaveArsenal();
         }
@@ -10850,7 +10850,7 @@ namespace MTA.Network {
                 arsenal.Enhancement = command.dwParam3;
                 arsenal.EnhancementExpDate = DateTime.Now.AddDays(30);
 
-                guild.ArsenalBPChanged = true;
+                guild.ArsenalBpChanged = true;
                 guild.GetMaxSharedBattlepower();
                 client.Guild.SaveArsenal();
             }

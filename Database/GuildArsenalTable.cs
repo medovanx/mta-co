@@ -18,7 +18,7 @@ namespace MTA.Database
                     BinaryReader reader = new BinaryReader(stream);
                     for (int i = 0; i < 8; i++)
                         guild.Arsenals[i].Load(reader);
-                    guild.ArsenalBPChanged = true;
+                    guild.ArsenalBpChanged = true;
                     guild.GetMaxSharedBattlepower();
                 }
                 else

@@ -161,7 +161,7 @@ namespace MTA.Game.ConquerStructures.Society
                 else if (value is >= 2000000 and < 4000000) SharedBattlePower = 1;
                 else if (value is >= 4000000 and < 10000000) SharedBattlePower = 2;
                 if (value >= 10000000) SharedBattlePower = 3;
-                if (val != SharedBattlePower) Super.ArsenalBPChanged = true;
+                if (val != SharedBattlePower) Super.ArsenalBpChanged = true;
                 _Donation = value;
             }
         }

@@ -225,7 +225,7 @@ namespace MTA.Game
 
             for (int i = 0; i < Math.Min(8, array.Length); i++)
             {
-                array[i].CalculateCTFRANK(true);
+                array[i].CalculateCtfrank(true);
                 GuildTable.SaveCTFPoins(array[i]);
 
                 if (i == 0)
