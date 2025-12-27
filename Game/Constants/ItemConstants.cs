@@ -71,5 +71,35 @@ namespace MTA.Game {
         public const uint BrownDye = 1060070;
         public const uint RedDye = 1060080;
         public const uint WhiteDye = 1060090;
+        public const uint SuperTaoistsCapPack = 721231;
+        public const uint SuperArchersCoatPack = 721232;
+        public const uint SuperArchersHatPack = 721233;
+        public const uint SuperNecklacePack = 721234;
+        public const uint SuperRingPack = 721235;
+        public const uint SuperTaoistsBagPack = 721236;
+        public const uint SuperTaoistsBraceletPack = 721237;
+        public const uint SuperBootsPack = 721238;
+        public const uint SuperBladePack = 721239;
+        public const uint SuperSwordPack = 721240;
+        public const uint SuperClubPack = 721241;
+        public const uint SuperShieldPack = 721242;
+        public const uint SuperKatanaPack = 721243;
+        public const uint SuperBackswordPack = 721244;
+        public const uint SuperBowPack = 721245;
+        public const uint GooseBow_Super = 500129;
+        public const uint GreatBacksword_Super = 421139;
+        public const uint RainKatana_Super = 601139;
+        public const uint WolfShield_Super = 900049;
+        public const uint BronzeClub_Super = 480139;
+        public const uint SharkSword_Supoer = 420139;
+        public const uint SparrowBlade_Super = 410139;
+        public const uint SnakeskinBoots_Super = 160139;
+        public const uint CyaniteBracelet_Super = 152149;
+        public const uint AmbergrisBag_Super = 121129;
+        public const uint PearlRing_Super = 150139;
+        public const uint PlatinaNecklace_Super = 120129;
+        public const uint ApeHat_Super = 113049;
+        public const uint ApeCoat_Super = 133049;
+        public const uint SharkCap_Super = 114069;
     }
 }

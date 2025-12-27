@@ -17,7 +17,7 @@ namespace MTA.Game.Items.Handlers {
                 _ => (3u, 10u) // Default case (should not occur)
             };
 
-            uint value = days * 24 * 60 * 60;
+            var value = days * 24 * 60 * 60;
             client.OnlineTrainingPoints += points;
             client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
             client.AddBless(value);
