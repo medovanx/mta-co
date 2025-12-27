@@ -12,7 +12,7 @@ namespace MTA.Game.Items.Handlers {
         public static void Handle(GameState client, ConquerItem item) {
             if (client.Inventory.Count <= 35) {
                 client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                client.Inventory.Add(DragonBall, 0, 5, bound: true);
+                client.Inventory.Add(DragonBall, 0, 5);
             }
             else {
                 client.Send(FullInventory);
