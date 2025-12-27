@@ -218,10 +218,6 @@ namespace MTA.Client.Commands {
                 if (data.Length > paramOffset + 7) {
                     newItem.SocketProgress = (uint)(b | (g << 8) | (r << 16));
                 }
-
-                if (client.Account.State == AccountTable.AccountState.GM)
-                    newItem.Bound = true;
-
                 client.Inventory.Add(newItem, Enums.ItemUse.CreateAndAdd);
             }
 
