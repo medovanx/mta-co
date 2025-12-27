@@ -1,6 +1,8 @@
 using MTA.Client;
+using MTA.Game.Items;
 using MTA.Network.GamePackets;
 using static MTA.Game.ItemConstants;
+using static MTA.Game.EntityClassConstants;
 
 namespace MTA.Game.Items.Handlers.SkillBooks {
     /// <summary>
@@ -9,7 +11,7 @@ namespace MTA.Game.Items.Handlers.SkillBooks {
     [ItemHandler(Tornado)]
     public static class TornadoHandler {
         public static void Handle(GameState client, ConquerItem item) {
-            if (client.Entity.Class is >= 140 and <= 145 && client.Entity.Level >= 90) {
+            if (IsFireTaoist(client.Entity.Class) && client.Entity.Level >= 90) {
                 client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
                 client.AddSpell(new Spell(true) { ID = 1002 });
             }
