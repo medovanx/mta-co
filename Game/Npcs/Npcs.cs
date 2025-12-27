@@ -21,6 +21,7 @@ using MTA.MaTrix;
 using MTA.Network;
 using MTA.Network.GamePackets;
 using NameChange = MTA.Database.NameChange;
+using static MTA.Game.ItemConstants;
 
 namespace MTA {
     using Titles = TitlePacket.Titles;
@@ -2251,10 +2252,10 @@ namespace MTA {
                                     break;
                                 }
                                 case 2: {
-                                    if (client.Inventory.Contains(1088000, 1)) {
+                                    if (client.Inventory.Contains(DragonBall, 1)) {
                                         ConquerItem armor = client.Equipment.TryGetItem(3);
                                         if (armor != null && armor.ID != 0) {
-                                            client.Inventory.Remove(1088000, 1);
+                                            client.Inventory.Remove(DragonBall, 1);
                                             armor.Color = Enums.Color.Black;
                                             ConquerItemTable.UpdateColor(armor);
                                             armor.Mode = Enums.ItemMode.Update;
@@ -2488,7 +2489,7 @@ namespace MTA {
                                 case 9: {
                                     if (client.Inventory.Contains(721536, 17)) {
                                         client.Inventory.Remove(721536, 17);
-                                        client.Inventory.Add(1088000, 0, 1);
+                                        client.Inventory.Add(DragonBall, 0, 1);
                                     }
                                     else {
                                         dialog.Text("You don't meet the requierments.");
@@ -3519,8 +3520,8 @@ namespace MTA {
                                         ConquerItem Item = null;
                                         Item = client.Equipment.TryGetItem(4);
                                         if (Item.SocketOne == Enums.Gem.NoSocket) {
-                                            if (client.Inventory.Contains(1088000, 1)) {
-                                                client.Inventory.Remove(1088000, 1);
+                                            if (client.Inventory.Contains(DragonBall, 1)) {
+                                                client.Inventory.Remove(DragonBall, 1);
                                                 Item.SocketOne = Enums.Gem.EmptySocket;
                                                 Item.Mode = Enums.ItemMode.Update;
                                                 Item.Send(client);
@@ -3536,8 +3537,8 @@ namespace MTA {
                                             }
                                         }
                                         else if (Item.SocketTwo == Enums.Gem.NoSocket) {
-                                            if (client.Inventory.Contains(1088000, 5)) {
-                                                client.Inventory.Remove(1088000, 5);
+                                            if (client.Inventory.Contains(DragonBall, 5)) {
+                                                client.Inventory.Remove(DragonBall, 5);
                                                 Item.SocketTwo = Enums.Gem.EmptySocket;
                                                 Item.Mode = Enums.ItemMode.Update;
                                                 Item.Send(client);
@@ -3674,8 +3675,8 @@ namespace MTA {
                                 }
                                 case 1: {
                                     if (client.Entity.Reborn > 0) {
-                                        if (client.Inventory.Contains(1088000, 1)) {
-                                            client.Inventory.Remove(1088000, 1);
+                                        if (client.Inventory.Contains(DragonBall, 1)) {
+                                            client.Inventory.Remove(DragonBall, 1);
                                             if (client.Entity.Reborn != 0) {
                                                 client.Entity.Agility = 0;
                                                 client.Entity.Strength = 0;
@@ -3842,7 +3843,7 @@ namespace MTA {
                                         case 3: {
                                             byte cost = (byte)(itemdetail.Level / 30);
                                             cost += (byte)((item.ID % 10) / 2);
-                                            uint id = 1088000;
+                                            uint id = DragonBall;
 
                                             if (client.Inventory.Remove(id, cost)) {
                                                 client.Inventory.Remove(id, cost);
@@ -4303,7 +4304,7 @@ namespace MTA {
 
                                             byte cost = (byte)(itemdetail.Level / 30);
                                             cost += (byte)((item.ID % 10) / 2);
-                                            uint id = 1088000;
+                                            uint id = DragonBall;
 
                                             if (client.Inventory.Contains(id, cost)) {
                                                 client.Inventory.Remove(id, cost);
@@ -4453,8 +4454,8 @@ namespace MTA {
                                             return;
                                         }
 
-                                        if (client.Inventory.Contains(1088000, 1)) {
-                                            client.Inventory.Remove(1088000, 1);
+                                        if (client.Inventory.Contains(DragonBall, 1)) {
+                                            client.Inventory.Remove(DragonBall, 1);
                                             //client.UnloadItemStats(item, false);
                                             item.ID = infos.CalculateUplevel();
                                             ConquerItemTable.UpdateItemID(item, client);
@@ -4659,8 +4660,8 @@ namespace MTA {
                                     break;
                                 }
                                 case 1: {
-                                    if (client.Inventory.Contains(1088000, 1)) {
-                                        client.Inventory.Remove(1088000, 1);
+                                    if (client.Inventory.Contains(DragonBall, 1)) {
+                                        client.Inventory.Remove(DragonBall, 1);
                                         client.ChiPoints += 800;
                                     }
                                     else {
@@ -4707,8 +4708,8 @@ namespace MTA {
                                     break;
                                 }
                                 case 5: {
-                                    if (client.Inventory.Contains(1088000, 10)) {
-                                        client.Inventory.Remove(1088000, 10);
+                                    if (client.Inventory.Contains(DragonBall, 10)) {
+                                        client.Inventory.Remove(DragonBall, 10);
                                         client.Inventory.Add(720028, 0, 1);
                                     }
                                     else {
@@ -4774,7 +4775,7 @@ namespace MTA {
                                     break;
                                 }
                                 case 3: {
-                                    if (client.Inventory.Contains(1088000, 1)) {
+                                    if (client.Inventory.Contains(DragonBall, 1)) {
                                         int Model = client.Entity.Body % 10;
                                         switch (Model) {
                                             case 2:
@@ -4787,7 +4788,7 @@ namespace MTA {
                                                 break;
                                         }
 
-                                        client.Inventory.Remove(1088000, 1);
+                                        client.Inventory.Remove(DragonBall, 1);
                                         break;
                                     }
                                     else {
@@ -4800,7 +4801,7 @@ namespace MTA {
                                     break;
                                 }
                                 case 4: {
-                                    if (client.Inventory.Contains(1088000, 1)) {
+                                    if (client.Inventory.Contains(DragonBall, 1)) {
                                         int Model = client.Entity.Body % 10;
                                         switch (Model) {
                                             case 3:
@@ -4815,7 +4816,7 @@ namespace MTA {
 
                                         client.Send(new Message("Your gender has been changed.", Color.BurlyWood,
                                             Message.TopLeft));
-                                        client.Inventory.Remove(1088000, 1);
+                                        client.Inventory.Remove(DragonBall, 1);
                                         break;
                                     }
                                     else {
@@ -5099,8 +5100,8 @@ namespace MTA {
                                             break;
                                         }
 
-                                        if (client.Inventory.Contains(1088000, needTimes)) {
-                                            client.Inventory.Remove(1088000, needTimes);
+                                        if (client.Inventory.Contains(DragonBall, needTimes)) {
+                                            client.Inventory.Remove(DragonBall, needTimes);
                                             client.IncreaseExperience(exp_reward, false);
                                             client.LastDragonBallUse = DateTime.Now;
                                             dialog.Text(
@@ -5379,8 +5380,8 @@ namespace MTA {
                                     break;
                                 }
                                 case 2: {
-                                    if (client.Inventory.Contains(1088000, 10)) {
-                                        client.Inventory.Remove(1088000, 10);
+                                    if (client.Inventory.Contains(DragonBall, 10)) {
+                                        client.Inventory.Remove(DragonBall, 10);
                                         client.Inventory.Add(720028, 0, 1);
                                     }
                                     else {
@@ -27136,7 +27137,7 @@ namespace MTA {
                         case 25: {
                             if (client.Entity.VirtuePoints >= DbPrize) {
                                 client.Entity.VirtuePoints -= DbPrize;
-                                client.Inventory.Add(1088000, 0, 2);
+                                client.Inventory.Add(DragonBall, 0, 2);
                                 _String str = new _String(true);
                                 str.UID = client.Entity.UID;
                                 str.Type = _String.Effect;
@@ -27155,7 +27156,7 @@ namespace MTA {
                         case 4: {
                             if (client.Entity.VirtuePoints >= DbPrize1) {
                                 client.Entity.VirtuePoints -= DbPrize1;
-                                client.Inventory.Add(1088000, 0, 5);
+                                client.Inventory.Add(DragonBall, 0, 5);
                                 _String str = new _String(true);
                                 str.UID = client.Entity.UID;
                                 str.Type = _String.Effect;

@@ -4,6 +4,7 @@
 //using System.Collections.Generic;
 //using System.Linq;
 //using System.Text;
+//using static MTA.Game.ItemConstants;
 
 //namespace MTA.Game
 //{
@@ -43,9 +44,9 @@
 //                        {
 //                            FloorItem floorItem = new FloorItem(true);
 
-//                            floorItem.ItemID = 1088000;
+//                            floorItem.ItemID = DragonBall;
 //                            floorItem.Item = new ConquerItem(true);
-//                            floorItem.Item.ID = 1088000;
+//                            floorItem.Item.ID = DragonBall;
 //                            floorItem.Item.UID = FloorItem.FloorUID.Next;
 //                            floorItem.UID = floorItem.Item.UID;
 //                            floorItem.Item.MobDropped = true;

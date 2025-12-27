@@ -24,6 +24,7 @@ using Team = MTA.Game.ConquerStructures.Team;
 using Trade = MTA.Network.GamePackets.Trade;
 using TradePartner = MTA.Game.ConquerStructures.Society.TradePartner;
 using Warehouse = MTA.Game.ConquerStructures.Warehouse;
+using static MTA.Game.ItemConstants;
 
 namespace MTA.Client {
     public class GameState {
@@ -2649,7 +2650,7 @@ namespace MTA.Client {
                 if (Entity.Class % 10 == 3)
                     return 700031;
                 if (Entity.Class % 10 == 4)
-                    return 1088000;
+                    return DragonBall;
                 return 0;
             }
         }

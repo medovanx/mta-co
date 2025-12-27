@@ -44,6 +44,7 @@ using TradePartner = MTA.Network.GamePackets.TradePartner;
 using VipStatus = MTA.Network.GamePackets.VipStatus;
 using Warehouse = MTA.Network.GamePackets.Warehouse;
 using Weather = MTA.Game.Weather;
+using static MTA.Game.ItemConstants;
 
 namespace MTA.Network {
     public static class PacketHandler {
@@ -12258,7 +12259,7 @@ namespace MTA.Network {
                                 client.Inventory.Remove(item, Enums.ItemUse.Remove);
                             if (compose.Countx > cost) {
                                 var diff = compose.Countx - cost;
-                                client.Inventory.Add((uint)(Minors[0].ID == 720028 ? 1088000 : 1088001), 0, (byte)diff);
+                                client.Inventory.Add((uint)(Minors[0].ID == 720028 ? DragonBall : 1088001), 0, (byte)diff);
                             }
 
                             break;
@@ -12312,7 +12313,7 @@ namespace MTA.Network {
                                 client.Inventory.Remove(item, Enums.ItemUse.Remove);
                             if (compose.Countx > cost) {
                                 var diff = compose.Countx - cost;
-                                client.Inventory.Add((uint)(Minors[0].ID == 720028 ? 1088000 : 1088001), 0, (byte)diff);
+                                client.Inventory.Add((uint)(Minors[0].ID == 720028 ? DragonBall : 1088001), 0, (byte)diff);
                             }
 
                             break;
@@ -12573,7 +12574,7 @@ namespace MTA.Network {
                     if (pos != ConquerItem.RightWeapon && pos != ConquerItem.LeftWeapon)
                         cost = 12;
 
-                    if (client.Inventory.Contains(1088000, cost)) {
+                    if (client.Inventory.Contains(DragonBall, cost)) {
                         item.SocketOne = Enums.Gem.EmptySocket;
                         item.Mode = Enums.ItemMode.Update;
                         item.Send(client);
@@ -12626,7 +12627,7 @@ namespace MTA.Network {
                         }
                     }
                     else {
-                        if (client.Inventory.Contains(1088000, cost)) {
+                        if (client.Inventory.Contains(DragonBall, cost)) {
                             item.SocketTwo = Enums.Gem.EmptySocket;
                             item.Mode = Enums.ItemMode.Update;
                             item.Send(client);
@@ -15008,7 +15009,7 @@ namespace MTA.Network {
                             break;
 
                         case 26:
-                            Uid = 1088000;
+                            Uid = DragonBall;
                             break;
 
                         case 27:
@@ -15432,8 +15433,8 @@ namespace MTA.Network {
                         Message.TopLeft));
                 }
                     break;
-                case 1088000: {
-                    client.Entity.ConquerPoints += ConquerItemInformation.BaseInformations[1088000].ConquerPointsWorth;
+                case DragonBall: {
+                    client.Entity.ConquerPoints += ConquerItemInformation.BaseInformations[DragonBall].ConquerPointsWorth;
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
                     break;
                 }
@@ -15775,7 +15776,7 @@ namespace MTA.Network {
                     client.Inventory.Add(720730, 0, 3, true);
                     client.Inventory.Add(720731, 0, 5);
                     client.Inventory.Add(729626, 0, 5);
-                    client.Inventory.Add(1088000, 0, 3);
+                    client.Inventory.Add(DragonBall, 0, 3);
                     client.Inventory.Add(720598, 0, 3);
                     client.Inventory.Add(723342, 0, 3);
                     break;
@@ -15791,7 +15792,7 @@ namespace MTA.Network {
                     client.Inventory.Add(720730, 0, 1, true);
                     client.Inventory.Add(720731, 0, 3);
                     client.Inventory.Add(729626, 0, 3);
-                    client.Inventory.Add(1088000, 0, 1);
+                    client.Inventory.Add(DragonBall, 0, 1);
                     client.Inventory.Add(720598, 0, 2);
                     client.Inventory.Add(723342, 0, 1);
                     break;
@@ -15840,7 +15841,7 @@ namespace MTA.Network {
 
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
                     client.IncreaseExperience(DataHolder.LevelExperience(client.Entity.Level), false);
-                    client.Inventory.Add(1088000, 0, 1);
+                    client.Inventory.Add(DragonBall, 0, 1);
                     client.Inventory.Add(723341, 0, 5);
                     client.Inventory.Add(729626, 0, 1);
                     client.Inventory.Add(720731, 0, 3);
@@ -15901,7 +15902,7 @@ namespace MTA.Network {
 
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
                     client.IncreaseExperience(DataHolder.LevelExperience(client.Entity.Level), false);
-                    client.Inventory.Add(1088000, 0, 1);
+                    client.Inventory.Add(DragonBall, 0, 1);
                     client.Inventory.Add(723341, 0, 5);
                     client.Inventory.Add(729626, 0, 1);
                     client.Inventory.Add(720731, 0, 3);
@@ -15962,7 +15963,7 @@ namespace MTA.Network {
 
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
                     client.IncreaseExperience(DataHolder.LevelExperience(client.Entity.Level), false);
-                    client.Inventory.Add(1088000, 0, 1);
+                    client.Inventory.Add(DragonBall, 0, 1);
                     client.Inventory.Add(723341, 0, 5);
                     client.Inventory.Add(729626, 0, 1);
                     client.Inventory.Add(720731, 0, 3);
@@ -17503,7 +17504,7 @@ namespace MTA.Network {
                 case 720028: {
                     if (client.Inventory.Count <= 31) {
                         client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                        client.Inventory.Add(1088000, 0, 10);
+                        client.Inventory.Add(DragonBall, 0, 10);
                     }
                     else
                         client.Send(Constants.FullInventory);
@@ -17518,7 +17519,7 @@ namespace MTA.Network {
                 case 3000714: {
                     if (client.Inventory.Count <= 29) {
                         client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                        client.Inventory.Add(1088000, 0, 11);
+                        client.Inventory.Add(DragonBall, 0, 11);
                     }
                     else
                         client.Send(Constants.FullInventory);
@@ -17533,7 +17534,7 @@ namespace MTA.Network {
                 case 720891: {
                     if (client.Inventory.Count <= 37) {
                         client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                        client.Inventory.Add(1088000, 0, 3);
+                        client.Inventory.Add(DragonBall, 0, 3);
                     }
                     else
                         client.Send(Constants.FullInventory);
@@ -20096,7 +20097,7 @@ namespace MTA.Network {
                 if (client.Inventory.TryGetItem(itemUsage.dwParam, out upgrade)) {
                     ConquerItemInformation infos = new ConquerItemInformation(item.ID, item.Plus);
                     switch (upgrade.ID) {
-                        case 1088000: {
+                        case DragonBall: {
                             if (item.ID % 10 == (byte)Enums.ItemQuality.Super)
                                 break;
                             byte chance = (byte)(70 -
@@ -21382,7 +21383,7 @@ namespace MTA.Network {
                                     if (ItemName.Contains("cp"))
                                         SpecialID = 729911;
                                     else if (ItemName.Contains("db"))
-                                        SpecialID = 1088000;
+                                        SpecialID = DragonBall;
                                     else if (ItemName.Contains("met"))
                                         SpecialID = 1088001;
                                     else if (ItemName.Contains("stone"))
