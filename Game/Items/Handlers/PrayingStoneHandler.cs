@@ -18,7 +18,7 @@ namespace MTA.Game.Items.Handlers {
             };
 
             var value = days * 24 * 60 * 60;
-            client.OnlineTrainingPoints += points;
+            client.OnlineTrainingPoints += (ushort)points;
             client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
             client.AddBless(value);
             client.Entity.Update(Update.OnlineTraining, client.OnlineTrainingPoints, false);

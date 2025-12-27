@@ -17667,6 +17667,8 @@ namespace MTA.Network {
 
                 #endregion
 
+                #endregion Misc
+
                 #region SkillBooks
 
                 case 725000: {
