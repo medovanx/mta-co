@@ -432,6 +432,7 @@ namespace MTA.Game.ConquerStructures
                             #endregion Stacksize
                             item.ID = id;
                             item.Plus = plus;
+                            item.Bound = bound;
                             item.Durability = item.MaximDurability = infos.BaseInformation.Durability;
 
                         }
