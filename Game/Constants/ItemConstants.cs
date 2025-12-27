@@ -32,5 +32,11 @@ namespace MTA.Game
         public const uint PenitenceAmulet = 720128;
         public const uint DragonSoulTicket = 728917;
         public const uint ExpBall = 3001283;
+        public const uint DragonBall = 1088000;
+        public const uint DragonBallPack = 727100;
+        public const uint Firework = 720030;
+        public const uint EndlessLoveFirework = 720031;
+        public const uint MyWishFirework = 720032;
+        public const uint StudyBook_Arena = 720774;
     }
 }

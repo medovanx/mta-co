@@ -20,6 +20,7 @@ using MTA.Game.ConquerStructures.Society;
 using MTA.Game.Features.Flowers;
 using MTA.Game.Features.Reincarnation;
 using MTA.Game.Features.Tournaments;
+using MTA.Game.Items;
 using MTA.Interfaces;
 using MTA.MaTrix;
 using MTA.Network.GamePackets;
@@ -13042,6 +13043,11 @@ namespace MTA.Network {
 
             #endregion
 
+            // Try to handle item using registered handlers
+            if (ItemHandlerRegistry.TryHandle(item.ID, client, item)) {
+                return; // Handler found and executed
+            }
+
             switch (item.ID) {
                 #region House Mobs
 
@@ -17532,64 +17538,6 @@ namespace MTA.Network {
                     else
                         client.Send(Constants.FullInventory);
 
-                    break;
-                }
-
-                #endregion
-
-                #region DragonBallPack(5)
-
-                case 727100: {
-                    if (client.Inventory.Count <= 35) {
-                        client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                        client.Inventory.Add(1088000, 0, 5);
-                    }
-                    else
-                        client.Send(Constants.FullInventory);
-
-                    break;
-                }
-
-                #endregion
-
-                #region StudyBook[Arena]
-
-                case 720774: {
-                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    client.Entity.SubClasses.StudyPoints += 50;
-                    client.Send(new SubClassShow()
-                        { ID = 8, Study = client.Entity.SubClasses.StudyPoints, StudyReceive = 50 }.ToArray());
-                    _String str = new _String(true) {
-                        Type = 10,
-                        UID = client.Entity.UID
-                    };
-                    str.Texts.Add("zf2-e300");
-                    client.SendScreen(str.ToArray());
-                    client.Send(new Message("Congratulations you got 50 study Points keep going", Color.Red,
-                        Message.TopLeft));
-                }
-                    break;
-
-                #endregion
-
-                #region Fireworks
-
-                case 720030: {
-                    // Firework
-                    client.Entity.Update(_String.Effect, "firework-like", true);
-                    client.Inventory.Remove(item, Enums.ItemUse.Remove);
-                    break;
-                }
-                case 720031: {
-                    // Endless Love
-                    client.Entity.Update(_String.Effect, "firework-1love", true);
-                    client.Inventory.Remove(item, Enums.ItemUse.Remove);
-                    break;
-                }
-                case 720032: {
-                    // My Wish
-                    client.Entity.Update(_String.Effect, "firework-2love", true);
-                    client.Inventory.Remove(item, Enums.ItemUse.Remove);
                     break;
                 }
 

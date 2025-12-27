@@ -15,6 +15,7 @@ using MTA.Game;
 using MTA.Game.ConquerStructures;
 using MTA.Game.ConquerStructures.House;
 using MTA.Game.ConquerStructures.Society;
+using MTA.Game.Items;
 using MTA.Game.Npcs;
 using MTA.Game.Npcs.ScriptEngine;
 using MTA.MaTrix;
@@ -310,6 +311,8 @@ internal abstract class Program {
             AuthCryptography.PrepareAuthCryptography();
             Console.WriteLine("Initializing NPC handlers...");
             NpcHandlerRegistry.Initialize();
+            Console.WriteLine("Initializing Item handlers...");
+            ItemHandlerRegistry.Initialize();
             _ = new Map(700, DMaps.MapPaths[700]);
             _ = new Map(1730, DMaps.MapPaths[1730]);
             _ = new Map(2068, DMaps.MapPaths[2068]);
