@@ -1,12 +1,10 @@
 // ReSharper disable InconsistentNaming
 
-namespace MTA.Game
-{
+namespace MTA.Game {
     /// <summary>
     /// Item ID constants for the game
     /// </summary>
-    public static class ItemConstants
-    {
+    public static class ItemConstants {
         public const uint GoldCoin = 711609;
         public const uint SilverCoin = 711610;
         public const uint CopperCoin = 711611;
@@ -38,5 +36,32 @@ namespace MTA.Game
         public const uint EndlessLoveFirework = 720031;
         public const uint MyWishFirework = 720032;
         public const uint StudyBook_Arena = 720774;
+        public const uint TopMoneyBag = 723723;
+        public const uint DBScroll = 720028;
+        public const uint DragonBallPack11 = 3000714;
+        public const uint DragonBallPack3 = 720891;
+        public const uint DragonGemPack = 727065;
+        public const uint MeteorScrollPack = 3003869;
+        public const uint MeteorScroll = 720027;
+        public const uint ExpPotion = 723017;
+        public const uint SuperExpPotion = 728201;
+        public const uint NinjaAmulet = 723583;
+        public const uint PrayingStone_S = 1200000;
+        public const uint PrayingStone_M = 1200001;
+        public const uint PrayingStone_L = 1200002;
+        public const uint PenitenceAmulet2 = 723727;
+        public const uint DisguiseAmulet = 723724;
+        public const uint Plus8StonePack = 721222;
+        public const uint ToughDrillPack = 721223;
+        public const uint DragonGem = 700013;
+        public const uint ToughDrill = 1200005;
+        public const uint Stone_1 = 730001;
+        public const uint Stone_2 = 730002;
+        public const uint Stone_3 = 730003;
+        public const uint Stone_4 = 730004;
+        public const uint Stone_5 = 730005;
+        public const uint Stone_6 = 730006;
+        public const uint Stone_7 = 730007;
+        public const uint Stone_8 = 730008;
     }
 }
