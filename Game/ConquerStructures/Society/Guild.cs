@@ -5,6 +5,7 @@ using MTA.Network;
 using System.IO;
 using System.Text;
 using System.Linq;
+using static MTA.Game.EntityClassConstants;
 
 namespace MTA.Game.ConquerStructures.Society
 {
@@ -184,19 +185,19 @@ namespace MTA.Game.ConquerStructures.Society
                     return false;
                 if (player.Reborn < Reborn && Reborn != 0)
                     return false;
-                if (Database.DataHolder.IsArcher(player.Class) && ContainFlag(Flags.Archas))
+                if (IsArcher(player.Class) && ContainFlag(Flags.Archas))
                     return false;
-                if (Database.DataHolder.IsTaoist(player.Class) && ContainFlag(Flags.Taoist))
+                if (IsTaoist(player.Class) && ContainFlag(Flags.Taoist))
                     return false;
-                if (Database.DataHolder.IsWarrior(player.Class) && ContainFlag(Flags.Warrior))
+                if (IsWarrior(player.Class) && ContainFlag(Flags.Warrior))
                     return false;
-                if (Database.DataHolder.IsTrojan(player.Class) && ContainFlag(Flags.Trojan))
+                if (IsTrojan(player.Class) && ContainFlag(Flags.Trojan))
                     return false;
-                if (Database.DataHolder.IsPirate(player.Class) && ContainFlag(Flags.Pirate))
+                if (IsPirate(player.Class) && ContainFlag(Flags.Pirate))
                     return false;
-                if (Database.DataHolder.IsMonk(player.Class) && ContainFlag(Flags.Monk))
+                if (IsMonk(player.Class) && ContainFlag(Flags.Monk))
                     return false;
-                if (Database.DataHolder.IsNinja(player.Class) && ContainFlag(Flags.Ninja))
+                if (IsNinja(player.Class) && ContainFlag(Flags.Ninja))
                     return false;
                 if (mod == Mode.Recruit)
                 {
