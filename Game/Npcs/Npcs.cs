@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using MTA.Client;
 using MTA.Database;
+using MTA.Extensions;
 using MTA.Franko;
 using MTA.Game;
 using MTA.Game.Attacking;

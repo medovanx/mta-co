@@ -8,6 +8,7 @@ using System.Threading.Generic;
 using MTA.Client;
 using System.Collections.Concurrent;
 using MTA.Database;
+using MTA.Extensions;
 
 namespace MTA.Game {
     public class Map {

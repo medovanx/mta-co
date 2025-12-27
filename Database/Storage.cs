@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using MTA.Extensions;
 
 namespace MTA.Database {
     public static class Storage {

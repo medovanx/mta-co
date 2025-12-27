@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using MTA.Client;
 using MTA.Database;
+using MTA.Extensions;
 using MTA.Game;
 using MTA.Game.ConquerStructures;
 using MTA.Game.ConquerStructures.House;
