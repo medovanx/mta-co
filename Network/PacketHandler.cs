@@ -16638,59 +16638,6 @@ namespace MTA.Network {
 
                 #endregion
 
-                #region Dyes
-
-                case 723584: {
-                    if (client.Equipment.TryGetItem(3) == null)
-                        return;
-                    if (client.Equipment.TryGetItem(3).ID == 0)
-                        return;
-                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    client.Equipment.TryGetItem(3).Color = Enums.Color.Black;
-                    ConquerItemTable.UpdateColor(client.Equipment.TryGetItem(3));
-                    client.Equipment.TryGetItem(3).Mode = Enums.ItemMode.Update;
-                    client.Equipment.TryGetItem(3).Send(client);
-                    client.Equipment.UpdateEntityPacket();
-                    break;
-                }
-                case 1060030: {
-                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    client.Entity.HairColor = 3;
-                    break;
-                }
-                case 1060040: {
-                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    client.Entity.HairColor = 9;
-                    break;
-                }
-                case 1060050: {
-                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    client.Entity.HairColor = 8;
-                    break;
-                }
-                case 1060060: {
-                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    client.Entity.HairColor = 7;
-                    break;
-                }
-                case 1060070: {
-                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    client.Entity.HairColor = 6;
-                    break;
-                }
-                case 1060080: {
-                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    client.Entity.HairColor = 5;
-                    break;
-                }
-                case 1060090: {
-                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    client.Entity.HairColor = 4;
-                    break;
-                }
-
-                #endregion
-
                 #region Misc
 
                 #region SteedPacks

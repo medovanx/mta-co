@@ -63,5 +63,13 @@ namespace MTA.Game {
         public const uint Stone_6 = 730006;
         public const uint Stone_7 = 730007;
         public const uint Stone_8 = 730008;
+        public const uint BlackTulip = 723584;
+        public const uint BlackDye = 1060030;
+        public const uint VioletDye = 1060040;
+        public const uint BlueDye = 1060050;
+        public const uint GreenDye = 1060060;
+        public const uint BrownDye = 1060070;
+        public const uint RedDye = 1060080;
+        public const uint WhiteDye = 1060090;
     }
 }
