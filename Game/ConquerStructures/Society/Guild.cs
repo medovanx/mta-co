@@ -6,7 +6,7 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using MTA.Client;
-using static MTA.Game.EntityClassConstants;
+using static MTA.Game.Constants.EntityClass;
 
 namespace MTA.Game.ConquerStructures.Society {
     public enum ArsenalType {

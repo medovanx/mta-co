@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using MTA.Database;
+using MTA.Game.Constants;
 using MTA.Network.GamePackets;
 
 namespace MTA.Game.Events.CaptainsCastleConquest;
@@ -20,7 +21,7 @@ public class CaptainsCastleConquestEvent : BaseEvent {
 
     // Castle map IDs
     private static readonly ushort[] CastleMaps =
-        [MapConstants.CAPTAIN_CASTLE_BEGINNER, MapConstants.CAPTAIN_CASTLE_ADVANCED];
+        [Maps.CAPTAIN_CASTLE_BEGINNER, Maps.CAPTAIN_CASTLE_ADVANCED];
 
     private DateTime? _lastWarning10Min;
     private DateTime? _lastWarning5Min;
@@ -39,21 +40,21 @@ public class CaptainsCastleConquestEvent : BaseEvent {
     public override void OnStart() {
         base.OnStart();
 
-        AutoInviteAllPlayers("The Captain's Castle Conquest has begun! Would you like to join?", MapConstants.TwinCity,
+        AutoInviteAllPlayers("The Captain's Castle Conquest has begun! Would you like to join?", Maps.TwinCity,
             288,
             280);
 
         Kernel.SendWorldMessage(new Message("The Captain's Castle Conquest has begun!", Color.White, Message.Center),
             Program.Values);
 
-        EnsureMonsterSpawn([MapConstants.CAPTAIN_CASTLE_BEGINNER, MapConstants.CAPTAIN_CASTLE_ADVANCED],
-            MonsterConstants.Captain, 10);
+        EnsureMonsterSpawn([Maps.CAPTAIN_CASTLE_BEGINNER, Maps.CAPTAIN_CASTLE_ADVANCED],
+            Monsters.Captain, 10);
     }
 
     /// <inheritdoc />
     public override void OnEnd() {
         base.OnEnd();
-        TeleportPlayersFromMaps(CastleMaps, MapConstants.TwinCity, TwinCityX, TwinCityY);
+        TeleportPlayersFromMaps(CastleMaps, Maps.TwinCity, TwinCityX, TwinCityY);
         BroadcastMessage(
             "The Captain's Castle Conquest has ended. See you next time!",
             Color.White, Message.Center);
@@ -97,10 +98,10 @@ public class CaptainsCastleConquestEvent : BaseEvent {
 
         // Check if monster is in any Captain's Castle Conquest map
         var mapId = monster.Owner.MapID;
-        if (mapId != MapConstants.CAPTAIN_CASTLE_BEGINNER && mapId != MapConstants.CAPTAIN_CASTLE_ADVANCED)
+        if (mapId != Maps.CAPTAIN_CASTLE_BEGINNER && mapId != Maps.CAPTAIN_CASTLE_ADVANCED)
             return false;
 
-        if (monster.ID != MonsterConstants.Captain)
+        if (monster.ID != Monsters.Captain)
             return false;
 
         CaptainsCastleConquestRewards.OnMonsterKilled(killer.Owner, monster.Name, monster.Owner.MapID);

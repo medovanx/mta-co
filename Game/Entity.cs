@@ -3574,7 +3574,7 @@ namespace MTA.Game {
 
             if (EntityFlag == EntityFlag.Player) {
                 if (killer.EntityFlag == EntityFlag.Player) {
-                    int[] dropAllowedMaps = [MapConstants.ProudSea];
+                    int[] dropAllowedMaps = [Maps.ProudSea];
                     bool allowDrops = dropAllowedMaps.Contains(killer.MapID);
 
                     if (GameConstants.PKFreeMaps.Contains(killer.MapID) && !allowDrops)

@@ -1,5 +1,6 @@
 using MTA.Client;
 using MTA.Database;
+using MTA.Game.Constants;
 using MTA.Network.GamePackets;
 using static MTA.Game.Enums;
 

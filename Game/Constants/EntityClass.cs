@@ -1,11 +1,11 @@
 // ReSharper disable InconsistentNaming
 
-namespace MTA.Game {
+namespace MTA.Game.Constants {
     /// <summary>
     /// Entity class ID constants for the game.
     /// Each class has 5 phases: base, +1, +2, +3, and +5 (Master).
     /// </summary>
-    public static class EntityClassConstants {
+    public static class EntityClass {
         // Trojan classes (base: 10)
         public const byte Trojan_1 = 10;
         public const byte Trojan_2 = 11;

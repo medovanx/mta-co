@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using MTA.Client;
+using MTA.Game.Constants;
 using MTA.Game.Npcs;
 using MTA.Network.GamePackets;
 
@@ -59,14 +60,14 @@ public static class NpcPrizeCenterTeleporter {
                 LastTeleportTimes[playerId] = DateTime.Now;
 
                 // Teleport to Prize Center
-                client.Entity.Teleport(MapConstants.JobCenter, MapConstants.TreasureInTheBlue_PrizeCenter, 57, 49);
+                client.Entity.Teleport(Maps.JobCenter, Maps.TreasureInTheBlue_PrizeCenter, 57, 49);
                 client.Entity.Update(_String.Effect, "accession3", true);
                 client.Send("You have been teleported to the Prize Center! Exchange your coins for rewards!");
 
                 break;
             }
             case 2: {
-                client.Entity.Teleport(MapConstants.TwinCity, 304, 287);
+                client.Entity.Teleport(Maps.TwinCity, 304, 287);
                 break;
             }
         }

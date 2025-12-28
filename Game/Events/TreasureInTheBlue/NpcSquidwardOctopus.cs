@@ -1,4 +1,5 @@
 using MTA.Client;
+using MTA.Game.Constants;
 using MTA.Game.Npcs;
 using MTA.Network.GamePackets;
 
@@ -66,7 +67,7 @@ public static class NpcSquidwardOctopus {
                 }
 
                 // Teleport to Proud Sea
-                client.Entity.Teleport(MapConstants.ProudSea, 200, 067);
+                client.Entity.Teleport(Maps.ProudSea, 200, 067);
                 client.Entity.Update(_String.Effect, "accession3", true);
                 client.Send(
                     "Welcome to the Proud Sea! The Treasure in the Blue awaits! Collect ancient coins from monsters, but remember: they expire after 60 minutes. Exchange them quickly with the Mammon Envoy at the Prize Center!");

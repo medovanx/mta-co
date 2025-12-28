@@ -1,10 +1,10 @@
 // ReSharper disable InconsistentNaming
 
-namespace MTA.Game {
+namespace MTA.Game.Constants {
     /// <summary>
     /// Map ID constants for the game
     /// </summary>
-    public static class MapConstants {
+    public static class Maps {
         #region Twin City
 
         public const ushort TwinCity = 1002;

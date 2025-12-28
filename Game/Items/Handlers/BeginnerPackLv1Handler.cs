@@ -6,7 +6,7 @@ using Message = MTA.Network.GamePackets.Message;
 using static MTA.Game.Constants.Items.BasicItems;
 using static MTA.Game.Constants.Items.MedicineAndGates;
 using static MTA.Game.Constants.Items.SuperEquipment;
-using static MTA.Game.EntityClassConstants;
+using static MTA.Game.Constants.EntityClass;
 
 namespace MTA.Game.Items.Handlers {
     /// <summary>

@@ -1,4 +1,5 @@
 using MTA.Client;
+using MTA.Game.Constants;
 using MTA.Game.Npcs;
 using MTA.Network.GamePackets;
 
@@ -47,7 +48,7 @@ public static class NpcCaptainsCastleConquest {
             {
                 var cpEvent = (BaseEvent)EventScheduler.GetEvent("CAPTAINS_CASTLE_CONQUEST")!;
                 if (cpEvent.IsActive) {
-                    client.Entity.Teleport(MapConstants.CAPTAIN_CASTLE_BEGINNER, 53, 78);
+                    client.Entity.Teleport(Maps.CAPTAIN_CASTLE_BEGINNER, 53, 78);
                     client.Entity.Update(_String.Effect, "accession4", true);
                     client.Send(
                         "Welcome to the Beginner's Path! May your blade strike true and your rewards be plentiful!");
@@ -70,7 +71,7 @@ public static class NpcCaptainsCastleConquest {
             {
                 var cpEvent = (BaseEvent)EventScheduler.GetEvent("CAPTAINS_CASTLE_CONQUEST")!;
                 if (cpEvent.IsActive) {
-                    client.Entity.Teleport(MapConstants.CAPTAIN_CASTLE_ADVANCED, 325, 335);
+                    client.Entity.Teleport(Maps.CAPTAIN_CASTLE_ADVANCED, 325, 335);
                     client.Entity.Update(_String.Effect, "accession4", true);
                     client.Send(
                         "Welcome to the Champion's Path! Beware, for here you face both monsters and other warriors. May the strongest prevail!");
@@ -109,7 +110,7 @@ public static class NpcCaptainsCastleConquestExit {
             }
 
             case 1: {
-                client.Entity.Teleport(MapConstants.TwinCity, 350, 350);
+                client.Entity.Teleport(Maps.TwinCity, 350, 350);
                 break;
             }
         }

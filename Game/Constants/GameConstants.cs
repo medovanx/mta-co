@@ -329,8 +329,8 @@ namespace MTA.Game.Constants {
             11030,
             11034,
             8880,
-            Game.MapConstants.POKER_GOLD,
-            Game.MapConstants.POKER_CPs,
+            Maps.POKER_GOLD,
+            Maps.POKER_CPs,
             1950,
             8800,
             8801,
@@ -341,12 +341,12 @@ namespace MTA.Game.Constants {
             1024,
             2351,
             601,
-            Game.MapConstants.CAPTAIN_CASTLE_BEGINNER,
-            Game.MapConstants.HOUSE_LV1,
-            Game.MapConstants.HOUSE_LV2,
-            Game.MapConstants.HOUSE_LV3,
-            Game.MapConstants.HOUSE_LV4,
-            Game.MapConstants.HOUSE_LV5
+            Maps.CAPTAIN_CASTLE_BEGINNER,
+            Maps.HOUSE_LV1,
+            Maps.HOUSE_LV2,
+            Maps.HOUSE_LV3,
+            Maps.HOUSE_LV4,
+            Maps.HOUSE_LV5
         ];
 
         /// <summary>
@@ -436,7 +436,7 @@ namespace MTA.Game.Constants {
             1459,
             1460,
             3693,
-            MapConstants.ProudSea,
+            Maps.ProudSea,
             3070,
             1707,
             2065,

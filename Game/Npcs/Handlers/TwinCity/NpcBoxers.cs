@@ -1,4 +1,5 @@
 using MTA.Client;
+using MTA.Game.Constants;
 using MTA.Network.GamePackets;
 
 namespace MTA.Game.Npcs.Handlers.TwinCity {
@@ -69,7 +70,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     if (client.Entity.Level >= 20) {
                         if (client.Entity.Money >= entryFee) {
                             client.Entity.Money -= entryFee;
-                            client.Entity.Teleport(MapConstants.TrainingGround, 208, 221);
+                            client.Entity.Teleport(Maps.TrainingGround, 208, 221);
                         }
                         else {
                             dialog.Text($"You don't have enough silvers. You need {entryFee} silvers to enter.");

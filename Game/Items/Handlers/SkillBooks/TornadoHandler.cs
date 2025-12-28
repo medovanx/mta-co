@@ -1,7 +1,7 @@
 using MTA.Client;
 using MTA.Network.GamePackets;
 using static MTA.Game.Constants.Items.SkillBooks;
-using static MTA.Game.EntityClassConstants;
+using static MTA.Game.Constants.EntityClass;
 
 namespace MTA.Game.Items.Handlers.SkillBooks {
     /// <summary>

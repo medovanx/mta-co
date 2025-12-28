@@ -1,4 +1,4 @@
-namespace MTA.Game
+namespace MTA.Game.Constants
 {
     /// <summary>
     /// Wing type and ID constants for wardrobe system

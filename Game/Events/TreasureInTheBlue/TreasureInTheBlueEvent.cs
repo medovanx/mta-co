@@ -4,10 +4,12 @@ using System.Drawing;
 using System.Linq;
 using MTA.Client;
 using MTA.Database;
+using MTA.Game.Constants;
 using MTA.Network.GamePackets;
 using static MTA.Kernel;
 using static MTA.Game.Constants.Items.BasicItems;
 using static MTA.Game.Constants.Items.StudyBooks;
+using Maps = MTA.Game.Constants.Maps;
 
 namespace MTA.Game.Events.TreasureInTheBlue;
 
@@ -68,7 +70,7 @@ public class TreasureInTheBlueEvent : BaseEvent {
         _bossInitialSpawnDone = false;
 
         AutoInviteAllPlayers("The Treasure in the Blue has begun! Would you like to join the Proud Sea?",
-            MapConstants.TwinCity,
+            Maps.TwinCity,
             323, 269);
 
         BroadcastMessage(
@@ -85,8 +87,8 @@ public class TreasureInTheBlueEvent : BaseEvent {
 
         RemoveEventCoinsFromAllPlayers();
 
-        TeleportPlayersFromMaps([MapConstants.ProudSea, MapConstants.TreasureInTheBlue_PrizeCenter],
-            MapConstants.TwinCity, 304, 287);
+        TeleportPlayersFromMaps([Maps.ProudSea, Maps.TreasureInTheBlue_PrizeCenter],
+            Maps.TwinCity, 304, 287);
 
         BroadcastMessage(
             "The Treasure in the Blue has ended! All adventurers have been returned to Twin City. Thank you for participating!",
@@ -105,7 +107,7 @@ public class TreasureInTheBlueEvent : BaseEvent {
         if (!_bossInitialSpawnDone && EventStartTime.HasValue) {
             var elapsed = now - EventStartTime.Value;
             if (elapsed.TotalMinutes >= BossInitialSpawnTimeMinutes) {
-                EnsureMonsterSpawn([MapConstants.ProudSea], MonsterConstants.Blackbeard, respawnTimeSeconds: 900,
+                EnsureMonsterSpawn([Maps.ProudSea], Monsters.Blackbeard, respawnTimeSeconds: 900,
                     x: 129, y: 178, isBoss: true);
                 _bossInitialSpawnDone = true;
             }
@@ -120,8 +122,8 @@ public class TreasureInTheBlueEvent : BaseEvent {
     /// </summary>
     public override void OnUpdateWhenInactive(DateTime now) {
         RemoveEventCoinsFromAllPlayers();
-        TeleportPlayersFromMaps([MapConstants.ProudSea, MapConstants.TreasureInTheBlue_PrizeCenter],
-            MapConstants.TwinCity, 304, 287);
+        TeleportPlayersFromMaps([Maps.ProudSea, Maps.TreasureInTheBlue_PrizeCenter],
+            Maps.TwinCity, 304, 287);
     }
 
     /// <summary>
@@ -147,10 +149,10 @@ public class TreasureInTheBlueEvent : BaseEvent {
     ///     Check if the Blackbeard boss has spawned and notify players in the map
     /// </summary>
     private void CheckBossSpawn() {
-        if (!Maps.TryGetValue(MapConstants.ProudSea, out var map)) return;
+        if (!Kernel.Maps.TryGetValue(Maps.ProudSea, out var map)) return;
 
         // Find the boss monster (Blackbeard)
-        var boss = map.Entities.Values.FirstOrDefault(entity => entity.MonsterInfo.ID == MonsterConstants.Blackbeard);
+        var boss = map.Entities.Values.FirstOrDefault(entity => entity.MonsterInfo.ID == Monsters.Blackbeard);
 
         if (boss == null) {
             _lastBossWasAlive = false;
@@ -173,11 +175,11 @@ public class TreasureInTheBlueEvent : BaseEvent {
     /// </summary>
     private static void NotifyBossSpawn(ushort bossX, ushort bossY) {
         foreach (var client in Program.Values) {
-            if (client.Entity.MapID != MapConstants.ProudSea) continue;
+            if (client.Entity.MapID != Maps.ProudSea) continue;
 
             client.MessageBox(
                 "BLACKBEARD HAS APPEARED! Defeat the pirate boss to claim Gold Coins! Teleport to battle?",
-                p => { p.Entity.Teleport(MapConstants.ProudSea, bossX, bossY); },
+                p => { p.Entity.Teleport(Maps.ProudSea, bossX, bossY); },
                 null,
                 30 // 30 second timeout
             );
@@ -199,13 +201,13 @@ public class TreasureInTheBlueEvent : BaseEvent {
     /// </remarks>
     public override bool OnMonsterKilled(MonsterInformation monster, Entity killer) {
         if (!IsActive) return false;
-        if (monster.Owner.MapID != MapConstants.ProudSea) return false;
+        if (monster.Owner.MapID != Maps.ProudSea) return false;
 
         var npctype = monster.ID;
 
         switch (npctype) {
             // Golden Octopus - Randomly drops weighted random reward
-            case MonsterConstants.GoldenOctopus: {
+            case Monsters.GoldenOctopus: {
                 if (!(Random.NextDouble() < GoldenOctopusDropRate)) return true; // Skip drop
                 var rewardItemId = TreasureInTheBlueHelpers.SelectWeightedReward(GoldenOctopusRewards);
                 DropItemOnGround(monster, rewardItemId);
@@ -214,7 +216,7 @@ public class TreasureInTheBlueEvent : BaseEvent {
             }
 
             // Coins Stealer - Randomly drops Copper Coin (50% chance)
-            case MonsterConstants.CoinsStealer: {
+            case Monsters.CoinsStealer: {
                 if (Random.NextDouble() < CopperCoinDropRate) {
                     DropItemOnGround(monster, CopperCoin);
                 }
@@ -223,7 +225,7 @@ public class TreasureInTheBlueEvent : BaseEvent {
             }
 
             // Silver Octopus - Randomly drops Silver Coin (50% chance)
-            case MonsterConstants.SilverOctopus:
+            case Monsters.SilverOctopus:
                 if (Random.NextDouble() < SilverCoinDropRate) {
                     DropItemOnGround(monster, SilverCoin);
                 }
@@ -231,7 +233,7 @@ public class TreasureInTheBlueEvent : BaseEvent {
                 return true; // Skip normal drop
 
             // Blackbeard - Always drops 4-9 Gold Coins (random)
-            case MonsterConstants.Blackbeard: {
+            case Monsters.Blackbeard: {
                 var coinCount = Random.Next(4, 10);
                 for (var i = 0; i < coinCount; i++) {
                     DropItemOnGround(monster, GoldCoin);
@@ -252,7 +254,7 @@ public class TreasureInTheBlueEvent : BaseEvent {
     /// <param name="coinId">The item ID to drop</param>
     private static void DropItemOnGround(MonsterInformation monster, uint coinId) {
         if (!ConquerItemInformation.BaseInformations.TryGetValue(coinId, out var infos)) return;
-        if (!Maps.TryGetValue(monster.Owner.MapID, out var map)) return;
+        if (!Kernel.Maps.TryGetValue(monster.Owner.MapID, out var map)) return;
         var x = monster.Owner.X;
         var y = monster.Owner.Y;
 

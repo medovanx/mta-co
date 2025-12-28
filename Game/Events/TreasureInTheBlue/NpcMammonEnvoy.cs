@@ -1,6 +1,7 @@
 using System;
 using MTA.Client;
 using MTA.Database;
+using MTA.Game.Constants;
 using MTA.Game.Npcs;
 using MTA.Network.GamePackets;
 using static MTA.Game.Constants.Items.BasicItems;
@@ -79,7 +80,7 @@ public static class NpcMammonEnvoy {
             }
 
             case 4: {
-                client.Entity.Teleport(MapConstants.ProudSea, 200, 067);
+                client.Entity.Teleport(Maps.ProudSea, 200, 067);
                 client.Entity.Update(_String.Effect, "accession3", true);
                 break;
             }

@@ -1,10 +1,10 @@
 // ReSharper disable InconsistentNaming
 
-namespace MTA.Game {
+namespace MTA.Game.Constants {
     /// <summary>
     /// Monster npctype (ID) constants in the game
     /// </summary>
-    public static class MonsterConstants {
+    public static class Monsters {
         #region Treasure in the Blue Event
 
         public const uint CoinsStealer = 7022;

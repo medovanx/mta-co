@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using MTA.Client;
+using MTA.Game.Constants;
 using MTA.Network.GamePackets;
-using static MTA.Game.MapConstants;
+using static MTA.Game.Constants.Maps;
 
 namespace MTA.Game.Events.DizzyLand;
 
@@ -65,7 +66,7 @@ public class DizzyLandEvent : BaseEvent {
     private void CheckAlive() {
         AliveCount = 0;
         foreach (var client in Kernel.GamePool.Values) {
-            if (client.Entity.MapID != MapConstants.DizzyLand ||
+            if (client.Entity.MapID != Maps.DizzyLand ||
                 client.Entity is not { Hitpoints: >= 1, Dead: false }) continue;
             AliveCount++;
 
