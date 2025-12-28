@@ -609,5 +609,40 @@ namespace MTA.Game {
         public const uint ChampionPack = 3001046;
 
         #endregion Arena Items
+
+        #region DemonBox Items
+
+        public const uint SuperMonsterBox = 3001661;
+        public const uint MonkeyMonsterBox = 3001660;
+        public const uint CrazyGhostBox = 3001659;
+        public const uint GoldenBirdBox = 3001658;
+        public const uint BloodGhostBox = 3001657;
+        public const uint HumanAideBox = 3001656;
+
+        #endregion DemonBox Items
+
+        #region Medicine Items
+
+        // HP Medicines
+        public const uint Stancher2 = 1000010;
+        public const uint Stancher3 = 1000020;
+        public const uint Stancher4 = 1000040;
+
+        // MP Medicines
+        public const uint Agrypnotic2 = 1001010;
+        public const uint Agrypnotic3 = 1001020;
+
+        #endregion Medicine Items
+
+        #region Teleport Gates
+
+        public const uint SmallLotteryTicketPack = 724002;
+        public const uint DesertCityGate = 1060021;
+        public const uint ApeCityGate = 1060022;
+        public const uint CastleGate = 1060023;
+        public const uint BirdIslandGate = 1060024;
+        public const uint ArroyoScroll = 1060039;
+
+        #endregion Teleport Gates
     }
 }
