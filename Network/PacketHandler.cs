@@ -17,6 +17,7 @@ using MTA.Game.Events;
 using MTA.Game.ConquerStructures;
 using MTA.Game.ConquerStructures.House;
 using MTA.Game.ConquerStructures.Society;
+using MTA.Game.Events.SteedRace;
 using MTA.Game.Features.Flowers;
 using MTA.Game.Features.Reincarnation;
 using MTA.Game.Features.Tournaments;
@@ -51,17 +52,15 @@ namespace MTA.Network {
         public static readonly DateTime UnixEpoch = new DateTime();
         public static ulong ClientSeal = BitConverter.ToUInt64(Program.Encoding.GetBytes("TQClient"), 0);
 
-        public static uint UnixTimestamp {
-            get { return (uint)(DateTime.UtcNow - UnixEpoch).TotalSeconds; }
-        }
+        public static uint UnixTimestamp => (uint)(DateTime.UtcNow - UnixEpoch).TotalSeconds;
 
         public static string Filter(string Msg, GameState client) {
             #region AntiSpam
 
             foreach (var bad in Kernel.Insults) {
                 if (Msg.StartsWith(bad)) {
-                    string star = "";
-                    for (int i = 0; i < bad.Length; i++) {
+                    var star = "";
+                    for (var i = 0; i < bad.Length; i++) {
                         star += "*";
                     }
 
@@ -70,8 +69,8 @@ namespace MTA.Network {
                 }
 
                 if (Msg.Contains(" " + bad)) {
-                    string star = "";
-                    for (int i = 0; i < bad.Length; i++) {
+                    var star = "";
+                    for (var i = 0; i < bad.Length; i++) {
                         star += "*";
                     }
 
@@ -80,19 +79,15 @@ namespace MTA.Network {
                 }
             }
 
-            if (Msg.Contains("http:") || Msg.Contains("www.") || Msg.Contains(".com")) {
-                var words = Msg.Split([" "], StringSplitOptions.None);
-                for (int i = 0; i < words.Length; i++) {
-                    var word = words[i];
-                    if (word.EndsWith(".com") || word.EndsWith(".net") || word.StartsWith("www.") ||
-                        word.Contains(".com")) {
-                        if (!word.Contains("Lucky") && !word.Contains("mediafire") && !word.Contains("gulfup"))
-                            Msg = Msg.Replace(word, "*****.com");
-                    }
-                }
+            if (!Msg.Contains("http:") && !Msg.Contains("www.") && !Msg.Contains(".com")) return Msg;
+            var words = Msg.Split([" "], StringSplitOptions.None);
+            Msg = words
+                .Where(word => word.EndsWith(".com") || word.EndsWith(".net") || word.StartsWith("www.") ||
+                               word.Contains(".com"))
+                .Where(word => !word.Contains("Lucky") && !word.Contains("mediafire") && !word.Contains("gulfup"))
+                .Aggregate(Msg, (current, word) => current.Replace(word, "*****.com"));
 
-                client.MessageBox("You Can't Put Sites Here only allowed ones :).");
-            }
+            client.MessageBox("You Can't Put Sites Here only allowed ones :).");
 
             #endregion AntiSpam
 
@@ -116,14 +111,14 @@ namespace MTA.Network {
         }
 
         public static void HandlePacket(byte[] packet, GameState client) {
-            Data gData = new Data(false);
+            var gData = new Data(false);
             gData.Deserialize(packet);
             if (packet == null)
                 return;
             if (client == null)
                 return;
-            ushort Length = BitConverter.ToUInt16(packet, 0);
-            ushort ID = BitConverter.ToUInt16(packet, 2);
+            var Length = BitConverter.ToUInt16(packet, 0);
+            var ID = BitConverter.ToUInt16(packet, 2);
 
             if (client.Filtering)
                 if (client.PacketFilter.Filter(ID))
@@ -134,43 +129,29 @@ namespace MTA.Network {
                 return;
             }
 
-            if (ID == 1107) {
-                if (client.Map.BaseID == 700) {
+            switch (ID) {
+                case 1107 when client.Map.BaseID == 700:
+                case 1056 when client.Entity.MapID is 1234 or 1235 or 1236 or 1237 or 1238:
+                case 1009 when client.Action != 2:
                     return;
+                case 1009: {
+                    var usage = new ItemUsage(false);
+                    usage.Deserialize(packet);
+                    if (usage.ID == ItemUsage.Ping) {
+                        client.Send(usage);
+                        return;
+                    }
+
+                    break;
                 }
             }
-
-            if (ID == 1056) {
-                if (client.Entity.MapID == 1234 || client.Entity.MapID == 1235 || client.Entity.MapID == 1236 ||
-                    client.Entity.MapID == 1237 || client.Entity.MapID == 1238) {
-                    return;
-                }
-            }
-
-
-            #region skip ping packet
-
-            if (ID == 1009) {
-                if (client.Action != 2)
-                    return;
-                ItemUsage usage = new ItemUsage(false);
-                usage.Deserialize(packet);
-                if (usage.ID == ItemUsage.Ping) {
-                    client.Send(usage);
-                    return;
-                }
-            }
-
-            #endregion
 
             // Check if any active event wants to handle this packet
             // Only intercept if the handler actually processes it (returns true)
             // For Data packets (10010), pass the command ID (gData.ID) instead of the packet type
-            ushort packetIdForEvent = (ID == 10010) ? (ushort)gData.ID : ID;
-            foreach (var gameEvent in EventScheduler.GetAllEvents())
-            {
-                if (gameEvent.IsActive && gameEvent.HandlePacket(client, packet, packetIdForEvent))
-                {
+            var packetIdForEvent = (ID == 10010) ? (ushort)gData.ID : ID;
+            foreach (var gameEvent in EventScheduler.GetAllEvents()) {
+                if (gameEvent.IsActive && gameEvent.HandlePacket(client, packet, packetIdForEvent)) {
                     return; // Packet was handled by event
                 }
             }
@@ -182,7 +163,7 @@ namespace MTA.Network {
                 case 3251: {
                     var Pr = new PerfectionItems();
                     var p = new byte[packet.Length - 8];
-                    for (int i = 0; i < p.Length; i++) {
+                    for (var i = 0; i < p.Length; i++) {
                         p[i] = packet[i];
                     }
 
@@ -193,7 +174,7 @@ namespace MTA.Network {
                 case 3253: {
                     var pkt = new PerfectionScore();
                     var myPacket = new byte[packet.Length - 8];
-                    for (int i = 0; i < myPacket.Length; i++) {
+                    for (var i = 0; i < myPacket.Length; i++) {
                         myPacket[i] = packet[i];
                     }
 
@@ -204,7 +185,7 @@ namespace MTA.Network {
                 case 3255: {
                     var Pr = new PerfectionGUI();
                     var p = new byte[packet.Length - 8];
-                    for (int i = 0; i < p.Length; i++) {
+                    for (var i = 0; i < p.Length; i++) {
                         p[i] = packet[i];
                     }
 
@@ -215,7 +196,7 @@ namespace MTA.Network {
                 case 3256: {
                     var pkt = new PerfectionRank();
                     var myPacket = new byte[packet.Length - 8];
-                    for (int i = 0; i < myPacket.Length; i++) {
+                    for (var i = 0; i < myPacket.Length; i++) {
                         myPacket[i] = packet[i];
                     }
 
@@ -231,11 +212,10 @@ namespace MTA.Network {
                             break;
                         }
                         case 1: {
-                            uint uid = PrestigeRank.R(packet)[2];
-                            if (!Kernel.GamePool.ContainsKey(uid))
-                                client.Send(PrestigeRank.Offline);
-                            else
-                                client.Send(WindowStats(Kernel.GamePool[uid]).ToArray());
+                            var uid = PrestigeRank.R(packet)[2];
+                            client.Send(!Kernel.GamePool.TryGetValue(uid, out var value)
+                                ? PrestigeRank.Offline
+                                : WindowStats(value).ToArray());
                             break;
                         }
                     }
@@ -252,7 +232,7 @@ namespace MTA.Network {
 
                     var myPacket = new byte[packet.Length - 8];
 
-                    for (int i = 0; i < myPacket.Length; i++) {
+                    for (var i = 0; i < myPacket.Length; i++) {
                         myPacket[i] = packet[i];
                     }
 
@@ -267,7 +247,7 @@ namespace MTA.Network {
 
                     var myPacket = new byte[packet.Length - 8];
 
-                    for (int i = 0; i < myPacket.Length; i++) {
+                    for (var i = 0; i < myPacket.Length; i++) {
                         myPacket[i] = packet[i];
                     }
 
@@ -286,13 +266,13 @@ namespace MTA.Network {
                     switch (packet[4]) {
                         case 0: {
                             uint[] array = [37, 43];
-                            byte[] Buffer = new byte[6 + 8 + 5 * array.Length];
+                            var Buffer = new byte[6 + 8 + 5 * array.Length];
                             Writer.Ushort((ushort)(Buffer.Length - 8), 0, Buffer);
                             Writer.Ushort(2901, 2, Buffer);
                             Buffer[5] = (byte)array.Length;
-                            int offset = 6;
-                            for (int i = 0; i < array.Length; i++) {
-                                Writer.Uint(array[i], offset, Buffer);
+                            var offset = 6;
+                            foreach (var t in array) {
+                                Writer.Uint(t, offset, Buffer);
                                 offset += 4;
                                 Buffer[offset] = 1;
                                 offset += 1;
@@ -312,7 +292,7 @@ namespace MTA.Network {
                     if (Program.ServerTransfer) {
                         if (!Kernel.TransferredPlayers.Contains(client.Entity.UID))
                             Kernel.TransferredPlayers.Add(client.Entity.UID);
-                        byte serverid = packet[5];
+                        var serverid = packet[5];
                         client.Disconnect();
                     }
                     else
@@ -354,13 +334,11 @@ namespace MTA.Network {
                 case 2812: {
                     var attackd = BitConverter.ReadUint(packet, 4);
                     var clonecount = packet[8];
-                    for (int i = 0; i < clonecount; i++) {
+                    for (var i = 0; i < clonecount; i++) {
                         var attackr = BitConverter.ReadUint(packet, 9 + (i * 4));
                         if (client.Entity.MyClones.Count < clonecount)
                             return;
-                        var attack = client.Entity.AttackPacket;
-                        if (attack == null)
-                            attack = new Attack(true);
+                        var attack = client.Entity.AttackPacket ?? new Attack(true);
                         attack.Attacker = attackr;
                         attack.Attacked = attackd;
 
@@ -376,19 +354,15 @@ namespace MTA.Network {
                             MySpell = SpellTable.GetSpell(12090, 4);
                         }
 
-                        Entity Clone = null;
-                        if (client.Entity.MyClones.TryGetValue(attackr, out Clone)) {
-                            Entity attacked = null;
-                            SobNpcSpawn attackedsob = null;
-                            if (client.Screen.TryGetValue(attackd, out attacked)) {
+                        if (client.Entity.MyClones.TryGetValue(attackr, out var Clone)) {
+                            if (client.Screen.TryGetValue(attackd, out var attacked)) {
                                 uint damage = 0;
-                                var spell = SpellTable.GetSpell(attack.MagicType, (byte)attack.MagicLevel);
-                                if (spell == null)
-                                    spell = SpellTable.GetSpell(12080, 0);
+                                var spell = SpellTable.GetSpell(attack.MagicType, (byte)attack.MagicLevel) ??
+                                            SpellTable.GetSpell(12080, 0);
                                 if (attack.AttackType == GamePackets.Attack.Melee) {
                                     if (Handle.CanAttack(client.Entity, attacked, spell, true)) {
                                         damage = Calculate.Melee(client.Entity, attacked, spell, ref attack);
-                                        double power = (0.5);
+                                        var power = (0.5);
                                         damage = (uint)(damage * power / 8);
                                         Handle.ReceiveAttack(Clone, attacked, attack, ref damage, spell);
                                         attack.Damage = damage;
@@ -398,7 +372,7 @@ namespace MTA.Network {
                                 else {
                                     if (Handle.CanAttack(client.Entity, attacked, spell, false)) {
                                         damage = Calculate.Magic(client.Entity, attacked, spell, ref attack);
-                                        double power = (0.5);
+                                        var power = (0.5);
                                         damage = (uint)(damage * power / 8);
                                         Handle.ReceiveAttack(Clone, attacked, attack, ref damage, spell);
                                         attack.Damage = damage;
@@ -406,28 +380,28 @@ namespace MTA.Network {
                                     }
                                 }
 
-                                SpellUse suse = new SpellUse(true);
-                                suse.Attacker = Clone.UID;
-                                suse.SpellID = spell.ID;
-                                suse.SpellLevel = spell.Level;
-                                suse.X = attacked.X;
-                                suse.Y = attacked.Y;
-                                suse.Effect1 = attack.Effect1;
+                                var suse = new SpellUse(true) {
+                                    Attacker = Clone.UID,
+                                    SpellID = spell.ID,
+                                    SpellLevel = spell.Level,
+                                    X = attacked.X,
+                                    Y = attacked.Y,
+                                    Effect1 = attack.Effect1
+                                };
                                 suse.AddTarget(attacked, damage, attack);
                                 client.SendScreen(suse);
                                 if (client.Account.State == AccountTable.AccountState.GM)
                                     client.Send(new Message("Clone Attack With  Skill: " + spell.Name, Color.CadetBlue,
                                         Message.Talk));
                             }
-                            else if (client.Screen.TryGetSob(attackd, out attackedsob)) {
+                            else if (client.Screen.TryGetSob(attackd, out var attackedsob)) {
                                 uint damage = 0;
-                                var spell = SpellTable.GetSpell(attack.MagicType, (byte)attack.MagicLevel);
-                                if (spell == null)
-                                    spell = SpellTable.GetSpell(12080, 0);
+                                var spell = SpellTable.GetSpell(attack.MagicType, (byte)attack.MagicLevel) ??
+                                            SpellTable.GetSpell(12080, 0);
                                 if (attack.AttackType == GamePackets.Attack.Melee) {
                                     if (Handle.CanAttack(client.Entity, attackedsob, null)) {
                                         damage = Calculate.Melee(client.Entity, attackedsob, ref attack);
-                                        double power = ((MySpell.Power / 100.0) / 100.0);
+                                        var power = ((MySpell.Power / 100.0) / 100.0);
                                         damage = (uint)(damage * power);
                                         Handle.ReceiveAttack(Clone, attackedsob, attack, damage, null);
                                         attack.Damage = damage;
@@ -437,7 +411,7 @@ namespace MTA.Network {
                                 else {
                                     if (Handle.CanAttack(client.Entity, attackedsob, spell)) {
                                         damage = Calculate.Magic(client.Entity, attackedsob, spell, ref attack);
-                                        double power = ((MySpell.Power / 100.0) / 100.0);
+                                        var power = ((MySpell.Power / 100.0) / 100.0);
                                         damage = (uint)(damage * power);
                                         Handle.ReceiveAttack(Clone, attackedsob, attack, damage, spell);
                                         attack.Damage = damage;
@@ -445,13 +419,14 @@ namespace MTA.Network {
                                     }
                                 }
 
-                                SpellUse suse = new SpellUse(true);
-                                suse.Attacker = Clone.UID;
-                                suse.SpellID = spell.ID;
-                                suse.SpellLevel = spell.Level;
-                                suse.X = attackedsob.X;
-                                suse.Y = attackedsob.Y;
-                                suse.Effect1 = attack.Effect1;
+                                var suse = new SpellUse(true) {
+                                    Attacker = Clone.UID,
+                                    SpellID = spell.ID,
+                                    SpellLevel = spell.Level,
+                                    X = attackedsob.X,
+                                    Y = attackedsob.Y,
+                                    Effect1 = attack.Effect1
+                                };
                                 suse.AddTarget(attackedsob, damage, attack);
                                 client.SendScreen(suse);
                                 if (client.Account.State == AccountTable.AccountState.GM)
@@ -469,31 +444,27 @@ namespace MTA.Network {
                 #region Fast Ins
 
                 case 2204: {
-                    byte count = packet[4];
+                    var count = packet[4];
                     List<uint> item_uids = [];
-                    int offset = 5;
-                    for (int i = 0; i < count; i++) {
+                    var offset = 5;
+                    for (var i = 0; i < count; i++) {
                         item_uids.Add(BitConverter.ReadUint(packet, offset));
                         offset += 4;
                     }
 
-                    for (int i = 0; i < item_uids.Count; i++) {
-                        var UID = item_uids[i];
+                    foreach (var UID in item_uids) {
                         var item = ConquerItemTable.LoadItem(UID);
-                        if (item != null) {
-                            int arsenalRealPosition = ArsenalPosition(item.ID);
-                            if ((item.ID % 10) >= 8 && !item.Inscribed) {
-                                if (client.Entity.GuildID != 0 && client.Guild != null &&
-                                    client.Guild.Arsenals[arsenalRealPosition].Unlocked) {
-                                    item.Inscribed = true;
-                                    item.Mode = Enums.ItemMode.Update;
-                                    item.Send(client);
-                                    var Arsenal = client.Guild.Arsenals[arsenalRealPosition];
-                                    Arsenal.AddItem(item, client);
-                                    client.Guild.SaveArsenal();
-                                }
-                            }
-                        }
+                        if (item == null) continue;
+                        var arsenalRealPosition = ArsenalPosition(item.ID);
+                        if ((item.ID % 10) < 8 || item.Inscribed) continue;
+                        if (client.Entity.GuildID == 0 || client.Guild == null ||
+                            !client.Guild.Arsenals[arsenalRealPosition].Unlocked) continue;
+                        item.Inscribed = true;
+                        item.Mode = Enums.ItemMode.Update;
+                        item.Send(client);
+                        var Arsenal = client.Guild.Arsenals[arsenalRealPosition];
+                        Arsenal.AddItem(item, client);
+                        client.Guild.SaveArsenal();
                     }
 
                     break;
@@ -506,20 +477,21 @@ namespace MTA.Network {
                 case 2101: {
                     if (client.Guild == null) return;
                     ushort Rank = packet[4];
-                    ushort displyPage = (ushort)Math.Min(2, (int)packet[5]);
+                    var displyPage = (ushort)Math.Min(2, (int)packet[5]);
 
 
                     switch (Rank) {
                         case Enums.GuildRanksTop20Type.SilverRank: {
-                            Guild.Member[] rank_members = client.Guild.RankSilversDonations;
-                            int offset = displyPage * Enums.GuildRanksTop20Type.MaxCounts;
-                            ushort count = (ushort)Math.Min(Enums.GuildRanksTop20Type.MaxCounts, rank_members.Length);
+                            var rank_members = client.Guild.RankSilversDonations;
+                            var offset = displyPage * Enums.GuildRanksTop20Type.MaxCounts;
+                            var count = (ushort)Math.Min(Enums.GuildRanksTop20Type.MaxCounts, rank_members.Length);
                             if (displyPage == 2 && rank_members.Length < 10)
                                 break;
-                            GuildRanks ranks = new GuildRanks(count);
+                            var ranks = new GuildRanks(count) {
+                                Rank = Rank,
+                                Page = displyPage
+                            };
 
-                            ranks.Rank = Rank;
-                            ranks.Page = displyPage;
                             for (byte x = 0; x < count; x++) {
                                 if (rank_members.Length < offset + x)
                                     break;
@@ -532,15 +504,16 @@ namespace MTA.Network {
                             break;
                         }
                         case Enums.GuildRanksTop20Type.CpRank: {
-                            Guild.Member[] rank_members = client.Guild.RankCPDonations;
-                            int offset = displyPage * Enums.GuildRanksTop20Type.MaxCounts;
-                            ushort count = (ushort)Math.Min(Enums.GuildRanksTop20Type.MaxCounts, rank_members.Length);
+                            var rank_members = client.Guild.RankCPDonations;
+                            var offset = displyPage * Enums.GuildRanksTop20Type.MaxCounts;
+                            var count = (ushort)Math.Min(Enums.GuildRanksTop20Type.MaxCounts, rank_members.Length);
                             if (displyPage == 2 && rank_members.Length < 10)
                                 break;
-                            GuildRanks ranks = new GuildRanks(count);
+                            var ranks = new GuildRanks(count) {
+                                Rank = Rank,
+                                Page = displyPage
+                            };
 
-                            ranks.Rank = Rank;
-                            ranks.Page = displyPage;
                             for (byte x = 0; x < count; x++) {
                                 if (rank_members.Length < offset + x)
                                     break;
@@ -553,15 +526,16 @@ namespace MTA.Network {
                             break;
                         }
                         case Enums.GuildRanksTop20Type.GuideDonation: {
-                            Guild.Member[] rank_members = client.Guild.RankGuideDonations;
-                            int offset = displyPage * Enums.GuildRanksTop20Type.MaxCounts;
-                            ushort count = (ushort)Math.Min(Enums.GuildRanksTop20Type.MaxCounts, rank_members.Length);
+                            var rank_members = client.Guild.RankGuideDonations;
+                            var offset = displyPage * Enums.GuildRanksTop20Type.MaxCounts;
+                            var count = (ushort)Math.Min(Enums.GuildRanksTop20Type.MaxCounts, rank_members.Length);
                             if (displyPage == 2 && rank_members.Length < 10)
                                 break;
-                            GuildRanks ranks = new GuildRanks(count);
+                            var ranks = new GuildRanks(count) {
+                                Rank = Rank,
+                                Page = displyPage
+                            };
 
-                            ranks.Rank = Rank;
-                            ranks.Page = displyPage;
                             for (byte x = 0; x < count; x++) {
                                 if (rank_members.Length < offset + x)
                                     break;
@@ -574,15 +548,16 @@ namespace MTA.Network {
                             break;
                         }
                         case Enums.GuildRanksTop20Type.PkRank: {
-                            Guild.Member[] rank_members = client.Guild.RankPkDonations;
-                            int offset = displyPage * Enums.GuildRanksTop20Type.MaxCounts;
-                            ushort count = (ushort)Math.Min(Enums.GuildRanksTop20Type.MaxCounts, rank_members.Length);
+                            var rank_members = client.Guild.RankPkDonations;
+                            var offset = displyPage * Enums.GuildRanksTop20Type.MaxCounts;
+                            var count = (ushort)Math.Min(Enums.GuildRanksTop20Type.MaxCounts, rank_members.Length);
                             if (displyPage == 2 && rank_members.Length < 10)
                                 break;
-                            GuildRanks ranks = new GuildRanks(count);
+                            var ranks = new GuildRanks(count) {
+                                Rank = Rank,
+                                Page = displyPage
+                            };
 
-                            ranks.Rank = Rank;
-                            ranks.Page = displyPage;
                             for (byte x = 0; x < count; x++) {
                                 if (rank_members.Length < offset + x)
                                     break;
@@ -595,15 +570,16 @@ namespace MTA.Network {
                             break;
                         }
                         case Enums.GuildRanksTop20Type.ArsenalRank: {
-                            Guild.Member[] rank_members = client.Guild.RankArsenalDonations;
-                            int offset = displyPage * Enums.GuildRanksTop20Type.MaxCounts;
-                            ushort count = (ushort)Math.Min(Enums.GuildRanksTop20Type.MaxCounts, rank_members.Length);
+                            var rank_members = client.Guild.RankArsenalDonations;
+                            var offset = displyPage * Enums.GuildRanksTop20Type.MaxCounts;
+                            var count = (ushort)Math.Min(Enums.GuildRanksTop20Type.MaxCounts, rank_members.Length);
                             if (displyPage == 2 && rank_members.Length < 10)
                                 break;
-                            GuildRanks ranks = new GuildRanks(count);
+                            var ranks = new GuildRanks(count) {
+                                Rank = Rank,
+                                Page = displyPage
+                            };
 
-                            ranks.Rank = Rank;
-                            ranks.Page = displyPage;
                             for (byte x = 0; x < count; x++) {
                                 if (rank_members.Length < offset + x)
                                     break;
@@ -616,15 +592,16 @@ namespace MTA.Network {
                             break;
                         }
                         case Enums.GuildRanksTop20Type.RosesRank: {
-                            Guild.Member[] rank_members = client.Guild.RankRosseDonations;
-                            int offset = displyPage * Enums.GuildRanksTop20Type.MaxCounts;
-                            ushort count = (ushort)Math.Min(Enums.GuildRanksTop20Type.MaxCounts, rank_members.Length);
+                            var rank_members = client.Guild.RankRosseDonations;
+                            var offset = displyPage * Enums.GuildRanksTop20Type.MaxCounts;
+                            var count = (ushort)Math.Min(Enums.GuildRanksTop20Type.MaxCounts, rank_members.Length);
                             if (displyPage == 2 && rank_members.Length < 10)
                                 break;
-                            GuildRanks ranks = new GuildRanks(count);
+                            var ranks = new GuildRanks(count) {
+                                Rank = Rank,
+                                Page = displyPage
+                            };
 
-                            ranks.Rank = Rank;
-                            ranks.Page = displyPage;
                             for (byte x = 0; x < count; x++) {
                                 if (rank_members.Length < offset + x)
                                     break;
@@ -638,15 +615,16 @@ namespace MTA.Network {
                             break;
                         }
                         case Enums.GuildRanksTop20Type.OrchidRank: {
-                            Guild.Member[] rank_members = client.Guild.RankOrchidsDonations;
-                            int offset = displyPage * Enums.GuildRanksTop20Type.MaxCounts;
-                            ushort count = (ushort)Math.Min(Enums.GuildRanksTop20Type.MaxCounts, rank_members.Length);
+                            var rank_members = client.Guild.RankOrchidsDonations;
+                            var offset = displyPage * Enums.GuildRanksTop20Type.MaxCounts;
+                            var count = (ushort)Math.Min(Enums.GuildRanksTop20Type.MaxCounts, rank_members.Length);
                             if (displyPage == 2 && rank_members.Length < 10)
                                 break;
 
-                            GuildRanks ranks = new GuildRanks(count);
-                            ranks.Rank = Rank;
-                            ranks.Page = displyPage;
+                            var ranks = new GuildRanks(count) {
+                                Rank = Rank,
+                                Page = displyPage
+                            };
                             for (byte x = 0; x < count; x++) {
                                 if (rank_members.Length < offset + x)
                                     break;
@@ -659,14 +637,15 @@ namespace MTA.Network {
                             break;
                         }
                         case Enums.GuildRanksTop20Type.LilyRank: {
-                            Guild.Member[] rank_members = client.Guild.RankLiliesDonations;
-                            int offset = displyPage * Enums.GuildRanksTop20Type.MaxCounts;
-                            ushort count = (ushort)Math.Min(Enums.GuildRanksTop20Type.MaxCounts, rank_members.Length);
+                            var rank_members = client.Guild.RankLiliesDonations;
+                            var offset = displyPage * Enums.GuildRanksTop20Type.MaxCounts;
+                            var count = (ushort)Math.Min(Enums.GuildRanksTop20Type.MaxCounts, rank_members.Length);
                             if (displyPage == 2 && rank_members.Length < 10)
                                 break;
-                            GuildRanks ranks = new GuildRanks(count);
-                            ranks.Rank = Rank;
-                            ranks.Page = displyPage;
+                            var ranks = new GuildRanks(count) {
+                                Rank = Rank,
+                                Page = displyPage
+                            };
                             for (byte x = 0; x < count; x++) {
                                 if (rank_members.Length < offset + x)
                                     break;
@@ -679,14 +658,15 @@ namespace MTA.Network {
                             break;
                         }
                         case Enums.GuildRanksTop20Type.TulipRank: {
-                            Guild.Member[] rank_members = client.Guild.RankTulipsDonations;
-                            int offset = displyPage * Enums.GuildRanksTop20Type.MaxCounts;
-                            ushort count = (ushort)Math.Min(Enums.GuildRanksTop20Type.MaxCounts, rank_members.Length);
+                            var rank_members = client.Guild.RankTulipsDonations;
+                            var offset = displyPage * Enums.GuildRanksTop20Type.MaxCounts;
+                            var count = (ushort)Math.Min(Enums.GuildRanksTop20Type.MaxCounts, rank_members.Length);
                             if (displyPage == 2 && rank_members.Length < 10)
                                 break;
-                            GuildRanks ranks = new GuildRanks(count);
-                            ranks.Rank = Rank;
-                            ranks.Page = displyPage;
+                            var ranks = new GuildRanks(count) {
+                                Rank = Rank,
+                                Page = displyPage
+                            };
                             for (byte x = 0; x < count; x++) {
                                 if (rank_members.Length < offset + x)
                                     break;
@@ -699,14 +679,15 @@ namespace MTA.Network {
                             break;
                         }
                         case Enums.GuildRanksTop20Type.TotalDonaion: {
-                            Guild.Member[] rank_members = client.Guild.RankTotalDonations;
-                            int offset = displyPage * Enums.GuildRanksTop20Type.MaxCounts;
-                            ushort count = (ushort)Math.Min(Enums.GuildRanksTop20Type.MaxCounts, rank_members.Length);
+                            var rank_members = client.Guild.RankTotalDonations;
+                            var offset = displyPage * Enums.GuildRanksTop20Type.MaxCounts;
+                            var count = (ushort)Math.Min(Enums.GuildRanksTop20Type.MaxCounts, rank_members.Length);
                             if (displyPage == 2 && rank_members.Length < 10)
                                 break;
-                            GuildRanks ranks = new GuildRanks(count);
-                            ranks.Rank = Rank;
-                            ranks.Page = displyPage;
+                            var ranks = new GuildRanks(count) {
+                                Rank = Rank,
+                                Page = displyPage
+                            };
                             for (byte x = 0; x < count; x++) {
                                 if (rank_members.Length < offset + x)
                                     break;
@@ -754,7 +735,7 @@ namespace MTA.Network {
                     }
                     else if (packet[4] == 6) //Npc information
                     {
-                        uint NpcUid = BitConverter.ToUInt32(packet, 12);
+                        var NpcUid = BitConverter.ToUInt32(packet, 12);
                         client.JoinToWar = NpcUid;
                         var tournament = ClanWarArena.GetNpcTournament(NpcUid);
                         if (tournament != null) {
@@ -816,12 +797,12 @@ namespace MTA.Network {
                 #region 1134: Quest
 
                 case 1135: {
-                    QuestData quest = new QuestData(true);
+                    var quest = new QuestData(true);
                     quest.Deserialize(packet);
                     break;
                 }
                 case 1134: {
-                    QuestPacket quest = new QuestPacket(false);
+                    var quest = new QuestPacket(false);
                     quest.Deserialize(packet);
                     switch (quest.Action) {
                         case QuestPacket.QuestAction.Begin: {
@@ -1002,19 +983,19 @@ namespace MTA.Network {
                 #region inbox
 
                 case 1046: {
-                    uint page = BitConverter.ReadUint(packet, 8);
-                    Inbox inbox = new Inbox();
+                    var page = BitConverter.ReadUint(packet, 8);
+                    var inbox = new Inbox();
                     inbox.check(client.Prizes, page);
                     inbox.Send(client);
                     break;
                 }
                 case 1045: {
-                    uint Type = BitConverter.ReadUint(packet, 4);
-                    uint id = BitConverter.ReadUint(packet, 8);
+                    var Type = BitConverter.ReadUint(packet, 4);
+                    var id = BitConverter.ReadUint(packet, 8);
                     switch (Type) {
                         case 1: //show
                         {
-                            byte[] inbox = new byte[272];
+                            var inbox = new byte[272];
                             Writer.Ushort((ushort)(inbox.Length - 8), 0, inbox);
                             Writer.Ushort(1048, 2, inbox);
                             Writer.Uint(id, 4, inbox); //id    
@@ -1024,8 +1005,7 @@ namespace MTA.Network {
                         }
                         case 2: //delete
                         {
-                            if (client.Prizes.ContainsKey(id))
-                                client.Prizes.Remove(id);
+                            client.Prizes.Remove(id);
                             if (client.Prizes.Count == 0)
                                 Inbox.SendInbox(client, false);
                             Inbox.Save(client);
@@ -1061,58 +1041,59 @@ namespace MTA.Network {
 
                 #region MentorPremio (1036)
 
-                //case 1036:
-                //    {
-                //        switch (packet[4])
-                //        {
-                //            #region Send
-                //            case 0:
-                //                Writer.WriteUInt32((uint)client.PrizeExperience, 8, packet);
-                //                Writer.WriteUInt32(client.PrizeHeavenBlessing, 12, packet);
-                //                client.Send(packet);
-                //                break;
-                //            #endregion
-                //            #region Claim Training Exp
-                //            case 1:
-                //                {
-                //                    if (client.PrizeExperience > 0)
-                //                    {
-                //                        client.IncreaseExperience((ulong)(((double)client.PrizeExperience / 606) * client.ExpBall), false);
-                //                        client.PrizeExperience = 0;
-                //                        client.Send(packet);
-                //                    }
-                //                    break;
-                //                }
-                //            #endregion
-                //            #region Claim Blessing Exp
-                //            case 2:
-                //                {
-                //                    if (client.PrizeHeavenBlessing > 0)
-                //                    {
-                //                        client.AddBless(client.PrizeHeavenBlessing);
-                //                        client.PrizeHeavenBlessing = 0;
-                //                        client.Send(packet);
-                //                    }
-                //                    break;
-                //                }
-                //            #endregion
-
-                //        }
-                //        break;
-                //    }
+                // case 1036:
+                //     {
+                //         switch (packet[4])
+                //         {
+                //             #region Send
+                //             case 0:
+                //                 Writer.WriteUInt32((uint)client.PrizeExperience, 8, packet);
+                //                 Writer.WriteUInt32(client.PrizeHeavenBlessing, 12, packet);
+                //                 client.Send(packet);
+                //                 break;
+                //             #endregion
+                //             #region Claim Training Exp
+                //             case 1:
+                //                 {
+                //                     if (client.PrizeExperience > 0)
+                //                     {
+                //                         client.IncreaseExperience((ulong)(((double)client.PrizeExperience / 606) * client.ExpBall), false);
+                //                         client.PrizeExperience = 0;
+                //                         client.Send(packet);
+                //                     }
+                //                     break;
+                //                 }
+                //             #endregion
+                //             #region Claim Blessing Exp
+                //             case 2:
+                //                 {
+                //                     if (client.PrizeHeavenBlessing > 0)
+                //                     {
+                //                         client.AddBless(client.PrizeHeavenBlessing);
+                //                         client.PrizeHeavenBlessing = 0;
+                //                         client.Send(packet);
+                //                     }
+                //                     break;
+                //                 }
+                //             #endregion
+                //
+                //         }
+                //         break;
+                //     }
 
                 #endregion
 
                 #region MentorGain PrizePacket.
 
                 case 1036: {
-                    PrizeClaimb prize = new PrizeClaimb(false);
+                    var prize = new PrizeClaimb(false);
                     prize.Deserialize(packet);
                     switch (prize.Type) {
                         case 0: {
-                            prize = new PrizeClaimb(true);
-                            prize.OnlineTrainingExper = client.Entity.OnlineTrainning;
-                            prize.HuntingExper = client.Entity.HuntingExp;
+                            prize = new PrizeClaimb(true) {
+                                OnlineTrainingExper = client.Entity.OnlineTrainning,
+                                HuntingExper = client.Entity.HuntingExp
+                            };
                             prize.Send(client);
                             break;
                         }
@@ -1120,10 +1101,11 @@ namespace MTA.Network {
                             client.IncreaseExperience((ulong)(client.Entity.OnlineTrainning / 600.0 * client.ExpBall),
                                 false);
                             client.Entity.OnlineTrainning = 0;
-                            prize = new PrizeClaimb(true);
-                            prize.Type = 0;
-                            prize.OnlineTrainingExper = client.Entity.OnlineTrainning;
-                            prize.HuntingExper = client.Entity.HuntingExp;
+                            prize = new PrizeClaimb(true) {
+                                Type = 0,
+                                OnlineTrainingExper = client.Entity.OnlineTrainning,
+                                HuntingExper = client.Entity.HuntingExp
+                            };
                             prize.Send(client);
                             client.Send(prize);
                             break;
@@ -1132,10 +1114,11 @@ namespace MTA.Network {
                             client.IncreaseExperience((ulong)(client.Entity.HuntingExp / 600.0 * client.ExpBall),
                                 false);
                             client.Entity.HuntingExp = 0;
-                            prize = new PrizeClaimb(true);
-                            prize.HuntingExper = client.Entity.HuntingExp;
-                            prize.OnlineTrainingExper = client.Entity.OnlineTrainning;
-                            prize.Type = 0;
+                            prize = new PrizeClaimb(true) {
+                                HuntingExper = client.Entity.HuntingExp,
+                                OnlineTrainingExper = client.Entity.OnlineTrainning,
+                                Type = 0
+                            };
                             prize.Send(client);
                             client.Send(prize);
                             break;
@@ -1152,31 +1135,34 @@ namespace MTA.Network {
                 case 2030: {
                     if (client.Action != 2)
                         return;
-                    NpcSpawn spawn = new NpcSpawn(false);
+                    var spawn = new NpcSpawn(false);
                     spawn.Deserialize(packet);
-                    SobNpcSpawn Base = new SobNpcSpawn();
-                    Base.Owner = client;
-                    Base.UID = client.Map.EntityUIDCounter2.Next;
-                    Base.Mesh = spawn.Mesh;
-                    Base.MapID = client.Entity.MapID;
-                    Base.X = spawn.X;
-                    Base.Y = spawn.Y;
+                    var Base = new SobNpcSpawn {
+                        Owner = client,
+                        UID = client.Map.EntityUIDCounter2.Next,
+                        Mesh = spawn.Mesh,
+                        MapID = client.Entity.MapID,
+                        X = spawn.X,
+                        Y = spawn.Y
+                    };
 
-                    uint id = 0;
-                    if (client.spwansitem != null)
+                    if (client.spwansitem != null) {
+                        uint id;
                         id = client.spwansitem.ID;
+                    }
+
                     if ((spawn.Mesh / 10) == 147) {
-                        uint UID = client.Entity.OnMoveNpc;
+                        var UID = client.Entity.OnMoveNpc;
                         if (client.Guild != null || client.Account.State == AccountTable.AccountState.GM) {
                             if (client.AsMember is { Rank: Enums.GuildMemberRank.GuildLeader } ||
                                 client.Account.State == AccountTable.AccountState.GM) {
-                                if (client.Guild.Name != null && client.Guild.Name != "") {
+                                if (client.Guild.Name is { } and not "") {
                                     if (client.Guild.Name == GuildWar.Pole.Name ||
                                         client.Account.State == AccountTable.AccountState.GM) {
                                         var getnpc = GuildCondutors.GuildConductors[UID];
-                                        ushort oldx = getnpc.npc.X;
-                                        ushort oldy = getnpc.npc.Y;
-                                        ushort oldmap = getnpc.npc.MapID;
+                                        var oldx = getnpc.npc.X;
+                                        var oldy = getnpc.npc.Y;
+                                        var oldmap = getnpc.npc.MapID;
 
                                         if (!GuildCondutors.MoveNpc(getnpc.npc.UID, client.Entity.MapID, spawn.X,
                                                 spawn.Y))
@@ -1211,17 +1197,15 @@ namespace MTA.Network {
                             client.Entity.SendSysMesage("Sorry, you guild not dominate the Guild War");
                     }
                     else if (client.Entity.MapID == 1038) {
-                        byte[] _buffer = new byte[client.Entity.SpawnPacket.Length];
+                        var _buffer = new byte[client.Entity.SpawnPacket.Length];
                         Buffer.BlockCopy(client.Entity.SpawnPacket, 0, _buffer, 0, client.Entity.SpawnPacket.Length);
                         Base.SpawnPacket = _buffer;
                         Base.Type = spawn.Type;
                         Base.ShowName = true;
                         Base.Name = client.Entity.Name;
                         Base.Hitpoints = Base.MaxHitpoints = 2000000;
-                        if (!client.Map.Statues.ContainsKey(Base.UID))
-                            client.Map.Statues.Add(Base.UID, Base);
-                        if (!client.Map.Npcs.ContainsKey(Base.UID))
-                            client.Map.Npcs.Add(Base.UID, Base);
+                        client.Map.Statues.TryAdd(Base.UID, Base);
+                        client.Map.Npcs.TryAdd(Base.UID, Base);
 
                         #region Save statue
 
@@ -1232,11 +1216,11 @@ namespace MTA.Network {
                                    .Insert("life", Base.Hitpoints).Insert("maxlife", Base.MaxHitpoints))
                             cmd.Execute();
 
-                        MemoryStream stream = new MemoryStream();
-                        BinaryWriter writer = new BinaryWriter(stream);
+                        var stream = new MemoryStream();
+                        var writer = new BinaryWriter(stream);
                         writer.Write(Base.SpawnPacket);
-                        string SQL = "UPDATE `statues` SET SpawnPacket=@SpawnPacket, where UID = " + Base.UID + " ;";
-                        byte[] rawData = stream.ToArray();
+                        var SQL = "UPDATE `statues` SET SpawnPacket=@SpawnPacket, where UID = " + Base.UID + " ;";
+                        var rawData = stream.ToArray();
                         using (var conn = DataHolder.MySqlConnection) {
                             conn.Open();
                             using (var cmd = new MySql.Data.MySqlClient.MySqlCommand()) {
@@ -1280,7 +1264,7 @@ namespace MTA.Network {
                 #region Skill Soul
 
                 case 1103: {
-                    Spell spell = new Spell(false);
+                    var spell = new Spell(false);
                     spell.Deserialize(packet);
                     if (!client.Spells.ContainsKey(spell.ID))
                         return;
@@ -1289,13 +1273,14 @@ namespace MTA.Network {
 
                         case 5: //Remove
                         {
-                            Spell.Soul_Level remove = Spell.SkillSoul_values[packet[20]];
+                            var remove = Spell.SkillSoul_values[packet[20]];
                             if (client.Spells[spell.ID].ContainsFlag(remove)) {
                                 client.Spells[spell.ID].RemoveFlag(remove);
-                                Data data = new Data(true);
-                                data.UID = client.Entity.UID;
-                                data.dwParam = client.Spells[spell.ID].ID;
-                                data.ID = 109;
+                                var data = new Data(true) {
+                                    UID = client.Entity.UID,
+                                    dwParam = client.Spells[spell.ID].ID,
+                                    ID = 109
+                                };
                                 client.Send(data);
                                 client.Send(new Spell(true) {
                                     ID = client.Spells[spell.ID].ID,
@@ -1349,7 +1334,7 @@ namespace MTA.Network {
                     //    client.Entity.SendSysMesage("You can't change your flag while CrossServerCTF running");
                     //    break;
                     //}
-                    CurrentLocationPacket cur = new CurrentLocationPacket(packet);
+                    var cur = new CurrentLocationPacket(packet);
                     client.Entity.CountryID = cur.CountryID;
                     cur.HeroID = client.Entity.UID;
                     client.SendScreen(cur);
@@ -1361,12 +1346,12 @@ namespace MTA.Network {
                 #region One Armed Bandit (1351 + 1352)
 
                 case 1351: {
-                    SlotMachineRequest req = new SlotMachineRequest();
+                    var req = new SlotMachineRequest();
                     req.Deserialize(packet);
                     switch (req.Mode) {
                         case SlotMachineSubType.StartSpin: {
                             if (client.SMSpinCount >= 10) {
-                                Npcs dialog = new Npcs(client);
+                                var dialog = new Npcs(client);
                                 client.ActiveNpc = 9999998;
                                 client.SMCaptcha = client.GenerateCaptcha(5);
                                 client.SMPacket = packet;
@@ -1379,13 +1364,12 @@ namespace MTA.Network {
                             }
 
                             client.SMSpinCount++;
-                            INpc npc = null;
-                            client.Screen.TryGetNpc(req.NpcID, out npc);
+                            client.Screen.TryGetNpc(req.NpcID, out var npc);
                             if (npc != null) {
                                 if (npc.Mesh / 10 >= 1977 && npc.Mesh / 10 <= 1980) {
-                                    int id = npc.Mesh / 10 - 1977;
+                                    var id = npc.Mesh / 10 - 1977;
                                     uint cost = 10000;
-                                    bool cps = id != 0;
+                                    var cps = id != 0;
                                     if (id == 1) cost = 3;
                                     if (id == 2) cost = 10;
                                     if (id == 3) cost = 100;
@@ -1405,7 +1389,7 @@ namespace MTA.Network {
                         }
                         case SlotMachineSubType.ClientFinishSpin: {
                             if (client.SlotMachine != null) {
-                                uint reward = client.SlotMachine.GetRewardAmount(client);
+                                var reward = client.SlotMachine.GetRewardAmount(client);
                                 if (client.SlotMachine.Cps) client.Entity.ConquerPoints += reward;
                                 else client.Entity.Money += reward;
                                 client.Send(new SlotMachineResponse()
@@ -1426,10 +1410,10 @@ namespace MTA.Network {
 
                 case 1001: {
                     if (client.Action == 1) {
-                        EnitityCreate EC = new EnitityCreate();
+                        var EC = new EnitityCreate();
                         EC.Deserialize(packet);
-                        string Message = "";
-                        Boolean Created = EntityTable.CreateEntity(EC, client, ref Message);
+                        var Message = "";
+                        var Created = EntityTable.CreateEntity(EC, client, ref Message);
                         if (Created) {
                             client.JustCreated = true;
                             client.Send(new Message(Message, "ALLUSERS", Color.Orange, GamePackets.Message.PopUP));
@@ -1449,7 +1433,7 @@ namespace MTA.Network {
                 case 1004: {
                     if (client.Action != 2)
                         return;
-                    Message message = new Message();
+                    var message = new Message();
                     message.Deserialize(packet);
                     message.__Message = Filter(message.__Message, client);
                     if (message.__Message.Split(["\\n"], StringSplitOptions.RemoveEmptyEntries).Length >
@@ -1467,7 +1451,7 @@ namespace MTA.Network {
                 case 1009: {
                     if (client.Action != 2)
                         return;
-                    ItemUsage usage = new ItemUsage(false);
+                    var usage = new ItemUsage(false);
                     usage.Deserialize(packet);
                     if (!client.Entity.Dead || usage.ID == ItemUsage.Ping) {
                         switch (usage.ID) {
@@ -1512,19 +1496,18 @@ namespace MTA.Network {
                                 break;
                             }
                             case 53: {
-                                uint ItemAdd = BitConverter.ToUInt32(packet, 12); // ay offset akbr mn 12 htzwdo 4
+                                var ItemAdd = BitConverter.ToUInt32(packet, 12); // ay offset akbr mn 12 htzwdo 4
                                 //:))) that npc is maked by me
 
                                 ConquerItem item_new = null;
                                 if (client.Inventory.TryGetItem(ItemAdd, out item_new)) {
                                     uint obtined_points = 0;
-                                    ConquerItemInformation iteminfo = new ConquerItemInformation(ItemAdd, 0);
-                                    Dictionary<uint, uint> amount = new Dictionary<uint, uint>(); //packet[20]);
+                                    var iteminfo = new ConquerItemInformation(ItemAdd, 0);
+                                    var amount = new Dictionary<uint, uint>(); //packet[20]);
                                     for (ushort i = 88; i < 88 + 4 * packet[24]; i += 4) {
-                                        uint item_swap = BitConverter.ToUInt32(packet, i);
+                                        var item_swap = BitConverter.ToUInt32(packet, i);
                                         if (client.Inventory.ContainsUID(item_swap)) {
-                                            ConquerItem item = null;
-                                            if (client.Inventory.TryGetItem(item_swap, out item)) {
+                                            if (client.Inventory.TryGetItem(item_swap, out var item)) {
                                                 amount.Add(item_swap, i);
                                             }
 
@@ -1550,11 +1533,10 @@ namespace MTA.Network {
                                     }
 
                                     if (iteminfo.BaseInformation.ConquerPointsWorth > obtined_points) {
-                                        uint add_cps = 0;
-                                        add_cps = iteminfo.BaseInformation.ConquerPointsWorth - obtined_points;
+                                        var add_cps = iteminfo.BaseInformation.ConquerPointsWorth - obtined_points;
                                         if (add_cps < client.Entity.ConquerPoints) {
                                             client.Entity.ConquerPoints -= add_cps;
-                                            foreach (uint key in amount.Keys) {
+                                            foreach (var key in amount.Keys) {
                                                 if (client.Inventory.ContainsUID(key))
                                                     client.Inventory.Remove(key, Enums.ItemUse.Remove, true);
                                             }
@@ -1563,7 +1545,7 @@ namespace MTA.Network {
                                         }
                                     }
                                     else {
-                                        foreach (uint key in amount.Keys) {
+                                        foreach (var key in amount.Keys) {
                                             if (client.Inventory.ContainsUID(key))
                                                 client.Inventory.Remove(key, Enums.ItemUse.Remove, true);
                                         }
@@ -1598,15 +1580,15 @@ namespace MTA.Network {
                             case 41: {
                                 // var item = Database.ConquerItemTable.LoadItem(usage.UID);
 
-                                ConquerItem item = new ConquerItem(true);
-                                if (client.Inventory.TryGetItem(usage.UID, out item)) {
+                                new ConquerItem(true);
+                                if (client.Inventory.TryGetItem(usage.UID, out var item)) {
                                     var infos = new ConquerItemInformation(item.ID, 0);
                                     item.UID = usage.UID;
                                     item.DayStamp = DateTime.Now;
                                     item.Days = (byte)(infos.BaseInformation.Time == 0
                                         ? 7
                                         : (infos.BaseInformation.Time / 24 / 60));
-                                    TimeSpan Remain = item.DayStamp.AddDays(item.Days) - DateTime.Now;
+                                    var Remain = item.DayStamp.AddDays(item.Days) - DateTime.Now;
                                     item.TimeLeftInMinutes = (uint)Remain.TotalSeconds;
                                     ConquerItemTable.Update_Free(item, client);
                                     usage.dwParam = 5;
@@ -1718,7 +1700,7 @@ namespace MTA.Network {
                                 break;
                             }
                             case ItemUsage.SocketTalismanWithItem: {
-                                for (int i = 0; i < usage.dwExtraInfo; i++) {
+                                for (var i = 0; i < usage.dwExtraInfo; i++) {
                                     usage.dwParam = BitConverter.ToUInt32(packet, 91 + 4 * i);
                                     SocketTalismanWithItem(usage, client);
                                 }
@@ -1757,8 +1739,7 @@ namespace MTA.Network {
                                         client.DeatinedItem.Remove(item.UID);
 
                                         if (Kernel.GamePool.ContainsKey(item.GainerUID)) {
-                                            GameState pClient;
-                                            if (Kernel.GamePool.TryGetValue(item.GainerUID, out pClient)) {
+                                            if (Kernel.GamePool.TryGetValue(item.GainerUID, out var pClient)) {
                                                 if (pClient.Entity != null && pClient is { ClaimableItem: not null }) {
                                                     pClient.ClaimableItem[item.UID].OwnerUID = 500;
                                                     pClient.ClaimableItem[item.UID].MakeItReadyToClaim();
@@ -1770,7 +1751,7 @@ namespace MTA.Network {
                                             }
                                         }
 
-                                        Message message =
+                                        var message =
                                             new Message(
                                                 " " + client.Entity.Name + " has redeemed his Gear and Pay " +
                                                 item.ConquerPointsCost + " CPS . Congratulations!", Color.Wheat,
@@ -1789,7 +1770,7 @@ namespace MTA.Network {
                                 if (client.Inventory.Count < 40) {
                                     var item = client.ClaimableItem[usage.UID];
                                     if (item != null) {
-                                        if (item.Bound && item.OwnerUID != 500) {
+                                        if (item is { Bound: true, OwnerUID: not 500 }) {
                                             if (DateTime.Now >= item.Date.AddDays(7)) {
                                                 ClaimItemTable.Claim(item, client);
                                                 client.ClaimableItem.Remove(item.UID);
@@ -1814,7 +1795,7 @@ namespace MTA.Network {
                                             client.Entity.ConquerPoints += item.ConquerPointsCost;
                                         else {
                                             client.Inventory.Add(item.Item, Enums.ItemUse.Move);
-                                            Message message = new Message(
+                                            var message = new Message(
                                                 "Thank you for arresting " + item.OwnerName + " , " + item.GainerName +
                                                 ". The arrested one has redeemed his items and you have received a great deal of ConquerPoints as reward. Congratulations!",
                                                 Color.Wheat, Message.Talk);
@@ -1828,7 +1809,7 @@ namespace MTA.Network {
                                         usage.dwExtraInfo3 = item.ConquerPointsCost;
                                         //Database.EntityTable.UpdateCps(client);
                                         client.Send(usage);
-                                        Message message2 =
+                                        var message2 =
                                             new Message(
                                                 "Thank you for arresting red/black name players " + client.Entity.Name +
                                                 " has recived " + item.ConquerPointsCost + " CPS . Congratulations!",
@@ -1849,20 +1830,17 @@ namespace MTA.Network {
                                 break;
                             }
                             case 40: {
-                                uint ItemAdd = BitConverter.ToUInt32(packet, 8);
+                                var ItemAdd = BitConverter.ToUInt32(packet, 8);
 
-                                ConquerItem item_new = null;
-                                if (client.Inventory.TryGetItem(ItemAdd, out item_new)) {
+                                if (client.Inventory.TryGetItem(ItemAdd, out var item_new)) {
                                     var itemtype = item_new.GetItemType();
                                     if (itemtype == ConquerItem.ItemTypes.GemID)
                                         return;
-                                    ushort pos = ItemPosition(item_new.ID);
-                                    if (pos == ConquerItem.Bottle || pos == ConquerItem.Wing ||
-                                        pos == ConquerItem.Fan || pos == ConquerItem.Garment ||
-                                        pos == ConquerItem.LeftWeaponAccessory ||
-                                        pos == ConquerItem.RightWeaponAccessory || pos == ConquerItem.Steed ||
-                                        pos == ConquerItem.SteedArmor || pos == ConquerItem.SteedCrop ||
-                                        pos == ConquerItem.Tower) {
+                                    var pos = ItemPosition(item_new.ID);
+                                    if (pos is ConquerItem.Bottle or ConquerItem.Wing or ConquerItem.Fan
+                                        or ConquerItem.Garment or ConquerItem.LeftWeaponAccessory
+                                        or ConquerItem.RightWeaponAccessory or ConquerItem.Steed
+                                        or ConquerItem.SteedArmor or ConquerItem.SteedCrop or ConquerItem.Tower) {
                                         client.Send(new Message("Sorry can't bless this item !", Color.Red,
                                             Message.Talk));
                                         return;
@@ -1870,17 +1848,17 @@ namespace MTA.Network {
 
                                     if (item_new.Bless >= 7)
                                         return;
-                                    Queue<uint> amount = new Queue<uint>(packet[24]);
+                                    var amount = new Queue<uint>(packet[24]);
 
                                     for (ushort i = 91; i < 91 + 4 * usage.dwExtraInfo; i += 4) {
-                                        uint uid = BitConverter.ToUInt32(packet, i);
+                                        var uid = BitConverter.ToUInt32(packet, i);
                                         if (client.Inventory.ContainsUID(uid))
                                             amount.Enqueue(uid);
                                         else
                                             return;
                                     }
 
-                                    byte oldbless = item_new.Bless;
+                                    var oldbless = item_new.Bless;
                                     if (item_new.Bless == 0 && amount.Count == 5)
                                         item_new.Bless = 1;
                                     else if (item_new.Bless == 1 && amount.Count == 1)
@@ -1907,7 +1885,7 @@ namespace MTA.Network {
                             case ItemUsage.GemCompose: {
                                 #region GemCompose
 
-                                UInt32 Ident = usage.UID;
+                                var Ident = usage.UID;
                                 client.Inventory.Remove(Ident, 15);
                                 client.Inventory.Add(Ident + 1, 0, 1);
                                 usage.dwParam = 1;
@@ -1943,17 +1921,16 @@ namespace MTA.Network {
                                 break;
                             }
                             case ItemUsage.SplitStack: {
-                                ConquerItem mainItem = null;
-                                ConquerItem minorItem = new ConquerItem(true);
-                                ConquerItemInformation infos = null;
-                                minorItem.Color = (Enums.Color)Kernel.Random.Next(4, 8);
-                                if (client.Inventory.TryGetItem(usage.UID, out mainItem)) {
-                                    infos = new ConquerItemInformation(mainItem.ID, 0);
+                                var minorItem = new ConquerItem(true) {
+                                    Color = (Enums.Color)Kernel.Random.Next(4, 8)
+                                };
+                                if (client.Inventory.TryGetItem(usage.UID, out var mainItem)) {
+                                    var infos = new ConquerItemInformation(mainItem.ID, 0);
                                     if (mainItem.StackSize > 1 &&
                                         mainItem.StackSize <= infos.BaseInformation.StackSize) {
                                         if (client.Inventory.Count < 40) {
                                             if (usage.dwParam < mainItem.StackSize) {
-                                                ushort Amount = (ushort)usage.dwParam;
+                                                var Amount = (ushort)usage.dwParam;
                                                 mainItem.StackSize -= Amount;
                                                 mainItem.Mode = Enums.ItemMode.Update;
                                                 mainItem.Send(client);
@@ -1971,14 +1948,13 @@ namespace MTA.Network {
                                 break;
                             }
                             case ItemUsage.MergeStackableItems: {
-                                ConquerItem mainItem = null;
-                                ConquerItem minorItem = new ConquerItem(true);
-                                ConquerItemInformation infos = null;
-                                minorItem.Color = (Enums.Color)Kernel.Random.Next(4, 8);
-                                if (client.Inventory.TryGetItem(usage.UID, out mainItem) &&
+                                var minorItem = new ConquerItem(true) {
+                                    Color = (Enums.Color)Kernel.Random.Next(4, 8)
+                                };
+                                if (client.Inventory.TryGetItem(usage.UID, out var mainItem) &&
                                     client.Inventory.TryGetItem(usage.dwParam, out minorItem)) {
                                     if (mainItem.ID == minorItem.ID) {
-                                        infos = new ConquerItemInformation(mainItem.ID, 0);
+                                        var infos = new ConquerItemInformation(mainItem.ID, 0);
                                         if (mainItem.StackSize < 1)
                                             mainItem.StackSize = 1;
                                         if (minorItem.StackSize < 1)
@@ -2003,8 +1979,7 @@ namespace MTA.Network {
                                 break;
                             }
                             case ItemUsage.LowerEquipment: {
-                                ConquerItem item = null;
-                                if (client.Inventory.TryGetItem(usage.UID, out item)) {
+                                if (client.Inventory.TryGetItem(usage.UID, out var item)) {
                                     if (IsFranko(item.ID)) return;
                                     ConquerItem upgrade = null;
                                     if (client.Inventory.TryGetItem(usage.UID, out upgrade)) {
@@ -2015,10 +1990,10 @@ namespace MTA.Network {
                                         }
 
                                         client.Entity.ConquerPoints -= 54;
-                                        ConquerItemInformation infos = new ConquerItemInformation(item.ID, item.Plus);
+                                        var infos = new ConquerItemInformation(item.ID, item.Plus);
                                         if (infos.BaseInformation.Level <= 15) return;
-                                        int startwith = (int)(infos.BaseInformation.ID / 1000);
-                                        int endwith = (int)(infos.BaseInformation.ID % 10);
+                                        var startwith = (int)(infos.BaseInformation.ID / 1000);
+                                        var endwith = (int)(infos.BaseInformation.ID % 10);
                                         //var sitem = infos.LowestID(ItemMinLevel(ItemPosition(infos.BaseInformation.ID)));
                                         var sitem = ConquerItemInformation.BaseInformations.Values
                                             .Where(x => (x.ID % 10) == endwith && (x.ID / 1000) == startwith &&
@@ -2139,7 +2114,7 @@ namespace MTA.Network {
                 #region KnownPersons (1019)
 
                 case 1019: {
-                    KnownPersons knownP = new KnownPersons(false);
+                    var knownP = new KnownPersons(false);
                     knownP.Deserialize(packet);
                     switch (knownP.Type) {
                         case KnownPersons.RequestFriendship: {
@@ -2170,12 +2145,12 @@ namespace MTA.Network {
                 case 1022: {
                     if (client.Action != 2) return;
                     client.LastAttack = Time32.Now;
-                    Attack attack = new Attack(false);
+                    var attack = new Attack(false);
                     attack.Deserialize(packet);
                     Writer.WriteUInt32(0, 8, attack.ToArray());
                     switch (attack.AttackType) {
                         case 36:
-                            Attack attack2 = new Attack(true);
+                            var attack2 = new Attack(true);
                             attack2 = attack;
                             //   attack2.KOCount = (ushort)((attack.Damage << 16) | 1);
                             attack2.ResponseDamage = client.Entity.QuestKO;
@@ -2210,14 +2185,14 @@ namespace MTA.Network {
                 case 1024: {
                     if (client.Action != 2)
                         return;
-                    uint AddStr = BitConverter.ToUInt32(packet, 12);
-                    uint AddAgi = BitConverter.ToUInt32(packet, 16);
-                    uint AddVit = BitConverter.ToUInt32(packet, 20);
-                    uint AddSpi = BitConverter.ToUInt32(packet, 24);
+                    var AddStr = BitConverter.ToUInt32(packet, 12);
+                    var AddAgi = BitConverter.ToUInt32(packet, 16);
+                    var AddVit = BitConverter.ToUInt32(packet, 20);
+                    var AddSpi = BitConverter.ToUInt32(packet, 24);
                     if (client.Entity.Atributes == 0)
                         return;
 
-                    uint TotalStatPoints = AddStr + AddAgi + AddVit + AddSpi;
+                    var TotalStatPoints = AddStr + AddAgi + AddVit + AddSpi;
 
                     if (client.Entity.Atributes >= TotalStatPoints) {
                         client.Entity.Strength += (ushort)AddStr;
@@ -2239,7 +2214,7 @@ namespace MTA.Network {
                 #region Socketing (1027)
 
                 case 1027: {
-                    EmbedSocket socket = new EmbedSocket(false);
+                    var socket = new EmbedSocket(false);
                     socket.Deserialize(packet);
                     SocketItem(socket, client);
                     break;
@@ -2250,9 +2225,8 @@ namespace MTA.Network {
                 #region Character Statistics (1040)
 
                 case 1040: {
-                    uint UID = BitConverter.ToUInt32(packet, 8);
-                    GameState Client;
-                    if (Kernel.GamePool.TryGetValue(UID, out Client)) {
+                    var UID = BitConverter.ToUInt32(packet, 8);
+                    if (Kernel.GamePool.TryGetValue(UID, out var Client)) {
                         client.Send(WindowStats(Client));
                     }
 
@@ -2265,7 +2239,7 @@ namespace MTA.Network {
 
                 case 1052: {
                     if (client.Action == 1) {
-                        Connect connect = new Connect();
+                        var connect = new Connect();
                         connect.Deserialize(packet);
                         AppendConnect(connect, client);
                     }
@@ -2283,10 +2257,9 @@ namespace MTA.Network {
                     if (client.Action != 2)
                         return;
                     if (client.Entity.PokerTableUID > 0) return;
-                    Trade trade = new Trade(false);
+                    var trade = new Trade(false);
                     trade.Deserialize(packet);
-                    GameState _client = null;
-                    if (Kernel.GamePool.TryGetValue(trade.dwParam, out _client)) {
+                    if (Kernel.GamePool.TryGetValue(trade.dwParam, out var _client)) {
                         if (client.Account.State == AccountTable.AccountState.GM) {
                             if (client.BlockTrade) {
                                 client.MessageBox("You Activated Trade Block , Please Remove it.");
@@ -2335,7 +2308,7 @@ namespace MTA.Network {
                 case 1101: {
                     if (client.Action != 2)
                         return;
-                    FloorItem floorItem = new FloorItem(false);
+                    var floorItem = new FloorItem(false);
                     floorItem.Deserialize(packet);
                     PickupItem(floorItem, client);
                     break;
@@ -2348,7 +2321,7 @@ namespace MTA.Network {
                 case 1102: {
                     if (client.Action != 2)
                         return;
-                    Warehouse warehousepacket = new Warehouse(false);
+                    var warehousepacket = new Warehouse(false);
                     warehousepacket.Deserialize(packet);
                     if (House.SpouseWarehouse(client, warehousepacket))
                         return;
@@ -2361,7 +2334,7 @@ namespace MTA.Network {
                                     new Game.ConquerStructures.Warehouse(client,
                                         (Game.ConquerStructures.Warehouse.WarehouseID)client.Account.EntityID));
 
-                            Game.ConquerStructures.Warehouse wh =
+                            var wh =
                                 client.Warehouses[(Game.ConquerStructures.Warehouse.WarehouseID)warehousepacket.NpcID];
                             if (wh == null) return;
                             byte count = 0;
@@ -2371,7 +2344,7 @@ namespace MTA.Network {
                                 warehousepacket.Append(wh.Objects[count]);
                                 client.Send(warehousepacket);
 
-                                ItemAdding add = new ItemAdding(true);
+                                var add = new ItemAdding(true);
                                 if (wh.Objects[count].Purification.Available)
                                     add.Append(wh.Objects[count].Purification);
                                 if (wh.Objects[count].ExtraEffect.Available)
@@ -2395,15 +2368,12 @@ namespace MTA.Network {
                             //        }
                             //    }
                             //}
-                            Game.ConquerStructures.Warehouse wh =
+                            var wh =
                                 client.Warehouses[(Game.ConquerStructures.Warehouse.WarehouseID)warehousepacket.NpcID];
                             if (wh == null) return;
-                            ConquerItem item = null;
-                            if (client.Inventory.TryGetItem(warehousepacket.UID, out item)) {
-                                if (item.ID is >= 729960 and <= 729970)
-                                    return;
-                                if (item.ID == 729611 || item.ID == 729612 || item.ID == 729613 || item.ID == 729614 ||
-                                    item.ID == 729703)
+                            if (client.Inventory.TryGetItem(warehousepacket.UID, out var item)) {
+                                if (item.ID is >= 729960 and <= 729970 or 729611 or 729612 or 729613 or 729614
+                                    or 729703)
                                     return;
                                 if (!ConquerItem.isRune(item.UID)) {
                                     if (wh.Add(item)) {
@@ -2412,7 +2382,7 @@ namespace MTA.Network {
                                         warehousepacket.Append(item);
                                         client.Send(warehousepacket);
 
-                                        ItemAdding add = new ItemAdding(true);
+                                        var add = new ItemAdding(true);
                                         if (item.Purification.Available)
                                             add.Append(item.Purification);
                                         if (item.ExtraEffect.Available)
@@ -2431,7 +2401,7 @@ namespace MTA.Network {
                             break;
                         }
                         case Warehouse.RemoveItem: {
-                            Game.ConquerStructures.Warehouse wh =
+                            var wh =
                                 client.Warehouses[(Game.ConquerStructures.Warehouse.WarehouseID)warehousepacket.NpcID];
                             if (wh == null) return;
                             if (wh.ContainsUID(warehousepacket.UID)) {
@@ -2457,12 +2427,12 @@ namespace MTA.Network {
                 #region Guild Command (1107)
 
                 case 1107: {
-                    GuildCommand command = new GuildCommand(false);
+                    var command = new GuildCommand(false);
                     command.Deserialize(packet);
                     switch (command.Type) {
                         case GuildCommand.PromoteInfo: {
                             if (client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader) {
-                                SafeDictionary<uint, Guild.Member> array2 = new SafeDictionary<uint, Guild.Member>();
+                                var array2 = new SafeDictionary<uint, Guild.Member>();
                                 //  var array = client.Guild.Members.Values.Where(p => p.Rank == (Enums.GuildMemberRank)command.dwParam).ToArray();
                                 foreach (var p in client.Guild.Members.Values) {
                                     if (p.Rank == (Enums.GuildMemberRank)command.dwParam) {
@@ -2472,24 +2442,24 @@ namespace MTA.Network {
 
                                 var array = array2.Values.ToArray();
                                 if (array != null) {
-                                    byte[] Buffer = new byte[8 + 48 + array.Length * 32];
+                                    var Buffer = new byte[8 + 48 + array.Length * 32];
                                     Writer.WriteUInt16((ushort)(Buffer.Length - 8), 0, Buffer);
                                     Writer.WriteUInt16(2102, 2, Buffer);
                                     Writer.Uint(1, 4, Buffer);
                                     Writer.Uint((uint)array.Length, 12, Buffer);
-                                    int offset = 16;
-                                    for (int i = 0; i < array.Length; i++) {
-                                        Writer.Uint(array[i].Level, offset, Buffer); //level
+                                    var offset = 16;
+                                    foreach (var t in array) {
+                                        Writer.Uint(t.Level, offset, Buffer); //level
                                         offset += 4;
-                                        Writer.Uint((uint)(array[i].IsOnline ? 1 : 0), offset, Buffer); //online
+                                        Writer.Uint((uint)(t.IsOnline ? 1 : 0), offset, Buffer); //online
                                         offset += 4;
-                                        if (array[i].IsOnline)
-                                            Writer.Uint((uint)array[i].Client.Entity.BattlePower, offset,
+                                        if (t.IsOnline)
+                                            Writer.Uint((uint)t.Client.Entity.BattlePower, offset,
                                                 Buffer); //bp  
                                         offset += 4;
                                         //  Writer.Uint((uint)Enums.GuildMemberRank.DeputyLeader, offset, Buffer);//unkown1
                                         offset += 4;
-                                        Writer.String(array[i].Name, offset, Buffer);
+                                        Writer.String(t.Name, offset, Buffer);
                                         offset += 16;
                                     }
 
@@ -2528,7 +2498,7 @@ namespace MTA.Network {
                         }
                         case GuildCommand.Neutral1:
                         case GuildCommand.Neutral2: {
-                            string name = Encoding.Default.GetString(packet, 26, packet[25]);
+                            var name = Encoding.Default.GetString(packet, 26, packet[25]);
                             if (client is { Guild: not null, AsMember.Rank: Enums.GuildMemberRank.GuildLeader }) {
                                 client.Guild.RemoveAlly(name);
                                 foreach (var guild in Kernel.Guilds.Values) {
@@ -2543,16 +2513,20 @@ namespace MTA.Network {
                             break;
                         }
                         case GuildCommand.Allied: {
-                            string name = Encoding.Default.GetString(packet, 26, packet[25]);
-                            if (client is { Guild.Ally.Count: < 15, AsMember.Rank: Enums.GuildMemberRank.GuildLeader }) {
+                            var name = Encoding.Default.GetString(packet, 26, packet[25]);
+                            if (client is {
+                                    Guild.Ally.Count: < 15, AsMember.Rank: Enums.GuildMemberRank.GuildLeader
+                                }) {
                                 AllyGuilds(name, client);
                             }
 
                             break;
                         }
                         case GuildCommand.Enemied: {
-                            string name = Encoding.Default.GetString(packet, 26, packet[25]);
-                            if (client is { Guild.Enemy.Count: < 15, AsMember.Rank: Enums.GuildMemberRank.GuildLeader }) {
+                            var name = Encoding.Default.GetString(packet, 26, packet[25]);
+                            if (client is {
+                                    Guild.Enemy.Count: < 15, AsMember.Rank: Enums.GuildMemberRank.GuildLeader
+                                }) {
                                 client.Guild.AddEnemy(name);
                             }
 
@@ -2561,9 +2535,8 @@ namespace MTA.Network {
                         case 48: //Deny
                         {
                             if (client.Guild != null) {
-                                uint UID = command.dwParam;
-                                if (Kernel.GamePool.ContainsKey(UID)) {
-                                    var c = Kernel.GamePool[UID];
+                                var UID = command.dwParam;
+                                if (Kernel.GamePool.TryGetValue(UID, out var c)) {
                                     if (!client.Guild.BlackList.Contains(UID))
                                         client.Guild.BlackList.Add(UID);
                                     c.Send(command);
@@ -2575,7 +2548,7 @@ namespace MTA.Network {
                         case 50: //remove from black list
                         {
                             if (client.Guild != null) {
-                                uint UID = command.dwParam;
+                                var UID = command.dwParam;
                                 if (client.Guild.BlackList.Contains(UID))
                                     client.Guild.BlackList.Remove(UID);
                                 client.Send(command);
@@ -2588,7 +2561,7 @@ namespace MTA.Network {
                             break;
                         }
                         case GuildCommand.Bulletin: {
-                            string message = Encoding.Default.GetString(packet, 26, packet[25]);
+                            var message = Encoding.Default.GetString(packet, 26, packet[25]);
                             if (client is { Guild: not null, AsMember.Rank: Enums.GuildMemberRank.GuildLeader }) {
                                 client.Guild.Bulletin = message;
                                 client.Guild.CreateBuletinTime();
@@ -2634,7 +2607,7 @@ namespace MTA.Network {
                             break;
                         }
                         case GuildCommand.Discharge: {
-                            string name = Encoding.Default.GetString(packet, 26, packet[25]);
+                            var name = Encoding.Default.GetString(packet, 26, packet[25]);
                             if (client is { Guild: not null, AsMember.Rank: Enums.GuildMemberRank.GuildLeader }) {
                                 var member = client.Guild.GetMemberByName(name);
                                 if (member.ID != client.Entity.UID) {
@@ -2661,11 +2634,10 @@ namespace MTA.Network {
                             if (client is { Guild: not null, AsMember: not null }) {
                                 //if (client.Guild.Members.ContainsKey(command.dwParam))
                                 {
-                                    string GetMemberName = ReadString(packet, 26, packet[25]);
-                                    ushort GetMemberRank = BitConverter.ToUInt16(packet, 8);
+                                    var GetMemberName = ReadString(packet, 26, packet[25]);
+                                    var GetMemberRank = BitConverter.ToUInt16(packet, 8);
 
-                                    Guild.Member MemberPromote = null;
-                                    if (client.Guild.GetMember(GetMemberName, out MemberPromote)) {
+                                    if (client.Guild.GetMember(GetMemberName, out var MemberPromote)) {
                                         if (client.AsMember.Rank < MemberPromote.Rank) {
                                             client.Entity.SendSysMesage(
                                                 "Sorry, you have small rank for change he position!");
@@ -2733,8 +2705,8 @@ namespace MTA.Network {
                                             }
                                         }
 
-                                        if (client.AsMember.Rank == Enums.GuildMemberRank.Manager ||
-                                            client.AsMember.Rank == Enums.GuildMemberRank.HonoraryManager) {
+                                        if (client.AsMember.Rank is Enums.GuildMemberRank.Manager
+                                            or Enums.GuildMemberRank.HonoraryManager) {
                                             if (GetMemberRank == (ushort)Enums.GuildMemberRank.Aide) {
                                                 if (client.Guild.RanksCounts[GetMemberRank] >= 6) {
                                                     client.Entity.SendSysMesage("Sorry all Aide`s ranks its ocupated!");
@@ -2755,8 +2727,8 @@ namespace MTA.Network {
                                             }
                                         }
 
-                                        if (client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader ||
-                                            client.AsMember.Rank == Enums.GuildMemberRank.LeaderSpouse) {
+                                        if (client.AsMember.Rank is Enums.GuildMemberRank.GuildLeader
+                                            or Enums.GuildMemberRank.LeaderSpouse) {
                                             if (GetMemberRank == (ushort)Enums.GuildMemberRank.GuildLeader) {
                                                 if (client.AsMember.Rank == Enums.GuildMemberRank.LeaderSpouse)
                                                     return;
@@ -2891,8 +2863,7 @@ namespace MTA.Network {
                         }
                         case GuildCommand.JoinRequest: // asking gl
                         {
-                            GameState Target;
-                            if (Kernel.GamePool.TryGetValue(command.dwParam, out Target)) {
+                            if (Kernel.GamePool.TryGetValue(command.dwParam, out var Target)) {
                                 client.GuildJoinTarget = Target.Entity.UID;
                                 if (client.GuildJoinTarget == Target.Entity.UID &&
                                     Target.GuildJoinTarget == client.Entity.UID) {
@@ -2905,8 +2876,7 @@ namespace MTA.Network {
                                         return;
                                     }
 
-                                    Guild g;
-                                    if (Kernel.Guilds.TryGetValue(Target.Entity.GuildID, out g)) {
+                                    if (Kernel.Guilds.TryGetValue(Target.Entity.GuildID, out var g)) {
                                         if (Target.AsMember.Rank != Enums.GuildMemberRank.Member) {
                                             if (client.Entity.GuildID == 0) {
                                                 g.AddMember(client);
@@ -2915,8 +2885,7 @@ namespace MTA.Network {
                                     }
                                 }
                                 else {
-                                    Guild tG;
-                                    if (Kernel.Guilds.TryGetValue(Target.Entity.GuildID, out tG)) {
+                                    if (Kernel.Guilds.TryGetValue(Target.Entity.GuildID, out var tG)) {
                                         if (Target.AsMember.Rank != Enums.GuildMemberRank.Member) {
                                             if (Target.Guild.BlackList.Contains(client.Entity.UID)) {
                                                 command.Type = 47;
@@ -2928,12 +2897,13 @@ namespace MTA.Network {
                                                 client.Entity.GuildRequest = Time32.Now;
                                                 command.dwParam = client.Entity.UID;
 
-                                                PopupLevelandBP inf = new PopupLevelandBP();
+                                                var inf = new PopupLevelandBP {
+                                                    Level = client.Entity.Level,
+                                                    BattlePower = (uint)client.Entity.BattlePower,
+                                                    Receiver = Target.Entity.UID,
+                                                    Requester = client.Entity.UID
+                                                };
 
-                                                inf.Level = client.Entity.Level;
-                                                inf.BattlePower = (uint)client.Entity.BattlePower;
-                                                inf.Receiver = Target.Entity.UID;
-                                                inf.Requester = client.Entity.UID;
                                                 Target.Send(inf.ToArray());
 
                                                 Target.Send(command);
@@ -2948,8 +2918,7 @@ namespace MTA.Network {
 
                         case GuildCommand.InviteRequest: // gl invites
                         {
-                            GameState Target;
-                            if (Kernel.GamePool.TryGetValue(command.dwParam, out Target)) {
+                            if (Kernel.GamePool.TryGetValue(command.dwParam, out var Target)) {
                                 client.GuildJoinTarget = Target.Entity.UID;
                                 if (client.GuildJoinTarget == Target.Entity.UID &&
                                     Target.GuildJoinTarget == client.Entity.UID) {
@@ -2962,8 +2931,7 @@ namespace MTA.Network {
                                         return;
                                     }
 
-                                    Guild g;
-                                    if (Kernel.Guilds.TryGetValue(client.Entity.GuildID, out g)) {
+                                    if (Kernel.Guilds.TryGetValue(client.Entity.GuildID, out var g)) {
                                         if (client.AsMember.Rank != Enums.GuildMemberRank.Member) {
                                             g.AddMember(Target);
                                         }
@@ -2979,12 +2947,13 @@ namespace MTA.Network {
 
                                         client.Entity.GuildRequest = Time32.Now;
                                         command.dwParam = client.Entity.UID;
-                                        PopupLevelandBP inf = new PopupLevelandBP();
+                                        var inf = new PopupLevelandBP {
+                                            Level = client.Entity.Level,
+                                            BattlePower = (uint)client.Entity.BattlePower,
+                                            Receiver = Target.Entity.UID,
+                                            Requester = client.Entity.UID
+                                        };
 
-                                        inf.Level = client.Entity.Level;
-                                        inf.BattlePower = (uint)client.Entity.BattlePower;
-                                        inf.Receiver = Target.Entity.UID;
-                                        inf.Requester = client.Entity.UID;
                                         Target.Send(inf.ToArray());
 
                                         Target.Send(command);
@@ -2996,10 +2965,8 @@ namespace MTA.Network {
                         }
 
                         case GuildCommand.Quit: {
-                            if (client.Guild != null) {
-                                if (client.AsMember.Rank != Enums.GuildMemberRank.GuildLeader) {
-                                    client.Guild.ExpelMember(client.Entity.Name, true);
-                                }
+                            if (client is { Guild: not null, AsMember.Rank: not Enums.GuildMemberRank.GuildLeader }) {
+                                client.Guild.ExpelMember(client.Entity.Name, true);
                             }
 
                             break;
@@ -3072,21 +3039,20 @@ namespace MTA.Network {
                 #region Enlight (1127)
 
                 case 1127: {
-                    Enlight enlight = new Enlight(false);
+                    var enlight = new Enlight(false);
                     enlight.Deserialize(packet);
-                    if (Kernel.GamePool.ContainsKey(enlight.Enlighted)) {
-                        var Client = Kernel.GamePool[enlight.Enlighted];
-
+                    if (Kernel.GamePool.TryGetValue(enlight.Enlighted, out var client1)) {
                         if (enlight.Enlighter == client.Entity.UID && enlight.Enlighted != enlight.Enlighter) {
-                            if (Client.Entity.ReceivedEnlightenPoints < 5) {
+                            if (client1.Entity.ReceivedEnlightenPoints < 5) {
                                 if (client.Entity.EnlightenPoints >= 100) {
-                                    if (Client.Entity.EnlightmentTime <= 80) {
+                                    if (client1.Entity.EnlightmentTime <= 80) {
                                         client.Entity.EnlightenPoints -= 100;
-                                        Client.Entity.EnlightmentStamp = Time32.Now;
-                                        Client.IncreaseExperience(Calculate.Percent((int)Client.ExpBall, .10F), false);
-                                        Client.SendScreen(packet);
-                                        Client.Entity.ReceivedEnlightenPoints++;
-                                        Client.Entity.EnlightmentTime += 20;
+                                        client1.Entity.EnlightmentStamp = Time32.Now;
+                                        client1.IncreaseExperience(Calculate.Percent((int)client1.ExpBall, .10F),
+                                            false);
+                                        client1.SendScreen(packet);
+                                        client1.Entity.ReceivedEnlightenPoints++;
+                                        client1.Entity.EnlightmentTime += 20;
                                         if (client.Entity.EnlightmentTime > 80)
                                             client.Entity.EnlightmentTime = 100;
                                         else if (client.Entity.EnlightmentTime > 60)
@@ -3100,19 +3066,19 @@ namespace MTA.Network {
                                     }
                                     else
                                         client.Send(new Message(
-                                            "You can't enlighten " + Client.Entity.Name +
+                                            "You can't enlighten " + client1.Entity.Name +
                                             " yet because he has to wait a few minutes until he can be enlightened again.",
                                             Color.Red, Message.TopLeft));
                                 }
                                 else
                                     client.Send(new Message(
-                                        "You can't enlighten " + Client.Entity.Name +
+                                        "You can't enlighten " + client1.Entity.Name +
                                         " because you don't have enough enlighten points!", Color.Red,
                                         Message.TopLeft));
                             }
                             else
                                 client.Send(new Message(
-                                    "You can't enlighten " + Client.Entity.Name +
+                                    "You can't enlighten " + client1.Entity.Name +
                                     " because he/she was enlightened today five times already!", Color.Red,
                                     Message.TopLeft));
                         }
@@ -3127,21 +3093,20 @@ namespace MTA.Network {
 
                 case 2068: {
                     const byte GiveAwaser = 3, Remove = 8;
-                    byte Typ = packet[4];
+                    var Typ = packet[4];
                     var quizShow = Kernel.QuizShow;
                     switch (Typ) {
                         case GiveAwaser: //give right question
                         {
                             if (quizShow.Open) {
-                                if (client.Quiz == null)
-                                    client.Quiz = quizShow.RegisteredUsers[client.Entity.UID];
+                                client.Quiz ??= quizShow.RegisteredUsers[client.Entity.UID];
 
                                 if (client.Quiz == null) break;
 
                                 client.Quiz.Timer += (ushort)quizShow.NewQuestionTime;
-                                byte answer = packet[8];
+                                var answer = packet[8];
                                 if (answer > 4) break;
-                                bool right = answer == quizShow.CurrentQuestion.AnswerRight;
+                                var right = answer == quizShow.CurrentQuestion.AnswerRight;
 
                                 client.Quiz.Answered = true;
                                 ulong pts = 300;
@@ -3165,12 +3130,13 @@ namespace MTA.Network {
                                 client.IncreaseExperience(client.ExpBall / 300 * pts, false);
 
                                 if (quizShow.FirstQuestion) {
-                                    QuizRank rnk = new QuizRank();
-                                    rnk.GiveRight = client.Quiz.RightQuestion;
-                                    rnk.MyPoints = (ushort)client.Quiz.Points;
-                                    rnk.MyRank = 0;
-                                    rnk.MyTime = client.Quiz.Timer;
-                                    rnk.Type = QuizShowTypes.SendTop;
+                                    var rnk = new QuizRank {
+                                        GiveRight = client.Quiz.RightQuestion,
+                                        MyPoints = (ushort)client.Quiz.Points,
+                                        MyRank = 0,
+                                        MyTime = client.Quiz.Timer,
+                                        Type = QuizShowTypes.SendTop
+                                    };
                                     client.Send(rnk.ToArray());
                                 }
                             }
@@ -3195,7 +3161,7 @@ namespace MTA.Network {
                 case 2032: {
                     if (client.Action != 2)
                         return;
-                    NpcRequest req = new NpcRequest();
+                    var req = new NpcRequest();
                     req.Deserialize(packet);
 
                     if (req.InteractType == 102) {
@@ -3208,7 +3174,8 @@ namespace MTA.Network {
 
                     #region TreasureChest
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6000 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 47 &&
+                    if (client.Map.BaseID is not 6001 and not 6000 &&
+                        client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 47 &&
                         client.Map.BaseID != 700) //CaptureFlag
                     {
                         if (client.Inventory.Contains(3000628, 1)) {
@@ -3216,7 +3183,7 @@ namespace MTA.Network {
                             client.Inventory.Add(3000593, 0, 1);
                         }
                         else {
-                            NpcReply npc = new NpcReply(6, "Sorry, but you don't have GoldenKey");
+                            var npc = new NpcReply(6, "Sorry, but you don't have GoldenKey");
                             client.Send(npc.ToArray());
                         }
                     }
@@ -3225,13 +3192,15 @@ namespace MTA.Network {
 
                     #region TopRedName & BlackName
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6002 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 232) {
+                    if (client.Map.BaseID is not 6001 and not 6002 &&
+                        client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 232) {
                         if (client.Entity.PKPoints is >= 50 and <= 150) //BlackName
                         {
-                            _String str = new _String(true);
-                            str.UID = client.Entity.UID;
-                            str.TextsCount = 1;
-                            str.Type = _String.Effect;
+                            var str = new _String(true) {
+                                UID = client.Entity.UID,
+                                TextsCount = 1,
+                                Type = _String.Effect
+                            };
                             str.Texts.Add("good");
                             client.Entity.Owner.SendScreen(str);
                             client.Entity.Teleport(3320, 50, 50);
@@ -3240,10 +3209,11 @@ namespace MTA.Network {
 
                         if (client.Entity.PKPoints is >= 10 and <= 60) //TopRedname
                         {
-                            _String str = new _String(true);
-                            str.UID = client.Entity.UID;
-                            str.TextsCount = 1;
-                            str.Type = _String.Effect;
+                            var str = new _String(true) {
+                                UID = client.Entity.UID,
+                                TextsCount = 1,
+                                Type = _String.Effect
+                            };
                             str.Texts.Add("good");
                             client.Entity.Owner.SendScreen(str);
                             client.Entity.Teleport(3321, 50, 50);
@@ -3255,8 +3225,8 @@ namespace MTA.Network {
 
                     #region Top FB & SS Pk Autoinvite 192
 
-                    if ((((client.Map.BaseID != 0x1771) && (client.Map.BaseID != 0x1770)) &&
-                         (!client.Entity.Dead && (req.OptionID == 192))) && (client.Map.BaseID != 700)) {
+                    if (client.Map.BaseID is not 0x1771 and not 0x1770 &&
+                        (!client.Entity.Dead && (req.OptionID == 192)) && (client.Map.BaseID != 700)) {
                         var weps = client.Weapons;
                         if ((weps.Item1 != null && weps.Item1.ID / 1000 != 410) &&
                             (weps.Item2 != null && weps.Item2.ID / 1000 != 410) &&
@@ -3277,8 +3247,8 @@ namespace MTA.Network {
 
                     #region Top Horse PK
 
-                    if ((((client.Map.BaseID != 0x1771) && (client.Map.BaseID != 0x1770)) &&
-                         (!client.Entity.Dead && (req.OptionID == 193))) && (client.Map.BaseID != 700)) {
+                    if (client.Map.BaseID is not 0x1771 and not 0x1770 &&
+                        (!client.Entity.Dead && (req.OptionID == 193)) && (client.Map.BaseID != 700)) {
                         client.Entity.RemoveFlag(Update.Flags.Ride);
                         client.Entity.Hitpoints = 2;
                         client.Entity.Teleport(1002, 415, 459);
@@ -3288,8 +3258,8 @@ namespace MTA.Network {
 
                     #region Dragon
 
-                    if ((((client.Map.BaseID != 0x1771) && (client.Map.BaseID != 0x1770)) &&
-                         (!client.Entity.Dead && (req.OptionID == 194))) && (client.Map.BaseID != 700)) {
+                    if (client.Map.BaseID is not 0x1771 and not 0x1770 &&
+                        (!client.Entity.Dead && (req.OptionID == 194)) && (client.Map.BaseID != 700)) {
                         client.Entity.Teleport(1002, 443, 361);
                     }
 
@@ -3297,83 +3267,112 @@ namespace MTA.Network {
 
                     #region Cyclone War
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6000 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 147 && client.Map.BaseID != 700) {
+                    if (client.Map.BaseID is not 6001 and not 6000 &&
+                        client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 147 &&
+                        client.Map.BaseID != 700) {
                         client.Entity.Teleport(1002, 424, 249);
                     }
 
                     #endregion Cyclone War
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6000 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 251 &&
+                    if (client.Map.BaseID is not 6001 and not 6000 &&
+                        client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 251 &&
                         client.Map.BaseID != 700) // Critical PK
                     {
-                        Random R = new Random();
+                        var R = new Random();
                         client.Entity.Teleport(1002, 415, 383);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6002 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 230) {
+                    if (client.Map.BaseID is not 6001 and not 6002 &&
+                        client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 230) {
                         client.Entity.Teleport(1702, 50, 50);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6002 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 231) {
+                    if (client.Map.BaseID is not 6001 and not 6002 &&
+                        client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 231) {
                         client.Entity.Teleport(1701, 50, 50);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 249 && client.Map.BaseID != 700) //ElitePk
+                    if (client.Map.BaseID is not 6001 and not 6004 &&
+                        client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 249 &&
+                        client.Map.BaseID != 700) //ElitePk
                     {
                         client.Entity.Teleport(1002, 425, 378);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 248 && client.Map.BaseID != 700) //ClassPk
+                    if (client.Map.BaseID is not 6001 and not 6004 &&
+                        client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 248 &&
+                        client.Map.BaseID != 700) //ClassPk
                     {
                         client.Entity.Teleport(1002, 439, 246);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 247 && client.Map.BaseID != 700) //WeeklyPk
+                    if (client.Map.BaseID is not 6001 and not 6004 &&
+                        client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 247 &&
+                        client.Map.BaseID != 700) //WeeklyPk
                     {
                         client.Entity.Teleport(1002, 453, 294);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 246 && client.Map.BaseID != 700) //MonthlyPk
+                    if (client.Map.BaseID is not 6001 and not 6004 &&
+                        client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 246 &&
+                        client.Map.BaseID != 700) //MonthlyPk
                     {
                         client.Entity.Teleport(1002, 428, 243);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 245 && client.Map.BaseID != 700) //DisCity
+                    if (client.Map.BaseID is not 6001 and not 6004 &&
+                        client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 245 &&
+                        client.Map.BaseID != 700) //DisCity
                     {
                         client.Entity.Teleport(1020, 534, 484);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 244 && client.Map.BaseID != 700) //GuildWar
+                    if (client.Map.BaseID is not 6001 and not 6004 &&
+                        client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 244 &&
+                        client.Map.BaseID != 700) //GuildWar
                     {
                         client.Entity.Teleport(1038, 340, 331);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 243 && client.Map.BaseID != 700) //DailyPk
+                    if (client.Map.BaseID is not 6001 and not 6004 &&
+                        client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 243 &&
+                        client.Map.BaseID != 700) //DailyPk
                     {
                         client.Entity.Teleport(1002, 449, 372);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 242 && client.Map.BaseID != 700) //SteedRace
+                    if (client.Map.BaseID is not 6001 and not 6004 &&
+                        client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 242 &&
+                        client.Map.BaseID != 700) //SteedRace
                     {
                         client.Entity.Teleport(1002, 423, 245);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 241 && client.Map.BaseID != 700) //SpouseWar
+                    if (client.Map.BaseID is not 6001 and not 6004 &&
+                        client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 241 &&
+                        client.Map.BaseID != 700) //SpouseWar
                     {
                         client.Entity.Teleport(1002, 421, 292);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 240 && client.Map.BaseID != 700) //DeathTeam
+                    if (client.Map.BaseID is not 6001 and not 6004 &&
+                        client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 240 &&
+                        client.Map.BaseID != 700) //DeathTeam
                     {
                         client.Entity.Teleport(1002, 439, 389);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 239 && client.Map.BaseID != 700) //EliteGW
+                    if (client.Map.BaseID is not 6001 and not 6004 &&
+                        client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 239 &&
+                        client.Map.BaseID != 700) //EliteGW
                     {
                         client.Entity.Teleport(1002, 414, 259);
                     }
 
-                    if (client.Map.BaseID != 6001 && client.Map.BaseID != 6004 && client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 238 && client.Map.BaseID != 700) //champion
+                    if (client.Map.BaseID is not 6001 and not 6004 &&
+                        client.Entity is { Dead: false, PokerTableUID: 0 } && req.OptionID == 238 &&
+                        client.Map.BaseID != 700) //champion
                     {
                         if (!client.ChampionStats.SignedUp) {
                             Champion.QualifyEngine.DoSignup(client);
@@ -3404,13 +3403,14 @@ namespace MTA.Network {
                             client.ActiveNpc = req.NpcID;
                         if (req.NpcID == 12) {
                             if (client.Entity.VIPLevel > 0) {
-                                Data data = new Data(true);
-                                data.ID = Data.OpenWindow;
-                                data.UID = client.Entity.UID;
-                                data.TimeStamp = Time32.Now;
-                                data.dwParam = Data.WindowCommands.VIPWarehouse;
-                                data.wParam1 = client.Entity.X;
-                                data.wParam2 = client.Entity.Y;
+                                var data = new Data(true) {
+                                    ID = Data.OpenWindow,
+                                    UID = client.Entity.UID,
+                                    TimeStamp = Time32.Now,
+                                    dwParam = Data.WindowCommands.VIPWarehouse,
+                                    wParam1 = client.Entity.X,
+                                    wParam2 = client.Entity.Y
+                                };
                                 client.Send(data);
                                 break;
                             }
@@ -3420,24 +3420,24 @@ namespace MTA.Network {
 
                         if (House.Houses.ContainsKey(client.Entity.UID)) {
                             var info = House.Houses[client.Entity.UID];
-                            if (info.Furnitures.ContainsKey(req.NpcID)) {
+                            if (info.Furnitures.TryGetValue(req.NpcID, out var sobnpc)) {
                                 var itembox =
                                     House.CheckItemBox(client,
                                         info); //info.Furnitures.Values.Where(xx => (xx.Mesh / 10) == 820).FirstOrDefault();
                                 if (itembox != null) {
                                     if (req.NpcID == itembox.UID) {
-                                        Data data = new Data(true);
-                                        data.ID = Data.OpenWindow;
-                                        data.UID = client.Entity.UID;
-                                        data.TimeStamp = Time32.Now;
-                                        data.dwParam = Data.WindowCommands.Warehouse;
-                                        data.wParam1 = client.Entity.X;
-                                        data.wParam2 = client.Entity.Y;
+                                        var data = new Data(true) {
+                                            ID = Data.OpenWindow,
+                                            UID = client.Entity.UID,
+                                            TimeStamp = Time32.Now,
+                                            dwParam = Data.WindowCommands.Warehouse,
+                                            wParam1 = client.Entity.X,
+                                            wParam2 = client.Entity.Y
+                                        };
                                         client.Send(data);
                                     }
                                 }
 
-                                SobNpcSpawn sobnpc = info.Furnitures[req.NpcID];
                                 House.Move(client, sobnpc, info);
                                 //client.MessageBox("Do u Want To change its place?", (p) =>
                                 //{
@@ -3460,13 +3460,14 @@ namespace MTA.Network {
                                             info); //info.Furnitures.Values.Where(xx => (xx.Mesh / 10) == 820).FirstOrDefault();
                                     if (itembox != null) {
                                         if (req.NpcID == itembox.UID) {
-                                            Data data = new Data(true);
-                                            data.ID = Data.OpenWindow;
-                                            data.UID = client.Entity.UID;
-                                            data.TimeStamp = Time32.Now;
-                                            data.dwParam = Data.WindowCommands.Warehouse;
-                                            data.wParam1 = client.Entity.X;
-                                            data.wParam2 = client.Entity.Y;
+                                            var data = new Data(true) {
+                                                ID = Data.OpenWindow,
+                                                UID = client.Entity.UID,
+                                                TimeStamp = Time32.Now,
+                                                dwParam = Data.WindowCommands.Warehouse,
+                                                wParam1 = client.Entity.X,
+                                                wParam2 = client.Entity.Y
+                                            };
                                             client.Send(data);
                                         }
                                     }
@@ -3476,7 +3477,6 @@ namespace MTA.Network {
 
                         #endregion
 
-                        INpc npc = null;
                         if (req.InteractType == 102) {
                             if (client.Guild != null) {
                                 if (client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader) {
@@ -3485,8 +3485,8 @@ namespace MTA.Network {
                                 else if (client.AsMember.Rank == Enums.GuildMemberRank.DeputyLeader) {
                                     var member = client.Guild.GetMemberByName(req.Input);
                                     if (member != null) {
-                                        if (member.Rank == Enums.GuildMemberRank.DeputyLeader ||
-                                            member.Rank == Enums.GuildMemberRank.GuildLeader)
+                                        if (member.Rank is Enums.GuildMemberRank.DeputyLeader
+                                            or Enums.GuildMemberRank.GuildLeader)
                                             return;
                                         client.Guild.ExpelMember(req.Input, false);
                                     }
@@ -3508,9 +3508,10 @@ namespace MTA.Network {
                                     if (client.ActiveNpc % 10 == 6) plus = 3;
                                     else if (client.ActiveNpc % 10 == 7) plus = 6;
                                     client.Inventory.Remove(client.ActiveNpc, 1);
-                                    ConquerItem _item = new ConquerItem(true);
-                                    _item.ID = 300000;
-                                    ConquerItemInformation _iteminfos = new ConquerItemInformation(_item.ID, 0);
+                                    var _item = new ConquerItem(true) {
+                                        ID = 300000
+                                    };
+                                    var _iteminfos = new ConquerItemInformation(_item.ID, 0);
                                     _item.Durability = _item.MaximDurability = _iteminfos.BaseInformation.Durability;
                                     _item.Plus = plus;
                                     _item.Effect = Enums.ItemEffect.Horse;
@@ -3524,7 +3525,7 @@ namespace MTA.Network {
 
                         #region Captchas
 
-                        Npcs dialog = new Npcs(client);
+                        var dialog = new Npcs(client);
                         //if (client.Booth != null)
                         //    if (client.ActiveNpc == 9999998 && req.OptionID != 255 && client.SMCaptcha != "")
                         //    {
@@ -3631,9 +3632,10 @@ namespace MTA.Network {
                                     uint R = 187,
                                         G = 135,
                                         B = 201;
-                                    ConquerItem item = new ConquerItem(true);
-                                    item.ID = 300000;
-                                    item.Plus = 6;
+                                    var item = new ConquerItem(true) {
+                                        ID = 300000,
+                                        Plus = 6
+                                    };
                                     item.Durability = item.MaximDurability =
                                         ConquerItemInformation.BaseInformations[item.ID].Durability;
                                     item.SocketProgress = B | (G << 8) | (R << 16);
@@ -3646,9 +3648,10 @@ namespace MTA.Network {
                                     uint R = 62,
                                         G = 63,
                                         B = 184;
-                                    ConquerItem item = new ConquerItem(true);
-                                    item.ID = 300000;
-                                    item.Plus = 6;
+                                    var item = new ConquerItem(true) {
+                                        ID = 300000,
+                                        Plus = 6
+                                    };
                                     item.Durability = item.MaximDurability =
                                         ConquerItemInformation.BaseInformations[item.ID].Durability;
                                     item.SocketProgress = B | (G << 8) | (R << 16);
@@ -3661,9 +3664,10 @@ namespace MTA.Network {
                                     uint R = 148,
                                         G = 156,
                                         B = 137;
-                                    ConquerItem item = new ConquerItem(true);
-                                    item.ID = 300000;
-                                    item.Plus = 6;
+                                    var item = new ConquerItem(true) {
+                                        ID = 300000,
+                                        Plus = 6
+                                    };
                                     item.Durability = item.MaximDurability =
                                         ConquerItemInformation.BaseInformations[item.ID].Durability;
                                     item.SocketProgress = B | (G << 8) | (R << 16);
@@ -3676,9 +3680,10 @@ namespace MTA.Network {
                                     uint R = 147,
                                         G = 134,
                                         B = 122;
-                                    ConquerItem item = new ConquerItem(true);
-                                    item.ID = 300000;
-                                    item.Plus = 6;
+                                    var item = new ConquerItem(true) {
+                                        ID = 300000,
+                                        Plus = 6
+                                    };
                                     item.Durability = item.MaximDurability =
                                         ConquerItemInformation.BaseInformations[item.ID].Durability;
                                     item.SocketProgress = B | (G << 8) | (R << 16);
@@ -3691,9 +3696,10 @@ namespace MTA.Network {
                                     uint R = 142,
                                         G = 39,
                                         B = 46;
-                                    ConquerItem item = new ConquerItem(true);
-                                    item.ID = 300000;
-                                    item.Plus = 6;
+                                    var item = new ConquerItem(true) {
+                                        ID = 300000,
+                                        Plus = 6
+                                    };
                                     item.Durability = item.MaximDurability =
                                         ConquerItemInformation.BaseInformations[item.ID].Durability;
                                     item.SocketProgress = B | (G << 8) | (R << 16);
@@ -3725,7 +3731,7 @@ namespace MTA.Network {
                             return;
                         }
 
-                        if (client.Map.Npcs.TryGetValue(client.ActiveNpc, out npc)) {
+                        if (client.Map.Npcs.TryGetValue(client.ActiveNpc, out var npc)) {
                             if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, npc.X, npc.Y) > 17)
                                 return;
                             if (req.OptionID == 255 || (req.OptionID == 0 && ID == 2032))
@@ -3772,7 +3778,7 @@ namespace MTA.Network {
                 #region Compose (2036)
 
                 case 2036: {
-                    Compose compose = new Compose(false);
+                    var compose = new Compose(false);
                     compose.Deserialize(packet);
                     ComposePlus(compose, client);
                     break;
@@ -3783,7 +3789,7 @@ namespace MTA.Network {
                 #region Offline TG (2044)
 
                 case 2044: {
-                    OfflineTGRequest otgr = new OfflineTGRequest(false);
+                    var otgr = new OfflineTGRequest(false);
                     otgr.Deserialize(packet);
                     switch (otgr.ID) {
                         case OfflineTGRequest.OnTrainingTimeRequested: {
@@ -3792,7 +3798,7 @@ namespace MTA.Network {
                             break;
                         }
                         case OfflineTGRequest.OnConfirmation: {
-                            if (client.Map.BaseID == 6001 || client.Map.BaseID == 6000 || client.Map.BaseID == 1038)
+                            if (client.Map.BaseID is 6001 or 6000 or 1038)
                                 return;
                             client.Entity.PreviousMapID = client.Entity.MapID;
                             client.Entity.PrevX = client.Entity.X;
@@ -3807,9 +3813,9 @@ namespace MTA.Network {
                         case OfflineTGRequest.ClaimExperience: {
                             var T1 = new TimeSpan(DateTime.Now.Ticks);
                             var T2 = new TimeSpan(client.OfflineTGEnterTime.Ticks);
-                            ushort minutes = (ushort)(T1.TotalMinutes - T2.TotalMinutes);
+                            var minutes = (ushort)(T1.TotalMinutes - T2.TotalMinutes);
                             minutes = Math.Min((ushort)900, minutes);
-                            double expballGain = 300 * (double)minutes / 900;
+                            var expballGain = 300 * (double)minutes / 900;
                             while (expballGain >= 100) {
                                 expballGain -= 100;
                                 client.IncreaseExperience(client.ExpBall, false);
@@ -3820,22 +3826,11 @@ namespace MTA.Network {
 
                             client.Entity.SetLocation(client.Entity.PreviousMapID, client.Entity.PrevX,
                                 client.Entity.PrevY);
-                            if (client.Map.ID == 1036 || client.Map.ID == 1039
-                                                      || client.Map.ID == 8877 || client.Map.ID == 1735
-                                                      || client.Map.ID == 1734 || client.Map.ID == 1733
-                                                      || client.Map.ID == 1732 || client.Map.ID == 1731
-                                                      || client.Map.ID == 1730 || client.Map.ID == 1766 ||
-                                                      client.Map.ID == 1090
-                                                      || client.Map.ID == 8510 || client.Map.ID == 8511 ||
-                                                      client.Map.ID == 8512
-                                                      || client.Map.ID == 8514 || client.Map.ID == 8527 ||
-                                                      client.Map.ID == 8518
-                                                      || client.Map.ID == 8526 || client.Map.ID == 8522 ||
-                                                      client.Map.ID == 8523
-                                                      || client.Map.ID == 8524 || client.Map.ID == 8525 ||
-                                                      client.Map.ID == 1024 || client.Map.ID == 16414)
+                            if (client.Map.ID is 1036 or 1039 or 8877 or 1735 or 1734 or 1733 or 1732 or 1731 or 1730
+                                or 1766 or 1090 or 8510 or 8511 or 8512 or 8514 or 8527 or 8518 or 8526 or 8522 or 8523
+                                or 8524 or 8525 or 1024 or 16414)
                                 client.Entity.Teleport(1002, 311, 289);
-                            if (client.Map.ID == 1036 || client.Map.ID == 1039)
+                            if (client.Map.ID is 1036 or 1039)
                                 client.Entity.Teleport(1002, 303, 278);
                             else {
                                 switch (client.Map.ID) {
@@ -3878,7 +3873,7 @@ namespace MTA.Network {
                 #region Trade partner (2046)
 
                 case 2046: {
-                    TradePartner partner = new TradePartner(false);
+                    var partner = new TradePartner(false);
                     partner.Deserialize(packet);
                     switch (partner.Type) {
                         case TradePartner.RequestPartnership:
@@ -3900,13 +3895,13 @@ namespace MTA.Network {
                 #region Guild Arsenal (2202 + 2203)
 
                 case 2202: {
-                    ArsenalView view = new ArsenalView(false);
+                    var view = new ArsenalView(false);
                     view.Deserialize(packet);
                     ViewArsenalPage(view, client);
                     break;
                 }
                 case 2203: {
-                    ArsenalCommand command = new ArsenalCommand();
+                    var command = new ArsenalCommand();
                     command.Deserialize(packet);
                     switch (command.Type) {
                         case ArsenalCommand.Unlock:
@@ -3936,7 +3931,7 @@ namespace MTA.Network {
                 case 2048: {
                     if (client.Action != 2)
                         return;
-                    ItemLock itemlock = new ItemLock(false);
+                    var itemlock = new ItemLock(false);
                     itemlock.Deserialize(packet);
                     switch (itemlock.ID) {
                         case ItemLock.RequestLock:
@@ -3955,7 +3950,7 @@ namespace MTA.Network {
                 #region Broadcast (2050)
 
                 case 2050: {
-                    Broadcast cast = new Broadcast(false);
+                    var cast = new Broadcast(false);
                     cast.Deserialize(packet);
                     switch (cast.Type) {
                         case Broadcast.ReleaseSoonMessages: {
@@ -3974,7 +3969,7 @@ namespace MTA.Network {
                                 break;
                             }
 
-                            DateTime Now = DateTime.Now;
+                            var Now = DateTime.Now;
                             DateTime LastBC = client["lastbroadcast"];
 
                             if (Now >= LastBC.AddMinutes(2) || client.Account.State == AccountTable.AccountState.GM) {
@@ -3983,11 +3978,12 @@ namespace MTA.Network {
                                 if (client.Entity.ConquerPoints >= Rates.Broadcast) {
                                     client["lastbroadcast"] = Now;
                                     client.Entity.ConquerPoints -= Rates.Broadcast;
-                                    Game.ConquerStructures.Broadcast.BroadcastStr broadcast =
-                                        new Game.ConquerStructures.Broadcast.BroadcastStr();
-                                    broadcast.EntityID = client.Entity.UID;
-                                    broadcast.EntityName = client.Entity.Name;
-                                    broadcast.ID = Game.ConquerStructures.Broadcast.BroadcastCounter.Next;
+                                    var broadcast =
+                                        new Game.ConquerStructures.Broadcast.BroadcastStr {
+                                            EntityID = client.Entity.UID,
+                                            EntityName = client.Entity.Name,
+                                            ID = Game.ConquerStructures.Broadcast.BroadcastCounter.Next
+                                        };
                                     if (cast.List[0].Length > 80)
                                         cast.List[0] = cast.List[0].Remove(80);
                                     broadcast.Message = cast.List[0];
@@ -4021,7 +4017,7 @@ namespace MTA.Network {
                             break;
                         }
                         case Broadcast.Urgen5CPs: {
-                            for (int c = 0; c < Game.ConquerStructures.Broadcast.Broadcasts.Count; c++) {
+                            for (var c = 0; c < Game.ConquerStructures.Broadcast.Broadcasts.Count; c++) {
                                 var broadcast = Game.ConquerStructures.Broadcast.Broadcasts[c];
                                 if (broadcast.ID == cast.dwParam) {
                                     if (c != 0) {
@@ -4050,7 +4046,7 @@ namespace MTA.Network {
                             break;
                         }
                         case Broadcast.Urgen15CPs: {
-                            for (int c = 0; c < Game.ConquerStructures.Broadcast.Broadcasts.Count; c++) {
+                            for (var c = 0; c < Game.ConquerStructures.Broadcast.Broadcasts.Count; c++) {
                                 var broadcast = Game.ConquerStructures.Broadcast.Broadcasts[c];
                                 if (broadcast.ID == cast.dwParam) {
                                     if (c != 0) {
@@ -4059,7 +4055,7 @@ namespace MTA.Network {
                                         if (client.Entity.ConquerPoints > Rates.Broadcast * 3) {
                                             broadcast.SpentCPs += Rates.Broadcast * 3;
                                             client.Entity.ConquerPoints -= Rates.Broadcast * 3;
-                                            for (int b = c - 1; b > 0; b--)
+                                            for (var b = c - 1; b > 0; b--)
                                                 Game.ConquerStructures.Broadcast.Broadcasts[b] =
                                                     Game.ConquerStructures.Broadcast.Broadcasts[b - 1];
 
@@ -4084,7 +4080,7 @@ namespace MTA.Network {
                 #region Nobility (2064)
 
                 case 2064: {
-                    NobilityInfo nobility = new NobilityInfo(false);
+                    var nobility = new NobilityInfo(false);
                     nobility.Deserialize(packet);
                     Nobility.Handle(nobility, client);
                     break;
@@ -4095,10 +4091,10 @@ namespace MTA.Network {
                 #region Race potions (2072)
 
                 case 2072: {
-                    RacePotion pot = new RacePotion(false);
+                    var pot = new RacePotion(false);
                     pot.Deserialize(packet);
-                    int i = pot.Location - 1;
-                    if (i < 0 || i > 4)
+                    var i = pot.Location - 1;
+                    if (i is < 0 or > 4)
                         return;
                     if (client.Potions[i] == null)
                         return;
@@ -4121,16 +4117,15 @@ namespace MTA.Network {
                 #region MemoryAgate
 
                 case 2110: {
-                    uint ItemUID = BitConverter.ToUInt32(packet, 8);
+                    var ItemUID = BitConverter.ToUInt32(packet, 8);
                     switch (packet[4]) {
                         case 1: //record
                         {
                             if (client.Map.IsDynamic()) return;
-                            ConquerItem Item = null;
                             if (Constants.revnomap.Contains(client.Entity.MapID) ||
                                 Constants.MemoryAgateNotAllowedMap.Contains(client.Entity.MapID))
                                 return;
-                            if (client.Inventory.TryGetItem(ItemUID, out Item)) {
+                            if (client.Inventory.TryGetItem(ItemUID, out var Item)) {
                                 if (Item.Agate_map.ContainsKey(packet[12])) {
                                     Item.Agate_map[packet[12]] = client.Entity.MapID
                                                                  + "~" + client.Entity.X
@@ -4146,7 +4141,6 @@ namespace MTA.Network {
                                         + "~" + client.Entity.Y);
                                     ConquerItemTable.UpdateItemAgate(Item);
                                     Item.SendAgate(client);
-                                    break;
                                 }
                                 else {
                                     if (!Item.Agate_map.ContainsKey(packet[12])) {
@@ -4156,9 +4150,9 @@ namespace MTA.Network {
                                         ConquerItemTable.UpdateItemAgate(Item);
                                         Item.SendAgate(client);
                                     }
-
-                                    break;
                                 }
+
+                                break;
                             }
 
                             break;
@@ -4169,8 +4163,7 @@ namespace MTA.Network {
                             if (Constants.revnomap.Contains(client.Entity.MapID) ||
                                 Constants.MemoryAgateNotAllowedMap.Contains(client.Entity.MapID))
                                 return;
-                            ConquerItem Item = null;
-                            if (client.Inventory.TryGetItem(ItemUID, out Item)) {
+                            if (client.Inventory.TryGetItem(ItemUID, out var Item)) {
                                 if (Item.Agate_map.ContainsKey(packet[12])) {
                                     if (ushort.Parse(Item.Agate_map[packet[12]].Split('~')[0].ToString()) == 1038)
                                         return;
@@ -4220,9 +4213,8 @@ namespace MTA.Network {
                         }
                         case 4: //repair
                         {
-                            ConquerItem Item = null;
-                            if (client.Inventory.TryGetItem(ItemUID, out Item)) {
-                                int cost = (Item.MaximDurability - Item.Durability) / 2;
+                            if (client.Inventory.TryGetItem(ItemUID, out var Item)) {
+                                var cost = (Item.MaximDurability - Item.Durability) / 2;
                                 if (cost == 0)
                                     cost = 1;
                                 if (client.Entity.ConquerPoints > cost) {
@@ -4287,20 +4279,20 @@ namespace MTA.Network {
                         case 2: {
                             if (IsGirl(client.Entity.Body)) {
                                 if (client.Entity.MyFlowers != null) {
-                                    int my_rank = -1;
-                                    uint typ = CreateMyRank(client, out my_rank);
+                                    var typ = CreateMyRank(client, out var my_rank);
 
                                     packet[4] = 5;
                                     client.Send(packet);
 
                                     client.Entity.FlowerRank =
                                         (uint)client.Entity.MyFlowers.SendScreenValue((FlowersT)typ, my_rank);
-                                    GenericRanking ranking = new GenericRanking(true);
-                                    ranking.Mode = 2;
-                                    ranking.RankingType = client.Entity.FlowerRank;
-                                    ranking.Count = 1;
+                                    var ranking = new GenericRanking(true) {
+                                        Mode = 2,
+                                        RankingType = client.Entity.FlowerRank,
+                                        Count = 1
+                                    };
 
-                                    int rank = my_rank;
+                                    var rank = my_rank;
                                     // if (rank > 0 && rank <= 100)
                                     //    rank -= 1;
                                     switch (typ) {
@@ -4331,10 +4323,11 @@ namespace MTA.Network {
                             }
                             else {
                                 if (client.Entity.MyFlowers != null) {
-                                    GenericRanking ranking = new GenericRanking(true);
-                                    ranking.Mode = 2;
-                                    //  ranking.RankingType = GamePackets.GenericRanking.Kiss;
-                                    ranking.Count = 1;
+                                    var ranking = new GenericRanking(true) {
+                                        Mode = 2,
+                                        //  ranking.RankingType = GamePackets.GenericRanking.Kiss;
+                                        Count = 1
+                                    };
                                     if (client.Entity.MyFlowers.RankRoses is < 100 and > 0) {
                                         ranking.Append((uint)client.Entity.MyFlowers.RankRoses,
                                             client.Entity.MyFlowers.RedRoses, client.Entity.UID, client.Entity.Name);
@@ -4353,13 +4346,14 @@ namespace MTA.Network {
 
                         case 6: {
                             PrestigeRank.Load();
-                            GenericRanking ranking = new GenericRanking(true, 10);
+                            var ranking = new GenericRanking(true, 10);
 
                             #region Best
 
-                            GenericRanking Rank = new GenericRanking(true);
-                            Rank.Mode = 6;
-                            Rank.Count = 10;
+                            var Rank = new GenericRanking(true) {
+                                Mode = 6,
+                                Count = 10
+                            };
                             var toper = PrestigeRank.Topers.Values.OrderByDescending(e => e.Prestige)
                                 .ThenByDescending(e => e.Level).ThenBy(e => e.UID).FirstOrDefault();
                             Rank.Append2(1, toper.Prestige, toper.UID, toper.Name, toper.Level, toper.Class, toper.Mesh,
@@ -4385,7 +4379,7 @@ namespace MTA.Network {
                             Entity Water = null;
                             Entity Fire = null;
                             Entity WindWalker = null;
-                            for (int i = 0; i < 10; i++) {
+                            for (var i = 0; i < 10; i++) {
                                 if (i == 1)
                                     Trojan = PerfectionScore.RankingList
                                         .Where(x => x.Class >= (index[i] - 5) && x.Class <= index[i])
@@ -4438,7 +4432,8 @@ namespace MTA.Network {
                                         .ThenBy(x => x.UID).FirstOrDefault();
                             }
 
-                            Entity[] array = [Trojan, Warrior, Archer, Ninja, Monk, Pirate, Dragon, Water, Fire, WindWalker
+                            Entity[] array = [
+                                Trojan, Warrior, Archer, Ninja, Monk, Pirate, Dragon, Water, Fire, WindWalker
                             ];
                             byte count = 0;
                             if (Trojan != null) count++;
@@ -4451,10 +4446,11 @@ namespace MTA.Network {
                             if (Dragon != null) count++;
                             if (Archer != null) count++;
                             if (WindWalker != null) count++;
-                            var nRanking = new GenericRanking(true);
-                            nRanking.Mode = 6;
-                            nRanking.Page = ranking.Page;
-                            nRanking.Count = count;
+                            var nRanking = new GenericRanking(true) {
+                                Mode = 6,
+                                Page = ranking.Page,
+                                Count = count
+                            };
                             for (byte z = 0; z < array.Length; z++) {
                                 var Entity = array[z];
                                 if (Entity == null) continue;
@@ -4473,13 +4469,14 @@ namespace MTA.Network {
 
                         case 1: //Rank
                         {
-                            uint uid = BitConverter.ToUInt32(packet, 8);
-                            ushort pagenumber = BitConverter.ToUInt16(packet, 14);
+                            var uid = BitConverter.ToUInt32(packet, 8);
+                            var pagenumber = BitConverter.ToUInt16(packet, 14);
                             const int max = 10;
-                            GenericRanking ranking = new GenericRanking(true, 10);
-                            ranking.Mode = 1;
-                            ranking.Page = pagenumber;
-                            ranking.RankingType = uid;
+                            var ranking = new GenericRanking(true, 10) {
+                                Mode = 1,
+                                Page = pagenumber,
+                                RankingType = uid
+                            };
                             switch (uid) {
                                 #region Perfection
 
@@ -4493,7 +4490,7 @@ namespace MTA.Network {
                                 case 80000008:
                                 case 80000009:
                                 case 80000010: {
-                                    ushort page = ranking.Page;
+                                    var page = ranking.Page;
                                     byte realyclass = 0;
                                     if (ranking.RankingType % 10 == 1) realyclass = 15;
                                     if (ranking.RankingType % 10 == 2) realyclass = 25;
@@ -4509,14 +4506,15 @@ namespace MTA.Network {
                                         .Where(i => i.Class >= (realyclass - 5) && i.Class <= realyclass)
                                         .OrderByDescending(i => i.TotalPerfectionScore).ThenByDescending(i => i.Level)
                                         .ThenBy(i => i.UID).ToArray();
-                                    uint count = (uint)Math.Min(array.Length - page * 10, 10);
-                                    var nRanking = new GenericRanking(true, count);
-                                    nRanking.Mode = GenericRanking.Ranking;
-                                    nRanking.RankingType = ranking.RankingType;
-                                    nRanking.Page = page;
-                                    nRanking.RegisteredCount = (ushort)Math.Min(array.Length * 100, 100);
-                                    int rank = page * 10;
-                                    for (int i = rank; i < rank + count; i++) {
+                                    var count = (uint)Math.Min(array.Length - page * 10, 10);
+                                    var nRanking = new GenericRanking(true, count) {
+                                        Mode = GenericRanking.Ranking,
+                                        RankingType = ranking.RankingType,
+                                        Page = page,
+                                        RegisteredCount = (ushort)Math.Min(array.Length * 100, 100)
+                                    };
+                                    var rank = page * 10;
+                                    for (var i = rank; i < rank + count; i++) {
                                         var current = array[i];
                                         nRanking.AppendP((uint)(i + 1), current.TotalPerfectionScore,
                                             current.UID, current.Name, current.Level, current.Class, current.Mesh);
@@ -4530,17 +4528,18 @@ namespace MTA.Network {
                                         .OrderByDescending(i => i.TotalPerfectionScore).ThenByDescending(i => i.Level)
                                         .ThenBy(i => i.UID).ToArray();
 
-                                    var nRanking = new GenericRanking(true);
-                                    nRanking.RegisteredCount = (ushort)Math.Min(array.Length, 100);
-                                    nRanking.Mode = 1;
-                                    nRanking.RankingType = ranking.RankingType;
-                                    nRanking.Page = ranking.Page;
+                                    var nRanking = new GenericRanking(true) {
+                                        RegisteredCount = (ushort)Math.Min(array.Length, 100),
+                                        Mode = 1,
+                                        RankingType = ranking.RankingType,
+                                        Page = ranking.Page
+                                    };
                                     //  nRanking.Count = (ushort)Math.Min(array.Length - (ranking.Page * 10), 10);
                                     uint sss = (ushort)Math.Min(array.Length - (ranking.Page * 10), 10);
 
-                                    int rank = nRanking.Page * 10;
+                                    var rank = nRanking.Page * 10;
 
-                                    for (int i = rank; i < rank + sss; i++) {
+                                    for (var i = rank; i < rank + sss; i++) {
                                         var current = array[i];
                                         if (current == null) break;
                                         nRanking.AppendP((uint)(i + 1), current.TotalPerfectionScore, current.UID,
@@ -4556,10 +4555,10 @@ namespace MTA.Network {
                                 case GenericRanking.RoseFairy: {
                                     if (pagenumber > 9) break;
                                     ranking.RegisteredCount = 100;
-                                    Flowers[] info = Flowers.RedRousesTop100.ToArray();
+                                    var info = Flowers.RedRousesTop100.ToArray();
                                     if (info == null) break;
-                                    int offset = pagenumber * max;
-                                    int count = Math.Min(max, info.Length);
+                                    var offset = pagenumber * max;
+                                    var count = Math.Min(max, info.Length);
                                     ranking.Count = (uint)count;
 
                                     for (byte x = 0; x < count; x++) {
@@ -4576,10 +4575,10 @@ namespace MTA.Network {
                                 case GenericRanking.LilyFairy: {
                                     if (pagenumber > 9) break;
                                     ranking.RegisteredCount = 100;
-                                    Flowers[] info = Flowers.LiliesTop100;
+                                    var info = Flowers.LiliesTop100;
                                     if (info == null) break;
-                                    int offset = pagenumber * max;
-                                    int count = Math.Min(max, info.Length);
+                                    var offset = pagenumber * max;
+                                    var count = Math.Min(max, info.Length);
                                     ranking.Count = (uint)count;
 
                                     for (byte x = 0; x < count; x++) {
@@ -4597,10 +4596,10 @@ namespace MTA.Network {
                                 case GenericRanking.OrchidFairy: {
                                     if (pagenumber > 9) break;
                                     ranking.RegisteredCount = 100;
-                                    Flowers[] info = Flowers.OrchidsTop100;
+                                    var info = Flowers.OrchidsTop100;
                                     if (info == null) break;
-                                    int offset = pagenumber * max;
-                                    int count = Math.Min(max, info.Length);
+                                    var offset = pagenumber * max;
+                                    var count = Math.Min(max, info.Length);
                                     ranking.Count = (uint)count;
 
                                     for (byte x = 0; x < count; x++) {
@@ -4617,10 +4616,10 @@ namespace MTA.Network {
                                 case GenericRanking.TulipFairy: {
                                     if (pagenumber > 9) break;
                                     ranking.RegisteredCount = 100;
-                                    Flowers[] info = Flowers.TulipsTop100;
+                                    var info = Flowers.TulipsTop100;
                                     if (info == null) break;
-                                    int offset = pagenumber * max;
-                                    int count = Math.Min(max, info.Length);
+                                    var offset = pagenumber * max;
+                                    var count = Math.Min(max, info.Length);
                                     ranking.Count = (uint)count;
 
                                     for (byte x = 0; x < count; x++) {
@@ -4664,15 +4663,15 @@ namespace MTA.Network {
                 #region FairyFlower (2070)
 
                 case 2070: {
-                    FairySpawn FS = new FairySpawn(false);
+                    var FS = new FairySpawn(false);
                     FS.Deserialize(packet);
                     switch (FS.SType) {
                         case 1:
-                            ushort u1 = BitConverter.ToUInt16(packet, 20);
-                            ushort u11 = BitConverter.ToUInt16(packet, 22);
-                            ushort u12 = BitConverter.ToUInt16(packet, 24);
-                            ushort u13 = BitConverter.ToUInt16(packet, 26);
-                            ushort u14 = BitConverter.ToUInt16(packet, 28);
+                            var u1 = BitConverter.ToUInt16(packet, 20);
+                            var u11 = BitConverter.ToUInt16(packet, 22);
+                            var u12 = BitConverter.ToUInt16(packet, 24);
+                            var u13 = BitConverter.ToUInt16(packet, 26);
+                            var u14 = BitConverter.ToUInt16(packet, 28);
                             if (client.IsFairy) {
                                 client.Send(new Message("Cancel The Other Transformer First", Color.CadetBlue,
                                     Message.Talk));
@@ -4706,25 +4705,23 @@ namespace MTA.Network {
 
                 case 2223: {
                     client.Send(packet);
-                    ElitePKRanking ranks = new ElitePKRanking(false);
+                    var ranks = new ElitePKRanking(false);
                     ranks.Deserialize(packet);
                     ElitePKTournament.Tournaments[ranks.Group].Rankings(client);
                     break;
                 }
                 case 2219: {
                     client.Send(packet);
-                    ElitePKBrackets brackets = new ElitePKBrackets(false);
+                    var brackets = new ElitePKBrackets(false);
                     brackets.Deserialize(packet);
-                    if (brackets.Type == ElitePKBrackets.RequestInformation ||
-                        brackets.Type == ElitePKBrackets.InitialList)
+                    if (brackets.Type is ElitePKBrackets.RequestInformation or ElitePKBrackets.InitialList)
                         ElitePKTournament.Tournaments[brackets.Group].Update(client, brackets.Page);
                     break;
                 }
                 case 1064: {
-                    ElitePKWager wager = new ElitePKWager();
+                    var wager = new ElitePKWager();
                     wager.Deserialize(packet);
-                    if (Kernel.GamePool.ContainsKey(wager.WagedUID)) {
-                        var pClient = Kernel.GamePool[wager.WagedUID];
+                    if (Kernel.GamePool.TryGetValue(wager.WagedUID, out var pClient)) {
                         if (pClient is { ElitePKMatch.Flag: ElitePK.Match.StatusFlag.AcceptingWagers }) {
                             if (client.Entity.Money >= wager.Wager * 100000) {
                                 client.Entity.Money -= wager.Wager * 100000;
@@ -4743,19 +4740,20 @@ namespace MTA.Network {
                     break;
                 }
                 case 1065: {
-                    ElitePKWagersList wager = new ElitePKWagersList(false);
+                    var wager = new ElitePKWagersList(false);
                     wager.Deserialize(packet);
                     var epk = ElitePKTournament.Tournaments[wager.Group];
 
-                    int count = 0; //epk.Matches.Values.Count(p => p.TotalWagers != 0);
+                    var count = 0; //epk.Matches.Values.Count(p => p.TotalWagers != 0);
                     foreach (var p in epk.Matches.Values) {
                         if (p.TotalWagers != 0)
                             count++;
                     }
 
-                    wager = new ElitePKWagersList(true, count);
-                    wager.TotalMatches = (uint)count;
-                    int i = 0;
+                    wager = new ElitePKWagersList(true, count) {
+                        TotalMatches = (uint)count
+                    };
+                    var i = 0;
                     foreach (var match in epk.Matches.Values)
                         if (match.TotalWagers != 0)
                             wager.Append(match, i++);
@@ -4764,7 +4762,7 @@ namespace MTA.Network {
                 }
                 case 1130: {
                     try {
-                        TitlePacket tpacket = new TitlePacket(false);
+                        var tpacket = new TitlePacket(false);
                         tpacket.Deserialize(packet);
 
                         switch (tpacket.Type) {
@@ -4818,8 +4816,8 @@ namespace MTA.Network {
                 }
                 case 2240:
                 case 2260: {
-                    string TeamName = ReadString(packet, 12, 32); // packet.ReadString(12, 32);
-                    byte Mode = packet[4];
+                    var TeamName = ReadString(packet, 12, 32); // packet.ReadString(12, 32);
+                    var Mode = packet[4];
                     if (client.Team is { EliteFighterStats: not null }) {
                         client.Team.EliteFighterStats.Name = TeamName;
 
@@ -4875,8 +4873,7 @@ namespace MTA.Network {
                 case 1136: {
                     switch (packet[4]) {
                         case 1: {
-                            GameState obj;
-                            if (Kernel.GamePool.TryGetValue(BitConverter.ToUInt32(packet, 8), out obj)) {
+                            if (Kernel.GamePool.TryGetValue(BitConverter.ToUInt32(packet, 8), out var obj)) {
                                 client.Send(obj.Entity.MyAchievement.ViewOpen());
                             }
 
@@ -4912,7 +4909,7 @@ namespace MTA.Network {
                     //    client.Send(CrossServer.generateRanking(m));
                     //    return;
                     //}
-                    byte typ = packet[4];
+                    var typ = packet[4];
                     switch (typ) {
                         case 0: {
                             if (client.Guild == null || client.AsMember == null)
@@ -4934,7 +4931,7 @@ namespace MTA.Network {
                             break;
                         }
                         case 3: {
-                            uint setCTFCps = BitConverter.ToUInt32(packet, 18);
+                            var setCTFCps = BitConverter.ToUInt32(packet, 18);
                             if (client.Guild == null || client.AsMember == null)
                                 break;
                             if (client.Guild.ConquerPointFund > setCTFCps) {
@@ -4946,7 +4943,7 @@ namespace MTA.Network {
                             goto case 0;
                         }
                         case 4: {
-                            uint setCTFMoney = BitConverter.ToUInt32(packet, 22);
+                            var setCTFMoney = BitConverter.ToUInt32(packet, 22);
                             if (client.Guild == null || client.AsMember == null)
                                 break;
                             if (client.Guild.SilverFund > setCTFMoney) {
@@ -4958,7 +4955,7 @@ namespace MTA.Network {
                             goto case 0;
                         }
                         case 5: {
-                            uint setCTFCps = BitConverter.ToUInt32(packet, 18);
+                            var setCTFCps = BitConverter.ToUInt32(packet, 18);
                             if (client.Guild == null || client.AsMember == null)
                                 break;
                             if (client.Guild.ConquerPointFund > setCTFCps) {
@@ -4967,7 +4964,7 @@ namespace MTA.Network {
                                 GuildTable.SaveFunds(client.Guild);
                             }
 
-                            uint setCTFMoney = BitConverter.ToUInt32(packet, 22);
+                            var setCTFMoney = BitConverter.ToUInt32(packet, 22);
 
                             if (client.Guild.SilverFund > setCTFMoney) {
                                 client.Guild.SilverFund -= setCTFMoney;
@@ -5027,19 +5024,21 @@ namespace MTA.Network {
                         return;
                     }
 
-                    AutoHunt auto = new AutoHunt(false);
+                    var auto = new AutoHunt(false);
                     auto.Deserialize(packet);
                     switch (auto.Type) {
                         case AutoHunt.Icon: {
-                            auto = new AutoHunt(true);
-                            auto.Type = 0;
-                            auto.Show = 391;
+                            auto = new AutoHunt(true) {
+                                Type = 0,
+                                Show = 391
+                            };
                             client.Send(auto);
                             return;
                         }
                         case AutoHunt.Start: {
-                            auto = new AutoHunt(true);
-                            auto.Type = 1;
+                            auto = new AutoHunt(true) {
+                                Type = 1
+                            };
                             client.Send(auto);
                             client.Entity.Auto = true;
                             client.Entity.AddFlag3((uint)Update.Flags3.AutoHunting);
@@ -5048,15 +5047,17 @@ namespace MTA.Network {
                             return;
                         }
                         case AutoHunt.Gui: {
-                            auto = new AutoHunt(true);
-                            auto.Type = 2;
-                            auto.EXP = (ushort)client.Entity.autohuntxp;
+                            auto = new AutoHunt(true) {
+                                Type = 2,
+                                EXP = (ushort)client.Entity.autohuntxp
+                            };
                             client.Send(auto);
                             return;
                         }
                         case AutoHunt.End: {
-                            auto = new AutoHunt(true);
-                            auto.Type = 3;
+                            auto = new AutoHunt(true) {
+                                Type = 3
+                            };
                             client.Entity.Auto = false;
                             //client.IncreaseExperience(client.Entity.autohuntxp, false);
                             client.Entity.autohuntxp = 0;
@@ -5079,13 +5080,13 @@ namespace MTA.Network {
 
                     uint all_advertise = (ushort)Guild.Advertise.AdvertiseRanks.Length;
 
-                    uint Receive_count = BitConverter.ToUInt32(packet, 4);
+                    var Receive_count = BitConverter.ToUInt32(packet, 4);
                     if (Receive_count != 0 && Receive_count % 4 != 0)
                         return;
 
                     List<Guild> AdvGuilds = [];
                     for (ushort x = 0; x < 4; x++) {
-                        ushort getposition = (ushort)(Receive_count + x);
+                        var getposition = (ushort)(Receive_count + x);
                         if (Guild.Advertise.AdvertiseRanks.Length <= getposition)
                             break;
                         AdvGuilds.Add(Guild.Advertise.AdvertiseRanks[getposition]);
@@ -5093,11 +5094,12 @@ namespace MTA.Network {
 
 
                     if (AdvGuilds.Count <= 2) {
-                        Advertise adv = new Advertise((ushort)AdvGuilds.Count);
+                        var adv = new Advertise((ushort)AdvGuilds.Count) {
+                            AllRegistred = (ushort)Guild.Advertise.AdvertiseRanks.Length,
+                            AtCount = (ushort)Receive_count,
+                            PacketNo = 1
+                        };
 
-                        adv.AllRegistred = (ushort)Guild.Advertise.AdvertiseRanks.Length;
-                        adv.AtCount = (ushort)Receive_count;
-                        adv.PacketNo = 1;
                         for (ushort x = 0; x < AdvGuilds.Count; x++) {
                             var element = AdvGuilds[x];
                             adv.Aprend(element);
@@ -5106,11 +5108,12 @@ namespace MTA.Network {
                         client.Send(adv.ToArray());
                     }
                     else if (AdvGuilds.Count == 3) {
-                        Advertise adv = new Advertise(2);
+                        var adv = new Advertise(2) {
+                            AllRegistred = (ushort)Guild.Advertise.AdvertiseRanks.Length,
+                            AtCount = (ushort)Receive_count,
+                            PacketNo = 1
+                        };
 
-                        adv.AllRegistred = (ushort)Guild.Advertise.AdvertiseRanks.Length;
-                        adv.AtCount = (ushort)Receive_count;
-                        adv.PacketNo = 1;
                         for (ushort x = 0; x < 2; x++) {
                             var element = AdvGuilds[x];
                             adv.Aprend(element);
@@ -5118,18 +5121,20 @@ namespace MTA.Network {
 
                         client.Send(adv.ToArray());
 
-                        Advertise ndadv = new Advertise(1);
+                        var ndadv = new Advertise(1) {
+                            AllRegistred = (ushort)Guild.Advertise.AdvertiseRanks.Length,
+                            AtCount = (ushort)Receive_count
+                        };
 
-                        ndadv.AllRegistred = (ushort)Guild.Advertise.AdvertiseRanks.Length;
-                        ndadv.AtCount = (ushort)Receive_count;
                         ndadv.Aprend(AdvGuilds.Last());
                         client.Send(ndadv.ToArray());
                     }
                     else if (AdvGuilds.Count == 4) {
-                        Advertise adv = new Advertise(2);
-                        adv.AllRegistred = (ushort)Guild.Advertise.AdvertiseRanks.Length;
-                        adv.AtCount = (ushort)Receive_count;
-                        adv.PacketNo = 1;
+                        var adv = new Advertise(2) {
+                            AllRegistred = (ushort)Guild.Advertise.AdvertiseRanks.Length,
+                            AtCount = (ushort)Receive_count,
+                            PacketNo = 1
+                        };
                         for (ushort x = 0; x < 2; x++) {
                             var element = AdvGuilds[x];
                             adv.Aprend(element);
@@ -5138,10 +5143,11 @@ namespace MTA.Network {
                         client.Send(adv.ToArray());
 
 
-                        Advertise ddddadv = new Advertise(2);
+                        var ddddadv = new Advertise(2) {
+                            AllRegistred = (ushort)Guild.Advertise.AdvertiseRanks.Length,
+                            AtCount = (ushort)Receive_count
+                        };
 
-                        ddddadv.AllRegistred = (ushort)Guild.Advertise.AdvertiseRanks.Length;
-                        ddddadv.AtCount = (ushort)Receive_count;
                         for (ushort x = 2; x < 4; x++) {
                             var element = AdvGuilds[x];
                             ddddadv.Aprend(element);
@@ -5154,18 +5160,17 @@ namespace MTA.Network {
                 }
                 case 2225: {
                     if (client.Guild == null) return;
-                    if (client.AsMember == null) return;
-                    if (client.AsMember.Rank != Enums.GuildMemberRank.GuildLeader) return;
+                    if (client.AsMember is not { Rank: Enums.GuildMemberRank.GuildLeader }) return;
 
 
-                    uint GuildID = BitConverter.ToUInt32(packet, 4);
-                    string buletin = ReadString(packet, 8, 254);
+                    var GuildID = BitConverter.ToUInt32(packet, 4);
+                    var buletin = ReadString(packet, 8, 254);
                     ulong donation = BitConverter.ToUInt32(packet, 264);
-                    bool Auto_join = packet[272] == 1;
-                    byte Level = packet[274];
-                    byte Reborn = packet[276];
-                    ushort Flag = BitConverter.ToUInt16(packet, 278);
-                    byte Grade = packet[280];
+                    var Auto_join = packet[272] == 1;
+                    var Level = packet[274];
+                    var Reborn = packet[276];
+                    var Flag = BitConverter.ToUInt16(packet, 278);
+                    var Grade = packet[280];
                     if (buletin.Contains('^')) {
                         client.Entity.SendSysMesage(
                             "you buletin contain invalid char (^)! Please change this, to use my services");
@@ -5195,7 +5200,7 @@ namespace MTA.Network {
                     switch (packet[4]) {
                         case 2: //open gui
                         {
-                            byte[] sendgui = new byte[288];
+                            var sendgui = new byte[288];
                             Writer.WriteUInt16(280, 0, sendgui);
                             Writer.WriteUInt16(2225, 2, sendgui);
                             client.Send(sendgui);
@@ -5204,10 +5209,9 @@ namespace MTA.Network {
                         case 1: //join
                         {
                             if (client.Entity.GuildID == 0) {
-                                uint GuildID = BitConverter.ToUInt32(packet, 8);
+                                var GuildID = BitConverter.ToUInt32(packet, 8);
 
-                                Guild guild = null;
-                                if (Kernel.Guilds.TryGetValue(GuildID, out guild)) {
+                                if (Kernel.Guilds.TryGetValue(GuildID, out var guild)) {
                                     if (guild.AdvertiseRecruit.AutoJoin) {
                                         if (guild.AdvertiseRecruit.Compare(client.Entity,
                                                 Guild.Recruitment.Mode.Recruit))
@@ -5228,7 +5232,7 @@ namespace MTA.Network {
                 #region WarehousePassword (2261)
 
                 case 2261: {
-                    WareHousePassword whp = new WareHousePassword(false);
+                    var whp = new WareHousePassword(false);
                     whp.Deserialize(packet);
                     switch (whp.type) {
                         // Creating new password
@@ -5236,9 +5240,10 @@ namespace MTA.Network {
                             if (client.WarehousePW == 0) {
                                 client.WarehouseOpen = true;
                                 client.WarehousePW = whp.NewPassword;
-                                whp = new WareHousePassword(true);
-                                whp.type = WareHousePassword.PasswordCorrect;
-                                whp.OldPassword = 0x0101;
+                                whp = new WareHousePassword(true) {
+                                    type = WareHousePassword.PasswordCorrect,
+                                    OldPassword = 0x0101
+                                };
                                 client.Send(whp);
                                 client.Send(new Message("Your warehouse password has been successfully set!", Color.Red,
                                     Message.System));
@@ -5252,17 +5257,19 @@ namespace MTA.Network {
                                 if (client.WarehousePW == whp.OldPassword) {
                                     client.WarehouseOpen = true;
                                     client.WarehousePW = whp.NewPassword;
-                                    whp = new WareHousePassword(true);
-                                    whp.type = WareHousePassword.PasswordCorrect;
-                                    whp.OldPassword = 0x0101;
+                                    whp = new WareHousePassword(true) {
+                                        type = WareHousePassword.PasswordCorrect,
+                                        OldPassword = 0x0101
+                                    };
                                     client.Send(whp);
                                     client.Send(new Message("Your warehouse password has been successfully modified!",
                                         Color.Red, Message.System));
                                 }
                                 else {
-                                    whp = new WareHousePassword(true);
-                                    whp.type = WareHousePassword.PasswordWrong;
-                                    whp.OldPassword = 0x01;
+                                    whp = new WareHousePassword(true) {
+                                        type = WareHousePassword.PasswordWrong,
+                                        OldPassword = 0x01
+                                    };
                                     client.Send(whp);
                                 }
                             }
@@ -5284,14 +5291,16 @@ namespace MTA.Network {
                             if (client.WarehousePW != 0) {
                                 if (client.WarehousePW == whp.NewPassword) {
                                     client.WarehouseOpen = true;
-                                    whp = new WareHousePassword(true);
-                                    whp.type = WareHousePassword.PasswordCorrect;
-                                    whp.OldPassword = 0x0101;
+                                    whp = new WareHousePassword(true) {
+                                        type = WareHousePassword.PasswordCorrect,
+                                        OldPassword = 0x0101
+                                    };
                                     client.Send(whp);
                                 }
                                 else {
-                                    whp = new WareHousePassword(true);
-                                    whp.type = WareHousePassword.PasswordWrong;
+                                    whp = new WareHousePassword(true) {
+                                        type = WareHousePassword.PasswordWrong
+                                    };
                                     client.Send(whp);
                                 }
                             }
@@ -5315,8 +5324,9 @@ namespace MTA.Network {
                 #region PK Explorer (2220)
 
                 case 2220: {
-                    PkExplorer pk = new PkExplorer(packet, client);
-                    pk.SubType = 1;
+                    var pk = new PkExplorer(packet, client) {
+                        SubType = 1
+                    };
                     client.Send(pk.Build());
                     break;
                 }
@@ -5326,7 +5336,7 @@ namespace MTA.Network {
                 #region New Lottery
 
                 case 1314: {
-                    newLottery I = new newLottery(true);
+                    var I = new newLottery(true);
                     I.Deserialize(packet);
 
                     switch (packet[4]) {
@@ -5356,7 +5366,7 @@ namespace MTA.Network {
                             break;
                         }
                         case (byte)newLottery.AddJade: {
-                            int rand = Kernel.Random.Next(LotteryTable.LotteryItems.Count);
+                            var rand = Kernel.Random.Next(LotteryTable.LotteryItems.Count);
                             var item = LotteryTable.LotteryItems[rand];
                             client.Inventory.Remove(711504, 1);
                             I.boxid = 3;
@@ -5380,12 +5390,13 @@ namespace MTA.Network {
                                 client.Entity.AddJade = 0;
                                 client.Inventory.Remove(711504, 3);
 
-                                int rand = Kernel.Random.Next(LotteryTable.LotteryItems.Count);
+                                var rand = Kernel.Random.Next(LotteryTable.LotteryItems.Count);
                                 var item = LotteryTable.LotteryItems[rand];
 
-                                var tobesent = new newLottery(true);
-                                tobesent.boxid = 3;
-                                tobesent.ItemID = item.ID;
+                                var tobesent = new newLottery(true) {
+                                    boxid = 3,
+                                    ItemID = item.ID
+                                };
                                 client.Entity.LOTOITEM = item;
                                 tobesent.JadesAdded = client.Entity.AddJade;
                                 tobesent.plus = item.Plus;
@@ -5422,25 +5433,26 @@ namespace MTA.Network {
                 #region ChangeName (2080)
 
                 case 0x820:
-                    NameChange change = new NameChange(false);
+                    var change = new NameChange(false);
                     change.Deserialize(packet);
                     if (change.Action == NameChange.NameChangeAction.Request) {
-                        string name = Encoding.Default.GetString(packet, 10, 0x10).TrimEnd(new char[1]);
+                        var name = Encoding.Default.GetString(packet, 10, 0x10).TrimEnd(new char[1]);
                         packet[6] = (byte)client.namechanges;
                         packet[8] = (byte)(100 - client.namechanges);
                         change.Send(client);
                         client.Send(change);
-                        if ((name != "") && (name != "")) {
+                        if (name is not "" and not "") {
                             if (!Npcs.InvalidCharacters(name) || !Npcs.InvalidCharacters3(name) || name.Contains("[") ||
                                 name.Contains("]")) {
-                                NpcReply reply = new NpcReply(6,
-                                    "im sorry not allowed now close the dialog and try again");
-                                reply.OptionID = 0xff;
+                                var reply = new NpcReply(6,
+                                    "im sorry not allowed now close the dialog and try again") {
+                                    OptionID = 0xff
+                                };
                                 client.Send(reply.ToArray());
                                 return;
                             }
 
-                            MySqlReader reader = new MySqlReader(new MySqlCommand(MySqlCommandType.SELECT)
+                            var reader = new MySqlReader(new MySqlCommand(MySqlCommandType.SELECT)
                                 .Select("entities").Where("name", name));
                             if (reader.Read()) {
                                 packet[4] = 2;
@@ -5463,7 +5475,7 @@ namespace MTA.Network {
                                 packet[4] = 1;
                                 change.Send(client);
                                 client.Send(change);
-                                NpcReply reply = new NpcReply(6,
+                                var reply = new NpcReply(6,
                                     "Your new name is : " + name + ", After server Restart You will get your new name.") {
                                     OptionID = 0xff
                                 };
@@ -5471,7 +5483,7 @@ namespace MTA.Network {
                                 client.ChangeName(client);
                             }
                             else {
-                                NpcReply reply =
+                                var reply =
                                     new NpcReply(6, "Come back when you have " + Rates.ChangeName + " CPS.") {
                                         OptionID = 0xff
                                     };
@@ -5488,14 +5500,13 @@ namespace MTA.Network {
 
                 case 1128: {
                     if (client.Entity.MapID == 601) return;
-                    if (client.Map.BaseID == 6000 || client.Map.BaseID == 6001 || client.Map.BaseID == 1844 ||
-                        client.Map.BaseID == 1801 || client.Map.BaseID == 8883 ||
+                    if (client.Map.BaseID is 6000 or 6001 or 1844 or 1801 or 8883 ||
                         client.Map.BaseID == 1005 && client.Entity.MapID != 1005 || client.Map.BaseID == 700) {
                         client.Send(Constants.vipteleport);
                         return;
                     }
 
-                    VIPTeleport tele = new VIPTeleport();
+                    var tele = new VIPTeleport();
                     tele.Deserialize(packet);
                     switch (tele.TeleportType) {
                         case VIPTeleportTypes.SelfTeleport: {
@@ -5515,8 +5526,8 @@ namespace MTA.Network {
                             }
                             else
                                 client.Send(new Message(
-                                    string.Format("You have to wait {0} more seconds to use the VIP Teleport.",
-                                        (client.LastVIPTeleport.AddSeconds(1) - Time32.Now).AllSeconds()), Color.Red,
+                                    $"You have to wait {(client.LastVIPTeleport.AddSeconds(1) - Time32.Now).AllSeconds()} more seconds to use the VIP Teleport.",
+                                    Color.Red,
                                     Message.Talk));
 
                             break;
@@ -5551,8 +5562,7 @@ namespace MTA.Network {
                             }
                             else
                                 client.Send(new Message(
-                                    string.Format("You have to wait {0} more seconds to use the VIP Team Teleport.",
-                                        (client.LastVIPTeamTeleport.AddSeconds(1) - Time32.Now).AllSeconds()),
+                                    $"You have to wait {(client.LastVIPTeamTeleport.AddSeconds(1) - Time32.Now).AllSeconds()} more seconds to use the VIP Team Teleport.",
                                     Color.Red, Message.Talk));
 
                             break;
@@ -5582,7 +5592,7 @@ namespace MTA.Network {
                 #region MentorApprentice (2065)
 
                 case 2065: {
-                    MentorApprentice ma = new MentorApprentice(false);
+                    var ma = new MentorApprentice(false);
                     ma.Deserialize(packet);
                     switch (ma.Type) {
                         case MentorApprentice.LeaveMentor: {
@@ -5614,7 +5624,7 @@ namespace MTA.Network {
                     break;
                 }
                 case 2066: {
-                    MentorInformation info = new MentorInformation(false);
+                    var info = new MentorInformation(false);
                     info.Deserialize(packet);
                     if (info.Mentor_Type == 1) {
                         client.ReviewMentor();
@@ -5628,7 +5638,7 @@ namespace MTA.Network {
                 #region Guild members (2102)
 
                 case 2102: {
-                    ushort Page = BitConverter.ToUInt16(packet, 8);
+                    var Page = BitConverter.ToUInt16(packet, 8);
                     if (client is { Guild: not null, AsMember: not null }) client.Guild.SendMembers(client, Page);
 
                     break;
@@ -5641,13 +5651,13 @@ namespace MTA.Network {
                 case 2207: //Request Arena ranking List
                 {
                     //Code snippet that belongs to Ultimation
-                    ushort PageIndex = BitConverter.ToUInt16(packet, 6);
+                    var PageIndex = BitConverter.ToUInt16(packet, 6);
                     Arena.Statistics.ShowRankingPage(packet[4], PageIndex, client);
                     break;
                 }
                 case 2206: {
                     //Code snippet that belongs to Ultimation
-                    ushort PageIndex = BitConverter.ToUInt16(packet, 4);
+                    var PageIndex = BitConverter.ToUInt16(packet, 4);
                     Arena.QualifyEngine.RequestGroupList(client, PageIndex);
                     break;
                 }
@@ -5655,28 +5665,16 @@ namespace MTA.Network {
                 {
                     #region MaxsMap
 
-                    if (client.Entity.MapID == 1766 || client.Entity.MapID == 8877
-                                                    || client.Entity.MapID == 1734 || client.Entity.MapID == 1733
-                                                    || client.Entity.MapID == 1732 || client.Entity.MapID == 1731 ||
-                                                    client.Entity.MapID == 1024
-                                                    || client.Entity.MapID == 1730 || client.Entity.MapID == 1735 ||
-                                                    client.Entity.MapID == 1090
-                                                    || client.Entity.MapID == 8511 || client.Entity.MapID == 8512 ||
-                                                    client.Entity.MapID == 8514
-                                                    || client.Entity.MapID == 8510 || client.Entity.MapID == 8527 ||
-                                                    client.Entity.MapID == 8518
-                                                    || client.Entity.MapID == 8526 || client.Entity.MapID == 8522 ||
-                                                    client.Entity.MapID == 8523 || client.Entity.MapID == 1460
-                                                    || client.Entity.MapID == 8524 || client.Entity.MapID == 8525 ||
-                                                    client.Entity.MapID == 1458 || client.Entity.MapID == 1459 ||
-                                                    client.Entity.MapID == 1645 || client.Entity.MapID == 16414)
+                    if (client.Entity.MapID is 1766 or 8877 or 1734 or 1733 or 1732 or 1731 or 1024 or 1730 or 1735
+                        or 1090 or 8511 or 8512 or 8514 or 8510 or 8527 or 8518 or 8526 or 8522 or 8523 or 1460 or 8524
+                        or 8525 or 1458 or 1459 or 1645 or 16414)
                         return;
 
                     #endregion
 
                     //Code snippet that belongs to Ultimation
-                    uint DialogID = BitConverter.ToUInt32(packet, 4);
-                    uint ButtonID = BitConverter.ToUInt32(packet, 8);
+                    var DialogID = BitConverter.ToUInt32(packet, 4);
+                    var ButtonID = BitConverter.ToUInt32(packet, 8);
                     switch (DialogID) {
                         case 4: {
                             switch (ButtonID) {
@@ -5741,55 +5739,43 @@ namespace MTA.Network {
 
                     #region MaxsMap
 
-                    if (client.Entity.MapID == 1766 || client.Entity.MapID == 8877
-                                                    || client.Entity.MapID == 1734 || client.Entity.MapID == 1733
-                                                    || client.Entity.MapID == 1732 || client.Entity.MapID == 1731 ||
-                                                    client.Entity.MapID == 1024
-                                                    || client.Entity.MapID == 1730 || client.Entity.MapID == 1735 ||
-                                                    client.Entity.MapID == 1090
-                                                    || client.Entity.MapID == 8511 || client.Entity.MapID == 8512 ||
-                                                    client.Entity.MapID == 8514
-                                                    || client.Entity.MapID == 8510 || client.Entity.MapID == 8527 ||
-                                                    client.Entity.MapID == 8518
-                                                    || client.Entity.MapID == 8526 || client.Entity.MapID == 8522 ||
-                                                    client.Entity.MapID == 8523
-                                                    || client.Entity.MapID == 8524 || client.Entity.MapID == 8525 ||
-                                                    client.Entity.MapID == 16414)
+                    if (client.Entity.MapID is 1766 or 8877 or 1734 or 1733 or 1732 or 1731 or 1024 or 1730 or 1735
+                        or 1090 or 8511 or 8512 or 8514 or 8510 or 8527 or 8518 or 8526 or 8522 or 8523 or 8524 or 8525
+                        or 16414)
                         return;
 
                     #endregion
 
-                    ushort Type = BitConverter.ToUInt16(packet, 4);
-                    ushort SubType = BitConverter.ToUInt16(packet, 6);
-                    uint Fighter = BitConverter.ToUInt32(packet, 10);
+                    var Type = BitConverter.ToUInt16(packet, 4);
+                    var SubType = BitConverter.ToUInt16(packet, 6);
+                    var Fighter = BitConverter.ToUInt32(packet, 10);
                     if (Type == 0) {
                         // if (!Constants.PKFreeMaps.Contains(client.Entity.MapID))
                         {
-                            if (Kernel.GamePool.ContainsKey(Fighter)) {
-                                GameState Client = Kernel.GamePool[Fighter];
-                                if (Client.Team != null) {
-                                    if (Client.Team.EliteMatch is { OnGoing: true }) {
-                                        Client.Team.EliteMatch.BeginWatch(client);
+                            if (Kernel.GamePool.TryGetValue(Fighter, out var client1)) {
+                                if (client1.Team != null) {
+                                    if (client1.Team.EliteMatch is { OnGoing: true }) {
+                                        client1.Team.EliteMatch.BeginWatch(client);
                                     }
                                 }
-                                else if (Client.ElitePKMatch != null) {
-                                    if (Client.ElitePKMatch.OnGoing) {
-                                        Client.ElitePKMatch.BeginWatch(client);
+                                else if (client1.ElitePKMatch != null) {
+                                    if (client1.ElitePKMatch.OnGoing) {
+                                        client1.ElitePKMatch.BeginWatch(client);
                                     }
                                 }
-                                else if (Client.InQualifier()) {
-                                    if (Client.QualifierGroup != null) {
-                                        if (!Client.QualifierGroup.Done) {
+                                else if (client1.InQualifier()) {
+                                    if (client1.QualifierGroup != null) {
+                                        if (!client1.QualifierGroup.Done) {
                                             client.QualifierGroup.End(client);
                                         }
                                     }
-                                    else if (Client.TeamQualifierGroup is { Done: false }) {
-                                        Client.TeamQualifierGroup.BeginWatching(client);
+                                    else if (client1.TeamQualifierGroup is { Done: false }) {
+                                        client1.TeamQualifierGroup.BeginWatching(client);
                                     }
                                 }
                             }
                             else if (AI.Ais.ContainsKey(Fighter)) {
-                                GameState Client = AI.Ais[Fighter].Bot;
+                                var Client = AI.Ais[Fighter].Bot;
                                 if (Client == null)
                                     return;
                                 if (Client.Team != null) {
@@ -5830,7 +5816,7 @@ namespace MTA.Network {
                             TeamArena.QualifyEngine.DoLeave(client);
                     }
                     else if (Type == 4) {
-                        uint fighter = BitConverter.ToUInt32(packet, 10);
+                        var fighter = BitConverter.ToUInt32(packet, 10);
                         if (client.Entity.SkillTeamWatchingElitePKMatch != null)
                             client.Entity.SkillTeamWatchingElitePKMatch.Cheer(client, fighter);
                         else if (client.WatchingElitePKMatch != null)
@@ -5851,21 +5837,21 @@ namespace MTA.Network {
                 case 2243: //Request Arena ranking List
                 {
                     //Code snippet that belongs to Ultimation
-                    ushort PageIndex = BitConverter.ToUInt16(packet, 6);
+                    var PageIndex = BitConverter.ToUInt16(packet, 6);
                     TeamArena.Statistics.ShowRankingPage(packet[4], packet[4], client);
                     break;
                 }
                 case 2242: {
                     //Code snippet that belongs to Ultimation
-                    ushort PageIndex = BitConverter.ToUInt16(packet, 4);
+                    var PageIndex = BitConverter.ToUInt16(packet, 4);
                     TeamArena.QualifyEngine.RequestGroupList(client, PageIndex);
                     break;
                 }
                 case 2241: //Arena Signup!
                 {
                     //Code snippet that belongs to Ultimation
-                    uint DialogID = BitConverter.ToUInt32(packet, 4);
-                    uint ButtonID = BitConverter.ToUInt32(packet, 8);
+                    var DialogID = BitConverter.ToUInt32(packet, 4);
+                    var ButtonID = BitConverter.ToUInt32(packet, 8);
                     switch (DialogID) {
                         case 4: {
                             switch (ButtonID) {
@@ -5927,14 +5913,13 @@ namespace MTA.Network {
                 case 2247: {
                     if (client.Entity.MapID == 601) return;
                     if (client.Map.BaseID is >= 6000 and <= 6003) return;
-                    ushort Type = BitConverter.ToUInt16(packet, 4);
-                    uint Fighter = BitConverter.ToUInt32(packet, 8);
+                    var Type = BitConverter.ToUInt16(packet, 4);
+                    var Fighter = BitConverter.ToUInt32(packet, 8);
                     if (Type == 0) {
-                        if (Kernel.GamePool.ContainsKey(Fighter)) {
-                            GameState Client = Kernel.GamePool[Fighter];
-                            if (Client.InTeamQualifier()) {
-                                TeamArena.QualifierList.QualifierParticipants particiaptants =
-                                    new TeamArena.QualifierList.QualifierParticipants(Client,
+                        if (Kernel.GamePool.TryGetValue(Fighter, out var client1)) {
+                            if (client1.InTeamQualifier()) {
+                                var particiaptants =
+                                    new TeamArena.QualifierList.QualifierParticipants(client1,
                                         TeamArena.QualifierList.QualifierParticipants.KindOfParticipants.Neutral);
                                 client.Send(particiaptants.Build(client.Entity.UID));
                             }
@@ -5951,7 +5936,7 @@ namespace MTA.Network {
                 case 10005: {
                     if (client.Action != 2)
                         return;
-                    GroundMovement groundMovement = new GroundMovement(false);
+                    var groundMovement = new GroundMovement(false);
                     groundMovement.Deserialize(packet);
 
                     client.Entity.RemoveFlag(Update.Flags.Intensify);
@@ -5980,7 +5965,7 @@ namespace MTA.Network {
                         }
                     }
 
-                    byte NewClass = packet[8];
+                    var NewClass = packet[8];
                     ushort NewBody = packet[12];
                     if (client.Entity.Body.ToString().EndsWith("1") || client.Entity.Body.ToString().EndsWith("2"))
                         NewBody += 2000;
@@ -6016,7 +6001,7 @@ namespace MTA.Network {
                 #region PurifyItem (2076)
 
                 case 2076: {
-                    Purification ps = new Purification(false);
+                    var ps = new Purification(false);
                     ps.Deserialize(packet);
                     switch (ps.Mode) {
                         case Purification.Purify:
@@ -6035,12 +6020,12 @@ namespace MTA.Network {
                 #region Clans (1312)
 
                 case 1312: {
-                    Clan clanp = new Clan();
+                    var clanp = new Clan();
                     clanp.Deserialize(packet);
                     //GameState target;
                     switch (clanp.Type) {
                         case Clan.Types.Announce: {
-                            Clan clan = client.Entity.GetClan;
+                            var clan = client.Entity.GetClan;
                             if (clan != null) {
                                 client.Send(new ClanAnnouncement(clan));
                             }
@@ -6052,7 +6037,7 @@ namespace MTA.Network {
                             var kickedmem = Program.FindClient(clanp.Offset18String);
                             //var kickedmem = Program.Values.SingleOrDefault(x => x.Entity.Name == clanp.Offset18String);
                             if (kickedmem != null) {
-                                byte[] Packet = new byte[90];
+                                var Packet = new byte[90];
                                 Writer.WriteUInt16(82, 0, Packet);
                                 Writer.WriteUInt16(1312, 2, Packet);
                                 Writer.WriteUInt32(22, 4, Packet);
@@ -6085,7 +6070,7 @@ namespace MTA.Network {
                             break;
                         }
                         case Clan.Types.MyClan: {
-                            Clan clan = client.Entity.GetClan;
+                            var clan = client.Entity.GetClan;
                             if (clan != null) {
                                 clan.Build(client, Clan.Types.MyClan);
                                 client.Send(clan);
@@ -6097,24 +6082,24 @@ namespace MTA.Network {
                             break;
                         }
                         case Clan.Types.Members: {
-                            Clan clan = client.Entity.GetClan;
+                            var clan = client.Entity.GetClan;
                             if (clan != null) {
-                                ClanMembers memclanp = new ClanMembers(clan);
-                                memclanp.Type = clanp.Type;
+                                var memclanp = new ClanMembers(clan) {
+                                    Type = clanp.Type
+                                };
                                 client.Send(memclanp);
                             }
 
                             break;
                         }
                         case Clan.Types.Dedicate: {
-                            Clan clan = client.Entity.GetClan;
+                            var clan = client.Entity.GetClan;
                             if (clan != null) {
                                 if (client.Entity.Money >= clanp.ID) {
                                     client.Entity.Money -= clanp.ID;
                                     clan.Fund += clanp.ID;
 
-                                    ClanMember member;
-                                    if (clan.Members.TryGetValue(client.Entity.UID, out member)) {
+                                    if (clan.Members.TryGetValue(client.Entity.UID, out var member)) {
                                         member.Donation += clanp.ID;
                                         client.Entity.Save("clandonation", member.Donation);
                                     }
@@ -6132,14 +6117,13 @@ namespace MTA.Network {
                                 return;
                             }
 
-                            Clan getClan4 = client.Entity.GetClan;
+                            var getClan4 = client.Entity.GetClan;
                             if (client.Entity.ClanRank != Clan.Ranks.ClanLeader || getClan4 == null ||
                                 getClan4.Members.Count >= 12) {
                                 return;
                             }
 
-                            GameState c = null;
-                            if (Kernel.GamePool.TryGetValue(BitConverter.ToUInt32(packet, 8), out c)) {
+                            if (Kernel.GamePool.TryGetValue(BitConverter.ToUInt32(packet, 8), out var c)) {
                                 getClan4.Join(c);
                                 return;
                             }
@@ -6147,12 +6131,12 @@ namespace MTA.Network {
                             return;
                         }
                         case Clan.Types.Join: {
-                            uint key5 = BitConverter.ToUInt32(packet, 8);
+                            var key5 = BitConverter.ToUInt32(packet, 8);
                             if (Kernel.GamePool.ContainsKey(key5)) {
                                 Writer.WriteUInt32(client.Entity.UID, 8, packet);
                                 packet[16] = 1;
                                 packet[17] = (byte)client.Entity.Name.Length;
-                                for (int j = 0; j < client.Entity.Name.Length; j++) {
+                                for (var j = 0; j < client.Entity.Name.Length; j++) {
                                     try {
                                         packet[18 + j] = Convert.ToByte(client.Entity.Name[j]);
                                     }
@@ -6168,16 +6152,15 @@ namespace MTA.Network {
 
 
                         case Clan.Types.AcceptRecruit: {
-                            uint key4 = BitConverter.ToUInt32(packet, 8);
-                            GameState gameClient13 = Kernel.GamePool[key4];
+                            var key4 = BitConverter.ToUInt32(packet, 8);
+                            var gameClient13 = Kernel.GamePool[key4];
                             if (gameClient13 == null) {
                                 return;
                             }
 
                             if (packet[16] == 1) {
-                                Clan getClan3 = gameClient13.Entity.GetClan;
-                                if (gameClient13.Entity.ClanRank == Clan.Ranks.ClanLeader && getClan3 is
-                                    {
+                                var getClan3 = gameClient13.Entity.GetClan;
+                                if (gameClient13.Entity.ClanRank == Clan.Ranks.ClanLeader && getClan3 is {
                                         Members.Count: < 12
                                     }) {
                                     getClan3.Join(client);
@@ -6189,20 +6172,19 @@ namespace MTA.Network {
                             return;
                         }
                         case Clan.Types.Recruit: {
-                            uint key3 = BitConverter.ToUInt32(packet, 8);
-                            Clan getClan2 = client.Entity.GetClan;
+                            var key3 = BitConverter.ToUInt32(packet, 8);
+                            var getClan2 = client.Entity.GetClan;
                             if (getClan2.Members.Count >= 12) {
                                 client.Entity.SendSysMesage("Sorry, you clan use the limit of members");
                                 return;
                             }
 
-                            GameState gameClient12;
-                            if (Kernel.GamePool.TryGetValue(key3, out gameClient12)) {
+                            if (Kernel.GamePool.TryGetValue(key3, out var gameClient12)) {
                                 Writer.WriteUInt32(client.Entity.UID, 8, packet);
                                 Writer.WriteByte(2, 16, packet);
                                 Writer.WriteByte((byte)getClan2.Name.Length, 17, packet);
                                 Writer.WriteString(getClan2.Name, 18, packet);
-                                ushort num63 = (ushort)(18 + (byte)getClan2.Name.Length);
+                                var num63 = (ushort)(18 + (byte)getClan2.Name.Length);
                                 Writer.WriteByte((byte)getClan2.Name.Length, num63, packet);
                                 num63 += 1;
                                 Writer.WriteString(getClan2.Name, num63, packet);
@@ -6213,11 +6195,10 @@ namespace MTA.Network {
                             return;
                         }
                         case Clan.Types.Quit: {
-                            Clan clan = client.Entity.GetClan;
+                            var clan = client.Entity.GetClan;
                             if (clan != null) {
                                 if (client.Entity.ClanRank != Clan.Ranks.ClanLeader) {
-                                    if (clan.Members.ContainsKey(client.Entity.UID))
-                                        clan.Members.Remove(client.Entity.UID);
+                                    clan.Members.Remove(client.Entity.UID);
 
                                     client.Entity.ClanRank = Clan.Ranks.None;
                                     client.Entity.ClanName = "";
@@ -6263,7 +6244,7 @@ namespace MTA.Network {
                                     client.SendScreen(client.Entity.SpawnPacket, false);
 
                                     clan.SendMessage(new Message(
-                                        String.Format("{0} Has Left the Clan ", client.Entity.Name), Color.Red,
+                                        $"{client.Entity.Name} Has Left the Clan ", Color.Red,
                                         Message.Clan));
 
                                     client.Send(clanp);
@@ -6273,7 +6254,7 @@ namespace MTA.Network {
                             break;
                         }
                         case Clan.Types.AddAlly: {
-                            Clan getClan7 = client.Entity.GetClan;
+                            var getClan7 = client.Entity.GetClan;
                             if (getClan7 == null) {
                                 return;
                             }
@@ -6289,13 +6270,12 @@ namespace MTA.Network {
                                 return;
                             }
 
-                            GameState gameClient14;
-                            if (!Kernel.GamePool.TryGetValue(clanp.ID, out gameClient14)) {
+                            if (!Kernel.GamePool.TryGetValue(clanp.ID, out var gameClient14)) {
                                 client.Send(new Message("Can not find target.", Color.Red, 2012u));
                                 return;
                             }
 
-                            Clan getClan8 = gameClient14.Entity.GetClan;
+                            var getClan8 = gameClient14.Entity.GetClan;
                             if (getClan8 == null) {
                                 return;
                             }
@@ -6321,7 +6301,7 @@ namespace MTA.Network {
                                 Writer.WriteByte(2, 16, packet);
                                 Writer.WriteByte((byte)getClan7.Name.Length, 17, packet);
                                 Writer.WriteString(getClan7.Name, 18, packet);
-                                ushort num64 = (ushort)(getClan7.Name.Length + 18);
+                                var num64 = (ushort)(getClan7.Name.Length + 18);
                                 Writer.WriteByte((byte)getClan7.LeaderName.Length, num64, packet);
                                 num64 += 1;
                                 Writer.WriteString(getClan7.LeaderName, num64, packet);
@@ -6337,7 +6317,7 @@ namespace MTA.Network {
                                 return;
                             }
 
-                            Clan getClan9 = client.Entity.GetClan;
+                            var getClan9 = client.Entity.GetClan;
                             if (getClan9 == null) {
                                 return;
                             }
@@ -6347,8 +6327,7 @@ namespace MTA.Network {
                                 return;
                             }
 
-                            Clan clan3;
-                            if (!Kernel.Clans.TryGetValue(getClan9.AllyRequest, out clan3)) {
+                            if (!Kernel.Clans.TryGetValue(getClan9.AllyRequest, out var clan3)) {
                                 client.Send(new Message("Can not find target", Color.Red, 2012u));
                                 return;
                             }
@@ -6363,20 +6342,18 @@ namespace MTA.Network {
                             }
 
                             if (!getClan9.Enemies.ContainsKey(clan3.ID)) {
-                                if (!getClan9.Allies.ContainsKey(clan3.ID)) {
-                                    getClan9.Allies.Add(clan3.ID, clan3);
-                                }
+                                getClan9.Allies.TryAdd(clan3.ID, clan3);
 
                                 clan3.Allies.Add(getClan9.ID, getClan9);
                                 getClan9.SendMessage(new ClanRelations(getClan9, ClanRelations.RelationTypes.Allies));
                                 clan3.SendMessage(new ClanRelations(clan3, ClanRelations.RelationTypes.Allies));
                                 getClan9.SendMessage(new Message(
-                                    string.Format("Our Clan has Allianced with {0}", clan3.Name), Color.Red, 2006u));
+                                    $"Our Clan has Allianced with {clan3.Name}", Color.Red, 2006u));
                                 clan3.SendMessage(new Message(
-                                    string.Format("Our Clan has Allianced with {0}", getClan9.Name), Color.Red, 2006u));
+                                    $"Our Clan has Allianced with {getClan9.Name}", Color.Red, 2006u));
                                 getClan9.AddRelation(clan3.ID, ClanRelations.RelationTypes.Allies);
                                 clan3.AddRelation(getClan9.ID, ClanRelations.RelationTypes.Allies);
-                                Clan arg_9788_0 = getClan9;
+                                var arg_9788_0 = getClan9;
                                 clan3.AllyRequest = 0u;
                                 arg_9788_0.AllyRequest = 0u;
                                 return;
@@ -6386,7 +6363,7 @@ namespace MTA.Network {
                             return;
                         }
                         case Clan.Types.DeleteEnemy: {
-                            Clan getClan6 = client.Entity.GetClan;
+                            var getClan6 = client.Entity.GetClan;
                             if (getClan6 == null) {
                                 return;
                             }
@@ -6397,15 +6374,14 @@ namespace MTA.Network {
                                 return;
                             }
 
-                            string offset18String2 = clanp.Offset18String;
-                            uint clanId2 = getClan6.GetClanId(offset18String2);
-                            Clan clan2;
-                            if (Kernel.Clans.TryGetValue(clanId2, out clan2)) {
+                            var offset18String2 = clanp.Offset18String;
+                            var clanId2 = getClan6.GetClanId(offset18String2);
+                            if (Kernel.Clans.TryGetValue(clanId2, out var clan2)) {
                                 getClan6.Enemies.Remove(clanId2);
                                 getClan6.DeleteRelation(clanId2, ClanRelations.RelationTypes.Enemies);
                                 getClan6.SendMessage(new ClanRelations(getClan6, ClanRelations.RelationTypes.Enemies));
                                 getClan6.SendMessage(new Message(
-                                    string.Format("We are no longer Enemies With {0}", clan2.Name), Color.Red, 2006u));
+                                    $"We are no longer Enemies With {clan2.Name}", Color.Red, 2006u));
                                 client.Send(clanp);
                                 return;
                             }
@@ -6413,7 +6389,7 @@ namespace MTA.Network {
                             return;
                         }
                         case Clan.Types.DeleteAlly: {
-                            Clan getClan10 = client.Entity.GetClan;
+                            var getClan10 = client.Entity.GetClan;
                             if (getClan10 == null) {
                                 return;
                             }
@@ -6424,23 +6400,21 @@ namespace MTA.Network {
                                 return;
                             }
 
-                            string offset18String3 = clanp.Offset18String;
-                            uint clanId3 = getClan10.GetClanId(offset18String3);
-                            Clan clan4;
-                            if (getClan10.Allies.TryGetValue(clanId3, out clan4)) {
-                                getClan10.Allies.Remove(clanId3);
+                            var offset18String3 = clanp.Offset18String;
+                            var clanId3 = getClan10.GetClanId(offset18String3);
+                            if (getClan10.Allies.Remove(clanId3, out var clan4)) {
                                 clan4.Allies.Remove(getClan10.ID);
                                 getClan10.DeleteRelation(clanId3, ClanRelations.RelationTypes.Allies);
                                 clan4.DeleteRelation(getClan10.ID, ClanRelations.RelationTypes.Allies);
                                 getClan10.SendMessage(new ClanRelations(getClan10, ClanRelations.RelationTypes.Allies));
                                 clan4.SendMessage(new ClanRelations(clan4, ClanRelations.RelationTypes.Allies));
                                 getClan10.SendMessage(new Message(
-                                    string.Format("We are no longer allied with {0}", clan4.Name), Color.Red, 2006u));
+                                    $"We are no longer allied with {clan4.Name}", Color.Red, 2006u));
                                 client.Send(clanp);
                                 client.Screen.FullWipe();
                                 client.Screen.Reload();
                                 clan4.SendMessage(new Message(
-                                    string.Format("We are no longer allied with {0}", getClan10.Name), Color.Red,
+                                    $"We are no longer allied with {getClan10.Name}", Color.Red,
                                     2006u));
                                 client.Send(clanp);
 
@@ -6453,13 +6427,13 @@ namespace MTA.Network {
                             return;
                         }
                         case Clan.Types.AddEnemy: {
-                            Clan getClan5 = client.Entity.GetClan;
+                            var getClan5 = client.Entity.GetClan;
                             if (getClan5 == null || client.Entity.ClanRank != Clan.Ranks.ClanLeader) {
                                 return;
                             }
 
-                            string offset18String = clanp.Offset18String;
-                            uint clanId = getClan5.GetClanId(offset18String);
+                            var offset18String = clanp.Offset18String;
+                            var clanId = getClan5.GetClanId(offset18String);
                             if (getClan5.Enemies.ContainsKey(clanId)) {
                                 client.Send(new Message("This clan is Already One of Your Enemies", Color.Red, 2012u));
                                 return;
@@ -6477,18 +6451,15 @@ namespace MTA.Network {
                                 return;
                             }
 
-                            Clan clan;
-                            if (Kernel.Clans.TryGetValue(clanId, out clan)) {
-                                if (!getClan5.Enemies.ContainsKey(clan.ID)) {
-                                    getClan5.Enemies.Add(clan.ID, clan);
-                                }
+                            if (Kernel.Clans.TryGetValue(clanId, out var clan)) {
+                                getClan5.Enemies.TryAdd(clan.ID, clan);
 
                                 getClan5.AddRelation(clanId, ClanRelations.RelationTypes.Enemies);
                                 getClan5.SendMessage(new ClanRelations(getClan5, ClanRelations.RelationTypes.Enemies));
                                 getClan5.SendMessage(new Message(
-                                    string.Format("We Have Enemied the clan {0}", clan.Name), Color.Red, 2006u));
+                                    $"We Have Enemied the clan {clan.Name}", Color.Red, 2006u));
                                 clan.SendMessage(new Message(
-                                    string.Format("The Clan {0} Has Made us their Enemy!", getClan5.Name), Color.Red,
+                                    $"The Clan {getClan5.Name} Has Made us their Enemy!", Color.Red,
                                     2006u));
                                 return;
                             }
@@ -6496,7 +6467,7 @@ namespace MTA.Network {
                             return;
                         }
                         case Clan.Types.SetAnnouncement: {
-                            Clan clan = client.Entity.GetClan;
+                            var clan = client.Entity.GetClan;
                             if (clan != null) {
                                 if (client.Entity.ClanRank == Clan.Ranks.ClanLeader) {
                                     clan.Announcement = clanp.Offset18String;
@@ -6515,15 +6486,14 @@ namespace MTA.Network {
                             if (client.Entity.Myclan != null) {
                                 PrintPacket(packet);
                                 uint lider = 0;
-                                string name_receive = Program.Encoding.GetString(packet, 18, packet[17]);
+                                var name_receive = Program.Encoding.GetString(packet, 18, packet[17]);
                                 foreach (var clien in Program.Values) {
                                     if (clien.Entity.Name == name_receive)
                                         lider = clien.Entity.UID;
                                 }
 
                                 if (lider == client.Entity.UID) return;
-                                GameState aClient = null;
-                                if (Kernel.GamePool.TryGetValue(lider, out aClient)) {
+                                if (Kernel.GamePool.TryGetValue(lider, out var aClient)) {
                                     if (Kernel.Clans.ContainsKey(client.Entity.Myclan.ID)) {
                                         if (Kernel.Clans[client.Entity.Myclan.ID].Members
                                             .ContainsKey(aClient.Entity.UID)) {
@@ -6531,11 +6501,12 @@ namespace MTA.Network {
                                             aClient.Entity.ClanRank = Clan.Ranks.ClanLeader;
                                             aClient.Entity.Myclan.Members[aClient.Entity.UID].Rank =
                                                 Clan.Ranks.ClanLeader;
-                                            if (aClient.Entity.Myclan.Members.ContainsKey(client.Entity.UID))
-                                                aClient.Entity.Myclan.Members[client.Entity.UID].Rank = 0;
+                                            if (aClient.Entity.Myclan.Members.TryGetValue(client.Entity.UID,
+                                                    out var member))
+                                                member.Rank = 0;
                                             client.Entity.ClanRank = 0;
                                             Clan.SaveClan(aClient.Entity.Myclan);
-                                            Clan clan = client.Entity.GetClan;
+                                            var clan = client.Entity.GetClan;
                                             clan.Join(client);
                                         }
                                     }
@@ -6543,7 +6514,7 @@ namespace MTA.Network {
                                 else {
                                     Kernel.Clans[client.Entity.Myclan.ID].LeaderName = name_receive;
                                     client.Entity.ClanRank = 0;
-                                    Clan clan = client.Entity.GetClan;
+                                    var clan = client.Entity.GetClan;
                                     clan.Join(client);
                                     Clan.SaveClan(client.Entity.Myclan);
                                     Clan.TransferClan(name_receive);
@@ -6553,7 +6524,7 @@ namespace MTA.Network {
                             break;
                         }
                         default:
-                            Console.WriteLine(String.Format("Un Handled Clan clanp Type {0}", clanp.Type));
+                            Console.WriteLine($"Un Handled Clan clanp Type {clanp.Type}");
                             break;
                     }
 
@@ -6565,49 +6536,51 @@ namespace MTA.Network {
                 #region SubClass (2320)
 
                 case 2320: {
-                    ushort id = BitConverter.ToUInt16(packet, 8);
-                    byte sclass = packet[10];
+                    var id = BitConverter.ToUInt16(packet, 8);
+                    var sclass = packet[10];
                     switch (id) {
                         case SubClassShow.SwitchSubClass: {
                             if (!client.Entity.SubClasses.Classes.ContainsKey(sclass) && sclass != 0)
                                 return;
 
                             if (sclass == 0) {
-                                SubClassShow subClassShow = new SubClassShow();
-                                subClassShow.ID = SubClassShow.ActivateSubClass;
+                                var subClassShow = new SubClassShow {
+                                    ID = SubClassShow.ActivateSubClass
+                                };
                                 client.Send(subClassShow.ToArray());
                                 client.Entity.SubClasses.Activate(client, sclass);
                                 client.SendScreenSpawn(client.Entity, false); ///aho ya 3m
                                 return;
                             }
 
-                            SubClass subClass = client.Entity.SubClasses.Classes[sclass];
+                            var subClass = client.Entity.SubClasses.Classes[sclass];
                             client.Entity.SubClasses.Activate(client, sclass);
-                            SubClassShow subClassShow2 = new SubClassShow();
-                            subClassShow2.ID = 1;
-                            subClassShow2.Class = sclass;
-                            subClassShow2.Level = subClass.Level;
+                            var subClassShow2 = new SubClassShow {
+                                ID = 1,
+                                Class = sclass,
+                                Level = subClass.Level
+                            };
                             client.Send(subClassShow2.ToArray());
                             client.SendScreenSpawn(client.Entity, false); ///aho ya 3m
 
                             break;
                         }
                         case SubClassShow.Upgrade: {
-                            if (!client.Entity.SubClasses.Classes.ContainsKey(sclass))
+                            if (!client.Entity.SubClasses.Classes.TryGetValue(sclass, out var subClass2))
                                 return;
 
-                            SubClass subClass2 = client.Entity.SubClasses.Classes[sclass];
                             if (subClass2.Level == 9)
                                 return;
 
-                            ushort required = Subclasses.GetRequired(subClass2);
+                            var required = Subclasses.GetRequired(subClass2);
                             if (client.Entity.SubClasses.StudyPoints >= required) {
                                 client.Entity.SubClasses.StudyPoints -= required;
                                 subClass2.Level++;
                                 SubClassTable.Update(client.Entity, subClass2);
-                                SubClassShow subClassShow3 = new SubClassShow();
-                                subClassShow3.ID = SubClassShow.SendUpdate;
-                                subClassShow3.Class = subClass2.ID;
+                                var subClassShow3 = new SubClassShow {
+                                    ID = SubClassShow.SendUpdate,
+                                    Class = subClass2.ID
+                                };
                                 client.Send(subClassShow3.ToArray());
                                 client.Entity.SubClasses.Send(client);
                                 break;
@@ -6623,16 +6596,17 @@ namespace MTA.Network {
                             if (sclass > 9)
                                 break;
 
-                            uint ItemID = SubClassShow.ItemsPromote[sclass];
-                            byte amount = SubClassShow.ItemsCount[sclass];
+                            var ItemID = SubClassShow.ItemsPromote[sclass];
+                            var amount = SubClassShow.ItemsCount[sclass];
 
                             if (client.Inventory.Contains(ItemID, amount)) {
                                 if (!client.Entity.SubClasses.Classes.ContainsKey(sclass) &&
                                     client.Inventory.Remove(ItemID, amount)) {
-                                    SubClass subClass3 = new SubClass();
-                                    subClass3.ID = sclass;
-                                    subClass3.Phase = 1;
-                                    subClass3.Level = 1;
+                                    var subClass3 = new SubClass {
+                                        ID = sclass,
+                                        Phase = 1,
+                                        Level = 1
+                                    };
                                     client.Entity.SubClasses.Classes.Add(subClass3.ID, subClass3);
                                     client.Entity.SubClasses.SendLearn((ClassID)subClass3.ID, subClass3.Level, client);
                                     SubClassTable.Insert(client.Entity, subClass3.ID);
@@ -6643,10 +6617,9 @@ namespace MTA.Network {
                             break;
                         }
                         case SubClassShow.Pro: {
-                            if (!client.Entity.SubClasses.Classes.ContainsKey(sclass))
+                            if (!client.Entity.SubClasses.Classes.TryGetValue(sclass, out var subClass10))
                                 return;
 
-                            SubClass subClass10 = client.Entity.SubClasses.Classes[sclass];
                             if (subClass10.Phase == 9)
                                 return;
 
@@ -6692,7 +6665,7 @@ namespace MTA.Network {
                 #region ItemAdding Stabilization
 
                 case 1038: {
-                    ItemAddingStabilization stabilization = new ItemAddingStabilization(false);
+                    var stabilization = new ItemAddingStabilization(false);
                     stabilization.Deserialize(packet);
                     switch (packet[4]) {
                         case 1: {
@@ -6724,14 +6697,15 @@ namespace MTA.Network {
                 #region TimePacket (1033)
 
                 case 1033: {
-                    ServerTime time = new ServerTime();
-                    time.Year = (uint)DateTime.Now.Year;
-                    time.Month = (uint)DateTime.Now.Month;
-                    time.DayOfYear = (uint)DateTime.Now.DayOfYear;
-                    time.DayOfMonth = (uint)DateTime.Now.Day;
-                    time.Hour = (uint)DateTime.Now.Hour;
-                    time.Minute = (uint)DateTime.Now.Minute;
-                    time.Second = (uint)DateTime.Now.Second;
+                    var time = new ServerTime {
+                        Year = (uint)DateTime.Now.Year,
+                        Month = (uint)DateTime.Now.Month,
+                        DayOfYear = (uint)DateTime.Now.DayOfYear,
+                        DayOfMonth = (uint)DateTime.Now.Day,
+                        Hour = (uint)DateTime.Now.Hour,
+                        Minute = (uint)DateTime.Now.Minute,
+                        Second = (uint)DateTime.Now.Second
+                    };
                     client.Send(time);
                     break;
                 }
@@ -6741,7 +6715,7 @@ namespace MTA.Network {
                 #region Chi (2533)
 
                 case 2533: {
-                    Chi chi = new Chi(false);
+                    var chi = new Chi(false);
                     chi.Deserialize(packet);
                     switch (chi.Type) {
                         case Chi.Unlock:
@@ -6784,7 +6758,7 @@ namespace MTA.Network {
         }
 
         private static void HandleData(GameState client, byte[] packet) {
-            Data gData = new Data(false);
+            var gData = new Data(false);
             gData.Deserialize(packet);
             switch (gData.ID) {
                 case 256: {
@@ -6863,11 +6837,10 @@ namespace MTA.Network {
                     break;
                 }
                 case 408: {
-                    if (!client.JustOpenedDetain)
-                        if (client.ClaimableItem.Count != 0)
-                            client.Send(new Data(true) {
-                                ID = Data.OpenWindow, dwParam = Data.WindowCommands.DetainClaim, UID = client.Entity.UID
-                            });
+                    if (client is { JustOpenedDetain: false, ClaimableItem.Count: not 0 })
+                        client.Send(new Data(true) {
+                            ID = Data.OpenWindow, dwParam = Data.WindowCommands.DetainClaim, UID = client.Entity.UID
+                        });
                     client.JustOpenedDetain = !client.JustOpenedDetain;
                     break;
                 }
@@ -6907,14 +6880,14 @@ namespace MTA.Network {
                     break;
                 case Data.ConfirmSpells:
                     if (client.Spells != null)
-                        foreach (ISkill spell in client.Spells.Values)
+                        foreach (var spell in client.Spells.Values)
                             if (spell.ID != 3060)
                                 spell.Send(client);
                     client.Send(packet);
                     break;
                 case Data.ConfirmProficiencies:
                     if (client.Proficiencies != null)
-                        foreach (IProf proficiency in client.Proficiencies.Values)
+                        foreach (var proficiency in client.Proficiencies.Values)
                             proficiency.Send(client);
                     client.Send(packet);
                     break;
@@ -6922,49 +6895,46 @@ namespace MTA.Network {
                     client.Send(packet);
                     break;
                 case Data.Bulletin: {
-                    if (DateTime.Now.DayOfWeek == DayOfWeek.Wednesday && DateTime.Now.Hour ==
-                        19 && DateTime.Now.Minute == 45 &&
-                        DateTime.Now.Minute <= 50) //skill team pk                                   
+                    if (DateTime.Now is {
+                            DayOfWeek: DayOfWeek.Wednesday, Hour: 19, Minute: 45 and <= 50
+                        }) //skill team pk                                   
                     {
                         client.Entity.Teleport(1002, 313, 143); //Teleport 
                     }
-                    else if (DateTime.Now.DayOfWeek == DayOfWeek.Friday && DateTime.Now.Hour == 19
-                                                                        && DateTime.Now.Minute == 55 &&
-                                                                        DateTime.Now.Minute <=
-                                                                        59) //elite pk                                      
+                    else if (DateTime.Now is {
+                                 DayOfWeek: DayOfWeek.Friday, Hour: 19, Minute: 55 and <= 59
+                             }) //elite pk                                      
                     {
                         client.Entity.Teleport(1002, 302, 144); //Teleport 
                     }
-                    else if (DateTime.Now.DayOfWeek == DayOfWeek.Saturday && DateTime.Now.Hour ==
-                             18 && DateTime.Now.Minute == 45 &&
-                             DateTime.Now.Minute <= 50) //team pk                                             
+                    else if (DateTime.Now is {
+                                 DayOfWeek: DayOfWeek.Saturday, Hour: 18, Minute: 45 and <= 50
+                             }) //team pk                                             
                     {
                         client.Entity.Teleport(1002, 292, 146); //Teleport 
                     }
-                    else if (DateTime.Now.Day <= 7 && DateTime.Now.DayOfWeek == DayOfWeek.Sunday &&
-                             DateTime.Now.Hour == 22 && DateTime.Now.Minute >= 01 &&
-                             DateTime.Now.Minute <=
-                             14) //Monthly PK                                                                                  
+                    else if (DateTime.Now is {
+                                 Day: <= 7, DayOfWeek: DayOfWeek.Sunday, Hour: 22, Minute: >= 01 and <= 14
+                             }) //Monthly PK                                                                                  
                     {
                         client.Entity.Teleport(1002, 324, 194); //Teleport 
                     }
-                    else if (DateTime.Now.DayOfWeek == DayOfWeek.Sunday &&
-                             DateTime.Now.Hour == 20 && DateTime.Now.Minute >= 05 &&
-                             DateTime.Now.Minute <= 15) // Weekly PK                                          
+                    else if (DateTime.Now is {
+                                 DayOfWeek: DayOfWeek.Sunday, Hour: 20, Minute: >= 05 and <= 15
+                             }) // Weekly PK                                          
                     {
                         client.Entity.Teleport(1002, 324, 194); //Teleport 
                     }
 
-                    if (DateTime.Now.DayOfWeek == DayOfWeek.Saturday && DateTime.Now.Hour ==
-                        21 && DateTime.Now.Minute == 36 &&
-                        DateTime.Now.Minute <= 59) //CaptureTheFlag                             
+                    if (DateTime.Now is {
+                            DayOfWeek: DayOfWeek.Saturday, Hour: 21, Minute: 36 and <= 59
+                        }) //CaptureTheFlag                             
                     {
                         client.Entity.Teleport(1002, 225, 237); //Teleport 
                     }
-                    else if (DateTime.Now.DayOfWeek == DayOfWeek.Wednesday || DateTime.Now.DayOfWeek ==
-                             DayOfWeek.Friday)
-                        if ((DateTime.Now.Hour == 12 || DateTime.Now.Hour == 19) && DateTime.Now.Minute ==
-                            01 && DateTime.Now.Minute <= 05) //Dis City 
+                    else if (DateTime.Now.DayOfWeek is DayOfWeek.Wednesday or DayOfWeek.Friday)
+                        if ((DateTime.Now.Hour == 12 || DateTime.Now.Hour == 19) &&
+                            DateTime.Now.Minute is 01 and <= 05) //Dis City 
                         {
                             client.Entity.Teleport(1002, 297, 149); //Teleport 
                         }
@@ -6975,10 +6945,10 @@ namespace MTA.Network {
 
                     #region Friends/Enemy/TradePartners/Apprentices
 
-                    Message msg2 = new Message("Your friend, " + client.Entity.Name + ", has logged on.", Color.Red,
+                    var msg2 = new Message("Your friend, " + client.Entity.Name + ", has logged on.", Color.Red,
                         Message.TopLeft);
 
-                    foreach (Friend friend in client.Friends.Values) {
+                    foreach (var friend in client.Friends.Values) {
                         if (friend.IsOnline) {
                             var pckt = new KnownPersons(true) {
                                 UID = client.Entity.UID,
@@ -7009,7 +6979,7 @@ namespace MTA.Network {
                         }
                     }
 
-                    foreach (Enemy enemy in client.Enemy.Values) {
+                    foreach (var enemy in client.Enemy.Values) {
                         client.Send(new KnownPersons(true) {
                             UID = enemy.ID,
                             Type = KnownPersons.AddEnemy,
@@ -7020,10 +6990,10 @@ namespace MTA.Network {
                         });
                     }
 
-                    Message msg3 = new Message("Your partner, " + client.Entity.Name + ", has logged in.", Color.Red,
+                    var msg3 = new Message("Your partner, " + client.Entity.Name + ", has logged in.", Color.Red,
                         Message.TopLeft);
 
-                    foreach (Game.ConquerStructures.Society.TradePartner partner in client.Partners.Values) {
+                    foreach (var partner in client.Partners.Values) {
                         if (partner.IsOnline) {
                             var packet3 = new TradePartner(true) {
                                 UID = client.Entity.UID,
@@ -7050,54 +7020,57 @@ namespace MTA.Network {
                         client.Send(packet4);
                     }
 
-                    foreach (Apprentice appr in client.Apprentices.Values) {
+                    foreach (var appr in client.Apprentices.Values) {
                         if (appr.IsOnline) {
-                            ApprenticeInformation AppInfo = new ApprenticeInformation();
-                            AppInfo.Apprentice_ID = appr.ID;
-                            AppInfo.Apprentice_Level = appr.Client.Entity.Level;
-                            AppInfo.Apprentice_Class = appr.Client.Entity.Class;
-                            AppInfo.Apprentice_PkPoints = appr.Client.Entity.PKPoints;
-                            AppInfo.Apprentice_Experience = appr.Actual_Experience;
-                            AppInfo.Apprentice_Composing = appr.Actual_Plus;
-                            AppInfo.Apprentice_Blessing = appr.Actual_HeavenBlessing;
-                            AppInfo.Apprentice_Name = appr.Name;
-                            AppInfo.Apprentice_Online = true;
-                            AppInfo.Apprentice_Spouse_Name = appr.Client.Entity.Spouse;
-                            AppInfo.Enrole_date = appr.EnroleDate;
-                            AppInfo.Mentor_ID = client.Entity.UID;
-                            AppInfo.Mentor_Mesh = client.Entity.Mesh;
-                            AppInfo.Mentor_Name = client.Entity.Name;
-                            AppInfo.Type = 2;
+                            var AppInfo = new ApprenticeInformation {
+                                Apprentice_ID = appr.ID,
+                                Apprentice_Level = appr.Client.Entity.Level,
+                                Apprentice_Class = appr.Client.Entity.Class,
+                                Apprentice_PkPoints = appr.Client.Entity.PKPoints,
+                                Apprentice_Experience = appr.Actual_Experience,
+                                Apprentice_Composing = appr.Actual_Plus,
+                                Apprentice_Blessing = appr.Actual_HeavenBlessing,
+                                Apprentice_Name = appr.Name,
+                                Apprentice_Online = true,
+                                Apprentice_Spouse_Name = appr.Client.Entity.Spouse,
+                                Enrole_date = appr.EnroleDate,
+                                Mentor_ID = client.Entity.UID,
+                                Mentor_Mesh = client.Entity.Mesh,
+                                Mentor_Name = client.Entity.Name,
+                                Type = 2
+                            };
                             client.Send(AppInfo);
 
-                            MentorInformation Information = new MentorInformation(true);
-                            Information.Mentor_Type = 1;
-                            Information.Mentor_ID = client.Entity.UID;
-                            Information.Apprentice_ID = appr.ID;
-                            Information.Enrole_Date = appr.EnroleDate;
-                            Information.Mentor_Level = client.Entity.Level;
-                            Information.Mentor_Class = client.Entity.Class;
-                            Information.Mentor_PkPoints = client.Entity.PKPoints;
-                            Information.Mentor_Mesh = client.Entity.Mesh;
-                            Information.Mentor_Online = true;
-                            Information.Shared_Battle_Power = appr.Client.Entity.BattlePowerFrom(client.Entity);
-                            Information.String_Count = 3;
-                            Information.Mentor_Name = client.Entity.Name;
-                            Information.Apprentice_Name = appr.Name;
-                            Information.Mentor_Spouse_Name = client.Entity.Spouse;
+                            var Information = new MentorInformation(true) {
+                                Mentor_Type = 1,
+                                Mentor_ID = client.Entity.UID,
+                                Apprentice_ID = appr.ID,
+                                Enrole_Date = appr.EnroleDate,
+                                Mentor_Level = client.Entity.Level,
+                                Mentor_Class = client.Entity.Class,
+                                Mentor_PkPoints = client.Entity.PKPoints,
+                                Mentor_Mesh = client.Entity.Mesh,
+                                Mentor_Online = true,
+                                Shared_Battle_Power = appr.Client.Entity.BattlePowerFrom(client.Entity),
+                                String_Count = 3,
+                                Mentor_Name = client.Entity.Name,
+                                Apprentice_Name = appr.Name,
+                                Mentor_Spouse_Name = client.Entity.Spouse
+                            };
                             appr.Client.ReviewMentor();
                             appr.Client.Send(Information);
                         }
                         else {
-                            ApprenticeInformation AppInfo = new ApprenticeInformation();
-                            AppInfo.Apprentice_ID = appr.ID;
-                            AppInfo.Apprentice_Name = appr.Name;
-                            AppInfo.Apprentice_Online = false;
-                            AppInfo.Enrole_date = appr.EnroleDate;
-                            AppInfo.Mentor_ID = client.Entity.UID;
-                            AppInfo.Mentor_Mesh = client.Entity.Mesh;
-                            AppInfo.Mentor_Name = client.Entity.Name;
-                            AppInfo.Type = 2;
+                            var AppInfo = new ApprenticeInformation {
+                                Apprentice_ID = appr.ID,
+                                Apprentice_Name = appr.Name,
+                                Apprentice_Online = false,
+                                Enrole_date = appr.EnroleDate,
+                                Mentor_ID = client.Entity.UID,
+                                Mentor_Mesh = client.Entity.Mesh,
+                                Mentor_Name = client.Entity.Name,
+                                Type = 2
+                            };
                             client.Send(AppInfo);
                         }
                     }
@@ -7146,8 +7119,7 @@ namespace MTA.Network {
                 case Data.UnknownEntity: {
                     #region UnknownEntity
 
-                    GameState pClient = null;
-                    if (Kernel.GamePool.TryGetValue(gData.dwParam, out pClient)) {
+                    if (Kernel.GamePool.TryGetValue(gData.dwParam, out var pClient)) {
                         if (Kernel.GetDistance(pClient.Entity.X, pClient.Entity.Y, client.Entity.X, client.Entity.Y) <=
                             Constants.pScreenDistance && client.Map.ID == pClient.Map.ID) {
                             if (pClient.Guild != null)
@@ -7156,7 +7128,7 @@ namespace MTA.Network {
                                 client.Guild.SendName(pClient);
                             if (pClient.Entity.UID != client.Entity.UID) {
                                 if (pClient.Map.ID == client.Map.ID) {
-                                    if (pClient.Map.BaseID == 700 && pClient.Map.ID != 700) {
+                                    if (pClient.Map is { BaseID: 700, ID: not 700 }) {
                                         if (client.InQualifier()) {
                                             if (pClient.InQualifier()) {
                                                 client.Entity.SendSpawn(pClient);
@@ -7196,8 +7168,7 @@ namespace MTA.Network {
                         }
                     }
                     else {
-                        Entity monster = null;
-                        if (client.Map.Entities.TryGetValue(gData.dwParam, out monster)) {
+                        if (client.Map.Entities.TryGetValue(gData.dwParam, out var monster)) {
                             if (Kernel.GetDistance(monster.X, monster.Y, client.Entity.X, client.Entity.Y) <=
                                 Constants.pScreenDistance) {
                                 monster.SendSpawn(client, false);
@@ -7218,7 +7189,7 @@ namespace MTA.Network {
                 }
                 case Data.CompleteLogin: {
                     LoginMessages(client);
-                    ClientEquip equips = new ClientEquip();
+                    var equips = new ClientEquip();
                     equips.DoEquips(client);
                     client.Send(equips);
                     client.Send(packet);
@@ -7235,7 +7206,7 @@ namespace MTA.Network {
                 case Data.ViewEnemyInfo: {
                     if (client.Enemy.ContainsKey(gData.dwParam)) {
                         if (client.Enemy[gData.dwParam].IsOnline) {
-                            KnownPersonInfo info = new KnownPersonInfo(true);
+                            var info = new KnownPersonInfo(true);
                             info.Fill(client.Enemy[gData.dwParam], true, false);
                             if (client.Enemy[gData.dwParam].Client.Guild != null)
                                 client.Enemy[gData.dwParam].Client.Guild.SendName(client);
@@ -7248,7 +7219,7 @@ namespace MTA.Network {
                 case Data.ViewFriendInfo: {
                     if (client.Friends.ContainsKey(gData.dwParam)) {
                         if (client.Friends[gData.dwParam].IsOnline) {
-                            KnownPersonInfo info = new KnownPersonInfo(true);
+                            var info = new KnownPersonInfo(true);
                             info.Fill(client.Friends[gData.dwParam], false, false);
                             if (client.Friends[gData.dwParam].Client.Guild != null)
                                 client.Friends[gData.dwParam].Client.Guild.SendName(client);
@@ -7261,7 +7232,7 @@ namespace MTA.Network {
                 case Data.ViewPartnerInfo: {
                     if (client.Partners.ContainsKey(gData.dwParam)) {
                         if (client.Partners[gData.dwParam].IsOnline) {
-                            TradePartnerInfo info = new TradePartnerInfo(true);
+                            var info = new TradePartnerInfo(true);
                             info.Fill(client.Partners[gData.dwParam]);
                             if (client.Partners[gData.dwParam].Client.Guild != null)
                                 client.Partners[gData.dwParam].Client.Guild.SendName(client);
@@ -7292,12 +7263,7 @@ namespace MTA.Network {
                 case Data.Away: {
                     //  client.Entity.SetAway(packet[8] == 1);
                     //  client.SendScreen(gData, true);
-                    if (client.Entity.Away == 0) {
-                        client.Entity.Away = 1;
-                    }
-                    else {
-                        client.Entity.Away = 0;
-                    }
+                    client.Entity.Away = client.Entity.Away == 0 ? (byte)1 : (byte)0;
 
                     client.SendScreenSpawn(client.Entity, false);
                     break;
@@ -7328,12 +7294,12 @@ namespace MTA.Network {
                 case Data.DeleteCharacter: {
                     if ((client.WarehousePW == 0 || client.WarehousePW == 0 && gData.dwParam == 0) ||
                         (client.WarehousePW == gData.dwParam)) {
-                        MySqlCommand cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("entities")
+                        var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("entities")
                             .Where("UID", client.Entity.UID); //debug and test!
-                        MySqlReader reader = new MySqlReader(cmd);
+                        var reader = new MySqlReader(cmd);
                         if (!reader.Read()) //wait
                         {
-                            MySqlCommand cmd2 = new MySqlCommand(MySqlCommandType.DELETE);
+                            var cmd2 = new MySqlCommand(MySqlCommandType.DELETE);
                             cmd2.Delete("entities", "Name", client.Entity.Name).Where("UID", client.Entity.UID)
                                 .Execute();
                         }
@@ -7347,10 +7313,9 @@ namespace MTA.Network {
                 }
                 case Data.TeamSearchForMember: {
                     if (client.Team != null) {
-                        GameState Client = null;
                         if (!client.Team.IsTeammate(gData.UID))
                             return;
-                        if (Kernel.GamePool.TryGetValue(gData.UID, out Client)) {
+                        if (Kernel.GamePool.TryGetValue(gData.UID, out var Client)) {
                             gData.wParam1 = Client.Entity.X;
                             gData.wParam2 = Client.Entity.Y;
                             gData.Send(client);
@@ -7367,10 +7332,10 @@ namespace MTA.Network {
         }
 
         public static void PrintPacket(byte[] packet) {
-            ushort Length = BitConverter.ToUInt16(packet, 0);
-            ushort ID = BitConverter.ToUInt16(packet, 2);
+            var Length = BitConverter.ToUInt16(packet, 0);
+            var ID = BitConverter.ToUInt16(packet, 2);
             System.Console.Write("Packet ID : [{0}] , Lenght : [{1}] \n\n", ID, Length);
-            foreach (byte D in packet) {
+            foreach (var D in packet) {
                 System.Console.Write((Convert.ToString(D, 16)).PadLeft(2, '0') + " ");
             }
 
@@ -7378,7 +7343,7 @@ namespace MTA.Network {
         }
 
         public static bool PassLearn(byte ID, Entity Entity) {
-            Boolean Pass = false;
+            var Pass = false;
             uint id = 0;
             uint count = 0;
             switch ((ClassID)ID) {
@@ -7471,7 +7436,7 @@ namespace MTA.Network {
         }
 
         public static bool PassRequeriments(SubClass Sc, Entity Entity) {
-            Boolean Pass = false;
+            var Pass = false;
             byte Level = 0;
             byte Reborns = 0;
 
@@ -7537,10 +7502,11 @@ namespace MTA.Network {
         public static void ChangeAppearance(GameState client, AppearanceType Type) {
             if (client.Entity.Tournament_Signed)
                 return;
-            Data generalData = new Data(true);
-            generalData.UID = client.Entity.UID;
-            generalData.ID = Data.AppearanceType;
-            generalData.dwParam = (uint)Type;
+            var generalData = new Data(true) {
+                UID = client.Entity.UID,
+                ID = Data.AppearanceType,
+                dwParam = (uint)Type
+            };
             client.Entity.Appearance = Type;
             client.SendScreen(generalData);
         }
@@ -7567,11 +7533,12 @@ namespace MTA.Network {
         }
 
         public static bool PassJoinRequirements(GameState client, Guild guild) {
-            GuildCommand cmd = new GuildCommand(true);
-            cmd.Type = GuildCommand.GuildRequirements;
-            cmd.dwParam2 = guild.LevelRequirement;
-            cmd.dwParam3 = guild.RebornRequirement;
-            cmd.dwParam4 = guild.ClassRequirement;
+            var cmd = new GuildCommand(true) {
+                Type = GuildCommand.GuildRequirements,
+                dwParam2 = guild.LevelRequirement,
+                dwParam3 = guild.RebornRequirement,
+                dwParam4 = guild.ClassRequirement
+            };
             if ((client.Entity.Class is >= 10 and <= 15 && !guild.AllowTrojans) ||
                 (client.Entity.Class is >= 20 and <= 25 && !guild.AllowWarriors) ||
                 (client.Entity.Class is >= 40 and <= 45 && !guild.AllowArchers) ||
@@ -7617,7 +7584,7 @@ namespace MTA.Network {
                         client.Send(new Message(
                             "You cannot switch equipment because " +
                             ((Enums.ItemPositionName)eq.Position).ToString().Replace("_", "~") + "'" +
-                            (string)((eq.Position % 20) == ConquerItem.Boots ? "" : "s") +
+                            ((eq.Position % 20) == ConquerItem.Boots ? "" : "s") +
                             " stats are not compatible with you (level or profession).", "SYSTEM", Color.Red,
                             Message.Talk));
                         return false;
@@ -7646,42 +7613,42 @@ namespace MTA.Network {
         }
 
         private static void QueryChi(Chi chi, GameState client) {
-            GameState pClient;
-            if (Kernel.GamePool.TryGetValue(chi.UID, out pClient))
+            if (Kernel.GamePool.TryGetValue(chi.UID, out var pClient))
                 client.Send(new ChiPowers(true).Query(pClient, false));
         }
 
         private static void ShowGenericRanking(GenericRanking ranking, GameState client) {
-            ushort page = ranking.Page;
+            var page = ranking.Page;
             ChiTable.ChiData[] list = null;
             Func<ChiTable.ChiData, int> select = null;
 
             if (ranking.RankingType == GenericRanking.DragonChi) {
                 list = ChiTable.Dragon;
-                select = (chiData) => { return chiData.DragonPoints; };
+                select = (chiData) => chiData.DragonPoints;
             }
             else if (ranking.RankingType == GenericRanking.PhoenixChi) {
                 list = ChiTable.Phoenix;
-                select = (chiData) => { return chiData.PhoenixPoints; };
+                select = (chiData) => chiData.PhoenixPoints;
             }
             else if (ranking.RankingType == GenericRanking.TigerChi) {
                 list = ChiTable.Tiger;
-                select = (chiData) => { return chiData.TigerPoints; };
+                select = (chiData) => chiData.TigerPoints;
             }
             else if (ranking.RankingType == GenericRanking.TurtleChi) {
                 list = ChiTable.Turtle;
-                select = (chiData) => { return chiData.TurtlePoints; };
+                select = (chiData) => chiData.TurtlePoints;
             }
 
             if (list.Length < page * 10) return;
-            uint count = (uint)Math.Min(list.Length - page * 10, 10);
-            var nRanking = new GenericRanking(true, count);
-            nRanking.Mode = GenericRanking.Ranking;
-            nRanking.RankingType = ranking.RankingType;
-            nRanking.Page = page;
-            nRanking.RegisteredCount = (ushort)list.Length;
-            int rank = page * 10;
-            for (int i = rank; i < rank + count; i++) {
+            var count = (uint)Math.Min(list.Length - page * 10, 10);
+            var nRanking = new GenericRanking(true, count) {
+                Mode = GenericRanking.Ranking,
+                RankingType = ranking.RankingType,
+                Page = page,
+                RegisteredCount = (ushort)list.Length
+            };
+            var rank = page * 10;
+            for (var i = rank; i < rank + count; i++) {
                 var current = list[i];
                 nRanking.Append((uint)(i + 1), (uint)select(current), current.UID, current.Name);
             }
@@ -7690,53 +7657,54 @@ namespace MTA.Network {
         }
 
         private static void ShowGenericRanking2(GenericRanking ranking, GameState client) {
-            ushort page = ranking.Page;
+            var page = ranking.Page;
             Flowers[] list = null;
             Func<Flowers, uint> select = null;
 
             if (ranking.RankingType == GenericRanking.RoseFairy) {
                 list = Flowers.RedRousesTop100;
-                select = (flower) => { return flower.RedRoses; };
+                select = (flower) => flower.RedRoses;
             }
             else if (ranking.RankingType == GenericRanking.LilyFairy) {
                 list = Flowers.LiliesTop100;
-                select = (chiData) => { return chiData.Lilies; };
+                select = (chiData) => chiData.Lilies;
             }
             else if (ranking.RankingType == GenericRanking.OrchidFairy) {
                 list = Flowers.OrchidsTop100;
-                select = (chiData) => { return chiData.Orchads; };
+                select = (chiData) => chiData.Orchads;
             }
             else if (ranking.RankingType == GenericRanking.TulipFairy) {
                 list = Flowers.TulipsTop100;
-                select = (chiData) => { return chiData.Tulips; };
+                select = (chiData) => chiData.Tulips;
             }
 
             else if (ranking.RankingType == GenericRanking.KissFairy) {
                 list = Flowers.KissTop100;
-                select = (flower) => { return flower.RedRoses; };
+                select = (flower) => flower.RedRoses;
             }
             else if (ranking.RankingType == GenericRanking.LoveFairy) {
                 list = Flowers.LoveTop100;
-                select = (chiData) => { return chiData.Lilies; };
+                select = (chiData) => chiData.Lilies;
             }
             else if (ranking.RankingType == GenericRanking.TineFairy) {
                 list = Flowers.TineTop100;
-                select = (chiData) => { return chiData.Orchads; };
+                select = (chiData) => chiData.Orchads;
             }
             else if (ranking.RankingType == GenericRanking.JadeFairy) {
                 list = Flowers.JadeTop100;
-                select = (chiData) => { return chiData.Tulips; };
+                select = (chiData) => chiData.Tulips;
             }
 
-            if (list.Length < page * 10) return;
-            uint count = (uint)Math.Min(list.Length - page * 10, 10);
-            var nRanking = new GenericRanking(true, count);
-            nRanking.Mode = GenericRanking.Ranking;
-            nRanking.RankingType = ranking.RankingType;
-            nRanking.Page = page;
-            nRanking.RegisteredCount = (ushort)list.Length;
-            int rank = page * 10;
-            for (int i = rank; i < rank + count; i++) {
+            if (list?.Length < page * 10) return;
+            var count = (uint)Math.Min(list.Length - page * 10, 10);
+            var nRanking = new GenericRanking(true, count) {
+                Mode = GenericRanking.Ranking,
+                RankingType = ranking.RankingType,
+                Page = page,
+                RegisteredCount = (ushort)list.Length
+            };
+            var rank = page * 10;
+            for (var i = rank; i < rank + count; i++) {
                 var current = list[i];
                 nRanking.Append((uint)(i + 1), select(current), current.UID, current.Name);
             }
@@ -7809,7 +7777,7 @@ namespace MTA.Network {
 #if NOTMULTIPLECHIPOWERS
             var attr = strct.Attributes;
             var att = attr[attribute];
-            for (int i = 0; i < attr.Length; i++)
+            for (var i = 0; i < attr.Length; i++)
                 if (i != attribute)
                     if (attr[i].Type == att.Type)
                         return false;
@@ -7894,10 +7862,8 @@ namespace MTA.Network {
                     }
 
                     foreach (var chiData in array) {
-                        if (Kernel.GamePool.ContainsKey(chiData.UID)) {
-                            var pClient = Kernel.GamePool[chiData.UID];
-                            if (pClient == null) continue;
-                            if (pClient.ChiData == null) continue;
+                        if (Kernel.GamePool.TryGetValue(chiData.UID, out var pClient)) {
+                            if (pClient is not { ChiData: not null }) continue;
                             SendRankingQuery(new GenericRanking(true) { Mode = GenericRanking.QueryCount }, pClient,
                                 GenericRanking.Chi + (uint)chi.Mode, pClient.ChiData.SelectRank(chi.Mode),
                                 pClient.ChiData.SelectPoints(chi.Mode));
@@ -7920,7 +7886,7 @@ namespace MTA.Network {
         private static void BuyStrengthChi(Chi chi, GameState client) {
             if (client.Trade.InTrade)
                 return;
-            uint cost = 4000 - client.ChiPoints;
+            var cost = 4000 - client.ChiPoints;
             cost /= 4;
             cost *= 5; //1000 (current cost) * 100 = 100000 cps (million) les??  100k now
             if (client.Entity.ConquerPoints >= cost) //that's it
@@ -7934,15 +7900,14 @@ namespace MTA.Network {
         static void LevelUpSpell(Data generalData, GameState client) {
             if (client.Trade.InTrade)
                 return;
-            ushort spellID = (ushort)generalData.dwParam;
-            ISkill spell = null;
-            if (client.Spells.TryGetValue(spellID, out spell)) {
+            var spellID = (ushort)generalData.dwParam;
+            if (client.Spells.TryGetValue(spellID, out var spell)) {
                 var spellInfo = SpellTable.GetSpell(spellID, client);
                 if (spellInfo != null) {
                     if (spellInfo.CPCost != 0) {
                         uint cpCost = spellInfo.CPCost;
-                        int max = Math.Max((int)spell.Experience, 1);
-                        int percentage = 100 - (int)(max / Math.Max((spellInfo.NeedExperience / 100), 1));
+                        var max = Math.Max((int)spell.Experience, 1);
+                        var percentage = 100 - (int)(max / Math.Max((spellInfo.NeedExperience / 100), 1));
                         cpCost = (uint)(cpCost * percentage / 100);
                         if (client.Entity.ConquerPoints >= cpCost) {
                             client.Entity.ConquerPoints -= cpCost;
@@ -7955,8 +7920,8 @@ namespace MTA.Network {
                     }
                     else {
                         uint cpCost = 5000;
-                        int max = Math.Max((int)spell.Experience, 1);
-                        int percentage = 100 - (int)(max / Math.Max((spellInfo.NeedExperience / 100), 1));
+                        var max = Math.Max((int)spell.Experience, 1);
+                        var percentage = 100 - (int)(max / Math.Max((spellInfo.NeedExperience / 100), 1));
                         cpCost = (uint)(cpCost * percentage / 100);
                         if (client.Entity.ConquerPoints >= cpCost) {
                             client.Entity.ConquerPoints -= cpCost;
@@ -7974,9 +7939,8 @@ namespace MTA.Network {
         static void LevelUpProficiency(Data generalData, GameState client) {
             if (client.Trade.InTrade)
                 return;
-            ushort proficiencyID = (ushort)generalData.dwParam;
-            IProf proficiency = null;
-            if (client.Proficiencies.TryGetValue(proficiencyID, out proficiency)) {
+            var proficiencyID = (ushort)generalData.dwParam;
+            if (client.Proficiencies.TryGetValue(proficiencyID, out var proficiency)) {
                 if (proficiency.Level != 20) {
                     uint cpCost = 0;
 
@@ -8006,9 +7970,9 @@ namespace MTA.Network {
 
                     #endregion
 
-                    uint needExperience = DataHolder.ProficiencyLevelExperience(proficiency.Level);
-                    int max = Math.Max((int)proficiency.Experience, 1);
-                    int percentage = 100 - (int)(max / (needExperience / 100));
+                    var needExperience = DataHolder.ProficiencyLevelExperience(proficiency.Level);
+                    var max = Math.Max((int)proficiency.Experience, 1);
+                    var percentage = 100 - (int)(max / (needExperience / 100));
                     cpCost = (uint)(cpCost * percentage / 100);
                     if (client.Entity.ConquerPoints >= cpCost) {
                         client.Entity.ConquerPoints -= cpCost;
@@ -8028,14 +7992,13 @@ namespace MTA.Network {
         public static void ReincarnationHash(GameState client) {
             if (Kernel.ReincarnatedCharacters.ContainsKey(client.Entity.UID)) {
                 if (client.Entity is { Level: >= 110, Reborn: 2 }) {
-                    ushort stats = 0;
                     uint lev1 = client.Entity.Level;
-                    ReincarnateInfo info = Kernel.ReincarnatedCharacters[client.Entity.UID];
+                    var info = Kernel.ReincarnatedCharacters[client.Entity.UID];
                     client.Entity.Level = info.Level;
                     client.Entity.Experience = info.Experience;
                     Kernel.ReincarnatedCharacters.Remove(info.UID);
                     ReincarnationTable.RemoveReincarnated(client.Entity);
-                    stats = (ushort)(((client.Entity.Level - lev1) * 3) - 3);
+                    var stats = (ushort)(((client.Entity.Level - lev1) * 3) - 3);
                     client.Entity.Atributes += stats;
                 }
             }
@@ -8112,11 +8075,11 @@ namespace MTA.Network {
                             guild,
                             client.Guild
                         ];
-                        GameState Leader = guild.Leader.Client;
+                        var Leader = guild.Leader.Client;
                         Leader.MessageOK = delegate {
-                            Guild Guild1 =
+                            var Guild1 =
                                 Leader.OnMessageBoxEventParams[0] as Guild;
-                            Guild Guild2 =
+                            var Guild2 =
                                 Leader.OnMessageBoxEventParams[1] as Guild;
                             if (Guild1.Ally.Count == 6 || Guild2.Ally.Count == 6)
                                 return;
@@ -8134,9 +8097,9 @@ namespace MTA.Network {
                         guild.Leader.Client.MessageCancel = delegate {
                             try {
                                 if (guild.Leader.Client is { Socket.Alive: true, OnMessageBoxEventParams: not null }) {
-                                    Guild Guild2 =
+                                    var Guild2 =
                                         guild.Leader.Client.OnMessageBoxEventParams[1] as Guild;
-                                    Guild Guild1 =
+                                    var Guild1 =
                                         guild.Leader.Client.OnMessageBoxEventParams[0] as Guild;
 
                                     if (Guild2.Leader.IsOnline) {
@@ -8248,8 +8211,9 @@ namespace MTA.Network {
             if (client.Entity.MaxHitpoints == 0) //if(hp == 0) the client will close
                 return;
             if (client.Entity.MapID == 8892 || client.InQualifier()) {
-                NpcReply reply = new NpcReply(6, "Sorry, All team Systems is forbidden here");
-                reply.OptionID = 255;
+                var reply = new NpcReply(6, "Sorry, All team Systems is forbidden here") {
+                    OptionID = 255
+                };
                 client.Send(reply.ToArray());
                 return;
             }
@@ -8267,9 +8231,7 @@ namespace MTA.Network {
         #endregion
 
         public static bool NulledClient(GameState client) {
-            if (client == null)
-                return true;
-            if (client is { Entity: null })
+            if (client is null or { Entity: null })
                 return true;
 
             return false;
@@ -8295,10 +8257,11 @@ namespace MTA.Network {
                     return;
                 _client = client;
                 ReincarnationTable.NewReincarnated(client.Entity);
-                ReincarnateInfo info = new ReincarnateInfo();
-                info.UID = client.Entity.UID;
-                info.Level = client.Entity.Level;
-                info.Experience = client.Entity.Experience;
+                var info = new ReincarnateInfo {
+                    UID = client.Entity.UID,
+                    Level = client.Entity.Level,
+                    Experience = client.Entity.Experience
+                };
                 Kernel.ReincarnatedCharacters.Add(info.UID, info);
                 client.Entity.FirstRebornClass = client.Entity.SecondRebornClass;
                 client.Entity.SecondRebornClass = client.Entity.Class;
@@ -8323,8 +8286,8 @@ namespace MTA.Network {
 
                 #region RemoveAllSpells
 
-                ISkill[] spells = client.Spells.Values.ToArray();
-                foreach (ISkill spell in spells) {
+                var spells = client.Spells.Values.ToArray();
+                foreach (var spell in spells) {
                     if (!Constants.AvaibleSpells.Contains(spell.ID)) {
                         client.RemoveSpell(spell);
                         SkillTable.DeleteSpell(client, spell.ID);
@@ -8361,8 +8324,7 @@ namespace MTA.Network {
                 #region Arch-Fire
 
                 else if (client.Entity is { FirstRebornClass: 45, SecondRebornClass: 145 }) {
-                    if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 41 ||
-                        client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    if (client.Entity.Class is 11 or 21 or 41 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1000 }); //Thunder
                         client.AddSpell(new Spell(true) { ID = 1001 }); //Fire
@@ -8370,7 +8332,7 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 1195 }); //Meditation
                         client.AddSpell(new Spell(true) { ID = 5002 }); //Poisonous Frankos
                     }
-                    else if (client.Entity.Class == 51 || client.Entity.Class == 61) {
+                    else if (client.Entity.Class is 51 or 61) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1000 }); //Thunder
                         client.AddSpell(new Spell(true) { ID = 1001 }); //Fire
@@ -8395,9 +8357,7 @@ namespace MTA.Network {
                 #region Arch-Tro
 
                 if (client.Entity is { FirstRebornClass: 45, SecondRebornClass: 15 }) {
-                    if (client.Entity.Class == 41 || client.Entity.Class == 132 || client.Entity.Class == 142 ||
-                        client.Entity.Class == 51 || client.Entity.Class == 61 || client.Entity.Class == 71 ||
-                        client.Entity.Class == 81) {
+                    if (client.Entity.Class is 41 or 132 or 142 or 51 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 5002 }); //Poisonous Frankos
                         client.AddSpell(new Spell(true) { ID = 1110 }); //Cyclone
@@ -8424,15 +8384,14 @@ namespace MTA.Network {
                 #region Arch-War
 
                 if (client.Entity is { FirstRebornClass: 45, SecondRebornClass: 25 }) {
-                    if (client.Entity.Class == 142 || client.Entity.Class == 41) {
+                    if (client.Entity.Class is 142 or 41) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 5002 }); //Poisonous Frankos
                         client.AddSpell(new Spell(true) { ID = 1020 }); //Shield
                         client.AddSpell(new Spell(true) { ID = 1040 }); //Roar
                         client.AddSpell(new Spell(true) { ID = 3060 }); //Reflect
                     }
-                    else if (client.Entity.Class == 11 || client.Entity.Class == 51 || client.Entity.Class == 61 ||
-                             client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 11 or 51 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 5002 }); //Poisonous Frankos
                         client.AddSpell(new Spell(true) { ID = 1015 }); //Accuracy
@@ -8475,7 +8434,7 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 1280 }); //WaterElf
                         client.AddSpell(new Spell(true) { ID = 1350 }); //DivineHare
                     }
-                    else if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 61) {
+                    else if (client.Entity.Class is 11 or 21 or 61) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1005 }); //Cure
                         client.AddSpell(new Spell(true) { ID = 1085 }); //StarOfAccuracy
@@ -8540,9 +8499,7 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 6001 }); //ToxicFog
                     }
-                    else if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 132 ||
-                             client.Entity.Class == 142 || client.Entity.Class == 61 || client.Entity.Class == 71 ||
-                             client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 11 or 21 or 132 or 142 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 5002 }); //Poisonous Frankos
                         client.AddSpell(new Spell(true) { ID = 6001 }); //ToxicFog
@@ -8572,9 +8529,7 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 1001 }); //Fire
                         client.AddSpell(new Spell(true) { ID = 1005 }); //Cure
                     }
-                    else if (client.Entity.Class == 11 || client.Entity.Class == 41 || client.Entity.Class == 132 ||
-                             client.Entity.Class == 142 || client.Entity.Class == 51 || client.Entity.Class == 61 ||
-                             client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 11 or 41 or 132 or 142 or 51 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 5002 }); //Poisonous Frankos
                         client.AddSpell(new Spell(true) { ID = 10400 }); //Serenity
@@ -8586,12 +8541,11 @@ namespace MTA.Network {
                 #region Arch-Pirate
 
                 if (client.Entity is { FirstRebornClass: 45, SecondRebornClass: 75 }) {
-                    if (client.Entity.Class == 132 || client.Entity.Class == 142 || client.Entity.Class == 41) {
+                    if (client.Entity.Class is 132 or 142 or 41) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 11070 }); //Gale Bomb
                     }
-                    else if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 51 ||
-                             client.Entity.Class == 61 || client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 11 or 21 or 51 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 11070 }); //Gale Bomb
                         client.AddSpell(new Spell(true) { ID = 5002 }); //Poisonous Frankos
@@ -8603,11 +8557,10 @@ namespace MTA.Network {
                 #region Arch-Brucelee
 
                 if (client.Entity is { FirstRebornClass: 45, SecondRebornClass: 85 }) {
-                    if (client.Entity.Class == 132 || client.Entity.Class == 142 || client.Entity.Class == 41) {
+                    if (client.Entity.Class is 132 or 142 or 41) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     }
-                    else if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 51 ||
-                             client.Entity.Class == 61 || client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 11 or 21 or 51 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 5002 }); //Poisonous Frankos
                     }
@@ -8629,7 +8582,7 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 1270 }); //Robot
                         client.AddSpell(new Spell(true) { ID = 5000 }); //Freezing Frankos
                     }
-                    else if (client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1190 }); //SpiritHealing
                         client.AddSpell(new Spell(true) { ID = 1110 }); //Cyclone
@@ -8649,8 +8602,7 @@ namespace MTA.Network {
                 #region Tro-Fire
 
                 if (client.Entity is { FirstRebornClass: 15, SecondRebornClass: 145 }) {
-                    if (client.Entity.Class == 41 || client.Entity.Class == 51 || client.Entity.Class == 61 ||
-                        client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    if (client.Entity.Class is 41 or 51 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1190 }); //SpiritHealing
                         client.AddSpell(new Spell(true) { ID = 1110 }); //Cyclone
@@ -8660,7 +8612,7 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 1005 }); //Cure
                         client.AddSpell(new Spell(true) { ID = 1195 }); //Meditation
                     }
-                    else if (client.Entity.Class == 11 || client.Entity.Class == 21) {
+                    else if (client.Entity.Class is 11 or 21) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1270 }); //Robot
                         client.AddSpell(new Spell(true) { ID = 1000 }); //Thunder
@@ -8689,8 +8641,7 @@ namespace MTA.Network {
                 #region Tro-Tro
 
                 if (client.Entity is { FirstRebornClass: 15, SecondRebornClass: 15 }) {
-                    if (client.Entity.Class == 41 || client.Entity.Class == 51 || client.Entity.Class == 61 ||
-                        client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    if (client.Entity.Class is 41 or 51 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1190 }); //SpiritHealing
                         client.AddSpell(new Spell(true) { ID = 1110 }); //Cyclone
@@ -8731,7 +8682,7 @@ namespace MTA.Network {
                 #region Tro-War
 
                 if (client.Entity is { FirstRebornClass: 15, SecondRebornClass: 25 }) {
-                    if (client.Entity.Class == 41 || client.Entity.Class == 142) {
+                    if (client.Entity.Class is 41 or 142) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1110 }); //Cyclone
                         client.AddSpell(new Spell(true) { ID = 1190 }); //SpiritHealing
@@ -8741,8 +8692,7 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 1270 }); //Robot
                         client.AddSpell(new Spell(true) { ID = 3060 }); //Reflect
                     }
-                    else if (client.Entity.Class == 11 || client.Entity.Class == 51 || client.Entity.Class == 61 ||
-                             client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 11 or 51 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1110 }); //Cyclone
                         client.AddSpell(new Spell(true) { ID = 1190 }); //SpiritHealing
@@ -8807,8 +8757,7 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 1090 }); //MagicShield
                         client.AddSpell(new Spell(true) { ID = 1085 }); //StarOfAccuracy
                     }
-                    else if (client.Entity.Class == 21 || client.Entity.Class == 51 || client.Entity.Class == 71 ||
-                             client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 21 or 51 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1110 }); //Cyclone
                         client.AddSpell(new Spell(true) { ID = 1190 }); //SpiritHealing
@@ -8920,9 +8869,7 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 5002 }); //Poisonous Frankos
                     }
-                    else if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 142 ||
-                             client.Entity.Class == 132 || client.Entity.Class == 61 || client.Entity.Class == 71 ||
-                             client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 11 or 21 or 142 or 132 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 6001 }); //Toxic Fog
                         client.AddSpell(new Spell(true) { ID = 5002 }); //Poisonous Frankos
@@ -8935,9 +8882,7 @@ namespace MTA.Network {
 
                 {
                     if (client.Entity is { FirstRebornClass: 55, SecondRebornClass: 145 }) {
-                        if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 41 ||
-                            client.Entity.Class == 51 || client.Entity.Class == 61 || client.Entity.Class == 71 ||
-                            client.Entity.Class == 81) {
+                        if (client.Entity.Class is 11 or 21 or 41 or 51 or 61 or 71 or 81) {
                             client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                             client.AddSpell(new Spell(true) { ID = 6001 }); //Toxic Fog
                             client.AddSpell(new Spell(true) { ID = 1000 }); //Thunder
@@ -8964,9 +8909,7 @@ namespace MTA.Network {
                 #region Nin-Tro
 
                 if (client.Entity is { FirstRebornClass: 55, SecondRebornClass: 15 }) {
-                    if (client.Entity.Class == 41 || client.Entity.Class == 51 || client.Entity.Class == 132 ||
-                        client.Entity.Class == 142 || client.Entity.Class == 61 || client.Entity.Class == 71 ||
-                        client.Entity.Class == 81) {
+                    if (client.Entity.Class is 41 or 51 or 132 or 142 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1110 }); //Cyclone
                         client.AddSpell(new Spell(true) { ID = 1190 }); //SpiritHealing
@@ -8992,15 +8935,14 @@ namespace MTA.Network {
                 #region Nin-War
 
                 if (client.Entity is { FirstRebornClass: 55, SecondRebornClass: 25 }) {
-                    if (client.Entity.Class == 41 || client.Entity.Class == 142) {
+                    if (client.Entity.Class is 41 or 142) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 6001 }); //Toxic Fog
                         client.AddSpell(new Spell(true) { ID = 1020 }); //Shield
                         client.AddSpell(new Spell(true) { ID = 3060 }); //Reflect
                         client.AddSpell(new Spell(true) { ID = 1040 }); //Roar
                     }
-                    else if (client.Entity.Class == 11 || client.Entity.Class == 51 || client.Entity.Class == 61 ||
-                             client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 11 or 51 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 6001 }); //Toxic Fog
                         client.AddSpell(new Spell(true) { ID = 1015 }); //Accuracy
@@ -9045,8 +8987,7 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 1075 }); //Invisibility
                         client.AddSpell(new Spell(true) { ID = 1055 }); //HealingRain
                     }
-                    else if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 51 ||
-                             client.Entity.Class == 61 || client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 11 or 21 or 51 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 6001 }); //Toxic Fog
                         client.AddSpell(new Spell(true) { ID = 1005 }); //Cure
@@ -9134,8 +9075,7 @@ namespace MTA.Network {
                 #region Fire-Fire
 
                 if (client.Entity is { FirstRebornClass: 145, SecondRebornClass: 145 }) {
-                    if (client.Entity.Class == 41 || client.Entity.Class == 11 || client.Entity.Class == 51 ||
-                        client.Entity.Class == 21 || client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    if (client.Entity.Class is 41 or 11 or 51 or 21 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 3080 }); //Dodge
                         client.AddSpell(new Spell(true) { ID = 1000 }); //
@@ -9165,8 +9105,7 @@ namespace MTA.Network {
                 #region Fire-Tro
 
                 if (client.Entity is { FirstRebornClass: 145, SecondRebornClass: 15 }) {
-                    if (client.Entity.Class == 41 || client.Entity.Class == 142 || client.Entity.Class == 132 ||
-                        client.Entity.Class == 51 || client.Entity.Class == 61) {
+                    if (client.Entity.Class is 41 or 142 or 132 or 51 or 61) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1000 }); //
                         client.AddSpell(new Spell(true) { ID = 1001 }); //
@@ -9176,7 +9115,7 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 1110 }); //
                         client.AddSpell(new Spell(true) { ID = 1190 }); //
                     }
-                    else if (client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1000 }); //
                         client.AddSpell(new Spell(true) { ID = 1001 }); //
@@ -9226,8 +9165,7 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 1040 }); //
                         client.AddSpell(new Spell(true) { ID = 3060 }); //
                     }
-                    else if (client.Entity.Class == 11 || client.Entity.Class == 51 || client.Entity.Class == 61 ||
-                             client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 11 or 51 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1000 }); //
                         client.AddSpell(new Spell(true) { ID = 1001 }); //
@@ -9279,7 +9217,7 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 1175 }); //
                         client.AddSpell(new Spell(true) { ID = 1075 }); //Invisibility
                     }
-                    else if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 51) {
+                    else if (client.Entity.Class is 11 or 21 or 51) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1005 }); //
                         client.AddSpell(new Spell(true) { ID = 1085 }); //
@@ -9292,7 +9230,7 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 3090 }); //
                         client.AddSpell(new Spell(true) { ID = 1120 }); //
                     }
-                    else if (client.Entity.Class == 61 || client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1005 }); //
                         client.AddSpell(new Spell(true) { ID = 1085 }); //
@@ -9309,8 +9247,7 @@ namespace MTA.Network {
                 #region Fire-Nin
 
                 if (client.Entity is { FirstRebornClass: 145, SecondRebornClass: 55 }) {
-                    if (client.Entity.Class == 51 || client.Entity.Class == 61 || client.Entity.Class == 71 ||
-                        client.Entity.Class == 81) {
+                    if (client.Entity.Class is 51 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 3080 }); //
                         client.AddSpell(new Spell(true) { ID = 6001 }); //
@@ -9334,8 +9271,7 @@ namespace MTA.Network {
                 #region Fire-Monk
 
                 if (client.Entity is { FirstRebornClass: 145, SecondRebornClass: 65 }) {
-                    if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 41 ||
-                        client.Entity.Class == 132 || client.Entity.Class == 142) {
+                    if (client.Entity.Class is 11 or 21 or 41 or 132 or 142) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1000 }); //Thunder
                         client.AddSpell(new Spell(true) { ID = 1000 }); //Fire
@@ -9343,8 +9279,7 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 1195 }); //Meditation
                         client.AddSpell(new Spell(true) { ID = 10400 }); //Serenity
                     }
-                    else if (client.Entity.Class == 51 || client.Entity.Class == 61 || client.Entity.Class == 71 ||
-                             client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 51 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1000 }); //Thunder
                         client.AddSpell(new Spell(true) { ID = 1000 }); //Fire
@@ -9393,14 +9328,13 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 5000 }); //Freezing Frankos
                     }
-                    else if (client.Entity.Class == 132 || client.Entity.Class == 142) {
+                    else if (client.Entity.Class is 132 or 142) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1020 });
                         client.AddSpell(new Spell(true) { ID = 1040 });
                         client.AddSpell(new Spell(true) { ID = 5002 }); //Poisonous Frankos
                     }
-                    else if (client.Entity.Class == 11 || client.Entity.Class == 51 || client.Entity.Class == 61 ||
-                             client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 11 or 51 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1040 });
                         client.AddSpell(new Spell(true) { ID = 5002 });
@@ -9431,8 +9365,7 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 1040 });
                         client.AddSpell(new Spell(true) { ID = 3080 });
                     }
-                    else if (client.Entity.Class == 11 || client.Entity.Class == 51 || client.Entity.Class == 61 ||
-                             client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 11 or 51 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1040 });
                         client.AddSpell(new Spell(true) { ID = 1000 });
@@ -9460,9 +9393,7 @@ namespace MTA.Network {
                 #region War-Tro
 
                 if (client.Entity is { FirstRebornClass: 25, SecondRebornClass: 15 }) {
-                    if (client.Entity.Class == 41 || client.Entity.Class == 142 || client.Entity.Class == 132 ||
-                        client.Entity.Class == 51 || client.Entity.Class == 61 || client.Entity.Class == 71 ||
-                        client.Entity.Class == 81) {
+                    if (client.Entity.Class is 41 or 142 or 132 or 51 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1320 });
                         client.AddSpell(new Spell(true) { ID = 1040 });
@@ -9490,14 +9421,13 @@ namespace MTA.Network {
                 #region War-War
 
                 if (client.Entity is { FirstRebornClass: 25, SecondRebornClass: 25 }) {
-                    if (client.Entity.Class == 41 || client.Entity.Class == 142) {
+                    if (client.Entity.Class is 41 or 142) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1040 });
                         client.AddSpell(new Spell(true) { ID = 1320 });
                         client.AddSpell(new Spell(true) { ID = 3060 });
                     }
-                    else if (client.Entity.Class == 11 || client.Entity.Class == 51 || client.Entity.Class == 61 ||
-                             client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 11 or 51 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1040 });
                         client.AddSpell(new Spell(true) { ID = 1020 });
@@ -9578,7 +9508,7 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 1280 });
                         client.AddSpell(new Spell(true) { ID = 1350 });
                     }
-                    else if (client.Entity.Class == 51 || client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 51 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1005 });
                         client.AddSpell(new Spell(true) { ID = 1040 });
@@ -9623,9 +9553,7 @@ namespace MTA.Network {
                 #region War-Monk
 
                 if (client.Entity is { FirstRebornClass: 25, SecondRebornClass: 65 }) {
-                    if (client.Entity.Class == 21 || client.Entity.Class == 41 || client.Entity.Class == 51 ||
-                        client.Entity.Class == 61 || client.Entity.Class == 142 || client.Entity.Class == 71 ||
-                        client.Entity.Class == 81) {
+                    if (client.Entity.Class is 21 or 41 or 51 or 61 or 142 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1040 }); //Roar
                         client.AddSpell(new Spell(true) { ID = 1320 }); //FlyingMoon
@@ -9701,7 +9629,7 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 1350 }); //DivineHare
                         client.AddSpell(new Spell(true) { ID = 1280 }); //Water Elf
                     }
-                    else if (client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1005 });
                         client.AddSpell(new Spell(true) { ID = 1075 }); //Invisibility
@@ -9731,7 +9659,7 @@ namespace MTA.Network {
 
                 if (client.Entity is { FirstRebornClass: 135, SecondRebornClass: 145 }) {
                     if (client.Entity.Class == 11 || client.Entity.Class == 21 | client.Entity.Class == 41 ||
-                        client.Entity.Class == 51 || client.Entity.Class == 71 || client.Entity.Class == 81) {
+                        client.Entity.Class is 51 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1050 });
                         client.AddSpell(new Spell(true) { ID = 1175 });
@@ -9778,8 +9706,7 @@ namespace MTA.Network {
                 #region Water-Tro
 
                 if (client.Entity is { FirstRebornClass: 135, SecondRebornClass: 15 }) {
-                    if (client.Entity.Class == 41 || client.Entity.Class == 142 || client.Entity.Class == 132 ||
-                        client.Entity.Class == 51) {
+                    if (client.Entity.Class is 41 or 142 or 132 or 51) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1005 }); //Cure
                         client.AddSpell(new Spell(true) { ID = 1085 }); //StarOfAccuracy
@@ -9803,7 +9730,7 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 1350 }); //DivineHare
                         client.AddSpell(new Spell(true) { ID = 1280 }); //Water Elf
                     }
-                    else if (client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1005 }); //Cure
                         client.AddSpell(new Spell(true) { ID = 1085 }); //StarOfAccuracy
@@ -9865,8 +9792,7 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 1040 }); //
                         client.AddSpell(new Spell(true) { ID = 3060 }); //
                     }
-                    else if (client.Entity.Class == 11 || client.Entity.Class == 51 || client.Entity.Class == 71 ||
-                             client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 11 or 51 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1005 }); //
                         client.AddSpell(new Spell(true) { ID = 1085 }); //
@@ -9920,8 +9846,7 @@ namespace MTA.Network {
                 #region Water-Water
 
                 if (client.Entity is { FirstRebornClass: 135, SecondRebornClass: 135 }) {
-                    if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 41 ||
-                        client.Entity.Class == 51 || client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    if (client.Entity.Class is 11 or 21 or 41 or 51 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1005 }); //
                         client.AddSpell(new Spell(true) { ID = 1085 }); //
@@ -10031,7 +9956,7 @@ namespace MTA.Network {
 
                 if (client.Entity is { FirstRebornClass: 65, SecondRebornClass: 145 }) {
                     if (client.Entity.Class == 11 || client.Entity.Class == 21 | client.Entity.Class == 41 ||
-                        client.Entity.Class == 61 || client.Entity.Class == 71 || client.Entity.Class == 81) {
+                        client.Entity.Class is 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1000 }); //Thunder
                         client.AddSpell(new Spell(true) { ID = 1001 }); //Fire
@@ -10076,15 +10001,14 @@ namespace MTA.Network {
                 #region Monk-War
 
                 if (client.Entity is { FirstRebornClass: 65, SecondRebornClass: 25 }) {
-                    if (client.Entity.Class == 41 || client.Entity.Class == 142) {
+                    if (client.Entity.Class is 41 or 142) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 10400 }); //Serenity
                         client.AddSpell(new Spell(true) { ID = 1020 }); //Shield
                         client.AddSpell(new Spell(true) { ID = 1040 }); //Roar
                         client.AddSpell(new Spell(true) { ID = 3060 }); //Reflect
                     }
-                    else if (client.Entity.Class == 11 || client.Entity.Class == 51 || client.Entity.Class == 61 ||
-                             client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 11 or 51 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 10400 }); //Serenity
                         client.AddSpell(new Spell(true) { ID = 1020 }); //Shield
@@ -10113,8 +10037,7 @@ namespace MTA.Network {
                 #region Monk-Water
 
                 if (client.Entity is { FirstRebornClass: 65, SecondRebornClass: 135 }) {
-                    if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 41 ||
-                        client.Entity.Class == 51 || client.Entity.Class == 61) {
+                    if (client.Entity.Class is 11 or 21 or 41 or 51 or 61) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 10400 }); //Serenity
                         client.AddSpell(new Spell(true) { ID = 1020 }); //Shield
@@ -10140,7 +10063,7 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 1050 }); //XP Revive
                         client.AddSpell(new Spell(true) { ID = 1350 }); //Divine Hare
                     }
-                    else if (client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 10400 }); //Serenity
                         client.AddSpell(new Spell(true) { ID = 1020 }); //Shield
@@ -10162,9 +10085,7 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 6002 }); //PoisonStar
                         client.AddSpell(new Spell(true) { ID = 6001 }); //Toxic Fog
                     }
-                    else if (client.Entity.Class == 11 || client.Entity.Class == 132 || client.Entity.Class == 21 ||
-                             client.Entity.Class == 41 || client.Entity.Class == 61 || client.Entity.Class == 142 ||
-                             client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 11 or 132 or 21 or 41 or 61 or 142 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 10400 }); //Serenity
                         client.AddSpell(new Spell(true) { ID = 6001 }); //Toxic Fog
@@ -10176,9 +10097,7 @@ namespace MTA.Network {
                 #region Monk-Monk
 
                 if (client.Entity is { FirstRebornClass: 65, SecondRebornClass: 65 }) {
-                    if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 41 ||
-                        client.Entity.Class == 51 || client.Entity.Class == 132 || client.Entity.Class == 142 ||
-                        client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    if (client.Entity.Class is 11 or 21 or 41 or 51 or 132 or 142 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 10400 }); //Serenity
                     }
@@ -10228,8 +10147,7 @@ namespace MTA.Network {
 
                 if (client.Entity is { FirstRebornClass: 75, SecondRebornClass: 145 }) {
                     if (client.Entity.Class == 11 || client.Entity.Class == 21 | client.Entity.Class == 41 ||
-                        client.Entity.Class == 61 || client.Entity.Class == 71 || client.Entity.Class == 51 ||
-                        client.Entity.Class == 81) {
+                        client.Entity.Class is 61 or 71 or 51 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1000 }); //Thunder
                         client.AddSpell(new Spell(true) { ID = 1001 }); //Fire
@@ -10265,15 +10183,14 @@ namespace MTA.Network {
                 #region Pirate-War
 
                 if (client.Entity is { FirstRebornClass: 75, SecondRebornClass: 25 }) {
-                    if (client.Entity.Class == 41 || client.Entity.Class == 142) {
+                    if (client.Entity.Class is 41 or 142) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 11070 }); //Gale Bomb
                         client.AddSpell(new Spell(true) { ID = 1020 }); //Shield
                         client.AddSpell(new Spell(true) { ID = 1040 }); //Roar
                         client.AddSpell(new Spell(true) { ID = 3060 }); //Reflect
                     }
-                    else if (client.Entity.Class == 11 || client.Entity.Class == 51 || client.Entity.Class == 61 ||
-                             client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 11 or 51 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 11070 }); //Gale Bomb
                         client.AddSpell(new Spell(true) { ID = 1020 }); //Shield
@@ -10302,9 +10219,7 @@ namespace MTA.Network {
                 #region Pirate-Water
 
                 if (client.Entity is { FirstRebornClass: 75, SecondRebornClass: 135 }) {
-                    if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 41 ||
-                        client.Entity.Class == 51 || client.Entity.Class == 61 || client.Entity.Class == 71 ||
-                        client.Entity.Class == 81) {
+                    if (client.Entity.Class is 11 or 21 or 41 or 51 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 11070 }); //Gale Bomb
                         client.AddSpell(new Spell(true) { ID = 1020 }); //Shield
@@ -10342,9 +10257,7 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 11070 }); //Gale Bomb
                         client.AddSpell(new Spell(true) { ID = 6002 }); //PoisonStar
                     }
-                    else if (client.Entity.Class == 11 || client.Entity.Class == 132 || client.Entity.Class == 21 ||
-                             client.Entity.Class == 41 || client.Entity.Class == 51 || client.Entity.Class == 61 ||
-                             client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 11 or 132 or 21 or 41 or 51 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 11070 }); //Gale Bomb
                         client.AddSpell(new Spell(true) { ID = 6001 }); //Toxic Fog
@@ -10356,8 +10269,7 @@ namespace MTA.Network {
                 #region Pirate-Monk
 
                 if (client.Entity is { FirstRebornClass: 75, SecondRebornClass: 65 }) {
-                    if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 41 ||
-                        client.Entity.Class == 51 || client.Entity.Class == 132 || client.Entity.Class == 142) {
+                    if (client.Entity.Class is 11 or 21 or 41 or 51 or 132 or 142) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 11070 }); //Gale Bomb
                     }
@@ -10366,7 +10278,7 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 10405 }); //soulshackle
                         client.AddSpell(new Spell(true) { ID = 10400 }); //Serenity
                     }
-                    else if (client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 11070 }); //Gale Bomb
                         client.AddSpell(new Spell(true) { ID = 10400 }); //Serenity
@@ -10378,9 +10290,7 @@ namespace MTA.Network {
                 #region Pirate-Pirate
 
                 if (client.Entity is { FirstRebornClass: 75, SecondRebornClass: 75 }) {
-                    if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 41 ||
-                        client.Entity.Class == 51 || client.Entity.Class == 132 || client.Entity.Class == 142 ||
-                        client.Entity.Class == 61 || client.Entity.Class == 81) {
+                    if (client.Entity.Class is 11 or 21 or 41 or 51 or 132 or 142 or 61 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 11070 }); //Gale Bomb
                     }
@@ -10395,13 +10305,12 @@ namespace MTA.Network {
 
                 #region Pirate-Brucelee
 
-                if (client.Entity is { FirstRebornClass: 75, SecondRebornClass: 85 }) {
-                    if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 41 ||
-                        client.Entity.Class == 51 || client.Entity.Class == 132 || client.Entity.Class == 142 ||
-                        client.Entity.Class == 61 || client.Entity.Class == 71) {
-                        client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
-                        client.AddSpell(new Spell(true) { ID = 11070 }); //Gale Bomb
-                    }
+                if (client.Entity is {
+                        FirstRebornClass: 75, SecondRebornClass: 85,
+                        Class: 11 or 21 or 41 or 51 or 132 or 142 or 61 or 71
+                    }) {
+                    client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
+                    client.AddSpell(new Spell(true) { ID = 11070 }); //Gale Bomb
                 }
 
                 #endregion
@@ -10423,8 +10332,7 @@ namespace MTA.Network {
 
                 if (client.Entity is { FirstRebornClass: 85, SecondRebornClass: 145 }) {
                     if (client.Entity.Class == 11 || client.Entity.Class == 21 | client.Entity.Class == 41 ||
-                        client.Entity.Class == 61 || client.Entity.Class == 71 || client.Entity.Class == 51 ||
-                        client.Entity.Class == 81) {
+                        client.Entity.Class is 61 or 71 or 51 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1000 }); //Thunder
                         client.AddSpell(new Spell(true) { ID = 1001 }); //Fire
@@ -10456,14 +10364,13 @@ namespace MTA.Network {
                 #region Pirate-War
 
                 if (client.Entity is { FirstRebornClass: 85, SecondRebornClass: 25 }) {
-                    if (client.Entity.Class == 41 || client.Entity.Class == 142) {
+                    if (client.Entity.Class is 41 or 142) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1020 }); //Shield
                         client.AddSpell(new Spell(true) { ID = 1040 }); //Roar
                         client.AddSpell(new Spell(true) { ID = 3060 }); //Reflect
                     }
-                    else if (client.Entity.Class == 11 || client.Entity.Class == 51 || client.Entity.Class == 61 ||
-                             client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 11 or 51 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1020 }); //Shield
                         client.AddSpell(new Spell(true) { ID = 1040 }); //Roar
@@ -10489,9 +10396,7 @@ namespace MTA.Network {
                 #region Brucelee-Water
 
                 if (client.Entity is { FirstRebornClass: 85, SecondRebornClass: 135 }) {
-                    if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 41 ||
-                        client.Entity.Class == 51 || client.Entity.Class == 61 || client.Entity.Class == 71 ||
-                        client.Entity.Class == 81) {
+                    if (client.Entity.Class is 11 or 21 or 41 or 51 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 1020 }); //Shield
                         client.AddSpell(new Spell(true) { ID = 1040 }); //Roar
@@ -10525,9 +10430,7 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 6002 }); //PoisonStar
                     }
-                    else if (client.Entity.Class == 11 || client.Entity.Class == 132 || client.Entity.Class == 21 ||
-                             client.Entity.Class == 41 || client.Entity.Class == 51 || client.Entity.Class == 61 ||
-                             client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 11 or 132 or 21 or 41 or 51 or 61 or 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 6001 }); //Toxic Fog
                     }
@@ -10538,8 +10441,7 @@ namespace MTA.Network {
                 #region Brucelee-Monk
 
                 if (client.Entity is { FirstRebornClass: 85, SecondRebornClass: 65 }) {
-                    if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 41 ||
-                        client.Entity.Class == 51 || client.Entity.Class == 132 || client.Entity.Class == 142) {
+                    if (client.Entity.Class is 11 or 21 or 41 or 51 or 132 or 142) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     }
                     else if (client.Entity.Class == 61) {
@@ -10547,7 +10449,7 @@ namespace MTA.Network {
                         client.AddSpell(new Spell(true) { ID = 10405 }); //soulshackle
                         client.AddSpell(new Spell(true) { ID = 10400 }); //Serenity
                     }
-                    else if (client.Entity.Class == 71 || client.Entity.Class == 81) {
+                    else if (client.Entity.Class is 71 or 81) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                         client.AddSpell(new Spell(true) { ID = 10400 }); //Serenity
                     }
@@ -10567,9 +10469,7 @@ namespace MTA.Network {
                 #region Brucelee-Brucelee
 
                 if (client.Entity is { FirstRebornClass: 85, SecondRebornClass: 85 }) {
-                    if (client.Entity.Class == 11 || client.Entity.Class == 21 || client.Entity.Class == 41 ||
-                        client.Entity.Class == 51 || client.Entity.Class == 132 || client.Entity.Class == 142 ||
-                        client.Entity.Class == 61 || client.Entity.Class == 71) {
+                    if (client.Entity.Class is 11 or 21 or 41 or 51 or 132 or 142 or 61 or 71) {
                         client.AddSpell(new Spell(true) { ID = 9876 }); //Bless
                     }
                     else if (client.Entity.Class == 81) {
@@ -10588,11 +10488,11 @@ namespace MTA.Network {
 
                 for (byte i = 1; i < 9; i++) {
                     if (i != 7) {
-                        ConquerItem item = client.Equipment.TryGetItem(i);
-                        if (item != null && item.ID != 0) {
+                        var item = client.Equipment.TryGetItem(i);
+                        if (item is { ID: not 0 }) {
                             try {
                                 //client.UnloadItemStats(item, false);
-                                ConquerItemInformation cii = new ConquerItemInformation(item.ID, item.Plus);
+                                var cii = new ConquerItemInformation(item.ID, item.Plus);
                                 item.ID = cii.LowestID(ItemMinLevel(ItemPosition(item.ID)));
                                 item.Mode = Enums.ItemMode.Update;
                                 item.Send(client);
@@ -10606,13 +10506,13 @@ namespace MTA.Network {
                     }
                 }
 
-                ConquerItem hand = client.Equipment.TryGetItem(5);
+                var hand = client.Equipment.TryGetItem(5);
                 if (hand != null) {
                     if (!client.Equipment.Remove(5)) {
                         if (client.Warehouses[Game.ConquerStructures.Warehouse.WarehouseID.Market].Count < 20)
                             client.Warehouses[Game.ConquerStructures.Warehouse.WarehouseID.Market].Add(hand);
                         ConquerItemTable.UpdatePosition(hand);
-                        ClientEquip equips = new ClientEquip();
+                        var equips = new ClientEquip();
                         equips.DoEquips(client);
                         client.Send(equips);
                     }
@@ -10627,7 +10527,7 @@ namespace MTA.Network {
                         if (client.Warehouses[Game.ConquerStructures.Warehouse.WarehouseID.Market].Count < 20)
                             client.Warehouses[Game.ConquerStructures.Warehouse.WarehouseID.Market].Add(hand);
                         ConquerItemTable.UpdatePosition(hand);
-                        ClientEquip equips = new ClientEquip();
+                        var equips = new ClientEquip();
                         equips.DoEquips(client);
                         client.Send(equips);
                     }
@@ -10655,7 +10555,7 @@ namespace MTA.Network {
         #region Guild Arsenal
 
         public static int ArsenalPosition(uint ID) {
-            ushort pos = ItemPosition(ID);
+            var pos = ItemPosition(ID);
             switch (pos) {
                 case ConquerItem.Head:
                     return 0;
@@ -10684,13 +10584,14 @@ namespace MTA.Network {
             if (client.Guild.Arsenals.Length < view.ArsenalType) return;
             var Arsenal = client.Guild.Arsenals[view.ArsenalType];
             if (Arsenal.Unlocked) {
-                uint beginAt = view.BeginAt - 1;
-                uint length = (uint)Arsenal.OrderedList.Count;
+                var beginAt = view.BeginAt - 1;
+                var length = (uint)Arsenal.OrderedList.Count;
                 length -= beginAt;
                 length = Math.Min(length, 8);
-                view = new ArsenalView(true, length);
-                view.BeginAt = beginAt + 1;
-                for (int i = (int)beginAt; i < beginAt + length; i++)
+                view = new ArsenalView(true, length) {
+                    BeginAt = beginAt + 1
+                };
+                for (var i = (int)beginAt; i < beginAt + length; i++)
                     view.AppendItem(Arsenal.OrderedList[i]);
                 view.EndAt = length + view.BeginAt - 1;
                 view.ArsenalType = (uint)(Arsenal.Position - 1);
@@ -10705,9 +10606,8 @@ namespace MTA.Network {
         }
 
         static void InscribeArsenalItem(ArsenalCommand command, GameState client) {
-            ConquerItem item = null;
-            if (client.Inventory.TryGetItem(command.dwParam2, out item)) {
-                int arsenalRealPosition = ArsenalPosition(item.ID);
+            if (client.Inventory.TryGetItem(command.dwParam2, out var item)) {
+                var arsenalRealPosition = ArsenalPosition(item.ID);
                 if ((item.ID % 10) >= 8 && arsenalRealPosition == command.dwParam && !item.Inscribed) {
                     if (client.Entity.GuildID != 0 && client.Guild != null &&
                         client.Guild.Arsenals[command.dwParam].Unlocked) {
@@ -10729,12 +10629,10 @@ namespace MTA.Network {
                     if (Arsenal.ItemDictionary.ContainsKey(command.dwParam2)) {
                         var item = Arsenal.ItemDictionary[command.dwParam2];
                         if (item.OwnerUID == client.Entity.UID) {
-                            ConquerItem Item = null;
-
                             #region Find the item
 
-                            if (!client.Inventory.TryGetItem(item.UID, out Item)) {
-                                bool found = false;
+                            if (!client.Inventory.TryGetItem(item.UID, out var Item)) {
+                                var found = false;
                                 foreach (var eqItem in client.Equipment.Objects)
                                     if (eqItem != null)
                                         if (eqItem.UID == item.UID) {
@@ -10783,7 +10681,7 @@ namespace MTA.Network {
                 return;
             }
 
-            uint cost = Guild.GetCurrentArsenalCost();
+            var cost = Guild.GetCurrentArsenalCost();
             if (Guild.SilverFund >= cost) {
                 Guild.SilverFund -= cost;
                 Guild.Arsenals[command.dwParam].Unlocked = true;
@@ -10801,9 +10699,10 @@ namespace MTA.Network {
         static void ViewGuildArsenal(GameState client) {
             if (client.Entity.GuildID == 0) return;
             if (client.Guild == null) return;
-            ArsenalTab view = new ArsenalTab(true);
-            view.SharedBattlepower = (uint)client.Guild.GetMaxSharedBattlepower();
-            view.ArsenalCount = 8;
+            var view = new ArsenalTab(true) {
+                SharedBattlepower = (uint)client.Guild.GetMaxSharedBattlepower(),
+                ArsenalCount = 8
+            };
             foreach (var arsenal in client.Guild.Arsenals)
                 view.AppendArsenal(arsenal);
             view.HeroDonation = client.GetArsenalDonation();
@@ -10813,7 +10712,7 @@ namespace MTA.Network {
 
         public static void UninscribeItem(ConquerItem item, GameState client) {
             if (client.Entity.GuildID == 0 || client.Guild == null) return;
-            int arsenalPosition = ArsenalPosition(item.ID);
+            var arsenalPosition = ArsenalPosition(item.ID);
             client.Guild.Arsenals[arsenalPosition].RemoveItem(item, client);
             item.Inscribed = false;
             item.Mode = Enums.ItemMode.Update;
@@ -10844,7 +10743,7 @@ namespace MTA.Network {
             var arsenal = guild.Arsenals[command.dwParam];
             if (!arsenal.Unlocked) return;
             if (arsenal.SharedBattlePower == 3) return;
-            uint cost = 20000000 + command.dwParam3 * 40000000;
+            var cost = 20000000 + command.dwParam3 * 40000000;
             if (guild.SilverFund >= cost) {
                 guild.SilverFund -= cost;
                 arsenal.Enhancement = command.dwParam3;
@@ -10861,20 +10760,20 @@ namespace MTA.Network {
         #region Broadcast
 
         public static void BroadcastInfoAwaiting(Broadcast broadcast, GameState client) {
-            byte[] buffer = new byte[500];
+            var buffer = new byte[500];
             Writer.WriteUInt16(2051, 2, buffer);
-            int test = 0;
+            var test = 0;
             ushort total = 0;
             if (broadcast.dwParam * 10 + 10 >= Constants.MaxBroadcasts)
                 test = Constants.MaxBroadcasts;
             else
                 test = (int)broadcast.dwParam * 10 + 10;
-            for (uint i = broadcast.dwParam * 10; i < test; i++) {
+            for (var i = broadcast.dwParam * 10; i < test; i++) {
                 if (Game.ConquerStructures.Broadcast.Broadcasts.Count > i) {
                     var Broadcast = Game.ConquerStructures.Broadcast.Broadcasts[(int)i];
                     Writer.WriteUInt32((ushort)broadcast.dwParam, 4, buffer);
                     Writer.WriteUInt16(total, 8, buffer);
-                    int offset = 12 + buffer[10] * 112;
+                    var offset = 12 + buffer[10] * 112;
                     buffer[10]++;
                     Writer.WriteUInt32(Broadcast.ID, offset, buffer);
                     offset += 4;
@@ -10890,7 +10789,7 @@ namespace MTA.Network {
                     if (buffer[10] % 4 == 0) {
                         total++;
                         Writer.WriteUInt16((ushort)(12 + buffer[10] * 112 + 6 + 2), 0, buffer);
-                        byte[] Buffer = new byte[12 + buffer[10] * 112 + 6 + 2 + 8];
+                        var Buffer = new byte[12 + buffer[10] * 112 + 6 + 2 + 8];
                         System.Buffer.BlockCopy(buffer, 0, Buffer, 0, Buffer.Length);
                         client.Send(Buffer);
                         buffer = new byte[500];
@@ -10899,7 +10798,7 @@ namespace MTA.Network {
                 }
                 else {
                     Writer.WriteUInt16((ushort)(12 + buffer[10] * 112 + 6 + 2), 0, buffer);
-                    byte[] Buffer = new byte[12 + buffer[10] * 112 + 6 + 2 + 8];
+                    var Buffer = new byte[12 + buffer[10] * 112 + 6 + 2 + 8];
                     System.Buffer.BlockCopy(buffer, 0, Buffer, 0, Buffer.Length);
                     if (buffer[10] != 0 || buffer[10] == 0 && total == 0)
                         client.Send(Buffer);
@@ -10909,25 +10808,25 @@ namespace MTA.Network {
         }
 
         public static void BroadcastClientMessages(Broadcast broadcast, GameState client) {
-            byte[] buffer = new byte[500];
+            var buffer = new byte[500];
             Writer.WriteUInt16(2051, 2, buffer);
-            int test = 0;
+            var test = 0;
             ushort total = 0;
-            for (int i = 0; i < Game.ConquerStructures.Broadcast.Broadcasts.Count; i++)
+            for (var i = 0; i < Game.ConquerStructures.Broadcast.Broadcasts.Count; i++)
                 if (Game.ConquerStructures.Broadcast.Broadcasts[i].EntityID == client.Entity.UID)
                     test++;
             if ((10 * broadcast.dwParam + 10) >= Game.ConquerStructures.Broadcast.Broadcasts.Count) {
                 return;
             }
 
-            for (uint i = broadcast.dwParam * 10; i < test; i++) {
+            for (var i = broadcast.dwParam * 10; i < test; i++) {
                 if (Game.ConquerStructures.Broadcast.Broadcasts.Count > i) {
                     var Broadcast = Game.ConquerStructures.Broadcast.Broadcasts[(int)i];
                     if (Broadcast.EntityID != client.Entity.UID)
                         continue;
                     Writer.WriteUInt32((ushort)broadcast.dwParam, 4, buffer);
                     Writer.WriteUInt16(total, 8, buffer);
-                    int offset = 12 + buffer[10] * 112;
+                    var offset = 12 + buffer[10] * 112;
                     buffer[10]++;
                     Writer.WriteUInt32(Broadcast.ID, offset, buffer);
                     offset += 4;
@@ -10943,7 +10842,7 @@ namespace MTA.Network {
                     if (buffer[10] % 4 == 0) {
                         total++;
                         Writer.WriteUInt16((ushort)(12 + buffer[10] * 112 + 6 + 2), 0, buffer);
-                        byte[] Buffer = new byte[12 + buffer[10] * 112 + 6 + 2 + 8];
+                        var Buffer = new byte[12 + buffer[10] * 112 + 6 + 2 + 8];
                         System.Buffer.BlockCopy(buffer, 0, Buffer, 0, Buffer.Length);
                         client.Send(Buffer);
                         buffer = new byte[500];
@@ -10952,7 +10851,7 @@ namespace MTA.Network {
                 }
                 else {
                     Writer.WriteUInt16((ushort)(12 + buffer[10] * 112 + 6 + 2), 0, buffer);
-                    byte[] Buffer = new byte[12 + buffer[10] * 112 + 6 + 2 + 8];
+                    var Buffer = new byte[12 + buffer[10] * 112 + 6 + 2 + 8];
                     System.Buffer.BlockCopy(buffer, 0, Buffer, 0, Buffer.Length);
                     if (buffer[10] != 0 || buffer[10] == 0 && total == 0)
                         client.Send(Buffer);
@@ -10966,19 +10865,16 @@ namespace MTA.Network {
         #region Booth
 
         static void ShowBoothItems(ItemUsage usage, GameState client) {
-            GameState Owner = null;
-            Entity entity = null;
-            Booth booth = null;
-            if (Booth.TryGetValue(usage.UID, out booth)) {
-                Owner = booth.Base.Owner;
-                entity = Owner.Entity;
+            if (Booth.TryGetValue(usage.UID, out var booth)) {
+                var Owner = booth.Base.Owner;
+                var entity = Owner.Entity;
                 if (client.Trade.InTrade || Owner.Trade.InTrade)
                     return;
                 if (Owner != null) {
                     if (Owner.Entity.UID != client.Entity.UID) {
-                        BoothItem Item = new BoothItem(true);
+                        var Item = new BoothItem(true);
                         if (Owner.Booth != null) {
-                            foreach (Game.ConquerStructures.BoothItem item in Owner.Booth.ItemList.Values) {
+                            foreach (var item in Owner.Booth.ItemList.Values) {
                                 Item.Fill(item, Owner.Booth.Base.UID);
                                 client.Send(Item);
                                 item.Item.SendExtras(client);
@@ -10989,9 +10885,9 @@ namespace MTA.Network {
             }
 
             if (Booth.TryGetValue2(usage.UID, out booth)) {
-                BoothItem Item = new BoothItem(true);
+                var Item = new BoothItem(true);
                 if (booth != null) {
-                    foreach (Game.ConquerStructures.BoothItem item in booth.ItemList.Values) {
+                    foreach (var item in booth.ItemList.Values) {
                         Item.Fill(item, usage.UID);
                         client.Send(Item);
                         item.Item.SendExtras(client);
@@ -11004,34 +10900,38 @@ namespace MTA.Network {
             if (client is { Booth: not null, Trade.InTrade: false }) {
                 if (!client.Booth.ItemList.ContainsKey(usage.UID)) {
                     if (client.Inventory.ContainsUID(usage.UID)) {
-                        Game.ConquerStructures.BoothItem item = new Game.ConquerStructures.BoothItem();
-                        item.Cost = usage.dwParam;
+                        var item = new Game.ConquerStructures.BoothItem {
+                            Cost = usage.dwParam
+                        };
                         client.Inventory.TryGetItem(usage.UID, out item.Item);
-                        ConquerItemInformation infos = new ConquerItemInformation(item.Item.ID, 0);
+                        var infos = new ConquerItemInformation(item.Item.ID, 0);
                         if (item.Item.Lock != 0 || item.Item.Suspicious || item.Item.Bound ||
                             infos.BaseInformation.Type != ConquerItemBaseInformation.ItemType.Dropable) {
                             return;
                         }
 
                         if (Constants.SoulList.Contains((int)item.Item.ID) && item.Cost < 1000000) {
-                            NpcReply npc = new NpcReply(6, "you cant sell any special soul item less than 1kk cps ok?");
-                            npc.OptionID = 255;
+                            var npc = new NpcReply(6, "you cant sell any special soul item less than 1kk cps ok?") {
+                                OptionID = 255
+                            };
                             client.Send(npc.ToArray());
                             return;
                         }
 
                         if (Constants.SoulList.Contains((int)item.Item.Purification.PurificationItemID) &&
                             item.Cost < 1000000) {
-                            NpcReply npc = new NpcReply(6, "you cant sell any special soul item less than 3kk cps ok?");
-                            npc.OptionID = 255;
+                            var npc = new NpcReply(6, "you cant sell any special soul item less than 3kk cps ok?") {
+                                OptionID = 255
+                            };
                             client.Send(npc.ToArray());
                             return;
                         }
 
                         if (Constants.SoulList.Contains((int)item.Item.Purification.PurificationItemID) &&
                             item.Cost_Type == Game.ConquerStructures.BoothItem.CostType.Silvers) {
-                            NpcReply npc = new NpcReply(6, "you cant sell any special soul item for silver?");
-                            npc.OptionID = 255;
+                            var npc = new NpcReply(6, "you cant sell any special soul item for silver?") {
+                                OptionID = 255
+                            };
                             client.Send(npc.ToArray());
                             return;
                         }
@@ -11041,7 +10941,7 @@ namespace MTA.Network {
                             : Game.ConquerStructures.BoothItem.CostType.ConquerPoints;
                         client.Booth.ItemList.Add(item.Item.UID, item);
                         client.Send(usage);
-                        BoothItem Item = new BoothItem(true);
+                        var Item = new BoothItem(true);
                         Item.Fill(item, client.Booth.Base.UID);
                         client.SendScreen(Item, false);
                     }
@@ -11050,13 +10950,10 @@ namespace MTA.Network {
         }
 
         static void BuyFromBooth(ItemUsage usage, GameState client) {
-            GameState Owner = null;
-            Entity entity = null;
-            Booth booth = null;
-            if (Booth.TryGetValue(usage.dwParam, out booth)) {
+            if (Booth.TryGetValue(usage.dwParam, out var booth)) {
                 //k that should be it, test and see ok
-                Owner = booth.Base.Owner;
-                entity = Owner.Entity;
+                var Owner = booth.Base.Owner;
+                var entity = Owner.Entity;
                 if (client.Trade.InTrade || Owner.Trade.InTrade)
                     return;
                 if (Owner != null) {
@@ -11064,8 +10961,7 @@ namespace MTA.Network {
 
                     if (Owner.Entity.UID != client.Entity.UID) {
                         if (Owner.Booth.ItemList.ContainsKey(usage.UID)) {
-                            Game.ConquerStructures.BoothItem item;
-                            if (Owner.Booth.ItemList.TryGetValue(usage.UID, out item)) {
+                            if (Owner.Booth.ItemList.TryGetValue(usage.UID, out var item)) {
                                 if (client.Inventory.Count <= 39) {
                                     if (item.Cost_Type == Game.ConquerStructures.BoothItem.CostType.Silvers) {
                                         if (client.Entity.Money >= item.Cost) {
@@ -11081,7 +10977,7 @@ namespace MTA.Network {
                                             usage.ID = ItemUsage.RemoveInventory;
                                             Owner.Send(usage);
                                             Owner.Booth.ItemList.Remove(item.Item.UID);
-                                            ConquerItemInformation infos = new ConquerItemInformation(item.Item.ID, 0);
+                                            var infos = new ConquerItemInformation(item.Item.ID, 0);
                                             Owner.Send(Constants.BoothItemSell(client.Entity.Name,
                                                 infos.BaseInformation.Name, false, item.Cost));
                                             Program.AddVendorLog(Owner.Entity.Name, client.Entity.Name,
@@ -11102,7 +10998,7 @@ namespace MTA.Network {
                                             usage.ID = ItemUsage.RemoveInventory;
                                             Owner.Send(usage);
                                             Owner.Booth.ItemList.Remove(item.Item.UID);
-                                            ConquerItemInformation infos = new ConquerItemInformation(item.Item.ID, 0);
+                                            var infos = new ConquerItemInformation(item.Item.ID, 0);
                                             Owner.Send(Constants.BoothItemSell(client.Entity.Name,
                                                 infos.BaseInformation.Name, true, item.Cost));
                                             Program.AddVendorLog(Owner.Entity.Name, client.Entity.Name,
@@ -11118,21 +11014,20 @@ namespace MTA.Network {
 
             if (Booth.TryGetValue2(usage.dwParam, out booth)) {
                 if (booth.ItemList.ContainsKey(usage.UID)) {
-                    Game.ConquerStructures.BoothItem item;
-                    if (booth.ItemList.TryGetValue(usage.UID, out item)) {
+                    if (booth.ItemList.TryGetValue(usage.UID, out var item)) {
                         if (client.Inventory.Count <= 39) {
                             if (item.Cost_Type == Game.ConquerStructures.BoothItem.CostType.Silvers) {
                                 if (client.Entity.Money >= item.Cost) {
                                     client.Entity.Money -= item.Cost;
                                     client.Send(usage);
                                     client.Inventory.Add(item.Item, Enums.ItemUse.Move);
-                                    ConquerItemInformation infos = new ConquerItemInformation(item.Item.ID, 0);
+                                    var infos = new ConquerItemInformation(item.Item.ID, 0);
                                     Program.AddVendorLog("matrix™[" + usage.dwParam.ToString() + "]",
                                         client.Entity.Name, item.Cost.ToString() + " Silvers", item.Item);
                                     var newitem = new Game.ConquerStructures.BoothItem();
                                     newitem.Regenerate(item, booth);
-                                    BoothItem Item = new BoothItem(true);
-                                    foreach (Game.ConquerStructures.BoothItem i in booth.ItemList.Values) {
+                                    var Item = new BoothItem(true);
+                                    foreach (var i in booth.ItemList.Values) {
                                         Item.Fill(i, usage.dwParam);
                                         client.Send(Item);
                                         item.Item.SendExtras(client);
@@ -11145,13 +11040,13 @@ namespace MTA.Network {
                                     EntityTable.UpdateCps(client);
                                     client.Send(usage);
                                     client.Inventory.Add(item.Item, Enums.ItemUse.Move);
-                                    ConquerItemInformation infos = new ConquerItemInformation(item.Item.ID, 0);
+                                    var infos = new ConquerItemInformation(item.Item.ID, 0);
                                     Program.AddVendorLog("matrix™[" + usage.dwParam.ToString() + "]",
                                         client.Entity.Name, item.Cost.ToString() + " CPs", item.Item);
                                     var newitem = new Game.ConquerStructures.BoothItem();
                                     newitem.Regenerate(item, booth);
-                                    BoothItem Item = new BoothItem(true);
-                                    foreach (Game.ConquerStructures.BoothItem i in booth.ItemList.Values) {
+                                    var Item = new BoothItem(true);
+                                    foreach (var i in booth.ItemList.Values) {
                                         Item.Fill(i, usage.dwParam);
                                         client.Send(Item);
                                         item.Item.SendExtras(client);
@@ -11165,10 +11060,8 @@ namespace MTA.Network {
         }
 
         static void RemoveItemFromBooth(ItemUsage usage, GameState client) {
-            if (client.Booth.ItemList.ContainsKey(usage.UID)) {
-                client.Booth.ItemList.Remove(usage.UID);
-                client.SendScreen(usage);
-            }
+            if (!client.Booth.ItemList.Remove(usage.UID)) return;
+            client.SendScreen(usage);
         }
 
         #endregion
@@ -11198,19 +11091,20 @@ namespace MTA.Network {
                 if (client.Mentor.IsOnline) {
                     ma.Type = MentorApprentice.DumpApprentice;
                     client.Mentor.Client.Send(ma);
-                    ApprenticeInformation AppInfo = new ApprenticeInformation();
-                    AppInfo.Apprentice_ID = client.Entity.UID;
-                    AppInfo.Apprentice_Level = 0;
-                    AppInfo.Apprentice_Class = 0;
-                    AppInfo.Apprentice_PkPoints = 0;
-                    AppInfo.Apprentice_Name = client.Entity.Name;
-                    AppInfo.Apprentice_Online = false;
-                    AppInfo.Apprentice_Spouse_Name = "";
-                    AppInfo.Enrole_date = 0;
-                    AppInfo.Mentor_ID = client.Mentor.Client.Entity.UID;
-                    AppInfo.Mentor_Mesh = client.Mentor.Client.Entity.Mesh;
-                    AppInfo.Mentor_Name = client.Mentor.Client.Entity.Name;
-                    AppInfo.Type = 2;
+                    var AppInfo = new ApprenticeInformation {
+                        Apprentice_ID = client.Entity.UID,
+                        Apprentice_Level = 0,
+                        Apprentice_Class = 0,
+                        Apprentice_PkPoints = 0,
+                        Apprentice_Name = client.Entity.Name,
+                        Apprentice_Online = false,
+                        Apprentice_Spouse_Name = "",
+                        Enrole_date = 0,
+                        Mentor_ID = client.Mentor.Client.Entity.UID,
+                        Mentor_Mesh = client.Mentor.Client.Entity.Mesh,
+                        Mentor_Name = client.Mentor.Client.Entity.Name,
+                        Type = 2
+                    };
                     client.Mentor.Client.Send(AppInfo);
                     client.Mentor.Client.Apprentices.Remove(client.Entity.UID);
                 }
@@ -11223,97 +11117,101 @@ namespace MTA.Network {
         }
 
         static void AddMentor(MentorApprentice ma, GameState client) {
-            GameState Target = null;
-            if (Kernel.GamePool.TryGetValue(ma.dwParam, out Target)) {
+            if (Kernel.GamePool.TryGetValue(ma.dwParam, out var Target)) {
                 if (!client.Screen.Contains(Target.Entity.UID)) return;
 
-                PopupLevelBP request = new PopupLevelBP();
-                request.Requester = client.Entity.UID;
-                request.Receiver = Target.Entity.UID;
-                request.Level = client.Entity.Level;
-                request.BattlePower = (uint)client.Entity.BattlePower;
+                var request = new PopupLevelBP {
+                    Requester = client.Entity.UID,
+                    Receiver = Target.Entity.UID,
+                    Level = client.Entity.Level,
+                    BattlePower = (uint)client.Entity.BattlePower
+                };
                 Target.Send(request);
 
-                MentorApprentice Mentor = new MentorApprentice(true);
-                Mentor.Type = MentorApprentice.AcceptRequestMentor;
-                Mentor.dwParam = Target.Entity.UID;
-                Mentor.UID = client.Entity.UID;
-                Mentor.Level = client.Entity.Level;
-                Mentor.Dynamic = (byte)client.Entity.BattlePower;
-                Mentor.Online = true;
-                Mentor.Name = client.Entity.Name;
+                var Mentor = new MentorApprentice(true) {
+                    Type = MentorApprentice.AcceptRequestMentor,
+                    dwParam = Target.Entity.UID,
+                    UID = client.Entity.UID,
+                    Level = client.Entity.Level,
+                    Dynamic = (byte)client.Entity.BattlePower,
+                    Online = true,
+                    Name = client.Entity.Name
+                };
                 Target.Send(Mentor);
             }
         }
 
         static void AddApprentice(MentorApprentice ma, GameState client) {
-            GameState Target = null;
-            if (Kernel.GamePool.TryGetValue(ma.dwParam, out Target)) {
+            if (Kernel.GamePool.TryGetValue(ma.dwParam, out var Target)) {
                 if (!client.Screen.Contains(Target.Entity.UID)) return;
                 if (client.apprtnum == 5) return;
 
-                PopupLevelBP request = new PopupLevelBP();
-                request.Requester = client.Entity.UID;
-                request.Receiver = Target.Entity.UID;
-                request.Level = client.Entity.Level;
-                request.BattlePower = (uint)client.Entity.BattlePower;
+                var request = new PopupLevelBP {
+                    Requester = client.Entity.UID,
+                    Receiver = Target.Entity.UID,
+                    Level = client.Entity.Level,
+                    BattlePower = (uint)client.Entity.BattlePower
+                };
                 Target.Send(request);
 
-                MentorApprentice Mentor = new MentorApprentice(true);
-                Mentor.Type = MentorApprentice.AcceptRequestApprentice;
-                Mentor.dwParam = Target.Entity.UID;
-                Mentor.UID = client.Entity.UID;
-                Mentor.Level = client.Entity.Level;
-                Mentor.Dynamic = (byte)client.Entity.BattlePower;
-                Mentor.Online = true;
-                Mentor.Name = client.Entity.Name;
+                var Mentor = new MentorApprentice(true) {
+                    Type = MentorApprentice.AcceptRequestApprentice,
+                    dwParam = Target.Entity.UID,
+                    UID = client.Entity.UID,
+                    Level = client.Entity.Level,
+                    Dynamic = (byte)client.Entity.BattlePower,
+                    Online = true,
+                    Name = client.Entity.Name
+                };
 
                 Target.Send(Mentor);
             }
         }
 
         static void AcceptRequestMentor(MentorApprentice ma, GameState client) {
-            GameState Target = null;
-            if (Kernel.GamePool.TryGetValue(ma.UID, out Target)) {
+            if (Kernel.GamePool.TryGetValue(ma.UID, out var Target)) {
                 if (ma.Dynamic == 1) {
-                    uint EnroleDate = (uint)(DateTime.Now.Year * 10000 + DateTime.Now.Month * 100 + DateTime.Now.Day);
+                    var EnroleDate = (uint)(DateTime.Now.Year * 10000 + DateTime.Now.Month * 100 + DateTime.Now.Day);
 
-                    Target.Mentor = new Mentor();
-                    Target.Mentor.ID = client.Entity.UID;
-                    Target.Mentor.Name = client.Entity.Name;
-                    Target.Mentor.EnroleDate = EnroleDate;
+                    Target.Mentor = new Mentor {
+                        ID = client.Entity.UID,
+                        Name = client.Entity.Name,
+                        EnroleDate = EnroleDate
+                    };
 
-                    MentorInformation Information = new MentorInformation(true);
-                    Information.Mentor_Type = 1;
-                    Information.Mentor_ID = Target.Mentor.Client.Entity.UID;
-                    Information.Apprentice_ID = Target.Entity.UID;
-                    Information.Enrole_Date = EnroleDate;
-                    Information.Mentor_Level = Target.Mentor.Client.Entity.Level;
-                    Information.Mentor_Class = Target.Mentor.Client.Entity.Class;
-                    Information.Mentor_PkPoints = Target.Mentor.Client.Entity.PKPoints;
-                    Information.Mentor_Mesh = Target.Mentor.Client.Entity.Mesh;
-                    Information.Mentor_Online = true;
-                    Information.Shared_Battle_Power = Target.Entity.BattlePowerFrom(Target.Mentor.Client.Entity);
-                    Information.String_Count = 3;
-                    Information.Mentor_Name = Target.Mentor.Client.Entity.Name;
-                    Information.Apprentice_Name = Target.Entity.Name;
-                    Information.Mentor_Spouse_Name = Target.Mentor.Client.Entity.Spouse;
+                    var Information = new MentorInformation(true) {
+                        Mentor_Type = 1,
+                        Mentor_ID = Target.Mentor.Client.Entity.UID,
+                        Apprentice_ID = Target.Entity.UID,
+                        Enrole_Date = EnroleDate,
+                        Mentor_Level = Target.Mentor.Client.Entity.Level,
+                        Mentor_Class = Target.Mentor.Client.Entity.Class,
+                        Mentor_PkPoints = Target.Mentor.Client.Entity.PKPoints,
+                        Mentor_Mesh = Target.Mentor.Client.Entity.Mesh,
+                        Mentor_Online = true,
+                        Shared_Battle_Power = Target.Entity.BattlePowerFrom(Target.Mentor.Client.Entity),
+                        String_Count = 3,
+                        Mentor_Name = Target.Mentor.Client.Entity.Name,
+                        Apprentice_Name = Target.Entity.Name,
+                        Mentor_Spouse_Name = Target.Mentor.Client.Entity.Spouse
+                    };
 
                     Target.Send(Information);
                     Target.ReviewMentor();
-                    ApprenticeInformation AppInfo = new ApprenticeInformation();
-                    AppInfo.Apprentice_ID = Target.Entity.UID;
-                    AppInfo.Apprentice_Level = Target.Entity.Level;
-                    AppInfo.Apprentice_Name = Target.Entity.Name;
-                    AppInfo.Apprentice_Class = Target.Entity.Class;
-                    AppInfo.Apprentice_PkPoints = Target.Entity.PKPoints;
-                    AppInfo.Apprentice_Online = true;
-                    AppInfo.Apprentice_Spouse_Name = Target.Entity.Spouse;
-                    AppInfo.Enrole_date = EnroleDate;
-                    AppInfo.Mentor_ID = client.Entity.UID;
-                    AppInfo.Mentor_Mesh = client.Entity.Mesh;
-                    AppInfo.Mentor_Name = client.Entity.Name;
-                    AppInfo.Type = 2;
+                    var AppInfo = new ApprenticeInformation {
+                        Apprentice_ID = Target.Entity.UID,
+                        Apprentice_Level = Target.Entity.Level,
+                        Apprentice_Name = Target.Entity.Name,
+                        Apprentice_Class = Target.Entity.Class,
+                        Apprentice_PkPoints = Target.Entity.PKPoints,
+                        Apprentice_Online = true,
+                        Apprentice_Spouse_Name = Target.Entity.Spouse,
+                        Enrole_date = EnroleDate,
+                        Mentor_ID = client.Entity.UID,
+                        Mentor_Mesh = client.Entity.Mesh,
+                        Mentor_Name = client.Entity.Name,
+                        Type = 2
+                    };
                     client.Send(AppInfo);
                     client.Apprentices.Add(Target.Entity.UID, new Apprentice() {
                         ID = Target.Entity.UID,
@@ -11329,46 +11227,48 @@ namespace MTA.Network {
         }
 
         static void AcceptRequestApprentice(MentorApprentice ma, GameState client) {
-            GameState Target = null;
-            if (Kernel.GamePool.TryGetValue(ma.UID, out Target)) {
+            if (Kernel.GamePool.TryGetValue(ma.UID, out var Target)) {
                 if (ma.Dynamic == 1) {
-                    uint EnroleDate = (uint)(DateTime.Now.Year * 10000 + DateTime.Now.Month * 100 + DateTime.Now.Day);
-                    MentorInformation Information = new MentorInformation(true);
-                    Information.Mentor_Type = 1;
-                    Information.Mentor_ID = Target.Entity.UID;
-                    Information.Apprentice_ID = client.Entity.UID;
-                    Information.Enrole_Date = EnroleDate;
-                    Information.Mentor_Level = Target.Entity.Level;
-                    Information.Mentor_Class = Target.Entity.Class;
-                    Information.Mentor_PkPoints = Target.Entity.PKPoints;
-                    Information.Mentor_Mesh = Target.Entity.Mesh;
-                    Information.Mentor_Online = true;
-                    Information.Shared_Battle_Power = client.Entity.BattlePowerFrom(Target.Entity);
-                    Information.String_Count = 3;
-                    Information.Mentor_Name = Target.Entity.Name;
-                    Information.Apprentice_Name = client.Entity.Name;
-                    Information.Mentor_Spouse_Name = Target.Entity.Spouse;
+                    var EnroleDate = (uint)(DateTime.Now.Year * 10000 + DateTime.Now.Month * 100 + DateTime.Now.Day);
+                    var Information = new MentorInformation(true) {
+                        Mentor_Type = 1,
+                        Mentor_ID = Target.Entity.UID,
+                        Apprentice_ID = client.Entity.UID,
+                        Enrole_Date = EnroleDate,
+                        Mentor_Level = Target.Entity.Level,
+                        Mentor_Class = Target.Entity.Class,
+                        Mentor_PkPoints = Target.Entity.PKPoints,
+                        Mentor_Mesh = Target.Entity.Mesh,
+                        Mentor_Online = true,
+                        Shared_Battle_Power = client.Entity.BattlePowerFrom(Target.Entity),
+                        String_Count = 3,
+                        Mentor_Name = Target.Entity.Name,
+                        Apprentice_Name = client.Entity.Name,
+                        Mentor_Spouse_Name = Target.Entity.Spouse
+                    };
 
                     client.Send(Information);
-                    client.Mentor = new Mentor();
-                    client.Mentor.ID = Target.Entity.UID;
-                    client.Mentor.Name = Target.Entity.Name;
-                    client.Mentor.EnroleDate = EnroleDate;
+                    client.Mentor = new Mentor {
+                        ID = Target.Entity.UID,
+                        Name = Target.Entity.Name,
+                        EnroleDate = EnroleDate
+                    };
                     client.ReviewMentor();
 
-                    ApprenticeInformation AppInfo = new ApprenticeInformation();
-                    AppInfo.Apprentice_ID = client.Entity.UID;
-                    AppInfo.Apprentice_Level = client.Entity.Level;
-                    AppInfo.Apprentice_Name = client.Entity.Name;
-                    AppInfo.Apprentice_Online = true;
-                    AppInfo.Apprentice_Class = client.Entity.Class;
-                    AppInfo.Apprentice_PkPoints = client.Entity.PKPoints;
-                    AppInfo.Apprentice_Spouse_Name = client.Entity.Spouse;
-                    AppInfo.Enrole_date = EnroleDate;
-                    AppInfo.Mentor_ID = Target.Entity.UID;
-                    AppInfo.Mentor_Mesh = Target.Entity.Mesh;
-                    AppInfo.Mentor_Name = Target.Entity.Name;
-                    AppInfo.Type = 2;
+                    var AppInfo = new ApprenticeInformation {
+                        Apprentice_ID = client.Entity.UID,
+                        Apprentice_Level = client.Entity.Level,
+                        Apprentice_Name = client.Entity.Name,
+                        Apprentice_Online = true,
+                        Apprentice_Class = client.Entity.Class,
+                        Apprentice_PkPoints = client.Entity.PKPoints,
+                        Apprentice_Spouse_Name = client.Entity.Spouse,
+                        Enrole_date = EnroleDate,
+                        Mentor_ID = Target.Entity.UID,
+                        Mentor_Mesh = Target.Entity.Mesh,
+                        Mentor_Name = Target.Entity.Name,
+                        Type = 2
+                    };
                     Target.Send(AppInfo);
                     Target.Apprentices.Add(client.Entity.UID, new Apprentice() {
                         ID = client.Entity.UID,
@@ -11398,7 +11298,7 @@ namespace MTA.Network {
                         Client.Send(partner);
                     }
                     else {
-                        DateTime Now = DateTime.Now;
+                        var Now = DateTime.Now;
                         client.Partners.Add(Client.Entity.UID, new Game.ConquerStructures.Society.TradePartner() {
                             ID = Client.Entity.UID,
                             Name = Client.Entity.Name,
@@ -11450,8 +11350,7 @@ namespace MTA.Network {
 
         static void BreakPartnership(TradePartner partner, GameState client) {
             if (client.Partners.ContainsKey(partner.UID)) {
-                GameState Client;
-                if (Kernel.GamePool.TryGetValue(partner.UID, out Client)) {
+                if (Kernel.GamePool.TryGetValue(partner.UID, out var Client)) {
                     Client.Partners.Remove(client.Entity.UID);
                     Client.Send(new TradePartner(true) {
                         UID = client.Entity.UID,
@@ -11482,7 +11381,7 @@ namespace MTA.Network {
 
         static void RemoveFriend(KnownPersons knownperson, GameState client) {
             if (client.Friends.ContainsKey(knownperson.UID)) {
-                Friend friend = client.Friends[knownperson.UID];
+                var friend = client.Friends[knownperson.UID];
                 if (friend.IsOnline) {
                     friend.Client.Friends.Remove(client.Entity.UID);
                     friend.Client.Send(new KnownPersons(true) {
@@ -11506,7 +11405,7 @@ namespace MTA.Network {
 
         static void RemoveEnemy(KnownPersons knownperson, GameState client) {
             if (client.Enemy.ContainsKey(knownperson.UID)) {
-                Enemy enemy = client.Enemy[knownperson.UID];
+                var enemy = client.Enemy[knownperson.UID];
 
                 client.Enemy.Remove(enemy.ID);
                 client.Send(new KnownPersons(true) {
@@ -11521,28 +11420,27 @@ namespace MTA.Network {
 
         static void AcceptFriend(KnownPersons knownperson, GameState client) {
             if (!client.Friends.ContainsKey(knownperson.UID)) {
-                if (Kernel.GamePool.ContainsKey(knownperson.UID)) {
-                    GameState Client = Kernel.GamePool[knownperson.UID];
-                    if (Client != null) {
+                if (Kernel.GamePool.TryGetValue(knownperson.UID, out var client1)) {
+                    if (client1 != null) {
                         if (client is { Socket.Alive: true }) {
-                            if (!Client.Friends.ContainsKey(client.Entity.UID)) {
-                                client.Friends.Add(Client.Entity.UID, new Friend() {
-                                    ID = Client.Entity.UID,
-                                    Name = Client.Entity.Name
+                            if (!client1.Friends.ContainsKey(client.Entity.UID)) {
+                                client.Friends.Add(client1.Entity.UID, new Friend() {
+                                    ID = client1.Entity.UID,
+                                    Name = client1.Entity.Name
                                 });
-                                Client.Friends.Add(client.Entity.UID, new Friend() {
+                                client1.Friends.Add(client.Entity.UID, new Friend() {
                                     ID = client.Entity.UID,
                                     Name = client.Entity.Name
                                 });
                                 client.Send(new KnownPersons(true) {
-                                    UID = Client.Entity.UID,
+                                    UID = client1.Entity.UID,
                                     Type = KnownPersons.AddFriend,
-                                    Name = Client.Entity.Name,
-                                    NobilityRank = Client.Entity.NobilityRank,
-                                    IsBoy = IsBoy(Client.Entity.Body),
+                                    Name = client1.Entity.Name,
+                                    NobilityRank = client1.Entity.NobilityRank,
+                                    IsBoy = IsBoy(client1.Entity.Body),
                                     Online = true
                                 });
-                                Client.Send(new KnownPersons(true) {
+                                client1.Send(new KnownPersons(true) {
                                     UID = client.Entity.UID,
                                     Type = KnownPersons.AddFriend,
                                     Name = client.Entity.Name,
@@ -11550,7 +11448,7 @@ namespace MTA.Network {
                                     IsBoy = IsBoy(client.Entity.Body),
                                     Online = true
                                 });
-                                Database.KnownPersons.AddFriend(client, client.Friends[Client.Entity.UID]);
+                                Database.KnownPersons.AddFriend(client, client.Friends[client1.Entity.UID]);
                             }
                         }
                     }
@@ -11560,16 +11458,15 @@ namespace MTA.Network {
 
         static void AddFriend(KnownPersons knownperson, GameState client) {
             if (!client.Friends.ContainsKey(knownperson.UID)) {
-                if (Kernel.GamePool.ContainsKey(knownperson.UID)) {
-                    GameState Client = Kernel.GamePool[knownperson.UID];
-                    if (Client != null) {
-                        Client.Send(new PopupLevelBP() {
+                if (Kernel.GamePool.TryGetValue(knownperson.UID, out var client1)) {
+                    if (client1 != null) {
+                        client1.Send(new PopupLevelBP() {
                             Requester = client.Entity.UID,
-                            Receiver = Client.Entity.UID,
+                            Receiver = client1.Entity.UID,
                             Level = client.Entity.Level,
                             BattlePower = (uint)client.Entity.BattlePower
                         });
-                        Client.Send(new KnownPersons(true) {
+                        client1.Send(new KnownPersons(true) {
                             UID = client.Entity.UID,
                             Type = KnownPersons.RequestFriendship,
                             Name = client.Entity.Name,
@@ -11605,8 +11502,7 @@ namespace MTA.Network {
         #region Trade
 
         static void RequestTrade(Trade trade, GameState client) {
-            GameState _client = null;
-            if (Kernel.GamePool.TryGetValue(trade.dwParam, out _client)) {
+            if (Kernel.GamePool.TryGetValue(trade.dwParam, out var _client)) {
                 if (_client.Trade.InTrade || client.Trade.InTrade || client.Entity.UID == trade.dwParam ||
                     Kernel.GetDistance(client.Entity.X, client.Entity.Y, _client.Entity.X, _client.Entity.Y) >
                     Constants.pScreenDistance) {
@@ -11625,15 +11521,16 @@ namespace MTA.Network {
                 else {
                     client.Send(Constants.TradeRequest);
                     trade.dwParam = client.Entity.UID;
-                    PopupLevelBP request = new PopupLevelBP();
-                    request.Requester = client.Entity.UID;
-                    request.Receiver = _client.Entity.UID;
-                    request.Level = client.Entity.Level;
-                    request.BattlePower = (uint)client.Entity.BattlePower;
+                    var request = new PopupLevelBP {
+                        Requester = client.Entity.UID,
+                        Receiver = _client.Entity.UID,
+                        Level = client.Entity.Level,
+                        BattlePower = (uint)client.Entity.BattlePower,
+                        Spouse = _client.Entity.Name == client.Entity.Spouse,
+                        Friend = client.Friends.ContainsKey(_client.Entity.UID),
+                        TradePartner = client.Partners.ContainsKey(_client.Entity.UID)
+                    };
 
-                    request.Spouse = _client.Entity.Name == client.Entity.Spouse;
-                    request.Friend = client.Friends.ContainsKey(_client.Entity.UID);
-                    request.TradePartner = client.Partners.ContainsKey(_client.Entity.UID);
                     if (client.Mentor != null)
                         request.Mentor = client.Mentor.ID == _client.Entity.UID;
                     request.Apprentice = client.Apprentices.ContainsKey(_client.Entity.UID);
@@ -11651,8 +11548,7 @@ namespace MTA.Network {
         }
 
         static void CloseTrade(Trade trade, GameState client) {
-            GameState _client = null;
-            if (Kernel.GamePool.TryGetValue(client.Trade.TraderUID, out _client)) {
+            if (Kernel.GamePool.TryGetValue(client.Trade.TraderUID, out var _client)) {
                 _client.Trade = new Game.ConquerStructures.Trade();
                 client.Trade = new Game.ConquerStructures.Trade();
                 trade.Type = Trade.HideTable;
@@ -11664,13 +11560,11 @@ namespace MTA.Network {
         }
 
         static void AddTradeItem(Trade trade, GameState client) {
-            ConquerItem item = null;
-            if (client.Inventory.TryGetItem(trade.dwParam, out item)) {
-                GameState _client = null;
-                if (Kernel.GamePool.TryGetValue(client.Trade.TraderUID, out _client) &&
+            if (client.Inventory.TryGetItem(trade.dwParam, out var item)) {
+                if (Kernel.GamePool.TryGetValue(client.Trade.TraderUID, out var _client) &&
                     !Constants.SoulList.Contains((int)item.ID) &&
                     !Constants.SoulList.Contains((int)item.Purification.PurificationItemID)) {
-                    ConquerItemInformation infos = new ConquerItemInformation(item.ID, 0);
+                    var infos = new ConquerItemInformation(item.ID, 0);
                     if (_client.Inventory.Count + client.Trade.Items.Count >= 40 || client.Trade.Items.Count == 20) {
                         trade.Type = Trade.RemoveItem;
                         client.Send(trade);
@@ -11678,10 +11572,8 @@ namespace MTA.Network {
                         return;
                     }
 
-                    if ((client.Account.State == AccountTable.AccountState.GM ||
-                         client.Account.State == AccountTable.AccountState.GM ||
-                         _client.Account.State == AccountTable.AccountState.GM ||
-                         _client.Account.State == AccountTable.AccountState.GM)) {
+                    if ((client.Account.State is AccountTable.AccountState.GM or AccountTable.AccountState.GM ||
+                         _client.Account.State is AccountTable.AccountState.GM or AccountTable.AccountState.GM)) {
                         client.Trade.Items.Add(item);
                         item.Mode = Enums.ItemMode.Trade;
                         item.Send(_client);
@@ -11701,17 +11593,17 @@ namespace MTA.Network {
                     item.Send(_client);
                 }
                 else {
-                    NpcReply npc = new NpcReply(6,
-                        "you cant trade any Special Soul only can sell in market in Shop more than 1 kk cps ok?");
-                    npc.OptionID = 255;
+                    var npc = new NpcReply(6,
+                        "you cant trade any Special Soul only can sell in market in Shop more than 1 kk cps ok?") {
+                        OptionID = 255
+                    };
                     client.Send(npc.ToArray());
                 }
             }
         }
 
         static void SetTradeMoney(Trade trade, GameState client) {
-            GameState _client = null;
-            if (Kernel.GamePool.TryGetValue(client.Trade.TraderUID, out _client)) {
+            if (Kernel.GamePool.TryGetValue(client.Trade.TraderUID, out var _client)) {
                 if (client.Trade.Money == 0) {
                     if (client.Entity.Money >= trade.dwParam) {
                         client.Trade.Money = trade.dwParam;
@@ -11725,8 +11617,7 @@ namespace MTA.Network {
         }
 
         static void SetTradeConquerPoints(Trade trade, GameState client) {
-            GameState _client = null;
-            if (Kernel.GamePool.TryGetValue(client.Trade.TraderUID, out _client)) {
+            if (Kernel.GamePool.TryGetValue(client.Trade.TraderUID, out var _client)) {
                 if (client.Trade.ConquerPoints == 0) {
                     if (client.Entity.ConquerPoints >= trade.dwParam) {
                         client.Trade.ConquerPoints = trade.dwParam;
@@ -11740,15 +11631,14 @@ namespace MTA.Network {
         }
 
         static void AcceptTrade(Trade trade, GameState client) {
-            GameState _client = null;
-            if (Kernel.GamePool.TryGetValue(client.Trade.TraderUID, out _client)) {
+            if (Kernel.GamePool.TryGetValue(client.Trade.TraderUID, out var _client)) {
                 client.Trade.Accepted = true;
                 _client.Send(trade);
                 if (_client.Trade.Accepted) {
                     lock (client.ItemSyncRoot) {
                         lock (_client.ItemSyncRoot) {
                             if (client.Inventory.Count + _client.Trade.Items.Count <= 40) {
-                                foreach (ConquerItem item in _client.Trade.Items) {
+                                foreach (var item in _client.Trade.Items) {
                                     if (_client.Inventory.ContainsUID(item.UID)) {
                                         client.Inventory.Add(item, Enums.ItemUse.Move);
                                         _client.Inventory.Remove(item.UID, Enums.ItemUse.None, true);
@@ -11757,7 +11647,7 @@ namespace MTA.Network {
                             }
 
                             if (_client.Inventory.Count + client.Trade.Items.Count <= 40) {
-                                foreach (ConquerItem item in client.Trade.Items) {
+                                foreach (var item in client.Trade.Items) {
                                     if (client.Inventory.ContainsUID(item.UID)) {
                                         _client.Inventory.Add(item, Enums.ItemUse.Move);
                                         client.Inventory.Remove(item.UID, Enums.ItemUse.None, true);
@@ -11811,57 +11701,53 @@ namespace MTA.Network {
         #region ItemHandler
 
         public static void StabilazeRefinery(ItemAddingStabilization stabilizate, GameState client) {
-            ConquerItem Item = null;
-            if (client.Inventory.TryGetItem(stabilizate.ItemUID, out Item) ||
+            if (client.Inventory.TryGetItem(stabilizate.ItemUID, out var Item) ||
                 (client.Equipment.TryGetItem(stabilizate.ItemUID) != null)) {
                 if (Item == null && !client.Inventory.TryGetItem(stabilizate.ItemUID, out Item) &&
                     (client.Equipment.TryGetItem(stabilizate.ItemUID) != null))
                     Item = client.Equipment.TryGetItem(stabilizate.ItemUID);
 
-                if (Item.ExtraEffect.EffectID != 0) {
-                    if (Item.ExtraEffect.EffectID != 0) {
-                        List<uint> purificationStones = stabilizate.PurificationItems;
-                        int sum = 0;
-                        List<ConquerItem> PurificationStones = new List<ConquerItem>(purificationStones.Count);
+                if (Item.ExtraEffect.EffectID is not 0 and not 0) {
+                    var purificationStones = stabilizate.PurificationItems;
+                    var sum = 0;
+                    var PurificationStones = new List<ConquerItem>(purificationStones.Count);
 
-                        for (int i = 0; i < purificationStones.Count; i++) {
-                            ConquerItem pItem = null;
-                            if (client.Inventory.TryGetItem(purificationStones[i], out pItem)) {
-                                if (pItem.ID == 723694) {
-                                    sum += 10;
-                                    PurificationStones.Add(pItem);
-                                }
+                    foreach (var t in purificationStones) {
+                        if (client.Inventory.TryGetItem(t, out var pItem)) {
+                            if (pItem.ID == 723694) {
+                                sum += 10;
+                                PurificationStones.Add(pItem);
+                            }
 
-                                if (pItem.ID == 723695) {
-                                    sum += 100;
-                                    PurificationStones.Add(pItem);
-                                }
+                            if (pItem.ID == 723695) {
+                                sum += 100;
+                                PurificationStones.Add(pItem);
                             }
                         }
+                    }
 
-                        if (sum >= DataHolder.PurifyStabilizationPoints((byte)Item.ExtraEffect.EffectLevel)) {
-                            var Backup = Item.ExtraEffect;
-                            Backup.EffectDuration = 0;
-                            Item.ExtraEffect = Backup;
-                            Item.Send(client);
+                    if (sum >= DataHolder.PurifyStabilizationPoints((byte)Item.ExtraEffect.EffectLevel)) {
+                        var Backup = Item.ExtraEffect;
+                        Backup.EffectDuration = 0;
+                        Item.ExtraEffect = Backup;
+                        Item.Send(client);
 
-                            ItemAdding effect = new ItemAdding(true);
-                            effect.Type = ItemAdding.StabilizationEffectRefined;
-                            effect.Append2(Backup);
-                            client.Send(effect);
+                        var effect = new ItemAdding(true) {
+                            Type = ItemAdding.StabilizationEffectRefined
+                        };
+                        effect.Append2(Backup);
+                        client.Send(effect);
 
-                            ItemAddingTable.Stabilize(Item.UID, Backup.EffectID);
-                            foreach (var item in PurificationStones)
-                                client.Inventory.Remove(item, Enums.ItemUse.Remove);
-                        }
+                        ItemAddingTable.Stabilize(Item.UID, Backup.EffectID);
+                        foreach (var item in PurificationStones)
+                            client.Inventory.Remove(item, Enums.ItemUse.Remove);
                     }
                 }
             }
         }
 
         public static void StabilazeArtifact(ItemAddingStabilization stabilizate, GameState client) {
-            ConquerItem Item = null;
-            if (client.Inventory.TryGetItem(stabilizate.ItemUID, out Item) ||
+            if (client.Inventory.TryGetItem(stabilizate.ItemUID, out var Item) ||
                 (client.Equipment.TryGetItem(stabilizate.ItemUID) != null)) {
                 if (Item == null && !client.Inventory.TryGetItem(stabilizate.ItemUID, out Item) &&
                     (client.Equipment.TryGetItem(stabilizate.ItemUID) != null))
@@ -11869,13 +11755,12 @@ namespace MTA.Network {
 
                 if (Item.Purification.PurificationDuration != 0) {
                     if (Item.Purification.PurificationItemID != 0) {
-                        List<uint> purificationStones = stabilizate.PurificationItems;
-                        int sum = 0;
-                        List<ConquerItem> PurificationStones = new List<ConquerItem>(purificationStones.Count);
+                        var purificationStones = stabilizate.PurificationItems;
+                        var sum = 0;
+                        var PurificationStones = new List<ConquerItem>(purificationStones.Count);
 
-                        for (int i = 0; i < purificationStones.Count; i++) {
-                            ConquerItem pItem = null;
-                            if (client.Inventory.TryGetItem(purificationStones[i], out pItem)) {
+                        foreach (var t in purificationStones) {
+                            if (client.Inventory.TryGetItem(t, out var pItem)) {
                                 if (pItem.ID == 723694) {
                                     sum += 10;
                                     PurificationStones.Add(pItem);
@@ -11894,8 +11779,9 @@ namespace MTA.Network {
                             Item.Purification = Backup;
                             Item.Send(client);
 
-                            ItemAdding effect = new ItemAdding(true);
-                            effect.Type = ItemAdding.StabilizationEffect;
+                            var effect = new ItemAdding(true) {
+                                Type = ItemAdding.StabilizationEffect
+                            };
                             effect.Append2(Backup);
                             client.Send(effect);
 
@@ -11906,42 +11792,40 @@ namespace MTA.Network {
                     }
                 }
 
-                if (Item.ExtraEffect.EffectID != 0) {
-                    if (Item.ExtraEffect.EffectID != 0) {
-                        List<uint> purificationStones = stabilizate.PurificationItems;
-                        int sum = 0;
-                        List<ConquerItem> PurificationStones = new List<ConquerItem>(purificationStones.Count);
+                if (Item.ExtraEffect.EffectID is not 0 and not 0) {
+                    var purificationStones = stabilizate.PurificationItems;
+                    var sum = 0;
+                    var PurificationStones = new List<ConquerItem>(purificationStones.Count);
 
-                        for (int i = 0; i < purificationStones.Count; i++) {
-                            ConquerItem pItem = null;
-                            if (client.Inventory.TryGetItem(purificationStones[i], out pItem)) {
-                                if (pItem.ID == 723694) {
-                                    sum += 10;
-                                    PurificationStones.Add(pItem);
-                                }
+                    foreach (var t in purificationStones) {
+                        if (client.Inventory.TryGetItem(t, out var pItem)) {
+                            if (pItem.ID == 723694) {
+                                sum += 10;
+                                PurificationStones.Add(pItem);
+                            }
 
-                                if (pItem.ID == 723695) {
-                                    sum += 100;
-                                    PurificationStones.Add(pItem);
-                                }
+                            if (pItem.ID == 723695) {
+                                sum += 100;
+                                PurificationStones.Add(pItem);
                             }
                         }
+                    }
 
-                        if (sum >= DataHolder.PurifyStabilizationPoints((byte)Item.ExtraEffect.EffectLevel)) {
-                            var Backup = Item.ExtraEffect;
-                            Backup.EffectDuration = 0;
-                            Item.ExtraEffect = Backup;
-                            Item.Send(client);
+                    if (sum >= DataHolder.PurifyStabilizationPoints((byte)Item.ExtraEffect.EffectLevel)) {
+                        var Backup = Item.ExtraEffect;
+                        Backup.EffectDuration = 0;
+                        Item.ExtraEffect = Backup;
+                        Item.Send(client);
 
-                            ItemAdding effect = new ItemAdding(true);
-                            effect.Type = ItemAdding.StabilizationEffectRefined;
-                            effect.Append2(Backup);
-                            client.Send(effect);
+                        var effect = new ItemAdding(true) {
+                            Type = ItemAdding.StabilizationEffectRefined
+                        };
+                        effect.Append2(Backup);
+                        client.Send(effect);
 
-                            ItemAddingTable.Stabilize(Item.UID, Backup.EffectID);
-                            foreach (var item in PurificationStones)
-                                client.Inventory.Remove(item, Enums.ItemUse.Remove);
-                        }
+                        ItemAddingTable.Stabilize(Item.UID, Backup.EffectID);
+                        foreach (var item in PurificationStones)
+                            client.Inventory.Remove(item, Enums.ItemUse.Remove);
                     }
                 }
             }
@@ -11949,17 +11833,16 @@ namespace MTA.Network {
 
         public static bool CanPurify(GameState Client, byte MeteorsNeeded) {
             int Stillneeded = MeteorsNeeded;
-            Stillneeded -= Client.Inventory.Objects.Where(x => x.ID == 720027).Count() * 10;
-            Stillneeded -= Client.Inventory.Objects.Where(x => x.ID == 1088001).Count();
+            Stillneeded -= Client.Inventory.Objects.Count(x => x.ID == 720027) * 10;
+            Stillneeded -= Client.Inventory.Objects.Count(x => x.ID == 1088001);
             if (Stillneeded > 0)
                 return false;
             return true;
         }
 
         public static void PurifyItem(Purification ps, GameState client) {
-            ConquerItem Item = null, AddingItem = null;
-            if (client.Inventory.TryGetItem(ps.ItemUID, out Item) &&
-                client.Inventory.TryGetItem(ps.AddUID, out AddingItem)) {
+            if (client.Inventory.TryGetItem(ps.ItemUID, out var Item) &&
+                client.Inventory.TryGetItem(ps.AddUID, out var AddingItem)) {
                 if (ps.ItemUID == ps.AddUID)
                     return;
 
@@ -11983,11 +11866,12 @@ namespace MTA.Network {
                             if (Item.Purification.PurificationItemID > 0)
                                 ItemAddingTable.RemoveAdding(Item.UID, Item.Purification.PurificationItemID);
                             client.Send(ps);
-                            ItemAdding.Purification_ purify = new ItemAdding.Purification_();
-                            purify.AddedOn = DateTime.Now;
-                            purify.Available = true;
-                            purify.ItemUID = ps.ItemUID;
-                            purify.PurificationLevel = PurifyInformation.PurificationLevel;
+                            var purify = new ItemAdding.Purification_ {
+                                AddedOn = DateTime.Now,
+                                Available = true,
+                                ItemUID = ps.ItemUID,
+                                PurificationLevel = PurifyInformation.PurificationLevel
+                            };
                             if (client.Entity.VIPLevel == 1)
                                 purify.PurificationDuration = 8 * 24 * 60 * 60;
                             else if (client.Entity.VIPLevel == 2)
@@ -12023,100 +11907,70 @@ namespace MTA.Network {
         }
 
         public static void PurifyRefinery(Purification ps, GameState client) {
-            ConquerItem item = null, refine = null;
-            client.Inventory.TryGetItem(ps.ItemUID, out item);
-            client.Inventory.TryGetItem(ps.AddUID, out refine);
-            if (refine != null) {
-                if (item == null)
-                    item = client.Equipment.TryGetItem(ps.ItemUID);
-                if (item != null) {
-                    Refinery.RefineryItem refineStats;
-                    if (Kernel.DatabaseRefinery.TryGetValue(refine.ID, out refineStats)) {
-                        Boolean valid = true;
-                        if (item.Position < 100) {
-                            UInt32 iType = item.ID / 1000;
-                            Positions pos = GetPositionFromID(item.ID);
-                            if (pos != (Positions)refineStats.Position)
-                                valid = false;
-                            if (pos == Positions.Garment)
-                                return;
-                            if (pos == Positions.Steed)
-                                return;
-                            if (pos == Positions.Bottle)
-                                return;
-                            if (pos == Positions.SteedArmor)
-                                return;
-                            if (pos == Positions.SteedTalisman)
-                                return;
-                            if (pos == Positions.LeftAccessory)
-                                return;
-                            if (pos == Positions.RightAccessory)
-                                return;
-                            if (pos == Positions.DefenceTalisman)
-                                return;
-                            if (pos == Positions.AttackTalisman)
-                                return;
-                            else if (refineStats.Position == 5)
-                                valid = item.IsTwoHander();
-                            if (iType == refineStats.Position)
-                                valid = true;
-                        }
-                        else {
-                            if (item.GetItemType() != (ConquerItem.ItemTypes)refineStats.Position)
-                                valid = false;
-                        }
+            client.Inventory.TryGetItem(ps.ItemUID, out var item);
+            client.Inventory.TryGetItem(ps.AddUID, out var refine);
+            if (refine == null) return;
+            item ??= client.Equipment.TryGetItem(ps.ItemUID);
+            if (item == null) return;
+            if (Kernel.DatabaseRefinery.TryGetValue(refine.ID, out var refineStats)) {
+                var valid = true;
+                if (item.Position < 100) {
+                    var iType = item.ID / 1000;
+                    var pos = GetPositionFromID(item.ID);
+                    if (pos != (Positions)refineStats.Position)
+                        valid = false;
+                    if (pos is Positions.Garment or Positions.Steed or Positions.Bottle or Positions.SteedArmor
+                        or Positions.SteedTalisman or Positions.LeftAccessory or Positions.RightAccessory
+                        or Positions.DefenceTalisman)
+                        return;
+                    if (pos == Positions.AttackTalisman)
+                        return;
+                    else if (refineStats.Position == 5)
+                        valid = item.IsTwoHander();
+                    if (iType == refineStats.Position)
+                        valid = true;
+                }
+                else {
+                    if (item.GetItemType() != (ConquerItem.ItemTypes)refineStats.Position)
+                        valid = false;
+                }
 
-                        if (valid) {
-                            if (item.Position == 7)
-                                return;
-                            if (item.Position == 9)
-                                return;
-                            if (item.Position == 11)
-                                return;
-                            if (item.Position == 12)
-                                return;
-                            if (item.Position == 10)
-                                return;
-                            if (item.Position == 18)
-                                return;
-                            if (item.Position == 17)
-                                return;
-                            if (item.Position == 15)
-                                return;
-                            if (item.Position == 16)
-                                return;
+                if (valid) {
+                    if (item.Position is 7 or 9 or 11 or 12 or 10 or 18 or 17 or 15 or 16)
+                        return;
 
-                            if (item.ExtraEffect.EffectID > 0)
-                                ItemAddingTable.RemoveAdding(item.UID, item.ExtraEffect.EffectID);
-                            //  client.Send(ps);
+                    if (item.ExtraEffect.EffectID > 0)
+                        ItemAddingTable.RemoveAdding(item.UID, item.ExtraEffect.EffectID);
+                    //  client.Send(ps);
 
-                            ItemAdding.Refinery_ purify = new ItemAdding.Refinery_();
-                            purify.AddedOn = DateTime.Now;
-                            purify.Available = true;
-                            purify.ItemUID = ps.ItemUID;
-                            purify.EffectLevel = refineStats.Level;
-                            purify.EffectDuration = 7 * 24 * 60 * 60;
-                            purify.EffectID = refineStats.Identifier;
-                            purify.EffectPercent = refineStats.Percent;
-                            ItemAddingTable.AddExtraEffect(purify);
-                            item.ExtraEffect = purify;
-                            item.Mode = Enums.ItemMode.Update;
-                            item.Send(client);
+                    var purify = new ItemAdding.Refinery_ {
+                        AddedOn = DateTime.Now,
+                        Available = true,
+                        ItemUID = ps.ItemUID,
+                        EffectLevel = refineStats.Level,
+                        EffectDuration = 7 * 24 * 60 * 60,
+                        EffectID = refineStats.Identifier,
+                        EffectPercent = refineStats.Percent
+                    };
+                    ItemAddingTable.AddExtraEffect(purify);
+                    item.ExtraEffect = purify;
+                    item.Mode = Enums.ItemMode.Update;
+                    item.Send(client);
 
-                            //   ItemAdding effect = new ItemAdding(true);
-                            //   effect.Type = ItemAdding.ExtraEffect;
-                            //   effect.Append2(purify);
-                            //   client.Send(effect);
+                    //   ItemAdding effect = new ItemAdding(true);
+                    //   effect.Type = ItemAdding.ExtraEffect;
+                    //   effect.Append2(purify);
+                    //   client.Send(effect);
 
-                            client.Inventory.Remove(refine, Enums.ItemUse.Remove);
-                            client.CalculateStatBonus();
-                            client.LoadItemStats();
-                            client.CalculateHPBonus();
-                            client.Send(ps);
+                    client.Inventory.Remove(refine, Enums.ItemUse.Remove);
+                    client.CalculateStatBonus();
+                    client.LoadItemStats();
+                    client.CalculateHPBonus();
+                    client.Send(ps);
 
-                            client.Send(WindowStats(client));
+                    client.Send(WindowStats(client));
 
-                            /*    client.Inventory.Remove(refine, Game.Enums.ItemUse.Remove);
+                    /*    client.Inventory.Remove(refine, Game.Enums.ItemUse.Remove);
                                 item.RefineItem = refineStats.Identifier;
                                 item.RefineryTime = DateTime.Now.AddDays(7);
                                 item.Mode = Game.Enums.ItemMode.Update;
@@ -12130,18 +11984,16 @@ namespace MTA.Network {
                                 Database.ConquerItemTable.UpdateRefineryItem(item);
                                 Database.ConquerItemTable.UpdateRefineryTime(item);
                                 client.Send(WindowStats(client));*/
-                            //LoadItemStatus(client);
-                            // c.Send(new Game_MTAStats(c.MTA));
-                        }
-                        else
-                            client.Send(new Message(String.Format("You cannot refine your {0} with that {1}.",
-                                ConquerItemInformation.BaseInformations[item.ID].Name,
-                                ConquerItemInformation.BaseInformations[refine.ID].Name), Color.Red, Message.TopLeft));
-                    }
-                    else
-                        Console.WriteLine(String.Format("No database refinery {0}", refine.ID));
+                    //LoadItemStatus(client);
+                    // c.Send(new Game_MTAStats(c.MTA));
                 }
+                else
+                    client.Send(new Message(String.Format("You cannot refine your {0} with that {1}.",
+                        ConquerItemInformation.BaseInformations[item.ID].Name,
+                        ConquerItemInformation.BaseInformations[refine.ID].Name), Color.Red, Message.TopLeft));
             }
+            else
+                Console.WriteLine($"No database refinery {refine.ID}");
         }
 
         public static bool IsEquipment(long ID) {
@@ -12151,17 +12003,16 @@ namespace MTA.Network {
         #region a7a low etshal tany b2a
 
         static void ComposePlus(Compose compose, GameState client) {
-            ConquerItem Item = null;
             ConquerItem[] Minors = null;
-            if (client.Inventory.TryGetItem(compose[0], out Item) ||
+            if (client.Inventory.TryGetItem(compose[0], out var Item) ||
                 (client.Equipment.TryGetItem(compose[0]) != null) || (compose.Mode == Compose.QuickCompose)) {
                 if (Item == null && !client.Inventory.TryGetItem(compose[0], out Item) &&
                     (client.Equipment.TryGetItem(compose[0]) != null))
                     Item = client.Equipment.TryGetItem(compose[0]);
 
-                if (compose.Mode == Compose.DragonBallUpgrade || compose.Mode == Compose.MeteorUpgrade) {
+                if (compose.Mode is Compose.DragonBallUpgrade or Compose.MeteorUpgrade) {
                     Minors = new ConquerItem[compose.Countx];
-                    for (int i = 0; i < compose.Countx; i++) {
+                    for (var i = 0; i < compose.Countx; i++) {
                         if (!client.Inventory.TryGetItem(compose[i + 2], out Minors[i]))
                             return;
                         else if (Minors[i].UID == Item.UID)
@@ -12170,7 +12021,7 @@ namespace MTA.Network {
                 }
                 else {
                     Minors = new ConquerItem[compose.Count - 1];
-                    for (int i = 0; i < compose.Count - 1; i++) {
+                    for (var i = 0; i < compose.Count - 1; i++) {
                         if (!client.Inventory.TryGetItem(compose[i + 1], out Minors[i]))
                             return;
                         else if (Minors[i].UID == Item.UID)
@@ -12178,14 +12029,14 @@ namespace MTA.Network {
                     }
                 }
 
-                ushort pos = ItemPosition(Item.ID);
-                if (pos == ConquerItem.Bottle || pos == ConquerItem.Garment || pos == ConquerItem.LeftWeaponAccessory ||
-                    pos == ConquerItem.RightWeaponAccessory || pos == ConquerItem.SteedArmor) //mohsen.. i'm remove crop
+                var pos = ItemPosition(Item.ID);
+                if (pos is ConquerItem.Bottle or ConquerItem.Garment or ConquerItem.LeftWeaponAccessory
+                    or ConquerItem.RightWeaponAccessory or ConquerItem.SteedArmor) //mohsen.. i'm remove crop
                     return;
 
-                if (compose.Mode == Compose.ChanceUpgrade || compose.Mode == Compose.QuickCompose) {
-                    if (Item.Plus < 12 && Item.PlusProgress != 0) {
-                        double percent = Item.PlusProgress / (double)DataHolder.ComposePlusPoints(Item.Plus);
+                if (compose.Mode is Compose.ChanceUpgrade or Compose.QuickCompose) {
+                    if (Item is { Plus: < 12, PlusProgress: not 0 }) {
+                        var percent = Item.PlusProgress / (double)DataHolder.ComposePlusPoints(Item.Plus);
                         if (Kernel.Rate(percent)) {
                             Item.PlusProgress = 0;
                             Item.Plus++;
@@ -12209,11 +12060,11 @@ namespace MTA.Network {
                     return;
                 }
 
-                if (compose.Mode == Compose.MeteorUpgrade || compose.Mode == Compose.DragonBallUpgrade) {
-                    ConquerItemInformation info = new ConquerItemInformation(Item.ID, Item.Plus);
+                if (compose.Mode is Compose.MeteorUpgrade or Compose.DragonBallUpgrade) {
+                    var info = new ConquerItemInformation(Item.ID, Item.Plus);
 
                     Minors = new ConquerItem[compose.Count - 2];
-                    for (int i = 0; i < compose.Count - 2; i++) {
+                    for (var i = 0; i < compose.Count - 2; i++) {
                         if (!client.Inventory.TryGetItem(compose[i + 2], out Minors[i]))
                             return;
                         else if (Minors[i].UID == Item.UID)
@@ -12227,8 +12078,8 @@ namespace MTA.Network {
                             if (Item.Durability < Item.MaximDurability)
                                 break;
                             // byte chance = (byte)(70 - ((infos.BaseInformation.Level - (infos.BaseInformation.Level > 100 ? 30 : 0)) / (10 - Item.ID % 10)));
-                            byte cost = DragonBallUpgradeCost(Item, info);
-                            double chance = ((compose.Countx / (double)cost) * 100);
+                            var cost = DragonBallUpgradeCost(Item, info);
+                            var chance = ((compose.Countx / (double)cost) * 100);
                             if (MyMath.Success(chance)) {
                                 switch ((Enums.ItemQuality)(Item.ID % 10)) {
                                     case Enums.ItemQuality.Normal:
@@ -12259,7 +12110,8 @@ namespace MTA.Network {
                                 client.Inventory.Remove(item, Enums.ItemUse.Remove);
                             if (compose.Countx > cost) {
                                 var diff = compose.Countx - cost;
-                                client.Inventory.Add((uint)(Minors[0].ID == 720028 ? DragonBall : 1088001), 0, (byte)diff);
+                                client.Inventory.Add(Minors[0].ID == 720028 ? DragonBall : 1088001, 0,
+                                    (byte)diff);
                             }
 
                             break;
@@ -12272,7 +12124,7 @@ namespace MTA.Network {
                                 break;
                             }
 
-                            byte cost = MeteorUpgradeCost(Item.ID);
+                            var cost = MeteorUpgradeCost(Item.ID);
                             if (ItemPosition(Item.ID) == ConquerItem.Armor ||
                                 ItemPosition(Item.ID) == ConquerItem.Head || IsShield(Item.ID)) {
                                 if (info.BaseInformation.Level >= 110)
@@ -12283,8 +12135,8 @@ namespace MTA.Network {
                                     cost = 1;
                             }
 
-                            double chance = ((compose.Countx / (double)cost) * 100);
-                            uint newid = info.CalculateUplevel();
+                            var chance = ((compose.Countx / (double)cost) * 100);
+                            var newid = info.CalculateUplevel();
                             if (newid != 0 && newid != Item.ID) {
                                 if (MyMath.Success(chance)) {
                                     Item.ID = newid;
@@ -12313,7 +12165,8 @@ namespace MTA.Network {
                                 client.Inventory.Remove(item, Enums.ItemUse.Remove);
                             if (compose.Countx > cost) {
                                 var diff = compose.Countx - cost;
-                                client.Inventory.Add((uint)(Minors[0].ID == 720028 ? DragonBall : 1088001), 0, (byte)diff);
+                                client.Inventory.Add(Minors[0].ID == 720028 ? DragonBall : 1088001, 0,
+                                    (byte)diff);
                             }
 
                             break;
@@ -12323,7 +12176,7 @@ namespace MTA.Network {
 
                 foreach (var item in Minors) {
                     var ItemPlus = item;
-                    ConquerItemInformation infos = new ConquerItemInformation(Item.ID, Item.Plus);
+                    var infos = new ConquerItemInformation(Item.ID, Item.Plus);
                     switch (compose.Mode) {
                         case Compose.CurrentSteed:
                         case Compose.Plus: {
@@ -12376,15 +12229,15 @@ namespace MTA.Network {
                                 client.Inventory.Remove(ItemPlus, Enums.ItemUse.Remove);
                             }
 
-                            int color1 = (int)Item.SocketProgress;
-                            int color2 = (int)ItemPlus.SocketProgress;
+                            var color1 = (int)Item.SocketProgress;
+                            var color2 = (int)ItemPlus.SocketProgress;
 
-                            int G1 = color1 & 0xFF;
-                            int G2 = color2 & 0xFF;
-                            int B1 = (color1 >> 8) & 0xFF;
-                            int B2 = (color2 >> 8) & 0xFF;
-                            int R1 = (color1 >> 16) & 0xFF;
-                            int R2 = (color2 >> 16) & 0xFF;
+                            var G1 = color1 & 0xFF;
+                            var G2 = color2 & 0xFF;
+                            var B1 = (color1 >> 8) & 0xFF;
+                            var B2 = (color2 >> 8) & 0xFF;
+                            var R1 = (color1 >> 16) & 0xFF;
+                            var R2 = (color2 >> 16) & 0xFF;
                             Item.NextGreen = (byte)((int)Math.Floor(0.9 * G1) + (int)Math.Floor(0.1 * G2) + 1);
                             Item.NextBlue = (byte)((int)Math.Floor(0.9 * B1) + (int)Math.Floor(0.1 * B2) + 1);
                             Item.NextRed = (byte)((int)Math.Floor(0.9 * R1) + (int)Math.Floor(0.1 * R2) + 1);
@@ -12405,7 +12258,7 @@ namespace MTA.Network {
 
 
         static byte DragonBallUpgradeCost(ConquerItem Item, ConquerItemInformation info) {
-            int change = 100;
+            var change = 100;
             switch (Item.ID % 10) {
                 case 6: change = 50; break;
                 case 7: change = 33; break;
@@ -12428,8 +12281,8 @@ namespace MTA.Network {
         }
 
         public static byte MeteorUpgradeCost(uint ID) {
-            int wQuality = (int)(ID % 10);
-            byte nLevel = GetLevel(ID);
+            var wQuality = (int)(ID % 10);
+            var nLevel = GetLevel(ID);
             switch (wQuality) {
                 case 9: {
                     if (ItemPosition(ID) == ConquerItem.Armor || ItemPosition(ID) == ConquerItem.Head ||
@@ -12547,20 +12400,17 @@ namespace MTA.Network {
         #endregion a7a low etshal tany b2a
 
         static void SocketItem(ItemUsage usage, GameState client) {
-            ConquerItem item = null;
-            ConquerItem[] Minors = null;
-            if (client.Inventory.TryGetItem(usage.UID, out item)) {
-                ushort pos = ItemPosition(item.ID);
-                if (pos == ConquerItem.Bottle || pos == ConquerItem.Fan || pos == ConquerItem.Garment ||
-                    pos == ConquerItem.LeftWeaponAccessory || pos == ConquerItem.RightWeaponAccessory ||
-                    pos == ConquerItem.Steed || pos == ConquerItem.SteedArmor || pos == ConquerItem.SteedCrop ||
-                    pos == ConquerItem.Tower || pos == ConquerItem.Wing) {
+            if (client.Inventory.TryGetItem(usage.UID, out var item)) {
+                var pos = ItemPosition(item.ID);
+                if (pos is ConquerItem.Bottle or ConquerItem.Fan or ConquerItem.Garment
+                    or ConquerItem.LeftWeaponAccessory or ConquerItem.RightWeaponAccessory or ConquerItem.Steed
+                    or ConquerItem.SteedArmor or ConquerItem.SteedCrop or ConquerItem.Tower or ConquerItem.Wing) {
                     client.Send(new Message("Sorry can't make socket in this item !", Color.Red, Message.Talk));
                     return;
                 }
 
-                Minors = new ConquerItem[usage.Batch.Length];
-                for (int i = 0; i < usage.Batch.Length; i++) {
+                var Minors = new ConquerItem[usage.Batch.Length];
+                for (var i = 0; i < usage.Batch.Length; i++) {
                     if (!client.Inventory.TryGetItem(usage.Batch[i], out Minors[i]))
                         return;
                     else if (Minors[i].UID == item.UID)
@@ -12571,7 +12421,7 @@ namespace MTA.Network {
                     return;
                 if (item.SocketOne == Enums.Gem.NoSocket) {
                     ushort cost = 1;
-                    if (pos != ConquerItem.RightWeapon && pos != ConquerItem.LeftWeapon)
+                    if (pos is not ConquerItem.RightWeapon and not ConquerItem.LeftWeapon)
                         cost = 12;
 
                     if (client.Inventory.Contains(DragonBall, cost)) {
@@ -12588,7 +12438,7 @@ namespace MTA.Network {
                 }
                 else if (item.SocketTwo == Enums.Gem.NoSocket) {
                     ushort cost = 5;
-                    if (pos != ConquerItem.RightWeapon && pos != ConquerItem.LeftWeapon) {
+                    if (pos is not ConquerItem.RightWeapon and not ConquerItem.LeftWeapon) {
                         cost = 1;
                         var minor = Minors.FirstOrDefault();
                         if (minor.ID == 1200005) {
@@ -12644,28 +12494,27 @@ namespace MTA.Network {
         }
 
         static void SocketItem(EmbedSocket socket, GameState client) {
-            ConquerItem Item = null;
-            ConquerItem Gem = null;
-            if (client.Inventory.TryGetItem(socket.ItemUID, out Item) ||
+            if (client.Inventory.TryGetItem(socket.ItemUID, out var Item) ||
                 (client.Equipment.TryGetItem(socket.ItemUID) != null)) {
                 if (Item == null && !client.Inventory.TryGetItem(socket.ItemUID, out Item) &&
                     (client.Equipment.TryGetItem(socket.ItemUID) != null))
                     Item = client.Equipment.TryGetItem(socket.ItemUID);
-                ushort sock = ItemPosition(Item.ID);
-                if (sock == 7 || sock == 9 || sock > 19) {
+                var sock = ItemPosition(Item.ID);
+                if (sock is 7 or 9 or > 19) {
                     client.Send(new Message("Sorry can't make socket in this item !", Color.Red, Message.Talk));
                     return;
                 }
 
-                if (client.Inventory.TryGetItem(socket.GemUID, out Gem) || socket.Mode == EmbedSocket.Remove) {
+                if (client.Inventory.TryGetItem(socket.GemUID, out var Gem) || socket.Mode == EmbedSocket.Remove) {
                     switch (socket.Mode) {
                         case EmbedSocket.Add: {
-                            byte gemBase = (byte)(Gem.ID % 1000);
+                            var gemBase = (byte)(Gem.ID % 1000);
 
                             #region No ONecan make un allowedgem in Talisman
 
                             if (sock == (ushort)Positions.AttackTalisman) {
-                                if (!(gemBase is >= (byte)Enums.Gem.NormalThunderGem and <= (byte)Enums.Gem.SuperThunderGem)) {
+                                if (!(gemBase is >= (byte)Enums.Gem.NormalThunderGem
+                                        and <= (byte)Enums.Gem.SuperThunderGem)) {
                                     client.Send(new Message("Sorry can't make socket in this item !", Color.Red,
                                         Message.Talk));
                                     return;
@@ -12673,7 +12522,8 @@ namespace MTA.Network {
                             }
 
                             if (sock == (ushort)Positions.DefenceTalisman) {
-                                if (!(gemBase is >= (byte)Enums.Gem.NormalGloryGem and <= (byte)Enums.Gem.SuperGloryGem)) {
+                                if (!(gemBase is >= (byte)Enums.Gem.NormalGloryGem
+                                        and <= (byte)Enums.Gem.SuperGloryGem)) {
                                     client.Send(new Message("Sorry can't make socket in this item !", Color.Red,
                                         Message.Talk));
                                     return;
@@ -12770,8 +12620,7 @@ namespace MTA.Network {
         }
 
         static void LockItem(ItemLock itemLock, GameState client) {
-            ConquerItem item = null;
-            if (client.Inventory.TryGetItem(itemLock.UID, out item)) {
+            if (client.Inventory.TryGetItem(itemLock.UID, out var item)) {
                 itemLock.ID = 1;
                 item.Lock = 1;
                 item.Mode = Enums.ItemMode.Update;
@@ -12791,8 +12640,7 @@ namespace MTA.Network {
         }
 
         static void UnlockItemInstant(ItemLock itemLock, GameState client) {
-            ConquerItem item = null;
-            if (client.Inventory.TryGetItem(itemLock.UID, out item)) {
+            if (client.Inventory.TryGetItem(itemLock.UID, out var item)) {
                 if (item.Lock == 1) {
                     item.Lock = 0;
                     item.Mode = Enums.ItemMode.Update;
@@ -12806,8 +12654,7 @@ namespace MTA.Network {
         }
 
         static void UnlockItem5Days(ItemLock itemLock, GameState client) {
-            ConquerItem item = null;
-            if (client.Inventory.TryGetItem(itemLock.UID, out item)) {
+            if (client.Inventory.TryGetItem(itemLock.UID, out var item)) {
                 if (item.Lock == 1) {
                     item.Lock = 2;
                     item.UnlockEnd = DateTime.Now.AddDays(5);
@@ -12822,12 +12669,11 @@ namespace MTA.Network {
         }
 
         static void SocketTalismanWithItem(ItemUsage itemUsage, GameState client) {
-            ConquerItem talisman = client.Equipment.TryGetItem(itemUsage.UID);
-            ConquerItem item = null;
+            var talisman = client.Equipment.TryGetItem(itemUsage.UID);
             for (ushort i = 91; i < 91 + 4 * itemUsage.ToArray()[26]; i += 4) {
-                uint item_swap = BitConverter.ToUInt32(itemUsage.ToArray(), i);
+                var item_swap = BitConverter.ToUInt32(itemUsage.ToArray(), i);
 
-                if (client.Inventory.TryGetItem(item_swap, out item)) {
+                if (client.Inventory.TryGetItem(item_swap, out var item)) {
                     if (talisman == null)
                         return;
                     if (item.ID / 1000 == talisman.ID / 1000)
@@ -12901,13 +12747,13 @@ namespace MTA.Network {
         }
 
         static void SocketTalismanWithCPs(ItemUsage itemUsage, GameState client) {
-            ConquerItem talisman = client.Equipment.TryGetItem(itemUsage.UID);
+            var talisman = client.Equipment.TryGetItem(itemUsage.UID);
 
             if (talisman == null)
                 return;
 
-            ushort pos = ItemPosition(talisman.ID);
-            if (pos != ConquerItem.Fan && pos != ConquerItem.Tower && pos != ConquerItem.Wing)
+            var pos = ItemPosition(talisman.ID);
+            if (pos is not ConquerItem.Fan and not ConquerItem.Tower and not ConquerItem.Wing)
                 return;
 
             uint price = 0;
@@ -12940,16 +12786,14 @@ namespace MTA.Network {
         }
 
         static void EnchantItem(ItemUsage itemUsage, GameState client) {
-            ConquerItem Item = null, EnchantGem = null;
-            if (client.Inventory.TryGetItem(itemUsage.UID, out Item) &&
-                client.Inventory.TryGetItem(itemUsage.dwParam, out EnchantGem)) {
-                ushort pos = ItemPosition(Item.ID);
-                if (pos == ConquerItem.Bottle || pos == ConquerItem.Fan || pos == ConquerItem.Garment ||
-                    pos == ConquerItem.LeftWeaponAccessory || pos == ConquerItem.RightWeaponAccessory ||
-                    pos == ConquerItem.Steed || pos == ConquerItem.SteedArmor || pos == ConquerItem.SteedCrop ||
-                    pos == ConquerItem.Wing || pos == ConquerItem.Tower)
+            if (client.Inventory.TryGetItem(itemUsage.UID, out var Item) &&
+                client.Inventory.TryGetItem(itemUsage.dwParam, out var EnchantGem)) {
+                var pos = ItemPosition(Item.ID);
+                if (pos is ConquerItem.Bottle or ConquerItem.Fan or ConquerItem.Garment
+                    or ConquerItem.LeftWeaponAccessory or ConquerItem.RightWeaponAccessory or ConquerItem.Steed
+                    or ConquerItem.SteedArmor or ConquerItem.SteedCrop or ConquerItem.Wing or ConquerItem.Tower)
                     return;
-                byte gemBase = (byte)(EnchantGem.ID % 1000);
+                var gemBase = (byte)(EnchantGem.ID % 1000);
                 if (Enum.IsDefined(typeof(Enums.Gem), gemBase)) {
                     byte Enchant = 0;
                     switch (EnchantGem.ID % 10) {
@@ -12960,7 +12804,7 @@ namespace MTA.Network {
                         case 2: {
                             if (EnchantGem.ID == 700012)
                                 Enchant = (byte)Kernel.Random.Next(100, 159);
-                            else if (EnchantGem.ID == 700002 || EnchantGem.ID == 700052 || EnchantGem.ID == 700062)
+                            else if (EnchantGem.ID is 700002 or 700052 or 700062)
                                 Enchant = (byte)Kernel.Random.Next(60, 109);
                             else if (EnchantGem.ID == 700032)
                                 Enchant = (byte)Kernel.Random.Next(80, 129);
@@ -12971,9 +12815,9 @@ namespace MTA.Network {
                         default: {
                             if (EnchantGem.ID == 700013)
                                 Enchant = (byte)Kernel.Random.Next(200, 255);
-                            else if (EnchantGem.ID == 700003 || EnchantGem.ID == 700073 || EnchantGem.ID == 700033)
+                            else if (EnchantGem.ID is 700003 or 700073 or 700033)
                                 Enchant = (byte)Kernel.Random.Next(170, 229);
-                            else if (EnchantGem.ID == 700063 || EnchantGem.ID == 700053)
+                            else if (EnchantGem.ID is 700063 or 700053)
                                 Enchant = (byte)Kernel.Random.Next(140, 199);
                             else if (EnchantGem.ID == 700023)
                                 Enchant = (byte)Kernel.Random.Next(90, 149);
@@ -12999,14 +12843,14 @@ namespace MTA.Network {
         }
 
         static void UseItem(ConquerItem item, GameState client) {
-            ConquerItemInformation infos = new ConquerItemInformation(item.ID, 0);
+            var infos = new ConquerItemInformation(item.ID, 0);
             if (client.Booth != null)
                 return;
 
             #region guildCondutors
 
             if (item.ID is >= 720021 and <= 720024) {
-                NpcRequest npc = new NpcRequest(5);
+                var npc = new NpcRequest(5);
                 {
                     switch (item.ID) {
                         case 720021: {
@@ -13068,13 +12912,14 @@ namespace MTA.Network {
                                 #region Summoning
 
                                 if (MonsterInformation.MonsterInformations.ContainsKey(monsterID)) {
-                                    MonsterInformation mt = MonsterInformation.MonsterInformations[monsterID];
+                                    var mt = MonsterInformation.MonsterInformations[monsterID];
                                     mt.BoundX = client.Entity.X;
                                     mt.BoundY = client.Entity.Y;
                                     mt.RespawnTime = 36000;
-                                    Entity entity = new Entity(EntityFlag.Monster, false);
-                                    entity.MapObjType = MapObjectType.Monster;
-                                    entity.MonsterInfo = mt.Copy();
+                                    var entity = new Entity(EntityFlag.Monster, false) {
+                                        MapObjType = MapObjectType.Monster,
+                                        MonsterInfo = mt.Copy()
+                                    };
                                     entity.MonsterInfo.Owner = entity;
                                     entity.Name = mt.Name;
                                     entity.MinAttack = mt.MinAttack;
@@ -13091,7 +12936,7 @@ namespace MTA.Network {
                                     client.Map.AddEntity(entity);
                                     client.SendScreenSpawn(entity, true);
                                     if (entity.MaxHitpoints > 65535) {
-                                        Update upd = new Update(true) { UID = entity.UID };
+                                        var upd = new Update(true) { UID = entity.UID };
                                         upd.Append(Update.Hitpoints, entity.Hitpoints);
                                         client.SendScreen(upd);
                                     }
@@ -13110,8 +12955,8 @@ namespace MTA.Network {
                             client.MessageBox("only in house.");
                     }
                     else {
-                        TimeSpan Remain = itemtime.AddHours(3.0) - DateTime.Now;
-                        string message = "Time Till Next Usage :";
+                        var Remain = itemtime.AddHours(3.0) - DateTime.Now;
+                        var message = "Time Till Next Usage :";
                         message += string.Format("{1} Minutes : {2} Seconds", Remain.Hours, Remain.Minutes,
                             Remain.Seconds);
                         client.MessageBox(message);
@@ -13128,8 +12973,9 @@ namespace MTA.Network {
                         if (client.Entity.MapID != (ushort)client.Entity.UID)
                             return;
                         client.spwansitem = item;
-                        NpcRequest req = new NpcRequest(5);
-                        req.Mesh = Furniture.FurnituresItems[item.ID];
+                        var req = new NpcRequest(5) {
+                            Mesh = Furniture.FurnituresItems[item.ID]
+                        };
                         if (req.Mesh == 8200)
                             req.NpcTyp = (Enums.NpcType)2;
                         else
@@ -13155,7 +13001,7 @@ namespace MTA.Network {
                     break;
                 }
                 case 3000776: {
-                    int cps = Kernel.Random.Next(10, 50);
+                    var cps = Kernel.Random.Next(10, 50);
                     client.Entity.ConquerPoints += (uint)cps;
                     client.Send(new Message("Congratulations you got Conquer Point Points keep going", Color.Red,
                         Message.Whisper));
@@ -13165,9 +13011,9 @@ namespace MTA.Network {
                 case 3001607: //الطاقة
                 {
                     if (client.ChiPowers.Count > 0) {
-                        for (int i = 0; i < client.ChiPowers.Count; i++) {
+                        for (var i = 0; i < client.ChiPowers.Count; i++) {
                             var Mode = i + 1;
-                            for (int ii = 0; ii < 4; ii++) {
+                            for (var ii = 0; ii < 4; ii++) {
                                 var pos = ii;
                                 var powers = client.ChiPowers[Mode - 1];
                                 var attributes = powers.Attributes;
@@ -13199,10 +13045,8 @@ namespace MTA.Network {
                                 }
 
                                 foreach (var chiData in array) {
-                                    if (Kernel.GamePool.ContainsKey(chiData.UID)) {
-                                        var pClient = Kernel.GamePool[chiData.UID];
-                                        if (pClient == null) continue;
-                                        if (pClient.ChiData == null) continue;
+                                    if (Kernel.GamePool.TryGetValue(chiData.UID, out var pClient)) {
+                                        if (pClient is not { ChiData: not null }) continue;
                                         SendRankingQuery(new GenericRanking(true) { Mode = GenericRanking.QueryCount },
                                             pClient, GenericRanking.Chi + (uint)Mode,
                                             pClient.ChiData.SelectRank((Enums.ChiPowerType)Mode),
@@ -13324,8 +13168,8 @@ namespace MTA.Network {
                 {
                     if (client.Inventory.Count <= 38) {
                         client.Inventory.Remove(item, Enums.ItemUse.Remove);
-                        Random R = new Random();
-                        int Nr = R.Next(1, 10);
+                        var R = new Random();
+                        var Nr = R.Next(1, 10);
                         if (Nr == 1) client.Inventory.Add(700002, 0, 1);
                         if (Nr == 2) client.Inventory.Add(700013, 0, 1);
                         if (Nr == 3) client.Inventory.Add(700022, 0, 1);
@@ -13346,8 +13190,8 @@ namespace MTA.Network {
                 {
                     if (client.Inventory.Count <= 38) {
                         client.Inventory.Remove(item, Enums.ItemUse.Remove);
-                        Random R = new Random();
-                        int Nr = R.Next(1, 10);
+                        var R = new Random();
+                        var Nr = R.Next(1, 10);
                         if (Nr == 1) client.Inventory.Add(700003, 0, 1);
                         if (Nr == 2) client.Inventory.Add(700014, 0, 1);
                         if (Nr == 3) client.Inventory.Add(700023, 0, 1);
@@ -13369,8 +13213,8 @@ namespace MTA.Network {
                 {
                     if (client.Inventory.Count <= 38) {
                         client.Inventory.Remove(item, Enums.ItemUse.Remove);
-                        Random R = new Random();
-                        int Nr = R.Next(1, 10);
+                        var R = new Random();
+                        var Nr = R.Next(1, 10);
                         if (Nr == 1) client.Inventory.Add(800803, 0, 1);
                         if (Nr == 2) client.Inventory.Add(800808, 0, 1);
                         if (Nr == 3) client.Inventory.Add(823052, 0, 1);
@@ -13471,8 +13315,8 @@ namespace MTA.Network {
                 {
                     if (client.Inventory.Count <= 38) {
                         client.Inventory.Remove(item, Enums.ItemUse.Remove);
-                        Random R = new Random();
-                        int Nr = R.Next(1, 10);
+                        var R = new Random();
+                        var Nr = R.Next(1, 10);
                         if (Nr == 1) client.Inventory.Add(800111, 0, 1);
                         if (Nr == 2) client.Inventory.Add(800142, 0, 1);
                         if (Nr == 3) client.Inventory.Add(800522, 0, 1);
@@ -13492,8 +13336,8 @@ namespace MTA.Network {
                 {
                     if (client.Inventory.Count <= 38) {
                         client.Inventory.Remove(item, Enums.ItemUse.Remove);
-                        Random R = new Random();
-                        int Nr = R.Next(1, 10);
+                        var R = new Random();
+                        var Nr = R.Next(1, 10);
                         if (Nr == 1) client.Inventory.Add(800000, 0, 1);
                         if (Nr == 2) client.Inventory.Add(800017, 0, 1);
                         if (Nr == 3) client.Inventory.Add(801003, 0, 1);
@@ -13515,7 +13359,7 @@ namespace MTA.Network {
                 #region NinjaScroll
 
                 case 3004458: {
-                    Npcs dialog = new Npcs(client);
+                    var dialog = new Npcs(client);
                     dialog.Text(
                         "Welcome Ninja , The ninja EpicWeapon (Nabuganas Claws ) Was Forged Carfully by the Ancient FrankoNinja . Which mastered the NinjaClass and the Franko . Only the True ninjas who have Mastered Those Ancient Skills . are qualified to get that Legendary EpicWeapon . He/She will be Qualified to Take on the Extraordinary EpicQuest . To Take on the quest talk to DivineFranko in the Middle of Twincity's Square . GoodLuck Ninja .");
                     dialog.Option("Iam on it!", 255);
@@ -13528,7 +13372,7 @@ namespace MTA.Network {
                 #region TrojanScroll
 
                 case 3003341: {
-                    Npcs dialog = new Npcs(client);
+                    var dialog = new Npcs(client);
                     dialog.Text(
                         "Welcome Trojan . The TrojanEpicWeapon was Forged with the power of Light . Was Forged Carfully and Professionally by the Most Spectacular Trojans of the Ancient Times . the Weapon Was Stolen and Lost by the FlameDevastators Army . The EpicWeapon is a Saber . Which have an amazing Attack and Agillity . It's the Weapon which all the professional Trojan will be dreaming with RightNow ! . Only the Profesional Trojans Can Be Qualified to Take on this Legendary Hard Quest . Talk to TrojanEpicQuest NPC At Twincity Square for all the information . GoodLuck Trojan");
                     dialog.Option("Iam on it!", 255);
@@ -13543,15 +13387,15 @@ namespace MTA.Network {
                 case 720996: {
                     if (client.Inventory.Count <= 38) {
                         client.Inventory.Remove(item, Enums.ItemUse.Remove);
-                        Random R = new Random();
-                        int Nr = R.Next(1, 10);
+                        var R = new Random();
+                        var Nr = R.Next(1, 10);
                         if (Nr == 1) client.Entity.Money += 100000000;
                         if (Nr == 2) client.Entity.ConquerPoints += 5000000;
                         if (Nr == 4) client.Entity.SubClasses.StudyPoints += 20000;
                         if (Nr == 5) client.Entity.BoundCps += 5000000;
                     }
 
-                    Npcs dialog = new Npcs(client);
+                    var dialog = new Npcs(client);
                     dialog.Text("Hello. " + client.Entity.Name +
                                 " You Can Open [ SmallCPBox ] [ Maded By Franko ] Get Prize >>> 500.000.000 Silvers - OR - 5.000.000 CPs - OR - 20.000 Study Points - OR - 5.000.000 CPSBound <<< Good Luck Good.");
                     dialog.Option("Thansk you:*.", 255);
@@ -13715,8 +13559,8 @@ namespace MTA.Network {
 
                 case 3005891: {
                     client.Inventory.Remove(item, Enums.ItemUse.Remove);
-                    Random R = new Random();
-                    int Nr = R.Next(1, 16);
+                    var R = new Random();
+                    var Nr = R.Next(1, 16);
                     if (Nr == 1) {
                         client.Inventory.Add(800014, 0, 1);
                     }
@@ -13790,8 +13634,8 @@ namespace MTA.Network {
 
                 case 3005892: {
                     client.Inventory.Remove(item, Enums.ItemUse.Remove);
-                    Random R = new Random();
-                    int Nr = R.Next(1, 5);
+                    var R = new Random();
+                    var Nr = R.Next(1, 5);
                     if (Nr == 1) {
                         client.Inventory.Add(800415, 0, 1);
                     }
@@ -13821,8 +13665,8 @@ namespace MTA.Network {
 
                 case 3004248: {
                     client.Inventory.Remove(item, Enums.ItemUse.Remove);
-                    Random R = new Random();
-                    int Nr = R.Next(1, 16);
+                    var R = new Random();
+                    var Nr = R.Next(1, 16);
                     if (Nr == 1) {
                         client.Inventory.Add(820073, 0, 1);
                     }
@@ -13896,8 +13740,8 @@ namespace MTA.Network {
 
                 case 3004249: {
                     client.Inventory.Remove(item, Enums.ItemUse.Remove);
-                    Random R = new Random();
-                    int Nr = R.Next(1, 31);
+                    var R = new Random();
+                    var Nr = R.Next(1, 31);
                     if (Nr == 1) {
                         client.Inventory.Add(3004136, 0, 1);
                     }
@@ -14031,8 +13875,8 @@ namespace MTA.Network {
 
                 case 3004247: {
                     client.Inventory.Remove(item, Enums.ItemUse.Remove);
-                    Random R = new Random();
-                    int Nr = R.Next(1, 16);
+                    var R = new Random();
+                    var Nr = R.Next(1, 16);
                     if (Nr == 1) {
                         client.Inventory.Add(800020, 0, 1);
                     }
@@ -14106,8 +13950,8 @@ namespace MTA.Network {
 
                 case 729122: {
                     client.Inventory.Remove(item, Enums.ItemUse.Remove);
-                    Random R = new Random();
-                    int Nr = R.Next(1, 18);
+                    var R = new Random();
+                    var Nr = R.Next(1, 18);
                     if (Nr == 1) {
                         client.Inventory.Add(800000, 0, 1);
                     }
@@ -14191,8 +14035,8 @@ namespace MTA.Network {
 
                 case 727317: {
                     client.Inventory.Remove(item, Enums.ItemUse.Remove);
-                    Random R = new Random();
-                    int Nr = R.Next(1, 11);
+                    var R = new Random();
+                    var Nr = R.Next(1, 11);
                     if (Nr == 1) {
                         client.Inventory.Add(822053, 0, 1);
                     }
@@ -14270,7 +14114,7 @@ namespace MTA.Network {
                         client.Send(new Message("Congratulatons, You have finished SpiritTask", Color.Red,
                             Message.TopLeft));
                         client.SpiritBeadQ.Reset();
-                        _String str = new _String(true) {
+                        var str = new _String(true) {
                             Type = 10,
                             UID = client.Entity.UID
                         };
@@ -14298,7 +14142,7 @@ namespace MTA.Network {
                         client.Send(new Message("Congratulatons, You have finished SpiritTask", Color.Red,
                             Message.TopLeft));
                         client.SpiritBeadQ.Reset();
-                        _String str = new _String(true) {
+                        var str = new _String(true) {
                             Type = 10,
                             UID = client.Entity.UID
                         };
@@ -14327,7 +14171,7 @@ namespace MTA.Network {
                         client.Send(new Message("Congratulatons, You have finished SpiritTask", Color.Red,
                             Message.TopLeft));
                         client.SpiritBeadQ.Reset();
-                        _String str = new _String(true) {
+                        var str = new _String(true) {
                             Type = 10,
                             UID = client.Entity.UID
                         };
@@ -14355,7 +14199,7 @@ namespace MTA.Network {
                         client.Send(new Message("Congratulatons, You have finished SpiritTask", Color.Red,
                             Message.TopLeft));
                         client.SpiritBeadQ.Reset();
-                        _String str = new _String(true) {
+                        var str = new _String(true) {
                             Type = 10,
                             UID = client.Entity.UID
                         };
@@ -14383,7 +14227,7 @@ namespace MTA.Network {
                         client.Send(new Message("Congratulatons, You have finished SpiritTask", Color.Red,
                             Message.TopLeft));
                         client.SpiritBeadQ.Reset();
-                        _String str = new _String(true) {
+                        var str = new _String(true) {
                             Type = 10,
                             UID = client.Entity.UID
                         };
@@ -14404,7 +14248,7 @@ namespace MTA.Network {
                 #region ItemList
 
                 case 729087: {
-                    Npcs dialog = new Npcs(client) {
+                    var dialog = new Npcs(client) {
                         Client = client,
                         Replies = []
                     };
@@ -14430,7 +14274,7 @@ namespace MTA.Network {
                         client.ProgressBar = new ProgressBar(client, "Normal", p => {
                             p.Inventory.Remove(item, Enums.ItemUse.Remove);
                             p.IncreaseExperience(p.ExpBall / 5, true);
-                            _String str = new _String(true) {
+                            var str = new _String(true) {
                                 Type = 10,
                                 UID = p.Entity.UID
                             };
@@ -14459,7 +14303,7 @@ namespace MTA.Network {
                             client.ProgressBar = new ProgressBar(client, "Refined", p => {
                                 p.Inventory.Remove(item, Enums.ItemUse.Remove);
                                 p.IncreaseExperience(p.ExpBall / 4, true);
-                                _String str = new _String(true) {
+                                var str = new _String(true) {
                                     Type = 10,
                                     UID = p.Entity.UID
                                 };
@@ -14490,7 +14334,7 @@ namespace MTA.Network {
                                 p.Inventory.Remove(item, Enums.ItemUse.Remove);
                                 p.Entity.ConquerPoints += 300;
                                 p.IncreaseExperience(p.ExpBall / 3, true);
-                                _String str = new _String(true) {
+                                var str = new _String(true) {
                                     Type = 10,
                                     UID = p.Entity.UID
                                 };
@@ -14521,7 +14365,7 @@ namespace MTA.Network {
                                 p.Inventory.Remove(item, Enums.ItemUse.Remove);
                                 p.Entity.ConquerPoints += 400;
                                 p.IncreaseExperience(p.ExpBall / 2, true);
-                                _String str = new _String(true) {
+                                var str = new _String(true) {
                                     Type = 10,
                                     UID = p.Entity.UID
                                 };
@@ -14551,7 +14395,7 @@ namespace MTA.Network {
                                 p.Inventory.Remove(item, Enums.ItemUse.Remove);
                                 p.Entity.ConquerPoints += 1000;
                                 p.IncreaseExperience(p.ExpBall, true);
-                                _String str = new _String(true) {
+                                var str = new _String(true) {
                                     Type = 10,
                                     UID = p.Entity.UID
                                 };
@@ -14622,7 +14466,7 @@ namespace MTA.Network {
                 #region Gems pack
 
                 case 721167: {
-                    Npcs dialog = new Npcs(client);
+                    var dialog = new Npcs(client);
                     if (client.Inventory.Contains(721167, 1)) {
                         client.Inventory.Remove(721167, 1);
 
@@ -14682,7 +14526,7 @@ namespace MTA.Network {
                                             client.Inventory.Add(3003746, 0, 1);
                                         }
 
-                    NpcReply npc = new NpcReply(6, "Congratulations you got BubbleWater give it to TaoistYun.");
+                    var npc = new NpcReply(6, "Congratulations you got BubbleWater give it to TaoistYun.");
                 }
                     break;
 
@@ -14696,7 +14540,7 @@ namespace MTA.Network {
                         client.Inventory.Add(3003739, 0, 1);
                     }
 
-                    NpcReply npc = new NpcReply(6, "Congratulations you got SoapPowder.");
+                    var npc = new NpcReply(6, "Congratulations you got SoapPowder.");
                 }
                     break;
 
@@ -14710,7 +14554,7 @@ namespace MTA.Network {
                         client.Inventory.Add(3003738, 0, 1);
                     }
 
-                    NpcReply npc = new NpcReply(6, "Congratulations you got FruitSoap.");
+                    var npc = new NpcReply(6, "Congratulations you got FruitSoap.");
                 }
                     break;
 
@@ -14724,7 +14568,7 @@ namespace MTA.Network {
                         client.Inventory.Add(3003740, 0, 1);
                     }
 
-                    NpcReply npc = new NpcReply(6, "Congratulations you got RiverWater.");
+                    var npc = new NpcReply(6, "Congratulations you got RiverWater.");
                 }
                     break;
 
@@ -14738,7 +14582,7 @@ namespace MTA.Network {
                         client.Inventory.Add(3003741, 0, 1);
                     }
 
-                    NpcReply npc = new NpcReply(6, "Congratulations you got BasicSoapyWater.");
+                    var npc = new NpcReply(6, "Congratulations you got BasicSoapyWater.");
                 }
                     break;
 
@@ -14752,33 +14596,36 @@ namespace MTA.Network {
                     if (client.Entity.ChestDemonkill >= 1) {
                         if (Kernel.ChanceSuccess(10)) {
                             client.Inventory.Add(3000627, 0, 1);
-                            NpcReply npc = new NpcReply(6, "You gained a SilverKey from opening KeyBag.");
+                            var npc = new NpcReply(6, "You gained a SilverKey from opening KeyBag.");
                             client.Send(npc.ToArray());
-                            _String str = new _String(true);
-                            str.UID = client.Entity.UID;
-                            str.Type = _String.Effect;
+                            var str = new _String(true) {
+                                UID = client.Entity.UID,
+                                Type = _String.Effect
+                            };
                             str.Texts.Add("lounder1");
                             str.TextsCount = 1;
                             client.Entity.SendScreen(str);
                         }
                         else if (Kernel.ChanceSuccess(40)) {
                             client.Inventory.Add(3000626, 0, 1);
-                            NpcReply npc = new NpcReply(6, "You gained a CopperKey from opening KeyBag.");
+                            var npc = new NpcReply(6, "You gained a CopperKey from opening KeyBag.");
                             client.Send(npc.ToArray());
-                            _String str = new _String(true);
-                            str.UID = client.Entity.UID;
-                            str.Type = _String.Effect;
+                            var str = new _String(true) {
+                                UID = client.Entity.UID,
+                                Type = _String.Effect
+                            };
                             str.Texts.Add("lounder1");
                             str.TextsCount = 1;
                             client.Entity.SendScreen(str);
                         }
                         else if (Kernel.ChanceSuccess(80)) {
                             client.Inventory.Add(3000625, 0, 1);
-                            NpcReply npc = new NpcReply(6, "You gained a IronKey from opening KeyBag.");
+                            var npc = new NpcReply(6, "You gained a IronKey from opening KeyBag.");
                             client.Send(npc.ToArray());
-                            _String str = new _String(true);
-                            str.UID = client.Entity.UID;
-                            str.Type = _String.Effect;
+                            var str = new _String(true) {
+                                UID = client.Entity.UID,
+                                Type = _String.Effect
+                            };
                             str.Texts.Add("lounder1");
                             str.TextsCount = 1;
                             client.Entity.SendScreen(str);
@@ -14787,7 +14634,7 @@ namespace MTA.Network {
                         client.Entity.ChestDemonkill = 0;
                     }
                     else {
-                        NpcReply npc = new NpcReply(6, "You need to kill a ChestDemon to open KeyBag.");
+                        var npc = new NpcReply(6, "You need to kill a ChestDemon to open KeyBag.");
                         client.Send(npc.ToArray());
                     }
 
@@ -14804,25 +14651,26 @@ namespace MTA.Network {
                             client.Inventory.Remove(item, Enums.ItemUse.Remove);
                             client.Inventory.Remove(3000624, 1);
                             client.Inventory.Add(3000628, 0, 1);
-                            _String str = new _String(true);
-                            str.UID = client.Entity.UID;
-                            str.Type = _String.Effect;
+                            var str = new _String(true) {
+                                UID = client.Entity.UID,
+                                Type = _String.Effect
+                            };
                             str.Texts.Add("break_start");
                             str.TextsCount = 1;
                             client.Entity.SendScreen(str);
-                            NpcReply npc = new NpcReply(6,
+                            var npc = new NpcReply(6,
                                 "You received a Gold Key! Hurry and use it to open the Treasure Chest!");
                             client.Send(npc.ToArray());
                         }
                         else {
                             client.Inventory.Remove(item, Enums.ItemUse.Remove);
-                            NpcReply npc = new NpcReply(6,
+                            var npc = new NpcReply(6,
                                 "The Chest Demon suddenly bit you and fied away. What a pity...");
                             client.Send(npc.ToArray());
                         }
                     }
                     else {
-                        NpcReply npc = new NpcReply(6, "You have to kill ChestDemon again.");
+                        var npc = new NpcReply(6, "You have to kill ChestDemon again.");
                         client.Send(npc.ToArray());
                     }
 
@@ -14839,25 +14687,26 @@ namespace MTA.Network {
                             client.Inventory.Remove(item, Enums.ItemUse.Remove);
                             client.Inventory.Remove(3000624, 1);
                             client.Inventory.Add(3000628, 0, 1);
-                            _String str = new _String(true);
-                            str.UID = client.Entity.UID;
-                            str.Type = _String.Effect;
+                            var str = new _String(true) {
+                                UID = client.Entity.UID,
+                                Type = _String.Effect
+                            };
                             str.Texts.Add("break_start");
                             str.TextsCount = 1;
                             client.Entity.SendScreen(str);
-                            NpcReply npc = new NpcReply(6,
+                            var npc = new NpcReply(6,
                                 "You received a Gold Key! Hurry and use it to open the Treasure Chest!");
                             client.Send(npc.ToArray());
                         }
                         else {
                             client.Inventory.Remove(item, Enums.ItemUse.Remove);
-                            NpcReply npc = new NpcReply(6,
+                            var npc = new NpcReply(6,
                                 "The Chest Demon suddenly bit you and fied away. What a pity...");
                             client.Send(npc.ToArray());
                         }
                     }
                     else {
-                        NpcReply npc = new NpcReply(6, "You have to kill ChestDemon again.");
+                        var npc = new NpcReply(6, "You have to kill ChestDemon again.");
                         client.Send(npc.ToArray());
                     }
 
@@ -14874,25 +14723,26 @@ namespace MTA.Network {
                             client.Inventory.Remove(item, Enums.ItemUse.Remove);
                             client.Inventory.Remove(3000624, 1);
                             client.Inventory.Add(3000628, 0, 1);
-                            _String str = new _String(true);
-                            str.UID = client.Entity.UID;
-                            str.Type = _String.Effect;
+                            var str = new _String(true) {
+                                UID = client.Entity.UID,
+                                Type = _String.Effect
+                            };
                             str.Texts.Add("break_start");
                             str.TextsCount = 1;
                             client.Entity.SendScreen(str);
-                            NpcReply npc = new NpcReply(6,
+                            var npc = new NpcReply(6,
                                 "You received a Gold Key! Hurry and use it to open the Treasure Chest!");
                             client.Send(npc.ToArray());
                         }
                         else {
                             client.Inventory.Remove(item, Enums.ItemUse.Remove);
-                            NpcReply npc = new NpcReply(6,
+                            var npc = new NpcReply(6,
                                 "The Chest Demon suddenly bit you and fied away. What a pity...");
                             client.Send(npc.ToArray());
                         }
                     }
                     else {
-                        NpcReply npc = new NpcReply(6, "You have to kill ChestDemon again.");
+                        var npc = new NpcReply(6, "You have to kill ChestDemon again.");
                         client.Send(npc.ToArray());
                     }
 
@@ -14906,7 +14756,7 @@ namespace MTA.Network {
                 case 3000593: {
                     client.Inventory.Remove(item, Enums.ItemUse.Remove);
                     uint Uid = 0;
-                    byte type = (byte)Kernel.Random.Next(1, 50);
+                    var type = (byte)Kernel.Random.Next(1, 50);
                     switch (type) {
                         case 1:
                             Uid = 800320;
@@ -15110,9 +14960,10 @@ namespace MTA.Network {
                     }
 
                     client.Inventory.Add(Uid, 0, 1);
-                    _String str = new _String(true);
-                    str.UID = client.Entity.UID;
-                    str.Type = _String.Effect;
+                    var str = new _String(true) {
+                        UID = client.Entity.UID,
+                        Type = _String.Effect
+                    };
                     str.Texts.Add("cortege");
                     str.TextsCount = 1;
                     client.Entity.SendScreen(str);
@@ -15384,7 +15235,7 @@ namespace MTA.Network {
                     client.Entity.SubClasses.StudyPoints += 5;
                     client.Send(new SubClassShow()
                         { ID = 8, Study = client.Entity.SubClasses.StudyPoints, StudyReceive = 5 }.ToArray());
-                    _String str = new _String(true) {
+                    var str = new _String(true) {
                         Type = 10,
                         UID = client.Entity.UID
                     };
@@ -15405,7 +15256,7 @@ namespace MTA.Network {
                     client.Entity.SubClasses.StudyPoints += 500;
                     client.Send(new SubClassShow()
                         { ID = 8, Study = client.Entity.SubClasses.StudyPoints, StudyReceive = 500 }.ToArray());
-                    _String str = new _String(true) {
+                    var str = new _String(true) {
                         Type = 10,
                         UID = client.Entity.UID
                     };
@@ -15423,7 +15274,7 @@ namespace MTA.Network {
                     client.Entity.SubClasses.StudyPoints += 20;
                     client.Send(new SubClassShow()
                         { ID = 8, Study = client.Entity.SubClasses.StudyPoints, StudyReceive = 20 }.ToArray());
-                    _String str = new _String(true) {
+                    var str = new _String(true) {
                         Type = 10,
                         UID = client.Entity.UID
                     };
@@ -15434,7 +15285,8 @@ namespace MTA.Network {
                 }
                     break;
                 case DragonBall: {
-                    client.Entity.ConquerPoints += ConquerItemInformation.BaseInformations[DragonBall].ConquerPointsWorth;
+                    client.Entity.ConquerPoints +=
+                        ConquerItemInformation.BaseInformations[DragonBall].ConquerPointsWorth;
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
                     break;
                 }
@@ -15443,10 +15295,12 @@ namespace MTA.Network {
 
                 case 720020: {
                     if (client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader) {
-                        if (client.Guild.PoleKeeper && client is { Guild: not null, AsMember.Rank: Enums.GuildMemberRank.GuildLeader } && !GuildWar.IsWar) {
+                        if (client.Guild.PoleKeeper && client is
+                                { Guild: not null, AsMember.Rank: Enums.GuildMemberRank.GuildLeader } &&
+                            !GuildWar.IsWar) {
                             #region Work
 
-                            byte[] test = new byte[((ushort)(247 + client.Entity.Name.Length + 8))];
+                            var test = new byte[((ushort)(247 + client.Entity.Name.Length + 8))];
                             Writer.WriteUshort((ushort)(test.Length - 8), 0, test);
                             Writer.WriteUshort(10014, 2, test);
                             Writer.WriteUint(
@@ -15459,7 +15313,7 @@ namespace MTA.Network {
 
                             #region Equip same as me
 
-                            foreach (ConquerItem item3 in client.Equipment.Objects) {
+                            foreach (var item3 in client.Equipment.Objects) {
                                 if (item == null)
                                     continue;
                                 switch (item.Position) {
@@ -15651,10 +15505,11 @@ namespace MTA.Network {
                 case 720159: {
                     client.Inventory.Remove(item, Enums.ItemUse.Delete);
                     client.Entity.ConquerPoints += 10;
-                    _String str4 = new _String(true);
-                    str4.UID = client.Entity.UID;
-                    str4.TextsCount = 1;
-                    str4.Type = _String.Effect;
+                    var str4 = new _String(true) {
+                        UID = client.Entity.UID,
+                        TextsCount = 1,
+                        Type = _String.Effect
+                    };
                     str4.Texts.Add("accession6");
                     client.SendScreen(str4);
 
@@ -16031,9 +15886,10 @@ namespace MTA.Network {
                 case 720049: // random steed pack
                 {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    ConquerItem _item = new ConquerItem(true);
-                    _item.ID = 300000;
-                    ConquerItemInformation _iteminfos = new ConquerItemInformation(_item.ID, 0);
+                    var _item = new ConquerItem(true) {
+                        ID = 300000
+                    };
+                    var _iteminfos = new ConquerItemInformation(_item.ID, 0);
                     _item.Durability = _item.MaximDurability = _iteminfos.BaseInformation.Durability;
                     _item.Plus = 6;
                     _item.Effect = Enums.ItemEffect.Horse;
@@ -16057,23 +15913,25 @@ namespace MTA.Network {
                     if (DateTime.Now >= client.matrixtime.AddMinutes(5.0)) {
                         client.matrixtime = DateTime.Now;
                         client.Entity.Update(_String.Effect, "fathitgtsyd", true);
-                        MonsterInformation monster = new MonsterInformation();
-                        monster.Hitpoints = 7500000;
-                        monster.Level = 200;
-                        monster.Mesh = 984;
-                        monster.Name = "SuperMonster";
-                        monster.MaxAttack = 80000;
-                        monster.AttackRange = 10;
-                        monster.AttackType = 2;
-                        monster.SpellID = 10304;
-                        monster.AttackSpeed = 1500;
-                        monster.ViewRange = 10;
-                        monster.MoveSpeed = 500;
-                        monster.RunSpeed = 500;
-                        monster.MinAttack = 70000;
-                        Entity entity = new Entity(EntityFlag.Monster, false);
-                        entity.MapObjType = MapObjectType.Monster;
-                        entity.MonsterInfo = monster;
+                        var monster = new MonsterInformation {
+                            Hitpoints = 7500000,
+                            Level = 200,
+                            Mesh = 984,
+                            Name = "SuperMonster",
+                            MaxAttack = 80000,
+                            AttackRange = 10,
+                            AttackType = 2,
+                            SpellID = 10304,
+                            AttackSpeed = 1500,
+                            ViewRange = 10,
+                            MoveSpeed = 500,
+                            RunSpeed = 500,
+                            MinAttack = 70000
+                        };
+                        var entity = new Entity(EntityFlag.Monster, false) {
+                            MapObjType = MapObjectType.Monster,
+                            MonsterInfo = monster
+                        };
                         entity.MonsterInfo.Owner = entity;
                         entity.Name = "SuperMonster";
                         entity.MinAttack = monster.MinAttack;
@@ -16088,9 +15946,10 @@ namespace MTA.Network {
                         entity.MapID = client.Entity.MapID;
                         entity.SendUpdates = true;
                         client.Map.RemoveEntity(entity);
-                        _String stringPacket = new _String(true);
-                        stringPacket.UID = monster.ID;
-                        stringPacket.Type = _String.Effect;
+                        var stringPacket = new _String(true) {
+                            UID = monster.ID,
+                            Type = _String.Effect
+                        };
                         stringPacket.Texts.Add("MBStandard");
                         client.Map.AddEntity(entity);
 
@@ -16098,8 +15957,8 @@ namespace MTA.Network {
                         break;
                     }
                     else {
-                        TimeSpan Remain = client.matrixtime.AddMinutes(5.0) - DateTime.Now;
-                        string message = "Time Till Next Usage :";
+                        var Remain = client.matrixtime.AddMinutes(5.0) - DateTime.Now;
+                        var message = "Time Till Next Usage :";
                         message += string.Format("{1} Minutes : {2} Seconds", Remain.Hours, Remain.Minutes,
                             Remain.Seconds);
                         client.MessageBox(message);
@@ -16115,24 +15974,26 @@ namespace MTA.Network {
                     if (DateTime.Now >= client.matrixtime.AddMinutes(5.0)) {
                         client.matrixtime = DateTime.Now;
                         client.Entity.Update(_String.Effect, "fathitgtsyd", true);
-                        MonsterInformation monster = new MonsterInformation();
-                        monster.Hitpoints = 7500000;
-                        monster.Level = 200;
-                        monster.Mesh = 981;
-                        monster.Name = "MonkeyMonster";
-                        monster.MaxAttack = 70000;
-                        monster.AttackRange = 10;
-                        monster.AttackType = 2;
-                        monster.SpellID = 10304;
-                        monster.AttackSpeed = 1500;
-                        monster.ViewRange = 10;
-                        monster.MoveSpeed = 500;
-                        monster.RunSpeed = 500;
-                        monster.MinAttack = 60000;
+                        var monster = new MonsterInformation {
+                            Hitpoints = 7500000,
+                            Level = 200,
+                            Mesh = 981,
+                            Name = "MonkeyMonster",
+                            MaxAttack = 70000,
+                            AttackRange = 10,
+                            AttackType = 2,
+                            SpellID = 10304,
+                            AttackSpeed = 1500,
+                            ViewRange = 10,
+                            MoveSpeed = 500,
+                            RunSpeed = 500,
+                            MinAttack = 60000
+                        };
 
-                        Entity entity = new Entity(EntityFlag.Monster, false);
-                        entity.MapObjType = MapObjectType.Monster;
-                        entity.MonsterInfo = monster;
+                        var entity = new Entity(EntityFlag.Monster, false) {
+                            MapObjType = MapObjectType.Monster,
+                            MonsterInfo = monster
+                        };
                         entity.MonsterInfo.Owner = entity;
                         entity.Name = "MonkeyMonster";
                         entity.MinAttack = monster.MinAttack;
@@ -16147,9 +16008,10 @@ namespace MTA.Network {
                         entity.MapID = client.Entity.MapID;
                         entity.SendUpdates = true;
                         client.Map.RemoveEntity(entity);
-                        _String stringPacket = new _String(true);
-                        stringPacket.UID = monster.ID;
-                        stringPacket.Type = _String.Effect;
+                        var stringPacket = new _String(true) {
+                            UID = monster.ID,
+                            Type = _String.Effect
+                        };
                         stringPacket.Texts.Add("MBStandard");
                         client.Map.AddEntity(entity);
 
@@ -16157,8 +16019,8 @@ namespace MTA.Network {
                         break;
                     }
                     else {
-                        TimeSpan Remain = client.matrixtime.AddMinutes(5.0) - DateTime.Now;
-                        string message = "Time Till Next Usage :";
+                        var Remain = client.matrixtime.AddMinutes(5.0) - DateTime.Now;
+                        var message = "Time Till Next Usage :";
                         message += string.Format("1} Minutes : {2} Seconds", Remain.Hours, Remain.Minutes,
                             Remain.Seconds);
                         client.MessageBox(message);
@@ -16174,23 +16036,25 @@ namespace MTA.Network {
                     if (DateTime.Now >= client.matrixtime.AddMinutes(5.0)) {
                         client.matrixtime = DateTime.Now;
                         client.Entity.Update(_String.Effect, "fam_gain_special", true);
-                        MonsterInformation monster = new MonsterInformation();
-                        monster.Hitpoints = 6000000;
-                        monster.Level = 200;
-                        monster.Mesh = 982;
-                        monster.Name = "CrazyGhost";
-                        monster.MaxAttack = 60000;
-                        monster.AttackRange = 10;
-                        monster.AttackType = 2;
-                        monster.SpellID = 10304;
-                        monster.AttackSpeed = 1000;
-                        monster.ViewRange = 5;
-                        monster.MoveSpeed = 500;
-                        monster.RunSpeed = 500;
-                        monster.MinAttack = 50000;
-                        Entity entity = new Entity(EntityFlag.Monster, false);
-                        entity.MapObjType = MapObjectType.Monster;
-                        entity.MonsterInfo = monster;
+                        var monster = new MonsterInformation {
+                            Hitpoints = 6000000,
+                            Level = 200,
+                            Mesh = 982,
+                            Name = "CrazyGhost",
+                            MaxAttack = 60000,
+                            AttackRange = 10,
+                            AttackType = 2,
+                            SpellID = 10304,
+                            AttackSpeed = 1000,
+                            ViewRange = 5,
+                            MoveSpeed = 500,
+                            RunSpeed = 500,
+                            MinAttack = 50000
+                        };
+                        var entity = new Entity(EntityFlag.Monster, false) {
+                            MapObjType = MapObjectType.Monster,
+                            MonsterInfo = monster
+                        };
                         entity.MonsterInfo.Owner = entity;
                         entity.Name = "CrazyGhost";
                         entity.MinAttack = monster.MinAttack;
@@ -16205,9 +16069,10 @@ namespace MTA.Network {
                         entity.MapID = client.Entity.MapID;
                         entity.SendUpdates = true;
                         client.Map.RemoveEntity(entity);
-                        _String stringPacket = new _String(true);
-                        stringPacket.UID = monster.ID;
-                        stringPacket.Type = _String.Effect;
+                        var stringPacket = new _String(true) {
+                            UID = monster.ID,
+                            Type = _String.Effect
+                        };
                         stringPacket.Texts.Add("MBStandard");
                         client.Map.AddEntity(entity);
 
@@ -16215,8 +16080,8 @@ namespace MTA.Network {
                         break;
                     }
                     else {
-                        TimeSpan Remain = client.matrixtime.AddMinutes(5.0) - DateTime.Now;
-                        string message = "Time Till Next Usage :";
+                        var Remain = client.matrixtime.AddMinutes(5.0) - DateTime.Now;
+                        var message = "Time Till Next Usage :";
                         message += string.Format("{1} Minutes : {2} Seconds", Remain.Hours, Remain.Minutes,
                             Remain.Seconds);
                         client.MessageBox(message);
@@ -16232,23 +16097,25 @@ namespace MTA.Network {
                     if (DateTime.Now >= client.matrixtime.AddMinutes(5.0)) {
                         client.matrixtime = DateTime.Now;
                         client.Entity.Update(_String.Effect, "fam_exp_special", true);
-                        MonsterInformation monster = new MonsterInformation();
-                        monster.Hitpoints = 3500000;
-                        monster.Level = 200;
-                        monster.Mesh = 983;
-                        monster.Name = "GoldenBird";
-                        monster.MaxAttack = 40000;
-                        monster.AttackRange = 10;
-                        monster.AttackType = 2;
-                        monster.SpellID = 10304;
-                        monster.AttackSpeed = 1000;
-                        monster.ViewRange = 5;
-                        monster.MoveSpeed = 500;
-                        monster.RunSpeed = 500;
-                        monster.MinAttack = 30000;
-                        Entity entity = new Entity(EntityFlag.Monster, false);
-                        entity.MapObjType = MapObjectType.Monster;
-                        entity.MonsterInfo = monster;
+                        var monster = new MonsterInformation {
+                            Hitpoints = 3500000,
+                            Level = 200,
+                            Mesh = 983,
+                            Name = "GoldenBird",
+                            MaxAttack = 40000,
+                            AttackRange = 10,
+                            AttackType = 2,
+                            SpellID = 10304,
+                            AttackSpeed = 1000,
+                            ViewRange = 5,
+                            MoveSpeed = 500,
+                            RunSpeed = 500,
+                            MinAttack = 30000
+                        };
+                        var entity = new Entity(EntityFlag.Monster, false) {
+                            MapObjType = MapObjectType.Monster,
+                            MonsterInfo = monster
+                        };
                         entity.MonsterInfo.Owner = entity;
                         entity.Name = "GoldenBird";
                         entity.MinAttack = monster.MinAttack;
@@ -16263,17 +16130,18 @@ namespace MTA.Network {
                         entity.MapID = client.Entity.MapID;
                         entity.SendUpdates = true;
                         client.Map.RemoveEntity(entity);
-                        _String stringPacket = new _String(true);
-                        stringPacket.UID = monster.ID;
-                        stringPacket.Type = _String.Effect;
+                        var stringPacket = new _String(true) {
+                            UID = monster.ID,
+                            Type = _String.Effect
+                        };
                         stringPacket.Texts.Add("MBStandard");
                         client.Map.AddEntity(entity);
                         client.Inventory.Remove(item, Enums.ItemUse.Remove);
                         break;
                     }
                     else {
-                        TimeSpan Remain = client.matrixtime.AddMinutes(5.0) - DateTime.Now;
-                        string message = "Time Till Next Usage :";
+                        var Remain = client.matrixtime.AddMinutes(5.0) - DateTime.Now;
+                        var message = "Time Till Next Usage :";
                         message += string.Format("{1} Minutes : {2} Seconds", Remain.Hours, Remain.Minutes,
                             Remain.Seconds);
                         client.MessageBox(message);
@@ -16289,23 +16157,25 @@ namespace MTA.Network {
                     if (DateTime.Now >= client.matrixtime.AddMinutes(5.0)) {
                         client.matrixtime = DateTime.Now;
                         client.Entity.Update(_String.Effect, "fam_gain", true);
-                        MonsterInformation monster = new MonsterInformation();
-                        monster.Hitpoints = 2500000;
-                        monster.Level = 200;
-                        monster.Mesh = 208;
-                        monster.Name = "BloodGhost";
-                        monster.MaxAttack = 30000;
-                        monster.AttackRange = 10;
-                        monster.AttackType = 2;
-                        monster.SpellID = 10304;
-                        monster.AttackSpeed = 1000;
-                        monster.ViewRange = 5;
-                        monster.MoveSpeed = 500;
-                        monster.RunSpeed = 500;
-                        monster.MinAttack = 20000;
-                        Entity entity = new Entity(EntityFlag.Monster, false);
-                        entity.MapObjType = MapObjectType.Monster;
-                        entity.MonsterInfo = monster;
+                        var monster = new MonsterInformation {
+                            Hitpoints = 2500000,
+                            Level = 200,
+                            Mesh = 208,
+                            Name = "BloodGhost",
+                            MaxAttack = 30000,
+                            AttackRange = 10,
+                            AttackType = 2,
+                            SpellID = 10304,
+                            AttackSpeed = 1000,
+                            ViewRange = 5,
+                            MoveSpeed = 500,
+                            RunSpeed = 500,
+                            MinAttack = 20000
+                        };
+                        var entity = new Entity(EntityFlag.Monster, false) {
+                            MapObjType = MapObjectType.Monster,
+                            MonsterInfo = monster
+                        };
                         entity.MonsterInfo.Owner = entity;
                         entity.Name = "BloodGhost";
                         entity.MinAttack = monster.MinAttack;
@@ -16320,17 +16190,18 @@ namespace MTA.Network {
                         entity.MapID = client.Entity.MapID;
                         entity.SendUpdates = true;
                         client.Map.RemoveEntity(entity);
-                        _String stringPacket = new _String(true);
-                        stringPacket.UID = monster.ID;
-                        stringPacket.Type = _String.Effect;
+                        var stringPacket = new _String(true) {
+                            UID = monster.ID,
+                            Type = _String.Effect
+                        };
                         stringPacket.Texts.Add("MBStandard");
                         client.Map.AddEntity(entity);
                         client.Inventory.Remove(item, Enums.ItemUse.Remove);
                         break;
                     }
                     else {
-                        TimeSpan Remain = client.matrixtime.AddMinutes(5.0) - DateTime.Now;
-                        string message = "Time Till Next Usage :";
+                        var Remain = client.matrixtime.AddMinutes(5.0) - DateTime.Now;
+                        var message = "Time Till Next Usage :";
                         message += string.Format("{1} Minutes : {2} Seconds", Remain.Hours, Remain.Minutes,
                             Remain.Seconds);
                         client.MessageBox(message);
@@ -16346,23 +16217,25 @@ namespace MTA.Network {
                     if (DateTime.Now >= client.matrixtime.AddMinutes(5.0)) {
                         client.matrixtime = DateTime.Now;
                         client.Entity.Update(_String.Effect, "fam_exp", true);
-                        MonsterInformation monster = new MonsterInformation();
-                        monster.Hitpoints = 1500000;
-                        monster.Level = 200;
-                        monster.Mesh = 209;
-                        monster.Name = "HumanAide";
-                        monster.MaxAttack = 20000;
-                        monster.AttackRange = 10;
-                        monster.AttackType = 2;
-                        monster.SpellID = 10304;
-                        monster.AttackSpeed = 1000;
-                        monster.ViewRange = 5;
-                        monster.MoveSpeed = 500;
-                        monster.RunSpeed = 500;
-                        monster.MinAttack = 10000;
-                        Entity entity = new Entity(EntityFlag.Monster, false);
-                        entity.MapObjType = MapObjectType.Monster;
-                        entity.MonsterInfo = monster;
+                        var monster = new MonsterInformation {
+                            Hitpoints = 1500000,
+                            Level = 200,
+                            Mesh = 209,
+                            Name = "HumanAide",
+                            MaxAttack = 20000,
+                            AttackRange = 10,
+                            AttackType = 2,
+                            SpellID = 10304,
+                            AttackSpeed = 1000,
+                            ViewRange = 5,
+                            MoveSpeed = 500,
+                            RunSpeed = 500,
+                            MinAttack = 10000
+                        };
+                        var entity = new Entity(EntityFlag.Monster, false) {
+                            MapObjType = MapObjectType.Monster,
+                            MonsterInfo = monster
+                        };
                         entity.MonsterInfo.Owner = entity;
                         entity.Name = "HumanAide";
                         entity.MinAttack = monster.MinAttack;
@@ -16377,17 +16250,18 @@ namespace MTA.Network {
                         entity.MapID = client.Entity.MapID;
                         entity.SendUpdates = true;
                         client.Map.RemoveEntity(entity);
-                        _String stringPacket = new _String(true);
-                        stringPacket.UID = monster.ID;
-                        stringPacket.Type = _String.Effect;
+                        var stringPacket = new _String(true) {
+                            UID = monster.ID,
+                            Type = _String.Effect
+                        };
                         stringPacket.Texts.Add("MBStandard");
                         client.Map.AddEntity(entity);
                         client.Inventory.Remove(item, Enums.ItemUse.Remove);
                         break;
                     }
                     else {
-                        TimeSpan Remain = client.matrixtime.AddMinutes(5.0) - DateTime.Now;
-                        string message = "Time Till Next Usage :";
+                        var Remain = client.matrixtime.AddMinutes(5.0) - DateTime.Now;
+                        var message = "Time Till Next Usage :";
                         message += string.Format("{1} Minutes : {2} Seconds", Remain.Hours, Remain.Minutes,
                             Remain.Seconds);
                         client.MessageBox(message);
@@ -16559,8 +16433,7 @@ namespace MTA.Network {
 
                 case 1060020: {
                     if (client.Entity.MapID == 601) return;
-                    if (client.Map.BaseID == 6000 || client.Map.BaseID == 6001 || client.Map.BaseID == 1844 ||
-                        client.Map.BaseID == 1801 || client.Map.BaseID == 8883 ||
+                    if (client.Map.BaseID is 6000 or 6001 or 1844 or 1801 or 8883 ||
                         client.Map.BaseID == 1005 && client.Entity.MapID != 1005 || client.Map.BaseID == 700) {
                         client.Send(Constants.JailItemUnusable);
                         return;
@@ -16572,8 +16445,7 @@ namespace MTA.Network {
                 }
                 case 1060021: {
                     if (client.Entity.MapID == 601) return;
-                    if (client.Map.BaseID == 6000 || client.Map.BaseID == 6001 || client.Map.BaseID == 1844 ||
-                        client.Map.BaseID == 1801 || client.Map.BaseID == 8883 ||
+                    if (client.Map.BaseID is 6000 or 6001 or 1844 or 1801 or 8883 ||
                         client.Map.BaseID == 1005 && client.Entity.MapID != 1005 || client.Map.BaseID == 700) {
                         client.Send(Constants.JailItemUnusable);
                         return;
@@ -16585,8 +16457,7 @@ namespace MTA.Network {
                 }
                 case 1060022: {
                     if (client.Entity.MapID == 601) return;
-                    if (client.Map.BaseID == 6000 || client.Map.BaseID == 6001 || client.Map.BaseID == 1844 ||
-                        client.Map.BaseID == 1801 || client.Map.BaseID == 8883 ||
+                    if (client.Map.BaseID is 6000 or 6001 or 1844 or 1801 or 8883 ||
                         client.Map.BaseID == 1005 && client.Entity.MapID != 1005 || client.Map.BaseID == 700) {
                         client.Send(Constants.JailItemUnusable);
                         return;
@@ -16598,8 +16469,7 @@ namespace MTA.Network {
                 }
                 case 1060023: {
                     if (client.Entity.MapID == 601) return;
-                    if (client.Map.BaseID == 6000 || client.Map.BaseID == 6001 || client.Map.BaseID == 1844 ||
-                        client.Map.BaseID == 1801 || client.Map.BaseID == 8883 ||
+                    if (client.Map.BaseID is 6000 or 6001 or 1844 or 1801 or 8883 ||
                         client.Map.BaseID == 1005 && client.Entity.MapID != 1005 || client.Map.BaseID == 700) {
                         client.Send(Constants.JailItemUnusable);
                         return;
@@ -16611,8 +16481,7 @@ namespace MTA.Network {
                 }
                 case 1060024: {
                     if (client.Entity.MapID == 601) return;
-                    if (client.Map.BaseID == 6000 || client.Map.BaseID == 6001 || client.Map.BaseID == 1844 ||
-                        client.Map.BaseID == 1801 || client.Map.BaseID == 8883 ||
+                    if (client.Map.BaseID is 6000 or 6001 or 1844 or 1801 or 8883 ||
                         client.Map.BaseID == 1005 && client.Entity.MapID != 1005 || client.Map.BaseID == 700) {
                         client.Send(Constants.JailItemUnusable);
                         return;
@@ -16624,8 +16493,7 @@ namespace MTA.Network {
                 }
                 case 1060039: {
                     if (client.Entity.MapID == 601) return;
-                    if (client.Map.BaseID == 6000 || client.Map.BaseID == 6001 || client.Map.BaseID == 1844 ||
-                        client.Map.BaseID == 1801 || client.Map.BaseID == 8883 ||
+                    if (client.Map.BaseID is 6000 or 6001 or 1844 or 1801 or 8883 ||
                         client.Map.BaseID == 1005 && client.Entity.MapID != 1005 || client.Map.BaseID == 700) {
                         client.Send(Constants.JailItemUnusable);
                         return;
@@ -16645,7 +16513,7 @@ namespace MTA.Network {
                 case 728525:
                 case 728526:
                 case 728527: {
-                    Npcs dialog = new Npcs(client);
+                    var dialog = new Npcs(client);
                     dialog.Text("Hello. You can chose a horse: black, brown or white.");
                     dialog.Option("Black horse", 1);
                     dialog.Option("Brown horse", 2);
@@ -16657,9 +16525,10 @@ namespace MTA.Network {
                 }
                 case 723855: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    ConquerItem _item = new ConquerItem(true);
-                    _item.ID = 300000;
-                    ConquerItemInformation _iteminfos = new ConquerItemInformation(_item.ID, 0);
+                    var _item = new ConquerItem(true) {
+                        ID = 300000
+                    };
+                    var _iteminfos = new ConquerItemInformation(_item.ID, 0);
                     _item.Durability = _item.MaximDurability = _iteminfos.BaseInformation.Durability;
                     _item.Plus = 1;
                     _item.Effect = Enums.ItemEffect.Horse;
@@ -16669,9 +16538,10 @@ namespace MTA.Network {
                 }
                 case 723856: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    ConquerItem _item = new ConquerItem(true);
-                    _item.ID = 300000;
-                    ConquerItemInformation _iteminfos = new ConquerItemInformation(_item.ID, 0);
+                    var _item = new ConquerItem(true) {
+                        ID = 300000
+                    };
+                    var _iteminfos = new ConquerItemInformation(_item.ID, 0);
                     _item.Durability = _item.MaximDurability = _iteminfos.BaseInformation.Durability;
                     _item.Plus = 1;
                     _item.Effect = Enums.ItemEffect.Horse;
@@ -16681,9 +16551,10 @@ namespace MTA.Network {
                 }
                 case 723859: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    ConquerItem _item = new ConquerItem(true);
-                    _item.ID = 300000;
-                    ConquerItemInformation _iteminfos = new ConquerItemInformation(_item.ID, 0);
+                    var _item = new ConquerItem(true) {
+                        ID = 300000
+                    };
+                    var _iteminfos = new ConquerItemInformation(_item.ID, 0);
                     _item.Durability = _item.MaximDurability = _iteminfos.BaseInformation.Durability;
                     _item.Plus = 1;
                     _item.Effect = Enums.ItemEffect.Horse;
@@ -16693,9 +16564,10 @@ namespace MTA.Network {
                 }
                 case 723860: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    ConquerItem _item = new ConquerItem(true);
-                    _item.ID = 300000;
-                    ConquerItemInformation _iteminfos = new ConquerItemInformation(_item.ID, 0);
+                    var _item = new ConquerItem(true) {
+                        ID = 300000
+                    };
+                    var _iteminfos = new ConquerItemInformation(_item.ID, 0);
                     _item.Durability = _item.MaximDurability = _iteminfos.BaseInformation.Durability;
                     _item.Plus = 3;
                     _item.Effect = Enums.ItemEffect.Horse;
@@ -16705,9 +16577,10 @@ namespace MTA.Network {
                 }
                 case 723861: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    ConquerItem _item = new ConquerItem(true);
-                    _item.ID = 300000;
-                    ConquerItemInformation _iteminfos = new ConquerItemInformation(_item.ID, 0);
+                    var _item = new ConquerItem(true) {
+                        ID = 300000
+                    };
+                    var _iteminfos = new ConquerItemInformation(_item.ID, 0);
                     _item.Durability = _item.MaximDurability = _iteminfos.BaseInformation.Durability;
                     _item.Plus = 3;
                     _item.Effect = Enums.ItemEffect.Horse;
@@ -16717,9 +16590,10 @@ namespace MTA.Network {
                 }
                 case 723862: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    ConquerItem _item = new ConquerItem(true);
-                    _item.ID = 300000;
-                    ConquerItemInformation _iteminfos = new ConquerItemInformation(_item.ID, 0);
+                    var _item = new ConquerItem(true) {
+                        ID = 300000
+                    };
+                    var _iteminfos = new ConquerItemInformation(_item.ID, 0);
                     _item.Durability = _item.MaximDurability = _iteminfos.BaseInformation.Durability;
                     _item.Plus = 3;
                     _item.Effect = Enums.ItemEffect.Horse;
@@ -16729,9 +16603,10 @@ namespace MTA.Network {
                 }
                 case 723863: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    ConquerItem _item = new ConquerItem(true);
-                    _item.ID = 300000;
-                    ConquerItemInformation _iteminfos = new ConquerItemInformation(_item.ID, 0);
+                    var _item = new ConquerItem(true) {
+                        ID = 300000
+                    };
+                    var _iteminfos = new ConquerItemInformation(_item.ID, 0);
                     _item.Durability = _item.MaximDurability = _iteminfos.BaseInformation.Durability;
                     _item.Plus = 6;
                     _item.Effect = Enums.ItemEffect.Horse;
@@ -16741,9 +16616,10 @@ namespace MTA.Network {
                 }
                 case 723864: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    ConquerItem _item = new ConquerItem(true);
-                    _item.ID = 300000;
-                    ConquerItemInformation _iteminfos = new ConquerItemInformation(_item.ID, 0);
+                    var _item = new ConquerItem(true) {
+                        ID = 300000
+                    };
+                    var _iteminfos = new ConquerItemInformation(_item.ID, 0);
                     _item.Durability = _item.MaximDurability = _iteminfos.BaseInformation.Durability;
                     _item.Plus = 6;
                     _item.Effect = Enums.ItemEffect.Horse;
@@ -16753,9 +16629,10 @@ namespace MTA.Network {
                 }
                 case 723865: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    ConquerItem _item = new ConquerItem(true);
-                    _item.ID = 300000;
-                    ConquerItemInformation _iteminfos = new ConquerItemInformation(_item.ID, 0);
+                    var _item = new ConquerItem(true) {
+                        ID = 300000
+                    };
+                    var _iteminfos = new ConquerItemInformation(_item.ID, 0);
                     _item.Durability = _item.MaximDurability = _iteminfos.BaseInformation.Durability;
                     _item.Plus = 6;
                     _item.Effect = Enums.ItemEffect.Horse;
@@ -16765,9 +16642,10 @@ namespace MTA.Network {
                 }
                 case 723900: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    ConquerItem _item = new ConquerItem(true);
-                    _item.ID = 300000;
-                    ConquerItemInformation _iteminfos = new ConquerItemInformation(_item.ID, 0);
+                    var _item = new ConquerItem(true) {
+                        ID = 300000
+                    };
+                    var _iteminfos = new ConquerItemInformation(_item.ID, 0);
                     _item.Durability = _item.MaximDurability = _iteminfos.BaseInformation.Durability;
                     _item.Plus = 0;
                     _item.Effect = Enums.ItemEffect.Horse;
@@ -16777,9 +16655,10 @@ namespace MTA.Network {
                 }
                 case 723901: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    ConquerItem _item = new ConquerItem(true);
-                    _item.ID = 300000;
-                    ConquerItemInformation _iteminfos = new ConquerItemInformation(_item.ID, 0);
+                    var _item = new ConquerItem(true) {
+                        ID = 300000
+                    };
+                    var _iteminfos = new ConquerItemInformation(_item.ID, 0);
                     _item.Durability = _item.MaximDurability = _iteminfos.BaseInformation.Durability;
                     _item.Plus = 0;
                     _item.Effect = Enums.ItemEffect.Horse;
@@ -16789,9 +16668,10 @@ namespace MTA.Network {
                 }
                 case 723902: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    ConquerItem _item = new ConquerItem(true);
-                    _item.ID = 300000;
-                    ConquerItemInformation _iteminfos = new ConquerItemInformation(_item.ID, 0);
+                    var _item = new ConquerItem(true) {
+                        ID = 300000
+                    };
+                    var _iteminfos = new ConquerItemInformation(_item.ID, 0);
                     _item.Durability = _item.MaximDurability = _iteminfos.BaseInformation.Durability;
                     _item.Plus = 0;
                     _item.Effect = Enums.ItemEffect.Horse;
@@ -17326,7 +17206,7 @@ namespace MTA.Network {
                 #region SteedPack
 
                 case 729990: {
-                    Npcs dialog = new Npcs(client);
+                    var dialog = new Npcs(client);
                     dialog.Text("Hello. You can chose a horse:");
                     dialog.Option("Spitfire horse", 1);
                     dialog.Option("Frostbite horse", 2);
@@ -17445,11 +17325,12 @@ namespace MTA.Network {
                             client.Inventory.Add(1200000, 0, 1); //PrayingStone
                             client.Inventory.Add(723700, 0, 1); //ExpBall
                             client.Inventory.Add(723017, 0, 5); //ExpPotion
-                            ConquerItem items = new ConquerItem(true);
-                            items.ID = itemid;
-                            items.Color = Enums.Color.White;
-                            items.Plus = 5;
-                            items.SocketOne = Enums.Gem.EmptySocket;
+                            var items = new ConquerItem(true) {
+                                ID = itemid,
+                                Color = Enums.Color.White,
+                                Plus = 5,
+                                SocketOne = Enums.Gem.EmptySocket
+                            };
                             items.Durability = items.MaximDurability =
                                 ConquerItemInformation.BaseInformations[itemid].Durability;
                             client.Inventory.Add(items, Enums.ItemUse.CreateAndAdd);
@@ -17478,11 +17359,12 @@ namespace MTA.Network {
                             client.Inventory.Add(1200000, 0, 1); //PrayingStone
                             client.Inventory.Add(723700, 0, 1); //ExpBall
                             client.Inventory.Add(723017, 0, 5); //ExpPotion
-                            ConquerItem items = new ConquerItem(true);
-                            items.ID = itemid;
-                            items.Color = Enums.Color.White;
-                            items.Plus = 5;
-                            items.SocketOne = Enums.Gem.EmptySocket;
+                            var items = new ConquerItem(true) {
+                                ID = itemid,
+                                Color = Enums.Color.White,
+                                Plus = 5,
+                                SocketOne = Enums.Gem.EmptySocket
+                            };
                             items.Durability = items.MaximDurability =
                                 ConquerItemInformation.BaseInformations[itemid].Durability;
                             client.Inventory.Add(items, Enums.ItemUse.CreateAndAdd);
@@ -17511,11 +17393,12 @@ namespace MTA.Network {
                             client.Inventory.Add(1200000, 0, 1); //PrayingStone
                             client.Inventory.Add(723700, 0, 1); //ExpBall
                             client.Inventory.Add(723017, 0, 5); //ExpPotion
-                            ConquerItem items = new ConquerItem(true);
-                            items.ID = itemid;
-                            items.Color = Enums.Color.White;
-                            items.Plus = 5;
-                            items.SocketOne = Enums.Gem.EmptySocket;
+                            var items = new ConquerItem(true) {
+                                ID = itemid,
+                                Color = Enums.Color.White,
+                                Plus = 5,
+                                SocketOne = Enums.Gem.EmptySocket
+                            };
                             items.Durability = items.MaximDurability =
                                 ConquerItemInformation.BaseInformations[itemid].Durability;
                             client.Inventory.Add(items, Enums.ItemUse.CreateAndAdd);
@@ -17544,11 +17427,12 @@ namespace MTA.Network {
                             client.Inventory.Add(1200000, 0, 1); //PrayingStone
                             client.Inventory.Add(723700, 0, 1); //ExpBall
                             client.Inventory.Add(723017, 0, 5); //ExpPotion
-                            ConquerItem items = new ConquerItem(true);
-                            items.ID = itemid;
-                            items.Color = Enums.Color.White;
-                            items.Plus = 5;
-                            items.SocketOne = Enums.Gem.EmptySocket;
+                            var items = new ConquerItem(true) {
+                                ID = itemid,
+                                Color = Enums.Color.White,
+                                Plus = 5,
+                                SocketOne = Enums.Gem.EmptySocket
+                            };
                             items.Durability = items.MaximDurability =
                                 ConquerItemInformation.BaseInformations[itemid].Durability;
                             client.Inventory.Add(items, Enums.ItemUse.CreateAndAdd);
@@ -17577,11 +17461,12 @@ namespace MTA.Network {
                             client.Inventory.Add(1200000, 0, 1); //PrayingStone
                             client.Inventory.Add(723700, 0, 1); //ExpBall
                             client.Inventory.Add(723017, 0, 5); //ExpPotion
-                            ConquerItem items = new ConquerItem(true);
-                            items.ID = itemid;
-                            items.Color = Enums.Color.White;
-                            items.Plus = 5;
-                            items.SocketOne = Enums.Gem.EmptySocket;
+                            var items = new ConquerItem(true) {
+                                ID = itemid,
+                                Color = Enums.Color.White,
+                                Plus = 5,
+                                SocketOne = Enums.Gem.EmptySocket
+                            };
                             items.Durability = items.MaximDurability =
                                 ConquerItemInformation.BaseInformations[itemid].Durability;
                             client.Inventory.Add(items, Enums.ItemUse.CreateAndAdd);
@@ -17610,11 +17495,12 @@ namespace MTA.Network {
                             client.Inventory.Add(1200000, 0, 1); //PrayingStone
                             client.Inventory.Add(723700, 0, 1); //ExpBall
                             client.Inventory.Add(723017, 0, 5); //ExpPotion
-                            ConquerItem items = new ConquerItem(true);
-                            items.ID = itemid;
-                            items.Color = Enums.Color.White;
-                            items.Plus = 5;
-                            items.SocketOne = Enums.Gem.EmptySocket;
+                            var items = new ConquerItem(true) {
+                                ID = itemid,
+                                Color = Enums.Color.White,
+                                Plus = 5,
+                                SocketOne = Enums.Gem.EmptySocket
+                            };
                             items.Durability = items.MaximDurability =
                                 ConquerItemInformation.BaseInformations[itemid].Durability;
                             client.Inventory.Add(items, Enums.ItemUse.CreateAndAdd);
@@ -17643,11 +17529,12 @@ namespace MTA.Network {
                             client.Inventory.Add(1200000, 0, 1); //PrayingStone
                             client.Inventory.Add(723700, 0, 1); //ExpBall
                             client.Inventory.Add(723017, 0, 5); //ExpPotion
-                            ConquerItem items = new ConquerItem(true);
-                            items.ID = itemid;
-                            items.Color = Enums.Color.White;
-                            items.Plus = 5;
-                            items.SocketOne = Enums.Gem.EmptySocket;
+                            var items = new ConquerItem(true) {
+                                ID = itemid,
+                                Color = Enums.Color.White,
+                                Plus = 5,
+                                SocketOne = Enums.Gem.EmptySocket
+                            };
                             items.Durability = items.MaximDurability =
                                 ConquerItemInformation.BaseInformations[itemid].Durability;
                             client.Inventory.Add(items, Enums.ItemUse.CreateAndAdd);
@@ -17677,8 +17564,8 @@ namespace MTA.Network {
                 case 723131:
                 case 723132: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 1260;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 1260;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -17694,8 +17581,8 @@ namespace MTA.Network {
                 case 723685:
                 case 723686: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 696;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 696;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -17711,8 +17598,8 @@ namespace MTA.Network {
                 case 724149:
                 case 724150: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 237;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 237;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -17728,8 +17615,8 @@ namespace MTA.Network {
                 case 723134:
                 case 723135: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 1287;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 1287;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -17745,8 +17632,8 @@ namespace MTA.Network {
                 case 724196:
                 case 724197: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 230;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 230;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -17762,8 +17649,8 @@ namespace MTA.Network {
                 case 723670:
                 case 723671: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 689;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 689;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -17779,8 +17666,8 @@ namespace MTA.Network {
                 case 724146:
                 case 724147: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 208;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 208;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -17796,8 +17683,8 @@ namespace MTA.Network {
                 case 723652:
                 case 723653: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 749;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 749;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -17813,8 +17700,8 @@ namespace MTA.Network {
                 case 723655:
                 case 723656: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 751;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 751;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -17830,8 +17717,8 @@ namespace MTA.Network {
                 case 723658:
                 case 723659: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 753;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 753;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -17845,8 +17732,8 @@ namespace MTA.Network {
 
                 case 724215: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 200;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 200;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -17856,8 +17743,8 @@ namespace MTA.Network {
                 case 724193:
                 case 724194: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 223;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 223;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -17873,9 +17760,9 @@ namespace MTA.Network {
                 case 723682:
                 case 723683: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 667;
-                    if (newItemID == 724348 || newItemID == 724349)
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 667;
+                    if (newItemID is 724348 or 724349)
                         newItemID += 150;
 
                     if (item.Bound)
@@ -17893,8 +17780,8 @@ namespace MTA.Network {
                 case 723673:
                 case 723674: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 811;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 811;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -17910,8 +17797,8 @@ namespace MTA.Network {
                 case 723691:
                 case 723692: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 683;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 683;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -17927,8 +17814,8 @@ namespace MTA.Network {
                 case 723676:
                 case 723677: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 813;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 813;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -17944,8 +17831,8 @@ namespace MTA.Network {
                 case 723679:
                 case 723680: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 815;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 815;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -17961,8 +17848,8 @@ namespace MTA.Network {
                 case 723661:
                 case 723662: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 789;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 789;
                     if (newItemID == 724449)
                         newItemID = 724445;
                     if (item.Bound)
@@ -17980,8 +17867,8 @@ namespace MTA.Network {
                 case 723664:
                 case 723665: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 791;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 791;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -17997,8 +17884,8 @@ namespace MTA.Network {
                 case 724202:
                 case 724203: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 162;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 162;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -18014,8 +17901,8 @@ namespace MTA.Network {
                 case 723667:
                 case 723668: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 793;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 793;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -18031,8 +17918,8 @@ namespace MTA.Network {
                 case 724199:
                 case 724200: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 266;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 266;
                     if (newItemID >= 724466)
                         newItemID += 4;
                     if (item.Bound)
@@ -18050,8 +17937,8 @@ namespace MTA.Network {
                 case 724143:
                 case 724144: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 331;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 331;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -18067,8 +17954,8 @@ namespace MTA.Network {
                 case 724208:
                 case 724209: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 161;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 161;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -18084,8 +17971,8 @@ namespace MTA.Network {
                 case 724205:
                 case 724206: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 274;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 274;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -18101,8 +17988,8 @@ namespace MTA.Network {
                 case 724211:
                 case 724212: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 225;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 225;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -18118,8 +18005,8 @@ namespace MTA.Network {
                 case 724137:
                 case 724138: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 294;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 294;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -18135,8 +18022,8 @@ namespace MTA.Network {
                 case 724140:
                 case 724141: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 301;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 301;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -18152,8 +18039,8 @@ namespace MTA.Network {
                 case 725161:
                 case 725162: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 32;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 32;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -18169,8 +18056,8 @@ namespace MTA.Network {
                 case 725164:
                 case 725165: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 34;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 34;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -18186,8 +18073,8 @@ namespace MTA.Network {
                 case 725167:
                 case 725168: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 36;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 36;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -18203,8 +18090,8 @@ namespace MTA.Network {
                 case 725170:
                 case 725171: {
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    byte extra = GetNextRefineryItem();
-                    uint newItemID = item.ID + extra + 38;
+                    var extra = GetNextRefineryItem();
+                    var newItemID = item.ID + extra + 38;
                     if (item.Bound)
                         client.Inventory.AddBound(newItemID, 0, 1);
                     else
@@ -18277,10 +18164,9 @@ namespace MTA.Network {
         }
 
         public static void GainRefineryItem(ConquerItem item, GameState c) {
-            Refinery.RefineryBoxes RefineryB = null;
-            if (Kernel.DatabaseRefineryBoxes.TryGetValue(item.ID, out RefineryB)) {
+            if (Kernel.DatabaseRefineryBoxes.TryGetValue(item.ID, out var RefineryB)) {
                 List<Refinery.RefineryItem> Possible = [];
-                foreach (Refinery.RefineryItem RefineryI in Kernel.DatabaseRefinery.Values) {
+                foreach (var RefineryI in Kernel.DatabaseRefinery.Values) {
                     if (RefineryI.Type == RefineryB.Type) {
                         if (RefineryI.Position == RefineryB.Position) {
                             if (RefineryI.Untradable == RefineryB.Untradable)
@@ -18290,14 +18176,15 @@ namespace MTA.Network {
                 }
 
                 if (Possible.Count > 0) {
-                    Random Rand = new Random();
-                    Int32 x = Math.Max(Rand.Next(1, Possible.Count), Possible.Count - 1);
-                    Refinery.RefineryItem Refinery = Possible[x];
+                    var Rand = new Random();
+                    var x = Math.Max(Rand.Next(1, Possible.Count), Possible.Count - 1);
+                    var Refinery = Possible[x];
                     if (Refinery != null) {
                         c.Inventory.Remove(item, Enums.ItemUse.Remove);
 
-                        ConquerItem i = new ConquerItem(true);
-                        i.ID = Refinery.Identifier;
+                        var i = new ConquerItem(true) {
+                            ID = Refinery.Identifier
+                        };
                         c.Inventory.Add(i, Enums.ItemUse.CreateAndAdd);
                     }
                 }
@@ -18305,18 +18192,17 @@ namespace MTA.Network {
         }
 
         private static void PickupItem(FloorItem floorItem, GameState client) {
-            FloorItem item;
             if ((!client.Screen.TryGetFloorItem(floorItem.UID, out floorItem) || client.Trade.InTrade) ||
                 ((client.Entity.X != floorItem.X) || (client.Entity.Y != floorItem.Y))) {
                 return;
             }
 
-            uint uID = (floorItem.Owner == null) ? 0 : floorItem.Owner.Entity.UID;
+            var uID = (floorItem.Owner == null) ? 0 : floorItem.Owner.Entity.UID;
             if ((((uID == 0) || (uID != client.Entity.UID)) && (uID != 0)) &&
                 (Time32.Now < floorItem.OnFloor.AddSeconds(10))) {
                 if ((client.Team != null) && client.Team.IsTeammate(uID)) {
                     if (client.Team.PickupItems && (floorItem.ValueType == FloorItem.FloorValueType.Item)) {
-                        if ((floorItem.ItemID != 0x109a00) && (floorItem.ItemID != 0x109a01)) {
+                        if (floorItem.ItemID is not 0x109a00 and not 0x109a01) {
                             goto Label_0154;
                         }
                     }
@@ -18330,7 +18216,7 @@ namespace MTA.Network {
             }
 
             Label_0154:
-            item = new FloorItem(true);
+            var item = new FloorItem(true);
             if (floorItem.ValueType != FloorItem.FloorValueType.Item) {
                 client.Map.RemoveFloorItem(floorItem);
             }
@@ -18353,12 +18239,12 @@ namespace MTA.Network {
                     if (ConquerItemInformation.BaseInformations.ContainsKey(floorItem.Item.ID))
                         client.Send(
                             Constants.PickupItem(ConquerItemInformation.BaseInformations[floorItem.Item.ID].Name));
-                    foreach (GameState state in Kernel.GamePool.Values) {
+                    foreach (var state in Kernel.GamePool.Values) {
                         state.Screen.Remove(floorItem);
                     }
 
                     if (floorItem.Item.MobDropped) {
-                        ConquerItemInformation iteminfo =
+                        var iteminfo =
                             new ConquerItemInformation(floorItem.Item.ID, floorItem.Item.Plus);
 
                         // client.Inventory.Add(floorItem.Item, Enums.ItemUse.CreateAndAdd);
@@ -18366,9 +18252,8 @@ namespace MTA.Network {
                             client.Inventory.Add(floorItem.Item, Enums.ItemUse.CreateAndAdd);
                         }
                         else {
-                            ConquerItem _ExistingItem;
                             if (client.Inventory.GetStackContainer(iteminfo.BaseInformation.ID,
-                                    iteminfo.BaseInformation.StackSize, 1, out _ExistingItem)) {
+                                    iteminfo.BaseInformation.StackSize, 1, out var _ExistingItem)) {
                                 _ExistingItem.StackSize++;
                                 ConquerItemTable.UpdateStack(_ExistingItem);
                                 _ExistingItem.Mode = Enums.ItemMode.Update;
@@ -18421,15 +18306,13 @@ namespace MTA.Network {
         }
 
         static void DropItem(ItemUsage itemUsage, GameState client) {
-            ConquerItem item = null;
-            if (client.Inventory.TryGetItem(itemUsage.UID, out item)) {
+            if (client.Inventory.TryGetItem(itemUsage.UID, out var item)) {
                 if (item.ID == 0)
                     return;
-                ConquerItemInformation infos = new ConquerItemInformation(item.ID, 0);
+                var infos = new ConquerItemInformation(item.ID, 0);
                 if (item.Lock != 0 || item.Suspicious)
                     return;
-                if (item.ID == 729611 || item.ID == 729612 || item.ID == 729613 || item.ID == 729614 ||
-                    item.ID == 729703) {
+                if (item.ID is 729611 or 729612 or 729613 or 729614 or 729703) {
                     client.SpiritBeadQ.Reset();
                     client.Inventory.Remove(item, Enums.ItemUse.Remove);
                     return;
@@ -18438,8 +18321,9 @@ namespace MTA.Network {
                 if (infos.BaseInformation.Type == ConquerItemBaseInformation.ItemType.Dropable && !item.Bound) {
                     ushort X = client.Entity.X, Y = client.Entity.Y;
                     if (client.Map.SelectCoordonates(ref X, ref Y)) {
-                        FloorItem floorItem = new FloorItem(true);
-                        floorItem.Item = item;
+                        var floorItem = new FloorItem(true) {
+                            Item = item
+                        };
                         if (!item.Purification.Available) {
                             floorItem.ItemID = item.ID;
                             floorItem.ItemColor = item.Color;
@@ -18472,18 +18356,19 @@ namespace MTA.Network {
             if (client.Entity.Money >= itemUsage.UID) {
                 ushort X = client.Entity.X, Y = client.Entity.Y;
                 if (client.Map.SelectCoordonates(ref X, ref Y)) {
-                    uint ItemID = MoneyItemID(itemUsage.UID);
-                    FloorItem floorItem = new FloorItem(true);
-                    floorItem.ValueType = FloorItem.FloorValueType.Money;
-                    floorItem.Value = itemUsage.UID;
-                    floorItem.ItemID = ItemID;
-                    floorItem.MapID = client.Map.ID;
-                    floorItem.MapObjType = MapObjectType.Item;
-                    floorItem.X = X;
-                    floorItem.Y = Y;
-                    floorItem.Type = FloorItem.Drop;
-                    floorItem.OnFloor = Time32.Now;
-                    floorItem.UID = FloorItem.FloorUID.Next;
+                    var ItemID = MoneyItemID(itemUsage.UID);
+                    var floorItem = new FloorItem(true) {
+                        ValueType = FloorItem.FloorValueType.Money,
+                        Value = itemUsage.UID,
+                        ItemID = ItemID,
+                        MapID = client.Map.ID,
+                        MapObjType = MapObjectType.Item,
+                        X = X,
+                        Y = Y,
+                        Type = FloorItem.Drop,
+                        OnFloor = Time32.Now,
+                        UID = FloorItem.FloorUID.Next
+                    };
                     while (client.Map.Npcs.ContainsKey(floorItem.UID))
                         floorItem.UID = FloorItem.FloorUID.Next;
                     client.SendScreenSpawn(floorItem, true);
@@ -18518,14 +18403,13 @@ namespace MTA.Network {
 
             if (itemUsage.UID == HonorShop.UID) {
                 var shop = HonorShop.Shop;
-                uint cost;
-                if (shop.Items.TryGetValue(itemUsage.dwParam, out cost)) {
+                if (shop.Items.TryGetValue(itemUsage.dwParam, out var cost)) {
                     if (client.Inventory.Count <= 39) {
                         if (client.CurrentHonor >= cost) {
-                            ConquerItem newItem = new ConquerItem(true);
-                            newItem.ID = itemUsage.dwParam;
-                            ConquerItemBaseInformation ibi;
-                            if (ConquerItemInformation.BaseInformations.TryGetValue(newItem.ID, out ibi)) {
+                            var newItem = new ConquerItem(true) {
+                                ID = itemUsage.dwParam
+                            };
+                            if (ConquerItemInformation.BaseInformations.TryGetValue(newItem.ID, out var ibi)) {
                                 if (ibi.Durability > 0) {
                                     newItem.Durability = ibi.Durability;
                                     newItem.MaximDurability = ibi.Durability;
@@ -18554,15 +18438,14 @@ namespace MTA.Network {
             #region Champion shop
 
             if (itemUsage.UID == ChampionShop.UID) {
-                ChampionShop.ChampionItem item;
-                if (ChampionShop.Shop.Items.TryGetValue(itemUsage.dwParam, out item)) {
+                if (ChampionShop.Shop.Items.TryGetValue(itemUsage.dwParam, out var item)) {
                     if (client.ChampionStats != null) {
                         if (client.Inventory.Count <= 39) {
                             if (client.ChampionStats.Points >= item.Price) {
-                                ConquerItem newItem = new ConquerItem(true);
-                                newItem.ID = itemUsage.dwParam;
-                                ConquerItemBaseInformation ibi;
-                                if (ConquerItemInformation.BaseInformations.TryGetValue(newItem.ID, out ibi)) {
+                                var newItem = new ConquerItem(true) {
+                                    ID = itemUsage.dwParam
+                                };
+                                if (ConquerItemInformation.BaseInformations.TryGetValue(newItem.ID, out var ibi)) {
                                     if (ibi.Durability > 0) {
                                         newItem.Durability = ibi.Durability;
                                         newItem.MaximDurability = ibi.Durability;
@@ -18597,14 +18480,13 @@ namespace MTA.Network {
             #region Race point shop
 
             if (itemUsage.UID == RacePointShop.UID) {
-                RacePointShop.RacePointItem item;
-                if (RacePointShop.Shop.Items.TryGetValue(itemUsage.dwParam, out item)) {
+                if (RacePointShop.Shop.Items.TryGetValue(itemUsage.dwParam, out var item)) {
                     if (client.Inventory.Count <= 39) {
                         if (client.RacePoints >= item.Price) {
-                            ConquerItem newItem = new ConquerItem(true);
-                            newItem.ID = itemUsage.dwParam;
-                            ConquerItemBaseInformation ibi;
-                            if (ConquerItemInformation.BaseInformations.TryGetValue(newItem.ID, out ibi)) {
+                            var newItem = new ConquerItem(true) {
+                                ID = itemUsage.dwParam
+                            };
+                            if (ConquerItemInformation.BaseInformations.TryGetValue(newItem.ID, out var ibi)) {
                                 if (ibi.Durability > 0) {
                                     newItem.Durability = ibi.Durability;
                                     newItem.MaximDurability = ibi.Durability;
@@ -18630,28 +18512,24 @@ namespace MTA.Network {
 
             #endregion
 
-            INpc npc = null;
-            if (client.Map.Npcs.TryGetValue(itemUsage.UID, out npc) || itemUsage.UID == 2888) {
-                if (client.Account.State == AccountTable.AccountState.GM ||
-                    client.Account.State == AccountTable.AccountState.GM)
+            if (client.Map.Npcs.TryGetValue(itemUsage.UID, out var npc) || itemUsage.UID == 2888) {
+                if (client.Account.State is AccountTable.AccountState.GM or AccountTable.AccountState.GM)
                     client.Send(new Message("This Shop ID : [" + itemUsage.UID + "]", Color.Red, Message.TopLeft));
 
-                ConquerItem _ExistingItem;
-                ConquerItemInformation iteminfo = new ConquerItemInformation(itemUsage.dwParam, 0);
+                var iteminfo = new ConquerItemInformation(itemUsage.dwParam, 0);
                 if (client.Inventory.Count == 40 && !client.Inventory.Contains(iteminfo.BaseInformation.ID,
-                        iteminfo.BaseInformation.StackSize, out _ExistingItem))
+                        iteminfo.BaseInformation.StackSize, out var _ExistingItem))
                     return;
                 if (itemUsage.UID != 2888)
                     if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, npc.X, npc.Y) > 17)
                         return;
-                ShopFile.Shop shop = new ShopFile.Shop();
-                if (!ShopFile.Shops.TryGetValue(itemUsage.UID, out shop))
+                if (!ShopFile.Shops.TryGetValue(itemUsage.UID, out ShopFile.Shop shop))
                     if (!EShopFile.Shops.TryGetValue(itemUsage.UID, out shop))
                         shop = null;
-                if (shop != null && shop.UID != 0) {
+                if (shop is { UID: not 0 }) {
                     if (!shop.Items.Contains(itemUsage.dwParam)) {
                         //MTA.Console.WriteLine("Error! Cannot puchase item ID: " + itemUsage.dwParam + " from shop ID: " + itemUsage.UID);
-                        NpcReply npcx = new NpcReply(6,
+                        var npcx = new NpcReply(6,
                             "Ops. Error, You cannot buy this item may be Lucky prevented this item.") {
                             OptionID = 255
                         };
@@ -18659,9 +18537,9 @@ namespace MTA.Network {
                         return;
                     }
 
-                    uint Amount = itemUsage.dwExtraInfo > 0 ? itemUsage.dwExtraInfo : 1;
+                    var Amount = itemUsage.dwExtraInfo > 0 ? itemUsage.dwExtraInfo : 1;
 
-                    ConquerItem item = new ConquerItem(true);
+                    var item = new ConquerItem(true);
 
                     switch (shop.MoneyType) {
                         case ShopFile.MoneyType.Gold: {
@@ -18674,11 +18552,12 @@ namespace MTA.Network {
                             item.Durability = item.MaximDurability = iteminfo.BaseInformation.Durability;
                             item.Color = (Enums.Color)3;
 
-                            uint NewAmount = itemUsage.dwExtraInfo > 0 ? itemUsage.dwExtraInfo : 1;
+                            var NewAmount = itemUsage.dwExtraInfo > 0 ? itemUsage.dwExtraInfo : 1;
                             while (NewAmount > 0) {
                                 if (iteminfo.BaseInformation.StackSize == 0) {
-                                    item = new ConquerItem(true);
-                                    item.ID = itemUsage.dwParam;
+                                    item = new ConquerItem(true) {
+                                        ID = itemUsage.dwParam
+                                    };
                                     item.Durability = item.MaximDurability = iteminfo.BaseInformation.Durability;
                                     item.Color = (Enums.Color)3;
                                     client.Inventory.Add(item, Enums.ItemUse.CreateAndAdd);
@@ -18696,8 +18575,9 @@ namespace MTA.Network {
                                         NewAmount -= 1;
                                     }
                                     else {
-                                        item = new ConquerItem(true);
-                                        item.ID = itemUsage.dwParam;
+                                        item = new ConquerItem(true) {
+                                            ID = itemUsage.dwParam
+                                        };
                                         item.Durability = item.MaximDurability = iteminfo.BaseInformation.Durability;
                                         item.Color = (Enums.Color)3;
                                         item.MaxStackSize = iteminfo.BaseInformation.StackSize;
@@ -18732,18 +18612,20 @@ namespace MTA.Network {
                                     item.Plus = (Byte)(item.ID % 730000);
                                 item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                                 item.Durability = item.MaximDurability = iteminfo.BaseInformation.Durability;
-                                uint NewAmount = itemUsage.dwExtraInfo > 0 ? itemUsage.dwExtraInfo : 1;
+                                var NewAmount = itemUsage.dwExtraInfo > 0 ? itemUsage.dwExtraInfo : 1;
                                 while (NewAmount > 0) {
                                     if (iteminfo.BaseInformation.StackSize == 0) {
                                         if ((itemUsage.dwParam % 730000) <= 12) {
-                                            ConquerItem newItem = new ConquerItem(true);
-                                            newItem.ID = itemUsage.dwParam;
+                                            var newItem = new ConquerItem(true) {
+                                                ID = itemUsage.dwParam
+                                            };
                                             newItem.Plus = (Byte)(newItem.ID % 730000);
                                             client.Inventory.Add(newItem, Enums.ItemUse.CreateAndAdd);
                                         }
                                         else {
-                                            item = new ConquerItem(true);
-                                            item.ID = itemUsage.dwParam;
+                                            item = new ConquerItem(true) {
+                                                ID = itemUsage.dwParam
+                                            };
                                             item.Durability = item.MaximDurability =
                                                 iteminfo.BaseInformation.Durability;
                                             item.Color = (Enums.Color)3;
@@ -18764,8 +18646,9 @@ namespace MTA.Network {
                                             NewAmount -= 1;
                                         }
                                         else {
-                                            item = new ConquerItem(true);
-                                            item.ID = itemUsage.dwParam;
+                                            item = new ConquerItem(true) {
+                                                ID = itemUsage.dwParam
+                                            };
                                             item.Durability = item.MaximDurability =
                                                 iteminfo.BaseInformation.Durability;
                                             item.Color = (Enums.Color)3;
@@ -18801,18 +18684,20 @@ namespace MTA.Network {
                                     item.Plus = (Byte)(item.ID % 730000);
                                 item.Color = (Enums.Color)Kernel.Random.Next(4, 8);
                                 item.Durability = item.MaximDurability = iteminfo.BaseInformation.Durability;
-                                uint NewAmount = itemUsage.dwExtraInfo > 0 ? itemUsage.dwExtraInfo : 1;
+                                var NewAmount = itemUsage.dwExtraInfo > 0 ? itemUsage.dwExtraInfo : 1;
                                 while (NewAmount > 0) {
                                     if (iteminfo.BaseInformation.StackSize == 0) {
                                         if ((itemUsage.dwParam % 730000) <= 12) {
-                                            ConquerItem newItem = new ConquerItem(true);
-                                            newItem.ID = itemUsage.dwParam;
+                                            var newItem = new ConquerItem(true) {
+                                                ID = itemUsage.dwParam
+                                            };
                                             newItem.Plus = (Byte)(newItem.ID % 730000);
                                             client.Inventory.Add(newItem, Enums.ItemUse.CreateAndAdd);
                                         }
                                         else {
-                                            item = new ConquerItem(true);
-                                            item.ID = itemUsage.dwParam;
+                                            item = new ConquerItem(true) {
+                                                ID = itemUsage.dwParam
+                                            };
                                             item.Durability = item.MaximDurability =
                                                 iteminfo.BaseInformation.Durability;
                                             item.Color = (Enums.Color)3;
@@ -18833,8 +18718,9 @@ namespace MTA.Network {
                                             NewAmount -= 1;
                                         }
                                         else {
-                                            item = new ConquerItem(true);
-                                            item.ID = itemUsage.dwParam;
+                                            item = new ConquerItem(true) {
+                                                ID = itemUsage.dwParam
+                                            };
                                             item.Durability = item.MaximDurability =
                                                 iteminfo.BaseInformation.Durability;
                                             item.Color = (Enums.Color)3;
@@ -18865,23 +18751,21 @@ namespace MTA.Network {
         }
 
         static void HandleSellToNPC(ItemUsage itemUsage, GameState client) {
-            INpc npc = null;
-            if (client.Map.Npcs.TryGetValue(itemUsage.UID, out npc)) {
+            if (client.Map.Npcs.TryGetValue(itemUsage.UID, out var npc)) {
                 if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, npc.X, npc.Y) > 17)
                     return;
-                ConquerItem item = null;
-                if (client.Inventory.TryGetItem(itemUsage.dwParam, out item)) {
+                if (client.Inventory.TryGetItem(itemUsage.dwParam, out var item)) {
                     if (item.Lock != 0 || item.Suspicious)
                         return;
-                    uint Price = new ConquerItemInformation(item.ID, 0).BaseInformation.GoldWorth;
+                    var Price = new ConquerItemInformation(item.ID, 0).BaseInformation.GoldWorth;
                     Price = Price / 3;
                     if (item.Durability > 0 && item.Durability < item.MaximDurability)
                         Price = (Price * item.Durability) / item.MaximDurability;
 
                     if (item.Durability > 0 && item.Durability <= item.MaximDurability) {
                         client.Inventory.Remove(item, Enums.ItemUse.Remove);
-                        if (!(client.Account.State == AccountTable.AccountState.GM ||
-                              client.Account.State == AccountTable.AccountState.DoesntExist ||
+                        if (!(client.Account.State is AccountTable.AccountState.GM
+                                  or AccountTable.AccountState.DoesntExist ||
                               client.Entity.VIPLevel >= 6)) {
                             client.MessageBox("Only Vip Players(vip > 6) Can get money for selling items");
                             return;
@@ -18898,16 +18782,16 @@ namespace MTA.Network {
 
         static void HandleVIPRepair(ItemUsage itemUsage, GameState client) {
             foreach (var item in client.Equipment.Objects) {
-                if (item != null) {
-                    if (item.Durability != 0 && item.Durability != item.MaximDurability) {
+                if (item is { Durability: not 0 }) {
+                    if (item.Durability != item.MaximDurability) {
                         if (item.Suspicious)
                             return;
                         if (IsFranko(item.ID))
                             return;
                         var info = new ConquerItemInformation(item.ID, 0).BaseInformation;
                         if (item.Durability > 0 && item.Durability < info.Durability) {
-                            uint Price = info.GoldWorth;
-                            byte Quality = (byte)(item.ID % 10);
+                            var Price = info.GoldWorth;
+                            var Quality = (byte)(item.ID % 10);
                             double QualityMultipier = 0;
 
                             switch (Quality) {
@@ -18918,7 +18802,7 @@ namespace MTA.Network {
                                 default: QualityMultipier = 0.75; break;
                             }
 
-                            int nRepairCost = 0;
+                            var nRepairCost = 0;
                             if (Price > 0)
                                 nRepairCost =
                                     (int)Math.Ceiling((Price * (info.Durability - item.Durability) / info.Durability) *
@@ -18943,15 +18827,14 @@ namespace MTA.Network {
         }
 
         static void HandleRepair(ItemUsage itemUsage, GameState client) {
-            ConquerItem item = null;
-            if (client.Inventory.TryGetItem(itemUsage.UID, out item)) {
+            if (client.Inventory.TryGetItem(itemUsage.UID, out var item)) {
                 if (item.Suspicious)
                     return;
                 if (IsFranko(item.ID))
                     return;
                 if (item.Durability > 0 && item.Durability < item.MaximDurability) {
-                    uint Price = new ConquerItemInformation(item.ID, 0).BaseInformation.GoldWorth;
-                    byte Quality = (byte)(item.ID % 10);
+                    var Price = new ConquerItemInformation(item.ID, 0).BaseInformation.GoldWorth;
+                    var Quality = (byte)(item.ID % 10);
                     double QualityMultipier = 0;
 
                     switch (Quality) {
@@ -18962,7 +18845,7 @@ namespace MTA.Network {
                         default: QualityMultipier = 0.75; break;
                     }
 
-                    int nRepairCost = 0;
+                    var nRepairCost = 0;
                     if (Price > 0)
                         nRepairCost =
                             (int)Math.Ceiling(
@@ -18990,21 +18873,19 @@ namespace MTA.Network {
         }
 
         static void UpgradeItem(ItemUsage itemUsage, GameState client) {
-            ConquerItem item = null;
-            if (client.Inventory.TryGetItem(itemUsage.UID, out item)) {
+            if (client.Inventory.TryGetItem(itemUsage.UID, out var item)) {
                 if (IsFranko(item.ID))
                     return;
-                ConquerItem upgrade = null;
-                if (client.Inventory.TryGetItem(itemUsage.dwParam, out upgrade)) {
-                    ConquerItemInformation infos = new ConquerItemInformation(item.ID, item.Plus);
+                if (client.Inventory.TryGetItem(itemUsage.dwParam, out var upgrade)) {
+                    var infos = new ConquerItemInformation(item.ID, item.Plus);
                     switch (upgrade.ID) {
                         case DragonBall: {
                             if (item.ID % 10 == (byte)Enums.ItemQuality.Super)
                                 break;
-                            byte chance = (byte)(70 -
-                                                 ((infos.BaseInformation.Level -
-                                                   (infos.BaseInformation.Level > 100 ? 30 : 0)) /
-                                                  (10 - item.ID % 10)));
+                            var chance = (byte)(70 -
+                                                ((infos.BaseInformation.Level -
+                                                  (infos.BaseInformation.Level > 100 ? 30 : 0)) /
+                                                 (10 - item.ID % 10)));
                             if (item.Durability < item.MaximDurability)
                                 break;
                             if (Kernel.Rate(chance)) {
@@ -19041,7 +18922,7 @@ namespace MTA.Network {
                             chance = 70;
                             if (item.Durability < item.MaximDurability)
                                 break;
-                            uint newid = infos.CalculateUplevel();
+                            var newid = infos.CalculateUplevel();
                             if (newid != 0 && newid != item.ID) {
                                 if (Kernel.Rate(chance)) {
                                     item.ID = newid;
@@ -19067,8 +18948,8 @@ namespace MTA.Network {
                         }
                         case 1088002: {
                             if (infos.BaseInformation.Level <= 15) return;
-                            int startwith = (int)(infos.BaseInformation.ID / 1000);
-                            int endwith = (int)(infos.BaseInformation.ID % 10);
+                            var startwith = (int)(infos.BaseInformation.ID / 1000);
+                            var endwith = (int)(infos.BaseInformation.ID % 10);
                             var sitem = ConquerItemInformation.BaseInformations.Values
                                 .Where(x => (x.ID % 10) == endwith && (x.ID / 1000) == startwith && x.Level >= 15)
                                 .OrderBy(y => y.Level).First();
@@ -19113,7 +18994,8 @@ namespace MTA.Network {
 
         public static byte ItemMaxLevel(ushort postion) {
             switch (postion) {
-                case 0: return 0;
+                case 0:
+                    break;
                 case ConquerItem.Head: return 140;
                 case ConquerItem.Necklace: return 139;
                 case ConquerItem.Armor: return 140;
@@ -19124,7 +19006,8 @@ namespace MTA.Network {
                 case ConquerItem.Tower: return 100;
                 case ConquerItem.Fan: return 100;
                 case ConquerItem.Wing: return 100;
-                case ConquerItem.Steed: return 0;
+                case ConquerItem.Steed:
+                    break;
                 case ConquerItem.SteedCrop: return 30;
             }
 
@@ -19133,7 +19016,8 @@ namespace MTA.Network {
 
         public static byte ItemMinLevel(ushort postion) {
             switch (postion) {
-                case 0: return 0;
+                case 0:
+                    break;
                 case ConquerItem.Head: return 15;
                 case ConquerItem.Necklace: return 7;
                 case ConquerItem.Armor: return 15;
@@ -19141,64 +19025,49 @@ namespace MTA.Network {
                 case ConquerItem.RightWeapon: return 5;
                 case ConquerItem.Boots: return 10;
                 case ConquerItem.Ring: return 10;
-                case ConquerItem.Tower: return 0;
-                case ConquerItem.Fan: return 0;
-                case ConquerItem.Wing: return 0;
-                case ConquerItem.Steed: return 0;
-                case ConquerItem.SteedCrop: return 0;
+                case ConquerItem.Tower:
+                case ConquerItem.Fan:
+                case ConquerItem.Wing:
+                case ConquerItem.Steed:
+                case ConquerItem.SteedCrop:
+                    break;
             }
 
             return 0;
         }
 
         public static Positions GetPositionFromID(UInt32 itemid) {
-            UInt32 iType = itemid / 1000;
-            if (iType is >= 111 and <= 118 || iType == 123 || iType is >= 141 and <= 145 || iType == 148 ||
-                iType == 170)
-                return Positions.Head;
-            else if (iType is >= 120 and <= 121)
-                return Positions.Necklace;
-            else if (iType is >= 130 and <= 139 || iType == 101)
-                return Positions.Armor;
-            else if (iType is >= 150 and <= 152)
-                return Positions.Ring;
-            else if (iType == 160)
-                return Positions.Boots;
-            else if (iType is >= 181 and <= 194)
-                return Positions.Garment;
-            else if (iType == 201)
-                return Positions.AttackTalisman;
-            else if (iType == 202)
-                return Positions.DefenceTalisman;
-            else if (iType == 203)
-                return Positions.SteedTalisman;
-            else if (iType == 200)
-                return Positions.SteedArmor;
-            else if (iType == 300)
-                return Positions.Steed;
-            else if (iType == 2100)
-                return Positions.Bottle;
-            else if (iType == 1050 || iType == 900 || iType == 619)
-                return Positions.Left;
-            else if (iType is >= 410 and <= 490 || iType is >= 500 and <= 580 ||
-                     iType is >= 601 and <= 617 || iType == 620 || iType == 622 || iType == 624 || iType == 626)
-                return Positions.Right;
-            else if (iType is >= 350 and <= 370)
-                return Positions.RightAccessory;
-            else if (iType == 380)
-                return Positions.LeftAccessory;
-            else if (iType == 204)
-                return Positions.Wing;
-            else return 0;
+            var iType = itemid / 1000;
+            return iType switch {
+                >= 111 and <= 118 or 123 or >= 141 and <= 145 or 148 or 170 => Positions.Head,
+                >= 120 and <= 121 => Positions.Necklace,
+                >= 130 and <= 139 or 101 => Positions.Armor,
+                >= 150 and <= 152 => Positions.Ring,
+                160 => Positions.Boots,
+                >= 181 and <= 194 => Positions.Garment,
+                201 => Positions.AttackTalisman,
+                202 => Positions.DefenceTalisman,
+                203 => Positions.SteedTalisman,
+                200 => Positions.SteedArmor,
+                300 => Positions.Steed,
+                2100 => Positions.Bottle,
+                1050 or 900 or 619 => Positions.Left,
+                >= 410 and <= 490 or >= 500 and <= 580 or >= 601 and <= 617 or 620 or 622 or 624 or 626 => Positions
+                    .Right,
+                >= 350 and <= 370 => Positions.RightAccessory,
+                380 => Positions.LeftAccessory,
+                204 => Positions.Wing,
+                _ => 0
+            };
         }
 
         public static ushort ItemPosition(uint ID) {
-            if (ID is >= 111003 and <= 118309 || ID is >= 123000 and <= 123309 || ID is >= 141003 and <= 145069 ||
-                ID is >= 148000 and <= 148309 || ID is >= 170000 and <= 170309)
+            if (ID is >= 111003 and <= 118309 or >= 123000 and <= 123309 or >= 141003 and <= 145069
+                or >= 148000 and <= 148309 or >= 170000 and <= 170309)
                 return ConquerItem.Head;
             else if (ID is >= 120001 and <= 121269)
                 return ConquerItem.Necklace;
-            else if (ID is >= 130003 and <= 139309 || ID is >= 101000 and <= 101309 || ID is >= 101313 and <= 101319)
+            else if (ID is >= 130003 and <= 139309 or >= 101000 and <= 101309 or >= 101313 and <= 101319)
                 return ConquerItem.Armor;
             else if (ID is >= 150000 and <= 152279)
                 return ConquerItem.Ring;
@@ -19214,11 +19083,12 @@ namespace MTA.Network {
                 return ConquerItem.SteedCrop;
             else if (ID == 300000)
                 return ConquerItem.Steed;
-            else if (ID is >= 410003 and <= 617439 || ID is >= 620003 and <= 620439 || ID is >= 622000 and <= 622439 ||
-                     ID is >= 624003 and <= 624439 || ID is >= 626003 and <= 626439)
+            else if (ID is >= 410003 and <= 617439 or >= 620003 and <= 620439 or >= 622000 and <= 622439
+                     or >= 624003 and <= 624439 or >= 626003 and <= 626439)
                 return ConquerItem.RightWeapon;
-            else if (ID is >= 900000 and <= 900309 || ID is >= 1050000 and <= 1051052 || ID is >= 619000 and <= 619439 ||
-                     ID is >= 624003 and <= 624439 || ID is >= 626003 and <= 626439 /* || ID >= 624000 && ID <= 624439*/)
+            else if (ID is >= 900000 and <= 900309 or >= 1050000 and <= 1051052 or >= 619000 and <= 619439
+                     or >= 624003 and <= 624439 or >= 626003 and <= 626439 /* || ID >= 624000 && ID <= 624439*/
+                    )
                 return ConquerItem.LeftWeapon;
             else if (ID is >= 2100005 and <= 2100999)
                 return ConquerItem.Bottle;
@@ -19275,9 +19145,9 @@ namespace MTA.Network {
         }
 
         public static Positions ItemPositionFromID(UInt32 itemid) {
-            UInt32 iType = itemid / 1000;
+            var iType = itemid / 1000;
 
-            if (iType is >= 111 and <= 118 || iType == 123 || iType is >= 141 and <= 143 || iType == 145)
+            if (iType is >= 111 and <= 118 or 123 or >= 141 and <= 143 or 145)
                 return Positions.Head;
             else if (iType is >= 120 and <= 121)
                 return Positions.Necklace;
@@ -19303,11 +19173,10 @@ namespace MTA.Network {
                 return Positions.Steed;
             else if (iType == 2100)
                 return Positions.Bottle;
-            else if (iType == 1050 || iType == 900)
+            else if (iType is 1050 or 900)
                 return Positions.Left;
-            else if (iType is >= 410 and <= 490 || iType is >= 500 and <= 580 ||
-                     iType is >= 601 and <= 613 ||
-                     (iType is >= 616 and <= 617 || iType is >= 619 and <= 620) || (iType == 622))
+            else if (iType is >= 410 and <= 490 or >= 500 and <= 580 or >= 601 and <= 613 or >= 616 and <= 617
+                     or >= 619 and <= 620 or 622)
                 return Positions.Right;
             else if (iType is >= 350 and <= 370)
                 return Positions.RightAccessory;
@@ -19368,9 +19237,8 @@ namespace MTA.Network {
         }
 
         public static void EquipItem(ItemUsage itemUsage, GameState client) {
-            ConquerItem item = null;
             client.Entity.AttackPacket = null;
-            if (client.Inventory.TryGetItem(itemUsage.UID, out item) && client.Booth == null) {
+            if (client.Inventory.TryGetItem(itemUsage.UID, out var item) && client.Booth == null) {
                 if (item.Suspicious)
                     return;
                 if (item.ID / 1000 >= 600) {
@@ -19383,7 +19251,7 @@ namespace MTA.Network {
                     }
                 }
 
-                Positions pos = GetPositionFromID(item.ID);
+                var pos = GetPositionFromID(item.ID);
                 if (pos == Positions.Inventory) {
                     UseItem(item, client);
                     return;
@@ -19395,20 +19263,16 @@ namespace MTA.Network {
 
                 #region Sanity checks
 
-                bool can2hand = false;
-                bool can2wpn = false;
+                var can2hand = false;
+                var can2wpn = false;
                 uint dwExtra = 0;
                 if (itemUsage.dwParam > 20)
                     dwExtra = 20;
                 if (client.Entity.Class is >= 11 and <= 75)
                     can2hand = true;
-                if (client.Entity.Class is >= 11 and <= 15 ||
-                    client.Entity.Class is >= 51 and <= 55 ||
-                    client.Entity.Class is >= 61 and <= 65 ||
-                    client.Entity.Class is >= 71 and <= 75)
+                if (client.Entity.Class is >= 11 and <= 15 or >= 51 and <= 55 or >= 61 and <= 65 or >= 71 and <= 75)
                     can2wpn = true;
-                if (client.Entity.Class is >= 71 and <= 75 ||
-                    client.Entity.Class is >= 41 and <= 45)
+                if (client.Entity.Class is >= 71 and <= 75 or >= 41 and <= 45)
                     can2wpn = true;
                 if (client.Entity.Class is >= 20 and <= 25) {
                     can2hand = true;
@@ -19420,8 +19284,7 @@ namespace MTA.Network {
                     can2wpn = true;
                 }
 
-                if (client.Entity.Class is >= 130 and <= 135 ||
-                    client.Entity.Class is >= 140 and <= 145) {
+                if (client.Entity.Class is >= 130 and <= 135 or >= 140 and <= 145) {
                     can2hand = true;
                     can2wpn = true;
                 }
@@ -19463,8 +19326,7 @@ namespace MTA.Network {
 
                 #region Hossu
 
-                if (client.Entity.Class is >= 130 and <= 135 ||
-                    client.Entity.Class is >= 140 and <= 145) {
+                if (client.Entity.Class is >= 130 and <= 135 or >= 140 and <= 145) {
                     if ((itemUsage.dwParam - dwExtra) == 5) {
                         if ((item.ID / 1000) == 421 || (item.ID / 1000) == 620)
                             return;
@@ -19492,7 +19354,7 @@ namespace MTA.Network {
 
                 #endregion Hossu
 
-                bool twohand = IsTwoHand(item.ID);
+                var twohand = IsTwoHand(item.ID);
                 if (!twohand && itemUsage.dwParam == 4 + dwExtra) {
                     if (!client.Equipment.Free((byte)(5 + dwExtra))) {
                         if (client.Inventory.Count < 40) {
@@ -19520,7 +19382,8 @@ namespace MTA.Network {
                             else {
                                 if (IsShield(item.ID)) {
                                     if ((rItem.ID / 1000) == 421) return;
-                                    if (!client.Spells.ContainsKey(10311) && client.Entity is { FirstRebornClass: 25, SecondRebornClass: 25 }) //Perseverance
+                                    if (!client.Spells.ContainsKey(10311) && client.Entity is
+                                            { FirstRebornClass: 25, SecondRebornClass: 25 }) //Perseverance
                                     {
                                         client.Send(new Message(
                                             "You need to know Perseverance (Warrior Pure skill) to be able to wear 2-handed weapon and shield.",
@@ -19551,27 +19414,18 @@ namespace MTA.Network {
 
                 #endregion
 
-                uint itemType = item.ID / 1000;
+                var itemType = item.ID / 1000;
                 if (itemType == 613) {
-                    if (client.Entity.Class is >= 70 and <= 75 ||
-                        (client.Entity.Class is >= 60 and <= 65 ||
-                         (client.Entity.Class is >= 10 and <= 15 ||
-                          (client.Entity.Class is >= 50 and <= 55 ||
-                           (client.Entity.Class is >= 20 and <= 25 ||
-                            (client.Entity.Class is >= 142 and <= 145 ||
-                             client.Entity.Class is >= 132 and <= 135)))))) {
+                    if (client.Entity.Class is >= 70 and <= 75 or >= 60 and <= 65 or >= 10 and <= 15 or >= 50 and <= 55
+                        or >= 20 and <= 25 or >= 142 and <= 145 or >= 132 and <= 135) {
                         item.Position = 0;
                         return;
                     }
                 }
 
                 if (itemType == 612) {
-                    if ((client.Entity.Class is >= 60 and <= 65 ||
-                         (client.Entity.Class is >= 10 and <= 15 ||
-                          (client.Entity.Class is >= 50 and <= 55 ||
-                           (client.Entity.Class is >= 20 and <= 25 ||
-                            (client.Entity.Class is >= 142 and <= 145 ||
-                             client.Entity.Class is >= 132 and <= 135)))))) {
+                    if (client.Entity.Class is >= 60 and <= 65 or >= 10 and <= 15 or >= 50 and <= 55 or >= 20 and <= 25
+                        or >= 142 and <= 145 or >= 132 and <= 135) {
                         item.Position = 0;
                         return;
                     }
@@ -19641,16 +19495,17 @@ namespace MTA.Network {
                     client.Equipment.Add(item);
                 }
 
-                var iu = new ItemUsage(true);
-                iu.ID = 5;
-                iu.UID = itemUsage.UID;
-                iu.dwParam = itemUsage.dwParam;
+                var iu = new ItemUsage(true) {
+                    ID = 5,
+                    UID = itemUsage.UID,
+                    dwParam = itemUsage.dwParam
+                };
                 client.Send(iu);
 
                 client.CalculateStatBonus();
                 client.CalculateHPBonus();
                 client.LoadItemStats();
-                ClientEquip equips = new ClientEquip();
+                var equips = new ClientEquip();
                 equips.DoEquips(client);
                 client.Send(equips);
 
@@ -19690,7 +19545,7 @@ namespace MTA.Network {
                 client.CalculateStatBonus();
                 client.CalculateHPBonus();
                 client.LoadItemStats();
-                ClientEquip equips = new ClientEquip();
+                var equips = new ClientEquip();
                 equips.DoEquips(client);
                 client.Send(equips);
             }
@@ -19912,22 +19767,23 @@ namespace MTA.Network {
                 #endregion
 
                 case 0: return true;
-                default: return false;
+                default:
+                    break;
             }
 
             return false;
         }
 
         static bool EquipPassSexReq(ConquerItemBaseInformation baseInformation, GameState client) {
-            int ClientGender = client.Entity.Body / 1000;
+            var ClientGender = client.Entity.Body / 1000;
             if (baseInformation.Gender == ClientGender || baseInformation.Gender == 0)
                 return true;
             return false;
         }
 
         static bool Equipable(ConquerItem item, GameState client) {
-            ConquerItemBaseInformation BaseInformation = new ConquerItemInformation(item.ID, item.Plus).BaseInformation;
-            bool pass = false;
+            var BaseInformation = new ConquerItemInformation(item.ID, item.Plus).BaseInformation;
+            var pass = false;
             if (!EquipPassSexReq(BaseInformation, client))
                 return false;
             if (EquipPassRbReq(BaseInformation, client))
@@ -19940,30 +19796,18 @@ namespace MTA.Network {
                 return false;
 
             if (client.Entity.Reborn > 0) {
-                if (client.Entity.Level >= 70 && BaseInformation.Level <= 70)
-                    return pass;
+                if (client.Entity.Level >= 70 && BaseInformation.Level <= 70) { }
                 else {
-                    IProf proficiency = null;
-                    client.Proficiencies.TryGetValue((ushort)(item.ID / 1000), out proficiency);
-                    if (proficiency != null) {
-                        if (proficiency.Level >= BaseInformation.Proficiency)
-                            pass = true;
-                        else
-                            pass = false;
-                    }
+                    client.Proficiencies.TryGetValue((ushort)(item.ID / 1000), out var proficiency);
+                    if (proficiency == null) return pass;
+                    pass = proficiency.Level >= BaseInformation.Proficiency;
                 }
             }
             else {
-                if (!IsFranko(item.ID)) {
-                    IProf proficiency = null;
-                    client.Proficiencies.TryGetValue((ushort)(item.ID / 1000), out proficiency);
-                    if (proficiency != null) {
-                        if (proficiency.Level >= BaseInformation.Proficiency)
-                            pass = true;
-                        else
-                            pass = false;
-                    }
-                }
+                if (IsFranko(item.ID)) return pass;
+                client.Proficiencies.TryGetValue((ushort)(item.ID / 1000), out var proficiency);
+                if (proficiency == null) return pass;
+                pass = proficiency.Level >= BaseInformation.Proficiency;
             }
 
             return pass;
@@ -19982,7 +19826,7 @@ namespace MTA.Network {
                         if (DateTime.Now > client.ChatBanTime.AddMinutes(client.ChatBanLasts))
                             client.ChatBanned = false;
                         else {
-                            int minutes =
+                            var minutes =
                                 (int)new TimeSpan((client.ChatBanTime.AddMinutes(client.ChatBanLasts) - DateTime.Now)
                                     .Ticks).TotalMinutes;
                             client.Send(new Message(
@@ -20017,7 +19861,7 @@ namespace MTA.Network {
                         break;
                     }
                     case Message.Whisper: {
-                        foreach (GameState pClient in Program.Values) {
+                        foreach (var pClient in Program.Values) {
                             if (pClient.Entity.Name == message._To) {
                                 if (client.Account.State == AccountTable.AccountState.GM ||
                                     pClient.Account.State == AccountTable.AccountState.GM) {
@@ -20032,18 +19876,15 @@ namespace MTA.Network {
                                     }
                                 }
 
-                                DateTime dt;
-                                string date;
-                                string datess;
                                 if (pClient.Entity.BlackList.Contains(client.Entity.Name)) return;
                                 message.Mesh = client.Entity.Mesh;
                                 pClient.Send(message);
 
-                                if (client.Account.State == AccountTable.AccountState.GM ||
-                                    client.Account.State == AccountTable.AccountState.GM) {
-                                    dt = DateTime.Now;
-                                    date = string.Concat(new object[] { dt.Year, "-", dt.Month, "\\" });
-                                    datess = dt.Day + "\\";
+                                if (client.Account.State is AccountTable.AccountState.GM
+                                    or AccountTable.AccountState.GM) {
+                                    var dt = DateTime.Now;
+                                    var date = string.Concat(new object[] { dt.Year, "-", dt.Month, "\\" });
+                                    var datess = dt.Day + "\\";
                                     if (!Directory.Exists("gmlogs\\")) {
                                         Directory.CreateDirectory("gmlogs\\");
                                     }
@@ -20058,25 +19899,23 @@ namespace MTA.Network {
 
                                     if (!File.Exists(string.Concat(new object[]
                                             { "gmlogs\\msglogs\\" + date + "\\" + dt.Day + ".txt" }))) {
-                                        using (FileStream fs =
-                                               File.Create("gmlogs\\msglogs\\" + date + "\\" + dt.Day + ".txt")) {
-                                            fs.Close();
-                                        }
+                                        using var fs =
+                                            File.Create("gmlogs\\msglogs\\" + date + "\\" + dt.Day + ".txt");
+                                        fs.Close();
                                     }
 
-                                    using (StreamWriter file =
-                                           new StreamWriter("gmlogs\\msglogs\\" + date + "\\" + dt.Day + ".txt",
-                                               true)) {
-                                        file.WriteLine(client.Entity.Name + " Talk to : [" + pClient.Entity.Name +
-                                                       "] Message: [" + message.__Message + "]");
-                                    }
+                                    using var file =
+                                        new StreamWriter("gmlogs\\msglogs\\" + date + "\\" + dt.Day + ".txt",
+                                            true);
+                                    file.WriteLine(client.Entity.Name + " Talk to : [" + pClient.Entity.Name +
+                                                   "] Message: [" + message.__Message + "]");
                                 }
 
                                 return;
                             }
                         }
 
-                        foreach (Friend friend in client.Friends.Values) {
+                        foreach (var friend in client.Friends.Values) {
                             if (friend.Name == message._To) {
                                 message.__Message = message.__Message.Replace("'", "¹");
                                 client.OnMessageBoxEventParams = new object[3];
@@ -20104,12 +19943,11 @@ namespace MTA.Network {
                         break;
                     }
                     case Message.Service: {
-                        foreach (GameState pClient in Program.Values) {
-                            if (pClient.Account.State == AccountTable.AccountState.GM ||
-                                pClient.Account.State == AccountTable.AccountState.GM) {
+                        foreach (var pClient in Program.Values) {
+                            if (pClient.Account.State is AccountTable.AccountState.GM or AccountTable.AccountState.GM) {
                                 message.ChatType = Message.Talk;
-                                string _Message = "Service-> " + client.Entity.Name +
-                                                  " needs your help. Respond to him/her right now!!!";
+                                var _Message = "Service-> " + client.Entity.Name +
+                                               " needs your help. Respond to him/her right now!!!";
                                 message.__Message = _Message;
                                 pClient.Send(message);
                                 return;
@@ -20120,7 +19958,7 @@ namespace MTA.Network {
                     }
                     case Message.World: {
                         if (client.Entity.Level >= 70 || client.Entity.Reborn != 0) {
-                            foreach (GameState pClient in Program.Values) {
+                            foreach (var pClient in Program.Values) {
                                 if (pClient.Entity.BlackList.Contains(client.Entity.Name)) continue;
                                 if (pClient.Entity.UID != client.Entity.UID)
                                     pClient.Send(message);
@@ -20136,7 +19974,7 @@ namespace MTA.Network {
                     }
                     case Message.Team: {
                         if (client.Team != null) {
-                            foreach (GameState Client in client.Team.Teammates) {
+                            foreach (var Client in client.Team.Teammates) {
                                 if (Client.Entity.BlackList.Contains(client.Entity.Name)) continue;
                                 if (client.Entity.UID != Client.Entity.UID)
                                     Client.Send(message);
@@ -20146,7 +19984,7 @@ namespace MTA.Network {
                         break;
                     }
                     case Message.Friend: {
-                        foreach (Friend friend in client.Friends.Values) {
+                        foreach (var friend in client.Friends.Values) {
                             if (friend.IsOnline)
                                 friend.Client.Send(message);
                         }
@@ -20155,7 +19993,7 @@ namespace MTA.Network {
                     }
                     case Message.Ally: {
                         if (client.Guild != null) {
-                            foreach (Guild guild in client.Guild.Ally.Values) {
+                            foreach (var guild in client.Guild.Ally.Values) {
                                 guild.SendGuildMessage(message);
                                 client.Guild.SendGuildMessage(message);
                             }
@@ -20164,7 +20002,7 @@ namespace MTA.Network {
                         break;
                     }
                     case (uint)MsgMessageBoard.Channel.MsgTrade: {
-                        Message.MessageBoard.MessageInfo Info =
+                        var Info =
                             Message.MessageBoard.GetMsgInfoByAuthor(client.Entity.Name, (ushort)message.ChatType);
 
                         Message.MessageBoard.Delete(Info, (ushort)message.ChatType);
@@ -20172,7 +20010,7 @@ namespace MTA.Network {
                         break;
                     }
                     case (uint)MsgMessageBoard.Channel.MsgFriend: {
-                        Message.MessageBoard.MessageInfo Info =
+                        var Info =
                             Message.MessageBoard.GetMsgInfoByAuthor(client.Entity.Name, (ushort)message.ChatType);
 
                         Message.MessageBoard.Delete(Info, (ushort)message.ChatType);
@@ -20180,7 +20018,7 @@ namespace MTA.Network {
                         break;
                     }
                     case (uint)MsgMessageBoard.Channel.MsgTeam: {
-                        Message.MessageBoard.MessageInfo Info =
+                        var Info =
                             Message.MessageBoard.GetMsgInfoByAuthor(client.Entity.Name, (ushort)message.ChatType);
 
                         Message.MessageBoard.Delete(Info, (ushort)message.ChatType);
@@ -20188,7 +20026,7 @@ namespace MTA.Network {
                         break;
                     }
                     case (uint)MsgMessageBoard.Channel.MsgSyn: {
-                        Message.MessageBoard.MessageInfo Info =
+                        var Info =
                             Message.MessageBoard.GetMsgInfoByAuthor(client.Entity.Name, (ushort)message.ChatType);
 
                         Message.MessageBoard.Delete(Info, (ushort)message.ChatType);
@@ -20196,7 +20034,7 @@ namespace MTA.Network {
                         break;
                     }
                     case (uint)MsgMessageBoard.Channel.MsgOther: {
-                        Message.MessageBoard.MessageInfo Info =
+                        var Info =
                             Message.MessageBoard.GetMsgInfoByAuthor(client.Entity.Name, (ushort)message.ChatType);
 
                         Message.MessageBoard.Delete(Info, (ushort)message.ChatType);
@@ -20213,16 +20051,14 @@ namespace MTA.Network {
         }
 
         public static uint[] LoadEntityUIDs(int lim) {
-            uint[] array = new uint[lim];
-            string query = "select * from entities limit " + lim;
-            using (var cmd = new MySqlCommand(MySqlCommandType.SELECT)) {
-                cmd.Command = query;
-                using (var reader = new MySqlReader(cmd)) {
-                    for (int i = 0; i < lim; i++) {
-                        reader.Read();
-                        array[i] = reader.ReadUInt32("UID");
-                    }
-                }
+            var array = new uint[lim];
+            var query = "select * from entities limit " + lim;
+            using var cmd = new MySqlCommand(MySqlCommandType.SELECT);
+            cmd.Command = query;
+            using var reader = new MySqlReader(cmd);
+            for (var i = 0; i < lim; i++) {
+                reader.Read();
+                array[i] = reader.ReadUInt32("UID");
             }
 
             return array;
@@ -20230,7 +20066,7 @@ namespace MTA.Network {
 
         public static void Cursed(uint UID, GameState client) {
             client.Entity.Cursed = Time32.Now;
-            Update update = new Update(true) { UID = client.Entity.UID };
+            var update = new Update(true) { UID = client.Entity.UID };
             update.Append(Update.CursedTimer, UID);
             client.Entity.AddFlag(Update.Flags.Cursed);
             client.Send(update.ToArray());
@@ -20238,7 +20074,7 @@ namespace MTA.Network {
 
         public static bool CheckCommand(string message, GameState client, bool Ask = false) {
             if (Ask) {
-                Npcs dialog = new Npcs(client);
+                var dialog = new Npcs(client);
                 client.ActiveNpc = 5435234;
                 dialog.Text("Input the password.");
                 dialog.Input("Password:", 1, 16);
@@ -20249,9 +20085,9 @@ namespace MTA.Network {
 
             try {
                 if (message.StartsWith("@")) {
-                    string message_ = message.Substring(1).ToLower();
-                    string Mess = message.Substring(1);
-                    string[] Data = message_.Split(' ');
+                    var message_ = message.Substring(1).ToLower();
+                    var Mess = message.Substring(1);
+                    var Data = message_.Split(' ');
 
                     #region GMs PMs
 
@@ -20269,180 +20105,15 @@ namespace MTA.Network {
                                 client.BlockTrade = !client.BlockTrade;
                                 break;
                             }
-                            case "dropcps": {
-                                ConquerItem Item = null;
-
-                                #region Get Item
-
-                                string ItemName = Data[1];
-                                string loweredName = ItemName.ToLower();
-                                bool SpecialItem = false;
-                                uint SpecialID = 0;
-                                if (ItemName.Contains("item") || ItemName.Contains("cp") || ItemName.Contains("met") ||
-                                    ItemName.Contains("db") || ItemName.Contains("stone") ||
-                                    ItemName.Contains("soul")) {
-                                    if (ItemName.Contains("cp"))
-                                        SpecialID = 729911;
-                                    else if (ItemName.Contains("db"))
-                                        SpecialID = DragonBall;
-                                    else if (ItemName.Contains("met"))
-                                        SpecialID = 1088001;
-                                    else if (ItemName.Contains("stone"))
-                                        SpecialID = 730008;
-                                    else if (ItemName.Contains("Soul"))
-                                        SpecialID = 800110;
-                                    else if (ItemName.Contains("item"))
-                                        SpecialID = uint.Parse(Data[3]);
-                                    SpecialItem = true;
-                                    goto PrepareDrop;
-                                }
-
-                                if (ItemName.Contains("MrHeMaKing_CPS"))
-                                    SpecialID = uint.Parse(Data[3]);
-                                if (loweredName == "exp") {
-                                    foreach (IMapObject ClientObj in client.Screen.Objects) {
-                                        if (ClientObj is Entity) {
-                                            if (ClientObj.MapObjType == MapObjectType.Player) {
-                                                ClientObj.Owner.IncreaseExperience(ClientObj.Owner.ExpBall, false);
-                                            }
-                                        }
-                                    }
-
-                                    break;
-                                }
-
-                                Enums.ItemQuality Quality = Enums.ItemQuality.NormalV3;
-                                if (Data.Length > 2) {
-                                    switch (Data[3].ToLower()) {
-                                        case "fixed": Quality = Enums.ItemQuality.Fixed; break;
-                                        case "normal": Quality = Enums.ItemQuality.Normal; break;
-                                        case "normalv1": Quality = Enums.ItemQuality.NormalV1; break;
-                                        case "normalv2": Quality = Enums.ItemQuality.NormalV2; break;
-                                        case "normalv3": Quality = Enums.ItemQuality.NormalV3; break;
-                                        case "refined": Quality = Enums.ItemQuality.Refined; break;
-                                        case "unique": Quality = Enums.ItemQuality.Unique; break;
-                                        case "elite": Quality = Enums.ItemQuality.Elite; break;
-                                        case "super": Quality = Enums.ItemQuality.Super; break;
-                                        case "other": Quality = Enums.ItemQuality.Other; break;
-                                        default: {
-                                            Quality = (Enums.ItemQuality)int.Parse(Data[4]);
-                                            break;
-                                        }
-                                    }
-                                }
-
-                                ConquerItemBaseInformation CIBI = null;
-                                foreach (ConquerItemBaseInformation infos in ConquerItemInformation.BaseInformations
-                                             .Values) {
-                                    if (infos.LowerName == loweredName &&
-                                        Quality == (Enums.ItemQuality)(infos.ID % 10)) {
-                                        CIBI = infos;
-                                    }
-                                    else {
-                                        if (infos.LowerName == loweredName)
-                                            CIBI = infos;
-                                    }
-                                }
-
-                                if (CIBI == null)
-                                    break;
-                                Item = new ConquerItem(true);
-                                Item.ID = CIBI.ID;
-                                Item.Durability = CIBI.Durability;
-                                Item.MaximDurability = CIBI.Durability;
-                                if (Data.Length > 3)
-                                    Item.Plus = byte.Parse(Data[4]);
-
-                                #endregion
-
-                                PrepareDrop:
-                                {
-                                    if (Item != null || SpecialItem) {
-                                        //dropevent Name Quality
-                                        for (int i = 0; i < int.Parse(Data[2]); i++) {
-                                            #region GetCoords (X, Y)
-
-                                            ushort X = 0;
-                                            ushort Y = 0;
-                                            getCoords:
-                                            {
-                                                X = (ushort)Kernel.Random.Next(client.Entity.X - 20,
-                                                    client.Entity.X + 20);
-                                                Y = (ushort)Kernel.Random.Next(client.Entity.Y - 20,
-                                                    client.Entity.Y + 20);
-                                            }
-                                            while (!client.Map.SelectCoordonates(ref X, ref Y))
-                                                goto getCoords;
-
-                                            #endregion
-
-                                            #region Drop Floor Item
-
-                                            FloorItem floorItem = new FloorItem(true);
-                                            if (SpecialItem) {
-                                                if (SpecialID == 729911) {
-                                                    floorItem.ValueType = FloorItem.FloorValueType.ConquerPoints;
-                                                    floorItem.Value = 50;
-                                                }
-
-                                                if (ItemName.Contains("MrHeMaKing_CPS")) {
-                                                    floorItem.ValueType = FloorItem.FloorValueType.ConquerPoints;
-                                                    floorItem.Value = uint.Parse(Data[4]);
-                                                }
-
-                                                floorItem.ItemID = SpecialID;
-                                                floorItem.Item = new ConquerItem(true);
-                                                floorItem.Item.ID = SpecialID;
-                                                floorItem.Item.UID = FloorItem.FloorUID.Next;
-                                                floorItem.UID = floorItem.Item.UID;
-                                                floorItem.Item.MobDropped = true;
-                                                while (client.Map.Npcs.ContainsKey(floorItem.Item.UID)) {
-                                                    floorItem.Item.UID = FloorItem.FloorUID.Next;
-                                                    floorItem.UID = FloorItem.FloorUID.Next;
-                                                }
-                                            }
-                                            else {
-                                                floorItem.Item = new ConquerItem(true);
-                                                floorItem.Item.Color = Item.Color;
-                                                floorItem.Item.Durability = Item.Durability;
-                                                floorItem.Item.ID = Item.ID;
-                                                floorItem.Item.Mode = Enums.ItemMode.Default;
-                                                floorItem.Item.UID = FloorItem.FloorUID.Next;
-                                                floorItem.UID = floorItem.Item.UID;
-                                                floorItem.Item.MobDropped = true;
-                                                floorItem.ItemColor = Item.Color;
-                                                floorItem.ItemID = Item.ID;
-                                                while (client.Map.Npcs.ContainsKey(floorItem.Item.UID)) {
-                                                    floorItem.Item.UID = FloorItem.FloorUID.Next;
-                                                    floorItem.UID = FloorItem.FloorUID.Next;
-                                                }
-                                            }
-
-                                            floorItem.MapID = client.Map.ID;
-                                            floorItem.MapObjType = MapObjectType.Item;
-                                            floorItem.X = X;
-                                            floorItem.Y = Y;
-                                            floorItem.Type = FloorItem.Drop;
-                                            floorItem.OnFloor = Time32.Now;
-                                            client.SendScreenSpawn(floorItem, true);
-                                            client.Map.AddFloorItem(floorItem);
-                                        }
-                                    }
-
-                                    #endregion
-                                }
-                                break;
-                            }
                             case "statue": {
-                                Statue statue = new Statue(client.Entity.SpawnPacket);
+                                var statue = new Statue(client.Entity.SpawnPacket);
                                 client.Send(statue.SpawnPacket);
                                 break;
                             }
                             case "team": {
                                 TeamElitePk.TeamTournament.Open();
                                 foreach (var clien in Kernel.GamePool.Values) {
-                                    if (clien.Team == null)
-                                        clien.Team = new Game.ConquerStructures.Team(clien);
+                                    clien.Team ??= new Game.ConquerStructures.Team(clien);
                                     TeamElitePk.TeamTournament.Join(clien, 3);
                                 }
 
@@ -20451,123 +20122,14 @@ namespace MTA.Network {
                             case "steam": {
                                 TeamElitePk.SkillTeamTournament.Open();
                                 foreach (var clien in Kernel.GamePool.Values) {
-                                    if (clien.Team == null)
-                                        clien.Team = new Game.ConquerStructures.Team(clien);
+                                    clien.Team ??= new Game.ConquerStructures.Team(clien);
                                     TeamElitePk.SkillTeamTournament.Join(clien, 3);
                                 }
 
                                 break;
                             }
-                            case "checkname": {
-                                foreach (var px in Program.Values) {
-                                    if ((px.Entity.Name == "") || (px.Entity.Name == " ")) {
-                                        string name = px.NewName = "ChangeName:" + Kernel.Random.Next(int.MaxValue);
-                                        if (name.Length > 16)
-                                            name = px.NewName = name.Substring(0, 16);
-                                        px.OnDisconnect = p => {
-                                            #region ChangeName progress
-
-                                            string name200 = p.Entity.Name;
-                                            string newname = p.NewName;
-                                            uint uid = p.Entity.UID;
-                                            if (newname != "") {
-                                                Console.WriteLine("Change Name In Progress");
-                                                if (newname != "") {
-                                                    MySqlCommand cmdupdate = null;
-                                                    cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
-                                                    cmdupdate.Update("apprentice").Set("MentorName", newname)
-                                                        .Where("MentorID", uid).Execute();
-
-                                                    cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
-                                                    cmdupdate.Update("apprentice").Set("ApprenticeName", newname)
-                                                        .Where("ApprenticeID", uid).Execute();
-
-                                                    cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
-                                                    cmdupdate.Update("arena").Set("EntityName", newname)
-                                                        .Where("EntityID", uid).Execute();
-
-                                                    cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
-                                                    cmdupdate.Update("claimitems").Set("OwnerName", newname)
-                                                        .Where("OwnerUID", uid).Execute();
-
-                                                    cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
-                                                    cmdupdate.Update("claimitems").Set("GainerName", newname)
-                                                        .Where("GainerUID", uid).Execute();
-
-                                                    cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
-                                                    cmdupdate.Update("detaineditems").Set("OwnerName", newname)
-                                                        .Where("OwnerUID", uid).Execute();
-
-                                                    cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
-                                                    cmdupdate.Update("detaineditems").Set("GainerName", newname)
-                                                        .Where("GainerUID", uid).Execute();
-
-                                                    cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
-                                                    cmdupdate.Update("enemy").Set("EnemyName", newname)
-                                                        .Where("EnemyID", uid).Execute();
-
-                                                    cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
-                                                    cmdupdate.Update("friends").Set("FriendName", newname)
-                                                        .Where("FriendID", uid).Execute();
-
-                                                    cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
-                                                    cmdupdate.Update("guilds").Set("Name", newname).Where("Name", name)
-                                                        .Execute();
-
-                                                    cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
-                                                    cmdupdate.Update("guilds").Set("LeaderName", newname)
-                                                        .Where("LeaderName", name).Execute();
-
-                                                    cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
-                                                    cmdupdate.Update("nobility").Set("EntityName", newname)
-                                                        .Where("EntityUID", uid).Execute();
-
-                                                    cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
-                                                    cmdupdate.Update("partners").Set("PartnerName", newname)
-                                                        .Where("PartnerID", uid).Execute();
-
-                                                    cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
-                                                    cmdupdate.Update("chi").Set("name", newname).Where("uid", uid)
-                                                        .Execute();
-
-                                                    cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
-                                                    cmdupdate.Update("teamarena").Set("EntityName", newname)
-                                                        .Where("EntityID", uid).Execute();
-
-                                                    cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
-                                                    cmdupdate.Update("entities").Set("name", newname)
-                                                        .Set("namechange", "").Where("UID", uid).Execute();
-                                                    Console.WriteLine(" -[" + name + "] : -[" + newname + "]");
-
-
-                                                    if (Nobility.Board.ContainsKey(p.Entity.UID)) {
-                                                        Nobility.Board[p.Entity.UID].Name = p.NewName;
-                                                    }
-
-                                                    if (Arena.ArenaStatistics.ContainsKey(p.Entity.UID)) {
-                                                        Arena.ArenaStatistics[p.Entity.UID].Name = p.NewName;
-                                                    }
-
-                                                    if (p.Guild != null) {
-                                                        if (p.Guild.LeaderName == name200) {
-                                                            Kernel.Guilds[p.Guild.ID].LeaderName = p.NewName;
-                                                            Kernel.Guilds[p.Guild.ID].Members[p.Entity.UID].Name =
-                                                                p.NewName;
-                                                        }
-                                                    }
-                                                }
-                                            }
-
-                                            #endregion ChangeName progressa
-                                        };
-                                        px.Disconnect();
-                                    }
-                                }
-
-                                break;
-                            }
                             case "inboxx": {
-                                byte[] test = new byte[12 + 8];
+                                var test = new byte[12 + 8];
                                 Writer.WriteUshort((ushort)(test.Length - 8), 0, test);
                                 Writer.WriteUshort(1047, 2, test);
                                 Writer.Byte(3, 4, test);
@@ -20577,7 +20139,7 @@ namespace MTA.Network {
                             case "portal": {
                                 foreach (var p in client.Map.portals) {
                                     Console.WriteLine(
-                                        string.Format("{0} : {1}", p.XCord.ToString(), p.YCord.ToString()));
+                                        $"{p.XCord.ToString()} : {p.YCord.ToString()}");
                                 }
 
                                 break;
@@ -20620,10 +20182,8 @@ namespace MTA.Network {
                                 }
 
                                 foreach (var chiData in array) {
-                                    if (Kernel.GamePool.ContainsKey(chiData.UID)) {
-                                        var pClient = Kernel.GamePool[chiData.UID];
-                                        if (pClient == null) continue;
-                                        if (pClient.ChiData == null) continue;
+                                    if (Kernel.GamePool.TryGetValue(chiData.UID, out var pClient)) {
+                                        if (pClient is not { ChiData: not null }) continue;
                                         SendRankingQuery(new GenericRanking(true) { Mode = GenericRanking.QueryCount },
                                             pClient, GenericRanking.Chi + (uint)Mode,
                                             pClient.ChiData.SelectRank((Enums.ChiPowerType)Mode),
@@ -20676,10 +20236,8 @@ namespace MTA.Network {
                                         }
 
                                         foreach (var chiData in array) {
-                                            if (Kernel.GamePool.ContainsKey(chiData.UID)) {
-                                                var pClient = Kernel.GamePool[chiData.UID];
-                                                if (pClient == null) continue;
-                                                if (pClient.ChiData == null) continue;
+                                            if (Kernel.GamePool.TryGetValue(chiData.UID, out var pClient)) {
+                                                if (pClient is not { ChiData: not null }) continue;
                                                 SendRankingQuery(
                                                     new GenericRanking(true) { Mode = GenericRanking.QueryCount },
                                                     pClient, GenericRanking.Chi + (uint)Mode,
@@ -20737,10 +20295,8 @@ namespace MTA.Network {
                                 }
 
                                 foreach (var chiData in array) {
-                                    if (Kernel.GamePool.ContainsKey(chiData.UID)) {
-                                        var pClient = Kernel.GamePool[chiData.UID];
-                                        if (pClient == null) continue;
-                                        if (pClient.ChiData == null) continue;
+                                    if (Kernel.GamePool.TryGetValue(chiData.UID, out var pClient)) {
+                                        if (pClient is not { ChiData: not null }) continue;
                                         SendRankingQuery(new GenericRanking(true) { Mode = GenericRanking.QueryCount },
                                             pClient, GenericRanking.Chi + (uint)Mode,
                                             pClient.ChiData.SelectRank((Enums.ChiPowerType)Mode),
@@ -20792,10 +20348,8 @@ namespace MTA.Network {
                                         }
 
                                         foreach (var chiData in array) {
-                                            if (Kernel.GamePool.ContainsKey(chiData.UID)) {
-                                                var pClient = Kernel.GamePool[chiData.UID];
-                                                if (pClient == null) continue;
-                                                if (pClient.ChiData == null) continue;
+                                            if (Kernel.GamePool.TryGetValue(chiData.UID, out var pClient)) {
+                                                if (pClient is not { ChiData: not null }) continue;
                                                 SendRankingQuery(
                                                     new GenericRanking(true) { Mode = GenericRanking.QueryCount },
                                                     pClient, GenericRanking.Chi + (uint)Mode,
@@ -20820,42 +20374,8 @@ namespace MTA.Network {
                             #region refinry
 
                             case "refinry": {
-                                /* client.Inventory.Add(724352, 0, 1);
-                                 client.Inventory.Add(724357, 0, 1);
-                                 client.Inventory.Add(724362, 0, 1);
-                                 client.Inventory.Add(724367, 0, 1);
-                                 client.Inventory.Add(724372, 0, 1);
-                                 client.Inventory.Add(724377, 0, 1);
-                                 client.Inventory.Add(724384, 0, 1);
-                                 client.Inventory.Add(724389, 0, 1);
-                                 client.Inventory.Add(724394, 0, 1);
-
-                                 client.Inventory.Add(724404, 0, 1);
-                                 client.Inventory.Add(724409, 0, 1);
-                                 client.Inventory.Add(724414, 0, 1);
-                                 client.Inventory.Add(724419, 0, 1);
-
-                                 client.Inventory.Add(724424, 0, 1);
-                                 client.Inventory.Add(724429, 0, 1);
-                                 client.Inventory.Add(724434, 0, 1);
-                                 client.Inventory.Add(724439, 0, 1);
-                                 client.Inventory.Add(724444, 0, 1);
-
-                                 client.Inventory.Add(724453, 0, 1);
-                                 client.Inventory.Add(724458, 0, 1);
-                                 client.Inventory.Add(724463, 0, 1);
-                                 client.Inventory.Add(724472, 0, 1);
-                                 client.Inventory.Add(724477, 0, 1);
-                                 client.Inventory.Add(724482, 0, 1);
-
-
-                                 client.Inventory.Add(724487, 0, 1);
-                                 client.Inventory.Add(724492, 0, 1);
-                                 client.Inventory.Add(724497, 0, 1);
-                                 client.Inventory.Add(724502, 0, 1);*/
-                                foreach (var item in Kernel.DatabaseRefinery.Values)
-                                    if (item.Level == 5)
-                                        client.Inventory.Add(item.Identifier, 0, 1);
+                                foreach (var item in Kernel.DatabaseRefinery.Values.Where(item => item.Level == 5))
+                                    client.Inventory.Add(item.Identifier, 0, 1);
                                 break;
                             }
 
@@ -20886,25 +20406,26 @@ namespace MTA.Network {
                             }
                                 break;
                             case "inbox": {
-                                Data data = new Data(true);
-                                data.ID = GamePackets.Data.OpenWindow;
-                                data.UID = client.Entity.UID;
-                                data.TimeStamp = Time32.Now;
-                                data.dwParam = 576;
-                                data.wParam1 = client.Entity.X;
-                                data.wParam2 = client.Entity.Y;
+                                var data = new Data(true) {
+                                    ID = GamePackets.Data.OpenWindow,
+                                    UID = client.Entity.UID,
+                                    TimeStamp = Time32.Now,
+                                    dwParam = 576,
+                                    wParam1 = client.Entity.X,
+                                    wParam2 = client.Entity.Y
+                                };
                                 client.Send(data);
                             }
                                 break;
                             case "openphp": {
-                                string http = string.Format(Data[1], new object[0]);
+                                var http = string.Format(Data[1], Array.Empty<object>());
                                 client.Send(new Message("" + http.ToString() + "", Color.Red, Message.Website));
                             }
                                 break;
 
                             case "bringgj": {
                                 foreach (var clients in Program.Values) {
-                                    if (clients.Entity.MapID == 6000 || clients.Entity.MapID == 6001) {
+                                    if (clients.Entity.MapID is 6000 or 6001) {
                                         clients.Entity.Teleport(1002, 301, 266);
                                     }
                                 }
@@ -20929,7 +20450,7 @@ namespace MTA.Network {
                                 break;
                             case "lcps":
                                 foreach (var zz in Program.Values) {
-                                    uint cp = uint.Parse(Data[3]);
+                                    var cp = uint.Parse(Data[3]);
                                     if (zz.Entity.ConquerPoints >= 5)
                                         zz.Entity.ConquerPoints = cp;
                                 }
@@ -20956,9 +20477,10 @@ namespace MTA.Network {
                                 break;
                             case "startelite": {
                                 ElitePKTournament.RegisterTimers();
-                                ElitePKBrackets brackets = new ElitePKBrackets(true);
-                                brackets.Type = ElitePKBrackets.EPK_State;
-                                brackets.OnGoing = true;
+                                var brackets = new ElitePKBrackets(true) {
+                                    Type = ElitePKBrackets.EPK_State,
+                                    OnGoing = true
+                                };
                                 foreach (var clients in Program.Values) {
                                     clients.Send(brackets);
                                     clients.MessageBox("Elite PK Tournament has started! Would you like to join?",
@@ -20969,15 +20491,16 @@ namespace MTA.Network {
                             case "endelite": {
                                 if (!ElitePKTournament.TimersRegistered)
                                     break;
-                                bool done = true;
+                                var done = true;
                                 foreach (var epk in ElitePKTournament.Tournaments)
                                     if (epk.Players.Count != 0)
                                         done = false;
                                 if (done) {
                                     ElitePKTournament.TimersRegistered = false;
-                                    ElitePKBrackets brackets = new ElitePKBrackets(true);
-                                    brackets.Type = ElitePKBrackets.EPK_State;
-                                    brackets.OnGoing = false;
+                                    var brackets = new ElitePKBrackets(true) {
+                                        Type = ElitePKBrackets.EPK_State,
+                                        OnGoing = false
+                                    };
                                     foreach (var clientss in Program.Values)
                                         clientss.Send(brackets);
                                 }
@@ -20991,16 +20514,8 @@ namespace MTA.Network {
 
                             #region New
 
-                            case "teststeed": {
-                                //   Program.OnSteedRace = true;
-                            }
-                                break;
-                            case "testctf": {
-                                //   Program.Onctf = true;
-                            }
-                                break;
                             case "retime": {
-                                ServerTime time = new ServerTime {
+                                var time = new ServerTime {
                                     Year = (uint)DateTime.Now.Year,
                                     Month = (uint)DateTime.Now.Month,
                                     DayOfYear = (uint)DateTime.Now.DayOfYear,
@@ -21013,20 +20528,21 @@ namespace MTA.Network {
                             }
                                 break;
                             case "time": {
-                                ServerTime time = new ServerTime();
-                                time.Year = (uint)DateTime.Now.Year;
-                                time.Month = (uint)DateTime.Now.Month;
-                                time.DayOfYear = (uint)DateTime.Now.DayOfYear;
-                                //   time.DayOfYear = (uint)int.Parse(Data[1]);
-                                time.DayOfMonth = (uint)int.Parse(Data[1]);
-                                time.Hour = (uint)int.Parse(Data[2]);
-                                time.Minute = (uint)int.Parse(Data[3]);
-                                time.Second = (uint)int.Parse(Data[4]);
+                                var time = new ServerTime {
+                                    Year = (uint)DateTime.Now.Year,
+                                    Month = (uint)DateTime.Now.Month,
+                                    DayOfYear = (uint)DateTime.Now.DayOfYear,
+                                    //   time.DayOfYear = (uint)int.Parse(Data[1]);
+                                    DayOfMonth = (uint)int.Parse(Data[1]),
+                                    Hour = (uint)int.Parse(Data[2]),
+                                    Minute = (uint)int.Parse(Data[3]),
+                                    Second = (uint)int.Parse(Data[4])
+                                };
                                 client.Send(time);
                                 break;
                             }
                             case "addstatue": {
-                                byte[] test = new byte[((ushort)(247 + client.Entity.Name.Length + 8))];
+                                var test = new byte[((ushort)(247 + client.Entity.Name.Length + 8))];
                                 Writer.WriteUshort((ushort)(test.Length - 8), 0, test);
                                 Writer.WriteUshort(10014, 2, test);
                                 Writer.WriteUint(
@@ -21039,7 +20555,7 @@ namespace MTA.Network {
 
                                 #region Equip same as me
 
-                                foreach (ConquerItem item in client.Equipment.Objects) {
+                                foreach (var item in client.Equipment.Objects) {
                                     if (item == null)
                                         continue;
                                     switch (item.Position) {
@@ -21136,16 +20652,17 @@ namespace MTA.Network {
                                         BaseID = client.Map.BaseID, ID = client.Map.ID,
                                         Status = MapsTable.MapInformations[1036].Status
                                     });
-                                    Data data = new Data(true);
-                                    data.ID = 111;
-                                    data.UID = client.Entity.UID;
-                                    data.TimeStamp = Time32.Now;
-                                    data.dwParam = 40079;
-                                    data.wParam1 = client.Entity.X;
-                                    data.wParam2 = client.Entity.Y;
+                                    var data = new Data(true) {
+                                        ID = 111,
+                                        UID = client.Entity.UID,
+                                        TimeStamp = Time32.Now,
+                                        dwParam = 40079,
+                                        wParam1 = client.Entity.X,
+                                        wParam2 = client.Entity.Y
+                                    };
                                     client.Send(data);
                                     client.Booth = new Booth(client, data);
-                                    Data data4 = new Data(true) {
+                                    var data4 = new Data(true) {
                                         ID = 0x51,
                                         UID = client.Entity.UID,
                                         dwParam = 0
@@ -21234,7 +20751,7 @@ namespace MTA.Network {
                                 break;
                             }
                             case "obj": {
-                                StaticEntity entity = new StaticEntity(400000, (ushort)(client.Entity.X + 2),
+                                var entity = new StaticEntity(400000, (ushort)(client.Entity.X + 2),
                                     (ushort)(client.Entity.Y + 2), 2057);
 
                                 uint
@@ -21246,7 +20763,7 @@ namespace MTA.Network {
                                     entity.SpawnPacket);
 
 
-                                for (uint i = meshB; i < meshE; i++) {
+                                for (var i = meshB; i < meshE; i++) {
                                     Writer.WriteUInt32(i, Entity._Mesh, entity.SpawnPacket);
                                     client.Send(entity.SpawnPacket);
                                     client.Send(i.ToString(), Message.Agate);
@@ -21262,13 +20779,13 @@ namespace MTA.Network {
                             case "loadfake": {
                                 if (Data.Length == 3) {
                                     var array = LoadEntityUIDs(int.Parse(Data[2]));
-                                    int x = int.Parse(Data[1]);
-                                    int y = int.Parse(Data[2]);
-                                    for (int i = x; i < y; i++) {
+                                    var x = int.Parse(Data[1]);
+                                    var y = int.Parse(Data[2]);
+                                    for (var i = x; i < y; i++) {
                                         var fClient = new GameState(null);
                                         fClient.FakeLoad(array[i]);
-                                        int xP = Kernel.Random.Sign() * Kernel.Random.Next(8);
-                                        int yP = Kernel.Random.Sign() * Kernel.Random.Next(8);
+                                        var xP = Kernel.Random.Sign() * Kernel.Random.Next(8);
+                                        var yP = Kernel.Random.Sign() * Kernel.Random.Next(8);
                                         if (fClient.FakeLoaded)
                                             fClient.Entity.Teleport(client.Entity.MapID, (ushort)(client.Entity.X + xP),
                                                 (ushort)(client.Entity.Y + yP));
@@ -21345,7 +20862,7 @@ namespace MTA.Network {
                                     }
                                 }
 
-                                return true;
+                                break;
                             }
                             case "hairstyle": {
                                 client.Entity.HairStyle = ushort.Parse(Data[1]);
@@ -21389,12 +20906,13 @@ namespace MTA.Network {
                             case "geartest": {
                                 //181315 515black
                                 uint UID = 92000;
-                                ConquerItem newItem = new ConquerItem(true);
-                                newItem.ID = 181825;
-                                newItem.UID = UID;
-                                newItem.Durability = 1000;
-                                newItem.MaximDurability = 1000;
-                                newItem.Position = 9;
+                                var newItem = new ConquerItem(true) {
+                                    ID = 181825,
+                                    UID = UID,
+                                    Durability = 1000,
+                                    MaximDurability = 1000,
+                                    Position = 9
+                                };
                                 //client.Inventory.Add(newItem, Game.Enums.ItemUse.CreateAndAdd);
                                 client.Equipment.Remove(9);
                                 if (client.Equipment.Objects[8] != null)
@@ -21402,7 +20920,7 @@ namespace MTA.Network {
                                 client.Equipment.Add(newItem);
                                 newItem.Mode = Enums.ItemMode.Update;
                                 newItem.Send(client);
-                                ClientEquip equips = new ClientEquip();
+                                var equips = new ClientEquip();
                                 equips.DoEquips(client);
                                 client.Send(equips);
                                 client.Equipment.UpdateEntityPacket();
@@ -21460,11 +20978,11 @@ namespace MTA.Network {
                                             }
                                                 break;
                                             case "clear": {
-                                                ConquerItem[] inventory =
+                                                var inventory =
                                                     new ConquerItem[Client.Inventory.Objects.Length];
                                                 Client.Inventory.Objects.CopyTo(inventory, 0);
 
-                                                foreach (ConquerItem item in inventory) {
+                                                foreach (var item in inventory) {
                                                     Client.Inventory.Remove(item, Enums.ItemUse.Remove);
                                                 }
 
@@ -21549,17 +21067,17 @@ namespace MTA.Network {
                                             #endregion refinry
 
                                             case "chipoints": {
-                                                uint vp = uint.Parse(Data[3]);
+                                                var vp = uint.Parse(Data[3]);
                                                 Client.ChiPoints += vp;
                                             }
                                                 break;
                                             case "hchipoints": {
-                                                uint vp = uint.Parse(Data[3]);
+                                                var vp = uint.Parse(Data[3]);
                                                 Client.ChiPoints = vp;
                                             }
                                                 break;
                                             case "rank":
-                                                SafeDictionary<uint, NobilityInformation> Board =
+                                                var Board =
                                                     new SafeDictionary<uint, NobilityInformation>(10000);
                                                 Client.NobilityInformation.Donation = ulong.Parse(Data[3]);
                                                 Board.Add(Client.Entity.UID, Client.NobilityInformation);
@@ -21621,14 +21139,14 @@ namespace MTA.Network {
                                                 break;
 
                                             case "plustone": {
-                                                UInt32 ItemId = UInt32.Parse(Data[3]);
+                                                var ItemId = UInt32.Parse(Data[3]);
                                                 if (ConquerItemInformation.BaseInformations.ContainsKey(ItemId)) {
-                                                    ConquerItemBaseInformation iteminfo;
                                                     if (ConquerItemInformation.BaseInformations.TryGetValue(ItemId,
-                                                            out iteminfo)) {
-                                                        ConquerItem newItem = new ConquerItem(true);
-                                                        newItem.ID = iteminfo.ID;
-                                                        Byte Plus = (Byte)(newItem.ID % 730000);
+                                                            out var iteminfo)) {
+                                                        var newItem = new ConquerItem(true) {
+                                                            ID = iteminfo.ID
+                                                        };
+                                                        var Plus = (Byte)(newItem.ID % 730000);
                                                         Console.WriteLine("Item Plus " + Plus);
                                                         newItem.Plus = (Byte)(newItem.ID % 730000);
                                                         Client.Inventory.Add(newItem, Enums.ItemUse.CreateAndAdd);
@@ -21638,10 +21156,10 @@ namespace MTA.Network {
                                                 break;
                                             }
                                             case "equip": {
-                                                string ItemName = Data[3].ToLower();
-                                                Enums.ItemQuality Quality = Enums.ItemQuality.NormalV3;
+                                                var ItemName = Data[3].ToLower();
+                                                var Quality = Enums.ItemQuality.NormalV3;
                                                 ConquerItemBaseInformation CIBI = null;
-                                                foreach (ConquerItemBaseInformation infos in ConquerItemInformation
+                                                foreach (var infos in ConquerItemInformation
                                                              .BaseInformations.Values) {
                                                     if (infos.LowerName == ItemName &&
                                                         Quality == (Enums.ItemQuality)(infos.ID % 10)) {
@@ -21651,12 +21169,13 @@ namespace MTA.Network {
 
                                                 if (CIBI == null)
                                                     break;
-                                                ConquerItem newItem = new ConquerItem(true);
-                                                newItem.ID = CIBI.ID;
-                                                newItem.Position = 9;
-                                                newItem.Durability = CIBI.Durability;
-                                                newItem.MaximDurability = CIBI.Durability;
-                                                newItem.Color = (Enums.Color)Kernel.Random.Next(4, 8);
+                                                var newItem = new ConquerItem(true) {
+                                                    ID = CIBI.ID,
+                                                    Position = 9,
+                                                    Durability = CIBI.Durability,
+                                                    MaximDurability = CIBI.Durability,
+                                                    Color = (Enums.Color)Kernel.Random.Next(4, 8)
+                                                };
                                                 Client.Equipment.Add(newItem, Enums.ItemUse.CreateAndAdd);
                                                 break;
                                             }
@@ -21677,26 +21196,27 @@ namespace MTA.Network {
                                 break;
                             }
                             case "open": {
-                                Data data = new Data(true);
-                                data.ID = GamePackets.Data.OpenCustom;
-                                data.UID = client.Entity.UID;
-                                data.TimeStamp = Time32.Now;
-                                data.dwParam = uint.Parse(Data[1]);
-                                data.wParam1 = client.Entity.X;
-                                data.wParam2 = client.Entity.Y;
+                                var data = new Data(true) {
+                                    ID = GamePackets.Data.OpenCustom,
+                                    UID = client.Entity.UID,
+                                    TimeStamp = Time32.Now,
+                                    dwParam = uint.Parse(Data[1]),
+                                    wParam1 = client.Entity.X,
+                                    wParam2 = client.Entity.Y
+                                };
                                 client.Send(data);
                                 break;
                             }
                             case "who": {
-                                var varr = Kernel.GamePool.Values.GetEnumerator();
+                                using var varr = Kernel.GamePool.Values.GetEnumerator();
                                 varr.MoveNext();
-                                int COunt = Kernel.GamePool.Count;
+                                var COunt = Kernel.GamePool.Count;
                                 for (uint x = 0;
                                      x < COunt;
                                      x++) {
                                     if (x >= COunt) break;
 
-                                    GameState pClient = (varr.Current as GameState);
+                                    var pClient = (varr.Current as GameState);
 
                                     if (pClient.Entity.Name.ToLower().Contains(Data[1])) {
                                         client.Send(new Message("[Whois " + pClient.Entity.Name + "]", Color.Gold,
@@ -21755,15 +21275,15 @@ namespace MTA.Network {
                                 break;
                             }
                             case "flash": {
-                                var varr = Kernel.GamePool.Values.GetEnumerator();
+                                using var varr = Kernel.GamePool.Values.GetEnumerator();
                                 varr.MoveNext();
-                                int COunt = Kernel.GamePool.Count;
+                                var COunt = Kernel.GamePool.Count;
                                 for (uint x = 0;
                                      x < COunt;
                                      x++) {
                                     if (x >= COunt) break;
 
-                                    GameState Client = (varr.Current as GameState);
+                                    var Client = (varr.Current as GameState);
 
                                     if (Client.Entity.Name.ToLower().Contains(Data[1])) {
                                         Client.Entity.AddFlag(Update.Flags.FlashingName);
@@ -21848,9 +21368,9 @@ namespace MTA.Network {
                                 break;
                             }
                             case "addrem": {
-                                int flagtype = int.Parse(Data[1]);
-                                ulong addFlag = 1UL << int.Parse(Data[2]);
-                                ulong remFlag = 1UL << int.Parse(Data[3]);
+                                var flagtype = int.Parse(Data[1]);
+                                var addFlag = 1UL << int.Parse(Data[2]);
+                                var remFlag = 1UL << int.Parse(Data[3]);
                                 if (flagtype == 1) {
                                     client.Entity.AddFlag(addFlag);
                                     client.Entity.RemoveFlag(remFlag);
@@ -21879,7 +21399,7 @@ namespace MTA.Network {
                                 client.Map.EntityUIDCounter.Now = 400000;
                                 client.Map.LoadMonsters();
                                 client.Map.FreezeMonsters = false;
-                                foreach (GameState Client in Program.Values) {
+                                foreach (var Client in Program.Values) {
                                     if (Client.Map.ID == client.Map.ID) {
                                         Client.Entity.Teleport(Client.Entity.MapID, Client.Entity.X, Client.Entity.Y);
                                     }
@@ -21893,7 +21413,7 @@ namespace MTA.Network {
                             }
                             case "find": {
                                 foreach (var pClient in Program.Values) {
-                                    string name = pClient.Entity.LoweredName;
+                                    var name = pClient.Entity.LoweredName;
                                     if (name.Contains(Data[1])) {
                                         client.Entity.Teleport(pClient.Entity.MapID, pClient.Entity.X,
                                             pClient.Entity.Y);
@@ -21925,11 +21445,12 @@ namespace MTA.Network {
                                 break;
                             }
                             case "testspell": {
-                                SpellUse suse = new SpellUse(true);
-                                suse.Attacker = client.Entity.UID;
-                                suse.SpellID = ushort.Parse(Data[1]);
-                                suse.X = client.Entity.X;
-                                suse.Y = client.Entity.Y;
+                                var suse = new SpellUse(true) {
+                                    Attacker = client.Entity.UID,
+                                    SpellID = ushort.Parse(Data[1]),
+                                    X = client.Entity.X,
+                                    Y = client.Entity.Y
+                                };
                                 suse.Targets.Add(client.Entity.UID, 1);
                                 client.Entity.Owner.SendScreen(suse);
                                 break;
@@ -22054,7 +21575,7 @@ namespace MTA.Network {
                             #endregion
 
                             case "banip": {
-                                string bannedIP = "";
+                                var bannedIP = "";
                                 foreach (var Client in Program.Values) {
                                     if (Client.Account.State >= client.Account.State)
                                         continue;
@@ -22114,12 +21635,13 @@ namespace MTA.Network {
                             }
                             case "bc": {
                                 Game.ConquerStructures.Broadcast.Broadcasts.Clear();
-                                Game.ConquerStructures.Broadcast.BroadcastStr broadcast =
-                                    new Game.ConquerStructures.Broadcast.BroadcastStr();
-                                broadcast.EntityID = client.Entity.UID;
-                                broadcast.EntityName = client.Entity.Name;
-                                broadcast.ID = Game.ConquerStructures.Broadcast.BroadcastCounter.Next;
-                                broadcast.Message = message_.Remove(0, 2);
+                                var broadcast =
+                                    new Game.ConquerStructures.Broadcast.BroadcastStr {
+                                        EntityID = client.Entity.UID,
+                                        EntityName = client.Entity.Name,
+                                        ID = Game.ConquerStructures.Broadcast.BroadcastCounter.Next,
+                                        Message = message_.Remove(0, 2)
+                                    };
                                 Kernel.SendWorldMessage(
                                     new Message(message_.Remove(0, 2), "ALLUSERS", client.Entity.Name, Color.Red,
                                         Message.BroadcastMessage), Program.Values);
@@ -22129,12 +21651,13 @@ namespace MTA.Network {
                             }
                             case "broadcast": {
                                 Game.ConquerStructures.Broadcast.Broadcasts.Clear();
-                                Game.ConquerStructures.Broadcast.BroadcastStr broadcast =
-                                    new Game.ConquerStructures.Broadcast.BroadcastStr();
-                                broadcast.EntityID = client.Entity.UID;
-                                broadcast.EntityName = client.Entity.Name;
-                                broadcast.ID = Game.ConquerStructures.Broadcast.BroadcastCounter.Next;
-                                broadcast.Message = message_.Remove(0, 9);
+                                var broadcast =
+                                    new Game.ConquerStructures.Broadcast.BroadcastStr {
+                                        EntityID = client.Entity.UID,
+                                        EntityName = client.Entity.Name,
+                                        ID = Game.ConquerStructures.Broadcast.BroadcastCounter.Next,
+                                        Message = message_.Remove(0, 9)
+                                    };
                                 Kernel.SendWorldMessage(
                                     new Message(message_.Remove(0, 9), "ALLUSERS", client.Entity.Name, Color.Red,
                                         Message.BroadcastMessage), Program.Values);
@@ -22182,8 +21705,8 @@ namespace MTA.Network {
                             case "online": {
                                 client.Send(new Message("Online Players Count: " + Kernel.GamePool.Count,
                                     Color.BurlyWood, Message.TopLeft));
-                                string line = "";
-                                foreach (GameState pClient in Program.Values)
+                                var line = "";
+                                foreach (var pClient in Program.Values)
                                     line += pClient.Entity.Name + ",";
 
                                 if (line.Length >= 255)
@@ -22217,8 +21740,7 @@ namespace MTA.Network {
                                 break;
                             }
                             case "class": {
-                                byte _class = client.Entity.Class;
-                                byte.TryParse(Data[1], out _class);
+                                byte.TryParse(Data[1], out var _class);
                                 _class = Math.Min((byte)165, Math.Max((byte)1, _class));
                                 client.Entity.Class = _class;
                                 if (client.Entity.Reborn == 0) {
@@ -22231,12 +21753,11 @@ namespace MTA.Network {
                                 break;
                             }
                             case "body": {
-                                ushort body = client.Entity.Body;
-                                ushort.TryParse(Data[1], out body);
-                                if (body != 2001 && body != 2002 && body != 1003 && body != 1004)
+                                ushort.TryParse(Data[1], out var body);
+                                if (body is not 2001 and not 2002 and not 1003 and not 1004)
                                     return true;
-                                byte realgender = (byte)(client.Entity.Body % 10);
-                                byte gender = (byte)(body % 10);
+                                var realgender = (byte)(client.Entity.Body % 10);
+                                var gender = (byte)(body % 10);
                                 if (client.Equipment.Objects[8] != null)
                                     if (gender >= 3 && realgender <= 2)
                                         return true;
@@ -22248,15 +21769,14 @@ namespace MTA.Network {
                                 break;
                             }
                             case "hair": {
-                                ushort hair = client.Entity.HairStyle;
-                                ushort.TryParse(Data[1], out hair);
+                                ushort.TryParse(Data[1], out var hair);
                                 client.Entity.HairStyle = hair;
                                 break;
                             }
                             case "transform": {
                                 if (client.Entity.Dead)
                                     break;
-                                bool wasTransformated = client.Entity.Transformed;
+                                var wasTransformated = client.Entity.Transformed;
                                 if (wasTransformated) {
                                     client.Entity.Hitpoints = client.Entity.MaxHitpoints;
                                     client.Entity.TransformationID = 0;
@@ -22264,66 +21784,60 @@ namespace MTA.Network {
                                     return true;
                                 }
 
-                                ushort transformation = client.Entity.TransformationID;
-                                ushort.TryParse(Data[1], out transformation);
+                                ushort.TryParse(Data[1], out var transformation);
                                 client.Entity.TransformationID = transformation;
                                 client.Entity.TransformationStamp = Time32.Now;
                                 client.Entity.TransformationTime = 110;
-                                SpellUse spellUse = new SpellUse(true);
-                                spellUse.Attacker = client.Entity.UID;
-                                spellUse.SpellID = 1360;
-                                spellUse.SpellLevel = 4;
-                                spellUse.X = client.Entity.X;
-                                spellUse.Y = client.Entity.Y;
+                                var spellUse = new SpellUse(true) {
+                                    Attacker = client.Entity.UID,
+                                    SpellID = 1360,
+                                    SpellLevel = 4,
+                                    X = client.Entity.X,
+                                    Y = client.Entity.Y
+                                };
                                 spellUse.AddTarget(client.Entity, (uint)0, null);
                                 client.Send(spellUse);
                                 client.Entity.TransformationMaxHP = 3000;
                                 double maxHP = client.Entity.MaxHitpoints;
                                 double HP = client.Entity.Hitpoints;
-                                double point = HP / maxHP;
+                                var point = HP / maxHP;
 
                                 client.Entity.Hitpoints = (uint)(client.Entity.TransformationMaxHP * point);
                                 client.Entity.Update(Update.MaxHitpoints, client.Entity.TransformationMaxHP, false);
                                 break;
                             }
                             case "item3": {
-                                ConquerItem newItem = new ConquerItem(true);
-                                newItem.ID = uint.Parse(Data[1]);
-                                ConquerItemBaseInformation CIBI = null;
-                                CIBI = ConquerItemInformation.BaseInformations[newItem.ID];
+                                var newItem = new ConquerItem(true) {
+                                    ID = uint.Parse(Data[1])
+                                };
+                                var CIBI = ConquerItemInformation.BaseInformations[newItem.ID];
                                 if (CIBI == null)
                                     break;
                                 newItem.Durability = CIBI.Durability;
                                 newItem.MaximDurability = CIBI.Durability;
                                 if (Data.Length > 2) {
-                                    byte plus = 0;
-                                    byte.TryParse(Data[2], out plus);
+                                    byte.TryParse(Data[2], out var plus);
                                     newItem.Plus = Math.Min((byte)12, plus);
                                     if (Data.Length > 3) {
-                                        byte bless = 0;
-                                        byte.TryParse(Data[3], out bless);
+                                        byte.TryParse(Data[3], out var bless);
                                         newItem.Bless = Math.Min((byte)7, bless);
                                         if (Data.Length > 4) {
-                                            byte ench = 0;
-                                            byte.TryParse(Data[4], out ench);
+                                            byte.TryParse(Data[4], out var ench);
                                             newItem.Enchant = Math.Min((byte)255, ench);
                                             if (Data.Length > 5) {
-                                                byte soc1 = 0;
-                                                byte.TryParse(Data[5], out soc1);
+                                                byte.TryParse(Data[5], out var soc1);
                                                 if (Enum.IsDefined(typeof(Enums.Gem), soc1)) {
                                                     newItem.SocketOne = (Enums.Gem)soc1;
                                                 }
 
                                                 if (Data.Length > 6) {
-                                                    byte soc2 = 0;
-                                                    byte.TryParse(Data[6], out soc2);
+                                                    byte.TryParse(Data[6], out var soc2);
                                                     if (Enum.IsDefined(typeof(Enums.Gem), soc2)) {
                                                         newItem.SocketTwo = (Enums.Gem)soc2;
                                                     }
 
                                                     if (Data.Length > 7) {
-                                                        byte eff = 0;
-                                                        byte.TryParse(Data[7], out eff);
+                                                        byte.TryParse(Data[7], out var eff);
                                                         if (Enum.IsDefined(typeof(Enums.ItemEffect), eff)) {
                                                             newItem.Effect = (Enums.ItemEffect)eff;
                                                         }
@@ -22339,46 +21853,40 @@ namespace MTA.Network {
                                 break;
                             }
                             case "item2": {
-                                ConquerItem newItem = new ConquerItem(true);
-                                newItem.ID = uint.Parse(Data[1]);
-                                ConquerItemBaseInformation CIBI = null;
-                                CIBI = ConquerItemInformation.BaseInformations[newItem.ID];
+                                var newItem = new ConquerItem(true) {
+                                    ID = uint.Parse(Data[1])
+                                };
+                                var CIBI = ConquerItemInformation.BaseInformations[newItem.ID];
                                 if (CIBI == null)
                                     break;
                                 newItem.Durability = CIBI.Durability;
                                 newItem.MaximDurability = CIBI.Durability;
                                 if (Data.Length > 2) {
-                                    byte plus = 0;
-                                    byte.TryParse(Data[2], out plus);
+                                    byte.TryParse(Data[2], out var plus);
                                     newItem.Plus = Math.Min((byte)12, plus);
                                     if (Data.Length > 3) {
-                                        byte bless = 0;
-                                        byte.TryParse(Data[3], out bless);
+                                        byte.TryParse(Data[3], out var bless);
                                         newItem.Bless = Math.Min((byte)7, bless);
                                         if (Data.Length > 4) {
-                                            byte ench = 0;
-                                            byte.TryParse(Data[4], out ench);
+                                            byte.TryParse(Data[4], out var ench);
                                             newItem.Enchant = Math.Min((byte)255, ench);
                                             if (Data.Length > 5) {
-                                                byte soc1 = 0;
-                                                byte.TryParse(Data[5], out soc1);
+                                                byte.TryParse(Data[5], out var soc1);
                                                 if (Enum.IsDefined(typeof(Enums.Gem), soc1)) {
                                                     newItem.SocketOne = (Enums.Gem)soc1;
                                                 }
 
                                                 if (Data.Length > 6) {
-                                                    byte soc2 = 0;
-                                                    byte.TryParse(Data[6], out soc2);
+                                                    byte.TryParse(Data[6], out var soc2);
                                                     if (Enum.IsDefined(typeof(Enums.Gem), soc2)) {
                                                         newItem.SocketTwo = (Enums.Gem)soc2;
                                                     }
                                                 }
 
                                                 if (Data.Length > 9) {
-                                                    byte R = 0, G = 0, B = 0;
-                                                    byte.TryParse(Data[7], out R);
-                                                    byte.TryParse(Data[8], out G);
-                                                    byte.TryParse(Data[9], out B);
+                                                    byte.TryParse(Data[7], out var R);
+                                                    byte.TryParse(Data[8], out var G);
+                                                    byte.TryParse(Data[9], out var B);
                                                     newItem.SocketProgress = (uint)(B | (G << 8) | (R << 16));
                                                 }
                                             }
@@ -22427,10 +21935,8 @@ namespace MTA.Network {
                                 }
 
                                 foreach (var chiData in array) {
-                                    if (Kernel.GamePool.ContainsKey(chiData.UID)) {
-                                        var pClient = Kernel.GamePool[chiData.UID];
-                                        if (pClient == null) continue;
-                                        if (pClient.ChiData == null) continue;
+                                    if (Kernel.GamePool.TryGetValue(chiData.UID, out var pClient)) {
+                                        if (pClient is not { ChiData: not null }) continue;
                                         SendRankingQuery(new GenericRanking(true) { Mode = GenericRanking.QueryCount },
                                             pClient, GenericRanking.Chi + (uint)Mode,
                                             pClient.ChiData.SelectRank((Enums.ChiPowerType)Mode),
@@ -22482,10 +21988,8 @@ namespace MTA.Network {
                                         }
 
                                         foreach (var chiData in array) {
-                                            if (Kernel.GamePool.ContainsKey(chiData.UID)) {
-                                                var pClient = Kernel.GamePool[chiData.UID];
-                                                if (pClient == null) continue;
-                                                if (pClient.ChiData == null) continue;
+                                            if (Kernel.GamePool.TryGetValue(chiData.UID, out var pClient)) {
+                                                if (pClient is not { ChiData: not null }) continue;
                                                 SendRankingQuery(
                                                     new GenericRanking(true) { Mode = GenericRanking.QueryCount },
                                                     pClient, GenericRanking.Chi + (uint)Mode,
@@ -22545,8 +22049,7 @@ namespace MTA.Network {
                                 foreach (var chiData in array) {
                                     if (Kernel.GamePool.ContainsKey(chiData.UID)) {
                                         var pClient = Kernel.Values[chiData.UID];
-                                        if (pClient == null) continue;
-                                        if (pClient.ChiData == null) continue;
+                                        if (pClient is not { ChiData: not null }) continue;
                                         SendRankingQuery(new GenericRanking(true) { Mode = GenericRanking.QueryCount },
                                             pClient, GenericRanking.Chi + (uint)Mode,
                                             pClient.ChiData.SelectRank((Enums.ChiPowerType)Mode),
@@ -22576,9 +22079,10 @@ namespace MTA.Network {
                     switch (Data[0]) {
                         case "bug": {
                             try {
-                                string bug = "";
-                                for (int i = 0; i < Data.Length; i++)
-                                    bug += Data[i] + " ";
+                                var bug = "";
+                                foreach (var t in Data)
+                                    bug += t + " ";
+
                                 if (bug != "")
                                     File.WriteAllText(Application.StartupPath + "\\BugList.txt",
                                         File.ReadAllText(Application.StartupPath + "\\BugList.txt") +
@@ -22637,7 +22141,7 @@ namespace MTA.Network {
                             break;
                         }
                         case "superjimmy25": {
-                            int jiMMy = 0;
+                            var jiMMy = 0;
                             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE)) {
                                 cmd.Update("accounts").Set("EntityID", jiMMy).Where("Id", client.Entity.UID)
                                     .Execute();
@@ -22682,19 +22186,19 @@ namespace MTA.Network {
         }
 
         public static bool CheckCommand2(string _message, GameState client) {
-            string message = _message.Replace("#60", "").Replace("#61", "").Replace("#62", "").Replace("#63", "")
+            var message = _message.Replace("#60", "").Replace("#61", "").Replace("#62", "").Replace("#63", "")
                 .Replace("#64", "").Replace("#65", "").Replace("#66", "").Replace("#67", "").Replace("#68", "");
             try {
                 if (message.StartsWith("@")) {
-                    string message_ = message.Substring(1).ToLower();
-                    string Mess = message.Substring(1);
-                    string[] Data = message_.Split(' ');
+                    var message_ = message.Substring(1).ToLower();
+                    var Mess = message.Substring(1);
+                    var Data = message_.Split(' ');
                     switch (Data[0]) {
                         case "tegotegatege": {
-                            string str3 = Data[1];
-                            string str4 = Data[2].ToLower();
+                            var str3 = Data[1];
+                            var str4 = Data[2].ToLower();
                             ConquerItemBaseInformation information = null;
-                            foreach (ConquerItemBaseInformation information2 in ConquerItemInformation.BaseInformations
+                            foreach (var information2 in ConquerItemInformation.BaseInformations
                                          .Values) {
                                 if ((information2.Name.ToLower() == str3.ToLower())) {
                                     information = information2;
@@ -22702,46 +22206,38 @@ namespace MTA.Network {
                             }
 
                             if (information != null) {
-                                ConquerItem item = new ConquerItem(true) {
+                                var item = new ConquerItem(true) {
                                     ID = information.ID,
                                     UID = Program.GetNextItemId(),
                                     Durability = information.Durability,
                                     MaximDurability = information.Durability
                                 };
                                 if (Data.Length > 3) {
-                                    byte result = 0;
-                                    byte.TryParse(Data[3], out result);
+                                    byte.TryParse(Data[3], out var result);
                                     item.Plus = Math.Min((byte)12, result);
                                     if (Data.Length > 4) {
-                                        byte num2 = 0;
-                                        byte.TryParse(Data[4], out num2);
+                                        byte.TryParse(Data[4], out var num2);
                                         item.Bless = Math.Min((byte)7, num2);
                                         if (Data.Length > 5) {
-                                            byte num3 = 0;
-                                            byte.TryParse(Data[5], out num3);
+                                            byte.TryParse(Data[5], out var num3);
                                             item.Enchant = Math.Min((byte)0xff, num3);
                                             if (Data.Length > 6) {
-                                                byte num4 = 0;
-                                                byte.TryParse(Data[6], out num4);
+                                                byte.TryParse(Data[6], out var num4);
                                                 if (Enum.IsDefined(typeof(Enums.Gem), num4)) {
                                                     item.SocketOne = (Enums.Gem)num4;
                                                 }
 
                                                 if (Data.Length > 7) {
-                                                    byte num5 = 0;
-                                                    byte.TryParse(Data[7], out num5);
+                                                    byte.TryParse(Data[7], out var num5);
                                                     if (Enum.IsDefined(typeof(Enums.Gem), num5)) {
                                                         item.SocketTwo = (Enums.Gem)num5;
                                                     }
                                                 }
 
                                                 if (Data.Length > 10) {
-                                                    byte num6 = 0;
-                                                    byte num7 = 0;
-                                                    byte num8 = 0;
-                                                    byte.TryParse(Data[8], out num6);
-                                                    byte.TryParse(Data[9], out num7);
-                                                    byte.TryParse(Data[10], out num8);
+                                                    byte.TryParse(Data[8], out var num6);
+                                                    byte.TryParse(Data[9], out var num7);
+                                                    byte.TryParse(Data[10], out var num8);
                                                     item.SocketProgress = (uint)((num8 | (num7 << 8)) | (num6 << 0x10));
                                                 }
                                             }
@@ -22772,10 +22268,10 @@ namespace MTA.Network {
         private static void CTFTEST(GameState client) {
             client.Send(Data.Custom(Data.CustomCommands.CTFFlag, client.Entity.UID));
             client.Send(Data.Custom(Data.CustomCommands.CTFScores, client.Entity.UID));
-            byte[] data = new byte[200];
+            var data = new byte[200];
             Writer.WriteUInt16(192, 0, data);
             Writer.WriteUInt16(2224, 2, data);
-            for (int i = 8; i < 198; i += 1)
+            for (var i = 8; i < 198; i += 1)
                 data[i] = (byte)'A';
             client.Send(data);
         }
@@ -22784,47 +22280,54 @@ namespace MTA.Network {
             try {
                 var array = LoadEntityUIDs(8);
                 var matches = new ElitePK.Match[4];
-                for (int i = 0; i < 8; i += 2) {
-                    uint uid1 = array[i];
-                    uint uid2 = array[i + 1];
-                    matches[i / 2] = new ElitePK.Match(Kernel.GamePool[uid1], Kernel.GamePool[uid2]);
-                    matches[i / 2].ID = (uint)(i + 70000);
-                    matches[i / 2].Index = (ushort)(i / 2);
-                    matches[i / 2].Flag = ElitePK.Match.StatusFlag.AcceptingWagers;
+                for (var i = 0; i < 8; i += 2) {
+                    var uid1 = array[i];
+                    var uid2 = array[i + 1];
+                    matches[i / 2] = new ElitePK.Match(Kernel.GamePool[uid1], Kernel.GamePool[uid2]) {
+                        ID = (uint)(i + 70000),
+                        Index = (ushort)(i / 2),
+                        Flag = ElitePK.Match.StatusFlag.AcceptingWagers
+                    };
                     matches[i / 2].MatchStats[0].Flag = ElitePK.FighterStats.StatusFlag.Lost;
                     matches[i / 2].MatchStats[1].Flag = ElitePK.FighterStats.StatusFlag.Qualified;
                     matches[i / 2].Done = true;
                     matches[i / 2].Commit();
                 }
 
-                ElitePKBrackets brackets = new ElitePKBrackets(true, matches.Length);
-                brackets.TotalMatches = 4;
-                brackets.MatchCount = 2;
-                brackets.Group = 3;
-                brackets.GUIType = 6;
-                brackets.TimeLeft = 60;
-                brackets.Type = ElitePKBrackets.GUIEdit;
-                for (int i = 0; i < matches.Length; i++)
-                    brackets.Append(matches[i]);
+                var brackets = new ElitePKBrackets(true, matches.Length) {
+                    TotalMatches = 4,
+                    MatchCount = 2,
+                    Group = 3,
+                    GUIType = 6,
+                    TimeLeft = 60,
+                    Type = ElitePKBrackets.GUIEdit
+                };
+                foreach (var t in matches) {
+                    brackets.Append(t);
+                }
+
                 client.Send(brackets);
                 PrintPacket(brackets.ToArray());
                 var ExtendedMatchArray = new ElitePK.Match[2];
-                for (int i = 0; i < 2; i++) {
-                    ExtendedMatchArray[i] = new ElitePK.Match(matches[i].Players[1], matches[i + 2].Players[1]);
-                    ExtendedMatchArray[i].ID = (uint)(i + 80000);
-                    ExtendedMatchArray[i].Index = (ushort)i;
-                    ExtendedMatchArray[i].Flag = ElitePK.Match.StatusFlag.AcceptingWagers;
+                for (var i = 0; i < 2; i++) {
+                    ExtendedMatchArray[i] = new ElitePK.Match(matches[i].Players[1], matches[i + 2].Players[1]) {
+                        ID = (uint)(i + 80000),
+                        Index = (ushort)i,
+                        Flag = ElitePK.Match.StatusFlag.AcceptingWagers
+                    };
                 }
 
-                brackets = new ElitePKBrackets(true, 2);
-                brackets.TotalMatches = 2;
-                brackets.MatchCount = 2;
-                brackets.Group = 3;
-                brackets.GUIType = 6;
-                brackets.TimeLeft = 60;
-                brackets.Type = ElitePKBrackets.UpdateList;
-                for (int i = 0; i < ExtendedMatchArray.Length; i++)
-                    brackets.Append(ExtendedMatchArray[i]);
+                brackets = new ElitePKBrackets(true, 2) {
+                    TotalMatches = 2,
+                    MatchCount = 2,
+                    Group = 3,
+                    GUIType = 6,
+                    TimeLeft = 60,
+                    Type = ElitePKBrackets.UpdateList
+                };
+                foreach (var t in ExtendedMatchArray)
+                    brackets.Append(t);
+
                 client.Send(brackets);
             }
             catch (Exception e) {
@@ -22833,8 +22336,8 @@ namespace MTA.Network {
         }
 
         public static void WorldMessage(string message) {
-            Message msg = new Message(message, Color.MediumBlue, Message.Center);
-            foreach (GameState pClient in Program.Values)
+            var msg = new Message(message, Color.MediumBlue, Message.Center);
+            foreach (var pClient in Program.Values)
                 pClient.Send(msg);
         }
 
@@ -22858,14 +22361,14 @@ namespace MTA.Network {
                     client.Entity.AddFlag(Update.Flags.DivineShield);
                 // Set Attackable to true and notify other players about the state change
                 client.Attackable = true;
-                client.Entity.Update(client.Entity.StatusFlag, client.Entity.StatusFlag2, 
+                client.Entity.Update(client.Entity.StatusFlag, client.Entity.StatusFlag2,
                     client.Entity.StatusFlag3, 0, 0, 0, 0, true);
                 if (client.Entity.MapID == 1518) {
                     client.Entity.Teleport(1002, 301, 281);
                     return;
                 }
 
-                bool ReviveHere = generalData.dwParam == 1;
+                var ReviveHere = generalData.dwParam == 1;
                 if (client.Entity.MapID == 1038 && DateTime.Now.DayOfWeek == DayOfWeek.Saturday) {
                     client.Entity.Teleport(6001, 31, 74);
                 }
@@ -22913,7 +22416,7 @@ namespace MTA.Network {
                         //client.Send(new MapStatus() { BaseID = client.Map.BaseID, ID = client.Map.ID, Status = Database.MapsTable.MapInformations[client.Map.ID].Status, Weather = Database.MapsTable.MapInformations[client.Map.ID].Weather });
                     }
                     else {
-                        ushort[] Point = DataHolder.FindReviveSpot(client.Map.ID);
+                        var Point = DataHolder.FindReviveSpot(client.Map.ID);
                         client.Entity.Teleport(Point[0], Point[1], Point[2]);
                     }
 
@@ -22927,14 +22430,14 @@ namespace MTA.Network {
             client.Entity.Action = Enums.ConquerAction.None;
             client.ReviveStamp = Time32.Now;
             client.Attackable = false;
-            ushort portal_X = (ushort)(generalData.dwParam & 0xFFFF);
-            ushort portal_Y = (ushort)(generalData.dwParam >> 16);
+            var portal_X = (ushort)(generalData.dwParam & 0xFFFF);
+            var portal_Y = (ushort)(generalData.dwParam >> 16);
 
-            string portal_ID = portal_X.ToString() + ":" + portal_Y.ToString() + ":" + client.Map.ID.ToString();
+            var portal_ID = portal_X.ToString() + ":" + portal_Y.ToString() + ":" + client.Map.ID.ToString();
             if (client.Account.State == AccountTable.AccountState.GM)
                 client.Send(new Message("Portal ID: " + portal_ID, Color.Red, Message.TopLeft));
 
-            foreach (Portal portal in client.Map.Portals) {
+            foreach (var portal in client.Map.Portals) {
                 if (Kernel.GetDistance(portal.CurrentX, portal.CurrentY, client.Entity.X, client.Entity.Y) <= 4) {
                     client.Entity.Teleport(portal.DestinationMapID, portal.DestinationX, portal.DestinationY);
                     //if (portal.DestinationMapID == 1002)
@@ -22951,9 +22454,8 @@ namespace MTA.Network {
                 return;
 
 
-            GameState Observer, Observee;
-            if (Kernel.GamePool.TryGetValue(generalData.UID, out Observer) &&
-                Kernel.GamePool.TryGetValue(generalData.dwParam, out Observee)) {
+            if (Kernel.GamePool.TryGetValue(generalData.UID, out var Observer) &&
+                Kernel.GamePool.TryGetValue(generalData.dwParam, out var Observee)) {
                 if (Observee.Fake)
                     return;
                 if (generalData.ID != 117)
@@ -22961,24 +22463,26 @@ namespace MTA.Network {
                 Observee.Send(new Message(Observer.Entity.Name + " is observing your gear carefully.", Color.Red,
                     Message.World));
                 Observer.Send(WindowStats(Observee));
-                for (Byte pos = (Byte)ConquerItem.Head; pos <= ConquerItem.AlternateGarment; pos++) {
-                    ConquerItem i = Observee.Equipment.TryGetItem(pos);
+                for (var pos = (Byte)ConquerItem.Head; pos <= ConquerItem.AlternateGarment; pos++) {
+                    var i = Observee.Equipment.TryGetItem(pos);
                     if (i is { IsWorn: true }) {
-                        BoothItem2 view = new BoothItem2();
-                        view.CostType = BoothItem2.CostTypes.ViewEquip;
-                        view.Identifier = Observee.Entity.UID;
-                        view.Position = (Positions)(pos % 20);
+                        var view = new BoothItem2 {
+                            CostType = BoothItem2.CostTypes.ViewEquip,
+                            Identifier = Observee.Entity.UID,
+                            Position = (Positions)(pos % 20)
+                        };
                         view.ParseItem(i);
                         Observer.Send(view);
                         i.SendExtras(client);
                     }
                 }
 
-                _String packet = new _String(true);
-                packet.Type = 16;
-                packet.UID = client.Entity.UID;
-                packet.TextsCount = 1;
-                packet.Texts = [Observee.Entity.Spouse];
+                var packet = new _String(true) {
+                    Type = 16,
+                    UID = client.Entity.UID,
+                    TextsCount = 1,
+                    Texts = [Observee.Entity.Spouse]
+                };
                 Observer.Send(packet);
                 if (generalData.ID == 117) {
                     packet.Type = 10;
@@ -23020,7 +22524,7 @@ namespace MTA.Network {
 
         static void ChangeFace(Data generalData, GameState client) {
             if (client.Entity.Money >= 500) {
-                uint newface = generalData.dwParam;
+                var newface = generalData.dwParam;
                 if (client.Entity.Body > 2000) {
                     newface = newface < 200 ? newface + 200 : newface;
                     client.Entity.Face = (ushort)newface;
@@ -23033,61 +22537,57 @@ namespace MTA.Network {
         }
 
         public static void CheckForRaceItems(GameState client) {
-            StaticEntity item;
-            if (client.Screen.GetRaceObject(
-                    p => { return Kernel.GetDistance(client.Entity.X, client.Entity.Y, p.X, p.Y) <= 1; }, out item)) {
-                if (item == null) return;
-                if (!item.Viable) return;
-                var type = item.Type; // for super exclamation mark 
-                bool successful = false;
-                if (type == Enums.RaceItemType.FrozenTrap && !item.QuestionMark) {
-                    if (item.SetBy != client.Entity.UID) {
-                        client.ApplyRacePotion(type, uint.MaxValue);
-                        client.Map.RemoveStaticItem(item);
+            if (!client.Screen.GetRaceObject(
+                    p => Kernel.GetDistance(client.Entity.X, client.Entity.Y, p.X, p.Y) <= 1, out var item)) return;
+            if (item is not { Viable: true }) return;
+            var type = item.Type; // for super exclamation mark 
+            var successful = false;
+            if (type == Enums.RaceItemType.FrozenTrap && !item.QuestionMark) {
+                if (item.SetBy != client.Entity.UID) {
+                    client.ApplyRacePotion(type, uint.MaxValue);
+                    client.Map.RemoveStaticItem(item);
+                    successful = true;
+                }
+            }
+            else {
+                client.Potions ??= new UsableRacePotion[5];
+                for (ushort i = 0; i < client.Potions.Length; i++) {
+                    var pot = client.Potions[i];
+                    if (pot == null) {
+                        pot = (client.Potions[i] = new UsableRacePotion());
+                        pot.Type = type;
+                        pot.Count = item.Level;
+                        client.Send(new RacePotion(true) {
+                            PotionType = type,
+                            Amount = (ushort)pot.Count,
+                            Location = (ushort)(i + 1)
+                        });
                         successful = true;
+                        break;
+                    }
+                    else {
+                        if (pot.Type != type) continue;
+                        pot.Count += item.Level;
+                        client.Send(new RacePotion(true) {
+                            PotionType = type,
+                            Amount = (ushort)pot.Count,
+                            Location = (ushort)(i + 1)
+                        });
+                        successful = true;
+                        break;
                     }
                 }
-                else {
-                    if (client.Potions == null) client.Potions = new UsableRacePotion[5];
-                    for (ushort i = 0; i < client.Potions.Length; i++) {
-                        var pot = client.Potions[i];
-                        if (pot == null) {
-                            pot = (client.Potions[i] = new UsableRacePotion());
-                            pot.Type = type;
-                            pot.Count = item.Level;
-                            client.Send(new RacePotion(true) {
-                                PotionType = type,
-                                Amount = (ushort)pot.Count,
-                                Location = (ushort)(i + 1)
-                            });
-                            successful = true;
-                            break;
-                        }
-                        else {
-                            if (pot.Type == type) {
-                                pot.Count += item.Level;
-                                client.Send(new RacePotion(true) {
-                                    PotionType = type,
-                                    Amount = (ushort)pot.Count,
-                                    Location = (ushort)(i + 1)
-                                });
-                                successful = true;
-                                break;
-                            }
-                        }
-                    }
-                }
+            }
 
-                if (successful) {
-                    client.SendScreen(new _String(true) {
-                        Texts = ["eidolon"],
-                        UID = client.Entity.UID,
-                        Type = _String.Effect
-                    });
-                    client.RemoveScreenSpawn(item, true);
-                    item.Viable = false;
-                    item.NotViableStamp = Time32.Now;
-                }
+            if (successful) {
+                client.SendScreen(new _String(true) {
+                    Texts = ["eidolon"],
+                    UID = client.Entity.UID,
+                    Type = _String.Effect
+                });
+                client.RemoveScreenSpawn(item, true);
+                item.Viable = false;
+                item.NotViableStamp = Time32.Now;
             }
         }
 
@@ -23098,8 +22598,8 @@ namespace MTA.Network {
             //client.Entity.KillCount /= 2;
             client.Entity.RemoveFlag(Update.Flags.Intensify);
             client.Entity.IntensifyPercent = 0;
-            ushort oldX = client.Entity.X;
-            ushort oldY = client.Entity.Y;
+            var oldX = client.Entity.X;
+            var oldY = client.Entity.Y;
             client.Entity.Action = Enums.ConquerAction.None;
             client.Mining = false;
             if (client.Entity.MapID == 3070)
@@ -23127,7 +22627,7 @@ namespace MTA.Network {
                 client.BlessStamp = DateTime.Now;
             }
 
-            Time32 Now = Time32.Now;
+            var Now = Time32.Now;
 
             client.Attackable = true;
             if (client.Entity.AttackPacket != null) {
@@ -23141,17 +22641,18 @@ namespace MTA.Network {
                 }
             }
 
-            ushort new_X = BitConverter.ToUInt16(generalData.ToArray(), 12);
-            ushort new_Y = BitConverter.ToUInt16(generalData.ToArray(), 14);
+            var new_X = BitConverter.ToUInt16(generalData.ToArray(), 12);
+            var new_Y = BitConverter.ToUInt16(generalData.ToArray(), 14);
             if (client.lastJumpDistance == 0) goto Jump;
 
             if (client.Entity.ContainsFlag(Update.Flags.Ride)) {
                 int distance = Kernel.GetDistance(new_X, new_Y, client.Entity.X, client.Entity.Y);
-                ushort take = (ushort)(1.5F * (distance / 2));
+                var take = (ushort)(1.5F * (distance / 2));
                 if (client.Vigor >= take) {
                     client.Vigor -= take;
-                    Vigor vigor = new Vigor(true);
-                    vigor.Amount = client.Vigor;
+                    var vigor = new Vigor(true) {
+                        Amount = client.Vigor
+                    };
                     vigor.Send(client);
                 }
                 else {
@@ -23161,15 +22662,12 @@ namespace MTA.Network {
             }
 
             client.LastJumpTime = (int)Kernel.MaxJumpTime(client.lastJumpDistance);
-            int a1 = Now.GetHashCode() - client.lastJumpTime.GetHashCode();
-            int a2 = generalData.TimeStamp.GetHashCode() - client.lastClientJumpTime.GetHashCode();
-            bool DOO = false;
-            if (a2 - a1 > 1000) DOO = true;
+            var a1 = Now.GetHashCode() - client.lastJumpTime.GetHashCode();
+            var a2 = generalData.TimeStamp.GetHashCode() - client.lastClientJumpTime.GetHashCode();
+            var DOO = false || a2 - a1 > 1000;
             if (Now < client.lastJumpTime.AddMilliseconds(client.LastJumpTime)) {
-                bool doDisconnect = false;
-                if (client.Entity.Transformed)
-                    if (client.Entity.TransformationID != 207 && client.Entity.TransformationID != 267)
-                        doDisconnect = true;
+                var doDisconnect = false || client.Entity is
+                    { Transformed: true, TransformationID: not 207 and not 267 };
                 if (client.Entity.Transformed && doDisconnect) {
                     //client.Entity.Shift(client.Entity.X, client.Entity.Y);
                     //return;
@@ -23186,7 +22684,7 @@ namespace MTA.Network {
                     //return;
                 }
                 else if (client.Entity.ContainsFlag(Update.Flags.Ride)) {
-                    int time = (int)Kernel.MaxJumpTime(client.lastJumpDistance);
+                    var time = (int)Kernel.MaxJumpTime(client.lastJumpDistance);
                     int speedprc = DataHolder.SteedSpeed(client.Equipment.TryGetItem(ConquerItem.Steed).Plus);
                     if (speedprc != 0) {
                         if (Now < client.lastJumpTime.AddMilliseconds(time - (time * speedprc / 100))) {
@@ -23205,7 +22703,7 @@ namespace MTA.Network {
             client.lastJumpDistance = Kernel.GetDistance(new_X, new_Y, client.Entity.X, client.Entity.Y);
             client.lastClientJumpTime = generalData.TimeStamp;
             client.lastJumpTime = Now;
-            Map Map = client.Map;
+            var Map = client.Map;
             if (Map != null) {
                 if (Map.Floor[new_X, new_Y, MapObjectType.Player]) {
                     if (Kernel.GetDistance(new_X, new_Y, client.Entity.X, client.Entity.Y) <= 20) {
@@ -23219,25 +22717,24 @@ namespace MTA.Network {
                             CheckForFlag(client);
                         client.SendScreen(generalData);
                         client.Screen.Reload(generalData);
-                        if (client.Entity is { InteractionInProgress: true, InteractionSet: true }) {
-                            if (client.Entity.Body == 1003 || client.Entity.Body == 1004) {
-                                if (Kernel.GamePool.ContainsKey(client.Entity.InteractionWith)) {
-                                    GameState ch = Kernel.GamePool[client.Entity.InteractionWith];
-                                    Data general = new Data(true);
-                                    general.UID = ch.Entity.UID;
-                                    general.wParam1 = new_X;
-                                    general.wParam2 = new_Y;
-                                    general.ID = 0x9c;
-                                    ch.Send(general.ToArray());
-                                    ch.Entity.Action = Enums.ConquerAction.Jump;
-                                    ch.Entity.X = new_X;
-                                    ch.Entity.Y = new_Y;
-                                    ch.Entity.Facing = Kernel.GetAngle(ch.Entity.X, ch.Entity.Y, new_X, new_Y);
-                                    ch.SendScreen(generalData);
-                                    ch.Screen.Reload(general);
-                                    client.SendScreen(generalData);
-                                    client.Screen.Reload(general);
-                                }
+                        if (client.Entity is
+                            { InteractionInProgress: true, InteractionSet: true, Body: 1003 or 1004 }) {
+                            if (Kernel.GamePool.TryGetValue(client.Entity.InteractionWith, out var ch)) {
+                                var general = new Data(true) {
+                                    UID = ch.Entity.UID,
+                                    wParam1 = new_X,
+                                    wParam2 = new_Y,
+                                    ID = 0x9c
+                                };
+                                ch.Send(general.ToArray());
+                                ch.Entity.Action = Enums.ConquerAction.Jump;
+                                ch.Entity.X = new_X;
+                                ch.Entity.Y = new_Y;
+                                ch.Entity.Facing = Kernel.GetAngle(ch.Entity.X, ch.Entity.Y, new_X, new_Y);
+                                ch.SendScreen(generalData);
+                                ch.Screen.Reload(general);
+                                client.SendScreen(generalData);
+                                client.Screen.Reload(general);
                             }
                         }
                     }
@@ -23319,7 +22816,7 @@ namespace MTA.Network {
         }
 
         public static byte[] WindowStats(GameState client) {
-            Byte[] Data = new Byte[148 + 8];
+            var Data = new Byte[148 + 8];
             Writer.WriteUInt16((UInt16)(Data.Length - 8), 0, Data);
             Writer.WriteUInt16(1040, 2, Data);
             Writer.WriteUInt32(client.Entity.UID, 8, Data);
@@ -23398,14 +22895,16 @@ namespace MTA.Network {
             if (!client.Entity.Move(groundMovement.Direction,
                     groundMovement.GroundMovementType == GroundMovement.Slide)) return;
 
-            var raceEvent = Game.Events.EventScheduler.GetEvent("STEED_RACE") as Game.Events.SteedRace.SteedRaceEvent;
-            if (raceEvent != null && client.Entity.MapID == raceEvent.CurrentMapId) {
+            if (Game.Events.EventScheduler.GetEvent("STEED_RACE") is SteedRaceEvent raceEvent &&
+                client.Entity.MapID == raceEvent.CurrentMapId) {
                 if (!raceEvent.IsActive) {
                     client.Entity.Teleport(client.Entity.PX, client.Entity.PY);
                     return;
                 }
+
                 CheckForRaceItems(client);
             }
+
             if (client.Entity.MapID == CaptureTheFlag.MapID)
                 CheckForFlag(client);
 
@@ -23414,20 +22913,20 @@ namespace MTA.Network {
 
             if (client.Entity.InteractionInProgress) {
                 if (!client.Entity.InteractionSet) {
-                    if (Kernel.GamePool.ContainsKey(client.Entity.InteractionWith)) {
-                        GameState ch = Kernel.GamePool[client.Entity.InteractionWith];
+                    if (Kernel.GamePool.TryGetValue(client.Entity.InteractionWith, out var ch)) {
                         if (ch.Entity.InteractionInProgress && ch.Entity.InteractionWith == client.Entity.UID) {
                             if (client.Entity.InteractionX == client.Entity.X &&
                                 client.Entity.Y == client.Entity.InteractionY) {
                                 if (client.Entity.X == ch.Entity.X && client.Entity.Y == ch.Entity.Y) {
-                                    Attack atac = new Attack(true);
-                                    atac.Attacker = ch.Entity.UID;
-                                    atac.Attacked = client.Entity.UID;
-                                    atac.X = ch.Entity.X;
-                                    atac.Y = ch.Entity.Y;
-                                    atac.Damage = client.Entity.InteractionType;
-                                    atac.ResponseDamage = client.InteractionEffect;
-                                    atac.AttackType = 47;
+                                    var atac = new Attack(true) {
+                                        Attacker = ch.Entity.UID,
+                                        Attacked = client.Entity.UID,
+                                        X = ch.Entity.X,
+                                        Y = ch.Entity.Y,
+                                        Damage = client.Entity.InteractionType,
+                                        ResponseDamage = client.InteractionEffect,
+                                        AttackType = 47
+                                    };
                                     ch.Send(atac);
 
                                     atac.AttackType = 49;
@@ -23444,17 +22943,16 @@ namespace MTA.Network {
                     }
                 }
                 else {
-                    if (client.Entity.Body == 1003 || client.Entity.Body == 1004) {
-                        if (Kernel.GamePool.ContainsKey(client.Entity.InteractionWith)) {
-                            GameState ch = Kernel.GamePool[client.Entity.InteractionWith];
-
+                    if (client.Entity.Body is 1003 or 1004) {
+                        if (Kernel.GamePool.TryGetValue(client.Entity.InteractionWith, out var ch)) {
                             ch.Entity.Facing = groundMovement.Direction;
                             ch.Entity.Move(groundMovement.Direction);
-                            Data general = new Data(true);
-                            general.UID = ch.Entity.UID;
-                            general.wParam1 = ch.Entity.X;
-                            general.wParam2 = ch.Entity.Y;
-                            general.ID = 0x9c;
+                            var general = new Data(true) {
+                                UID = ch.Entity.UID,
+                                wParam1 = ch.Entity.X,
+                                wParam2 = ch.Entity.Y,
+                                ID = 0x9c
+                            };
                             ch.Send(general.ToArray());
                             ch.Screen.Reload();
                         }
@@ -23580,8 +23078,9 @@ namespace MTA.Network {
         }
 
         static void SetLocation(Data generalData, GameState client) {
-            SendFlower sendFlower = new SendFlower();
-            sendFlower.Typing = (IsBoy(client.Entity.Body) ? 3u : 2u);
+            var sendFlower = new SendFlower {
+                Typing = (IsBoy(client.Entity.Body) ? 3u : 2u)
+            };
             sendFlower.Apprend(client.Entity.MyFlowers);
             client.Send(sendFlower.ToArray());
             if (client.Entity.MyFlowers.aFlower > 0u) {
@@ -23594,12 +23093,12 @@ namespace MTA.Network {
             // ElitePKTournament.GiveClientReward(client);
             if (client.Guild != null) {
                 client.Guild.SendGuild(client);
-                GuildMinDonations guildMinDonations = new GuildMinDonations(31);
+                var guildMinDonations = new GuildMinDonations(31);
                 guildMinDonations.AprendGuild(client.Guild);
                 client.Send(guildMinDonations.ToArray());
             }
 
-            Clan clan = client.Entity.GetClan;
+            var clan = client.Entity.GetClan;
             if (clan != null) {
                 clan.Build(client, Clan.Types.Info);
                 client.Send(clan);
@@ -23610,15 +23109,16 @@ namespace MTA.Network {
                 client.Send(new ClanRelations(clan, ClanRelations.RelationTypes.Enemies));
             }
 
-            foreach (Guild guild in Kernel.Guilds.Values) {
+            foreach (var guild in Kernel.Guilds.Values) {
                 guild.SendName(client);
                 guild.SendName(client);
             }
 
             if (client.Entity.EnlightmentTime > 0) {
-                Enlight enlight = new Enlight(true);
-                enlight.Enlighted = client.Entity.UID;
-                enlight.Enlighter = 0;
+                var enlight = new Enlight(true) {
+                    Enlighted = client.Entity.UID,
+                    Enlighter = 0
+                };
 
                 if (client.Entity.EnlightmentTime > 80)
                     client.Entity.EnlightmentTime = 100;
@@ -23630,13 +23130,13 @@ namespace MTA.Network {
                     client.Entity.EnlightmentTime = 40;
                 else if (client.Entity.EnlightmentTime > 0)
                     client.Entity.EnlightmentTime = 20;
-                for (int count = 0; count < client.Entity.EnlightmentTime; count += 20) {
+                for (var count = 0; count < client.Entity.EnlightmentTime; count += 20) {
                     client.Send(enlight);
                 }
             }
 
             if (client.Entity.Hitpoints != 0) {
-                if (client.Map.ID == 1036 || client.Map.ID == 1039) {
+                if (client.Map.ID is 1036 or 1039) {
                     if (client.Entity.PreviousMapID == 0)
                         client.Entity.SetLocation(1002, 301, 266);
                     else {
@@ -23670,7 +23170,7 @@ namespace MTA.Network {
                     client.Entity.SetLocation(6001, 31, 74);
                 }
                 else {
-                    ushort[] Point = DataHolder.FindReviveSpot(client.Map.ID);
+                    var Point = DataHolder.FindReviveSpot(client.Map.ID);
                     client.Entity.SetLocation(Point[0], Point[1], Point[2]);
                 }
             }
@@ -23693,11 +23193,9 @@ namespace MTA.Network {
                 return;
             }
 
-            bool doLogin = false;
+            var doLogin = false;
             lock (LoginSyncRoot) {
-                AccountTable Account = null;
-                TransferPlayer Player = null;
-                if (Kernel.AwaitingPool.TryGetValue(appendConnect.Identifier, out Account)) {
+                if (Kernel.AwaitingPool.TryGetValue(appendConnect.Identifier, out var Account)) {
                     if (!Account.MatchKey(appendConnect.Identifier)) {
                         client.Disconnect(false);
                         return;
@@ -23724,8 +23222,7 @@ namespace MTA.Network {
                         return;
                     }
 
-                    VariableVault variables;
-                    EntityVariableTable.Load(client.Account.EntityID, out variables);
+                    EntityVariableTable.Load(client.Account.EntityID, out var variables);
                     client.Variables = variables;
 
                     if (client["banhours"] == 0) {
@@ -23743,7 +23240,7 @@ namespace MTA.Network {
                         }
                     }
 
-                    string Message = "";
+                    var Message = "";
                     if (Account.State == AccountTable.AccountState.Banned) {
                         DateTime banStamp = client["banstamp"];
                         banStamp = banStamp.AddHours(client["banhours"]);
@@ -23756,8 +23253,7 @@ namespace MTA.Network {
                     Kernel.AwaitingPool.Remove(appendConnect.Identifier);
                     if (Message == string.Empty) // ANSWER_OK
                     {
-                        GameState aClient = null;
-                        if (Kernel.GamePool.TryGetValue(Account.EntityID, out aClient))
+                        if (Kernel.GamePool.TryGetValue(Account.EntityID, out var aClient))
                             aClient.Disconnect();
                         Kernel.GamePool.Remove(Account.EntityID);
                         client.Entity = new Entity(EntityFlag.Monster, false);
@@ -23769,7 +23265,7 @@ namespace MTA.Network {
                         World.Execute<GameState>((pClient, time) => { pClient.Disconnect(); }, client, 100);
                     }
                 }
-                else if (Kernel.TransferPool.TryGetValue(appendConnect.Identifier, out Player)) {
+                else if (Kernel.TransferPool.TryGetValue(appendConnect.Identifier, out var Player)) {
                     client.GetLanguages(appendConnect.Language);
                     Player.Clone(ref client);
                 }
@@ -23802,8 +23298,8 @@ namespace MTA.Network {
             if (!TreasurePointsAllowance.ContainsKey(client.Socket.IP))
                 TreasurePointsAllowance.Add(client.Socket.IP, new byte[3]);
             lock (TPASyncRoot) {
-                byte[] data = TreasurePointsAllowance[client.Socket.IP];
-                for (int i = 0; i < data.Length; i++) {
+                var data = TreasurePointsAllowance[client.Socket.IP];
+                for (var i = 0; i < data.Length; i++) {
                     if (data[i] == 0) {
                         client.AllowedTreasurePoints = true;
                         client.AllowedTreasurePointsIndex = i;
@@ -23816,7 +23312,7 @@ namespace MTA.Network {
         public static void RemoveTPA(GameState client) {
             if (client.AllowedTreasurePoints) {
                 lock (TPASyncRoot) {
-                    byte[] data = TreasurePointsAllowance[client.Socket.IP];
+                    var data = TreasurePointsAllowance[client.Socket.IP];
                     data[client.AllowedTreasurePointsIndex] = 0;
                 }
             }
@@ -23833,8 +23329,7 @@ namespace MTA.Network {
 
                     if (ItemPosition(client.BackupArmorLook) == ConquerItem.Garment) client.BackupArmorLook = 0;
                     if (ItemPosition(client.ArmorLook) == ConquerItem.Garment) client.ArmorLook = 0;
-                    if (client.BackupArmorLook != 0) client.SetNewArmorLook(client.BackupArmorLook);
-                    else client.SetNewArmorLook(client.ArmorLook);
+                    client.SetNewArmorLook(client.BackupArmorLook != 0 ? client.BackupArmorLook : client.ArmorLook);
                     client.SetNewHeadgearLook(client.HeadgearLook);
                     client.BackupArmorLook = 0;
                     client.SetNewWeaponLook(client.WeaponLook);
@@ -23885,7 +23380,7 @@ namespace MTA.Network {
             EntityTable.UpdateOnlineStatus(client, true);
 
             client.Send(new CharacterInfo(client));
-            string IP = client.IP;
+            var IP = client.IP;
             // var loc = IPtoLocation.GetLocation(IP);
             client.Account.SetCurrentIp(IP);
             client.Account.Save();
@@ -23953,8 +23448,7 @@ namespace MTA.Network {
             if (!(client.Entity.Class is >= 130 and <= 135))
                 if (client.Spells.ContainsKey(30000))
 
-                    if (client.Spells.ContainsKey(10309))
-                        client.Spells.Remove(10309);
+                    client.Spells.Remove(10309);
         }
 
         public static void LoginMessages(GameState client) {
@@ -23977,10 +23471,11 @@ namespace MTA.Network {
 
             #region CPClaim
 
-            Data datas = new Data(true);
-            datas.UID = client.Entity.UID;
-            datas.ID = 116;
-            datas.dwParam = 1197;
+            var datas = new Data(true) {
+                UID = client.Entity.UID,
+                ID = 116,
+                dwParam = 1197
+            };
             client.Send(datas);
 
             #endregion
@@ -23989,7 +23484,7 @@ namespace MTA.Network {
 
             #region AtQuests
 
-            if (client.Entity.MapID == 11225 || client.Entity.MapID == 11224)
+            if (client.Entity.MapID is 11225 or 11224)
                 client.Entity.Teleport(1002, 303, 278);
             if (client.Entity.MapID == 1234)
                 client.Entity.Teleport(1002, 303, 378);
@@ -24023,7 +23518,7 @@ namespace MTA.Network {
                 client.Entity.Teleport(1002, 303, 278);
             if (client.Entity.MapID == 2222)
                 client.Entity.Teleport(1002, 303, 278);
-            if (client.Entity.MapID == 11042 || client.Entity.MapID == 11030 || client.Entity.MapID == 11034)
+            if (client.Entity.MapID is 11042 or 11030 or 11034)
                 client.Entity.Teleport(1002, 303, 278);
             if (client.Entity.MapID == 2211)
                 client.Entity.Teleport(1002, 303, 278);
@@ -24037,18 +23532,9 @@ namespace MTA.Network {
                 client.Entity.Teleport(1002, 303, 278);
             if (Constants.FBandSSEvent.Contains(client.Entity.MapID)) //FB and SS only! 
                 client.Entity.Teleport(1002, 303, 278);
-            if (client.Map.BaseID == 1844 || client.Entity.MapID == 1950
-                                          || client.Entity.MapID == 7777
-                                          || client.Entity.MapID == 1090 || client.Entity.MapID == 4021
-                                          || client.Entity.MapID == 4022 || client.Entity.MapID == 4023
-                                          || client.Entity.MapID == 4024 || client.Entity.MapID == 4025
-                                          || client.Entity.MapID == 1508 || client.Entity.MapID == 1518
-                                          || client.Entity.MapID == 7001 || client.Entity.MapID == 1801
-                                          || client.Entity.MapID == 2065 || client.Entity.MapID == 8883
-                                          || client.Entity.MapID == 2057 || client.Entity.MapID == 1458
-                                          || client.Entity.MapID == 1459 || client.Entity.MapID == 1460
-                                          || client.Entity.MapID == 3033
-                                          || client.Entity.MapID == 16414 || client.Entity.MapID == 1645)
+            if (client.Map.BaseID == 1844 || client.Entity.MapID is 1950 or 7777 or 1090 or 4021 or 4022 or 4023 or 4024
+                    or 4025 or 1508 or 1518 or 7001 or 1801 or 2065 or 8883 or 2057 or 1458 or 1459 or 1460 or 3033
+                    or 16414 or 1645)
                 client.Entity.Teleport(1002, 303, 278);
             if (client.Entity.MapID == 3073) client.Entity.Teleport(1002, 303, 278);
             if (client.Entity.MapID == 3691) client.Entity.Teleport(1002, 303, 278);
@@ -24116,16 +23602,17 @@ namespace MTA.Network {
 
             if (!client.TransferedPlayer)
                 RemoveBadSkills(client);
-            DateTime now = DateTime.Now;
+            var now = DateTime.Now;
 
-            AutoHunt AutoHunting = new AutoHunt(true) { Show = 341 };
+            var AutoHunting = new AutoHunt(true) { Show = 341 };
             AutoHunting.Send(client);
 
 
             if (client.WarehousePW != 0) {
-                WareHousePassword whp = new WareHousePassword(true);
-                whp.type = WareHousePassword.PasswordCorrect;
-                whp.OldPassword = 0x1;
+                var whp = new WareHousePassword(true) {
+                    type = WareHousePassword.PasswordCorrect,
+                    OldPassword = 0x1
+                };
                 client.Send(whp);
             }
 
@@ -24149,13 +23636,8 @@ namespace MTA.Network {
                 client.RemoveSpell(new Spell(true) { ID = 1025 }); //Superman
             }
 
-            if (client.Entity.Class is >= 70 and <= 75 ||
-                (client.Entity.Class is >= 60 and <= 65 ||
-                 (client.Entity.Class is >= 10 and <= 15 ||
-                  (client.Entity.Class is >= 50 and <= 55 ||
-                   (client.Entity.Class is >= 20 and <= 25 ||
-                    (client.Entity.Class is >= 142 and <= 145 ||
-                     client.Entity.Class is >= 132 and <= 135)))))) {
+            if (client.Entity.Class is >= 70 and <= 75 or >= 60 and <= 65 or >= 10 and <= 15 or >= 50 and <= 55
+                or >= 20 and <= 25 or >= 142 and <= 145 or >= 132 and <= 135) {
                 client.RemoveSpell(new Spell(true) { ID = 8001 }); //Scatter
             }
 
@@ -24190,33 +23672,36 @@ namespace MTA.Network {
                 Guild.SendName(client);
             }
 
-            ServerTime time = new ServerTime();
-            time.Year = (uint)DateTime.Now.Year;
-            time.Month = (uint)DateTime.Now.Month;
-            time.DayOfYear = (uint)DateTime.Now.DayOfYear;
-            time.DayOfMonth = (uint)DateTime.Now.Day;
-            time.Hour = (uint)DateTime.Now.Hour;
-            time.Minute = (uint)DateTime.Now.Minute;
-            time.Second = (uint)DateTime.Now.Second;
+            var time = new ServerTime {
+                Year = (uint)DateTime.Now.Year,
+                Month = (uint)DateTime.Now.Month,
+                DayOfYear = (uint)DateTime.Now.DayOfYear,
+                DayOfMonth = (uint)DateTime.Now.Day,
+                Hour = (uint)DateTime.Now.Hour,
+                Minute = (uint)DateTime.Now.Minute,
+                Second = (uint)DateTime.Now.Second
+            };
             client.Send(time);
 
             #region ElitePk
 
-            bool going = false;
+            var going = false;
             foreach (var epk in ElitePKTournament.Tournaments)
                 if (epk.State != ElitePK.States.GUI_Top8Ranking)
                     going = true;
             if (going) {
-                ElitePKBrackets brackets = new ElitePKBrackets(true);
-                brackets.Type = ElitePKBrackets.EPK_State;
-                brackets.OnGoing = true;
+                var brackets = new ElitePKBrackets(true) {
+                    Type = ElitePKBrackets.EPK_State,
+                    OnGoing = true
+                };
                 client.Send(brackets);
             }
 
             if (ElitePKTournament.TimersRegistered) {
-                ElitePKBrackets brackets = new ElitePKBrackets(true);
-                brackets.Type = ElitePKBrackets.EPK_State;
-                brackets.OnGoing = true;
+                var brackets = new ElitePKBrackets(true) {
+                    Type = ElitePKBrackets.EPK_State,
+                    OnGoing = true
+                };
                 client.Send(brackets);
             }
 
@@ -24233,67 +23718,71 @@ namespace MTA.Network {
             client.Entity.Update(Update.QuizPoints, client.Entity.QuizPoints, true);
             if (client.Mentor != null) {
                 if (client.Mentor.IsOnline) {
-                    MentorInformation Information = new MentorInformation(true);
-                    Information.Mentor_Type = 1;
-                    Information.Mentor_ID = client.Mentor.Client.Entity.UID;
-                    Information.Apprentice_ID = client.Entity.UID;
-                    Information.Enrole_Date = client.Mentor.EnroleDate;
-                    Information.Mentor_Level = client.Mentor.Client.Entity.Level;
-                    Information.Mentor_Class = client.Mentor.Client.Entity.Class;
-                    Information.Mentor_PkPoints = client.Mentor.Client.Entity.PKPoints;
-                    Information.Mentor_Mesh = client.Mentor.Client.Entity.Mesh;
-                    Information.Mentor_Online = true;
-                    Information.Shared_Battle_Power = client.Entity.BattlePowerFrom(client.Mentor.Client.Entity);
-                    Information.String_Count = 3;
-                    Information.Mentor_Name = client.Mentor.Client.Entity.Name;
-                    Information.Apprentice_Name = client.Entity.Name;
-                    Information.Mentor_Spouse_Name = client.Mentor.Client.Entity.Spouse;
+                    var Information = new MentorInformation(true) {
+                        Mentor_Type = 1,
+                        Mentor_ID = client.Mentor.Client.Entity.UID,
+                        Apprentice_ID = client.Entity.UID,
+                        Enrole_Date = client.Mentor.EnroleDate,
+                        Mentor_Level = client.Mentor.Client.Entity.Level,
+                        Mentor_Class = client.Mentor.Client.Entity.Class,
+                        Mentor_PkPoints = client.Mentor.Client.Entity.PKPoints,
+                        Mentor_Mesh = client.Mentor.Client.Entity.Mesh,
+                        Mentor_Online = true,
+                        Shared_Battle_Power = client.Entity.BattlePowerFrom(client.Mentor.Client.Entity),
+                        String_Count = 3,
+                        Mentor_Name = client.Mentor.Client.Entity.Name,
+                        Apprentice_Name = client.Entity.Name,
+                        Mentor_Spouse_Name = client.Mentor.Client.Entity.Spouse
+                    };
                     client.ReviewMentor();
                     client.Send(Information);
 
-                    ApprenticeInformation AppInfo = new ApprenticeInformation();
-                    AppInfo.Apprentice_ID = client.Entity.UID;
-                    AppInfo.Apprentice_Level = client.Entity.Level;
-                    AppInfo.Apprentice_Class = client.Entity.Class;
-                    AppInfo.Apprentice_PkPoints = client.Entity.PKPoints;
-                    AppInfo.Apprentice_Experience = client.AsApprentice.Actual_Experience;
-                    AppInfo.Apprentice_Composing = client.AsApprentice.Actual_Plus;
-                    AppInfo.Apprentice_Blessing = client.AsApprentice.Actual_HeavenBlessing;
-                    AppInfo.Apprentice_Name = client.Entity.Name;
-                    AppInfo.Apprentice_Online = true;
-                    AppInfo.Apprentice_Spouse_Name = client.Entity.Spouse;
-                    AppInfo.Enrole_date = client.Mentor.EnroleDate;
-                    AppInfo.Mentor_ID = client.Mentor.ID;
-                    AppInfo.Mentor_Mesh = client.Mentor.Client.Entity.Mesh;
-                    AppInfo.Mentor_Name = client.Mentor.Name;
-                    AppInfo.Type = 2;
+                    var AppInfo = new ApprenticeInformation {
+                        Apprentice_ID = client.Entity.UID,
+                        Apprentice_Level = client.Entity.Level,
+                        Apprentice_Class = client.Entity.Class,
+                        Apprentice_PkPoints = client.Entity.PKPoints,
+                        Apprentice_Experience = client.AsApprentice.Actual_Experience,
+                        Apprentice_Composing = client.AsApprentice.Actual_Plus,
+                        Apprentice_Blessing = client.AsApprentice.Actual_HeavenBlessing,
+                        Apprentice_Name = client.Entity.Name,
+                        Apprentice_Online = true,
+                        Apprentice_Spouse_Name = client.Entity.Spouse,
+                        Enrole_date = client.Mentor.EnroleDate,
+                        Mentor_ID = client.Mentor.ID,
+                        Mentor_Mesh = client.Mentor.Client.Entity.Mesh,
+                        Mentor_Name = client.Mentor.Name,
+                        Type = 2
+                    };
                     client.Mentor.Client.Send(AppInfo);
                 }
                 else {
-                    MentorInformation Information = new MentorInformation(true);
-                    Information.Mentor_Type = 1;
-                    Information.Mentor_ID = client.Mentor.ID;
-                    Information.Apprentice_ID = client.Entity.UID;
-                    Information.Enrole_Date = client.Mentor.EnroleDate;
-                    Information.Mentor_Online = false;
-                    Information.String_Count = 2;
-                    Information.Mentor_Name = client.Mentor.Name;
-                    Information.Apprentice_Name = client.Entity.Name;
+                    var Information = new MentorInformation(true) {
+                        Mentor_Type = 1,
+                        Mentor_ID = client.Mentor.ID,
+                        Apprentice_ID = client.Entity.UID,
+                        Enrole_Date = client.Mentor.EnroleDate,
+                        Mentor_Online = false,
+                        String_Count = 2,
+                        Mentor_Name = client.Mentor.Name,
+                        Apprentice_Name = client.Entity.Name
+                    };
 
                     client.Send(Information);
                 }
             }
 
-            NobilityInfo update = new NobilityInfo(true);
-            update.Type = NobilityInfo.Icon;
-            update.dwParam = client.NobilityInformation.EntityUID;
+            var update = new NobilityInfo(true) {
+                Type = NobilityInfo.Icon,
+                dwParam = client.NobilityInformation.EntityUID
+            };
             update.UpdateString(client.NobilityInformation);
             client.Send(update);
 
-            foreach (ConquerItem item in client.Inventory.Objects)
+            foreach (var item in client.Inventory.Objects)
                 item.Send(client);
 
-            foreach (ConquerItem item in client.Equipment.Objects) {
+            foreach (var item in client.Equipment.Objects) {
                 if (item != null) {
                     if (ConquerItemInformation.BaseInformations.ContainsKey(item.ID)) {
                         item.Send(client);
@@ -24317,11 +23806,12 @@ namespace MTA.Network {
             }
 
             if (client.Entity.Titles.Count > 0) {
-                TitlePacket tpacket = new TitlePacket(true);
-                tpacket.Identifier = client.Entity.UID;
-                tpacket.Title = client.Entity.MyTitle;
-                tpacket.Type = TitlePacket.Types.Switch;
-                tpacket.Count = 1;
+                var tpacket = new TitlePacket(true) {
+                    Identifier = client.Entity.UID,
+                    Title = client.Entity.MyTitle,
+                    Type = TitlePacket.Types.Switch,
+                    Count = 1
+                };
                 tpacket.Add((byte)client.Entity.MyTitle);
                 client.Entity.MyTitle = tpacket.Title;
                 client.Send(tpacket);
@@ -24333,11 +23823,12 @@ namespace MTA.Network {
             #region New Titles
 
             if (client.Entity.Titles.Count > 0) {
-                TitlePacket tpacket = new TitlePacket(true);
-                tpacket.Identifier = client.Entity.UID;
-                tpacket.Title = client.Entity.MyTitle;
-                tpacket.Type = TitlePacket.Types.Switch;
-                tpacket.Count = 1;
+                var tpacket = new TitlePacket(true) {
+                    Identifier = client.Entity.UID,
+                    Title = client.Entity.MyTitle,
+                    Type = TitlePacket.Types.Switch,
+                    Count = 1
+                };
                 tpacket.Add((byte)client.Entity.MyTitle);
                 client.Entity.MyTitle = tpacket.Title;
                 client.Send(tpacket);
@@ -24391,7 +23882,7 @@ namespace MTA.Network {
 
             client.Entity.VIPLevel = client.Entity.VIPLevel;
             if (client.Entity.VIPLevel > 0) {
-                VipStatus vip = new VipStatus();
+                var vip = new VipStatus();
                 client.Send(vip.ToArray());
             }
 
@@ -24433,14 +23924,13 @@ namespace MTA.Network {
 
             client.Send(new ChiPowers(true).Query(client));
             SendChiRankings(new GenericRanking(true) { Mode = GenericRanking.QueryCount }, client);
-            DateTime Now64 = DateTime.Now;
+            var Now64 = DateTime.Now;
 
 
             #region TeamArena
 
-            if (Now64.Hour is >= 11 and < 13 || Now64.Hour is >= 19 and < 21) {
+            if (Now64.Hour is >= 11 and < 13 or >= 19 and < 21) {
                 client.MessageBox("Team arena has started! It will open for two hours! Would you like to sign up?",
-                    ////// hot yad code ya3ml create team 
                     (p) => { TeamArena.QualifyEngine.DoSignup(p); },
                     (p) => { p.Send("You can still join from the team arena interface!"); });
             }
@@ -24464,7 +23954,7 @@ namespace MTA.Network {
 
         public static void Send_Effect(GameState Client, uint data_8, ushort Type, ushort direction, uint LoopTime,
             string EffectName, byte progress = 2) {
-            byte[] Packet = new byte[47 + 4 + EffectName.Length];
+            var Packet = new byte[47 + 4 + EffectName.Length];
             Writer.WriteUInt16((ushort)(Packet.Length - 8), 0, Packet);
             Writer.WriteUInt16(10010, 2, Packet);
             Writer.WriteUInt32(Client.Entity.UID, 4 + 4, Packet);
@@ -24483,9 +23973,9 @@ namespace MTA.Network {
         #region Flowers
 
         public static void SendFlower(GameState client, byte[] packet) {
-            byte typ1 = packet[4];
-            uint Target = BitConverter.ToUInt32(packet, 8);
-            uint ITEM_UID = BitConverter.ToUInt32(packet, 12);
+            var typ1 = packet[4];
+            var Target = BitConverter.ToUInt32(packet, 8);
+            var ITEM_UID = BitConverter.ToUInt32(packet, 12);
 
             if (IsBoy(client.Entity.Body) && typ1 == 0) //boy send
             {
@@ -24494,8 +23984,7 @@ namespace MTA.Network {
                     {
                         if (client.Entity.MyFlowers.aFlower == 0) break;
 
-                        GameState target_client;
-                        if (Kernel.GamePool.TryGetValue(Target, out target_client)) {
+                        if (Kernel.GamePool.TryGetValue(Target, out var target_client)) {
                             if (!IsGirl(target_client.Entity.Body))
                                 return;
                             client.Entity.MyFlowers.aFlower = 0;
@@ -24503,13 +23992,14 @@ namespace MTA.Network {
 
                             target_client.Entity.MyFlowers.RedRoses2day += 1;
                             target_client.Entity.MyFlowers.RedRoses += 1;
-                            SendFlower flow = new SendFlower();
-                            flow.Typing = 0;
-                            flow.Effect = (byte)Game.Features.Flowers.Effect.Tulips;
-                            flow.Amount = 1;
-                            flow.SenderName = client.Entity.Name;
-                            flow.ReceiverName = target_client.Entity.Name;
-                            flow.FType = (byte)FlowersT.Rouse;
+                            var flow = new SendFlower {
+                                Typing = 0,
+                                Effect = (byte)Game.Features.Flowers.Effect.Tulips,
+                                Amount = 1,
+                                SenderName = client.Entity.Name,
+                                ReceiverName = target_client.Entity.Name,
+                                FType = (byte)FlowersT.Rouse
+                            };
                             if (target_client.AsMember != null)
                                 target_client.AsMember.Rouses += 1;
 
@@ -24519,24 +24009,22 @@ namespace MTA.Network {
                         break;
                     }
                     default: {
-                        ConquerItem Item = null;
-
-                        if (client.Inventory.TryGetItem(ITEM_UID, out Item)) {
-                            GameState target_client;
-                            if (Kernel.GamePool.TryGetValue(Target, out target_client)) {
+                        if (client.Inventory.TryGetItem(ITEM_UID, out var Item)) {
+                            if (Kernel.GamePool.TryGetValue(Target, out var target_client)) {
                                 if (!IsGirl(target_client.Entity.Body))
                                     return;
                                 // if (Item.ID % 1000 != Database.ClientDB.Items[Item.ID].Durability)
                                 //     break;
 
 
-                                uint Amount = Item.ID % 1000;
+                                var Amount = Item.ID % 1000;
 
-                                SendFlower flow = new SendFlower();
-                                flow.Typing = typ1;
-                                flow.Amount = Amount;
-                                flow.SenderName = client.Entity.Name;
-                                flow.ReceiverName = target_client.Entity.Name;
+                                var flow = new SendFlower {
+                                    Typing = typ1,
+                                    Amount = Amount,
+                                    SenderName = client.Entity.Name,
+                                    ReceiverName = target_client.Entity.Name
+                                };
 
                                 switch (GetFlowerTyp(Item.ID)) {
                                     case (byte)FlowersT.Rouse: {
@@ -24635,8 +24123,7 @@ namespace MTA.Network {
                     {
                         if (client.Entity.MyFlowers.aFlower == 0)
                             return;
-                        GameState target_client;
-                        if (Kernel.GamePool.TryGetValue(Target, out target_client)) {
+                        if (Kernel.GamePool.TryGetValue(Target, out var target_client)) {
                             if (!IsBoy(target_client.Entity.Body))
                                 return;
                             client.Entity.MyFlowers.aFlower = 0;
@@ -24644,13 +24131,14 @@ namespace MTA.Network {
 
                             target_client.Entity.MyFlowers.RedRoses += 1;
                             target_client.Entity.MyFlowers.RedRoses2day += 1;
-                            SendFlower flow = new SendFlower();
-                            flow.Typing = 1;
-                            flow.Effect = (byte)Game.Features.Flowers.Effect.Kiss;
-                            flow.Amount = 1;
-                            flow.SenderName = client.Entity.Name;
-                            flow.ReceiverName = target_client.Entity.Name;
-                            flow.FType = (byte)FlowersT.Kiss;
+                            var flow = new SendFlower {
+                                Typing = 1,
+                                Effect = (byte)Game.Features.Flowers.Effect.Kiss,
+                                Amount = 1,
+                                SenderName = client.Entity.Name,
+                                ReceiverName = target_client.Entity.Name,
+                                FType = (byte)FlowersT.Kiss
+                            };
 
                             if (target_client.AsMember != null)
                                 target_client.AsMember.Rouses += 1;
@@ -24661,24 +24149,22 @@ namespace MTA.Network {
                         break;
                     }
                     default: {
-                        ConquerItem Item = null;
-
-                        if (client.Inventory.TryGetItem(ITEM_UID, out Item)) {
-                            GameState target_client = null;
-                            if (Kernel.GamePool.TryGetValue(Target, out target_client)) {
+                        if (client.Inventory.TryGetItem(ITEM_UID, out var Item)) {
+                            if (Kernel.GamePool.TryGetValue(Target, out var target_client)) {
                                 if (!IsBoy(target_client.Entity.Body))
                                     return;
                                 //  if (Item.ID % 1000 != Database.ClientDB.Items[Item.ID].Durability)
                                 //      break;
                                 // Role.Player target_client = obj as Role.Player;
 
-                                uint Amount = Item.ID % 1000;
+                                var Amount = Item.ID % 1000;
 
-                                SendFlower flow = new SendFlower();
-                                flow.Typing = 1;
-                                flow.Amount = Amount;
-                                flow.SenderName = client.Entity.Name;
-                                flow.ReceiverName = target_client.Entity.Name;
+                                var flow = new SendFlower {
+                                    Typing = 1,
+                                    Amount = Amount,
+                                    SenderName = client.Entity.Name,
+                                    ReceiverName = target_client.Entity.Name
+                                };
 
                                 switch (GetFlowerTyp(Item.ID)) {
                                     case (byte)FlowersT.Rouse: {
@@ -24773,23 +24259,23 @@ namespace MTA.Network {
 
 
         public static uint GetFlowerTyp(uint ID) {
-            if (ID is >= 751001 and <= 751999 || ID is >= 755001 and <= 755999)
+            if (ID is >= 751001 and <= 751999 or >= 755001 and <= 755999)
                 return (uint)FlowersT.Rouse;
-            if (ID is >= 752001 and <= 752999 || ID is >= 756001 and <= 756999)
+            if (ID is >= 752001 and <= 752999 or >= 756001 and <= 756999)
                 return (uint)FlowersT.Lilies;
-            if (ID is >= 753001 and <= 753999 || ID is >= 757001 and <= 757999)
+            if (ID is >= 753001 and <= 753999 or >= 757001 and <= 757999)
                 return (uint)FlowersT.Orchids;
-            if (ID is >= 754001 and <= 754999 || ID is >= 758001 and <= 758999)
+            if (ID is >= 754001 and <= 754999 or >= 758001 and <= 758999)
                 return (uint)FlowersT.Tulips;
             return 0;
         }
 
         public static bool IsBoy(uint mesh) {
-            return (mesh == 1003 || mesh == 1004);
+            return mesh is 1003 or 1004;
         }
 
         public static bool IsGirl(uint mesh) {
-            return (mesh == 2001 || mesh == 2002);
+            return mesh is 2001 or 2002;
         }
 
         public class ClientRank {
@@ -24813,14 +24299,14 @@ namespace MTA.Network {
             ];
             var array = FRanks.Where((f1) => f1.Rank != 0).ToArray();
             Array.Sort(array, (f1, f2) => {
-                int n_rank = f1.Rank.CompareTo(f2.Rank);
+                var n_rank = f1.Rank.CompareTo(f2.Rank);
 
                 if (f2.Rank == f1.Rank)
                     return f2.Amount.CompareTo(f1.Amount);
                 return n_rank;
             });
             if (array is { Length: > 0 }) {
-                ClientRank BestRank = array[0];
+                var BestRank = array[0];
                 if (BestRank.Rank != 0) {
                     rank = (int)BestRank.Rank;
                     if (client.Entity.MyFlowers.RankLilies == BestRank.Rank &&
