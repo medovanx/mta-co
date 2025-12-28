@@ -1,16 +1,12 @@
 // ReSharper disable InconsistentNaming
 
-namespace MTA.Game {
+namespace MTA.Game.Constants.Items {
     /// <summary>
-    /// Partial class for Arena item constants
+    /// Arena item constants
     /// </summary>
-    public static partial class ItemConstants {
-        #region Arena Items
-
+    public static class ArenaItems {
         public const uint ArenaEXPPack = 723912;
         public const uint ChampionPack = 3001046;
-
-        #endregion Arena Items
     }
 }
 

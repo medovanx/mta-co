@@ -21,7 +21,7 @@ using MTA.MaTrix;
 using MTA.Network;
 using MTA.Network.GamePackets;
 using NameChange = MTA.Database.NameChange;
-using static MTA.Game.ItemConstants;
+using static MTA.Game.Constants.Items.BasicItems;
 
 namespace MTA {
     using Titles = TitlePacket.Titles;

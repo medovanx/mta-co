@@ -1,12 +1,8 @@
-// ReSharper disable InconsistentNaming
-
-namespace MTA.Game {
+namespace MTA.Game.Constants.Items {
     /// <summary>
-    /// Partial class for Dragon Soul pack constants
+    /// Dragon Soul pack constants
     /// </summary>
-    public static partial class ItemConstants {
-        #region Dragon Soul Packs
-
+    public static class DragonSoulPacks {
         public const uint P4DragonSoulBag = 3005133;
         public const uint SweetLovePack = 3005134;
         public const uint P6DragonSoulBag = 3005135;
@@ -18,8 +14,6 @@ namespace MTA.Game {
         public const uint P7WeaponSoulPack2 = 3004247;
         public const uint P6WeaponSoulPack = 729122;
         public const uint P6DragonSoulPack = 727317;
-
-        #endregion Dragon Soul Packs
     }
 }
 

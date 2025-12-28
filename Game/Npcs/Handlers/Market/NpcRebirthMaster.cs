@@ -2,7 +2,7 @@ using MTA.Client;
 using MTA.Database;
 using MTA.Network.GamePackets;
 using static MTA.Game.EntityClassConstants;
-using static MTA.Game.ItemConstants;
+using static MTA.Game.Constants.Items.BasicItems;
 
 namespace MTA.Game.Npcs.Handlers.Market {
     /// <summary>

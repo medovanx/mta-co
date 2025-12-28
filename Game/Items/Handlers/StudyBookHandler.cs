@@ -3,7 +3,8 @@ using MTA.Client;
 using MTA.Network.GamePackets;
 using Message = MTA.Network.GamePackets.Message;
 using _String = MTA.Network.GamePackets._String;
-using static MTA.Game.ItemConstants;
+using static MTA.Game.Constants.Items.StudyAndGuild;
+using static MTA.Game.Constants.Items.BasicItems;
 
 namespace MTA.Game.Items.Handlers {
     /// <summary>

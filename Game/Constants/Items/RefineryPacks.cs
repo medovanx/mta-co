@@ -1,11 +1,10 @@
 // ReSharper disable InconsistentNaming
 
-namespace MTA.Game {
+namespace MTA.Game.Constants.Items {
     /// <summary>
-    /// Partial class for Refinery pack constants
+    /// Refinery pack constants
     /// </summary>
-    public static partial class ItemConstants {
-        #region Refinery Packs
+    public static class RefineryPacks {
         // Penetration Packs
         public const uint PenetrationPrimaryPackBracelet = 723130;
         public const uint PenetrationMediumPackBracelet = 723131;
@@ -169,8 +168,5 @@ namespace MTA.Game {
         public const uint RefineryPack725056 = 725056;
         public const uint RefineryPack725057 = 725057;
         public const uint RefineryPack725058 = 725058;
-
-        #endregion Refinery Packs
     }
 }
-

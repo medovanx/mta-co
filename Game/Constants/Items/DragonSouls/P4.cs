@@ -1,9 +1,8 @@
-namespace MTA.Game {
+namespace MTA.Game.Constants.Items.DragonSouls {
     /// <summary>
-    /// Partial class for P4 Dragon Soul constants
+    /// P4 Dragon Soul constants
     /// </summary>
-    public static partial class ItemConstants {
-        #region P4 Dragon Souls
+    public static class P4 {
         public const uint RadiantSword = 800014;
         public const uint MoonHammer = 800015;
         public const uint OnimaKatana = 800016;
@@ -20,8 +19,5 @@ namespace MTA.Game {
         public const uint VioletRing = 823052;
         public const uint HolyHeavyRing = 823053;
         public const uint MoonBracelet = 823054;
-
-        #endregion P4 Dragon Souls
     }
 }
-

@@ -1,12 +1,8 @@
-// ReSharper disable InconsistentNaming
-
-namespace MTA.Game {
+namespace MTA.Game.Constants.Items {
     /// <summary>
-    /// Partial class for Skill Book constants
+    /// Skill Book constants
     /// </summary>
-    public static partial class ItemConstants {
-        #region Skills Books
-
+    public static class SkillBooks {
         public const uint Thunder = 725000;
         public const uint Fire = 725001;
         public const uint Tornado = 725002;
@@ -43,8 +39,5 @@ namespace MTA.Game {
         public const uint Roamer = 725044;
         public const uint BombScroll = 1060100;
         public const uint FireofHell = 1060101;
-
-        #endregion Skill Books
     }
 }
-

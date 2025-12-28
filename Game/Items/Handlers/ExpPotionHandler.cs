@@ -1,7 +1,7 @@
 using System;
 using MTA.Client;
 using MTA.Network.GamePackets;
-using static MTA.Game.ItemConstants;
+using static MTA.Game.Constants.Items.BasicItems;
 using Update = MTA.Network.GamePackets.Update;
 
 namespace MTA.Game.Items.Handlers {

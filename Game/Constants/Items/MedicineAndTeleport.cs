@@ -1,10 +1,8 @@
-// ReSharper disable InconsistentNaming
-
-namespace MTA.Game {
+namespace MTA.Game.Constants.Items {
     /// <summary>
-    /// Partial class for Medicine and Teleport Gate constants
+    /// Medicine and Teleport Gate constants
     /// </summary>
-    public static partial class ItemConstants {
+    public static class MedicineAndTeleport {
         #region Medicine Items
 
         // HP Medicines
@@ -44,4 +42,3 @@ namespace MTA.Game {
         #endregion Teleport Gates
     }
 }
-

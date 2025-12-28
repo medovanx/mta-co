@@ -2,7 +2,9 @@ using System.Collections.Generic;
 using MTA.Client;
 using MTA.Database;
 using MTA.Network.GamePackets;
-using static MTA.Game.ItemConstants;
+using static MTA.Game.Constants.Items.QuestAndOther;
+using static MTA.Game.Constants.Items.BasicItems;
+using static MTA.Game.Constants.Items.StudyAndGuild;
 
 namespace MTA.Game.Items.Handlers {
     /// <summary>

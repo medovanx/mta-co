@@ -3,7 +3,7 @@ using MTA.Client;
 using MTA.Database;
 using MTA.Network.GamePackets;
 using _String = MTA.Network.GamePackets._String;
-using static MTA.Game.ItemConstants;
+using static MTA.Game.Constants.Items.QuestAndOther;
 
 namespace MTA.Game.Items.Handlers {
     /// <summary>

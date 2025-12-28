@@ -3,6 +3,9 @@ using MTA.Client;
 using MTA.Database;
 using MTA.Game.Npcs;
 using MTA.Network.GamePackets;
+using static MTA.Game.Constants.Items.BasicItems;
+using static MTA.Game.Constants.Items.Mounts;
+using static MTA.Game.Constants.Items.StudyAndGuild;
 
 namespace MTA.Game.Events.TreasureInTheBlue;
 
@@ -18,25 +21,25 @@ public static class NpcMammonEnvoy {
 
     // Reward item IDs and odds per coin type
     private static readonly (uint itemId, double weight)[] CopperCoinRewards = [
-        (ItemConstants.Meteor, 0.50),        
-        (ItemConstants.Class1MoneyBag, 0.25),
-        (ItemConstants.SmallJoyStone, 0.60),
-        (ItemConstants.ExpBallScrap, 0.60)   
+        (Meteor, 0.50),        
+        (Class1MoneyBag, 0.25),
+        (SmallJoyStone, 0.60),
+        (ExpBallScrap, 0.60)   
     ];
 
     private static readonly (uint itemId, double weight)[] SilverCoinRewards = [
-        (ItemConstants.EnduranceBook, 0.35),
-        (ItemConstants.Class2MoneyBag, 0.15),
-        (ItemConstants.HorseRacingPointsPack3K, 0.40),
-        (ItemConstants.ExpBallScrap, 0.50),  
-        (ItemConstants.SmallJoyStone, 0.80)  
+        (EnduranceBook, 0.35),
+        (Class2MoneyBag, 0.15),
+        (HorseRacingPointsPack3K, 0.40),
+        (ExpBallScrap, 0.50),  
+        (SmallJoyStone, 0.80)  
     ];
 
     private static readonly (uint itemId, double weight)[] GoldCoinRewards = [
-        (ItemConstants.SmallLotteryTicket, 0.60),
-        (ItemConstants.JadeHare, 0.05),
-        (ItemConstants.CelestialBird, 0.25),    
-        (ItemConstants.GreenEyedBeast, 0.25)    
+        (SmallLotteryTicket, 0.60),
+        (JadeHare, 0.05),
+        (CelestialBird, 0.25),    
+        (GreenEyedBeast, 0.25)    
     ];
 
     public static void Handle(GameState client, NpcRequest npcRequest, MTA.Npcs dialog) {
@@ -60,17 +63,17 @@ public static class NpcMammonEnvoy {
             }
 
             case 1: {
-                ExchangeCoin(client, dialog, coinTracker, ItemConstants.CopperCoin, CopperCoinRewards);
+                ExchangeCoin(client, dialog, coinTracker, CopperCoin, CopperCoinRewards);
                 break;
             }
 
             case 2: {
-                ExchangeCoin(client, dialog, coinTracker, ItemConstants.SilverCoin, SilverCoinRewards);
+                ExchangeCoin(client, dialog, coinTracker, SilverCoin, SilverCoinRewards);
                 break;
             }
 
             case 3: {
-                ExchangeCoin(client, dialog, coinTracker, ItemConstants.GoldCoin, GoldCoinRewards);
+                ExchangeCoin(client, dialog, coinTracker, GoldCoin, GoldCoinRewards);
                 break;
             }
 

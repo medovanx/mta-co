@@ -4,7 +4,7 @@ using MTA.Game.ConquerStructures;
 using MTA.Network.GamePackets;
 using Data = MTA.Network.GamePackets.Data;
 using MapStatus = MTA.Network.GamePackets.MapStatus;
-using static MTA.Game.ItemConstants;
+using static MTA.Game.Constants.Items.BasicItems;
 
 namespace MTA.Game.Items.Handlers {
     /// <summary>

@@ -1,7 +1,7 @@
 using MTA.Client;
 using MTA.Network.GamePackets;
 using QuestID = MTA.Network.GamePackets.QuestID;
-using static MTA.Game.ItemConstants;
+using static MTA.Game.Constants.Items.QuestAndOther;
 
 namespace MTA.Game.Items.Handlers {
     /// <summary>

@@ -1,12 +1,10 @@
 // ReSharper disable InconsistentNaming
 
-namespace MTA.Game {
+namespace MTA.Game.Constants.Items {
     /// <summary>
-    /// Partial class for Super Equipment Pack constants
+    /// Super Equipment Pack constants
     /// </summary>
-    public static partial class ItemConstants {
-        #region Super Equipment Packs
-
+    public static class SuperEquipment {
         // Pack IDs
         public const uint SuperWarriorsArmorPack = 721224;
         public const uint SuperWarriorsHelmetPack = 721225;
@@ -54,8 +52,6 @@ namespace MTA.Game {
         public const uint TigerVest_Super = 135069;
         public const uint BloodVeil_Super = 112069;
         public const uint CraneVestment_Super = 134069;
-
-        #endregion Super Equipment Packs
     }
 }
 

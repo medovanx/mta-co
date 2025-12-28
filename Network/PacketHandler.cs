@@ -44,7 +44,7 @@ using TradePartner = MTA.Network.GamePackets.TradePartner;
 using VipStatus = MTA.Network.GamePackets.VipStatus;
 using Warehouse = MTA.Network.GamePackets.Warehouse;
 using Weather = MTA.Game.Weather;
-using static MTA.Game.ItemConstants;
+using static MTA.Game.Constants.Items.BasicItems;
 
 namespace MTA.Network {
     public static class PacketHandler {

@@ -1,7 +1,8 @@
 using System;
 using MTA.Client;
 using MTA.Network.GamePackets;
-using static MTA.Game.ItemConstants;
+using static MTA.Game.Constants.Items.DragonSoulPacks;
+using static MTA.Game.Constants.Items.DragonSouls.P7;
 
 namespace MTA.Game.Items.Handlers {
     /// <summary>

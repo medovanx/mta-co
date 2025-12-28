@@ -3,7 +3,11 @@ using System.Drawing;
 using MTA.Client;
 using MTA.Network.GamePackets;
 using Message = MTA.Network.GamePackets.Message;
-using static MTA.Game.ItemConstants;
+using static MTA.Game.Constants.Items.DragonSoulPacks;
+using static MTA.Game.Constants.Items.DragonSouls.P4;
+using static MTA.Game.Constants.Items.DragonSouls.P5;
+using static MTA.Game.Constants.Items.DragonSouls.P6;
+using static MTA.Game.Constants.Items.DragonSouls.P7;
 
 namespace MTA.Game.Items.Handlers {
     /// <summary>

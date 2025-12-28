@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MTA.Client;
 using MTA.Database;
+using static MTA.Game.Constants.Items.BasicItems;
 
 namespace MTA.Game.Events.TreasureInTheBlue;
 
@@ -37,9 +38,9 @@ public class TreasureInTheBlueCoinTracker {
     /// </summary>
     public bool CanClaimReward(uint coinType) {
         return coinType switch {
-            ItemConstants.CopperCoin => _copperCoinRewardsRemaining > 0,
-            ItemConstants.SilverCoin => _silverCoinRewardsRemaining > 0,
-            ItemConstants.GoldCoin => _goldCoinRewardsRemaining > 0,
+            CopperCoin => _copperCoinRewardsRemaining > 0,
+            SilverCoin => _silverCoinRewardsRemaining > 0,
+            GoldCoin => _goldCoinRewardsRemaining > 0,
             _ => false
         };
     }
@@ -49,9 +50,9 @@ public class TreasureInTheBlueCoinTracker {
     /// </summary>
     public bool ClaimReward(uint coinType) {
         return coinType switch {
-            ItemConstants.CopperCoin when _copperCoinRewardsRemaining > 0 => --_copperCoinRewardsRemaining >= 0,
-            ItemConstants.SilverCoin when _silverCoinRewardsRemaining > 0 => --_silverCoinRewardsRemaining >= 0,
-            ItemConstants.GoldCoin when _goldCoinRewardsRemaining > 0 => --_goldCoinRewardsRemaining >= 0,
+            CopperCoin when _copperCoinRewardsRemaining > 0 => --_copperCoinRewardsRemaining >= 0,
+            SilverCoin when _silverCoinRewardsRemaining > 0 => --_silverCoinRewardsRemaining >= 0,
+            GoldCoin when _goldCoinRewardsRemaining > 0 => --_goldCoinRewardsRemaining >= 0,
             _ => false
         };
     }

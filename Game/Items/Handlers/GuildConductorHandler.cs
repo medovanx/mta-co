@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using MTA.Client;
 using MTA.Database;
 using MTA.Network.GamePackets;
-using static MTA.Game.ItemConstants;
+using static MTA.Game.Constants.Items.GuildItems;
 
 namespace MTA.Game.Items.Handlers {
     /// <summary>

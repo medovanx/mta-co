@@ -2,7 +2,7 @@ using MTA.Client;
 using MTA.Database;
 using MTA.Network;
 using MTA.Network.GamePackets;
-using static MTA.Game.ItemConstants;
+using static MTA.Game.Constants.Items.QuestAndOther;
 
 namespace MTA.Game.Items.Handlers {
     /// <summary>

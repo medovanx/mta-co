@@ -1,6 +1,6 @@
 using MTA.Client;
 using MTA.Network.GamePackets;
-using static MTA.Game.ItemConstants;
+using static MTA.Game.Constants.Items.SkillBooks;
 
 namespace MTA.Game.Items.Handlers.SkillBooks {
     /// <summary>

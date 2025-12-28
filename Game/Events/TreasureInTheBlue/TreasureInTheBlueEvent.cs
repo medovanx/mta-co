@@ -6,6 +6,8 @@ using MTA.Client;
 using MTA.Database;
 using MTA.Network.GamePackets;
 using static MTA.Kernel;
+using static MTA.Game.Constants.Items.BasicItems;
+using static MTA.Game.Constants.Items.StudyAndGuild;
 
 namespace MTA.Game.Events.TreasureInTheBlue;
 
@@ -24,15 +26,15 @@ public class TreasureInTheBlueEvent : BaseEvent {
 
     // Golden Octopus drop rewards with weighted odds (Gold Coin has the lowest probability)
     private static readonly (uint itemId, double weight)[] GoldenOctopusRewards = [
-        (ItemConstants.LotteryTicket, 0.30),
-        (ItemConstants.QuestChanceB, 0.30),
-        (ItemConstants.PenitenceAmulet, 0.50),
-        (ItemConstants.DragonSoulTicket, 0.20),
-        (ItemConstants.HorseRacingPointsPack5K, 0.15),
-        (ItemConstants.ExpBall, 0.18),
-        (ItemConstants.EnduranceBook, 0.15),
-        (ItemConstants.Meteor, 0.30),
-        (ItemConstants.GoldCoin, 0.10)
+        (LotteryTicket, 0.30),
+        (QuestChanceB, 0.30),
+        (PenitenceAmulet, 0.50),
+        (DragonSoulTicket, 0.20),
+        (HorseRacingPointsPack5K, 0.15),
+        (ExpBall, 0.18),
+        (EnduranceBook, 0.15),
+        (Meteor, 0.30),
+        (GoldCoin, 0.10)
     ];
 
     // Boss spawn tracking
@@ -127,16 +129,16 @@ public class TreasureInTheBlueEvent : BaseEvent {
     /// </summary>
     private static void RemoveEventCoinsFromAllPlayers() {
         foreach (var client in Program.Values) {
-            while (client.Inventory.Contains(ItemConstants.CopperCoin, 1)) {
-                client.Inventory.Remove(ItemConstants.CopperCoin, 1);
+            while (client.Inventory.Contains(CopperCoin, 1)) {
+                client.Inventory.Remove(CopperCoin, 1);
             }
 
-            while (client.Inventory.Contains(ItemConstants.SilverCoin, 1)) {
-                client.Inventory.Remove(ItemConstants.SilverCoin, 1);
+            while (client.Inventory.Contains(SilverCoin, 1)) {
+                client.Inventory.Remove(SilverCoin, 1);
             }
 
-            while (client.Inventory.Contains(ItemConstants.GoldCoin, 1)) {
-                client.Inventory.Remove(ItemConstants.GoldCoin, 1);
+            while (client.Inventory.Contains(GoldCoin, 1)) {
+                client.Inventory.Remove(GoldCoin, 1);
             }
         }
     }
@@ -214,7 +216,7 @@ public class TreasureInTheBlueEvent : BaseEvent {
             // Coins Stealer - Randomly drops Copper Coin (50% chance)
             case MonsterConstants.CoinsStealer: {
                 if (Random.NextDouble() < CopperCoinDropRate) {
-                    DropItemOnGround(monster, ItemConstants.CopperCoin);
+                    DropItemOnGround(monster, CopperCoin);
                 }
 
                 return true; // Skip normal drop
@@ -223,7 +225,7 @@ public class TreasureInTheBlueEvent : BaseEvent {
             // Silver Octopus - Randomly drops Silver Coin (50% chance)
             case MonsterConstants.SilverOctopus:
                 if (Random.NextDouble() < SilverCoinDropRate) {
-                    DropItemOnGround(monster, ItemConstants.SilverCoin);
+                    DropItemOnGround(monster, SilverCoin);
                 }
 
                 return true; // Skip normal drop
@@ -232,7 +234,7 @@ public class TreasureInTheBlueEvent : BaseEvent {
             case MonsterConstants.Blackbeard: {
                 var coinCount = Random.Next(4, 10);
                 for (var i = 0; i < coinCount; i++) {
-                    DropItemOnGround(monster, ItemConstants.GoldCoin);
+                    DropItemOnGround(monster, GoldCoin);
                 }
 
                 return true; // Skip normal drop

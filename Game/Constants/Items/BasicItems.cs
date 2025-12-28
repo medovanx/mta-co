@@ -1,10 +1,10 @@
 // ReSharper disable InconsistentNaming
 
-namespace MTA.Game {
+namespace MTA.Game.Constants.Items {
     /// <summary>
-    /// Partial class for Basic item constants
+    /// Basic item constants
     /// </summary>
-    public static partial class ItemConstants {
+    public static class BasicItems {
         public const uint Saddle = 723903;
         public const uint GoldCoin = 711609;
         public const uint SilverCoin = 711610;

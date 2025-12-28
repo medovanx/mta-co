@@ -1,11 +1,10 @@
 // ReSharper disable InconsistentNaming
 
-namespace MTA.Game {
+namespace MTA.Game.Constants.Items {
     /// <summary>
-    /// Partial class for Conquer Points bag constants
+    /// Conquer Points bag constants
     /// </summary>
-    public static partial class ItemConstants {
-        #region Conquer Points Bags
+    public static class ConquerPointsBags {
         // Low CP Bags
         public const uint CPBag5 = 3001133;
         public const uint CPBag5_2 = 720657;
@@ -43,8 +42,6 @@ namespace MTA.Game {
         public const uint CPBag10000 = 720695;
         public const uint CPBag13500 = 720678;
         public const uint CPBag13800 = 720667;
-
-        #endregion Conquer Points Bags
     }
 }
 

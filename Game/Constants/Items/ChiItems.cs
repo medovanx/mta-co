@@ -1,11 +1,8 @@
-// ReSharper disable InconsistentNaming
-
-namespace MTA.Game {
+namespace MTA.Game.Constants.Items {
     /// <summary>
-    /// Partial class for Chi point item constants
+    /// Chi point item constants
     /// </summary>
-    public static partial class ItemConstants {
-        #region Chi Point Items
+    public static class ChiItems {
         public const uint ChiPoint5 = 3000051;
         public const uint ChiPoint100 = 729476;
         public const uint ChiPoint200 = 729477;
@@ -23,8 +20,6 @@ namespace MTA.Game {
         public const uint ChiPack300 = 3005312;
         public const uint ChiPack800 = 3005313;
         public const uint ChiPack1000 = 3005314;
-
-        #endregion Chi Point Items
     }
 }
 

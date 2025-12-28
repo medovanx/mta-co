@@ -3,7 +3,7 @@ using MTA.Franko;
 using MTA.Network.GamePackets;
 using _String = MTA.Network.GamePackets._String;
 using QuestID = MTA.Network.GamePackets.QuestID;
-using static MTA.Game.ItemConstants;
+using static MTA.Game.Constants.Items.QuestAndOther;
 using static MTA.Kernel;
 
 namespace MTA.Game.Items.Handlers {

@@ -1,12 +1,8 @@
-// ReSharper disable InconsistentNaming
-
-namespace MTA.Game {
+namespace MTA.Game.Constants.Items {
     /// <summary>
-    /// Partial class for Gem constants
+    /// Gem constants
     /// </summary>
-    public static partial class ItemConstants {
-        #region Gems
-
+    public static class Gems {
         // Refined Gems
         public const uint RefinedPhoenixGem = 700002;
         public const uint RefinedDragonGem = 700013;
@@ -30,8 +26,6 @@ namespace MTA.Game {
         public const uint SuperTortoiseGem = 700073;
         public const uint SuperThunderGem = 700103;
         public const uint SuperGloryGem = 700123;
-
-        #endregion Gems
     }
 }
 

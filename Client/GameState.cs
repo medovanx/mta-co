@@ -25,7 +25,7 @@ using Team = MTA.Game.ConquerStructures.Team;
 using Trade = MTA.Network.GamePackets.Trade;
 using TradePartner = MTA.Game.ConquerStructures.Society.TradePartner;
 using Warehouse = MTA.Game.ConquerStructures.Warehouse;
-using static MTA.Game.ItemConstants;
+using static MTA.Game.Constants.Items.BasicItems;
 using Interaction = MTA.Network.GamePackets.Interaction;
 
 namespace MTA.Client {

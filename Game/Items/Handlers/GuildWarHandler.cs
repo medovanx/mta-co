@@ -5,7 +5,7 @@ using MTA.Network.GamePackets;
 using Message = MTA.Network.GamePackets.Message;
 using Update = MTA.Network.GamePackets.Update;
 using _String = MTA.Network.GamePackets._String;
-using static MTA.Game.ItemConstants;
+using static MTA.Game.Constants.Items.GuildItems;
 
 namespace MTA.Game.Items.Handlers {
     /// <summary>

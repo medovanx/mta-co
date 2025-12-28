@@ -5,7 +5,7 @@ using MTA.Database;
 using MTA.Game.ConquerStructures.House;
 using MTA.Network.GamePackets;
 using Update = MTA.Network.GamePackets.Update;
-using static MTA.Game.ItemConstants;
+using static MTA.Game.Constants.Items.QuestAndOther;
 
 namespace MTA.Game.Items.Handlers {
     /// <summary>

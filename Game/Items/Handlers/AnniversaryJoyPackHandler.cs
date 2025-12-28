@@ -1,7 +1,12 @@
 using MTA.Client;
 using MTA.Network.GamePackets;
 using _String = MTA.Network.GamePackets._String;
-using static MTA.Game.ItemConstants;
+using static MTA.Game.Constants.Items.QuestAndOther;
+using static MTA.Game.Constants.Items.BasicItems;
+using static MTA.Game.Constants.Items.StudyAndGuild;
+using static MTA.Game.Constants.Items.ChiItems;
+using static MTA.Game.Constants.Items.ConquerPointsBags;
+using static MTA.Game.Constants.Items.Gems;
 
 namespace MTA.Game.Items.Handlers {
     /// <summary>

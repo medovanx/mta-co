@@ -1,10 +1,10 @@
 // ReSharper disable InconsistentNaming
 
-namespace MTA.Game {
+namespace MTA.Game.Constants.Items {
     /// <summary>
-    /// Partial class for Quest Items and Other miscellaneous constants
+    /// Quest Items and Other miscellaneous constants
     /// </summary>
-    public static partial class ItemConstants {
+    public static class QuestAndOther {
         #region Quest Items
 
         public const uint SurpriseBox = 722178;

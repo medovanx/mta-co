@@ -4,7 +4,7 @@ using MTA.Network.GamePackets;
 using Message = MTA.Network.GamePackets.Message;
 using _String = MTA.Network.GamePackets._String;
 using QuestID = MTA.Network.GamePackets.QuestID;
-using static MTA.Game.ItemConstants;
+using static MTA.Game.Constants.Items.QuestAndOther;
 
 namespace MTA.Game.Items.Handlers {
     /// <summary>

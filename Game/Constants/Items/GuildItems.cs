@@ -1,10 +1,8 @@
-// ReSharper disable InconsistentNaming
-
-namespace MTA.Game {
+namespace MTA.Game.Constants.Items {
     /// <summary>
-    /// Partial class for Guild-related item constants
+    /// Guild-related item constants
     /// </summary>
-    public static partial class ItemConstants {
+    public static class GuildItems {
         #region Guild War Items
 
         public const uint GuildWarStatue = 720020;
@@ -22,4 +20,3 @@ namespace MTA.Game {
         #endregion Guild Conductors
     }
 }
-

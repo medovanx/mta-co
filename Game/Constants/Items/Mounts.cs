@@ -1,10 +1,8 @@
-// ReSharper disable InconsistentNaming
-
-namespace MTA.Game {
+namespace MTA.Game.Constants.Items {
     /// <summary>
-    /// Partial class for Mount constants
+    /// Mount constants
     /// </summary>
-    public static partial class ItemConstants {
+    public static class Mounts {
         // Mount Items
         public const uint JadeHare = 200407;
         public const uint CelestialBird = 200420;
@@ -48,4 +46,3 @@ namespace MTA.Game {
         public const uint FancyAlpacaPack = 3005301;
     }
 }
-

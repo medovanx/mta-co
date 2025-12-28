@@ -4,7 +4,7 @@ using MTA.Client;
 using MTA.Database;
 using MTA.Network.GamePackets;
 using Message = MTA.Network.GamePackets.Message;
-using static MTA.Game.ItemConstants;
+using static MTA.Game.Constants.Items.SkillBooks;
 
 namespace MTA.Game.Items.Handlers.SkillBooks {
     /// <summary>
