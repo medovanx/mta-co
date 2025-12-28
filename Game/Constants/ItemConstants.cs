@@ -834,5 +834,90 @@ namespace MTA.Game {
         public const uint CraneVestment_Super = 134069;
 
         #endregion Super Equipment Packs
+
+        #region Guild Conductors
+
+        public const uint GuildConductor1 = 720021;
+        public const uint GuildConductor2 = 720022;
+        public const uint GuildConductor3 = 720023;
+        public const uint GuildConductor4 = 720024;
+
+        #endregion Guild Conductors
+
+        #region House Mobs
+
+        public const uint HouseMobPack1 = 3004259;
+        public const uint HouseMobPack2 = 720842;
+
+        #endregion House Mobs
+
+        #region VIP Items
+
+        public const uint VIP7Item = 3002687;
+
+        #endregion VIP Items
+
+        #region Empty Items
+
+        public const uint EmptyItem1 = 720793;
+        public const uint EmptyItem2 = 720981;
+
+        #endregion Empty Items
+
+        #region Random CP Items
+
+        public const uint RandomCPItem = 3000776;
+
+        #endregion Random CP Items
+
+        #region Chi Power Items
+
+        public const uint ChiPowerMaxItem = 3001607;
+
+        #endregion Chi Power Items
+
+        #region Elite PK Prize Items
+
+        // Level 130+
+        public const uint ElitePKChampion130 = 720729;
+        public const uint ElitePKSecond130 = 720728;
+        public const uint ElitePKThird130 = 720727;
+        public const uint ElitePKFourth130 = 720726;
+
+        // Level 120+
+        public const uint ElitePKChampion120 = 720725;
+        public const uint ElitePKSecond120 = 720724;
+        public const uint ElitePKThird120 = 720723;
+        public const uint ElitePKFourth120 = 720722;
+
+        // Level 110+
+        public const uint ElitePKChampion110 = 720721;
+        public const uint ElitePKSecond110 = 720720;
+        public const uint ElitePKThird110 = 720719;
+        public const uint ElitePKFourth110 = 720718;
+
+        // Level 1+
+        public const uint ElitePKChampion1 = 720717;
+        public const uint ElitePKSecond1 = 720716;
+        public const uint ElitePKThird1 = 720715;
+        public const uint ElitePKFourth1 = 720714;
+
+        #endregion Elite PK Prize Items
+
+        #region Random Item Packs
+
+        public const uint RandomSuperItemPack = 729626;
+        public const uint RandomItemPack350k = 720731;
+        public const uint RandomSteedPack = 720049;
+
+        #endregion Random Item Packs
+
+        #region Elite PK Prize Items (Unknown)
+
+        // These items are used in Elite PK Prizes but not found in items.json
+        public const uint ElitePKItem720730 = 720730;
+        public const uint ElitePKItem720598 = 720598;
+
+        #endregion Elite PK Prize Items (Unknown)
     }
 }
