@@ -18796,7 +18796,6 @@ namespace MTA.Network {
             return pass;
         }
 
-        #endregion
 
         #region Chat
 
