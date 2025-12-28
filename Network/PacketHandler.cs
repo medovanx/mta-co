@@ -15434,7 +15434,7 @@ namespace MTA.Network {
 
                 #region GuildWar Bomb
 
-                /*case 721261:
+                case 721261:
                     {
                         if (Game.GuildWar.IsWar)
                         {
@@ -15483,122 +15483,7 @@ namespace MTA.Network {
                             }
                         }
                         break;
-                    }*/
-
-                #endregion
-
-                #region Cps Bag Event
-
-                case 720159: {
-                    client.Inventory.Remove(item, Enums.ItemUse.Delete);
-                    client.Entity.ConquerPoints += 10;
-                    var str4 = new _String(true) {
-                        UID = client.Entity.UID,
-                        TextsCount = 1,
-                        Type = _String.Effect
-                    };
-                    str4.Texts.Add("accession6");
-                    client.SendScreen(str4);
-
-                    client.Send(new Message("Congulrations! You Have just Found 10 Cps Keep Going To Be A Molioner",
-                        Color.Tan, Message.TopLeft)); // Random Message 
-                    break;
-                }
-
-                #endregion
-
-                #region OutstandingExploitPack
-
-                case 3007108: {
-                    client.Entity.lacb += 50;
-                    client.Send(new Message("Congratulations You receive 50 War Exploits , 50 pts to Union Fund",
-                        Color.Red, Message.World));
-                    client.Inventory.Remove(item, Enums.ItemUse.Remove);
-                    break;
-                }
-
-                #endregion
-
-                #region ExcellentExploitPack
-
-                case 3007109: {
-                    client.Entity.lacb += 100;
-                    client.Send(new Message(
-                        "Congratulations You receive 50 Champion Points , 100 War Exploits , 160 pts to Union Fund",
-                        Color.Red, Message.World));
-                    client.Inventory.Remove(item, Enums.ItemUse.Remove);
-                    break;
-                }
-
-                #endregion
-
-                #region SupremeExploitPack
-
-                case 3007110: {
-                    client.Entity.lacb += 150;
-                    client.Send(new Message(
-                        "Congratulations You receive 100 Champion Points , 150 War Exploits , 360 pts to Union Fund",
-                        Color.Red, Message.World));
-                    client.Inventory.Remove(item, Enums.ItemUse.Remove);
-                    break;
-                }
-
-                #endregion
-
-                #region MemoryAgate
-
-                case 0xaffbc:
-                    if (Constants.revnomap.Contains(client.Entity.MapID) ||
-                        Constants.MemoryAgateNotAllowedMap.Contains(client.Entity.MapID)) {
-                        client.Send(new Message("You Can't record here !", Color.Tan, 0x7dc));
-                        return;
                     }
-
-                    item.SendAgate(client);
-                    break;
-
-                #endregion MemoryAgate
-
-                #region booth item
-
-                case 3001523: {
-                    #region booth
-
-                    {
-                        if (client.Booth == null) {
-                            client.Send(new MapStatus() {
-                                BaseID = client.Map.BaseID, ID = client.Map.ID,
-                                Status = MapsTable.MapInformations[1036].Status
-                            });
-                            client.Booth = new Booth(client, new Data(true) { UID = client.Entity.UID });
-                            client.Send(new Data(true)
-                                { ID = Data.ChangeAction, UID = client.Entity.UID, dwParam = 0 });
-                            //client.Inventory.Remove(item, Game.Enums.ItemUse.RemoveFromStack);
-                        }
-
-                        break;
-                    }
-
-                    #endregion booth
-                }
-
-                #endregion booth
-
-                #region PowerEXPBall
-
-                case 723744:
-                case 722057: {
-                    if (client.Entity.Level < 140) {
-                        client.IncreaseExperience(((DataHolder.LevelExperience(client.Entity.Level) / 100) * 20),
-                            false);
-                        client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    }
-                    else
-                        client.Send(new Message("You Already level 140, you do not need the EXP", Color.Red,
-                            Message.TopLeft));
-
-                    break;
-                }
 
                 #endregion
 

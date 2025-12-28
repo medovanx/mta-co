@@ -115,6 +115,14 @@ namespace MTA.Game {
         public const uint HeavenDemonBox = 720671;
         public const uint ChaosDemonBox = 720672;
         public const uint SacredDemonBox = 720673;
+        public const uint StolenGift = 720159;
+        public const uint OutstandingExploitPack = 3007108;
+        public const uint ExcellentExploitPack = 3007109;
+        public const uint SupremeExploitPack = 3007110;
+        public const uint MemoryAgate = 720828;
+        public const uint BoothsItem = 3001523;
+        public const uint PowerEXPBall = 722057;
+        public const uint PowerEXPBallBound = 723744;
         public const uint DragonBall = 1088000;
         public const uint Emerald = 1080001;
         public const uint TwinCityGate = 1060020;
