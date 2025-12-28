@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using MTA.Client;
 using MTA.Database;
-using MTA.Game.Attacking;
 using MTA.Game.ConquerStructures.House;
 using MTA.Network.GamePackets;
 using Update = MTA.Network.GamePackets.Update;

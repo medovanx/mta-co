@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using MTA.Game.Constants;
 
 namespace MTA.Database
 {
@@ -16,7 +17,7 @@ namespace MTA.Database
         }
         public static void Load()
         {
-            string[] text = File.ReadAllLines(Constants.ShopsPath);
+            string[] text = File.ReadAllLines(GameConstants.ShopsPath);
             Shop shop = new Shop();
             for (int x = 0; x < text.Length; x++)
             {

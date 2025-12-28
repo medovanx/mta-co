@@ -1,6 +1,5 @@
 ﻿using MTA.Client;
 using MTA.Network.GamePackets;
-using System.Collections.Generic;
 
 namespace MTA.Game.ConquerStructures
 {

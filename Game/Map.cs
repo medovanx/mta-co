@@ -9,6 +9,7 @@ using MTA.Client;
 using System.Collections.Concurrent;
 using MTA.Database;
 using MTA.Extensions;
+using MTA.Game.Constants;
 
 namespace MTA.Game {
     public class Map {
@@ -270,7 +271,7 @@ namespace MTA.Game {
             file.SceneFileName = NTString(Program.Encoding.GetString(Reader.ReadBytes(260)));
             file.Location = new Point(Reader.ReadInt32(), Reader.ReadInt32());
             using (BinaryReader reader =
-                   new BinaryReader(new FileStream(Constants.DataHolderPath + file.SceneFileName, FileMode.Open))) {
+                   new BinaryReader(new FileStream(GameConstants.DataHolderPath + file.SceneFileName, FileMode.Open, FileAccess.Read))) {
                 ScenePart[] partArray = new ScenePart[reader.ReadInt32()];
                 for (int i = 0; i < partArray.Length; i++) {
                     reader.BaseStream.Seek(0x14cL, SeekOrigin.Current);
@@ -327,9 +328,9 @@ namespace MTA.Game {
 
             #region Loading floor.
 
-            if (File.Exists(Constants.DMapsPath + "\\maps\\" + id.ToString() + ".map")) {
+            if (File.Exists(GameConstants.DMapsPath + "\\maps\\" + id.ToString() + ".map")) {
                 //   Console.WriteLine("Loading " + ID + " DMap : maps\\" + id.ToString() + ".map");
-                byte[] buff = File.ReadAllBytes(Constants.DMapsPath + "\\maps\\" + id.ToString() + ".map");
+                byte[] buff = File.ReadAllBytes(GameConstants.DMapsPath + "\\maps\\" + id.ToString() + ".map");
                 MemoryStream FS = new MemoryStream(buff);
                 BinaryReader BR = new BinaryReader(FS);
                 int Width = BR.ReadInt32();
@@ -350,9 +351,9 @@ namespace MTA.Game {
                 FS.Close();
             }
             else {
-                if (File.Exists(Constants.DMapsPath + Path)) {
+                if (File.Exists(GameConstants.DMapsPath + Path)) {
                     //      Console.WriteLine("Loading " + ID + " DMap : " + Path);
-                    byte[] buff = File.ReadAllBytes(Constants.DMapsPath + Path);
+                    byte[] buff = File.ReadAllBytes(GameConstants.DMapsPath + Path);
                     MemoryStream FS = new MemoryStream(buff);
                     BinaryReader BR = new BinaryReader(FS);
                     BR.ReadBytes(268);
@@ -429,9 +430,9 @@ namespace MTA.Game {
                 }
             }
             else {
-                if (File.Exists(Constants.DMapsPath + "\\maps\\" + baseid.ToString() + ".map")) {
+                if (File.Exists(GameConstants.DMapsPath + "\\maps\\" + baseid.ToString() + ".map")) {
                     // Console.WriteLine("Loading " + ID + " DMap : maps\\" + id.ToString() + ".map");
-                    byte[] buff = File.ReadAllBytes(Constants.DMapsPath + "\\maps\\" + baseid.ToString() + ".map");
+                    byte[] buff = File.ReadAllBytes(GameConstants.DMapsPath + "\\maps\\" + baseid.ToString() + ".map");
                     MemoryStream FS = new MemoryStream(buff);
                     BinaryReader BR = new BinaryReader(FS);
                     int Width = BR.ReadInt32();
@@ -449,9 +450,9 @@ namespace MTA.Game {
                     FS.Close();
                 }
                 else {
-                    if (File.Exists(Constants.DMapsPath + Path)) {
+                    if (File.Exists(GameConstants.DMapsPath + Path)) {
                         //     Console.WriteLine("Loading "+ID+" DMap : " + Path);
-                        FileStream FS = new FileStream(Constants.DMapsPath + Path, FileMode.Open);
+                        FileStream FS = new FileStream(GameConstants.DMapsPath + Path, FileMode.Open, FileAccess.Read);
                         BinaryReader BR = new BinaryReader(FS);
                         BR.ReadBytes(268);
                         int Width = BR.ReadInt32();
@@ -582,7 +583,7 @@ namespace MTA.Game {
         }
 
         private void LoadPortals() {
-            IniFile file = new IniFile(Constants.PortalsPath);
+            IniFile file = new IniFile(GameConstants.PortalsPath);
             ushort portalCount = file.ReadUInt16(BaseID.ToString(), "Count");
 
             for (int i = 0; i < portalCount; i++) {
@@ -636,9 +637,9 @@ namespace MTA.Game {
         }
 
         private void SaveMap() {
-            if (!File.Exists(Constants.DMapsPath + "\\maps\\" + BaseID.ToString() + ".map")) {
-                FileStream stream = new FileStream(Constants.DMapsPath + "\\maps\\" + BaseID.ToString() + ".map",
-                    FileMode.Create);
+            if (!File.Exists(GameConstants.DMapsPath + "\\maps\\" + BaseID.ToString() + ".map")) {
+                FileStream stream = new FileStream(GameConstants.DMapsPath + "\\maps\\" + BaseID.ToString() + ".map",
+                    FileMode.Create, FileAccess.Write);
                 BinaryWriter writer = new BinaryWriter(stream);
                 writer.Write((uint)Floor.Bounds.Width);
                 writer.Write((uint)Floor.Bounds.Height);
@@ -943,7 +944,7 @@ namespace MTA.Game {
                             foreach (GameState client in Program.Values) {
                                 if (client.Map.ID == map.ID) {
                                     if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, monster.X, monster.Y) <
-                                        Constants.nScreenDistance) {
+                                        GameConstants.nScreenDistance) {
                                         monster.CauseOfDeathIsMagic = false;
                                         monster.SendSpawn(client, false);
                                         client.Send(stringPacket);

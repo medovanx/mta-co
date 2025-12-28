@@ -1,6 +1,5 @@
 using System.Drawing;
 using MTA.Client;
-using MTA.Game;
 using MTA.Network;
 using MTA.Network.GamePackets;
 using Message = MTA.Network.GamePackets.Message;

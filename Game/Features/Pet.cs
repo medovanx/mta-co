@@ -6,6 +6,7 @@ using MTA.Client;
 using MTA.Database;
 using MTA.Game;
 using MTA.Game.Attacking;
+using MTA.Game.Constants;
 using MTA.Network.GamePackets;
 
 namespace MTA.MaTrix {
@@ -280,7 +281,7 @@ namespace MTA.MaTrix {
                                 client.Entity.StigmaIncrease = 50;
                                 client.Entity.StigmaTime = 60;
                                 if (client.Entity.EntityFlag == EntityFlag.Player)
-                                    client.Entity.Owner.Send(Constants.Stigma(50, 60));
+                                    client.Entity.Owner.Send(GameConstants.Stigma(50, 60));
                             }
 
                             #endregion
@@ -305,7 +306,7 @@ namespace MTA.MaTrix {
                                 client.Entity.ShieldIncrease = 1.1f;
                                 client.Entity.ShieldTime = 60;
                                 if (client.Entity.EntityFlag == EntityFlag.Player)
-                                    client.Entity.Owner.Send(Constants.Shield(50, 60));
+                                    client.Entity.Owner.Send(GameConstants.Shield(50, 60));
                             }
 
                             #endregion

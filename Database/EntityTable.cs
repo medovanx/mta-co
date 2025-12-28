@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using MTA.Network.GamePackets;
 using System.Collections.Concurrent;
 using MTA.Game;
+using MTA.Game.Constants;
 
 namespace MTA.Database
 {
@@ -113,7 +113,7 @@ namespace MTA.Database
                         client.VendingDisguise = 223;
                     client.Entity.X = reader.ReadUInt16("X");
                     client.Entity.Y = reader.ReadUInt16("Y");
-                    if (Constants.EtaleMaps.Contains(client.Entity.MapID))
+                    if (GameConstants.EtaleMaps.Contains(client.Entity.MapID))
                     {
                         client.Entity.MapID = 1002;
                         client.Entity.X = 300;
@@ -824,7 +824,7 @@ namespace MTA.Database
             }
 
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("configuration")
-                       .Set("EntityID", client.Entity.UID).Where("Server", Constants.ServerName))
+                       .Set("EntityID", client.Entity.UID).Where("Server", GameConstants.ServerName))
                 cmd.Execute();
             client.Account.EntityID = client.Entity.UID;
             return true;
@@ -952,7 +952,7 @@ namespace MTA.Database
             }
 
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("configuration")
-                       .Set("EntityID", client.Entity.UID).Where("Server", Constants.ServerName))
+                       .Set("EntityID", client.Entity.UID).Where("Server", GameConstants.ServerName))
                 cmd.Execute();
             client.Account.EntityID = client.Entity.UID;
             client.Account.Save();

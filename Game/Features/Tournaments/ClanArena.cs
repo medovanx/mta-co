@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using MTA.Client;
 using MTA.Database;
+using MTA.Game.Constants;
 using MTA.Network.GamePackets;
 
 namespace MTA.Game {
@@ -72,7 +73,7 @@ namespace MTA.Game {
             if (client.Entity.MapID is >= 1090 and <= 1094) return false;
             if (client.Entity.MapID is >= 1505 and <= 1509) return false;
             if (client.Entity.MapID == 1081) return false;
-            return (!Constants.PKFreeMaps.Contains(client.Map.ID) || client.Map.ID == 1005);
+            return (!GameConstants.PKFreeMaps.Contains(client.Map.ID) || client.Map.ID == 1005);
         }
 
         private void KickAll() {

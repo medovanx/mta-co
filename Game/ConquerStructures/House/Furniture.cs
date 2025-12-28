@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using MTA.Game.Constants;
 
 namespace MTA.Game.ConquerStructures.House
 {
@@ -21,7 +22,7 @@ namespace MTA.Game.ConquerStructures.House
         public static SafeDictionary<uint, FurInfo> Furnitures = new SafeDictionary<uint, FurInfo>();
         public static void Load()
         {
-            string[] lines = File.ReadAllLines(Constants.FurniturePath);
+            string[] lines = File.ReadAllLines(GameConstants.FurniturePath);
             foreach (var item in lines)
             {
                 var coloums = item.Split([" "], StringSplitOptions.RemoveEmptyEntries);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using MTA.Game.Constants;
 
 namespace MTA.Database
 {
@@ -21,7 +22,7 @@ namespace MTA.Database
         }
         public static void Load()
         {
-            string[] text = File.ReadAllLines(Constants.ChampionShopPath);
+            string[] text = File.ReadAllLines(GameConstants.ChampionShopPath);
             Shop = new ChampionShopBase();
             Shop.Items = new Dictionary<uint, ChampionItem>();
             for (int x = 0; x < text.Length; x++)

@@ -1,6 +1,7 @@
-﻿
+
 
 using System;
+using MTA.Game.Constants;
 using MTA.Network.GamePackets;
 
 namespace MTA.Game.Attacking
@@ -75,7 +76,7 @@ namespace MTA.Game.Attacking
         internal static uint Melee(Entity attacker, Entity attacked, Database.SpellInformation spell, ref Attack attack, byte p = 0)
         {
             int Damage = 0;
-            if (Constants.FBandSSEvent.Contains(attacker.MapID)) //FB and SS only!   
+            if (GameConstants.FBandSSEvent.Contains(attacker.MapID)) //FB and SS only!   
             {
                 Damage = (int)attacked.Hitpoints + 1;
                 return (uint)Damage;
@@ -385,7 +386,7 @@ namespace MTA.Game.Attacking
             #endregion
             if (attacked.ContainsFlag(Update.Flags.ShurikenVortex))
                 Damage = 1;
-            if (Constants.Damage1Map.Contains(attacked.MapID))
+            if (GameConstants.Damage1Map.Contains(attacked.MapID))
                 Damage = 1;
         }
         public static void CreateAzureDMG(uint dmg, Entity attacker, Entity attacked)

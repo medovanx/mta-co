@@ -4,6 +4,7 @@ using System.IO;
 using MTA.Client;
 using MTA.Database;
 using MTA.Game;
+using MTA.Game.Constants;
 using MTA.Network.GamePackets;
 using BoothItem = MTA.Game.ConquerStructures.BoothItem;
 
@@ -17,7 +18,7 @@ namespace MTA.MrNiTro.Systems {
         public static SafeDictionary<uint, Booth> Boooths = new SafeDictionary<uint, Booth>();
 
         public static void Load() {
-            string[] text = File.ReadAllLines(Constants.BoothsPath);
+            string[] text = File.ReadAllLines(GameConstants.BoothsPath);
             Booth booth = new();
             for (int x = 0; x < text.Length; x++) {
                 string line = text[x];

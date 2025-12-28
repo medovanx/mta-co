@@ -1,6 +1,7 @@
 ﻿using System;
 using MTA.Client;
 using MTA.Database;
+using MTA.Game.Constants;
 using MTA.Network.GamePackets;
 using static MTA.Kernel;
 
@@ -32,7 +33,7 @@ namespace MTA.Game.Features.Kiss {
                     KissSystemTable.SaveKissTable(caller);
                 }
                 else
-                    caller.Send(Constants.OneKissADay);
+                    caller.Send(GameConstants.OneKissADay);
             }
             else {
                 if (!caller.Inventory.TryGetValue(packet.ItemUID, out var item)) return;

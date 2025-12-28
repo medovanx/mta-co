@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Collections;
+using MTA.Game.Constants;
 
 namespace MTA.Database
 {
@@ -11,10 +12,10 @@ namespace MTA.Database
         public static SafeDictionary<ushort, string> MapPaths = new SafeDictionary<ushort, string>(280);
         public static void Load()
         {
-            if (File.Exists(Constants.GameMapPath))
+            if (File.Exists(GameConstants.GameMapPath))
             {
                 Time32 start = Time32.Now;
-                FileStream FS = new FileStream(Constants.GameMapPath, FileMode.Open);
+                FileStream FS = new FileStream(GameConstants.GameMapPath, FileMode.Open, FileAccess.Read);
                 BinaryReader BR = new BinaryReader(FS);
                 uint MapCount = BR.ReadUInt32();
                 for (uint i = 0; i < MapCount; i++)
@@ -50,9 +51,9 @@ namespace MTA.Database
         }
         public static void LoadHouses()
         {
-            if (File.Exists(Constants.DataHolderPath + "DMapOwner.dat"))
+            if (File.Exists(GameConstants.DataHolderPath + "DMapOwner.dat"))
             {
-                FileStream FS = new FileStream(Constants.DataHolderPath + "DMapOwner.dat", FileMode.Open);
+                FileStream FS = new FileStream(GameConstants.DataHolderPath + "DMapOwner.dat", FileMode.Open, FileAccess.Read);
                 BinaryReader BR = new BinaryReader(FS);
 
                 try
@@ -80,7 +81,7 @@ namespace MTA.Database
             {
                 mapadd++;
             }
-            FileStream FS = new FileStream(Constants.DataHolderPath + "GameMap.dat", FileMode.Open);
+            FileStream FS = new FileStream(GameConstants.DataHolderPath + "GameMap.dat", FileMode.Open, FileAccess.Read);
             BinaryReader BR = new BinaryReader(FS);
             uint MapCount = BR.ReadUInt32();
             for (uint i = 0; i < MapCount; i++)
@@ -134,7 +135,7 @@ namespace MTA.Database
         }
         public static void Save()
         {
-            FileStream FS = new FileStream(Constants.DataHolderPath + "DMapOwner.dat", FileMode.OpenOrCreate);
+            FileStream FS = new FileStream(GameConstants.DataHolderPath + "DMapOwner.dat", FileMode.OpenOrCreate, FileAccess.Write);
             BinaryWriter BW = new BinaryWriter(FS);
             BW.Write(MapOwner.Count);
             foreach (DictionaryEntry Map in MapOwner)

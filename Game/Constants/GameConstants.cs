@@ -1,18 +1,14 @@
-﻿using System;
+using System;
 using System.IO;
 using MTA.Network.GamePackets;
 using System.Collections.Generic;
-using MTA.Game;
 
-namespace MTA
-{
-    public class Constants
-    {
+namespace MTA.Game.Constants {
+    public class GameConstants {
         /// <summary>
         /// Returns the full path to a file or folder in the Database folder. Throws an exception if the file/folder is not found.
         /// </summary>
-        private static string Database(string filename)
-        {
+        private static string Database(string filename) {
             var directory = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
             while (directory != null && !Directory.Exists(Path.Combine(directory.FullName, "Database")))
                 directory = directory.Parent;
@@ -29,19 +25,20 @@ namespace MTA
             string fullPath = Path.Combine(dbPath, filename);
 
             // Check if it's a folder path (ends with separator) or a file path
-            bool isFolder = filename.EndsWith(Path.DirectorySeparatorChar.ToString()) || filename.EndsWith("/") || filename.EndsWith("\\");
+            bool isFolder = filename.EndsWith(Path.DirectorySeparatorChar.ToString()) || filename.EndsWith("/") ||
+                            filename.EndsWith("\\");
 
-            if (isFolder)
-            {
+            if (isFolder) {
                 // For folders, check if directory exists
                 if (!Directory.Exists(fullPath))
-                    throw new DirectoryNotFoundException($"Directory '{filename}' not found in Database folder at '{directory.FullName}'.");
+                    throw new DirectoryNotFoundException(
+                        $"Directory '{filename}' not found in Database folder at '{directory.FullName}'.");
             }
-            else
-            {
+            else {
                 // For files, check if file exists
                 if (!File.Exists(fullPath))
-                    throw new FileNotFoundException($"File '{filename}' not found in Database folder at '{directory.FullName}'.");
+                    throw new FileNotFoundException(
+                        $"File '{filename}' not found in Database folder at '{directory.FullName}'.");
             }
 
             return fullPath;
@@ -52,118 +49,153 @@ namespace MTA
             1511
         ];
 
-        public static readonly Message FullInventory = new Message("There is not enough room in your inventory!", System.Drawing.Color.Red, Message.TopLeft),
+        public static readonly Message FullInventory =
+                new Message("There is not enough room in your inventory!", System.Drawing.Color.Red, Message.TopLeft),
             OneFlowerADay = new Message("You may only send 1 flower a day", System.Drawing.Color.Red, Message.TopLeft),
             TradeRequest = new Message("Trade request sent.", System.Drawing.Color.Red, Message.TopLeft),
-            TradeInventoryFull = new Message("There is not enough room in your partner inventory.", System.Drawing.Color.Red, Message.TopLeft),
-            TradeInProgress = new Message("An trade is already in progress. Try again later.", System.Drawing.Color.Red, Message.TopLeft),
-            FloorItemNotAvailable = new Message("You need to wait until you will be able to pick this item up!", System.Drawing.Color.Red, Message.TopLeft),
-            JailItemUnusable = new Message("You can't use this item in here!", System.Drawing.Color.Red, Message.TopLeft),
+            TradeInventoryFull = new Message("There is not enough room in your partner inventory.",
+                System.Drawing.Color.Red, Message.TopLeft),
+            TradeInProgress = new Message("An trade is already in progress. Try again later.", System.Drawing.Color.Red,
+                Message.TopLeft),
+            FloorItemNotAvailable = new Message("You need to wait until you will be able to pick this item up!",
+                System.Drawing.Color.Red, Message.TopLeft),
+            JailItemUnusable =
+                new Message("You can't use this item in here!", System.Drawing.Color.Red, Message.TopLeft),
             PKForbidden = new Message("PK Forbidden in this map.", System.Drawing.Color.Red, Message.TopLeft),
-            ExpBallsUsed = new Message("You can use only ten exp balls a day. Try tomorrow.", System.Drawing.Color.Red, Message.TopLeft),
-            SpellLeveled = new Message("Congratulation, you have just leveled your spell.", System.Drawing.Color.Red, Message.TopLeft),
+            ExpBallsUsed = new Message("You can use only ten exp balls a day. Try tomorrow.", System.Drawing.Color.Red,
+                Message.TopLeft),
+            SpellLeveled = new Message("Congratulation, you have just leveled your spell.", System.Drawing.Color.Red,
+                Message.TopLeft),
             OneKissADay = new Message("You may only send free Kiss a day", System.Drawing.Color.Red, Message.TopLeft),
-            ProficiencyLeveled = new Message("Congratulation, you have just leveled your proficiency.", System.Drawing.Color.Red, Message.TopLeft),
+            ProficiencyLeveled = new Message("Congratulation, you have just leveled your proficiency.",
+                System.Drawing.Color.Red, Message.TopLeft),
             FrankosReloaded = new Message("Frankos Reloaded.", System.Drawing.Color.Red, Message.TopLeft),
             Warrent = new Message("The guards are looking for you!", System.Drawing.Color.Red, Message.TopLeft),
-            VIPExpired = new Message("Your VIP has expired. Please reactivate your VIP if you wish to keep VIP services.", System.Drawing.Color.Red, Message.World),
+            VIPExpired =
+                new Message("Your VIP has expired. Please reactivate your VIP if you wish to keep VIP services.",
+                    System.Drawing.Color.Red, Message.World),
             VIPLifetime = new Message("Your VIP service is unlimited.", System.Drawing.Color.Red, Message.World),
-            WrongAccessory = new Message("You cannot wear this accessory and this item at the same time.", System.Drawing.Color.Red, Message.World),
-            NoAccessory = new Message("You cannot wear an accessory without a support item.", System.Drawing.Color.Red, Message.World),
+            WrongAccessory = new Message("You cannot wear this accessory and this item at the same time.",
+                System.Drawing.Color.Red, Message.World),
+            NoAccessory = new Message("You cannot wear an accessory without a support item.", System.Drawing.Color.Red,
+                Message.World),
             vipteleport = new Message("You can't teleport in this map.", System.Drawing.Color.Red, Message.World),
-        Noteleport = new Message("You can't teleport to this map.", System.Drawing.Color.Red, Message.World);
+            Noteleport = new Message("You can't teleport to this map.", System.Drawing.Color.Red, Message.World);
 
         public static List<ushort> QuestsMaps = [6752];
+
         public static readonly List<ulong> ActiveNPC = [
             10081,
             10082,
             2031,
             140
         ];
+
         public static readonly List<ushort> NoRevHere = [
             1090, 1559, 1518, 4021, 12345, 12346, 1707, 14785, 3333, 3935,
             6412, 1844, 4025, 3071, 2527, 2522, 1655, 2090, 2091, 1002, 2014
         ];
-        public static Message VIPRemaining(string days, string hours)
-        {
-            return new Message("You have " + days + " day(s) and " + hours + " hour(s) of VIP service remaining.", System.Drawing.Color.Red, Message.World);
-        }
-        public static Message NoFrankos(string name)
-        {
-            return new Message("Can't reload Frankos, you are out of " + name + "s!", System.Drawing.Color.Red, Message.TopLeft);
-        }
-        public static Message Stigma(float percent, int time)
-        {
-            return new Message("Stigma activated. Your attack will be increased with " + percent + " for " + time + ".", System.Drawing.Color.Red, Message.TopLeft);
-        }
-        public static Message Accuracy(int time)
-        {
-            return new Message("Accuracy activated. Your agility will be increased a bit for " + time + ".", System.Drawing.Color.Red, Message.TopLeft);
-        }
-        public static Message Invisibility(int time)
-        {
-            return new Message("Invisibility activated. You will be invisible for monsters as long as you don't attack for " + time + ".", System.Drawing.Color.Red, Message.TopLeft);
-        }
-        public static Message Shield(float percent, int time)
-        {
-            return new Message("Shield activated. Your defence will be increased with " + percent + " for " + time + ".", System.Drawing.Color.Red, Message.TopLeft);
-        }
-        public static Message Shackled(int time)
-        {
-            return new Message("You have been shackled and can not move for " + time + " Seconds.", System.Drawing.Color.Red, Message.TopLeft);
+
+        public static Message VIPRemaining(string days, string hours) {
+            return new Message("You have " + days + " day(s) and " + hours + " hour(s) of VIP service remaining.",
+                System.Drawing.Color.Red, Message.World);
         }
 
-        public static Message Dodge(float percent, int time)
-        {
-            return new Message("Dodge activated. Your dodge will be increased with " + percent + " for " + time + ".", System.Drawing.Color.Red, Message.TopLeft);
+        public static Message NoFrankos(string name) {
+            return new Message("Can't reload Frankos, you are out of " + name + "s!", System.Drawing.Color.Red,
+                Message.TopLeft);
         }
-        public static Message NoDrugs(int time)
-        {
-            return new Message("Poison star activated. You will not be able to use drugs for " + time + " seconds.", System.Drawing.Color.Red, Message.TopLeft);
+
+        public static Message Stigma(float percent, int time) {
+            return new Message("Stigma activated. Your attack will be increased with " + percent + " for " + time + ".",
+                System.Drawing.Color.Red, Message.TopLeft);
         }
-        public static Message ExtraExperience(uint experience)
-        {
-            return new Message("You have gained extra " + experience + " experience for killing the monster.", System.Drawing.Color.Red, Message.TopLeft);
+
+        public static Message Accuracy(int time) {
+            return new Message("Accuracy activated. Your agility will be increased a bit for " + time + ".",
+                System.Drawing.Color.Red, Message.TopLeft);
         }
-        public static Message TeamExperience(uint experience)
-        {
-            return new Message("One of your teammates killed a monster so you gained " + experience + " experience.", System.Drawing.Color.Red, Message.TopLeft);
+
+        public static Message Invisibility(int time) {
+            return new Message(
+                "Invisibility activated. You will be invisible for monsters as long as you don't attack for " + time +
+                ".", System.Drawing.Color.Red, Message.TopLeft);
         }
-        public static Message NoobTeamExperience(uint experience)
-        {
-            return new Message("One of your teammates killed a monster and because you have a noob inside your team, you gained " + experience + " experience.", System.Drawing.Color.Red, Message.TopLeft);
+
+        public static Message Shield(float percent, int time) {
+            return new Message(
+                "Shield activated. Your defence will be increased with " + percent + " for " + time + ".",
+                System.Drawing.Color.Red, Message.TopLeft);
         }
-        public static Message PickupGold(uint amount)
-        {
+
+        public static Message Shackled(int time) {
+            return new Message("You have been shackled and can not move for " + time + " Seconds.",
+                System.Drawing.Color.Red, Message.TopLeft);
+        }
+
+        public static Message Dodge(float percent, int time) {
+            return new Message("Dodge activated. Your dodge will be increased with " + percent + " for " + time + ".",
+                System.Drawing.Color.Red, Message.TopLeft);
+        }
+
+        public static Message NoDrugs(int time) {
+            return new Message("Poison star activated. You will not be able to use drugs for " + time + " seconds.",
+                System.Drawing.Color.Red, Message.TopLeft);
+        }
+
+        public static Message ExtraExperience(uint experience) {
+            return new Message("You have gained extra " + experience + " experience for killing the monster.",
+                System.Drawing.Color.Red, Message.TopLeft);
+        }
+
+        public static Message TeamExperience(uint experience) {
+            return new Message("One of your teammates killed a monster so you gained " + experience + " experience.",
+                System.Drawing.Color.Red, Message.TopLeft);
+        }
+
+        public static Message NoobTeamExperience(uint experience) {
+            return new Message(
+                "One of your teammates killed a monster and because you have a noob inside your team, you gained " +
+                experience + " experience.", System.Drawing.Color.Red, Message.TopLeft);
+        }
+
+        public static Message PickupGold(uint amount) {
             return new Message("You have picked up " + amount + " gold.", System.Drawing.Color.Red, Message.TopLeft);
         }
-        public static Message PickupConquerPoints(uint amount)
-        {
-            return new Message("You have picked up " + amount + " Conquer Points.", System.Drawing.Color.Red, Message.TopLeft);
+
+        public static Message PickupConquerPoints(uint amount) {
+            return new Message("You have picked up " + amount + " Conquer Points.", System.Drawing.Color.Red,
+                Message.TopLeft);
         }
-        public static Message PickupItem(string name)
-        {
+
+        public static Message PickupItem(string name) {
             return new Message("You have picked up a/an " + name + " item.", System.Drawing.Color.Red, Message.TopLeft);
         }
-        public static Message DummyLevelTooHigh()
-        {
-            return new Message("You can't attack this dummy because your level is not high enough.", System.Drawing.Color.Red, Message.TopLeft);
+
+        public static Message DummyLevelTooHigh() {
+            return new Message("You can't attack this dummy because your level is not high enough.",
+                System.Drawing.Color.Red, Message.TopLeft);
         }
-        public static Message BoothItemSell(string buyername, string itemname, bool conquerpoints, uint cost)
-        {
-            return new Message("Congratulations. You just have just sold " + itemname + " to " + buyername + " for " + cost + (conquerpoints ? " ConquerPoints." : " Gold."), System.Drawing.Color.Red, Message.TopLeft);
+
+        public static Message BoothItemSell(string buyername, string itemname, bool conquerpoints, uint cost) {
+            return new Message(
+                "Congratulations. You just have just sold " + itemname + " to " + buyername + " for " + cost +
+                (conquerpoints ? " ConquerPoints." : " Gold."), System.Drawing.Color.Red, Message.TopLeft);
         }
-        public static Message Enchant(int origEnch, int newEnch)
-        {
+
+        public static Message Enchant(int origEnch, int newEnch) {
             if (newEnch <= origEnch)
-                return new Message("You were unlucky. You didn't gain any more enchantment in your item. Your generated enchant is " + newEnch + ".", System.Drawing.Color.Red, Message.TopLeft);
+                return new Message(
+                    "You were unlucky. You didn't gain any more enchantment in your item. Your generated enchant is " +
+                    newEnch + ".", System.Drawing.Color.Red, Message.TopLeft);
             else
-                return new Message("You were lucky. You gained more enchantment in your item. Your generated enchant is " + newEnch + ".", System.Drawing.Color.Red, Message.TopLeft);
+                return new Message(
+                    "You were lucky. You gained more enchantment in your item. Your generated enchant is " + newEnch +
+                    ".", System.Drawing.Color.Red, Message.TopLeft);
         }
-        public static Message VoteSpan(Client.GameState client)
-        {
-            if (DateTime.Now <= client.LastVote.AddHours(12))
-            {
+
+        public static Message VoteSpan(Client.GameState client) {
+            if (DateTime.Now <= client.LastVote.AddHours(12)) {
                 TimeSpan agospan = client.LastVote.Subtract(DateTime.Now);
                 TimeSpan tillspan = DateTime.Now.Subtract(client.LastVote);
                 string message = "You last voted ";
@@ -179,7 +211,9 @@ namespace MTA
                 message += tillspan.Seconds.ToString() + " ago. To vote again!";
                 return new Message(message, System.Drawing.Color.Red, Message.TopLeft);
             }
-            return new Message("You haven't voted in the past 12 hours. Vote now to gain an extra point!", System.Drawing.Color.Red, Message.TopLeft);
+
+            return new Message("You haven't voted in the past 12 hours. Vote now to gain an extra point!",
+                System.Drawing.Color.Red, Message.TopLeft);
         }
 
         public const string ScriptsBasePath = "scripts\\";
@@ -194,7 +228,9 @@ namespace MTA
         public static readonly string CoatStorageTypePath = Database("coat_storage_type.txt");
         public static readonly string SoulProtectionPath = Database("souls_protection.txt");
         public static readonly string RoulettesPath = Database("Roulettes.txt");
+
         public static readonly string FurniturePath = Database("Furniture.txt");
+
         // public static readonly string DMapOwnerPath = Database("DMapOwner.dat");
         public static readonly string StatsPath = Database("Stats.ini");
         public static readonly string GameMapPath = Database("GameMap.dat");
@@ -224,23 +260,33 @@ namespace MTA
         public const string GameCryptographyKey = "C238xs65pjy7HU9Q";
         public static string? ServerName;
         public const int MaxBroadcasts = 50;
-        public static uint ExtraExperienceRate, ExtraSpellRate, ExtraProficiencyRate, ConquerPointsDropRate, ConquerPointsDropMultiple, ItemDropRate;
+
+        public static uint ExtraExperienceRate,
+            ExtraSpellRate,
+            ExtraProficiencyRate,
+            ConquerPointsDropRate,
+            ConquerPointsDropMultiple,
+            ItemDropRate;
+
         public static ulong MoneyDropRate, MoneyDropMultiple;
         public static string[]? ItemDropQualityRates;
         public static string? WebAccExt, ServerWebsite, WebVoteExt, WebDonateExt, ServerGMPass;
         public const sbyte pScreenDistance = 19;
         public const sbyte nScreenDistance = 19;
         public const sbyte remScreenDistance = 19;
+
         public const ushort DisconnectTimeOutSeconds = 10,
             FloorItemSeconds = 20,
             FloorItemAvailableAfter = 15;
 
         public const ushort SocketOneProgress = 100,
             SocketTwoProgress = 300;
+
         public static readonly List<ushort> revnomap = [
             1, 2, 3, 0x80c, 0x1b61, 0x80c, 0x79e, 0x3ed, 0x1b5d, 0x1b5e, 0x1b60, 0x1770, 0x1774, 0x1771, 0x1772, 0x1773,
             0x734, 0x1b59, 0x709, 0x5e4, 0x5ee, 0x1e61, 0x22ad, 0xd05, 0x442, 0x4c9, 1860, 700, 3073
         ];
+
         public static readonly List<ushort> MemoryAgateNotAllowedMap = [];
 
         public static readonly List<ulong> NoVipTele = [
@@ -255,11 +301,14 @@ namespace MTA
             8892,
             1645
         ];
+
         public static readonly List<ulong> fbss = [
             1707,
             1238
         ];
+
         public static readonly List<ulong> horsepk = [3707];
+
         public static readonly List<string> NoFog = [
             "Clannad",
             "Btooom",
@@ -267,6 +316,7 @@ namespace MTA
             "Hades",
             "Centar"
         ];
+
         public static readonly List<ushort> PKForbiddenMaps = [
             1036,
             1002,
@@ -305,17 +355,14 @@ namespace MTA
         /// <param name="mapID">The MapID to check</param>
         /// <param name="map">Optional Map object to check BaseID if MapID doesn't match</param>
         /// <returns>True if PK is forbidden on this map</returns>
-        public static bool IsPKForbidden(ushort mapID, Game.Map map = null)
-        {
+        public static bool IsPKForbidden(ushort mapID, Game.Map map = null) {
             // First check if the MapID itself is in the forbidden list
             if (PKForbiddenMaps.Contains(mapID))
                 return true;
 
             // For dynamic maps (houses), check BaseID if map is provided
-            if (map != null && map.BaseID != map.ID)
-            {
-                if (PKForbiddenMaps.Contains(map.BaseID))
-                {
+            if (map != null && map.BaseID != map.ID) {
+                if (PKForbiddenMaps.Contains(map.BaseID)) {
                     return true;
                 }
             }
@@ -335,7 +382,9 @@ namespace MTA
             1547,
             1548
         ];
+
         public static readonly List<ulong> blackname = [3071];
+
         public static readonly List<ulong> FBandSSEvent = [
             1543,
             1544,
@@ -344,6 +393,7 @@ namespace MTA
             1547,
             1548
         ];
+
         public static readonly List<ulong> EtaleMaps = [
             1543,
             1544,
@@ -352,6 +402,7 @@ namespace MTA
             1547,
             1548
         ];
+
         public static readonly List<ulong> SSFB = [
             1543,
             1544,
@@ -433,6 +484,7 @@ namespace MTA
         ];
 
         public static readonly List<int> SoulList = [80032000];
+
         public static readonly List<int> MaxItems = [
             410439,
             420439,
@@ -452,6 +504,7 @@ namespace MTA
             800110,
             800320
         ];
+
         public static readonly List<string> monsters = [
             "CaptainCook",
             "PirateTurner",
@@ -463,6 +516,7 @@ namespace MTA
             "EidArenaking",
             "EidArena"
         ];
+
         public static readonly List<ushort> twinskill = [
             8001,
             1165,
@@ -487,6 +541,7 @@ namespace MTA
             11070,
             11650
         ];
+
         public static readonly List<int> AvaibleSpells = [
             1045,
             12020,
@@ -496,6 +551,7 @@ namespace MTA
             8001,
             1046
         ];
+
         public static readonly List<ushort> Damage1Map = [
             12470,
             1844,

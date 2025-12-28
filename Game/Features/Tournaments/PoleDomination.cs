@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MTA.Network.GamePackets;
 using MTA.Client;
+using MTA.Game.Constants;
 
 
 namespace MTA.Game
@@ -54,8 +55,8 @@ namespace MTA.Game
             this.prize = prize;
             damages = new ConcurrentDictionary<Guild, ulong>();
             winners = [];
-            File.Open(Constants.PoleDominationPath, FileMode.OpenOrCreate).Close();
-            foreach (var name in File.ReadAllLines(Constants.PoleDominationPath))
+            File.Open(GameConstants.PoleDominationPath, FileMode.OpenOrCreate).Close();
+            foreach (var name in File.ReadAllLines(GameConstants.PoleDominationPath))
                 if (name.Length != 0)
                     winners.Add(name);
         }
@@ -101,8 +102,8 @@ namespace MTA.Game
                                 client.MessageOK = (pClient) => { joinClient(pClient); };
                                 client.Send(new NpcReply(NpcReply.MessageBox, "Pole Domination began in " + ((Enums.Maps)currentMap.ID).ToString() + ". Would you like to join?"));
                             });
-                            currentMap.WasPKFree = Constants.PKFreeMaps.Contains(currentMap.ID);
-                            if (!currentMap.WasPKFree) Constants.PKFreeMaps.Add(currentMap.ID);
+                            currentMap.WasPKFree = GameConstants.PKFreeMaps.Contains(currentMap.ID);
+                            if (!currentMap.WasPKFree) GameConstants.PKFreeMaps.Add(currentMap.ID);
                             if (currentLocation != -1 && (killedPole && lastKiller != null && currentMap != null))
                                 Kernel.SendWorldMessage(new Message("Guild " + lastKiller.Name + " won the pole in " + ((Enums.Maps)ID).ToString() + "!" + "The Pole Domination moved to " + ((Enums.Maps)currentMap.ID).ToString() + "!", Color.Red, Message.Guild));
                             else
@@ -166,7 +167,7 @@ namespace MTA.Game
         {
             StringBuilder builder = new StringBuilder();
             foreach (var line in winners) builder.AppendLine(line);
-            File.WriteAllText(Constants.PoleDominationPath, builder.ToString());
+            File.WriteAllText(GameConstants.PoleDominationPath, builder.ToString());
         }
         public uint GetWinnerPrize(string name)
         {
@@ -226,7 +227,7 @@ namespace MTA.Game
                 }
             });
             if (!currentMap.WasPKFree)
-                Constants.PKFreeMaps.Remove(currentMap.ID);
+                GameConstants.PKFreeMaps.Remove(currentMap.ID);
             damages.Clear();
         }
 

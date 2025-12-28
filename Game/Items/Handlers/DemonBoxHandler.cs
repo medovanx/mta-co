@@ -1,7 +1,6 @@
 using System;
 using MTA.Client;
 using MTA.Database;
-using MTA.Game.Attacking;
 using MTA.Network.GamePackets;
 using _String = MTA.Network.GamePackets._String;
 using static MTA.Game.ItemConstants;

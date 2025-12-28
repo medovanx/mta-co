@@ -1,4 +1,5 @@
-﻿using MTA.Network;
+﻿using MTA.Game.Constants;
+using MTA.Network;
 
 namespace MTA.TransferServer
 {
@@ -12,7 +13,7 @@ namespace MTA.TransferServer
             WriteUInt16(5050, 2, Buffer);
             WriteUInt32(uid, 4, Buffer);
             WriteString(user, 8, Buffer);
-            WriteString(Constants.ServerName, 24, Buffer);
+            WriteString(GameConstants.ServerName, 24, Buffer);
         }
 
         public byte[] GetArray() { return Buffer; }
@@ -33,7 +34,7 @@ namespace MTA.TransferServer
             WriteUInt32(uid, 4, Buffer);
             WriteUInt32((uint)Reply, 8, Buffer);
             WriteString(user, 12, Buffer);
-            WriteString(Constants.ServerName, 28, Buffer);
+            WriteString(GameConstants.ServerName, 28, Buffer);
         }
         public byte[] GetArray() { return Buffer; }
     }
@@ -47,7 +48,7 @@ namespace MTA.TransferServer
             WriteUInt16(5053, 2, Buffer);
             WriteUInt32(uid, 4, Buffer);
             WriteString(user, 8, Buffer);
-            WriteString(Constants.ServerName, 24, Buffer);
+            WriteString(GameConstants.ServerName, 24, Buffer);
         }
 
         public byte[] GetArray() { return Buffer; }

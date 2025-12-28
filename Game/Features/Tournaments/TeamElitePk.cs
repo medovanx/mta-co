@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using MTA.Client;
 using MTA.Database;
+using MTA.Game.Constants;
 using MTA.MaTrix;
 using MTA.Network.GamePackets;
 using MySqlCommand = MySql.Data.MySqlClient.MySqlCommand;
@@ -161,7 +162,7 @@ namespace MTA.Game.Features.Tournaments {
                 MatchCounter = new Counter((uint)(GroupID * 100000 + 100000));
 
                 WaitingArea = Kernel.Maps[ElitePKTournament.WaitingAreaID].MakeDynamicMap();
-                Constants.PKForbiddenMaps.Add(WaitingArea.ID);
+                GameConstants.PKForbiddenMaps.Add(WaitingArea.ID);
 
                 State = States.GUI_Top8Ranking;
                 pState = States.T_Organize;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using MTA.Game.Constants;
 using MTA.Network.GamePackets;
 
 namespace MTA.Game.ConquerStructures
@@ -512,7 +513,7 @@ namespace MTA.Game.ConquerStructures
                     return true;
                 if (Count == 40)
                 {
-                    Owner.Send(Constants.FullInventory);
+                    Owner.Send(GameConstants.FullInventory);
                     return false;
                 }
                 if (!inventory.ContainsKey(item.UID))

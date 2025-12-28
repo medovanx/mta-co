@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MTA.Client;
+using MTA.Game.Constants;
 using MTA.Network.GamePackets;
 using MTA.Network.GamePackets.Roulette;
 
@@ -12,7 +13,7 @@ namespace MTA.Database {
         public static Dictionary<uint, RouletteTable> RoulettesPoll = new Dictionary<uint, RouletteTable>();
 
         internal static void Load() {
-            string[] baseText = File.ReadAllLines(Constants.RoulettesPath);
+            string[] baseText = File.ReadAllLines(GameConstants.RoulettesPath);
             if (baseText.Length <= 1)
                 return;
             //x = 1..... first line is info

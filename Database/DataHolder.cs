@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using MTA.Extensions;
+using MTA.Game.Constants;
 
 
 namespace MTA.Database
@@ -35,7 +36,7 @@ namespace MTA.Database
 
         public static void ReadStats()
         {
-            string Path = Constants.StatsPath;
+            string Path = GameConstants.StatsPath;
             IniFile IniFile = new IniFile(Path);
 
             for (byte lvl = 1; lvl < 122; lvl++)
@@ -73,7 +74,7 @@ namespace MTA.Database
         }
         public static ushort[] FindReviveSpot(ushort mapID)
         {
-            IniFile IniFile = new IniFile(Constants.RevivePoints);
+            IniFile IniFile = new IniFile(GameConstants.RevivePoints);
             string value = IniFile.ReadString(mapID.ToString(), "Value");
             if (value == String.Empty)
                 return [1002, 300, 278];

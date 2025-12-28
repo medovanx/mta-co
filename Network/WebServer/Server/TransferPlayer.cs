@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using MTA.Interfaces;
 using MTA.Network;
 using MTA.Game.ConquerStructures;
+using MTA.Game.Constants;
 
 namespace MTA.WebServer
 {
@@ -328,7 +329,7 @@ namespace MTA.WebServer
 
             _String str = new _String(true);
             str.Type = 61;
-            str.Texts.Add(Constants.ServerName);
+            str.Texts.Add(GameConstants.ServerName);
             client.Send(str);
 
             client.Send(new Data(true) { UID = client.Entity.UID, ID = Data.ChangePKMode, dwParam = (uint)Enums.PkMode.Team });

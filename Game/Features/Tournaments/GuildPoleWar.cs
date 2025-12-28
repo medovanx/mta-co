@@ -6,6 +6,7 @@ using MTA.Client;
 using MTA.Game;
 using MTA.Game.ConquerStructures.Society;
 using MTA.Network.GamePackets;
+using MTA.Game.Constants;
 
 namespace MTA.MaTrix {
     public class GuildPoleWar {
@@ -71,8 +72,8 @@ namespace MTA.MaTrix {
                     EndWar();
                 IsWar = true;
                 WarStart = DateTime.Now;
-                if (!Constants.PKFreeMaps.Contains(Map.ID))
-                    Constants.PKFreeMaps.Add(Map.ID);
+                if (!GameConstants.PKFreeMaps.Contains(Map.ID))
+                    GameConstants.PKFreeMaps.Add(Map.ID);
                 Poles = new SobNpcSpawn[3];
                 PolesWinners = new uint[3];
 

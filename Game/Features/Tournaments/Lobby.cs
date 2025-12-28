@@ -12,6 +12,7 @@ using MTA.Game;
 using MTA.Game.Attacking;
 using MTA.Game.ConquerStructures;
 using MTA.Game.ConquerStructures.Society;
+using MTA.Game.Constants;
 using MTA.Interfaces;
 using MTA.Network.GamePackets;
 using Calculate = Pathfinding.AStar.Calculate;
@@ -392,7 +393,7 @@ namespace MTA.MaTrix {
                 if (Owner.Entity.MapID == ai.Bot.Entity.MapID) {
                     var pClient = ai.Bot;
                     short dist = Kernel.GetDistance(ai.Bot.Entity.X, ai.Bot.Entity.Y, Owner.Entity.X, Owner.Entity.Y);
-                    if (dist <= Constants.pScreenDistance) {
+                    if (dist <= GameConstants.pScreenDistance) {
                         Owner.Entity.SendSpawn(pClient);
                         pClient.Entity.SendSpawn(Owner);
 

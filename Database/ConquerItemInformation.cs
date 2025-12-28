@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using MTA.Game.Constants;
 
 namespace MTA.Database
 {
@@ -21,7 +22,7 @@ namespace MTA.Database
             PlusInformations = new SafeDictionary<uint, SafeDictionary<byte, ConquerItemPlusInformation>>(10000);
             GradeInformations = new SafeDictionary<string, SafeDictionary<int, ConquerItemBaseInformation>>(10000);
             GradeInformations2 = new SafeDictionary<string, SafeDictionary<uint, int>>(10000);
-            string[] baseText = File.ReadAllLines(Constants.ItemBaseInfosPath);
+            string[] baseText = File.ReadAllLines(GameConstants.ItemBaseInfosPath);
             int count = 0;
             int gkey = 0;
             int lastlevel = 0;
@@ -71,7 +72,7 @@ namespace MTA.Database
                 }
             }
             GradeInformations2.Clear();
-            baseText = File.ReadAllLines(Constants.ItemPlusInfosPath);
+            baseText = File.ReadAllLines(GameConstants.ItemPlusInfosPath);
 
             foreach (string line in baseText)
             {

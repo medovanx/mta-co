@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using MTA.Client;
 using MTA.Game.ConquerStructures.Society;
+using MTA.Game.Constants;
 using MTA.Network.GamePackets;
 
 namespace MTA.Game {
@@ -53,8 +54,8 @@ namespace MTA.Game {
                 IsWar = true;
                 WarStart = DateTime.Now;
 
-                if (!Constants.PKFreeMaps.Contains(Map.ID))
-                    Constants.PKFreeMaps.Add(Map.ID);
+                if (!GameConstants.PKFreeMaps.Contains(Map.ID))
+                    GameConstants.PKFreeMaps.Add(Map.ID);
                 Map.Npcs.Clear();
 
                 #region StatuesPole

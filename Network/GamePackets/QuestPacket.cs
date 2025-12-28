@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using MTA.Client;
 using MTA.Database;
+using MTA.Game.Constants;
 using MTA.Interfaces;
 
 namespace MTA.Network.GamePackets {
@@ -383,7 +384,7 @@ namespace MTA.Network.GamePackets {
         public static SafeDictionary<QuestID, Info> AllQuests = new SafeDictionary<QuestID, Info>();
 
         public static void Load() {
-            string[] text = File.ReadAllLines(Constants.QuestInfoPath);
+            string[] text = File.ReadAllLines(GameConstants.QuestInfoPath);
             Info info = new Info();
             for (int x = 0; x < text.Length; x++) {
                 string line = text[x];

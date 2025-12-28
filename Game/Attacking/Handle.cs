@@ -9,6 +9,7 @@ using MTA.Interfaces;
 using MTA.MaTrix;
 using MTA.Network;
 using MTA.Network.GamePackets;
+using MTA.Game.Constants;
 
 namespace MTA.Game.Attacking {
     public class Handle {
@@ -307,7 +308,7 @@ namespace MTA.Game.Attacking {
                     if (attacker.Companion) {
                         // Check PK forbidden maps, including BaseID for dynamic maps (houses)
                         Map attackerMap = attacker.Owner != null ? attacker.Owner.Map : null;
-                        if (Constants.IsPKForbidden(attacker.MapID, attackerMap))
+                        if (GameConstants.IsPKForbidden(attacker.MapID, attackerMap))
                             return;
                     }
 
@@ -992,7 +993,7 @@ namespace MTA.Game.Attacking {
                         }
 
                         if (attacker.MapID == DeathMatch.MAPID || attacker.MapID == DeathMatch2.MAPID ||
-                            Constants.FBandSSEvent.Contains(attacker.MapID)) {
+                            GameConstants.FBandSSEvent.Contains(attacker.MapID)) {
                             attacker.Owner.Send(new Message(
                                 "You have to use linear skills(FastBlade/ScentSword/ViperFang) only", Color.Red,
                                 Message.Talk));
@@ -1421,7 +1422,7 @@ namespace MTA.Game.Attacking {
 
                     else if (attack.AttackType == Attack.Ranged) {
                         if (attacker.MapID == DeathMatch.MAPID || attacker.MapID == DeathMatch2.MAPID ||
-                            Constants.FBandSSEvent.Contains(attacker.MapID)) {
+                            GameConstants.FBandSSEvent.Contains(attacker.MapID)) {
                             attacker.Owner.Send(new Message(
                                 "You should use skills(FastBlade/ScentSword/ViperFang) only !", Color.Red,
                                 Message.Talk));
@@ -1519,7 +1520,7 @@ namespace MTA.Game.Attacking {
                             #endregion
 
                             if (Kernel.GetDistance(attacker.X, attacker.Y, attacked.X, attacked.Y) <=
-                                Constants.pScreenDistance) {
+                                GameConstants.pScreenDistance) {
                                 attack.Effect1 = Attack.AttackEffects1.None;
                                 uint damage = 0;
 
@@ -1641,7 +1642,7 @@ namespace MTA.Game.Attacking {
                                 #endregion
 
                                 if (Kernel.GetDistance(attacker.X, attacker.Y, attackedsob.X, attackedsob.Y) <=
-                                    Constants.pScreenDistance) {
+                                    GameConstants.pScreenDistance) {
                                     attack.Effect1 = Attack.AttackEffects1.None;
                                     uint damage = 0;
                                     //   if (!attacker.Assassin())
@@ -1819,7 +1820,7 @@ namespace MTA.Game.Attacking {
                                 }
 
                                 if (attacker.MapID == DeathMatch2.MAPID ||
-                                    Constants.FBandSSEvent.Contains(attacker.MapID) || attacker.MapID == 1707 ||
+                                    GameConstants.FBandSSEvent.Contains(attacker.MapID) || attacker.MapID == 1707 ||
                                     attacker.MapID == 1238) {
                                     if (SpellID != 1045 && SpellID != 1046 && spellID != 11005 && spellID != 11960) {
                                         attacker.Owner.Send(new Message(
@@ -2591,7 +2592,7 @@ namespace MTA.Game.Attacking {
                                                         attacked.InvisibilityStamp = Time32.Now;
                                                         attacked.InvisibilityTime = (byte)spell.Duration;
                                                         if (attacked.EntityFlag == EntityFlag.Player)
-                                                            attacked.Owner.Send(Constants.Invisibility(spell.Duration));
+                                                            attacked.Owner.Send(GameConstants.Invisibility(spell.Duration));
                                                     }
                                                     else {
                                                         attacked.AccuracyStamp = Time32.Now;
@@ -2603,7 +2604,7 @@ namespace MTA.Game.Attacking {
                                                         attacked.StarOfAccuracyStamp = Time32.Now;
                                                         attacked.StarOfAccuracyTime = (byte)spell.Duration;
                                                         if (attacked.EntityFlag == EntityFlag.Player)
-                                                            attacked.Owner.Send(Constants.Accuracy(spell.Duration));
+                                                            attacked.Owner.Send(GameConstants.Accuracy(spell.Duration));
                                                     }
                                                 }
                                                 else {
@@ -2618,7 +2619,7 @@ namespace MTA.Game.Attacking {
                                                         attacked.MagicShieldIncrease = 1.1f; //spell.PowerPercent;
                                                         attacked.MagicShieldTime = (byte)spell.Duration;
                                                         if (attacked.EntityFlag == EntityFlag.Player)
-                                                            attacked.Owner.Send(Constants.Shield(spell.PowerPercent,
+                                                            attacked.Owner.Send(GameConstants.Shield(spell.PowerPercent,
                                                                 spell.Duration));
                                                     }
                                                     else if (spell.ID == 1095) {
@@ -2627,7 +2628,7 @@ namespace MTA.Game.Attacking {
                                                         attacked.StigmaIncrease = spell.PowerPercent;
                                                         attacked.StigmaTime = (byte)spell.Duration;
                                                         if (attacked.EntityFlag == EntityFlag.Player)
-                                                            attacked.Owner.Send(Constants.Stigma(spell.PowerPercent,
+                                                            attacked.Owner.Send(GameConstants.Stigma(spell.PowerPercent,
                                                                 spell.Duration));
                                                     }
                                                     else if (spell.ID == 30000) {
@@ -2667,7 +2668,7 @@ namespace MTA.Game.Attacking {
                                                               case 4: attacked.MagicShieldTime = 60; break;
                                                           }*/
                                                         if (attacked.EntityFlag == EntityFlag.Player)
-                                                            attacked.Owner.Send(Constants.Shield(12000,
+                                                            attacked.Owner.Send(GameConstants.Shield(12000,
                                                                 attacked.MagicShieldTime));
                                                     }
 
@@ -2697,7 +2698,7 @@ namespace MTA.Game.Attacking {
 
                                                                 if (attacked.EntityFlag == EntityFlag.Player)
                                                                     attacked.Owner.Send(
-                                                                        Constants.Shackled(attacked.ShackleTime));
+                                                                        GameConstants.Shackled(attacked.ShackleTime));
                                                             }
                                                         }
                                                     }
@@ -3393,7 +3394,7 @@ namespace MTA.Game.Attacking {
                                                     attacked.NoDrugsStamp = Time32.Now;
                                                     attacked.NoDrugsTime = (short)spell.Duration;
                                                     if (attacked.EntityFlag == EntityFlag.Player)
-                                                        attacked.Owner.Send(Constants.NoDrugs(spell.Duration));
+                                                        attacked.Owner.Send(GameConstants.NoDrugs(spell.Duration));
                                                 }
                                                 else {
                                                     suse.Targets[attacked.UID].Hit = false;
@@ -8563,7 +8564,7 @@ namespace MTA.Game.Attacking {
         }
 
         public static bool CanUseSpell(SpellInformation spell, GameState client) {
-            if (Constants.SSFB.Contains(client.Entity.MapID)) {
+            if (GameConstants.SSFB.Contains(client.Entity.MapID)) {
                 //w9 
                 if (client.Entity.ContainsFlag(Update.Flags.XPList)) {
                     client.Entity.RemoveFlag(Update.Flags.XPList);
@@ -8881,7 +8882,7 @@ namespace MTA.Game.Attacking {
                     return true;
                 else {
                     attacker.AttackPacket = null;
-                    attacker.Owner.Send(Constants.DummyLevelTooHigh());
+                    attacker.Owner.Send(GameConstants.DummyLevelTooHigh());
                     return false;
                 }
             }
@@ -9036,7 +9037,7 @@ namespace MTA.Game.Attacking {
                 return attacker.TeamDeathMatchTeamKey != attacked.TeamDeathMatchTeamKey;
             if (spell != null)
                 if (spell.CanKill && attacker.EntityFlag == EntityFlag.Player &&
-                    Constants.IsPKForbidden(attacker.Owner.Map.ID, attacker.Owner.Map) &&
+                    GameConstants.IsPKForbidden(attacker.Owner.Map.ID, attacker.Owner.Map) &&
                     attacked.EntityFlag == EntityFlag.Player)
                     return false;
             if (attacker is { EntityFlag: EntityFlag.Player, Owner.WatchingGroup: not null }) return false;
@@ -9056,7 +9057,7 @@ namespace MTA.Game.Attacking {
                     return false;
             if (attacked.EntityFlag == EntityFlag.Monster) {
                 if (attacked.Companion) {
-                    if (Constants.IsPKForbidden(attacker.Owner.Map.ID, attacker.Owner.Map)) {
+                    if (GameConstants.IsPKForbidden(attacker.Owner.Map.ID, attacker.Owner.Map)) {
                         if (attacked.Owner == attacker.Owner)
                             return false;
                         if (attacker.PKMode != Enums.PkMode.PK &&
@@ -9094,10 +9095,10 @@ namespace MTA.Game.Attacking {
                         return false;
 
 
-                if (Constants.IsPKForbidden(attacker.Owner.Map.ID, attacker.Owner.Map)) {
+                if (GameConstants.IsPKForbidden(attacker.Owner.Map.ID, attacker.Owner.Map)) {
                     if (attacker.PKMode == Enums.PkMode.PK ||
                         attacker.PKMode == Enums.PkMode.Team || spell is { CanKill: true }) {
-                        attacker.Owner.Send(Constants.PKForbidden);
+                        attacker.Owner.Send(GameConstants.PKForbidden);
                         attacker.AttackPacket = null;
                     }
 
@@ -9171,9 +9172,9 @@ namespace MTA.Game.Attacking {
                 else {
                     if (!attacked.ContainsFlag(Update.Flags.FlashingName)) {
                         if (!attacked.ContainsFlag(Update.Flags.BlackName)) {
-                            if (Constants.PKFreeMaps.Contains(attacker.MapID))
+                            if (GameConstants.PKFreeMaps.Contains(attacker.MapID))
                                 return true;
-                            if (Constants.Damage1Map.Contains(attacker.MapID))
+                            if (GameConstants.Damage1Map.Contains(attacker.MapID))
                                 return true;
                             if (attacker.Owner.Map.BaseID == 700)
                                 return true;
@@ -9244,13 +9245,13 @@ namespace MTA.Game.Attacking {
                                     client.Entity.MagicShieldIncrease = 1.1f;
                                     client.Entity.MagicShieldTime = 120;
                                     if (client.Entity.EntityFlag == EntityFlag.Player)
-                                        client.Send(Constants.Shield(2, 120));
+                                        client.Send(GameConstants.Shield(2, 120));
                                     client.SendScreen(spellUse);
                                     break;
                                 }
                                 case Enums.ItemEffect.Poison: {
                                     if (attacked != null) {
-                                        if (Constants.IsPKForbidden(client.Entity.MapID, client.Map))
+                                        if (GameConstants.IsPKForbidden(client.Entity.MapID, client.Map))
                                             return;
                                         if (client.Map.BaseID == 700)
                                             return;
@@ -9336,7 +9337,7 @@ namespace MTA.Game.Attacking {
                                     client.Entity.MagicShieldIncrease = 1.1f;
                                     client.Entity.MagicShieldTime = 120;
                                     if (client.Entity.EntityFlag == EntityFlag.Player)
-                                        client.Send(Constants.Shield(2, 120));
+                                        client.Send(GameConstants.Shield(2, 120));
                                     client.SendScreen(spellUse);
                                     break;
                                 }
@@ -9344,7 +9345,7 @@ namespace MTA.Game.Attacking {
                                     if (attacked != null) {
                                         if (attacked.UID == client.Entity.UID)
                                             return;
-                                        if (Constants.IsPKForbidden(client.Entity.MapID, client.Map))
+                                        if (GameConstants.IsPKForbidden(client.Entity.MapID, client.Map))
                                             return;
                                         if (client.Map.BaseID == 700)
                                             return;

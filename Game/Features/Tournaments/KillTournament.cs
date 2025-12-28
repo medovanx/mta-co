@@ -4,6 +4,7 @@ using MTA.Client;
 using MTA.Network.GamePackets;
 using System.Drawing;
 using System.Collections.Concurrent;
+using MTA.Game.Constants;
 
 namespace MTA.Game
 {
@@ -26,7 +27,7 @@ namespace MTA.Game
         public KillTournament(ushort mapID, WeekDay day, int hour, int minute, Action<GameState> prize, string name, Func<GameState, bool> selectFunc, string message = "")
         {
             this.mapID = mapID;
-            Constants.PKFreeMaps.Add(this.mapID);
+            GameConstants.PKFreeMaps.Add(this.mapID);
             this.day = day;
             this.hour = hour;
             this.minute = minute;

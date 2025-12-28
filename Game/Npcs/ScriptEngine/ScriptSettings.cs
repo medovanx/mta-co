@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using MTA.Game.Constants;
 
 namespace MTA.Game.Npcs.ScriptEngine
 {
@@ -17,7 +18,7 @@ namespace MTA.Game.Npcs.ScriptEngine
         /// <summary>
         /// The full path of the scripts location.
         /// </summary>
-        public string ScriptLocation = Environment.CurrentDirectory + "\\" + Constants.ScriptsBasePath;
+        public string ScriptLocation = Environment.CurrentDirectory + "\\" + GameConstants.ScriptsBasePath;
 
         /// <summary>
         /// The .NET Framework to compile with.

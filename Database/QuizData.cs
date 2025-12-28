@@ -1,5 +1,6 @@
 ﻿using MTA.Game.ConquerStructures;
 using System.IO;
+using MTA.Game.Constants;
 
 namespace MTA.Database
 {
@@ -7,7 +8,7 @@ namespace MTA.Database
     {
         public static void Load(QuizShow qz)
         {
-            string[] lines = File.ReadAllLines(Constants.QuizShow);
+            string[] lines = File.ReadAllLines(GameConstants.QuizShow);
 
             for (uint x = 0; x < lines.Length; x++)
             {

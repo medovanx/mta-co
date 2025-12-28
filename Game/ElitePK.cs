@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Linq;
 using MTA.Client;
 using System.Collections.Concurrent;
 using MTA.Network.GamePackets;
 using System.IO;
+using MTA.Game.Constants;
 
 namespace MTA.Game
 {
@@ -66,7 +67,7 @@ namespace MTA.Game
                 LoadTop8();
 
                 WaitingArea = Kernel.Maps[ElitePKTournament.WaitingAreaID].MakeDynamicMap();
-                Constants.PKForbiddenMaps.Add(WaitingArea.ID);
+                GameConstants.PKForbiddenMaps.Add(WaitingArea.ID);
 
                 State = States.GUI_Top8Ranking;
                 pState = States.T_Organize;

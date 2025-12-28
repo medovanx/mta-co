@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using MTA.Client;
 using MTA.Game.ConquerStructures;
+using MTA.Game.Constants;
 using MTA.Network.GamePackets;
 
 namespace MTA.Game {
@@ -85,8 +86,8 @@ namespace MTA.Game {
                 AllPole = false;
                 IsWar = true;
                 WarStart = DateTime.Now;
-                if (!Constants.PKFreeMaps.Contains(Map.ID))
-                    Constants.PKFreeMaps.Add(Map.ID);
+                if (!GameConstants.PKFreeMaps.Contains(Map.ID))
+                    GameConstants.PKFreeMaps.Add(Map.ID);
                 Poles = new SobNpcSpawn[13];
                 PolesWinners = new uint[13];
 

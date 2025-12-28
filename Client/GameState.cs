@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
@@ -17,6 +17,7 @@ using MTA.MaTrix;
 using MTA.Network;
 using MTA.Network.Cryptography;
 using MTA.Network.GamePackets;
+using MTA.Game.Constants;
 using MTA.Network.Sockets;
 using BoothItem = MTA.Game.ConquerStructures.BoothItem;
 using KnownPersons = MTA.Database.KnownPersons;
@@ -25,6 +26,7 @@ using Trade = MTA.Network.GamePackets.Trade;
 using TradePartner = MTA.Game.ConquerStructures.Society.TradePartner;
 using Warehouse = MTA.Game.ConquerStructures.Warehouse;
 using static MTA.Game.ItemConstants;
+using Interaction = MTA.Network.GamePackets.Interaction;
 
 namespace MTA.Client {
     public class GameState {
@@ -363,7 +365,7 @@ namespace MTA.Client {
                 Entity.StigmaIncrease = spell.PowerPercent;
                 Entity.StigmaTime = (byte)spell.Duration;
                 if (Entity.EntityFlag == EntityFlag.Player)
-                    Send(Constants.Stigma(spell.PowerPercent, spell.Duration));
+                    Send(GameConstants.Stigma(spell.PowerPercent, spell.Duration));
 
                 spell = SpellTable.GetSpell(1090, 4);
                 Entity.ShieldTime = 0;
@@ -376,7 +378,7 @@ namespace MTA.Client {
                 Entity.MagicShieldIncrease = 1.1f; //spell.PowerPercent;
                 Entity.MagicShieldTime = (byte)spell.Duration;
                 if (Entity.EntityFlag == EntityFlag.Player)
-                    Send(Constants.Shield(spell.PowerPercent, spell.Duration));
+                    Send(GameConstants.Shield(spell.PowerPercent, spell.Duration));
 
                 spell = SpellTable.GetSpell(1085, 4);
                 Entity.AccuracyStamp = Time32.Now;
@@ -388,7 +390,7 @@ namespace MTA.Client {
                 Entity.StarOfAccuracyStamp = Time32.Now;
                 Entity.StarOfAccuracyTime = (byte)spell.Duration;
                 if (Entity.EntityFlag == EntityFlag.Player)
-                    Send(Constants.Accuracy(spell.Duration));
+                    Send(GameConstants.Accuracy(spell.Duration));
 
                 client.IncreaseSpellExperience(100, 12390);
             }
@@ -488,7 +490,7 @@ namespace MTA.Client {
                         if (!Auras.ContainsKey(aura)) {
                             if (Entity.UID != monk.Entity.UID &&
                                 Kernel.GetDistance(Entity.X, Entity.Y, monk.Entity.X, monk.Entity.Y) <=
-                                Constants.pScreenDistance) {
+                                GameConstants.pScreenDistance) {
                                 Auras Aura = new Auras();
                                 Aura.TeamAuraOwner = monk;
                                 Aura.TeamAuraStatusFlag = monk.Entity.Aura_actType;
@@ -534,7 +536,7 @@ namespace MTA.Client {
                             (pthis.Team == null || (pthis.Team != null && !pthis.Team.IsTeammate(Entity.UID))) ||
                             Entity.Dead ||
                             Kernel.GetDistance(Entity.X, Entity.Y, pthis.Entity.X, pthis.Entity.Y) >
-                            Constants.pScreenDistance) {
+                            GameConstants.pScreenDistance) {
                             new Update(true).Aura(Entity, Update.AuraDataTypes.Remove, Aura.aura,
                                 Aura.TeamAuraLevel, Aura.TeamAuraPower);
                             removeAuraBonuses(Aura.TeamAuraStatusFlag, Aura.TeamAuraPower, 1);
@@ -1445,7 +1447,7 @@ namespace MTA.Client {
                 Base.Mesh = 100;
                 Base.Type = Enums.NpcType.Booth;
                 Base.ShowName = true;
-                Base.Name = "matrix™[" + Base.UID.ToString() + "]";
+                Base.Name = "matrix�[" + Base.UID.ToString() + "]";
                 Base.MapID = Map;
                 Base.X = X;
                 Base.Y = Y;
@@ -1507,7 +1509,7 @@ namespace MTA.Client {
             Action = 0;
             _socket = socket;
 
-            Cryptography = new GameCryptography(Program.Encoding.GetBytes(Constants.GameCryptographyKey));
+            Cryptography = new GameCryptography(Program.Encoding.GetBytes(GameConstants.GameCryptographyKey));
             DHKeyExchange = new DHKeyExchange.ServerKeyExchange();
             SpiritBeadQ = new SpiritBeadQuest(this);
             ChiPowers = [];
@@ -1606,7 +1608,7 @@ namespace MTA.Client {
             if (length == 0)
                 Writer.WriteUInt16((ushort)(buffer.Length - 8), 0, buffer);
             Buffer.BlockCopy(buffer, 0, _buffer, 0, buffer.Length);
-            Writer.WriteString(Constants.ServerKey, _buffer.Length - 8, _buffer);
+            Writer.WriteString(GameConstants.ServerKey, _buffer.Length - 8, _buffer);
             try {
                 lock (_socket) {
                     if (!_socket.Alive) return;
@@ -3270,7 +3272,7 @@ namespace MTA.Client {
             if (addMultiple) {
                 if (Entity.VIPLevel > 0)
                     experience *= Entity.VIPLevel;
-                experience *= Constants.ExtraExperienceRate;
+                experience *= GameConstants.ExtraExperienceRate;
                 if (Entity.HeavenBlessing > 0)
                     experience += (uint)(experience * 20 / 100);
                 if (Entity.Reborn >= 2)
@@ -3403,7 +3405,7 @@ namespace MTA.Client {
                         experience = 100; break;
                 }
 
-                experience *= Constants.ExtraSpellRate;
+                experience *= GameConstants.ExtraSpellRate;
                 experience += (uint)(experience * Entity.Gems[6] / 100);
                 if (Map.BaseID == 1039)
                     experience /= 40;
@@ -3423,7 +3425,7 @@ namespace MTA.Client {
                             spell.Experience = 0;
                             spell.Level++;
                             leveled = true;
-                            Send(Constants.SpellLeveled);
+                            Send(GameConstants.SpellLeveled);
                         }
 
                         if (leveled) {
@@ -3445,7 +3447,7 @@ namespace MTA.Client {
         public void IncreaseProficiencyExperience(uint experience, ushort id) {
             if (Proficiencies.ContainsKey(id)) {
                 IProf proficiency = Proficiencies[id];
-                experience *= Constants.ExtraProficiencyRate;
+                experience *= GameConstants.ExtraProficiencyRate;
                 experience += (uint)(experience * Entity.Gems[5] / 100);
                 if (Map.BaseID == 1039)
                     experience /= 40;
@@ -3462,14 +3464,14 @@ namespace MTA.Client {
                         if (proficiency.Level == 20) {
                             proficiency.Experience = 0;
                             proficiency.Send(this);
-                            Send(Constants.ProficiencyLeveled);
+                            Send(GameConstants.ProficiencyLeveled);
                             return;
                         }
 
                         proficiency.NeededExperience =
                             DataHolder.ProficiencyLevelExperience(proficiency.Level);
                         leveled = true;
-                        Send(Constants.ProficiencyLeveled);
+                        Send(GameConstants.ProficiencyLeveled);
                     }
 
                     if (leveled) {

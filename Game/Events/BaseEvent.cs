@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using MTA.Client;
 using MTA.Database;
+using MTA.Game.Constants;
 using MTA.Network.GamePackets;
 
 namespace MTA.Game.Events;
@@ -277,7 +278,7 @@ public abstract class BaseEvent : IEvent {
                 foreach (var client in Program.Values) {
                     if (client.Entity.MapID != mapId) continue;
                     if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, entity.X, entity.Y) >=
-                        Constants.nScreenDistance) continue;
+                        GameConstants.nScreenDistance) continue;
                     entity.SendSpawn(client, false);
                     var stringPacket = new _String(true) {
                         UID = entity.UID,
@@ -310,7 +311,7 @@ public abstract class BaseEvent : IEvent {
                     foreach (var client in Program.Values) {
                         if (client.Entity.MapID != mapId) continue;
                         if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, entity.X, entity.Y) >=
-                            Constants.nScreenDistance) continue;
+                            GameConstants.nScreenDistance) continue;
                         entity.SendSpawn(client, false);
                         var stringPacket = new _String(true) {
                             UID = entity.UID,

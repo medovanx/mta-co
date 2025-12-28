@@ -13,6 +13,7 @@ using MTA.Client.Commands;
 using MTA.Database;
 using MTA.Game;
 using MTA.Game.Attacking;
+using MTA.Game.Constants;
 using MTA.Game.ConquerStructures;
 using MTA.Game.ConquerStructures.House;
 using MTA.Game.ConquerStructures.Society;
@@ -35,7 +36,6 @@ using Handle = MTA.Game.Attacking.Handle;
 using KnownPersons = MTA.Network.GamePackets.KnownPersons;
 using Message = MTA.Network.GamePackets.Message;
 using NameChange = MTA.Network.GamePackets.NameChange;
-using ProgressBar = MTA.Franko.ProgressBar;
 using Statue = MTA.Game.Statue;
 using SubClass = MTA.Game.SubClass;
 using Team = MTA.Network.GamePackets.Team;
@@ -3760,7 +3760,7 @@ namespace MTA.Network {
                             //    return;
                             //}
                             if (client.Map.BaseID is >= 6000 and <= 6004 &&
-                                (!(Constants.ActiveNPC.Contains(client.ActiveNpc))))
+                                (!(GameConstants.ActiveNPC.Contains(client.ActiveNpc))))
                                 return;
                             Npcs.GetDialog(req, client);
                             if (client.Account.State == AccountTable.AccountState.GM)
@@ -3961,7 +3961,7 @@ namespace MTA.Network {
                             break;
                         }
                         case Broadcast.BroadcastMessage: {
-                            if (Game.ConquerStructures.Broadcast.Broadcasts.Count == Constants.MaxBroadcasts) {
+                            if (Game.ConquerStructures.Broadcast.Broadcasts.Count == GameConstants.MaxBroadcasts) {
                                 client.Send(new Message(
                                     "You cannot send any broadcasts for now. The limit has been reached. Wait until a broadcast is chopped down.",
                                     Color.Red, Message.TopLeft));
@@ -4000,7 +4000,7 @@ namespace MTA.Network {
                                         }
                                     }
 
-                                    File.AppendAllText(Constants.BroadcastsPath,
+                                    File.AppendAllText(GameConstants.BroadcastsPath,
                                         broadcast.EntityName + " | " + broadcast.EntityID + " | MESSAGE: '" +
                                         broadcast.Message + "'");
                                     Game.ConquerStructures.Broadcast.Broadcasts.Add(broadcast);
@@ -4121,8 +4121,8 @@ namespace MTA.Network {
                         case 1: //record
                         {
                             if (client.Map.IsDynamic()) return;
-                            if (Constants.revnomap.Contains(client.Entity.MapID) ||
-                                Constants.MemoryAgateNotAllowedMap.Contains(client.Entity.MapID))
+                            if (GameConstants.revnomap.Contains(client.Entity.MapID) ||
+                                GameConstants.MemoryAgateNotAllowedMap.Contains(client.Entity.MapID))
                                 return;
                             if (client.Inventory.TryGetItem(ItemUID, out var Item)) {
                                 if (Item.Agate_map.ContainsKey(packet[12])) {
@@ -4159,8 +4159,8 @@ namespace MTA.Network {
                         case 3: //recal
                         {
                             if (client.Map.IsDynamic()) return;
-                            if (Constants.revnomap.Contains(client.Entity.MapID) ||
-                                Constants.MemoryAgateNotAllowedMap.Contains(client.Entity.MapID))
+                            if (GameConstants.revnomap.Contains(client.Entity.MapID) ||
+                                GameConstants.MemoryAgateNotAllowedMap.Contains(client.Entity.MapID))
                                 return;
                             if (client.Inventory.TryGetItem(ItemUID, out var Item)) {
                                 if (Item.Agate_map.ContainsKey(packet[12])) {
@@ -5501,7 +5501,7 @@ namespace MTA.Network {
                     if (client.Entity.MapID == 601) return;
                     if (client.Map.BaseID is 6000 or 6001 or 1844 or 1801 or 8883 ||
                         client.Map.BaseID == 1005 && client.Entity.MapID != 1005 || client.Map.BaseID == 700) {
-                        client.Send(Constants.vipteleport);
+                        client.Send(GameConstants.vipteleport);
                         return;
                     }
 
@@ -5509,17 +5509,17 @@ namespace MTA.Network {
                     tele.Deserialize(packet);
                     switch (tele.TeleportType) {
                         case VIPTeleportTypes.SelfTeleport: {
-                            if (Constants.MemoryAgateNotAllowedMap.Contains(client.Map.BaseID)) {
-                                client.Send(Constants.Noteleport);
+                            if (GameConstants.MemoryAgateNotAllowedMap.Contains(client.Map.BaseID)) {
+                                client.Send(GameConstants.Noteleport);
                                 return;
                             }
 
                             if (Time32.Now > client.LastVIPTeleport.AddSeconds(1)) {
                                 client.LastVIPTeleport = Time32.Now;
                                 Teleport(client, tele.Location);
-                                if (Constants.MemoryAgateNotAllowedMap.Contains(client.Entity.MapID)) {
+                                if (GameConstants.MemoryAgateNotAllowedMap.Contains(client.Entity.MapID)) {
                                     client.Entity.PreviousTeleport();
-                                    client.Send(Constants.Noteleport);
+                                    client.Send(GameConstants.Noteleport);
                                     return;
                                 }
                             }
@@ -5532,8 +5532,8 @@ namespace MTA.Network {
                             break;
                         }
                         case VIPTeleportTypes.TeamTeleport: {
-                            if (Constants.MemoryAgateNotAllowedMap.Contains(client.Map.BaseID)) {
-                                client.Send(Constants.Noteleport);
+                            if (GameConstants.MemoryAgateNotAllowedMap.Contains(client.Map.BaseID)) {
+                                client.Send(GameConstants.Noteleport);
                                 return;
                             }
 
@@ -5553,9 +5553,9 @@ namespace MTA.Network {
                                 }
 
                                 Teleport(client, tele.Location);
-                                if (Constants.MemoryAgateNotAllowedMap.Contains(client.Entity.MapID)) {
+                                if (GameConstants.MemoryAgateNotAllowedMap.Contains(client.Entity.MapID)) {
                                     client.Entity.PreviousTeleport();
-                                    client.Send(Constants.Noteleport);
+                                    client.Send(GameConstants.Noteleport);
                                     return;
                                 }
                             }
@@ -5567,15 +5567,15 @@ namespace MTA.Network {
                             break;
                         }
                         case VIPTeleportTypes.TeammateTeleport: {
-                            if (Constants.MemoryAgateNotAllowedMap.Contains(client.Map.BaseID)) {
-                                client.Send(Constants.Noteleport);
+                            if (GameConstants.MemoryAgateNotAllowedMap.Contains(client.Map.BaseID)) {
+                                client.Send(GameConstants.Noteleport);
                                 return;
                             }
 
                             Teleport(client, tele.Location);
-                            if (Constants.MemoryAgateNotAllowedMap.Contains(client.Entity.MapID)) {
+                            if (GameConstants.MemoryAgateNotAllowedMap.Contains(client.Entity.MapID)) {
                                 client.Entity.PreviousTeleport();
-                                client.Send(Constants.Noteleport);
+                                client.Send(GameConstants.Noteleport);
                                 return;
                             }
 
@@ -5749,7 +5749,7 @@ namespace MTA.Network {
                     var SubType = BitConverter.ToUInt16(packet, 6);
                     var Fighter = BitConverter.ToUInt32(packet, 10);
                     if (Type == 0) {
-                        // if (!Constants.PKFreeMaps.Contains(client.Entity.MapID))
+                        // if (!GameConstants.PKFreeMaps.Contains(client.Entity.MapID))
                         {
                             if (Kernel.GamePool.TryGetValue(Fighter, out var client1)) {
                                 if (client1.Team != null) {
@@ -7120,7 +7120,7 @@ namespace MTA.Network {
 
                     if (Kernel.GamePool.TryGetValue(gData.dwParam, out var pClient)) {
                         if (Kernel.GetDistance(pClient.Entity.X, pClient.Entity.Y, client.Entity.X, client.Entity.Y) <=
-                            Constants.pScreenDistance && client.Map.ID == pClient.Map.ID) {
+                            GameConstants.pScreenDistance && client.Map.ID == pClient.Map.ID) {
                             if (pClient.Guild != null)
                                 pClient.Guild.SendName(client);
                             if (client.Guild != null)
@@ -7169,13 +7169,13 @@ namespace MTA.Network {
                     else {
                         if (client.Map.Entities.TryGetValue(gData.dwParam, out var monster)) {
                             if (Kernel.GetDistance(monster.X, monster.Y, client.Entity.X, client.Entity.Y) <=
-                                Constants.pScreenDistance) {
+                                GameConstants.pScreenDistance) {
                                 monster.SendSpawn(client, false);
                             }
                         }
                         //if (client.Map.Companions.TryGetValue(gData.dwParam, out monster))
                         //{
-                        //    if (Kernel.GetDistance(monster.X, monster.Y, client.Entity.X, client.Entity.Y) <= Constants.pScreenDistance)
+                        //    if (Kernel.GetDistance(monster.X, monster.Y, client.Entity.X, client.Entity.Y) <= GameConstants.pScreenDistance)
                         //    {
                         //        monster.SendSpawn(client, false);
                         //    }
@@ -7271,7 +7271,7 @@ namespace MTA.Network {
                     if (client is { Entity: { MapID: < 10000, Dead: false } } &&
                         !client.Entity.InJail() && !client.InQualifier() && !client.InTeamQualifier() &&
                         !client.IsWatching() && client.Booth == null &&
-                        !Constants.PKFreeMaps.Contains(client.Entity.MapID)) {
+                        !GameConstants.PKFreeMaps.Contains(client.Entity.MapID)) {
                         switch (packet[12]) {
                             case 1:
                                 client.Entity.Teleport(1858, 89, 92);
@@ -8275,7 +8275,7 @@ namespace MTA.Network {
 
                 var spells = client.Spells.Values.ToArray();
                 foreach (var spell in spells) {
-                    if (!Constants.AvaibleSpells.Contains(spell.ID)) {
+                    if (!GameConstants.AvaibleSpells.Contains(spell.ID)) {
                         client.RemoveSpell(spell);
                         SkillTable.DeleteSpell(client, spell.ID);
                     }
@@ -10751,8 +10751,8 @@ namespace MTA.Network {
             Writer.WriteUInt16(2051, 2, buffer);
             var test = 0;
             ushort total = 0;
-            if (broadcast.dwParam * 10 + 10 >= Constants.MaxBroadcasts)
-                test = Constants.MaxBroadcasts;
+            if (broadcast.dwParam * 10 + 10 >= GameConstants.MaxBroadcasts)
+                test = GameConstants.MaxBroadcasts;
             else
                 test = (int)broadcast.dwParam * 10 + 10;
             for (var i = broadcast.dwParam * 10; i < test; i++) {
@@ -10897,7 +10897,7 @@ namespace MTA.Network {
                             return;
                         }
 
-                        if (Constants.SoulList.Contains((int)item.Item.ID) && item.Cost < 1000000) {
+                        if (GameConstants.SoulList.Contains((int)item.Item.ID) && item.Cost < 1000000) {
                             var npc = new NpcReply(6, "you cant sell any special soul item less than 1kk cps ok?") {
                                 OptionID = 255
                             };
@@ -10905,7 +10905,7 @@ namespace MTA.Network {
                             return;
                         }
 
-                        if (Constants.SoulList.Contains((int)item.Item.Purification.PurificationItemID) &&
+                        if (GameConstants.SoulList.Contains((int)item.Item.Purification.PurificationItemID) &&
                             item.Cost < 1000000) {
                             var npc = new NpcReply(6, "you cant sell any special soul item less than 3kk cps ok?") {
                                 OptionID = 255
@@ -10914,7 +10914,7 @@ namespace MTA.Network {
                             return;
                         }
 
-                        if (Constants.SoulList.Contains((int)item.Item.Purification.PurificationItemID) &&
+                        if (GameConstants.SoulList.Contains((int)item.Item.Purification.PurificationItemID) &&
                             item.Cost_Type == Game.ConquerStructures.BoothItem.CostType.Silvers) {
                             var npc = new NpcReply(6, "you cant sell any special soul item for silver?") {
                                 OptionID = 255
@@ -10965,7 +10965,7 @@ namespace MTA.Network {
                                             Owner.Send(usage);
                                             Owner.Booth.ItemList.Remove(item.Item.UID);
                                             var infos = new ConquerItemInformation(item.Item.ID, 0);
-                                            Owner.Send(Constants.BoothItemSell(client.Entity.Name,
+                                            Owner.Send(GameConstants.BoothItemSell(client.Entity.Name,
                                                 infos.BaseInformation.Name, false, item.Cost));
                                             Program.AddVendorLog(Owner.Entity.Name, client.Entity.Name,
                                                 item.Cost.ToString() + " Silvers", item.Item);
@@ -10986,7 +10986,7 @@ namespace MTA.Network {
                                             Owner.Send(usage);
                                             Owner.Booth.ItemList.Remove(item.Item.UID);
                                             var infos = new ConquerItemInformation(item.Item.ID, 0);
-                                            Owner.Send(Constants.BoothItemSell(client.Entity.Name,
+                                            Owner.Send(GameConstants.BoothItemSell(client.Entity.Name,
                                                 infos.BaseInformation.Name, true, item.Cost));
                                             Program.AddVendorLog(Owner.Entity.Name, client.Entity.Name,
                                                 item.Cost.ToString() + " CPs", item.Item);
@@ -11492,8 +11492,8 @@ namespace MTA.Network {
             if (Kernel.GamePool.TryGetValue(trade.dwParam, out var _client)) {
                 if (_client.Trade.InTrade || client.Trade.InTrade || client.Entity.UID == trade.dwParam ||
                     Kernel.GetDistance(client.Entity.X, client.Entity.Y, _client.Entity.X, _client.Entity.Y) >
-                    Constants.pScreenDistance) {
-                    client.Send(Constants.TradeInProgress);
+                    GameConstants.pScreenDistance) {
+                    client.Send(GameConstants.TradeInProgress);
                     return;
                 }
 
@@ -11506,7 +11506,7 @@ namespace MTA.Network {
                     _client.Send(trade);
                 }
                 else {
-                    client.Send(Constants.TradeRequest);
+                    client.Send(GameConstants.TradeRequest);
                     trade.dwParam = client.Entity.UID;
                     var request = new PopupLevelBP {
                         Requester = client.Entity.UID,
@@ -11549,13 +11549,13 @@ namespace MTA.Network {
         static void AddTradeItem(Trade trade, GameState client) {
             if (client.Inventory.TryGetItem(trade.dwParam, out var item)) {
                 if (Kernel.GamePool.TryGetValue(client.Trade.TraderUID, out var _client) &&
-                    !Constants.SoulList.Contains((int)item.ID) &&
-                    !Constants.SoulList.Contains((int)item.Purification.PurificationItemID)) {
+                    !GameConstants.SoulList.Contains((int)item.ID) &&
+                    !GameConstants.SoulList.Contains((int)item.Purification.PurificationItemID)) {
                     var infos = new ConquerItemInformation(item.ID, 0);
                     if (_client.Inventory.Count + client.Trade.Items.Count >= 40 || client.Trade.Items.Count == 20) {
                         trade.Type = Trade.RemoveItem;
                         client.Send(trade);
-                        client.Send(Constants.TradeInventoryFull);
+                        client.Send(GameConstants.TradeInventoryFull);
                         return;
                     }
 
@@ -12814,7 +12814,7 @@ namespace MTA.Network {
                         }
                     }
 
-                    client.Send(Constants.Enchant(Item.Enchant, Enchant));
+                    client.Send(GameConstants.Enchant(Item.Enchant, Enchant));
                     if (Enchant > Item.Enchant) {
                         Item.Enchant = Enchant;
                         Item.Mode = Enums.ItemMode.Update;
@@ -12915,7 +12915,7 @@ namespace MTA.Network {
                     }
                 }
 
-                client.Send(Constants.FloorItemNotAvailable);
+                client.Send(GameConstants.FloorItemNotAvailable);
                 return;
             }
 
@@ -12932,7 +12932,7 @@ namespace MTA.Network {
             switch (floorItem.ValueType) {
                 case FloorItem.FloorValueType.Item:
                     if (client.Inventory.Count > 0x27) {
-                        client.Send(Constants.FullInventory);
+                        client.Send(GameConstants.FullInventory);
                         return;
                     }
 
@@ -12942,7 +12942,7 @@ namespace MTA.Network {
                     client.Map.RemoveFloorItem(floorItem);
                     if (ConquerItemInformation.BaseInformations.ContainsKey(floorItem.Item.ID))
                         client.Send(
-                            Constants.PickupItem(ConquerItemInformation.BaseInformations[floorItem.Item.ID].Name));
+                            GameConstants.PickupItem(ConquerItemInformation.BaseInformations[floorItem.Item.ID].Name));
                     foreach (var state in Kernel.GamePool.Values) {
                         state.Screen.Remove(floorItem);
                     }
@@ -12992,7 +12992,7 @@ namespace MTA.Network {
                     return;
 
                 case FloorItem.FloorValueType.Money:
-                    client.Send(Constants.PickupGold(floorItem.Value));
+                    client.Send(GameConstants.PickupGold(floorItem.Value));
                     client.SendScreen(item, false);
                     client.Entity.Money += floorItem.Value;
                     floorItem.Type = 2;
@@ -13000,7 +13000,7 @@ namespace MTA.Network {
                     return;
 
                 case FloorItem.FloorValueType.ConquerPoints:
-                    client.Send(Constants.PickupConquerPoints(floorItem.Value));
+                    client.Send(GameConstants.PickupConquerPoints(floorItem.Value));
                     client.SendScreen(item, false);
                     client.Entity.ConquerPoints += floorItem.Value; // Math.Min(floorItem.Value, 300);
                     floorItem.Type = 2;
@@ -13680,12 +13680,12 @@ namespace MTA.Network {
                 item.SocketProgress += 5;
             ushort need = 0;
             if (item is { SocketOne: Enums.Gem.NoSocket, SocketTwo: Enums.Gem.NoSocket })
-                need = Constants.SocketOneProgress;
+                need = GameConstants.SocketOneProgress;
             else if (item.SocketOne != Enums.Gem.NoSocket && item.SocketTwo == Enums.Gem.NoSocket)
-                need = Constants.SocketTwoProgress;
+                need = GameConstants.SocketTwoProgress;
             if (item.SocketProgress >= need && need != 0) {
                 item.SocketProgress -= need;
-                if (need == Constants.SocketOneProgress)
+                if (need == GameConstants.SocketOneProgress)
                     item.SocketOne = Enums.Gem.EmptySocket;
                 else
                     item.SocketTwo = Enums.Gem.EmptySocket;
@@ -18233,7 +18233,7 @@ namespace MTA.Network {
                 client.Entity.Teleport(1002, 303, 278);
             if (client.Map.BaseID == 1005 && client.Entity.MapID != 1005)
                 client.Entity.Teleport(1002, 303, 278);
-            if (Constants.FBandSSEvent.Contains(client.Entity.MapID)) //FB and SS only! 
+            if (GameConstants.FBandSSEvent.Contains(client.Entity.MapID)) //FB and SS only! 
                 client.Entity.Teleport(1002, 303, 278);
             if (client.Map.BaseID == 1844 || client.Entity.MapID is 1950 or 7777 or 1090 or 4021 or 4022 or 4023 or 4024
                     or 4025 or 1508 or 1518 or 7001 or 1801 or 2065 or 8883 or 2057 or 1458 or 1459 or 1460 or 3033

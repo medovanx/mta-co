@@ -1,4 +1,5 @@
 ﻿using System;
+using MTA.Game.Constants;
 using MTA.Network.GamePackets;
 
 namespace MTA.Game.Features.Flowers
@@ -37,7 +38,7 @@ namespace MTA.Game.Features.Flowers
                 }
                 else
                 {
-                    Caller.Send(Constants.OneFlowerADay);
+                    Caller.Send(GameConstants.OneFlowerADay);
                 }
             }
             else

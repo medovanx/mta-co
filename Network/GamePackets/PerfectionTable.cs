@@ -8,6 +8,7 @@ using System.Linq;
 using MTA.Client;
 using MTA.Database;
 using MTA.Game;
+using MTA.Game.Constants;
 using MySql.Data.MySqlClient;
 using ProtoBuf;
 using MySqlCommand = MTA.Database.MySqlCommand;
@@ -19,10 +20,10 @@ namespace MTA.Network.GamePackets {
         public static Dictionary<uint, A> AbilitiesList = new Dictionary<uint, A>();
         public static Dictionary<uint, St> Garments = new Dictionary<uint, St>();
         public static Dictionary<uint, St> Mounts = new Dictionary<uint, St>();
-        public static string Cost = Constants.ItemRefineCostPath;
-        public static string Upgrade = Constants.ItemRefineUpgradePath;
-        public static string Ability = Constants.AbilityScorePath;
-        public static string Storage = Constants.CoatStorageTypePath;
+        public static string Cost = GameConstants.ItemRefineCostPath;
+        public static string Upgrade = GameConstants.ItemRefineUpgradePath;
+        public static string Ability = GameConstants.AbilityScorePath;
+        public static string Storage = GameConstants.CoatStorageTypePath;
 
         public static uint AmountStarGarments(GameState client, byte Star) {
             uint Count = 0;

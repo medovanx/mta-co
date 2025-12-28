@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using MTA.Database;
+using MTA.Game.Constants;
 using MTA.Network;
 using MTA.Network.GamePackets;
 
@@ -148,8 +149,8 @@ namespace MTA.Game {
                 PoleKeeper.wins++;
                 Kernel.SendWorldMessage(
                     new Message(
-                        "حرب عبر السيرفيرات, " + PoleKeeper.Name + ", فاز بمرات " + PoleKeeper.wins +
-                        " وقد فاز هذا حرب عبر السيرفيرات جولة الحرب!", Color.Red, Message.Center), Program.Values);
+                        "??? ??? ??????????, " + PoleKeeper.Name + ", ??? ????? " + PoleKeeper.wins +
+                        " ??? ??? ??? ??? ??? ?????????? ???? ?????!", Color.Red, Message.Center), Program.Values);
             }
 
             Pole.Hitpoints = Pole.MaxHitpoints;
@@ -208,27 +209,27 @@ namespace MTA.Game {
         public static string GetCountry(uint ID) {
             string Country = "";
             switch (ID) {
-                case 0: Country = "قهر"; break;
-                case 1: Country = "مصر"; break;
-                case 2: Country = "سعودية"; break;
-                case 3: Country = "امارات"; break;
-                case 4: Country = "الأردن"; break;
-                case 5: Country = "الجزائر"; break;
-                case 6: Country = "الكويت"; break;
-                case 7: Country = "قطر"; break;
-                case 8: Country = "عمان"; break;
-                case 9: Country = "لبنان"; break;
-                case 10: Country = "اليمن"; break;
-                case 11: Country = "ليبيا"; break;
-                case 12: Country = "العراق"; break;
-                case 13: Country = "فلسطين"; break;
-                case 14: Country = "سودان"; break;
-                case 15: Country = "سوريا"; break;
-                case 16: Country = "المغرب"; break;
-                case 17: Country = "تونس"; break;
-                case 18: Country = "مورتانيا"; break;
-                case 19: Country = "البحرين"; break;
-                case 20: Country = "قهر"; break;
+                case 0: Country = "???"; break;
+                case 1: Country = "???"; break;
+                case 2: Country = "??????"; break;
+                case 3: Country = "??????"; break;
+                case 4: Country = "??????"; break;
+                case 5: Country = "???????"; break;
+                case 6: Country = "??????"; break;
+                case 7: Country = "???"; break;
+                case 8: Country = "????"; break;
+                case 9: Country = "?????"; break;
+                case 10: Country = "?????"; break;
+                case 11: Country = "?????"; break;
+                case 12: Country = "??????"; break;
+                case 13: Country = "??????"; break;
+                case 14: Country = "?????"; break;
+                case 15: Country = "?????"; break;
+                case 16: Country = "??????"; break;
+                case 17: Country = "????"; break;
+                case 18: Country = "????????"; break;
+                case 19: Country = "???????"; break;
+                case 20: Country = "???"; break;
             }
 
             return Country;
@@ -272,7 +273,7 @@ namespace MTA.Game {
 
                         Writer.WriteUInt32(b + 1, offset, data);
                         offset += 2;
-                        Writer.WriteString(Constants.ServerName, offset, data);
+                        Writer.WriteString(GameConstants.ServerName, offset, data);
                         offset += 16;
                         Writer.WriteString(array[(int)b].Name, offset, data);
                         offset += 36;

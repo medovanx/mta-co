@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Linq;
+using MTA.Game.Constants;
 
 namespace MTA.Database {
     public class Flowers {
         public static void SaveFlowers() {
-            using (Write write = new Write(Constants.FlowersPath)) {
+            using (Write write = new Write(GameConstants.FlowersPath)) {
                 Game.Features.Flowers.Flowers[] array = Game.Features.Flowers.Flowers.Flowers_Poll.Values
                     .ToArray<Game.Features.Flowers.Flowers>();
                 uint count = (uint)Game.Features.Flowers.Flowers.Flowers_Poll.Count;
@@ -16,7 +17,7 @@ namespace MTA.Database {
                 write.Add(array2, array2.Length).Execute(Mode.Open);
             }
 
-            using (Write write2 = new Write(Constants.BoyFlowersPath)) {
+            using (Write write2 = new Write(GameConstants.BoyFlowersPath)) {
                 Game.Features.Flowers.Flowers[] array3 = Game.Features.Flowers.Flowers.BoyFlowers.Values
                     .ToArray<Game.Features.Flowers.Flowers>();
                 uint count2 = (uint)Game.Features.Flowers.Flowers.BoyFlowers.Count;
@@ -30,7 +31,7 @@ namespace MTA.Database {
         }
 
         public static void LoadFlowers() {
-            using (Read read = new Read(Constants.FlowersPath)) {
+            using (Read read = new Read(GameConstants.FlowersPath)) {
                 if (read.Reader()) {
                     int count = read.Count;
                     uint num = 0u;
@@ -57,7 +58,7 @@ namespace MTA.Database {
                 }
             }
 
-            using (Read read2 = new Read(Constants.BoyFlowersPath)) {
+            using (Read read2 = new Read(GameConstants.BoyFlowersPath)) {
                 if (read2.Reader()) {
                     int count2 = read2.Count;
                     uint num2 = 0u;

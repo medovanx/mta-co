@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using MTA.Game.Constants;
 
 namespace MTA.Database
 {
@@ -15,7 +16,7 @@ namespace MTA.Database
 
         public static void Load()
         {
-            string[] data = File.ReadAllLines(Constants.SoulGearInformation);
+            string[] data = File.ReadAllLines(GameConstants.SoulGearInformation);
             foreach (var line in data)
             {
                 string[] datas = line.Split([" "], StringSplitOptions.RemoveEmptyEntries);

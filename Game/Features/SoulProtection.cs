@@ -1,14 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using MTA.Network;
+using MTA.Game.Constants;
 
 namespace MTA.MaTrix {
     public class SoulProtection {
         public static SafeDictionary<uint, SOulInfo> Soul_Protections = new SafeDictionary<uint, SOulInfo>();
 
         public static void Load() {
-            string[] lines = File.ReadAllLines(Constants.SoulProtectionPath);
+            string[] lines = File.ReadAllLines(GameConstants.SoulProtectionPath);
             foreach (var item in lines) {
                 try {
                     var coloums = item.Split([" "], StringSplitOptions.RemoveEmptyEntries);

@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
+using MTA.Game.Constants;
 
 namespace MTA.Database
 {
@@ -19,7 +20,7 @@ namespace MTA.Database
         }
         public static void Load()
         {
-            string[] text = File.ReadAllLines(Constants.RaceShopPath);
+            string[] text = File.ReadAllLines(GameConstants.RaceShopPath);
             Shop = new RacePointShopBase();
             Shop.Items = new Dictionary<uint, RacePointItem>();
             for (int x = 0; x < text.Length; x++)

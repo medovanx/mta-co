@@ -27,7 +27,7 @@ using MTA.Network.GamePackets;
 using MTA.Network.Sockets;
 using MTA.ServerBase;
 using MTA.WebServer;
-using static MTA.Constants;
+using static MTA.Game.Constants.GameConstants;
 using Message = MTA.Network.GamePackets.Message;
 using Screen = MTA.Game.Screen;
 using Trade = MTA.Game.ConquerStructures.Trade;

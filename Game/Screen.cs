@@ -8,6 +8,7 @@ using MTA.Database;
 using MTA.Game.Attacking;
 using MTA.Game.ConquerStructures;
 using MTA.Game.ConquerStructures.House;
+using MTA.Game.Constants;
 using MTA.Interfaces;
 using MTA.MaTrix;
 using MTA.Network.GamePackets;
@@ -339,7 +340,7 @@ namespace MTA.Game {
                                 //            item.UID = client.Entity.UID;
                                 //            item.X = client.Entity.X;
                                 //            item.Y = client.Entity.Y;
-                                //            //  client.Send(Constants.PickupGold(floorItem.Value));
+                                //            //  client.Send(GameConstants.PickupGold(floorItem.Value));
                                 //            monster.MonsterInfo.SendScreen(item);
                                 //            flooritem.Type = 2;
                                 //            client.RemoveScreenSpawn(flooritem, true);
@@ -423,7 +424,7 @@ namespace MTA.Game {
                                         client.Entity.AzureShieldPacket();
 
                                         if (client.Entity.EntityFlag == EntityFlag.Player)
-                                            client.Send(Constants.Shield(12000, client.Entity.MagicShieldTime));
+                                            client.Send(GameConstants.Shield(12000, client.Entity.MagicShieldTime));
                                     }
                                     else {
                                         use = new SpellUse(true);
@@ -438,7 +439,7 @@ namespace MTA.Game {
                                         client.Entity.NoDrugsStamp = Time32.Now;
                                         client.Entity.NoDrugsTime = 60;
                                         if (client.Entity.EntityFlag == EntityFlag.Player)
-                                            client.Send(Constants.NoDrugs(60));
+                                            client.Send(GameConstants.NoDrugs(60));
                                     }
                                 }
                                 else {
@@ -465,7 +466,7 @@ namespace MTA.Game {
                                         client.Entity.Owner.Send(upgrade.ToArray());
 
                                         if (client.Entity.EntityFlag == EntityFlag.Player)
-                                            client.Send(Constants.Shackled(client.Entity.ShackleTime));
+                                            client.Send(GameConstants.Shackled(client.Entity.ShackleTime));
                                     }
                                 }
                             }
@@ -489,7 +490,7 @@ namespace MTA.Game {
                         }
 
                         short distance = Kernel.GetDistance(monster.X, monster.Y, client.Entity.X, client.Entity.Y);
-                        if (distance > Constants.pScreenDistance) {
+                        if (distance > GameConstants.pScreenDistance) {
                             client.Screen.Remove(obj);
                             continue;
                         }
@@ -499,7 +500,7 @@ namespace MTA.Game {
                                 GameState cl;
                                 if (Kernel.GamePool.TryGetValue(monster.MonsterInfo.InSight, out cl)) {
                                     short dst = Kernel.GetDistance(monster.X, monster.Y, cl.Entity.X, cl.Entity.Y);
-                                    if (dst > Constants.pScreenDistance)
+                                    if (dst > GameConstants.pScreenDistance)
                                         monster.MonsterInfo.InSight = 0;
                                 }
                                 else
@@ -511,7 +512,7 @@ namespace MTA.Game {
                             //    if (companion != null)
                             //    {
                             //        short dst = Kernel.GetDistance(monster.X, monster.Y, companion.X, companion.Y);
-                            //        if (dst > Constants.pScreenDistance)
+                            //        if (dst > GameConstants.pScreenDistance)
                             //            monster.MonsterInfo.InSight = 0;
                             //    }
                             //    else
@@ -520,7 +521,7 @@ namespace MTA.Game {
                         }
 
                         if (Now >= monster.MonsterInfo.LastMove.AddMilliseconds(monster.MonsterInfo.MinimumSpeed)) {
-                            if (distance <= Constants.pScreenDistance) {
+                            if (distance <= GameConstants.pScreenDistance) {
                                 #region Companions
 
                                 foreach (var pet in client.Pet.Pets.Values) {
@@ -538,7 +539,7 @@ namespace MTA.Game {
                                                 }
                                                 else {
                                                     if (monster.MonsterInfo.InSight == pet.Entity.UID) {
-                                                        if (distance2 > Constants.pScreenDistance) {
+                                                        if (distance2 > GameConstants.pScreenDistance) {
                                                             monster.MonsterInfo.InSight = 0;
                                                         }
                                                         else {
@@ -557,7 +558,7 @@ namespace MTA.Game {
                                                             }
                                                             else {
                                                                 if (distance2 > monster.MonsterInfo.ViewRange / 2) {
-                                                                    if (distance2 < Constants.pScreenDistance) {
+                                                                    if (distance2 < GameConstants.pScreenDistance) {
                                                                         if (Now >= monster.MonsterInfo.LastMove
                                                                                 .AddMilliseconds(monster.MonsterInfo
                                                                                     .RunSpeed)) {
@@ -669,7 +670,7 @@ namespace MTA.Game {
                                             return;
                                         }
 
-                                        if (distance > Constants.pScreenDistance) {
+                                        if (distance > GameConstants.pScreenDistance) {
                                             monster.MonsterInfo.InSight = 0;
                                         }
                                         else {
@@ -729,7 +730,7 @@ namespace MTA.Game {
                                             }
                                             else {
                                                 if (distance > monster.MonsterInfo.ViewRange / 2) {
-                                                    if (distance < Constants.pScreenDistance) {
+                                                    if (distance < GameConstants.pScreenDistance) {
                                                         if (Now >= monster.MonsterInfo.LastMove.AddMilliseconds(
                                                                 monster.MonsterInfo.RunSpeed)) {
                                                             monster.MonsterInfo.LastMove = Time32.Now;
@@ -1081,7 +1082,7 @@ namespace MTA.Game {
 
             if (!_objectDictionary.ContainsKey(_object.UID)) {
                 if (Kernel.GetDistance(_object.X, _object.Y, Owner.Entity.X, Owner.Entity.Y) <=
-                    Constants.pScreenDistance) {
+                    GameConstants.pScreenDistance) {
                     _objectDictionary[_object.UID] = _object;
                     updateBase();
                     return true;
@@ -1241,7 +1242,7 @@ namespace MTA.Game {
                         }
 
                         if (Kernel.GetDistance(Owner.Entity.X, Owner.Entity.Y, Base.X, Base.Y) >=
-                            Constants.remScreenDistance)
+                            GameConstants.remScreenDistance)
                             remove = true;
                         if (remove) {
                             if ((Base as Entity).MonsterInfo.InSight == Owner.Entity.UID)
@@ -1250,7 +1251,7 @@ namespace MTA.Game {
                     }
                     else if (Base.MapObjType == MapObjectType.Player) {
                         if (remove = (Kernel.GetDistance(Owner.Entity.X, Owner.Entity.Y, Base.X, Base.Y) >=
-                                      Constants.pScreenDistance)) {
+                                      GameConstants.pScreenDistance)) {
                             GameState pPlayer = Base.Owner as GameState;
                             pPlayer.Screen.Remove(Owner.Entity);
                         }
@@ -1260,7 +1261,7 @@ namespace MTA.Game {
                     }
                     else {
                         remove = (Kernel.GetDistance(Owner.Entity.X, Owner.Entity.Y, Base.X, Base.Y) >=
-                                  Constants.remScreenDistance);
+                                  GameConstants.remScreenDistance);
                     }
 
                     if (Base.MapID != Owner.Map.ID)
@@ -1375,7 +1376,7 @@ namespace MTA.Game {
                             item.SendSpawn(Owner, false);
                     }
                     else {
-                        if ((Time32.Now > item.OnFloor.AddSeconds(Constants.FloorItemSeconds)) ||
+                        if ((Time32.Now > item.OnFloor.AddSeconds(GameConstants.FloorItemSeconds)) ||
                             item.PickedUpAlready) {
                             item.Type = FloorItem.Remove;
                             Map.RemoveFloorItem(item);
@@ -1408,7 +1409,7 @@ namespace MTA.Game {
                 if (Owner.Map.ID == Roulettes.RouletteTable.MapID) {
                     foreach (var R in Roulettes.RoulettesPoll.Values) {
                         if (Kernel.GetDistance(R.SpawnPacket.X, R.SpawnPacket.Y, Owner.Entity.X, Owner.Entity.Y) <=
-                            Constants.nScreenDistance && !Contains(R.SpawnPacket.UID)) {
+                            GameConstants.nScreenDistance && !Contains(R.SpawnPacket.UID)) {
                             Owner.Send(R.SpawnPacket);
                         }
                     }
@@ -1484,7 +1485,7 @@ namespace MTA.Game {
                         if (pClient.Map.ID == Owner.Map.ID) {
                             short dist = Kernel.GetDistance(pClient.Entity.X, pClient.Entity.Y, Owner.Entity.X,
                                 Owner.Entity.Y);
-                            if (dist <= Constants.pScreenDistance && !Contains(pClient.Entity)) {
+                            if (dist <= GameConstants.pScreenDistance && !Contains(pClient.Entity)) {
                                 if (pClient.Guild != null)
                                     pClient.Guild.SendName(Owner);
 

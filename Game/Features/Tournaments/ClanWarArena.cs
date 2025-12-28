@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using System.Collections.Generic;
+using MTA.Game.Constants;
 using MTA.Network.GamePackets;
 
 namespace MTA.Game
@@ -206,7 +207,7 @@ namespace MTA.Game
         }
         public static void Save()
         {
-            using (Database.Write _wr = new Database.Write(Constants.ClanWarPath))
+            using (Database.Write _wr = new Database.Write(GameConstants.ClanWarPath))
             {
                 string[] items = new string[(byte)ClanArena.Count];
                 for (byte x = 0; x < Tournaments.Length; x++)
@@ -216,7 +217,7 @@ namespace MTA.Game
         }
         public static void Load()
         {
-            using (Database.Read r = new Database.Read(Constants.ClanWarPath))
+            using (Database.Read r = new Database.Read(GameConstants.ClanWarPath))
             {
                 if (r.Reader())
                 {
@@ -242,8 +243,8 @@ namespace MTA.Game
             public ClanArena Map;
             public ClanTournament(ClanArena map)
             {
-                if (!Constants.PKFreeMaps.Contains(GetMap(map)))
-                    Constants.PKFreeMaps.Add(GetMap(map));
+                if (!GameConstants.PKFreeMaps.Contains(GetMap(map)))
+                    GameConstants.PKFreeMaps.Add(GetMap(map));
                 Map = map;
                 Client = new ClientWar();
                 Client.DominationMap = Client.CurentMap = Map.ToString();

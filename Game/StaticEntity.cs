@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using MTA.Network;
 using MTA.Network.GamePackets;
 using MTA.Client;
+using MTA.Game.Constants;
 
 namespace MTA.Game
 {
@@ -148,7 +149,7 @@ namespace MTA.Game
                 if (pClient == null) continue;
                 if (!pClient.Socket.Alive) continue;
                 if (pClient.Entity.MapID != MapID) continue;
-                if (Kernel.GetDistance(pClient.Entity.X, pClient.Entity.Y, X, Y) > Constants.pScreenDistance) continue;
+                if (Kernel.GetDistance(pClient.Entity.X, pClient.Entity.Y, X, Y) > GameConstants.pScreenDistance) continue;
                 pClient.Send(packet);
             }
         }

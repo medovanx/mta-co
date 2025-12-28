@@ -6,6 +6,7 @@ using MTA.Database;
 using MTA.Game;
 using MTA.Game.ConquerStructures;
 using MTA.Client;
+using MTA.Game.Constants;
 
 namespace MTA.TransferServer
 {
@@ -119,7 +120,7 @@ namespace MTA.TransferServer
                                         fClient.FakeLoad(uid, false);
                                         fClient.Account = account;
                                     }
-                                    byte[] CreateTransfer = new Transfer(fClient, Constants.ServerName).GetArray();
+                                    byte[] CreateTransfer = new Transfer(fClient, GameConstants.ServerName).GetArray();
                                     Send(CreateTransfer, server);
                                 }
                             }

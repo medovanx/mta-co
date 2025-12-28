@@ -12,6 +12,7 @@ using MTA.Client;
 using MTA.Network.GamePackets;
 using System.Collections.Concurrent;
 using System.Drawing;
+using MTA.Game.Constants;
 using MTA.Network;
 
 namespace MTA.Game
@@ -845,7 +846,7 @@ namespace MTA.Game
                         if (client.Entity.MapID is >= 1090 and <= 1094) return false;
                         if (client.Entity.MapID is >= 1505 and <= 1509) return false;
                         if (client.Entity.ContainsFlag2(Update.Flags2.SoulShackle)) return false;
-                        if (!Constants.PKFreeMaps.Contains(client.Map.ID) || client.Map.ID == 1005)
+                        if (!GameConstants.PKFreeMaps.Contains(client.Map.ID) || client.Map.ID == 1005)
                             if (client.ArenaState == FindMatch)
                                 return true;
                     }

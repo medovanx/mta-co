@@ -1,7 +1,6 @@
 using MTA.Client;
 using MTA.Game.Npcs;
 using MTA.Network.GamePackets;
-using static MTA.Game.MapConstants;
 
 namespace MTA.Game.Events.DizzyLand;
 

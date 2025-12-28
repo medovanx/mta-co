@@ -12,6 +12,7 @@ using MTA.Client;
 using MTA.Network.GamePackets;
 using System.Collections.Concurrent;
 using System.Drawing;
+using MTA.Game.Constants;
 
 namespace MTA.Game
 {
@@ -1241,7 +1242,7 @@ namespace MTA.Game
                         if (client.Entity.MapID is >= 1090 and <= 1094) return false;
                         if (client.Entity.MapID is >= 1505 and <= 1509) return false;
                         if (client.Entity.ContainsFlag2(Update.Flags2.SoulShackle)) return false;
-                        if (client.Map.ID == 1002 || client.Map.ID == 1005 || !Constants.PKFreeMaps.Contains(client.Map.ID))
+                        if (client.Map.ID == 1002 || client.Map.ID == 1005 || !GameConstants.PKFreeMaps.Contains(client.Map.ID))
                             if (client.ArenaStatistic.Status == ArenaStatistic.WaitingForOpponent)
                                 return true;
                     }

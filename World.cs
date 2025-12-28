@@ -1,4 +1,4 @@
-﻿using MTA.Game;
+using MTA.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +10,7 @@ using MTA.Game.ConquerStructures;
 using MTA.Client;
 using System.Drawing;
 using MTA.Franko;
+using MTA.Game.Constants;
 using MTA.Game.Features.Tournaments;
 using MTA.Game.Npcs.ScriptEngine;
 using MTA.Network.GamePackets.EventAlert;
@@ -2949,19 +2950,19 @@ namespace MTA {
 
             Program.Values = Kernel.GamePool.Values.ToArray();
 
-            Console.Title = Constants.ServerName + " - Online : " + Kernel.GamePool.Count + "/" + Program.PlayerCap;
+            Console.Title = GameConstants.ServerName + " - Online : " + Kernel.GamePool.Count + "/" + Program.PlayerCap;
 
             if (Kernel.GamePool.Count > Program.MaxOn) {
                 Program.MaxOn = Kernel.GamePool.Count;
             }
 
-            Console.Title = Constants.ServerName + " - Online : " + Kernel.GamePool.Count + "/" + Program.PlayerCap +
+            Console.Title = GameConstants.ServerName + " - Online : " + Kernel.GamePool.Count + "/" + Program.PlayerCap +
                             " (Peak: " + Program.MaxOn + ")";
-            if (Constants.ServerName != null)
+            if (GameConstants.ServerName != null)
                 new Database.MySqlCommand(Database.MySqlCommandType.UPDATE).Update("configuration")
                     .Set("GuildID", Game.ConquerStructures.Society.Guild.GuildCounter.Now)
                     .Set("MaxOnline", Program.MaxOn).Set("ItemUID", Program.NextItemId)
-                    .Where("Server", Constants.ServerName).Execute();
+                    .Where("Server", GameConstants.ServerName).Execute();
             if (Program.Vars != null) Database.EntityVariableTable.Save(0, Program.Vars);
             if (Kernel.BlackSpoted.Values.Count > 0) {
                 foreach (var spot in Kernel.BlackSpoted.Values) {

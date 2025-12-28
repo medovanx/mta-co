@@ -12,7 +12,7 @@ using MTA.Game;
 using MTA.Game.Attacking;
 using MTA.Game.ConquerStructures;
 using MTA.Game.ConquerStructures.House;
-using MTA.Game.Events;
+using MTA.Game.Constants;
 using MTA.Game.Features;
 using MTA.Game.Features.Tournaments;
 using MTA.Game.Npcs;
@@ -206,7 +206,7 @@ namespace MTA {
 
         public static void GetDialog(NpcRequest npcRequest, GameState client) {
             if (AvatarLinker == null)
-                AvatarLinker = new IniFile(Constants.NpcPath);
+                AvatarLinker = new IniFile(GameConstants.NpcPath);
             //Console.WriteLine("[" + client.Entity.Name + "][NPC] " + npcRequest.NpcID + " : " + npcRequest.OptionID);
 
             Npcs dialog = new Npcs(client);
@@ -544,8 +544,8 @@ namespace MTA {
                                         dialog.Send();
                                     }
                                     else {
-                                        if (!Constants.PKFreeMaps.Contains(700))
-                                            Constants.PKFreeMaps.Add(700);
+                                        if (!GameConstants.PKFreeMaps.Contains(700))
+                                            GameConstants.PKFreeMaps.Add(700);
                                         Challenge.Create(client, player);
                                         if (client.Challenge == null) {
                                             dialog.Text("You need to set a warehouse password first.");
@@ -1144,7 +1144,7 @@ namespace MTA {
                                 case 100: {
                                     client.Entity.AddFlag(Update.Flags.FlashingName);
                                     client.Entity.FlashingNameStamp = Time32.Now.AddSeconds(30);
-                                    client.Send(Constants.Warrent);
+                                    client.Send(GameConstants.Warrent);
                                     dialog.Text("Guards! HELP! " + client.Entity.Name + " is trying to kill me!!");
                                     dialog.Option("I'll get you!", 255);
                                     dialog.Send();
@@ -4000,7 +4000,7 @@ namespace MTA {
                                         return;
                                     }
 
-                                    if (Constants.MaxItems.Contains((int)item.ID)) {
+                                    if (GameConstants.MaxItems.Contains((int)item.ID)) {
                                         dialog.Text("This item's level cannot be upgraded anymore.");
                                         dialog.Option("Ahh sorry.", 255);
                                         dialog.Send();
@@ -4101,7 +4101,7 @@ namespace MTA {
                                                 return;
                                             }
 
-                                            if (Constants.MaxItems.Contains((int)item.ID)) {
+                                            if (GameConstants.MaxItems.Contains((int)item.ID)) {
                                                 dialog.Text("This item's level cannot be upgraded anymore.");
                                                 dialog.Option("Ahh sorry.", 255);
                                                 dialog.Send();
@@ -4223,7 +4223,7 @@ namespace MTA {
                                                 return;
                                             }
 
-                                            if (Constants.MaxItems.Contains((int)item.ID)) {
+                                            if (GameConstants.MaxItems.Contains((int)item.ID)) {
                                                 dialog.Text("This item's level cannot be upgraded anymore.");
                                                 dialog.Option("Ahh sorry.", 255);
                                                 dialog.Send();
@@ -4356,7 +4356,7 @@ namespace MTA {
                                         return;
                                     }
 
-                                    if (Constants.MaxItems.Contains((int)item.ID)) {
+                                    if (GameConstants.MaxItems.Contains((int)item.ID)) {
                                         dialog.Text("This item's level cannot be upgraded anymore.");
                                         dialog.Option("Ahh sorry.", 255);
                                         dialog.Send();
@@ -28054,7 +28054,7 @@ namespace MTA {
                                     quest.Mob = "";
                                 }
                                 else {
-                                    client.Send(Constants.FullInventory);
+                                    client.Send(GameConstants.FullInventory);
                                     return;
                                 }
 

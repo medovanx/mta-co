@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using MTA.Game.Constants;
 
 namespace MTA.Database
 {
@@ -9,7 +10,7 @@ namespace MTA.Database
 
         public static void LoadTables()
         {
-            string[] TDs = System.IO.File.ReadAllLines(Constants.PokerTablesPath);
+            string[] TDs = System.IO.File.ReadAllLines(GameConstants.PokerTablesPath);
             foreach (string Tinfo in TDs)
             {
                 string[] line = Tinfo.Split(',');

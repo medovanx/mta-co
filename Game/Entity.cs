@@ -8,6 +8,7 @@ using MTA.Interfaces;
 using MTA.Database;
 using System.Collections.Concurrent;
 using MTA.Client;
+using MTA.Game.Constants;
 
 namespace MTA.Game {
     public class Entity : Writer, IBaseEntity, IMapObject {
@@ -2159,7 +2160,7 @@ namespace MTA.Game {
                 }
             }
             else if (isAway && Away == 0) {
-                if (!Constants.PKFreeMaps.Contains(MapID)) {
+                if (!GameConstants.PKFreeMaps.Contains(MapID)) {
                     if (!(MapID == 1036 || Owner.Mining) || Owner.Booth != null) {
                         PreviousMapID = MapID;
                         PrevX = X;
@@ -3089,63 +3090,63 @@ namespace MTA.Game {
         }
 
         public static Vector GetBorderCoords(ushort old_x, ushort old_y, ushort Target_x, ushort Target_y) {
-            double Θ = GetAngle(old_x, old_y, Target_x, Target_y);
+            double T = GetAngle(old_x, old_y, Target_x, Target_y);
             double w, h;
             Vector v = new Vector();
             byte quadrant = 1;
-            if (Θ < 0)
-                Θ += 360;
-            else if (Θ == 360)
-                Θ = 0;
-            while (Θ >= 90) {
-                Θ -= 90;
+            if (T < 0)
+                T += 360;
+            else if (T == 360)
+                T = 0;
+            while (T >= 90) {
+                T -= 90;
                 quadrant++;
             }
 
             double screendistance = ScreenDistance;
             if (quadrant == 1) {
-                screendistance = ScreenDistance / (Math.Cos(Θ * Math.PI / 180));
+                screendistance = ScreenDistance / (Math.Cos(T * Math.PI / 180));
                 if (screendistance > 25)
-                    screendistance = ScreenDistance / (Math.Sin(Θ * Math.PI / 180));
-                else if (Θ != 0)
+                    screendistance = ScreenDistance / (Math.Sin(T * Math.PI / 180));
+                else if (T != 0)
                     v.Y++;
-                h = screendistance * (Math.Sin(Θ * Math.PI / 180));
-                w = screendistance * (Math.Cos(Θ * Math.PI / 180));
+                h = screendistance * (Math.Sin(T * Math.PI / 180));
+                w = screendistance * (Math.Cos(T * Math.PI / 180));
                 v.X += (ushort)(Target_x + Math.Round(w));
-                if (Θ == 90)
+                if (T == 90)
                     v.Y += (ushort)(Target_y - Math.Round(h));
                 else
                     v.Y += (ushort)(Target_y + Math.Round(h));
             }
             else if (quadrant == 2) {
-                screendistance = ScreenDistance / (Math.Cos(Θ * Math.PI / 180));
+                screendistance = ScreenDistance / (Math.Cos(T * Math.PI / 180));
                 if (screendistance > 25) {
-                    screendistance = ScreenDistance / (Math.Sin(Θ * Math.PI / 180));
+                    screendistance = ScreenDistance / (Math.Sin(T * Math.PI / 180));
                     v.Y++;
                 }
 
-                w = screendistance * (Math.Sin(Θ * Math.PI / 180));
-                h = screendistance * (Math.Cos(Θ * Math.PI / 180));
+                w = screendistance * (Math.Sin(T * Math.PI / 180));
+                h = screendistance * (Math.Cos(T * Math.PI / 180));
                 v.X += (ushort)(Target_x - w);
                 v.Y += (ushort)(Target_y + h);
             }
             else if (quadrant == 3) {
-                screendistance = ScreenDistance / (Math.Cos(Θ * Math.PI / 180));
+                screendistance = ScreenDistance / (Math.Cos(T * Math.PI / 180));
                 if (screendistance > 25)
-                    screendistance = ScreenDistance / (Math.Sin(Θ * Math.PI / 180));
-                h = screendistance * (Math.Sin(Θ * Math.PI / 180));
-                w = screendistance * (Math.Cos(Θ * Math.PI / 180));
+                    screendistance = ScreenDistance / (Math.Sin(T * Math.PI / 180));
+                h = screendistance * (Math.Sin(T * Math.PI / 180));
+                w = screendistance * (Math.Cos(T * Math.PI / 180));
                 v.X += (ushort)(Target_x - w);
                 v.Y += (ushort)(Target_y - h);
             }
             else if (quadrant == 4) {
-                screendistance = ScreenDistance / (Math.Cos(Θ * Math.PI / 180));
+                screendistance = ScreenDistance / (Math.Cos(T * Math.PI / 180));
                 if (screendistance > 25)
-                    screendistance = ScreenDistance / (Math.Sin(Θ * Math.PI / 180));
-                else if (Θ > 0)
+                    screendistance = ScreenDistance / (Math.Sin(T * Math.PI / 180));
+                else if (T > 0)
                     v.X++;
-                w = screendistance * (Math.Sin(Θ * Math.PI / 180));
-                h = screendistance * (Math.Cos(Θ * Math.PI / 180));
+                w = screendistance * (Math.Sin(T * Math.PI / 180));
+                h = screendistance * (Math.Cos(T * Math.PI / 180));
                 v.X += (ushort)(Target_x + w);
                 v.Y += (ushort)(Target_y - h);
             }
@@ -3200,7 +3201,7 @@ namespace MTA.Game {
             }
 
             if (EntityFlag == EntityFlag.Player) {
-                if (Constants.PKFreeMaps.Contains(MapID))
+                if (GameConstants.PKFreeMaps.Contains(MapID))
                     goto Over;
 
                 //DropRandomStuff(Killer);
@@ -3576,9 +3577,9 @@ namespace MTA.Game {
                     int[] dropAllowedMaps = [MapConstants.ProudSea];
                     bool allowDrops = dropAllowedMaps.Contains(killer.MapID);
 
-                    if (Constants.PKFreeMaps.Contains(killer.MapID) && !allowDrops)
+                    if (GameConstants.PKFreeMaps.Contains(killer.MapID) && !allowDrops)
                         goto Over;
-                    if (Constants.Damage1Map.Contains(killer.MapID))
+                    if (GameConstants.Damage1Map.Contains(killer.MapID))
                         goto Over;
                     if (killer.Owner.Map.BaseID == 700)
                         goto Over;
@@ -3755,7 +3756,7 @@ namespace MTA.Game {
                             if (teammate == null)
                                 continue;
                             if (Kernel.GetDistance(killer.X, killer.Y, teammate.Entity.X, teammate.Entity.Y) <=
-                                Constants.pScreenDistance) {
+                                GameConstants.pScreenDistance) {
                                 if (killer.UID != teammate.Entity.UID) {
                                     uint extraExperience = MaxHitpoints / 2;
                                     if (killer.Spouse == teammate.Entity.Name)
@@ -3765,13 +3766,13 @@ namespace MTA.Game {
                                         if (teammate.Entity.Level < 137) {
                                             extraExperience *= 2;
                                             teammate.IncreaseExperience(extraExperience, false);
-                                            teammate.Send(Constants.NoobTeamExperience(extraExperience));
+                                            teammate.Send(GameConstants.NoobTeamExperience(extraExperience));
                                         }
                                     }
                                     else {
                                         if (teammate.Entity.Level < 137) {
                                             teammate.IncreaseExperience(extraExperience, false);
-                                            teammate.Send(Constants.TeamExperience(extraExperience));
+                                            teammate.Send(GameConstants.TeamExperience(extraExperience));
                                         }
                                     }
 
@@ -3796,7 +3797,7 @@ namespace MTA.Game {
 
                     if (killer.Level < 138) {
                         uint extraExp = MaxHitpoints;
-                        extraExp *= Constants.ExtraExperienceRate;
+                        extraExp *= GameConstants.ExtraExperienceRate;
                         extraExp += (uint)(extraExp * killer.Gems[3] / 100);
                         extraExp += (uint)(extraExp * ((float)killer.BattlePower / 100));
 
@@ -3804,18 +3805,18 @@ namespace MTA.Game {
                             extraExp += extraExp * 20 / 100;
                         if (killer.Reborn >= 2)
                             extraExp /= 3;
-                        killer.Owner.Send(Constants.ExtraExperience(extraExp));
+                        killer.Owner.Send(GameConstants.ExtraExperience(extraExp));
                     }
                     else if (killer.Level is >= 138 and < 140) {
                         uint extraExp = MaxHitpoints / 2;
-                        extraExp *= Constants.ExtraExperienceRate / 2;
+                        extraExp *= GameConstants.ExtraExperienceRate / 2;
                         extraExp += (uint)(extraExp * killer.Gems[3] / 100);
                         extraExp += (uint)(extraExp * ((float)killer.BattlePower / 100));
                         if (killer.HeavenBlessing > 0)
                             extraExp += extraExp * 10 / 100;
                         if (killer.Reborn >= 2)
                             extraExp /= 4;
-                        killer.Owner.Send(Constants.ExtraExperience(extraExp));
+                        killer.Owner.Send(GameConstants.ExtraExperience(extraExp));
                     }
 
                     killer.Owner.XPCount++;
@@ -4573,7 +4574,7 @@ namespace MTA.Game {
                     if (Owner.Map.ID == 1036 && Owner.Equipment.TryGetItem(12).Plus < 6)
                         RemoveFlag(Network.GamePackets.Update.Flags.Ride);
                 if (ContainsFlag(Network.GamePackets.Update.Flags.Ride)) {
-                    if (Constants.RideForbiddenMaps.Contains(MapID))
+                    if (GameConstants.RideForbiddenMaps.Contains(MapID))
                         RemoveFlag(Network.GamePackets.Update.Flags.Ride);
                 }
 
@@ -5823,7 +5824,7 @@ namespace MTA.Game {
                     break;
 
                 case 0x138a:
-                    mapName = "دفعه";
+                    mapName = "????";
                     break;
 
                 case 0x1770:

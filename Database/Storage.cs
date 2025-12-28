@@ -1,11 +1,12 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using MTA.Extensions;
+using MTA.Game.Constants;
 
 namespace MTA.Database {
     public static class Storage {
         public static void Read(out StorageInfo storageInfo) {
             storageInfo = new StorageInfo();
-            var reader = new IniFile(Constants.StoragePath);
+            var reader = new IniFile(GameConstants.StoragePath);
             {
                 storageInfo.Count = reader.ReadInt32("Storage", "StorageTypeCount", 0);
                 storageInfo.Storages = new StorageInfo.Storage[storageInfo.Count];

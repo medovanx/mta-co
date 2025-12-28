@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
@@ -8,6 +8,7 @@ using MTA.Database;
 using MTA.Game;
 using MTA.Game.ConquerStructures;
 using MTA.Game.ConquerStructures.Society;
+using MTA.Game.Constants;
 using MTA.Game.Features.Reincarnation;
 using MTA.Interfaces;
 using MTA.Network;
@@ -294,7 +295,7 @@ namespace MTA {
             foreach (var pClient in values) {
                 if (!pClient.Socket.Alive) continue;
                 if (pClient.Entity.MapID != obj.MapID) continue;
-                if (GetDistance(pClient.Entity.X, pClient.Entity.Y, obj.X, obj.Y) > Constants.pScreenDistance) continue;
+                if (GetDistance(pClient.Entity.X, pClient.Entity.Y, obj.X, obj.Y) > GameConstants.pScreenDistance) continue;
                 pClient.Send(packet);
             }
         }
@@ -338,7 +339,7 @@ namespace MTA {
         internal static void SendSpawn(StaticEntity item) {
             foreach (var client in Program.Values)
                 if (client.Map.ID == item.MapID)
-                    if (GetDistance(item.X, item.Y, client.Entity.X, client.Entity.Y) <= Constants.pScreenDistance)
+                    if (GetDistance(item.X, item.Y, client.Entity.X, client.Entity.Y) <= GameConstants.pScreenDistance)
                         item.SendSpawn(client);
         }
 
