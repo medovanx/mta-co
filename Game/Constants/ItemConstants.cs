@@ -267,5 +267,98 @@ namespace MTA.Game {
         public const uint FireofHell = 1060101;
 
         #endregion Skill Books
+
+        public const uint Class1FortunePack = 3005117;
+        public const uint Class2FortunePack = 3005118;
+        public const uint Class3FortunePack = 3005119;
+        public const uint Class4FortunePack = 3005120;
+        public const uint Class5FortunePack = 3005121;
+        public const uint Class6FortunePack = 3005122;
+        public const uint NormalChiPack = 3005126;
+        public const uint MediumChiPack = 3005127;
+        public const uint SeniorChiPack = 3005128;
+        public const uint ExtremeChiPack = 3005129;
+        public const uint RefinedGemBPack = 3005130;
+        public const uint SuperGemBPack = 3005132;
+        public const uint P4DragonSoulBag = 3005133;
+        public const uint SweetLovePack = 3005134;
+        public const uint P6DragonSoulBag = 3005135;
+        public const uint TurkeyRunPack = 3005300;
+        public const uint FancyAlpacaPack = 3005301;
+        public const uint ChiPack100 = 3005309;
+        public const uint ChiPack120 = 3005310;
+        public const uint ChiPack160 = 3005311;
+        public const uint ChiPack300 = 3005312;
+        public const uint ChiPack800 = 3005313;
+        public const uint ChiPack1000 = 3005314;
+        public const uint P7WeaponSoulPack = 3005331;
+
+
+        #region Dragon Souls
+
+        // P4 Dragon Souls
+        public const uint GloomPistol = 800803;
+        public const uint TitanRapier = 800808;
+        public const uint VioletRing = 823052;
+        public const uint HolyHeavyRing = 823053;
+        public const uint MoonBracelet = 823054;
+        public const uint HolyBeadsOfMagnanimity = 800720;
+        public const uint AnnihilationScythe = 800253;
+
+        // P6 Dragon Souls
+        public const uint TombBlade = 800000;
+        public const uint StealthKatana = 800017;
+        public const uint DragonChant = 801003;
+        public const uint DestinyRapier = 800809;
+        public const uint HolyBeadsOfConsciousness = 800722;
+        public const uint SaintBag = 821032;
+        public const uint SaintNecklace = 821031;
+
+        // P7 Weapon Souls
+        public const uint SkyHammer = 800111;
+        public const uint ShadowKatana = 800142;
+        public const uint TimeBacksword = 800522;
+        public const uint SunBow = 800618;
+        public const uint SpiritShield = 800422;
+        public const uint BuddaBeads = 800725;
+        public const uint DeathPistol = 800810;
+        public const uint RepentRapier = 800811;
+
+        #endregion Dragon Souls
+
+        #region Gems
+
+        // Refined Gems
+        public const uint RefinedPhoenixGem = 700002;
+        public const uint RefinedDragonGem = 700013;
+        public const uint RefinedFuryGem = 700022;
+        public const uint RefinedRainbowGem = 700032;
+        public const uint RefinedKylinGem = 700042;
+        public const uint RefinedVioletGem = 700052;
+        public const uint RefinedMoonGem = 700062;
+        public const uint RefinedTortoiseGem = 700072;
+        public const uint RefinedThunderGem = 700102;
+        public const uint RefinedGloryGem = 700122;
+
+        // Super Gems
+        public const uint SuperPhoenixGem = 700003;
+        public const uint SuperDragonGem = 700014;
+        public const uint SuperFuryGem = 700023;
+        public const uint SuperRainbowGem = 700033;
+        public const uint SuperKylinGem = 700043;
+        public const uint SuperVioletGem = 700053;
+        public const uint SuperMoonGem = 700063;
+        public const uint SuperTortoiseGem = 700073;
+        public const uint SuperThunderGem = 700103;
+        public const uint SuperGloryGem = 700123;
+
+        #endregion Gems
+
+        #region Wedding Items
+
+        public const uint RedRose = 422020;
+        public const uint Kisses99 = 755099;
+
+        #endregion Wedding Items
     }
 }

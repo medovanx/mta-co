@@ -1,0 +1,70 @@
+using System;
+using System.Drawing;
+using MTA.Client;
+using MTA.Network.GamePackets;
+using Message = MTA.Network.GamePackets.Message;
+using static MTA.Constants;
+using static MTA.Game.ItemConstants;
+
+namespace MTA.Game.Items.Handlers {
+    /// <summary>
+    /// Handles GemPack items that grant random gems when used.
+    /// </summary>
+    [ItemHandler(RefinedGemBPack, SuperGemBPack)]
+    public static class GemPackHandler {
+        public static void Handle(GameState client, ConquerItem item) {
+            if (client.Inventory.Count > 38) {
+                return;
+            }
+
+            client.Inventory.Remove(item, Enums.ItemUse.Remove);
+
+            var r = new Random();
+            var nr = r.Next(1, 11);
+
+            if (item.ID == RefinedGemBPack) {
+                uint gemId = nr switch {
+                    1 => RefinedPhoenixGem,
+                    2 => RefinedDragonGem,
+                    3 => RefinedFuryGem,
+                    4 => RefinedRainbowGem,
+                    5 => RefinedKylinGem,
+                    6 => RefinedVioletGem,
+                    7 => RefinedMoonGem,
+                    8 => RefinedTortoiseGem,
+                    9 => RefinedThunderGem,
+                    10 => RefinedGloryGem,
+                    _ => 0u
+                };
+
+                if (gemId != 0) {
+                    client.Inventory.Add(gemId, 0, 1);
+                }
+
+                client.Send(new Message("Congratultions you have got a Refined gem!", Color.Red, Message.TopLeft));
+            }
+            else if (item.ID == SuperGemBPack) {
+                uint gemId = nr switch {
+                    1 => SuperPhoenixGem,
+                    2 => SuperDragonGem,
+                    3 => SuperFuryGem,
+                    4 => SuperRainbowGem,
+                    5 => SuperKylinGem,
+                    6 => SuperVioletGem,
+                    7 => SuperMoonGem,
+                    8 => SuperTortoiseGem,
+                    9 => SuperThunderGem,
+                    10 => SuperGloryGem,
+                    _ => 0u
+                };
+
+                if (gemId != 0) {
+                    client.Inventory.Add(gemId, 0, 1);
+                }
+
+                client.Send(new Message("Congratultions you have got a Super gem!", Color.Red, Message.TopLeft));
+            }
+        }
+    }
+}
+
