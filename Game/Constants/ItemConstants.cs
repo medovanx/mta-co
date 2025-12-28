@@ -502,5 +502,112 @@ namespace MTA.Game {
         public const uint BubbleWater = 3003746;
 
         #endregion Crafting Items
+
+        #region Epic Weapon Items
+
+        public const uint NinjaScroll = 3004458;
+        public const uint TrojanScroll = 3003341;
+        public const uint LifesEye = 3004464;
+        public const uint TrojanEpic = 3003340;
+        public const uint DivinePanacea = 3006016;
+        public const uint EpicWeaponToken = 3006226;
+
+        #endregion Epic Weapon Items
+
+        #region Scrap and Crafting Materials
+
+        public const uint P7WeaponSoulPackScrap = 3004243;
+        public const uint P7EquipmentSoulScrap = 3004244;
+        public const uint SacredRefineryScrap = 3004245;
+        public const uint AncientStone = 3004246;
+        public const uint SoulScrolls = 3004260;
+
+        #endregion Scrap and Crafting Materials
+
+        #region Quest Items
+
+        public const uint SmallCPBox = 720996;
+        public const uint KeyBag = 3000624;
+        public const uint IronKey = 3000625;
+        public const uint CopperKey = 3000626;
+        public const uint SilverKey = 3000627;
+        public const uint GoldKey = 3000628;
+        public const uint AnniversaryJoyPack = 3000593;
+
+        #endregion Quest Items
+
+        #region Conquer Points Bags
+
+        // Low CP Bags
+        public const uint CPBag5 = 3001133;
+        public const uint CPBag5_2 = 720657;
+        public const uint CPBag10 = 720656;
+        public const uint CPBag10_2 = 3001134;
+        public const uint CPBag20 = 3001135;
+        public const uint CPBag20_2 = 720655;
+        public const uint CPBag25 = 720658;
+        public const uint CPBag50 = 720663;
+        public const uint CPBag50_2 = 720659;
+        public const uint CPBag100 = 720660;
+        public const uint CPBag100_2 = 720664;
+        public const uint CPBag1Billion = 720665;
+        public const uint CPBag250 = 720675;
+        public const uint CPBag270 = 720653;
+        public const uint CPBag500 = 720681;
+        public const uint CPBag500_2 = 720676;
+        public const uint CPBag500_3 = 3001136;
+
+        // Medium CP Bags
+        public const uint CPBag1000 = 720677;
+        public const uint CPBag1000_2 = 720682;
+        public const uint CPBag1000_3 = 720687;
+        public const uint CPBag1350 = 720661;
+        public const uint CPBag1380 = 720654;
+        public const uint CPBag2000 = 720683;
+        public const uint CPBag2000_2 = 720688;
+        public const uint CPBag2500 = 720693;
+        public const uint CPBag2700 = 720666;
+        public const uint CPBag4000 = 720689;
+        public const uint CPBag5000 = 720694;
+        public const uint CPBag6900 = 720662;
+
+        // High CP Bags
+        public const uint CPBag10000 = 720695;
+        public const uint CPBag13500 = 720678;
+        public const uint CPBag13800 = 720667;
+
+        #endregion Conquer Points Bags
+
+        #region Chi Point Items
+
+        public const uint ChiPoint5 = 3000051;
+        public const uint ChiPoint100 = 729476;
+        public const uint ChiPoint200 = 729477;
+        public const uint ChiPoint300 = 729478;
+        public const uint ChiPoint400 = 729479;
+
+        #endregion Chi Point Items
+
+        #region Study Point Books
+
+        public const uint DiligenceBook = 723340;
+        public const uint ModestyBook = 723342;
+        public const uint EnduranceBook = 723341;
+
+        #endregion Study Point Books
+
+        #region Guild War Items
+
+        public const uint GuildWarStatue = 720020;
+        public const uint GuildWarBomb = 721261;
+
+        #endregion Guild War Items
+
+        #region Arena Items
+
+        public const uint ArenaEXPPack = 723912;
+        public const uint ChampionPack = 3001046;
+
+        #endregion Arena Items
     }
 }

@@ -6,7 +6,7 @@ namespace MTA.Game.Items.Handlers {
     /// <summary>
     /// Handles crafting items that transform into other items when used.
     /// </summary>
-    [ItemHandler(EmptyBottle, CommonSoap, FlowerSoap, SoilPigment)]
+    [ItemHandler(EmptyBottle, CommonSoap, FlowerSoap, SoilPigment, RiverWater)]
     public static class CraftingHandler {
         public static void Handle(GameState client, ConquerItem item) {
             if (item.ID == EmptyBottle) {
@@ -16,6 +16,14 @@ namespace MTA.Game.Items.Handlers {
                 }
 
                 var npc = new NpcReply(6, "Congratulations you got RiverWater.");
+            }
+            else if (item.ID == RiverWater) {
+                if (client.Inventory.Contains(RiverWater, 1)) {
+                    client.Inventory.Remove(RiverWater, 1);
+                    client.Inventory.Add(BasicSoapyWater, 0, 1);
+                }
+
+                var npc = new NpcReply(6, "Congratulations you got BasicSoapyWater.");
             }
             else if (item.ID == CommonSoap) {
                 if (client.Inventory.Contains(CommonSoap, 1)) {

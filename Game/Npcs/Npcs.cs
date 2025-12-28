@@ -5821,7 +5821,7 @@ namespace MTA {
 
                         #region ClaimGuildPrize
 
-                        case 4482114: {
+                        case 19: {
                             switch (npcRequest.OptionID) {
                                 case 0: {
                                     dialog.Text("Hello, how may I help you?");
