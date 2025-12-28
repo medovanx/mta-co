@@ -1,7 +1,6 @@
 using System.Drawing;
 using MTA.Client;
 using MTA.Database;
-using MTA.Game.Items;
 using MTA.Network.GamePackets;
 using Message = MTA.Network.GamePackets.Message;
 using static MTA.Game.ItemConstants;

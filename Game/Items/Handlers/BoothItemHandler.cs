@@ -1,7 +1,6 @@
 using MTA.Client;
 using MTA.Database;
 using MTA.Game.ConquerStructures;
-using MTA.Game.Items;
 using MTA.Network.GamePackets;
 using Data = MTA.Network.GamePackets.Data;
 using MapStatus = MTA.Network.GamePackets.MapStatus;

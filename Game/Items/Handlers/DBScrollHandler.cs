@@ -1,5 +1,4 @@
 using MTA.Client;
-using MTA.Game.Items;
 using MTA.Network.GamePackets;
 using static MTA.Constants;
 using static MTA.Game.ItemConstants;
