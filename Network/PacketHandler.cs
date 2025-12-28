@@ -13,10 +13,10 @@ using MTA.Client.Commands;
 using MTA.Database;
 using MTA.Game;
 using MTA.Game.Attacking;
-using MTA.Game.Events;
 using MTA.Game.ConquerStructures;
 using MTA.Game.ConquerStructures.House;
 using MTA.Game.ConquerStructures.Society;
+using MTA.Game.Events;
 using MTA.Game.Events.SteedRace;
 using MTA.Game.Features.Flowers;
 using MTA.Game.Features.Reincarnation;
@@ -28,7 +28,6 @@ using MTA.Network.GamePackets;
 using MTA.Network.GamePackets.EventAlert;
 using MTA.Network.GamePackets.Roulette;
 using MTA.Networking.GamePackets;
-using MTA.WebServer;
 using BoothItem = MTA.Network.GamePackets.BoothItem;
 using Broadcast = MTA.Network.GamePackets.Broadcast;
 using Flowers = MTA.Game.Features.Flowers.Flowers;
@@ -16924,6 +16923,105 @@ namespace MTA.Network {
 
                 #endregion
 
+                #region Class1MoneyBag
+
+                case 723713: {
+                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
+                    client.Entity.Money += 300000;
+                    break;
+                }
+
+                #endregion
+
+                #region Class2MoneyBag
+
+                case 723714: {
+                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
+                    client.Entity.Money += 800000;
+                    break;
+                }
+
+                #endregion
+
+                #region Class3MoneyBag
+
+                case 723715: {
+                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
+                    client.Entity.Money += 1200000;
+                    break;
+                }
+
+                #endregion
+
+                #region Class4MoneyBag
+
+                case 723716: {
+                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
+                    client.Entity.Money += 1800000;
+                    break;
+                }
+
+                #endregion
+
+                #region Class5MoneyBag
+
+                case 723717: {
+                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
+                    client.Entity.Money += 5000000;
+                    break;
+                }
+
+                #endregion
+
+                #region Class6MoneyBag
+
+                case 723718: {
+                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
+                    client.Entity.Money += 20000000;
+                    break;
+                }
+
+                #endregion
+
+                #region Class7MoneyBag
+
+                case 723719: {
+                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
+                    client.Entity.Money += 25000000;
+                    break;
+                }
+
+                #endregion
+
+                #region Class8MoneyBag
+
+                case 723720: {
+                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
+                    client.Entity.Money += 80000000;
+                    break;
+                }
+
+                #endregion
+
+                #region Class9MoneyBag
+
+                case 723721: {
+                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
+                    client.Entity.Money += 100000000;
+                    break;
+                }
+
+                #endregion
+
+                #region Class10MoneyBag
+
+                case 723722: {
+                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
+                    client.Entity.Money += 300000000;
+                    break;
+                }
+
+                #endregion
 
                 #region BeginnerPackL1
 
@@ -22784,7 +22882,7 @@ namespace MTA.Network {
             if (!client.Entity.Move(groundMovement.Direction,
                     groundMovement.GroundMovementType == GroundMovement.Slide)) return;
 
-            if (Game.Events.EventScheduler.GetEvent("STEED_RACE") is SteedRaceEvent raceEvent &&
+            if (EventScheduler.GetEvent("STEED_RACE") is SteedRaceEvent raceEvent &&
                 client.Entity.MapID == raceEvent.CurrentMapId) {
                 if (!raceEvent.IsActive) {
                     client.Entity.Teleport(client.Entity.PX, client.Entity.PY);
