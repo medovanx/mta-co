@@ -9,7 +9,7 @@ namespace MTA.Game.Items.Handlers {
     [ItemHandler(NobleSteedPack)]
     public static class NobleSteedPackHandler {
         public static void Handle(GameState client, ConquerItem item) {
-            var dialog = new Npcs(client);
+            var dialog = new MTA.Npcs(client);
             dialog.Text("Hello. You can chose a horse:");
             dialog.Option("Spitfire horse", 1);
             dialog.Option("Frostbite horse", 2);

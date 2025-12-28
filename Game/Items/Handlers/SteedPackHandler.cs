@@ -15,7 +15,7 @@ namespace MTA.Game.Items.Handlers {
         public static void Handle(GameState client, ConquerItem item) {
             // Dialog-based steed packs (728525-728527) - don't remove item, handled in dialog response
             if (item.ID is Plus1SteedPack or Plus3SteedPack or Plus6SteedPack) {
-                var dialog = new Npcs(client);
+                var dialog = new MTA.Npcs(client);
                 dialog.Text("Hello. You can chose a horse: black, brown or white.");
                 dialog.Option("Black horse", 1);
                 dialog.Option("Brown horse", 2);
