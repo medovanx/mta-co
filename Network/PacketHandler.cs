@@ -49,12 +49,12 @@ using static MTA.Game.ItemConstants;
 
 namespace MTA.Network {
     public static class PacketHandler {
-        public static readonly DateTime UnixEpoch = new DateTime();
-        public static ulong ClientSeal = BitConverter.ToUInt64(Program.Encoding.GetBytes("TQClient"), 0);
+        private static readonly DateTime UnixEpoch = new DateTime();
+        private static readonly ulong ClientSeal = BitConverter.ToUInt64(Program.Encoding.GetBytes("TQClient"), 0);
 
         public static uint UnixTimestamp => (uint)(DateTime.UtcNow - UnixEpoch).TotalSeconds;
 
-        public static string Filter(string Msg, GameState client) {
+        private static string Filter(string Msg, GameState client) {
             #region AntiSpam
 
             foreach (var bad in Kernel.Insults) {
@@ -7499,7 +7499,7 @@ namespace MTA.Network {
             client.SendScreen(generalData);
         }
 
-        public static void ChangeAppearance(GameState client, AppearanceType Type) {
+        private static void ChangeAppearance(GameState client, AppearanceType Type) {
             if (client.Entity.Tournament_Signed)
                 return;
             var generalData = new Data(true) {
@@ -7532,7 +7532,7 @@ namespace MTA.Network {
             }
         }
 
-        public static bool PassJoinRequirements(GameState client, Guild guild) {
+        private static bool PassJoinRequirements(GameState client, Guild guild) {
             var cmd = new GuildCommand(true) {
                 Type = GuildCommand.GuildRequirements,
                 dwParam2 = guild.LevelRequirement,
@@ -7545,17 +7545,8 @@ namespace MTA.Network {
                 (client.Entity.Class is >= 50 and <= 55 && !guild.AllowNinjas) ||
                 (client.Entity.Class is >= 60 and <= 65 && !guild.AllowMonks) ||
                 (client.Entity.Class is >= 70 and <= 75 && !guild.AllowPirates) ||
-                (client.Entity.Class is >= 100 and <= 190 && !guild.AllowTaoists)) {
-                client.Send(cmd);
-                return false;
-            }
-
-            if (client.Entity.Reborn < guild.RebornRequirement) {
-                client.Send(cmd);
-                return false;
-            }
-
-            if (client.Entity.Level < guild.LevelRequirement) {
+                (client.Entity.Class is >= 100 and <= 190 && !guild.AllowTaoists) ||
+                client.Entity.Reborn < guild.RebornRequirement || client.Entity.Level < guild.LevelRequirement) {
                 client.Send(cmd);
                 return false;
             }
@@ -8028,7 +8019,7 @@ namespace MTA.Network {
                             guild2.AddAlly(guild1.Name);
                             if (((guild1.Leader.Client != null) && guild1.Leader.Client.Socket.Connected) && ((guild2.Leader.Client != null) && guild2.Leader.Client.Socket.Connected))
                             {
-                                guild2.Leader.Client.Send(new MTA.Network.GamePackets.Message(guild1.Leader.Name + " has accepted your ally request.", System.Drawing.Color.Blue, 0x7dc));
+                                guild2.Leader.Client.Send(new MTA.Network.GamePackets.Message(guild1.Leader.Name + " has accepted your alliance request.", System.Drawing.Color.Blue, 0x7dc));
                             }
                         };
                         if (action == null)
@@ -8043,7 +8034,7 @@ namespace MTA.Network {
                                         Game.ConquerStructures.Society.Guild guild2 = guild.Leader.Client.OnMessageBoxEventParams[0] as Game.ConquerStructures.Society.Guild;
                                         if (guild1.Leader.IsOnline)
                                         {
-                                            guild1.Leader.Client.Send(new MTA.Network.GamePackets.Message(guild2.Leader.Name + " has declined your ally request.", System.Drawing.Color.Blue, 0x7dc));
+                                            guild1.Leader.Client.Send(new MTA.Network.GamePackets.Message(guild2.Leader.Name + " has declined your alliance request.", System.Drawing.Color.Blue, 0x7dc));
                                         }
                                     }
                                 }
@@ -8125,7 +8116,7 @@ namespace MTA.Network {
 
         #endregion
 
-        public static void Teleport(GameState client, VIPTeleportLocations Location) {
+        private static void Teleport(GameState client, VIPTeleportLocations Location) {
             switch (Location) {
                 case VIPTeleportLocations.TwinCity:
                 case VIPTeleportLocations.TCSquare:
@@ -8197,7 +8188,7 @@ namespace MTA.Network {
 
         #region Attack
 
-        public static void Attack(Attack attack, GameState client) {
+        private static void Attack(Attack attack, GameState client) {
             client.Entity.RemoveMagicDefender();
             client.Entity.AttackPacket = attack;
             new Handle(attack, client.Entity, null);
@@ -8230,11 +8221,8 @@ namespace MTA.Network {
 
         #endregion
 
-        public static bool NulledClient(GameState client) {
-            if (client is null or { Entity: null })
-                return true;
-
-            return false;
+        private static bool NulledClient(GameState client) {
+            return client is null or { Entity: null };
         }
 
         internal static bool IsShield(uint p) {
@@ -8247,7 +8235,7 @@ namespace MTA.Network {
 
         #region Reincarnation
 
-        public class Reincarnation {
+        private class Reincarnation {
             private GameState _client;
 
             public Reincarnation(GameState client, byte new_class) {
@@ -16936,105 +16924,6 @@ namespace MTA.Network {
 
                 #endregion
 
-                #region Class1MoneyBag
-
-                case 723713: {
-                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    client.Entity.Money += 300000;
-                    break;
-                }
-
-                #endregion
-
-                #region Class2MoneyBag
-
-                case 723714: {
-                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    client.Entity.Money += 800000;
-                    break;
-                }
-
-                #endregion
-
-                #region Class3MoneyBag
-
-                case 723715: {
-                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    client.Entity.Money += 1200000;
-                    break;
-                }
-
-                #endregion
-
-                #region Class4MoneyBag
-
-                case 723716: {
-                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    client.Entity.Money += 1800000;
-                    break;
-                }
-
-                #endregion
-
-                #region Class5MoneyBag
-
-                case 723717: {
-                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    client.Entity.Money += 5000000;
-                    break;
-                }
-
-                #endregion
-
-                #region Class6MoneyBag
-
-                case 723718: {
-                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    client.Entity.Money += 20000000;
-                    break;
-                }
-
-                #endregion
-
-                #region Class7MoneyBag
-
-                case 723719: {
-                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    client.Entity.Money += 25000000;
-                    break;
-                }
-
-                #endregion
-
-                #region Class8MoneyBag
-
-                case 723720: {
-                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    client.Entity.Money += 80000000;
-                    break;
-                }
-
-                #endregion
-
-                #region Class9MoneyBag
-
-                case 723721: {
-                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    client.Entity.Money += 100000000;
-                    break;
-                }
-
-                #endregion
-
-                #region Class10MoneyBag
-
-                case 723722: {
-                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    client.Entity.Money += 300000000;
-                    break;
-                }
-
-                #endregion
 
                 #region BeginnerPackL1
 
@@ -23931,7 +23820,7 @@ namespace MTA.Network {
 
             if (Now64.Hour is >= 11 and < 13 or >= 19 and < 21) {
                 client.MessageBox("Team arena has started! It will open for two hours! Would you like to sign up?",
-                    (p) => { TeamArena.QualifyEngine.DoSignup(p); },
+                    TeamArena.QualifyEngine.DoSignup,
                     (p) => { p.Send("You can still join from the team arena interface!"); });
             }
 
@@ -24278,7 +24167,7 @@ namespace MTA.Network {
             return mesh is 2001 or 2002;
         }
 
-        public class ClientRank {
+        private class ClientRank {
             public uint Amount;
             public uint Rank;
         }

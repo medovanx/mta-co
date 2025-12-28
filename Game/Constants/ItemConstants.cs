@@ -13,7 +13,16 @@ namespace MTA.Game {
         public const uint CelestialBird = 200420;
         public const uint GreenEyedBeast = 200413;
         public const uint EnduranceBook = 723341;
+        public const uint Class1MoneyBag = 723713;
         public const uint Class2MoneyBag = 723714;
+        public const uint Class3MoneyBag = 723715;
+        public const uint Class4MoneyBag = 723716;
+        public const uint Class5MoneyBag = 723717;
+        public const uint Class6MoneyBag = 723718;
+        public const uint Class7MoneyBag = 723719;
+        public const uint Class8MoneyBag = 723720;
+        public const uint Class9MoneyBag = 723721;
+        public const uint Class10MoneyBag = 723722;
         public const uint HorseRacingPointsPack10K = 720874;
         public const uint HorseRacingPointsPack8K = 720875;
         public const uint HorseRacingPointsPack7K = 720876;
@@ -24,7 +33,6 @@ namespace MTA.Game {
         public const uint ExpBallScrap = 3003005;
         public const uint SmallJoyStone = 720173;
         public const uint Meteor = 1088001;
-        public const uint Class1MoneyBag = 723713;
         public const uint LotteryTicket = 710212;
         public const uint QuestChanceB = 710214;
         public const uint PenitenceAmulet = 720128;
