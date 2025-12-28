@@ -857,13 +857,6 @@ namespace MTA.Game {
 
         #endregion VIP Items
 
-        #region Empty Items
-
-        public const uint EmptyItem1 = 720793;
-        public const uint EmptyItem2 = 720981;
-
-        #endregion Empty Items
-
         #region Random CP Items
 
         public const uint RandomCPItem = 3000776;
