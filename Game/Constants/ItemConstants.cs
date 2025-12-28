@@ -12,6 +12,39 @@ namespace MTA.Game {
         public const uint JadeHare = 200407;
         public const uint CelestialBird = 200420;
         public const uint GreenEyedBeast = 200413;
+        public const uint FancyAlpaca = 200499;
+        public const uint ChaosBull = 200411;
+        public const uint SilverBeast = 200412;
+        public const uint RoyalApe = 200414;
+        public const uint PolarBear = 200415;
+        public const uint RoaringChow = 200426;
+        public const uint AuspiciousKylin = 200417;
+        public const uint AncientElephant = 200418;
+        public const uint GoldGlobefish = 200437;
+        public const uint SaintDragon = 200421;
+        public const uint WinebibberPanda = 200427;
+        public const uint WildCamel = 200431;
+        public const uint Pegasus = 200438;
+        public const uint IcePhoenix = 200444;
+        public const uint FieryLion = 200442;
+        public const uint BlessedFancyAlpacaPack = 3004764;
+        public const uint JadeHarePack = 3000254;
+        public const uint ChaosBullPack = 3000256;
+        public const uint SilverBeastPack = 3000257;
+        public const uint GreenEyedBeastPack = 3000258;
+        public const uint RoyalApePack = 3000259;
+        public const uint PolarBearPack = 3000260;
+        public const uint RoaringChowPack = 3000261;
+        public const uint AuspiciousKylinPack = 3000262;
+        public const uint AncientElephantPack = 3000263;
+        public const uint GoldGlobefishPack = 3000264;
+        public const uint CelestialBirdPack = 3000265;
+        public const uint SaintDragonPack = 3000266;
+        public const uint WinebibberPandaPack = 3000267;
+        public const uint WildCamelPack = 3000268;
+        public const uint PegasusPack = 3000269;
+        public const uint IcePhoenixPack = 3000270;
+        public const uint FieryLionPack = 3000271;
         public const uint EnduranceBook = 723341;
         public const uint Class1MoneyBag = 723713;
         public const uint Class2MoneyBag = 723714;
@@ -38,7 +71,23 @@ namespace MTA.Game {
         public const uint PenitenceAmulet = 720128;
         public const uint DragonSoulTicket = 728917;
         public const uint ExpBall = 3001283;
+        public const uint ExpBall_B = 723700;
         public const uint DragonBall = 1088000;
+        public const uint Emerald = 1080001;
+        public const uint TwinCityGate = 1060020;
+        public const uint MoonBox = 721090;
+        public const uint BladeSoulLv100 = 800010;
+        public const uint ShieldSoulLv100 = 800410;
+        public const uint BowSoulLv100 = 800610;
+        public const uint BackswordSoulLv100 = 800508;
+        public const uint BeginnerPackLv1 = 723753;
+        public const uint BeginnerPackLv10 = 723755;
+        public const uint BeginnerPackLv70 = 723767;
+        public const uint BeginnerPackLv100 = 723772;
+        public const uint BeginnerPackLv110 = 723774;
+        public const uint BeginnerPackLv120 = 723776;
+        public const uint Stancher = 1000000;
+        public const uint Agrypnotic = 1001000;
         public const uint CelestialStone = 721259;
         public const uint OblivionDew = 711083;
         public const uint ExemptionToken = 723701;
@@ -82,8 +131,9 @@ namespace MTA.Game {
         public const uint BrownDye = 1060070;
         public const uint RedDye = 1060080;
         public const uint WhiteDye = 1060090;
-        
+
         #region Gear
+
         public const uint SuperTaoistsCapPack = 721231;
         public const uint SuperArchersCoatPack = 721232;
         public const uint SuperArchersHatPack = 721233;
@@ -114,8 +164,11 @@ namespace MTA.Game {
         public const uint ApeHat_Super = 113049;
         public const uint ApeCoat_Super = 133049;
         public const uint SharkCap_Super = 114069;
+
         #endregion Gear
+
         #region Skills Books
+
         public const uint Thunder = 725000;
         public const uint Fire = 725001;
         public const uint Tornado = 725002;
@@ -152,6 +205,7 @@ namespace MTA.Game {
         public const uint Roamer = 725044;
         public const uint BombScroll = 1060100;
         public const uint FireofHell = 1060101;
+
         #endregion Skill Books
     }
 }
