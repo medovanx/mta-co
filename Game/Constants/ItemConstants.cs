@@ -292,18 +292,36 @@ namespace MTA.Game {
         public const uint ChiPack800 = 3005313;
         public const uint ChiPack1000 = 3005314;
         public const uint P7WeaponSoulPack = 3005331;
-
+        public const uint P4DragonSoulPack = 3005891;
+        public const uint P5DragonSoulPack = 3005892;
+        public const uint P7EquipmentSoulPack = 3004248;
 
         #region Dragon Souls
 
         // P4 Dragon Souls
+        public const uint RadiantSword = 800014;
+        public const uint MoonHammer = 800015;
+        public const uint OnimaKatana = 800016;
+        public const uint SnakeHalbert = 800214;
+        public const uint AnnihilationScythe = 800253;
+        public const uint LotusBacksword = 800512;
+        public const uint GraceBow = 800613;
+        public const uint HolyBeadsOfMagnanimity = 800720;
         public const uint GloomPistol = 800803;
         public const uint TitanRapier = 800808;
+        public const uint StygianKnifeSoul = 800913;
+        public const uint BlazingScale = 801002;
+        public const uint UniversalHossu = 801102;
         public const uint VioletRing = 823052;
         public const uint HolyHeavyRing = 823053;
         public const uint MoonBracelet = 823054;
-        public const uint HolyBeadsOfMagnanimity = 800720;
-        public const uint AnnihilationScythe = 800253;
+
+        // P5 Dragon Souls
+        public const uint ThunderShield = 800415;
+        public const uint AzureHat = 820056;
+        public const uint SolarHat = 820057;
+        public const uint SpiritNecklace = 821028;
+        public const uint EbonyBag = 821030;
 
         // P6 Dragon Souls
         public const uint TombBlade = 800000;
@@ -323,6 +341,24 @@ namespace MTA.Game {
         public const uint BuddaBeads = 800725;
         public const uint DeathPistol = 800810;
         public const uint RepentRapier = 800811;
+
+        // P7 Equipment Souls
+        public const uint MoonHeadgear = 820073;
+        public const uint SunHeadgear = 820074;
+        public const uint StarHeadgear = 820075;
+        public const uint IceHeadgear = 820076;
+        public const uint HeavenNecklace = 821033;
+        public const uint FervorBag = 821034;
+        public const uint NetherArmor = 822071;
+        public const uint EclipseArmor = 822072;
+        public const uint CraneRing = 823058;
+        public const uint DragonRing = 823059;
+        public const uint RainbowBracelet = 823060;
+        public const uint LionHeavyRing = 823061;
+        public const uint TigerHeavyRing = 823062;
+        public const uint FoxBoots = 824018;
+        public const uint DragonBoots = 824019;
+        public const uint CraneBoots = 824020;
 
         #endregion Dragon Souls
 
