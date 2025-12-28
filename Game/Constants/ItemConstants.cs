@@ -295,6 +295,10 @@ namespace MTA.Game {
         public const uint P4DragonSoulPack = 3005891;
         public const uint P5DragonSoulPack = 3005892;
         public const uint P7EquipmentSoulPack = 3004248;
+        public const uint SacredRefineryPack = 3004249;
+        public const uint P7WeaponSoulPack2 = 3004247;
+        public const uint P6WeaponSoulPack = 729122;
+        public const uint P6DragonSoulPack = 727317;
 
         #region Dragon Souls
 
@@ -332,15 +336,37 @@ namespace MTA.Game {
         public const uint SaintBag = 821032;
         public const uint SaintNecklace = 821031;
 
+        // P6 Weapon Souls
+        public const uint GrimHammer = 800110;
+        public const uint SufferingScythe = 800254;
+        public const uint ArchonWand = 800320;
+        public const uint FlameShield = 800421;
+        public const uint LotusBacksword = 800512;
+        public const uint WingedBow = 800616;
+        public const uint TimePistol = 800804;
+        public const uint DominantKnifeSoul = 800916;
+        public const uint WarCraze = 801004;
+        public const uint HeavenHossu = 801103;
+        public const uint WonderHossu = 801104;
+        public const uint FistofSky = 801212;
+        public const uint FistofEarth = 801214;
+        public const uint SolarFanSoul = 801306;
+
         // P7 Weapon Souls
+        public const uint MonsterSaber = 800020;
         public const uint SkyHammer = 800111;
         public const uint ShadowKatana = 800142;
+        public const uint SkyHalberd = 800215;
+        public const uint DemonScythe = 800255;
+        public const uint SpiritShield = 800422;
         public const uint TimeBacksword = 800522;
         public const uint SunBow = 800618;
-        public const uint SpiritShield = 800422;
         public const uint BuddaBeads = 800725;
         public const uint DeathPistol = 800810;
         public const uint RepentRapier = 800811;
+        public const uint StygianKnifeSoul2 = 800917;
+        public const uint FistofDemon = 801218;
+        public const uint FistofDeity = 801216;
 
         // P7 Equipment Souls
         public const uint MoonHeadgear = 820073;
@@ -359,8 +385,52 @@ namespace MTA.Game {
         public const uint FoxBoots = 824018;
         public const uint DragonBoots = 824019;
         public const uint CraneBoots = 824020;
+        public const uint WhirlpoolArmor = 822053;
+        public const uint WaterflowArmor = 822055;
+        public const uint SaintRing = 823055;
+        public const uint SaintBracelet = 823056;
+        public const uint SaintHeavyRing = 823057;
+        public const uint SaintBoots = 824017;
+        public const uint SaintHeadgear = 820071;
+        public const uint HolyHeadgear = 820072;
 
         #endregion Dragon Souls
+
+        #region Sacred Refinery Materials
+
+        public const uint SacredMDefenseMaterial1 = 3004136;
+        public const uint SacredCriticalStrikeMaterial1 = 3004137;
+        public const uint SacredSkillCStrikeMaterial1 = 3004138;
+        public const uint SacredImmunityMaterial1 = 3004139;
+        public const uint SacredIntensificationMaterial = 3004140;
+        public const uint SacredBreakthroughMaterial1 = 3004141;
+        public const uint SacredCounteractionMaterial1 = 3004142;
+        public const uint SacredDetoxicationMaterial1 = 3004143;
+        public const uint SacredBlockMaterial = 3004144;
+        public const uint SacredPenetrationMaterial1 = 3004145;
+        public const uint SacredMDefenseMaterial2 = 3004146;
+        public const uint SacredCriticalStrikeMaterial2 = 3004147;
+        public const uint SacredSkillCStrikeMaterial2 = 3004148;
+        public const uint SacredImmunityMaterial2 = 3004149;
+        public const uint SacredBreakthroughMaterial2 = 3004150;
+        public const uint SacredCounteractionMaterial2 = 3004151;
+        public const uint SacredDetoxicationMaterial2 = 3004152;
+        public const uint SacredBlockMaterial2 = 3004153;
+        public const uint SacredPenetrationMaterial2 = 3004154;
+        public const uint SacredMDefenseMaterial3 = 3004155;
+        public const uint SacredCriticalStrikeMaterial3 = 3004156;
+        public const uint SacredMDefenseMaterial4 = 3004157;
+        public const uint SacredCriticalStrikeMaterial4 = 3004158;
+        public const uint SacredBreakthroughMaterial3 = 3004159;
+        public const uint SacredCounteractionMaterial3 = 3004160;
+        public const uint SacredDetoxicationMaterial3 = 3004161;
+        public const uint SacredPenetrationMaterial3 = 3004162;
+        public const uint SacredBreakthroughMaterial4 = 3004163;
+        public const uint SacredBreakthroughMaterial5 = 3004164;
+        public const uint SacredDetoxicationMaterial4 = 3004165;
+        public const uint SacredDetoxicationMaterial5 = 3004166;
+
+        #endregion Sacred Refinery Materials
 
         #region Gems
 

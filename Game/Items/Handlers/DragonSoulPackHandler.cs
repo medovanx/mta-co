@@ -10,7 +10,8 @@ namespace MTA.Game.Items.Handlers {
     /// <summary>
     /// Handles DragonSoulPack items that grant random dragon souls when used.
     /// </summary>
-    [ItemHandler(P4DragonSoulBag, P6DragonSoulBag, P7WeaponSoulPack, P4DragonSoulPack, P5DragonSoulPack)]
+    [ItemHandler(P4DragonSoulBag, P6DragonSoulBag, P7WeaponSoulPack, P4DragonSoulPack, P5DragonSoulPack,
+        P7WeaponSoulPack2, P6WeaponSoulPack, P6DragonSoulPack)]
     public static class DragonSoulPackHandler {
         public static void Handle(GameState client, ConquerItem item) {
             if (client.Inventory.Count > 38) {
@@ -114,6 +115,83 @@ namespace MTA.Game.Items.Handlers {
                     3 => SolarHat,
                     4 => SpiritNecklace,
                     5 => EbonyBag,
+                    _ => 0u
+                };
+
+                if (soulId != 0) {
+                    client.Inventory.Add(soulId, 0, 1);
+                }
+            }
+            else if (item.ID == P7WeaponSoulPack2) {
+                var nr = r.Next(1, 17);
+                soulId = nr switch {
+                    1 => MonsterSaber,
+                    2 => SkyHammer,
+                    3 => ShadowKatana,
+                    4 => SkyHalberd,
+                    5 => DemonScythe,
+                    6 => SpiritShield,
+                    7 => TimeBacksword,
+                    8 => SunBow,
+                    9 => BuddaBeads,
+                    10 => DeathPistol,
+                    11 => RepentRapier,
+                    12 => StygianKnifeSoul2,
+                    13 => WarCraze,
+                    14 => WonderHossu,
+                    15 => FistofDemon,
+                    16 => FistofDeity,
+                    _ => 0u
+                };
+
+                if (soulId != 0) {
+                    client.Inventory.Add(soulId, 0, 1);
+                }
+            }
+            else if (item.ID == P6WeaponSoulPack) {
+                var nr = r.Next(1, 18);
+                soulId = nr switch {
+                    1 => TombBlade,
+                    2 => StealthKatana,
+                    3 => GrimHammer,
+                    4 => SufferingScythe,
+                    5 => ArchonWand,
+                    6 => FlameShield,
+                    7 => LotusBacksword,
+                    8 => WingedBow,
+                    9 => HolyBeadsOfConsciousness,
+                    10 => TimePistol,
+                    11 => DestinyRapier,
+                    12 => DominantKnifeSoul,
+                    13 => DragonChant,
+                    14 => HeavenHossu,
+                    15 => FistofSky,
+                    16 => FistofEarth,
+                    17 => SolarFanSoul,
+                    _ => 0u
+                };
+
+                if (soulId != 0) {
+                    client.Inventory.Add(soulId, 0, 1);
+                }
+
+                // P6WeaponSoulPack also gives P6DragonSoulPack and CPs
+                client.Inventory.Add(P6DragonSoulPack, 0, 1);
+                client.Entity.ConquerPoints += 2000000;
+            }
+            else if (item.ID == P6DragonSoulPack) {
+                var nr = r.Next(1, 11);
+                soulId = nr switch {
+                    1 => WhirlpoolArmor,
+                    2 => WaterflowArmor,
+                    3 => SaintRing,
+                    4 => SaintBracelet,
+                    5 => SaintHeavyRing,
+                    6 => SaintBoots,
+                    7 => SaintNecklace,
+                    8 => SaintBag,
+                    9 => SaintHeadgear,
+                    10 => HolyHeadgear,
                     _ => 0u
                 };
 
