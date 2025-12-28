@@ -1,18 +1,18 @@
 using MTA.Client;
 using MTA.Network.GamePackets;
-using static MTA.Game.Constants.Items.ConquerPointsBags;
+using static MTA.Game.Constants.Items.CPsBags;
 
 namespace MTA.Game.Items.Handlers {
     /// <summary>
     /// Handles Conquer Points bag items that grant CPs when used.
     /// </summary>
-    [ItemHandler(CPBag5, CPBag5_2, CPBag10, CPBag10_2, CPBag20, CPBag20_2, CPBag25, CPBag50, CPBag50_2, CPBag100,
-        CPBag100_2, CPBag1Billion, CPBag250, CPBag270, CPBag500, CPBag500_2, CPBag500_3, CPBag1000, CPBag1000_2,
-        CPBag1000_3, CPBag1350, CPBag1380, CPBag2000, CPBag2000_2, CPBag2500, CPBag2700, CPBag4000, CPBag5000,
-        CPBag6900, CPBag10000, CPBag13500, CPBag13800)]
+    [ItemHandler(HopeCPPack, HopeCPPack_2, MascotCPPack, CPBag10_2, MascotCPPack_2, MammonCPPack, FestivalCPPack, VioletCPPack, VioletCPPack_2, LegendCPPack,
+        FlareCPPack, CuteCPPack, GhostCPPack, DreamCPPack, DeityCPPack, SoulCPPack, DeityCPPack_2, BloodCPPack, FlowerCPPack,
+        CloudCPPack, PureCPPack, JoyCPPack, HeartCPPack, JewelCPPack, FogCPPack, StarCPPack, ShadowCPPack, MoonCPPack,
+        MysticCPPack, EarthCPPack, LifeCPPack, FantasyCPPack)]
     public static class ConquerPointsBagHandler {
         public static void Handle(GameState client, ConquerItem item) {
-            if (item.ID == CPBag1Billion) {
+            if (item.ID == CuteCPPack) {
                 if (client.Entity.ConquerPoints <= 1000000050) {
                     client.Entity.ConquerPoints += 1000000000;
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
@@ -25,27 +25,27 @@ namespace MTA.Game.Items.Handlers {
             }
 
             var cps = item.ID switch {
-                CPBag5 or CPBag5_2 => 5u,
-                CPBag10 or CPBag10_2 => 10u,
-                CPBag20 or CPBag20_2 => 20u,
-                CPBag25 => 25u,
-                CPBag50 or CPBag50_2 => 50u,
-                CPBag100 or CPBag100_2 => 100u,
-                CPBag250 => 250u,
-                CPBag270 => 270u,
-                CPBag500 or CPBag500_2 or CPBag500_3 => 500u,
-                CPBag1000 or CPBag1000_2 or CPBag1000_3 => 1000u,
-                CPBag1350 => 1350u,
-                CPBag1380 => 1380u,
-                CPBag2000 or CPBag2000_2 => 2000u,
-                CPBag2500 => 2500u,
-                CPBag2700 => 2700u,
-                CPBag4000 => 4000u,
-                CPBag5000 => 5000u,
-                CPBag6900 => 6900u,
-                CPBag10000 => 10000u,
-                CPBag13500 => 13500u,
-                CPBag13800 => 13800u,
+                HopeCPPack or HopeCPPack_2 => 5u,
+                MascotCPPack or CPBag10_2 => 10u,
+                MascotCPPack_2 or MammonCPPack => 20u,
+                FestivalCPPack => 25u,
+                VioletCPPack or VioletCPPack_2 => 50u,
+                LegendCPPack or FlareCPPack => 100u,
+                GhostCPPack => 250u,
+                DreamCPPack => 270u,
+                DeityCPPack or SoulCPPack or DeityCPPack_2 => 500u,
+                BloodCPPack or FlowerCPPack or CloudCPPack => 1000u,
+                PureCPPack => 1350u,
+                JoyCPPack => 1380u,
+                HeartCPPack or JewelCPPack => 2000u,
+                FogCPPack => 2500u,
+                StarCPPack => 2700u,
+                ShadowCPPack => 4000u,
+                MoonCPPack => 5000u,
+                MysticCPPack => 6900u,
+                EarthCPPack => 10000u,
+                LifeCPPack => 13500u,
+                FantasyCPPack => 13800u,
                 _ => 0u
             };
 

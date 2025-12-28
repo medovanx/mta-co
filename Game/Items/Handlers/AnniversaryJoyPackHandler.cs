@@ -3,9 +3,9 @@ using MTA.Network.GamePackets;
 using _String = MTA.Network.GamePackets._String;
 using static MTA.Game.Constants.Items.QuestAndOther;
 using static MTA.Game.Constants.Items.BasicItems;
-using static MTA.Game.Constants.Items.StudyAndGuild;
+using static MTA.Game.Constants.Items.StudyBooks;
 using static MTA.Game.Constants.Items.ChiItems;
-using static MTA.Game.Constants.Items.ConquerPointsBags;
+using static MTA.Game.Constants.Items.CPsBags;
 using static MTA.Game.Constants.Items.Gems;
 
 namespace MTA.Game.Items.Handlers {
@@ -26,15 +26,15 @@ namespace MTA.Game.Items.Handlers {
                 5 => 822056u,
                 6 => 727100u,
                 7 => 822053u,
-                8 => CPBag6900,
+                8 => MysticCPPack,
                 9 => 800050u,
                 10 => 800015u,
                 11 => 800090u,
-                12 => CPBag500,
+                12 => DeityCPPack,
                 13 => 800017u,
                 14 => 800071u,
                 15 => 800016u,
-                16 => CPBag250,
+                16 => GhostCPPack,
                 17 => 800130u,
                 18 => DiligenceBook,
                 19 => 800141u,
@@ -49,13 +49,13 @@ namespace MTA.Game.Items.Handlers {
                 28 => 800401u,
                 29 => 800512u,
                 30 => 823043u,
-                31 => ChiPoint200,
+                31 => ChiPill_200,
                 32 => 800520u,
                 33 => 800521u,
-                34 => CPBag500_2,
+                34 => SoulCPPack,
                 35 => 800614u,
                 36 => 800615u,
-                37 => CPBag5,
+                37 => HopeCPPack,
                 38 => 800617u,
                 39 => 800720u,
                 40 => 700123u,

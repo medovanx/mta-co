@@ -3,7 +3,6 @@ using System.Drawing;
 using MTA.Client;
 using MTA.Network.GamePackets;
 using Message = MTA.Network.GamePackets.Message;
-using static MTA.Game.Constants.Items.DragonSoulPacks;
 using static MTA.Game.Constants.Items.DragonSouls.P4;
 using static MTA.Game.Constants.Items.DragonSouls.P5;
 using static MTA.Game.Constants.Items.DragonSouls.P6;
@@ -24,7 +23,7 @@ namespace MTA.Game.Items.Handlers {
             client.Inventory.Remove(item, Enums.ItemUse.Remove);
 
             var r = new Random();
-            var soulId = 0u;
+            uint soulId;
 
             if (item.ID == P4DragonSoulBag) {
                 var nr = r.Next(1, 8);

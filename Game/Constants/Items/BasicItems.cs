@@ -10,16 +10,7 @@ namespace MTA.Game.Constants.Items {
         public const uint SilverCoin = 711610;
         public const uint CopperCoin = 711611;
         public const uint SmallLotteryTicket = 711504;
-        public const uint Class1MoneyBag = 723713;
-        public const uint Class2MoneyBag = 723714;
-        public const uint Class3MoneyBag = 723715;
-        public const uint Class4MoneyBag = 723716;
-        public const uint Class5MoneyBag = 723717;
-        public const uint Class6MoneyBag = 723718;
-        public const uint Class7MoneyBag = 723719;
-        public const uint Class8MoneyBag = 723720;
-        public const uint Class9MoneyBag = 723721;
-        public const uint Class10MoneyBag = 723722;
+
         public const uint TopMoneyBag = 723723;
         public const uint HorseRacingPointsPack10K = 720874;
         public const uint HorseRacingPointsPack8K = 720875;
@@ -141,6 +132,6 @@ namespace MTA.Game.Constants.Items {
         public const uint BrownDye = 1060070;
         public const uint RedDye = 1060080;
         public const uint WhiteDye = 1060090;
+        public const uint SweetLovePack = 3005134;
     }
 }
-

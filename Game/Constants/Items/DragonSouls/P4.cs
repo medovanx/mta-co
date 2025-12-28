@@ -19,5 +19,12 @@ namespace MTA.Game.Constants.Items.DragonSouls {
         public const uint VioletRing = 823052;
         public const uint HolyHeavyRing = 823053;
         public const uint MoonBracelet = 823054;
+
+        #region P4 Packs
+
+        public const uint P4DragonSoulBag = 3005133;
+        public const uint P4DragonSoulPack = 3005891;
+
+        #endregion P4 Packs
     }
 }

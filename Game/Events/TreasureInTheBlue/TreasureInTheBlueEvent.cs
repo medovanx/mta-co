@@ -7,7 +7,7 @@ using MTA.Database;
 using MTA.Network.GamePackets;
 using static MTA.Kernel;
 using static MTA.Game.Constants.Items.BasicItems;
-using static MTA.Game.Constants.Items.StudyAndGuild;
+using static MTA.Game.Constants.Items.StudyBooks;
 
 namespace MTA.Game.Events.TreasureInTheBlue;
 

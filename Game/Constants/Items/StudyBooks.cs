@@ -1,8 +1,8 @@
 namespace MTA.Game.Constants.Items {
     /// <summary>
-    /// Study Books and Guild item constants
+    /// Study Books Constants
     /// </summary>
-    public static class StudyAndGuild {
+    public static class StudyBooks {
         public const uint DiligenceBook = 723340;
         public const uint ModestyBook = 723342;
         public const uint EnduranceBook = 723341;

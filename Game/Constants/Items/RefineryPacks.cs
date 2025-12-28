@@ -168,5 +168,6 @@ namespace MTA.Game.Constants.Items {
         public const uint RefineryPack725056 = 725056;
         public const uint RefineryPack725057 = 725057;
         public const uint RefineryPack725058 = 725058;
+        public const uint SacredRefineryPack = 3004249;
     }
 }

@@ -8,8 +8,8 @@ namespace MTA.Game.Items.Handlers {
     /// <summary>
     /// Handles ChiPack items that grant Chi Points when used.
     /// </summary>
-    [ItemHandler(NormalChiPack, MediumChiPack, SeniorChiPack, ExtremeChiPack, ChiPack100, ChiPack120, ChiPack160,
-        ChiPack300, ChiPack800, ChiPack1000)]
+    [ItemHandler(NormalChiPack, MediumChiPack, SeniorChiPack, ExtremeChiPack, ChiPack_100, ChiPack_120, ChiPack_160,
+        ChiPack_300, ChiPack_800, ChiPack_1000)]
     public static class ChiPackHandler {
         public static void Handle(GameState client, ConquerItem item) {
             client.Inventory.Remove(item, Enums.ItemUse.Remove);
@@ -19,12 +19,12 @@ namespace MTA.Game.Items.Handlers {
                 MediumChiPack => 1000u,
                 SeniorChiPack => 2000u,
                 ExtremeChiPack => 3000u,
-                ChiPack100 => 100u,
-                ChiPack120 => 120u,
-                ChiPack160 => 160u,
-                ChiPack300 => 300u,
-                ChiPack800 => 800u,
-                ChiPack1000 => 1000u,
+                ChiPack_100 => 100u,
+                ChiPack_120 => 120u,
+                ChiPack_160 => 160u,
+                ChiPack_300 => 300u,
+                ChiPack_800 => 800u,
+                ChiPack_1000 => 1000u,
                 _ => 0u // Default case (should not occur)
             };
 

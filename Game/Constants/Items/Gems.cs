@@ -3,7 +3,8 @@ namespace MTA.Game.Constants.Items {
     /// Gem constants
     /// </summary>
     public static class Gems {
-        // Refined Gems
+        #region Refined Gems
+
         public const uint RefinedPhoenixGem = 700002;
         public const uint RefinedDragonGem = 700013;
         public const uint RefinedFuryGem = 700022;
@@ -15,7 +16,10 @@ namespace MTA.Game.Constants.Items {
         public const uint RefinedThunderGem = 700102;
         public const uint RefinedGloryGem = 700122;
 
-        // Super Gems
+        #endregion Refined Gems
+
+        #region Super Gems
+
         public const uint SuperPhoenixGem = 700003;
         public const uint SuperDragonGem = 700014;
         public const uint SuperFuryGem = 700023;
@@ -26,6 +30,14 @@ namespace MTA.Game.Constants.Items {
         public const uint SuperTortoiseGem = 700073;
         public const uint SuperThunderGem = 700103;
         public const uint SuperGloryGem = 700123;
+
+        #endregion
+
+        #region Gem Packs
+
+        public const uint RefinedGemBPack = 3005130;
+        public const uint SuperGemBPack = 3005132;
+
+        #endregion
     }
 }
-

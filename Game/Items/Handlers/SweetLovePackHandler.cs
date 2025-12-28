@@ -1,8 +1,8 @@
 using MTA.Client;
 using MTA.Network.GamePackets;
 using static MTA.Game.Constants.GameConstants;
-using static MTA.Game.Constants.Items.DragonSoulPacks;
 using static MTA.Game.Constants.Items.QuestAndOther;
+using static MTA.Game.Constants.Items.BasicItems;
 
 namespace MTA.Game.Items.Handlers {
     /// <summary>

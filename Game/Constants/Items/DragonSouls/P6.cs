@@ -23,6 +23,13 @@ namespace MTA.Game.Constants.Items.DragonSouls {
         public const uint FistofSky = 801212;
         public const uint FistofEarth = 801214;
         public const uint SolarFanSoul = 801306;
+
+        #region P6 Packs
+
+        public const uint P6WeaponSoulPack = 729122;
+        public const uint P6DragonSoulPack = 727317;
+        public const uint P6DragonSoulBag = 3005135;
+
+        #endregion
     }
 }
-

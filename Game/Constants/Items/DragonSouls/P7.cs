@@ -85,5 +85,13 @@ namespace MTA.Game.Constants.Items.DragonSouls {
         public const uint SaintBoots = 824017;
 
         #endregion Boots
+
+        #region P7 Packs
+
+        public const uint P7WeaponSoulPack = 3005331;
+        public const uint P7EquipmentSoulPack = 3004248;
+        public const uint P7WeaponSoulPack2 = 3004247;
+
+        #endregion
     }
 }

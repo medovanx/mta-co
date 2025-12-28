@@ -6,15 +6,15 @@ namespace MTA.Game.Items.Handlers {
     /// <summary>
     /// Handles Chi Point items that grant chi points when used.
     /// </summary>
-    [ItemHandler(ChiPoint5, ChiPoint100, ChiPoint200, ChiPoint300, ChiPoint400)]
+    [ItemHandler(SmallChiPill, ChiPill_100, ChiPill_200, ChiPill_300, ChiPill_400)]
     public static class ChiPointHandler {
         public static void Handle(GameState client, ConquerItem item) {
             var chiPoints = item.ID switch {
-                ChiPoint5 => 5u,
-                ChiPoint100 => 100u,
-                ChiPoint200 => 200u,
-                ChiPoint300 => 300u,
-                ChiPoint400 => 400u,
+                SmallChiPill => 5u,
+                ChiPill_100 => 100u,
+                ChiPill_200 => 200u,
+                ChiPill_300 => 300u,
+                ChiPill_400 => 400u,
                 _ => 0u
             };
 

@@ -2,10 +2,9 @@ namespace MTA.Game.Constants.Items {
     /// <summary>
     /// Medicine and Teleport Gate constants
     /// </summary>
-    public static class MedicineAndTeleport {
-        #region Medicine Items
+    public static class MedicineAndGates {
+        #region HP Medicines
 
-        // HP Medicines
         public const uint Stancher = 1000000;
         public const uint Stancher2 = 1000010;
         public const uint Stancher3 = 1000020;
@@ -17,7 +16,10 @@ namespace MTA.Game.Constants.Items {
         public const uint MilGinsengPill = 1002050;
         public const uint SevenStarOintment = 725065;
 
-        // MP Medicines
+        #endregion HP Medicines
+
+        #region MP Medicines
+
         public const uint Agrypnotic = 1001000;
         public const uint Agrypnotic2 = 1001010;
         public const uint Agrypnotic3 = 1001020;
@@ -27,7 +29,7 @@ namespace MTA.Game.Constants.Items {
         public const uint ChantPillPill = 1002040;
         public const uint SerenityPill = 725066;
 
-        #endregion Medicine Items
+        #endregion MP Medicines
 
         #region Teleport Gates
 

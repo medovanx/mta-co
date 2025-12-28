@@ -4,7 +4,7 @@ using MTA.Network;
 using MTA.Network.GamePackets;
 using Message = MTA.Network.GamePackets.Message;
 using static MTA.Game.Constants.Items.BasicItems;
-using static MTA.Game.Constants.Items.MedicineAndTeleport;
+using static MTA.Game.Constants.Items.MedicineAndGates;
 using static MTA.Game.Constants.Items.SuperEquipment;
 using static MTA.Game.EntityClassConstants;
 

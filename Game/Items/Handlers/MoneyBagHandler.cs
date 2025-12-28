@@ -1,6 +1,6 @@
 using MTA.Client;
 using MTA.Network.GamePackets;
-using static MTA.Game.Constants.Items.BasicItems;
+using static MTA.Game.Constants.Items.MoneyBags;
 
 namespace MTA.Game.Items.Handlers {
     /// <summary>
@@ -29,4 +29,3 @@ namespace MTA.Game.Items.Handlers {
         }
     }
 }
-

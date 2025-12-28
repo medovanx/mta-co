@@ -3,7 +3,7 @@ using MTA.Client;
 using MTA.Database;
 using MTA.Network.GamePackets;
 using static MTA.Game.Constants.GameConstants;
-using static MTA.Game.Constants.Items.MedicineAndTeleport;
+using static MTA.Game.Constants.Items.MedicineAndGates;
 
 namespace MTA.Game.Items.Handlers {
     /// <summary>

@@ -5,7 +5,8 @@ using MTA.Game.Npcs;
 using MTA.Network.GamePackets;
 using static MTA.Game.Constants.Items.BasicItems;
 using static MTA.Game.Constants.Items.Mounts;
-using static MTA.Game.Constants.Items.StudyAndGuild;
+using static MTA.Game.Constants.Items.StudyBooks;
+using static MTA.Game.Constants.Items.MoneyBags;
 
 namespace MTA.Game.Events.TreasureInTheBlue;
 

@@ -3,7 +3,8 @@ namespace MTA.Game.Constants.Items {
     /// Mount constants
     /// </summary>
     public static class Mounts {
-        // Mount Items
+        #region Mount Items
+
         public const uint JadeHare = 200407;
         public const uint CelestialBird = 200420;
         public const uint GreenEyedBeast = 200413;
@@ -23,7 +24,10 @@ namespace MTA.Game.Constants.Items {
         public const uint IcePhoenix = 200444;
         public const uint FieryLion = 200442;
 
-        // Mount Packs
+        #endregion Mount Items
+
+        #region Mount Packs
+
         public const uint BlessedFancyAlpacaPack = 3004764;
         public const uint JadeHarePack = 3000254;
         public const uint ChaosBullPack = 3000256;
@@ -44,5 +48,7 @@ namespace MTA.Game.Constants.Items {
         public const uint FieryLionPack = 3000271;
         public const uint TurkeyRunPack = 3005300;
         public const uint FancyAlpacaPack = 3005301;
+
+        #endregion Mount Packs
     }
 }

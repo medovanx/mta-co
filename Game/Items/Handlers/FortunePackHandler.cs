@@ -2,7 +2,7 @@ using System.Drawing;
 using MTA.Client;
 using MTA.Network.GamePackets;
 using Message = MTA.Network.GamePackets.Message;
-using static MTA.Game.Constants.Items.FortunePacks;
+using static MTA.Game.Constants.Items.MoneyBags;
 
 namespace MTA.Game.Items.Handlers {
     /// <summary>

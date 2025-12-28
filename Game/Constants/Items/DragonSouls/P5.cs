@@ -8,5 +8,11 @@ namespace MTA.Game.Constants.Items.DragonSouls {
         public const uint SolarHat = 820057;
         public const uint SpiritNecklace = 821028;
         public const uint EbonyBag = 821030;
+
+        #region P5 Packs
+
+        public const uint P5DragonSoulPack = 3005892;
+
+        #endregion
     }
 }
