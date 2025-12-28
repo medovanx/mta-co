@@ -10,7 +10,7 @@ namespace MTA.Game.Items.Handlers {
     /// <summary>
     /// Handles GemPack items that grant random gems when used.
     /// </summary>
-    [ItemHandler(RefinedGemBPack, SuperGemBPack)]
+    [ItemHandler(RefinedGemBPack, SuperGemBPack, SuperGemPack)]
     public static class GemPackHandler {
         public static void Handle(GameState client, ConquerItem item) {
             if (client.Inventory.Count > 38) {
@@ -63,6 +63,39 @@ namespace MTA.Game.Items.Handlers {
                 }
 
                 client.Send(new Message("Congratultions you have got a Super gem!", Color.Red, Message.TopLeft));
+            }
+            else if (item.ID == SuperGemPack) {
+                if (client.Inventory.Count > 38) {
+                    return;
+                }
+
+                if (!client.Inventory.Contains(SuperGemPack, 1)) {
+                    return;
+                }
+
+                client.Inventory.Remove(SuperGemPack, 1);
+
+                var nr = r.Next(1, 11);
+
+                uint gemId = nr switch {
+                    1 => SuperPhoenixGem,
+                    2 => SuperDragonGem,
+                    3 => SuperFuryGem,
+                    4 => SuperRainbowGem,
+                    5 => SuperKylinGem,
+                    6 => SuperVioletGem,
+                    7 => SuperMoonGem,
+                    8 => SuperTortoiseGem,
+                    9 => SuperThunderGem,
+                    10 => SuperGloryGem,
+                    _ => 0u
+                };
+
+                if (gemId != 0) {
+                    // SuperTortoiseGem gives 2, others give 1
+                    uint amount = gemId == SuperTortoiseGem ? 2u : 1u;
+                    client.Inventory.Add(gemId, 0, amount);
+                }
             }
         }
     }

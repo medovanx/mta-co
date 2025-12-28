@@ -466,5 +466,41 @@ namespace MTA.Game {
         public const uint Kisses99 = 755099;
 
         #endregion Wedding Items
+
+        #region Quest Items
+
+        public const uint SurpriseBox = 722178;
+        public const uint ItemList = 729087;
+        public const uint ChiToken = 729304;
+        public const uint GoldenExorcismPack = 729594;
+        public const uint SuperGemPack = 721167;
+        public const uint NormalSpiritBead = 729611;
+        public const uint RefinedSpiritBead = 729612;
+        public const uint UniqueSpiritBead = 729613;
+        public const uint EliteSpiritBead = 729614;
+        public const uint SuperSpiritBead = 729703;
+        public const uint NormalMagnoliaSeed = 729306;
+        public const uint RefinedMagnoliaSeed = 729307;
+        public const uint UniqueMagnoliaSeed = 729308;
+        public const uint EliteMagnoliaSeed = 729309;
+        public const uint SuperMagnoliaSeed = 729310;
+
+        #endregion Quest Items
+
+        #region Crafting Items
+
+        public const uint EmptyBottle = 3003735;
+        public const uint CommonSoap = 3003736;
+        public const uint FlowerSoap = 3003737;
+        public const uint FruitSoap = 3003738;
+        public const uint SoapPowder = 3003739;
+        public const uint RiverWater = 3003740;
+        public const uint BasicSoapyWater = 3003741;
+        public const uint SoilPigment = 3003742;
+        public const uint FlowerMudPigment = 3003743;
+        public const uint MineralPigment = 3003744;
+        public const uint BubbleWater = 3003746;
+
+        #endregion Crafting Items
     }
 }
