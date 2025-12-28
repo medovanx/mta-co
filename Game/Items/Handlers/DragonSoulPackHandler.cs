@@ -21,7 +21,7 @@ namespace MTA.Game.Items.Handlers {
             client.Inventory.Remove(item, Enums.ItemUse.Remove);
 
             var r = new Random();
-            uint soulId = 0u;
+            var soulId = 0u;
 
             if (item.ID == P4DragonSoulBag) {
                 var nr = r.Next(1, 8);

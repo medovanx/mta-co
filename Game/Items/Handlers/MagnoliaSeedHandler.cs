@@ -25,7 +25,7 @@ namespace MTA.Game.Items.Handlers {
                 return;
             }
 
-            string seedType = item.ID switch {
+            var seedType = item.ID switch {
                 NormalMagnoliaSeed => "Normal",
                 RefinedMagnoliaSeed => "Refined",
                 UniqueMagnoliaSeed => "Unique",
@@ -37,7 +37,7 @@ namespace MTA.Game.Items.Handlers {
             client.ProgressBar = new ProgressBar(client, seedType, p => {
                 p.Inventory.Remove(item, Enums.ItemUse.Remove);
 
-                uint expDivisor = item.ID switch {
+                var expDivisor = item.ID switch {
                     NormalMagnoliaSeed => 5u,
                     RefinedMagnoliaSeed => 4u,
                     UniqueMagnoliaSeed => 3u,
@@ -46,16 +46,18 @@ namespace MTA.Game.Items.Handlers {
                     _ => 5u
                 };
 
-                p.IncreaseExperience(p.ExpBall / (int)expDivisor, true);
+                p.IncreaseExperience((ulong)(p.ExpBall / expDivisor), true);
 
-                if (item.ID == UniqueMagnoliaSeed) {
-                    p.Entity.ConquerPoints += 300;
-                }
-                else if (item.ID == EliteMagnoliaSeed) {
-                    p.Entity.ConquerPoints += 400;
-                }
-                else if (item.ID == SuperMagnoliaSeed) {
-                    p.Entity.ConquerPoints += 1000;
+                switch (item.ID) {
+                    case UniqueMagnoliaSeed:
+                        p.Entity.ConquerPoints += 300;
+                        break;
+                    case EliteMagnoliaSeed:
+                        p.Entity.ConquerPoints += 400;
+                        break;
+                    case SuperMagnoliaSeed:
+                        p.Entity.ConquerPoints += 1000;
+                        break;
                 }
 
                 var str = new _String(true) {
@@ -71,4 +73,3 @@ namespace MTA.Game.Items.Handlers {
         }
     }
 }
-

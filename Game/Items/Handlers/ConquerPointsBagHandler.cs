@@ -1,4 +1,5 @@
 using MTA.Client;
+using MTA.Network.GamePackets;
 using static MTA.Game.ItemConstants;
 
 namespace MTA.Game.Items.Handlers {
@@ -11,24 +12,25 @@ namespace MTA.Game.Items.Handlers {
         CPBag6900, CPBag10000, CPBag13500, CPBag13800)]
     public static class ConquerPointsBagHandler {
         public static void Handle(GameState client, ConquerItem item) {
-            uint cps = item.ID switch {
+            if (item.ID == CPBag1Billion) {
+                if (client.Entity.ConquerPoints <= 1000000050) {
+                    client.Entity.ConquerPoints += 1000000000;
+                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
+                }
+                else {
+                    client.MessageBox("You cannot have more than 1 billion CPs to open this.");
+                }
+
+                return;
+            }
+
+            var cps = item.ID switch {
                 CPBag5 or CPBag5_2 => 5u,
                 CPBag10 or CPBag10_2 => 10u,
                 CPBag20 or CPBag20_2 => 20u,
                 CPBag25 => 25u,
                 CPBag50 or CPBag50_2 => 50u,
                 CPBag100 or CPBag100_2 => 100u,
-                CPBag1Billion => {
-                    if (client.Entity.ConquerPoints <= 1000000050) {
-                        client.Entity.ConquerPoints += 1000000000;
-                        client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                        return;
-                    }
-                    else {
-                        client.MessageBox(" You Shouldn't Have More Than 1 Mlyar To Open It ");
-                        return;
-                    }
-                },
                 CPBag250 => 250u,
                 CPBag270 => 270u,
                 CPBag500 or CPBag500_2 or CPBag500_3 => 500u,
@@ -47,11 +49,9 @@ namespace MTA.Game.Items.Handlers {
                 _ => 0u
             };
 
-            if (cps > 0) {
-                client.Entity.ConquerPoints += (int)cps;
-                client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-            }
+            if (cps <= 0) return;
+            client.Entity.ConquerPoints += cps;
+            client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
         }
     }
 }
-

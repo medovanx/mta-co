@@ -1,12 +1,12 @@
 using System.Drawing;
 using MTA.Client;
 using MTA.Game;
+using MTA.Network;
 using MTA.Network.GamePackets;
 using Message = MTA.Network.GamePackets.Message;
 using Update = MTA.Network.GamePackets.Update;
 using _String = MTA.Network.GamePackets._String;
 using static MTA.Game.ItemConstants;
-using Writer = MTA.Writer;
 
 namespace MTA.Game.Items.Handlers {
     /// <summary>
@@ -133,12 +133,12 @@ namespace MTA.Game.Items.Handlers {
                 if (Game.GuildWar.IsWar) {
                     if (client.Entity.MapID == 1038 & client.Entity.X == 165 & client.Entity.Y == 213) {
                         MTA.Game.GuildWar.LeftGate.Mesh = (ushort)(250 + MTA.Game.GuildWar.LeftGate.Mesh % 10);
-                        Update upd = new Update(true);
+                        var upd = new Update(true);
                         upd.UID = MTA.Game.GuildWar.LeftGate.UID;
                         upd.Append(Update.Mesh, MTA.Game.GuildWar.LeftGate.Mesh);
                         client.SendScreen(upd, true);
                         client.SendScreen(upd, true);
-                        _String str = new _String(true);
+                        var str = new _String(true);
                         str.UID = client.Entity.UID;
                         str.TextsCount = 1;
                         str.Type = _String.Effect;
@@ -149,11 +149,11 @@ namespace MTA.Game.Items.Handlers {
                     else {
                         if (client.Entity.MapID == 1038 & client.Entity.X == 225 & client.Entity.Y == 178) {
                             MTA.Game.GuildWar.RightGate.Mesh = (ushort)(280 + MTA.Game.GuildWar.RightGate.Mesh % 10);
-                            Update upd = new Update(true);
+                            var upd = new Update(true);
                             upd.UID = MTA.Game.GuildWar.RightGate.UID;
                             upd.Append(Update.Mesh, MTA.Game.GuildWar.RightGate.Mesh);
                             client.SendScreen(upd, true);
-                            _String str = new _String(true);
+                            var str = new _String(true);
                             str.UID = client.Entity.UID;
                             str.TextsCount = 1;
                             str.Type = _String.Effect;

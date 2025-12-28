@@ -1,5 +1,6 @@
 using System;
 using MTA.Client;
+using MTA.Database;
 using MTA.Game.Attacking;
 using MTA.Network.GamePackets;
 using _String = MTA.Network.GamePackets._String;
@@ -24,8 +25,8 @@ namespace MTA.Game.Items.Handlers {
 
             client.matrixtime = DateTime.Now;
 
-            string effectName = "";
-            string monsterName = "";
+            var effectName = "";
+            var monsterName = "";
             MonsterInformation monster = null;
 
             if (item.ID == SuperMonsterBox) {
@@ -161,7 +162,7 @@ namespace MTA.Game.Items.Handlers {
             entity.Defence = 20000;
 
             // Set position based on monster type
-            if (item.ID == CrazyGhostBox || item.ID == HumanAideBox) {
+            if (item.ID is CrazyGhostBox or HumanAideBox) {
                 entity.X = client.Entity.X;
                 entity.Y = client.Entity.Y;
             }

@@ -1,5 +1,6 @@
 using System;
 using MTA.Client;
+using MTA.Network.GamePackets;
 using static MTA.Constants;
 using static MTA.Game.ItemConstants;
 
@@ -19,7 +20,7 @@ namespace MTA.Game.Items.Handlers {
             var r = new Random();
             var nr = r.Next(1, 17);
 
-            uint soulId = nr switch {
+            var soulId = nr switch {
                 1 => MoonHeadgear,
                 2 => SunHeadgear,
                 3 => StarHeadgear,

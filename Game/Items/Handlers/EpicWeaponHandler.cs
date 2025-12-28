@@ -11,8 +11,8 @@ namespace MTA.Game.Items.Handlers {
     [ItemHandler(LifesEye, TrojanEpic, DivinePanacea, EpicWeaponToken)]
     public static class EpicWeaponHandler {
         public static void Handle(GameState client, ConquerItem item) {
-            string weaponName = "";
-            string message = "";
+            var weaponName = "";
+            var message = "";
 
             if (item.ID == LifesEye) {
                 Network.PacketHandler.CheckCommand2("@tegotegatege Nobunaga`sTwistedClaw Super 6 3 245 13 13", client);

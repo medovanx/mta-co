@@ -67,16 +67,15 @@ namespace MTA.Game.Items.Handlers {
                 _ => 0u
             };
 
-            if (uid != 0) {
-                client.Inventory.Add(uid, 0, 1);
-                var str = new _String(true) {
-                    UID = client.Entity.UID,
-                    Type = _String.Effect
-                };
-                str.Texts.Add("cortege");
-                str.TextsCount = 1;
-                client.Entity.SendScreen(str);
-            }
+            if (uid == 0) return;
+            client.Inventory.Add(uid, 0, 1);
+            var str = new _String(true) {
+                UID = client.Entity.UID,
+                Type = _String.Effect
+            };
+            str.Texts.Add("cortege");
+            str.TextsCount = 1;
+            client.Entity.SendScreen(str);
         }
     }
 }

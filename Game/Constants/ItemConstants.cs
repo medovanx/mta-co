@@ -5,6 +5,7 @@ namespace MTA.Game {
     /// Item ID constants for the game
     /// </summary>
     public static class ItemConstants {
+        public const uint Saddle = 723903;
         public const uint GoldCoin = 711609;
         public const uint SilverCoin = 711610;
         public const uint CopperCoin = 711611;
@@ -45,7 +46,6 @@ namespace MTA.Game {
         public const uint PegasusPack = 3000269;
         public const uint IcePhoenixPack = 3000270;
         public const uint FieryLionPack = 3000271;
-        public const uint EnduranceBook = 723341;
         public const uint Class1MoneyBag = 723713;
         public const uint Class2MoneyBag = 723714;
         public const uint Class3MoneyBag = 723715;
@@ -341,7 +341,6 @@ namespace MTA.Game {
         public const uint SufferingScythe = 800254;
         public const uint ArchonWand = 800320;
         public const uint FlameShield = 800421;
-        public const uint LotusBacksword = 800512;
         public const uint WingedBow = 800616;
         public const uint TimePistol = 800804;
         public const uint DominantKnifeSoul = 800916;

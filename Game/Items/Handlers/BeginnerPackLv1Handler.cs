@@ -94,11 +94,9 @@ namespace MTA.Game.Items.Handlers {
                                 client.Inventory.Add(ShieldSoulLv100, 0, 1);
                             else if (IsArcher(client.Entity.Class))
                                 client.Inventory.Add(BowSoulLv100, 0, 1);
-                            else if (IsNinja(client.Entity.Class))
+                            else if (IsNinja(client.Entity.Class) || IsMonk(client.Entity.Class))
                                 client.Inventory.Add(BladeSoulLv100, 0, 1);
-                            else if (IsMonk(client.Entity.Class))
-                                client.Inventory.Add(BladeSoulLv100, 0, 1);
-                            else // Taoist
+                            else
                                 client.Inventory.Add(BackswordSoulLv100, 0, 1);
 
                             client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);

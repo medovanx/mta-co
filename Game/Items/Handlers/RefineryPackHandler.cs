@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using MTA.Client;
 using MTA.Network;
+using MTA.Network.GamePackets;
 using static MTA.Game.ItemConstants;
 
 namespace MTA.Game.Items.Handlers {
@@ -141,12 +142,12 @@ namespace MTA.Game.Items.Handlers {
             if (ItemOffsets.TryGetValue(item.ID, out var offset)) {
                 client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
                 var extra = PacketHandler.GetNextRefineryItem();
-                var newItemID = item.ID + extra + offset;
+                var newItemID = (uint)(item.ID + extra + offset);
 
                 // Special cases
                 if (item.ID >= DetoxicationPrimaryPackNecklace && item.ID <= DetoxicationSuperiorPackNecklace) {
                     // Detoxication - Necklace
-                    if (newItemID == 724348 || newItemID == 724349)
+                    if (newItemID is 724348 or 724349)
                         newItemID += 150;
                 }
                 else if (item.ID >= BreakthroughPrimaryPack1Handed && item.ID <= BreakthroughSuperiorPack1Handed) {

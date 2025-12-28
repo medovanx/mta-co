@@ -1,6 +1,7 @@
 using System;
 using MTA.Client;
 using MTA.Database;
+using MTA.Network.GamePackets;
 using static MTA.Constants;
 using static MTA.Game.ItemConstants;
 
@@ -16,10 +17,7 @@ namespace MTA.Game.Items.Handlers {
             var infos = new ConquerItemInformation(item.ID, 0);
 
             // Check if HP medicines
-            bool isHpMedicine = item.ID == Stancher || item.ID == Stancher2 || item.ID == Stancher3 ||
-                                item.ID == AmritaPill || item.ID == PanaceaPill || item.ID == GinsengPill ||
-                                item.ID == VanillaPill || item.ID == MilGinsengPill || item.ID == Stancher4 ||
-                                item.ID == SevenStarOintment;
+            var isHpMedicine = item.ID is Stancher or Stancher2 or Stancher3 or AmritaPill or PanaceaPill or GinsengPill or VanillaPill or MilGinsengPill or Stancher4 or SevenStarOintment;
 
             if (isHpMedicine) {
                 if (NoHp.Contains(client.Entity.MapID)) {

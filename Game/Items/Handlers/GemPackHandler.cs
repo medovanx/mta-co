@@ -23,7 +23,7 @@ namespace MTA.Game.Items.Handlers {
             var nr = r.Next(1, 11);
 
             if (item.ID == RefinedGemBPack) {
-                uint gemId = nr switch {
+                var gemId = nr switch {
                     1 => RefinedPhoenixGem,
                     2 => RefinedDragonGem,
                     3 => RefinedFuryGem,
@@ -44,7 +44,7 @@ namespace MTA.Game.Items.Handlers {
                 client.Send(new Message("Congratultions you have got a Refined gem!", Color.Red, Message.TopLeft));
             }
             else if (item.ID == SuperGemBPack) {
-                uint gemId = nr switch {
+                var gemId = nr switch {
                     1 => SuperPhoenixGem,
                     2 => SuperDragonGem,
                     3 => SuperFuryGem,
@@ -75,9 +75,9 @@ namespace MTA.Game.Items.Handlers {
 
                 client.Inventory.Remove(SuperGemPack, 1);
 
-                var nr = r.Next(1, 11);
+                var nr2 = r.Next(1, 11);
 
-                uint gemId = nr switch {
+                var gemId = nr2 switch {
                     1 => SuperPhoenixGem,
                     2 => SuperDragonGem,
                     3 => SuperFuryGem,
@@ -91,13 +91,11 @@ namespace MTA.Game.Items.Handlers {
                     _ => 0u
                 };
 
-                if (gemId != 0) {
-                    // SuperTortoiseGem gives 2, others give 1
-                    uint amount = gemId == SuperTortoiseGem ? 2u : 1u;
-                    client.Inventory.Add(gemId, 0, amount);
-                }
+                if (gemId == 0) return;
+                // SuperTortoiseGem gives 2, others give 1
+                var amount = gemId == SuperTortoiseGem ? 2u : 1u;
+                client.Inventory.Add(gemId, 0, (byte)amount);
             }
         }
     }
 }
-

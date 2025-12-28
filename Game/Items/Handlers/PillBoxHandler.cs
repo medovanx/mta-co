@@ -11,7 +11,7 @@ namespace MTA.Game.Items.Handlers {
     public static class PillBoxHandler {
         public static void Handle(GameState client, ConquerItem item) {
             if (client.Inventory.Count <= 38) {
-                uint pillId = item.ID switch {
+                var pillId = item.ID switch {
                     Amrita => AmritaPill,
                     Panacea => PanaceaPill,
                     Ginseng => GinsengPill,

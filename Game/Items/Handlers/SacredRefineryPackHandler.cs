@@ -1,5 +1,6 @@
 using System;
 using MTA.Client;
+using MTA.Network.GamePackets;
 using static MTA.Constants;
 using static MTA.Game.ItemConstants;
 
@@ -19,7 +20,7 @@ namespace MTA.Game.Items.Handlers {
             var r = new Random();
             var nr = r.Next(1, 32);
 
-            uint materialId = nr switch {
+            var materialId = nr switch {
                 1 => SacredMDefenseMaterial1,
                 2 => SacredMDefenseMaterial2,
                 3 => SacredMDefenseMaterial3,
@@ -60,4 +61,3 @@ namespace MTA.Game.Items.Handlers {
         }
     }
 }
-

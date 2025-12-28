@@ -14,7 +14,7 @@ namespace MTA.Game.Items.Handlers {
         public static void Handle(GameState client, ConquerItem item) {
             client.Inventory.Remove(item, Enums.ItemUse.Remove);
 
-            uint chiPoints = item.ID switch {
+            var chiPoints = item.ID switch {
                 NormalChiPack => 500u,
                 MediumChiPack => 1000u,
                 SeniorChiPack => 2000u,
@@ -28,7 +28,7 @@ namespace MTA.Game.Items.Handlers {
                 _ => 0u // Default case (should not occur)
             };
 
-            client.ChiPoints += (int)chiPoints;
+            client.ChiPoints += chiPoints;
             client.Send(new Message($"Congratultions you have got {chiPoints} Chi points.", Color.Red,
                 Message.TopLeft));
         }

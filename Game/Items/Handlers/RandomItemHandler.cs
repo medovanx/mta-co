@@ -1,6 +1,7 @@
 using System.Linq;
 using MTA.Client;
 using MTA.Database;
+using MTA.Network.GamePackets;
 using static MTA.Game.ItemConstants;
 
 namespace MTA.Game.Items.Handlers {

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using MTA.Client;
 using MTA.Database;
+using MTA.Network.GamePackets;
 using static MTA.Game.ItemConstants;
 
 namespace MTA.Game.Items.Handlers {
@@ -72,12 +73,12 @@ namespace MTA.Game.Items.Handlers {
             // Grant experience if applicable
             if (reward.ExperienceMultiplier.HasValue) {
                 var multiplier = reward.ExperienceMultiplier.Value;
-                int exp = multiplier switch {
+                var exp = multiplier switch {
                     1 => DataHolder.LevelExperience(client.Entity.Level),
                     2 => DataHolder.LevelExperience(client.Entity.Level) / 2,
                     10 => DataHolder.LevelExperience(client.Entity.Level) / 10 * 3,
                     100 => DataHolder.LevelExperience(client.Entity.Level) / 100 * 15,
-                    _ => 0
+                    _ => 0UL
                 };
                 if (exp > 0) {
                     client.IncreaseExperience(exp, false);
@@ -90,28 +91,28 @@ namespace MTA.Game.Items.Handlers {
             }
             if (reward.Item1.HasValue) {
                 if (reward.Item1Bound) {
-                    client.Inventory.Add(reward.Item1.Value, 0, reward.Item1Count, true);
+                    client.Inventory.Add(reward.Item1.Value, 0, (byte)reward.Item1Count, true);
                 } else {
-                    client.Inventory.Add(reward.Item1.Value, 0, reward.Item1Count);
+                    client.Inventory.Add(reward.Item1.Value, 0, (byte)reward.Item1Count);
                 }
             }
             if (reward.Item2.HasValue) {
-                client.Inventory.Add(reward.Item2.Value, 0, reward.Item2Count);
+                client.Inventory.Add(reward.Item2.Value, 0, (byte)reward.Item2Count);
             }
             if (reward.Item3.HasValue) {
-                client.Inventory.Add(reward.Item3.Value, 0, reward.Item3Count);
+                client.Inventory.Add(reward.Item3.Value, 0, (byte)reward.Item3Count);
             }
             if (reward.Item4.HasValue) {
-                client.Inventory.Add(reward.Item4.Value, 0, reward.Item4Count);
+                client.Inventory.Add(reward.Item4.Value, 0, (byte)reward.Item4Count);
             }
             if (reward.Item5.HasValue) {
-                client.Inventory.Add(reward.Item5.Value, 0, reward.Item5Count);
+                client.Inventory.Add(reward.Item5.Value, 0, (byte)reward.Item5Count);
             }
             if (reward.Item6.HasValue) {
-                client.Inventory.Add(reward.Item6.Value, 0, reward.Item6Count);
+                client.Inventory.Add(reward.Item6.Value, 0, (byte)reward.Item6Count);
             }
             if (reward.Item7.HasValue) {
-                client.Inventory.Add(reward.Item7.Value, 0, reward.Item7Count);
+                client.Inventory.Add(reward.Item7.Value, 0, (byte)reward.Item7Count);
             }
         }
     }

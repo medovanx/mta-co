@@ -14,11 +14,11 @@ namespace MTA.Game.Items.Handlers {
     public static class MountPackHandler {
         public static void Handle(GameState client, ConquerItem item) {
             // TurkeyRunPack and FancyAlpacaPack need inventory space check
-            if (item.ID == TurkeyRunPack || item.ID == FancyAlpacaPack) {
+            if (item.ID is TurkeyRunPack or FancyAlpacaPack) {
                 if (client.Inventory.Count <= 38) {
                     client.Inventory.Remove(item, Enums.ItemUse.Remove);
-                    uint mountId = item.ID == TurkeyRunPack ? 200490u : 200499u;
-                    client.Inventory.Add(mountId, 0, 1);
+                    var mountIdLocal = item.ID == TurkeyRunPack ? 200490u : 200499u;
+                    client.Inventory.Add(mountIdLocal, 0, 1);
                 }
                 else {
                     client.Send(FullInventory);
@@ -55,4 +55,3 @@ namespace MTA.Game.Items.Handlers {
         }
     }
 }
-
