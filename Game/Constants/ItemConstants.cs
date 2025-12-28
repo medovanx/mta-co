@@ -109,6 +109,12 @@ namespace MTA.Game {
         public const uint SevenStarOintment = 725065;
         public const uint SerenityPill = 725066;
         public const uint Steed = 300000;
+        public const uint DemonBox = 720650;
+        public const uint AncientDemonBox = 720651;
+        public const uint FloodDemonBox = 720652;
+        public const uint HeavenDemonBox = 720671;
+        public const uint ChaosDemonBox = 720672;
+        public const uint SacredDemonBox = 720673;
         public const uint DragonBall = 1088000;
         public const uint Emerald = 1080001;
         public const uint TwinCityGate = 1060020;
