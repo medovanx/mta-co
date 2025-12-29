@@ -15885,12 +15885,6 @@ namespace MTA.Network {
                 client.Entity.Teleport(1002, 303, 278);
             if (client.Entity.MapID == 1234)
                 client.Entity.Teleport(1002, 303, 378);
-            if (client.Entity.MapID == 2121)
-                client.Entity.Teleport(1002, 303, 278);
-            if (client.Entity.MapID == 2222)
-                client.Entity.Teleport(1002, 303, 278);
-            if (client.Entity.MapID == 2323)
-                client.Entity.Teleport(1002, 303, 278);
             if (client.Entity.MapID == 1235)
                 client.Entity.Teleport(1002, 303, 278);
             if (client.Entity.MapID == 1236)
@@ -15910,8 +15904,6 @@ namespace MTA.Network {
             if (client.Entity.MapID == 7008)
                 client.Entity.Teleport(1002, 303, 278);
             if (client.Entity.MapID == 1040)
-                client.Entity.Teleport(1002, 303, 278);
-            if (client.Entity.MapID == 2222)
                 client.Entity.Teleport(1002, 303, 278);
             if (client.Entity.MapID is 11042 or 11030 or 11034)
                 client.Entity.Teleport(1002, 303, 278);
