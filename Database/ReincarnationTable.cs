@@ -12,11 +12,11 @@ namespace MTA.Database
                 while (reader.Read())
                 {
                     ReincarnateInfo info = new ReincarnateInfo();
-                    info.UID = reader.ReadUInt32("Uid");
+                    info.Uid = reader.ReadUInt32("Uid");
                     info.Level = reader.ReadByte("Level");
                     info.Experience = reader.ReadUInt32("Experience");
-                    if (!Kernel.ReincarnatedCharacters.ContainsKey(info.UID))
-                        Kernel.ReincarnatedCharacters.Add(info.UID, info);
+                    if (!Kernel.ReincarnatedCharacters.ContainsKey(info.Uid))
+                        Kernel.ReincarnatedCharacters.Add(info.Uid, info);
                 }
             }
         }

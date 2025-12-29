@@ -2,7 +2,7 @@
 {
     public class ReincarnateInfo
     {
-        public uint UID;
+        public uint Uid;
         public byte Level;
         public ulong Experience;
     }
