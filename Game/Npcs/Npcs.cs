@@ -7883,97 +7883,6 @@ namespace MTA {
                 /////////////////////////////////////////////////////////////////
                 /////////////////////////////////////////////////////////////////
 
-                #region PrinceWar
-
-                case 81508: {
-                    switch (npcRequest.OptionID) {
-                        case 0: {
-                            dialog.Text("Hey there > " + client.Entity.Name + " <  Would you like to join PrinceWar?.");
-                            dialog.Option("Yes Please", 1);
-                            dialog.Option("Not now.", 255);
-                            dialog.Send();
-                            break;
-                        }
-                        case 1: {
-                            if (DateTime.Now.Minute >= 23 && DateTime.Now.Minute <= 26) {
-                                client.Entity.Teleport(8514, 50, 50);
-                            }
-                            else {
-                                dialog.Text("PrinceWar War is held during xx:23 To xx:26 in every Day");
-                                dialog.Option("I don't care.", 255);
-                                dialog.Send();
-                                break;
-                            }
-
-                            break;
-                        }
-                    }
-
-                    break;
-                }
-
-                #endregion
-
-                #region PrinceWar Prize
-
-                case 81509:
-                    switch (npcRequest.OptionID) {
-                        case 0: {
-                            dialog.Text(
-                                "Hey there > " + client.Entity.Name + " <  Would you like to claim your Prize?.");
-                            dialog.Option("Yes Please", 1);
-                            //dialog.Option("I Need To Leave", 2);
-                            dialog.Option("I don't care.", 0xff);
-                            dialog.Send();
-                            break;
-                        }
-
-                        case 1: {
-                            Daily.CheackAlive184();
-                            var Now64 = DateTime.Now;
-                            if (DateTime.Now.Minute >= 27 && DateTime.Now.Minute <= 50) {
-                                if (Daily.howmanyinmap184 == 1) {
-                                    client.Entity.ConquerPoints += 2000000;
-                                    client.Entity.RemoveFlag(Update.Flags.Ride);
-                                    client.Entity.AddTopStatus(Update.Flags2.Top3Warrior, 2, DateTime.Now.AddHours(1));
-                                    //  client.Entity.AddTopStatus(Update.Flags.TopNinja, DateTime.Now.AddHours(1));
-                                    Kernel.SendWorldMessage(
-                                        new Message(
-                                            "Congratulations! > " + client.Entity.Name +
-                                            " < You Wenner Quest PrinceWar Prize " + " 2 M " + " CPs.", Color.Black,
-                                            Message.Center), Program.Values);
-                                    client.Entity.SendSpawn(client, true);
-                                    client.Entity.Teleport(1002, 303, 278);
-                                    EntityTable.SaveEntity(client);
-                                }
-                                else {
-                                    dialog.Text("There are still " + Daily.howmanyinmap184 +
-                                                " players in the map kill it first to claim prize!");
-                                    dialog.Option("okay", 0xff);
-                                    dialog.Send();
-                                }
-                            }
-                            else {
-                                dialog.Text("Hey there > " + client.Entity.Name +
-                                            " < You can only claim the prize when the time on or after xx:27");
-                                dialog.Option("okay", 0xff);
-                                dialog.Send();
-                            }
-
-                            break;
-                        }
-                        case 2: {
-                            {
-                                client.Entity.Teleport(1002, 302, 280);
-                            }
-                            break;
-                        }
-                    }
-
-                    break;
-
-                #endregion
-
                 /////////////////////////////////////////////////////////////////
 
                 #region AttackersTop
@@ -26491,19 +26400,6 @@ namespace MTA {
                             }
                             else {
                                 dialog.Text("[[T]SpeedPK] War is held during 13:30 To 13:33 in every Hour");
-                                dialog.Option("I don't care.", 255);
-                                dialog.Send();
-                                break;
-                            }
-
-                            break;
-                        }
-                        case 104: {
-                            if (DateTime.Now.Hour == 14 && DateTime.Now.Minute >= 30 && DateTime.Now.Minute <= 33) {
-                                client.Entity.Teleport(8514, 45, 45);
-                            }
-                            else {
-                                dialog.Text("[[T]The Prince] War is held during xx:05 To 14:30 in every Hour");
                                 dialog.Option("I don't care.", 255);
                                 dialog.Send();
                                 break;

@@ -2537,19 +2537,6 @@ namespace MTA {
 
             #endregion
 
-            #region PrinceWar
-
-            if (DateTime.Now.Minute == 23 && now64.Second == 1) {
-                Kernel.SendWorldMessage(
-                    new Message("(PrinceWar Pk, Now Online All Go To Play PK", Color.White, Message.Center),
-                    Program.Values);
-                foreach (var client in Program.Values)
-                    client.MessageBox(" PrinceWar, Now Online, like to Join? ",
-                        p => { p.Entity.Teleport(1002, 274, 362); }, null, 60);
-            }
-
-            #endregion
-
             #region Attackers QuesT
 
             if (DateTime.Now.Minute == 32 && now64.Second == 1) {

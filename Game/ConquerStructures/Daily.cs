@@ -24,7 +24,6 @@ namespace MTA.Game.ConquerStructures
         public static int howmanyinmap181;
         public static int howmanyinmap182;
         public static int howmanyinmap183;
-        public static int howmanyinmap184;
         public static int howmanyinmap185;
         public static int howmanyinmap186;
         public static int howmanyinmap187;
@@ -249,19 +248,6 @@ namespace MTA.Game.ConquerStructures
                 {
                     howmanyinmap183 += 1;
                     Kernel.SendWorldMessage(new Message("Players Alive in Fighter Now: " + howmanyinmap183 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
-                }
-
-            }
-        }
-        public static void CheackAlive184()
-        {
-            howmanyinmap184 = 0;
-            foreach (Client.GameState client in Program.Values)
-            {
-                if (client.Entity is { MapID: 8514, Hitpoints: >= 1 })
-                {
-                    howmanyinmap184 += 1;
-                    Kernel.SendWorldMessage(new Message("Players Alive in [T]The Prince Now: " + howmanyinmap184 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
