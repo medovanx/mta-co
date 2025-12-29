@@ -23,6 +23,7 @@ namespace MTA.Client.Commands {
                 "die" => HandleDieCommand(client),
                 "xp" => HandleXpCommand(client, data),
                 "rev" => HandleRevCommand(client, data),
+                "class" => HandleClassCommand(client, data, mess),
                 _ => false,
             };
         }
@@ -727,6 +728,168 @@ namespace MTA.Client.Commands {
             }
 
             return true;
+        }
+
+        private static bool HandleClassCommand(GameState client, string[] data, string mess) {
+            // Check if second parameter is a player name
+            if (data.Length >= 2 && !byte.TryParse(data[1], out _)) {
+                // Extract player name - everything except the last parameter (which should be the class ID)
+                byte classId = 0;
+
+                // Try to find the class ID parameter (should be the last numeric parameter)
+                for (var i = data.Length - 1; i >= 1; i--) {
+                    if (byte.TryParse(data[i], out classId)) {
+                        break;
+                    }
+                }
+
+                if (classId == 0) {
+                    client.Send(new Network.GamePackets.Message(
+                        "Usage: @class <player_name> <class_id> or @class <class_id>",
+                        System.Drawing.Color.Red,
+                        Network.GamePackets.Message.Tip));
+                    client.Send(new Network.GamePackets.Message(
+                        "Valid class IDs: 15 (Trojan), 25 (Warrior), 45 (Archer), 55 (Ninja), 65 (Monk), 75 (Pirate), 85 (Leelong), 135 (Water), 145 (Fire), 165 (Windwalker)",
+                        System.Drawing.Color.Yellow,
+                        Network.GamePackets.Message.Tip));
+                    return true;
+                }
+
+                // Get player name - everything except the last parameter (class ID)
+                var playerNameSearch = mess.Substring(data[0].Length + 1).Trim();
+                var lastSpaceIndex = playerNameSearch.LastIndexOf(' ');
+                if (lastSpaceIndex >= 0) {
+                    playerNameSearch = playerNameSearch.Substring(0, lastSpaceIndex).Trim();
+                }
+
+                if (string.IsNullOrWhiteSpace(playerNameSearch)) {
+                    client.Send(new Network.GamePackets.Message(
+                        "Usage: @class <player_name> <class_id> or @class <class_id>",
+                        System.Drawing.Color.Red,
+                        Network.GamePackets.Message.Tip));
+                    return true;
+                }
+
+                // Search for player using utility function
+                if (!FindPlayerByName(playerNameSearch, out var foundPlayer, out var matchCount)) {
+                    if (matchCount == 0) {
+                        client.Send(new Network.GamePackets.Message(
+                            $"Player matching [{playerNameSearch}] not found or offline!",
+                            System.Drawing.Color.Red, Network.GamePackets.Message.Tip));
+                    }
+                    else {
+                        client.Send(new Network.GamePackets.Message(
+                            $"Multiple players found matching [{playerNameSearch}]. Please be more specific.",
+                            System.Drawing.Color.Red, Network.GamePackets.Message.Tip));
+                    }
+
+                    return true;
+                }
+
+                if (!IsValidClassId(classId)) {
+                    client.Send(new Network.GamePackets.Message($"Invalid class ID: {classId}",
+                        System.Drawing.Color.Red,
+                        Network.GamePackets.Message.Tip));
+                    client.Send(new Network.GamePackets.Message(
+                        "Valid class IDs: 15 (Trojan), 25 (Warrior), 45 (Archer), 55 (Ninja), 65 (Monk), 75 (Pirate), 85 (Leelong), 135 (Water), 145 (Fire), 165 (Windwalker)",
+                        System.Drawing.Color.Yellow,
+                        Network.GamePackets.Message.Tip));
+                    return true;
+                }
+
+                if (foundPlayer == null) return true;
+                foundPlayer.Entity.Class = classId;
+
+                // Recalculate stats like in HandleLevelCommand
+                Database.DataHolder.GetStats(foundPlayer.Entity.Class, foundPlayer.Entity.Level, foundPlayer);
+                foundPlayer.CalculateStatBonus();
+                foundPlayer.CalculateHPBonus();
+                foundPlayer.GemAlgorithm();
+
+                // Reload screen to show changes
+                foundPlayer.Screen.FullWipe();
+                foundPlayer.Screen.Reload();
+
+                var className = GetClassNameFromId(classId);
+                foundPlayer.Send(new Network.GamePackets.Message(
+                    $"Class set to {className} (ID: {classId}) by {client.Entity.Name}",
+                    System.Drawing.Color.Green, Network.GamePackets.Message.Tip));
+                client.Send(new Network.GamePackets.Message(
+                    $"Class set to {className} (ID: {classId}) for [{foundPlayer.Entity.Name}]",
+                    System.Drawing.Color.Green, Network.GamePackets.Message.Tip));
+
+                return true;
+            }
+
+            // Self class command
+            if (!byte.TryParse(data[1], out var selfClassId)) {
+                client.Send(new Network.GamePackets.Message(
+                    "Usage: @class <class_id> or @class <player_name> <class_id>",
+                    System.Drawing.Color.Red,
+                    Network.GamePackets.Message.Tip));
+                client.Send(new Network.GamePackets.Message(
+                    "Valid class IDs: 15 (Trojan), 25 (Warrior), 45 (Archer), 55 (Ninja), 65 (Monk), 75 (Pirate), 85 (Leelong), 135 (Water), 145 (Fire), 165 (Windwalker)",
+                    System.Drawing.Color.Yellow,
+                    Network.GamePackets.Message.Tip));
+                return true;
+            }
+
+            if (!IsValidClassId(selfClassId)) {
+                client.Send(new Network.GamePackets.Message($"Invalid class ID: {selfClassId}",
+                    System.Drawing.Color.Red,
+                    Network.GamePackets.Message.Tip));
+                client.Send(new Network.GamePackets.Message(
+                    "Valid class IDs: 15 (Trojan), 25 (Warrior), 45 (Archer), 55 (Ninja), 65 (Monk), 75 (Pirate), 85 (Leelong), 135 (Water), 145 (Fire), 165 (Windwalker)",
+                    System.Drawing.Color.Yellow,
+                    Network.GamePackets.Message.Tip));
+                return true;
+            }
+
+            client.Entity.Class = selfClassId;
+
+            // Recalculate stats like in HandleLevelCommand
+            Database.DataHolder.GetStats(client.Entity.Class, client.Entity.Level, client);
+            client.CalculateStatBonus();
+            client.CalculateHPBonus();
+            client.GemAlgorithm();
+
+            // Reload screen to show changes
+            client.Screen.FullWipe();
+            client.Screen.Reload();
+
+            var selfClassName = GetClassNameFromId(selfClassId);
+            client.Send(new Network.GamePackets.Message($"Class set to {selfClassName} (ID: {selfClassId})",
+                System.Drawing.Color.Green,
+                Network.GamePackets.Message.Tip));
+            return true;
+        }
+
+        private static bool IsValidClassId(byte classId) {
+            // Valid class ID ranges based on RebornCommands.cs
+            return (classId >= 10 && classId <= 15) || // Trojan
+                   (classId >= 20 && classId <= 25) || // Warrior
+                   (classId >= 40 && classId <= 45) || // Archer
+                   (classId >= 50 && classId <= 55) || // Ninja
+                   (classId >= 60 && classId <= 65) || // Monk
+                   (classId >= 70 && classId <= 75) || // Pirate
+                   (classId >= 80 && classId <= 85) || // Leelong
+                   (classId >= 130 && classId <= 135) || // Water
+                   (classId >= 140 && classId <= 145) || // Fire
+                   (classId >= 160 && classId <= 165); // Windwalker
+        }
+
+        private static string GetClassNameFromId(byte classId) {
+            if (classId is >= 10 and <= 15) return "Trojan";
+            if (classId is >= 20 and <= 25) return "Warrior";
+            if (classId is >= 40 and <= 45) return "Archer";
+            if (classId is >= 50 and <= 55) return "Ninja";
+            if (classId is >= 60 and <= 65) return "Monk";
+            if (classId is >= 70 and <= 75) return "Pirate";
+            if (classId is >= 80 and <= 85) return "Leelong";
+            if (classId is >= 130 and <= 135) return "Water";
+            if (classId is >= 140 and <= 145) return "Fire";
+            if (classId is >= 160 and <= 165) return "Windwalker";
+            return "Unknown";
         }
     }
 }
