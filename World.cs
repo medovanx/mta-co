@@ -2524,19 +2524,6 @@ namespace MTA {
 
             #endregion
 
-            #region StayAlive PK
-
-            if (DateTime.Now.Minute == 16 && now64.Second == 10) {
-                Kernel.SendWorldMessage(
-                    new Message(" StayAlive Pk, Now Online All Go To Play PK !", Color.White, Message.Center),
-                    Program.Values);
-                foreach (var client in Program.Values)
-                    client.MessageBox(" StayAlive Pk, Now Online, like to Join? ",
-                        p => { p.Entity.Teleport(1002, 297, 360); }, null, 60);
-            }
-
-            #endregion
-
             #region Attackers QuesT
 
             if (DateTime.Now.Minute == 32 && now64.Second == 1) {

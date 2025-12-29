@@ -463,7 +463,6 @@ namespace MTA.Game.Constants {
             3072,
             8510,
             8511,
-            8512,
             8513,
             8515,
             8516,
