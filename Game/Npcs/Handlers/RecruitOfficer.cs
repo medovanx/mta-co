@@ -7,7 +7,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
     /// Recruit Officer - Provides Bound Gears and Pack claims when players first join the server
     /// </summary>
     [NpcHandler(225587)]
-    public static class RecruitOffice {
+    public static class RecruitOfficer {
         public static void Handle(GameState client, NpcRequest npcRequest, MTA.Npcs dialog) {
             switch (npcRequest.OptionID) {
                 case 0: {
@@ -22,8 +22,8 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     dialog.Option("Water Taoist Pack.", 6);
                     dialog.Option("Warrior Pack.", 7);
                     dialog.Option("Pirate Pack.", 8);
-                    dialog.Option("Dragon Warrior Pack.", 9);
-                    dialog.Option("Wind Walker Pack.", 10);
+                    dialog.Option("Dragon-Warrior Pack.", 9);
+                    dialog.Option("Windwalker Pack.", 10);
                     dialog.Send();
                     break;
                 }
