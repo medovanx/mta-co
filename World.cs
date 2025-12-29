@@ -2550,19 +2550,6 @@ namespace MTA {
 
             #endregion
 
-            #region RevengerWar
-
-            if (DateTime.Now.Minute == 47 && now64.Second == 1) {
-                Kernel.SendWorldMessage(
-                    new Message(" ReVenger, Now Online All Go To Play PK,!", Color.White, Message.Center),
-                    Program.Values);
-                foreach (var client in Program.Values)
-                    client.MessageBox(" ReVengerWar Pk, Now Online, like to Join? ",
-                        (p) => { p.Entity.Teleport(1002, 279, 360); }, null, 60);
-            }
-
-            #endregion
-
             #region Dead World
 
             if (DateTime.Now.Minute == 53 && now64.Second == 1) {

@@ -34,7 +34,6 @@ namespace MTA.Game.ConquerStructures
         public static int howmanyinmap193;
         public static int howmanyinmap194;
         public static int howmanyinmap195;
-        public static int howmanyinmap196;
         public static int howmanyinmap197;
         public static int TopDlClaim;
         public static int TopGlClaim;
@@ -377,19 +376,6 @@ namespace MTA.Game.ConquerStructures
                 {
                     howmanyinmap195 += 1;
                     Kernel.SendWorldMessage(new Message("Players Alive in Top Death Now: " + howmanyinmap195 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
-                }
-
-            }
-        }
-        public static void CheackAlive196()
-        {
-            howmanyinmap196 = 0;
-            foreach (Client.GameState client in Program.Values)
-            {
-                if (client.Entity is { MapID: 8526, Hitpoints: >= 1 })
-                {
-                    howmanyinmap196 += 1;
-                    Kernel.SendWorldMessage(new Message("Players Alive in ReVengerWar Now: " + howmanyinmap196 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }

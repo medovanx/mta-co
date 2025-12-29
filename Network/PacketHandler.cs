@@ -3826,7 +3826,7 @@ namespace MTA.Network {
                             client.Entity.SetLocation(client.Entity.PreviousMapID, client.Entity.PrevX,
                                 client.Entity.PrevY);
                             if (client.Map.ID is 1036 or 1039 or 8877 or 1735 or 1734 or 1733 or 1732 or 1731 or 1730
-                                or 1766 or 1090 or 8510 or 8511 or 8527 or 8518 or 8526 or 8522 or 8523
+                                or 1766 or 1090 or 8510 or 8511 or 8527 or 8518 or 8522 or 8523
                                 or 8524 or 8525 or 1024 or 16414)
                                 client.Entity.Teleport(1002, 311, 289);
                             if (client.Map.ID is 1036 or 1039)
@@ -5665,7 +5665,7 @@ namespace MTA.Network {
                     #region MaxsMap
 
                     if (client.Entity.MapID is 1766 or 8877 or 1734 or 1733 or 1732 or 1731 or 1024 or 1730 or 1735
-                        or 1090 or 8511 or 8510 or 8527 or 8518 or 8526 or 8522 or 8523 or 1460 or 8524
+                        or 1090 or 8511 or 8510 or 8527 or 8518 or 8522 or 8523 or 1460 or 8524
                         or 8525 or 1458 or 1459 or 1645 or 16414)
                         return;
 
@@ -5739,7 +5739,7 @@ namespace MTA.Network {
                     #region MaxsMap
 
                     if (client.Entity.MapID is 1766 or 8877 or 1734 or 1733 or 1732 or 1731 or 1024 or 1730 or 1735
-                        or 1090 or 8511 or 8510 or 8527 or 8518 or 8526 or 8522 or 8523 or 8524 or 8525
+                        or 1090 or 8511 or 8510 or 8527 or 8518 or 8522 or 8523 or 8524 or 8525
                         or 16414)
                         return;
 
@@ -15970,7 +15970,6 @@ namespace MTA.Network {
             if (client.Entity.MapID == 8523) client.Entity.Teleport(1002, 303, 278);
             if (client.Entity.MapID == 8524) client.Entity.Teleport(1002, 303, 278);
             if (client.Entity.MapID == 8525) client.Entity.Teleport(1002, 303, 278);
-            if (client.Entity.MapID == 8526) client.Entity.Teleport(1002, 303, 278);
 
             #endregion
 
