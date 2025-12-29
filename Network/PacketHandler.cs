@@ -13976,7 +13976,6 @@ namespace MTA.Network {
                                         bannedIP = Client.Account.IP;
                                         Client.Account.State = AccountTable.AccountState.Banned;
                                         Client.Account.SaveState();
-                                        IPBan.Ban(Client.Account.IP);
                                         Client.Disconnect();
                                         break;
                                     }
@@ -13999,7 +13998,6 @@ namespace MTA.Network {
                                 break;
                             }
                             case "unbanip": {
-                                IPBan.Unban(Data[1]);
                                 break;
                             }
                             case "chatban": {

@@ -295,7 +295,6 @@ internal abstract class Program {
 
             Flowers.LoadFlowers();
             DataHolder.ReadStats();
-            IPBan.Load();
             GhRooms.Execute += GHRooms_Execute;
             GhRooms.Start();
             NobilityTable.Load();
@@ -1063,12 +1062,6 @@ internal abstract class Program {
                 fw.Type = Forward.ForwardType.Ready;
             else
                 fw.Type = Forward.ForwardType.InvalidInfo;
-
-            if (IPBan.IsBanned(arg3.IP)) {
-                fw.Type = Forward.ForwardType.Banned;
-                player.Send(fw);
-                return;
-            }
 
             if (!MainServer) {
                 if ((ServerTransfer && Kernel.TransferredPlayers.Contains(player.Account.EntityID)) ||
