@@ -8,13 +8,16 @@ namespace MTA.Database
         public static void Load()
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("championarena"))
-            using (var reader = new MySqlReader(cmd))
             {
-                while (reader.Read())
+                cmd.Command = cmd.Command.Replace("SELECT * FROM `championarena`",
+                    "SELECT c.EntityID, c.YesterdayRank, c.TotalMatches, c.WinStreak, c.SignedUp, c.Points, c.TotalPoints, c.TodayPoints, c.YesterdayPoints, c.Level, c.Class, c.Model, c.LastReset, e.Name FROM `championarena` c INNER JOIN `entities` e ON c.EntityID = e.UID");
+                using (var reader = new MySqlReader(cmd))
                 {
-                    ChampionStatistic stat = new ChampionStatistic(true);
-                    stat.UID = reader.ReadUInt32("EntityID");
-                    stat.Name = reader.ReadString("EntityName");
+                    while (reader.Read())
+                    {
+                        ChampionStatistic stat = new ChampionStatistic(true);
+                        stat.UID = reader.ReadUInt32("EntityID");
+                        stat.Name = reader.ReadString("Name");
                     stat.YesterdayRank = reader.ReadUInt32("YesterdayRank");
                     stat.TotalMatches = reader.ReadByte("TotalMatches");
                     stat.WinStreak = reader.ReadByte("WinStreak");
@@ -30,7 +33,8 @@ namespace MTA.Database
                     stat.LastReset = DateTime.FromBinary(reader.ReadInt64("LastReset"));
                     if (stat.LastReset.DayOfYear != DateTime.Now.DayOfYear)
                         Reset(stat);
-                    Game.Champion.ChampionStats.Add(stat.UID, stat);
+                        Game.Champion.ChampionStats.Add(stat.UID, stat);
+                    }
                 }
             }
 
@@ -48,7 +52,7 @@ namespace MTA.Database
                 .Set("TodayPoints", stats.TodayPoints).Set("TotalPoints", stats.TotalPoints)
                 .Set("WinStreak", stats.WinStreak).Set("SignedUp", stats.SignedUp)
                 .Set("Level", stats.Level).Set("Level", stats.Level).Set("Class", stats.Class)
-                .Set("EntityName", stats.Name).Set("LastReset", stats.LastReset.Ticks).Set("Model", stats.Model)
+                .Set("LastReset", stats.LastReset.Ticks).Set("Model", stats.Model)
                 .Set("Class", stats.Class).Where("EntityID", stats.UID)
                 .Execute(conn);
         }
@@ -63,7 +67,7 @@ namespace MTA.Database
         public static void InsertStatistic(Client.GameState client)
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.INSERT).Insert("championarena")
-              .Insert("EntityName", client.ChampionStats.Name).Insert("Points", client.ChampionStats.Points)
+              .Insert("Points", client.ChampionStats.Points)
               .Insert("Level", client.ChampionStats.Level).Insert("Class", client.ChampionStats.Class).Insert("Model", client.ChampionStats.Model)
               .Insert("EntityID", client.ChampionStats.UID))
                 cmd.Execute();
