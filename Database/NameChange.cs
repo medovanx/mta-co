@@ -56,9 +56,6 @@ namespace MTA.Database
                         cmdupdate.Update("guilds").Set("LeaderName", newname).Where("LeaderName", name).Execute();
 
                         cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
-                        cmdupdate.Update("nobility").Set("EntityName", newname).Where("EntityUID", uid).Execute();
-
-                        cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
                         cmdupdate.Update("partners").Set("PartnerName", newname).Where("PartnerID", uid).Execute();
 
                         cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);

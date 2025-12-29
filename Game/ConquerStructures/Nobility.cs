@@ -252,6 +252,8 @@ namespace MTA.Game.ConquerStructures
                         entry.Rank = Rank;
                         if (Kernel.GamePool.TryGetValue(entry.EntityUID, out client))
                         {
+                            // Sync name from Entity to ensure it's always current
+                            entry.Name = client.Entity.Name;
                             bool updateTheClient = false;
                             if (oldRank != Rank)
                             {

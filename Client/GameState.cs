@@ -597,9 +597,6 @@ namespace MTA.Client {
                             p.Entity.MyFlowers.Name = newname;
 
                         cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
-                        cmdupdate.Update("nobility").Set("EntityName", newname).Where("EntityUID", uid).Execute();
-
-                        cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
                         cmdupdate.Update("partners").Set("PartnerName", newname).Where("PartnerID", uid).Execute();
 
                         cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
