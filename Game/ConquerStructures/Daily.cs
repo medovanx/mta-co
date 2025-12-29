@@ -30,11 +30,8 @@ namespace MTA.Game.ConquerStructures
         public static int howmanyinmap189;
         public static int howmanyinmap190;
         public static int howmanyinmap191;
-        public static int howmanyinmap192;
-        public static int howmanyinmap193;
         public static int howmanyinmap194;
         public static int howmanyinmap195;
-        public static int howmanyinmap197;
         public static int TopDlClaim;
         public static int TopGlClaim;
         public static void AddDl()
@@ -328,32 +325,6 @@ namespace MTA.Game.ConquerStructures
 
             }
         }
-        public static void CheackAlive192()
-        {
-            howmanyinmap192 = 0;
-            foreach (Client.GameState client in Program.Values)
-            {
-                if (client.Entity is { MapID: 8522, Hitpoints: >= 1 })
-                {
-                    howmanyinmap192 += 1;
-                    Kernel.SendWorldMessage(new Message("Players Alive in [T]Dead World Now: " + howmanyinmap192 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
-                }
-
-            }
-        }
-        public static void CheackAlive193()
-        {
-            howmanyinmap193 = 0;
-            foreach (Client.GameState client in Program.Values)
-            {
-                if (client.Entity is { MapID: 8523, Hitpoints: >= 1 })
-                {
-                    howmanyinmap193 += 1;
-                    Kernel.SendWorldMessage(new Message("Players Alive in MemberAlter Now: " + howmanyinmap193 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
-                }
-
-            }
-        }
         public static void CheackAlive194()
         {
             howmanyinmap194 = 0;
@@ -376,19 +347,6 @@ namespace MTA.Game.ConquerStructures
                 {
                     howmanyinmap195 += 1;
                     Kernel.SendWorldMessage(new Message("Players Alive in Top Death Now: " + howmanyinmap195 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
-                }
-
-            }
-        }
-        public static void CheackAlive197()
-        {
-            howmanyinmap197 = 0;
-            foreach (Client.GameState client in Program.Values)
-            {
-                if (client.Entity is { MapID: 8527, Hitpoints: >= 1 })
-                {
-                    howmanyinmap197 += 1;
-                    Kernel.SendWorldMessage(new Message("Players Alive in AttackersWar Now: " + howmanyinmap197 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }

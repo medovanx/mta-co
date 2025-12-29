@@ -2550,32 +2550,6 @@ namespace MTA {
 
             #endregion
 
-            #region Dead World
-
-            if (DateTime.Now.Minute == 53 && now64.Second == 1) {
-                Kernel.SendWorldMessage(
-                    new Message(" Dead World Pk, Now Online All Go To Play PK!", Color.White, Message.Center),
-                    Program.Values);
-                foreach (var client in Program.Values)
-                    client.MessageBox(" Dead World Pk, Now Online, like to Join? ",
-                        p => { p.Entity.Teleport(1002, 282, 360); }, null, 60);
-            }
-
-            #endregion
-
-            #region MemberAlter
-
-            if (DateTime.Now.Minute == 57 && now64.Second == 10) {
-                Kernel.SendWorldMessage(
-                    new Message(" MemberAlter, Now Online All Go To Play PK,!", Color.White, Message.Center),
-                    Program.Values);
-                foreach (var client in Program.Values)
-                    client.MessageBox("War, MemberAlter, Now Online, like to Join? ",
-                        p => { p.Entity.Teleport(1002, 285, 360); }, null, 60);
-            }
-
-            #endregion
-
             #region [T]KingDom.GLD
 
             if (now64 is { Second: <= 2, DayOfWeek: DayOfWeek.Monday, Hour: 18, Minute: 48 }) {
