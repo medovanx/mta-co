@@ -4,6 +4,12 @@ using MTA.Game.Constants;
 using MTA.Network.GamePackets;
 
 namespace MTA.Game.Features.Reincarnation {
+    public class ReincarnateInfo {
+        public uint Uid;
+        public byte Level;
+        public ulong Experience;
+    }
+
     public class Reincarnation {
         public Reincarnation(Client.GameState client, byte newClass) {
             if (client.Entity.Level < 110)
