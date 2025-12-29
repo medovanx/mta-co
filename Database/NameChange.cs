@@ -23,9 +23,6 @@ namespace MTA.Database
 
                         MySqlCommand cmdupdate = null;//lol i see the problem hold on ,,, hold on what? :$ try now
                         cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
-                        cmdupdate.Update("arena").Set("EntityName", newname).Where("EntityID", uid).Execute();
-
-                        cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
                         cmdupdate.Update("claimitems").Set("OwnerName", newname).Where("OwnerUID", uid).Execute();
 
                         cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);

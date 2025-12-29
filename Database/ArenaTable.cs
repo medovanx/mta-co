@@ -8,13 +8,16 @@ namespace MTA.Database
         public static void Load()
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("arena"))
-            using (var reader = new MySqlReader(cmd))
             {
-                while (reader.Read())
+                cmd.Command = cmd.Command.Replace("SELECT * FROM `arena`",
+                    "SELECT a.EntityID, a.LastSeasonRank, a.ArenaPoints, a.TodayWin, a.TodayBattles, a.LastSeasonWin, a.LastSeasonLose, a.TotalWin, a.TotalLose, a.HistoryHonor, a.CurrentHonor, a.Level, a.Class, a.Model, a.ArenaPointFill, a.LastSeasonArenaPoints, e.Name FROM `arena` a INNER JOIN `entities` e ON a.EntityID = e.UID");
+                using (var reader = new MySqlReader(cmd))
                 {
-                    ArenaStatistic stat = new ArenaStatistic(true);
-                    stat.EntityID = reader.ReadUInt32("EntityID");
-                    stat.Name = reader.ReadString("EntityName");
+                    while (reader.Read())
+                    {
+                        ArenaStatistic stat = new ArenaStatistic(true);
+                        stat.EntityID = reader.ReadUInt32("EntityID");
+                        stat.Name = reader.ReadString("Name");
                     stat.LastSeasonRank = reader.ReadUInt32("LastSeasonRank");
                     stat.LastSeasonArenaPoints = reader.ReadUInt32("LastSeasonArenaPoints");
                     stat.ArenaPoints = reader.ReadUInt32("ArenaPoints");
@@ -42,7 +45,8 @@ namespace MTA.Database
                         stat.TodayBattles = 0;
                     }
 
-                    Game.Arena.ArenaStatistics.Add(stat.EntityID, stat);
+                        Game.Arena.ArenaStatistics.Add(stat.EntityID, stat);
+                    }
                 }
             }
 
@@ -74,7 +78,7 @@ namespace MTA.Database
                 .Set("LastSeasonLose", stats.LastSeasonLose).Set("TotalWin", stats.TotalWin)
                 .Set("TotalLose", stats.TotalLose).Set("HistoryHonor", stats.HistoryHonor)
                 .Set("CurrentHonor", stats.CurrentHonor).Set("Level", stats.Level).Set("Class", stats.Class)
-                .Set("EntityName", stats.Name).Set("ArenaPointFill", stats.LastArenaPointFill.Ticks).Set("Model", stats.Model)
+                .Set("ArenaPointFill", stats.LastArenaPointFill.Ticks).Set("Model", stats.Model)
                 .Set("Class", stats.Class).Set("LastSeasonArenaPoints", stats.LastSeasonArenaPoints).Where("EntityID", stats.EntityID)
                 .Execute();
         }
@@ -89,7 +93,7 @@ namespace MTA.Database
         public static void InsertArenaStatistic(Client.GameState client)
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.INSERT).Insert("arena")
-              .Insert("EntityName", client.ArenaStatistic.Name).Insert("ArenaPoints", client.ArenaStatistic.ArenaPoints)
+              .Insert("ArenaPoints", client.ArenaStatistic.ArenaPoints)
               .Insert("Level", client.ArenaStatistic.Level).Insert("Class", client.ArenaStatistic.Class).Insert("Model", client.ArenaStatistic.Model)
               .Insert("ArenaPointFill", client.ArenaStatistic.LastArenaPointFill.Ticks).Insert("EntityID", client.ArenaStatistic.EntityID))
                 cmd.Execute();
