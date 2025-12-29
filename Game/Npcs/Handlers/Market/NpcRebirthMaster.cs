@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using MTA.Client;
 using MTA.Database;
 using MTA.Network.GamePackets;
 using static MTA.Game.Constants.EntityClass;
 using static MTA.Game.Constants.Items.BasicItems;
+using static MTA.Game.Constants.Items.Gems;
 
 namespace MTA.Game.Npcs.Handlers.Market {
     /// <summary>
@@ -13,53 +15,51 @@ namespace MTA.Game.Npcs.Handlers.Market {
         private const byte WaterSaintRequiredLevel = 110;
         private const byte OtherClassesRequiredLevel = 120;
         private const uint OblivionDewPrice = 1500;
-        private const uint SuperGemBaseId = 700000;
 
         public static void Handle(GameState client, NpcRequest npcRequest, MTA.Npcs dialog) {
             switch (npcRequest.OptionID) {
                 case 0: {
                     dialog.Text(
                         "I have spent my whole life studying the changes of the universe, and I have finally understood the mystery of rebirth. As long as you reach level 90, you can embark on rebirth.");
-                    dialog.Option("1st Rebirth.", 1);
-                    dialog.Option("2nd Rebirth.", 2);
-                    dialog.Option("Reincarnation.", 3);
+                    switch (client.Entity.Reborn) {
+                        case 0:
+                            dialog.Option("1st Rebirth.", 1);
+                            break;
+                        case 1:
+                            dialog.Option("2nd Rebirth.", 2);
+                            break;
+                        case 2:
+                            dialog.Option("Reincarnation.", 3);
+                            break;
+                    }
+
                     dialog.Option("Reset my Attribute Points.", 4);
                     dialog.Option("Just passing by.", 255);
-                    dialog.Avatar(51);
                     dialog.Send();
                     break;
                 }
 
-                #region 1st Rebirth
-
                 case 1: {
-                    if (client.Entity.Reborn == 0) {
-                        if (IsMaster(client.Entity.Class) &&
-                            client.Entity.Level >= (client.Entity.Class == WaterTaoist_Master
-                                ? WaterSaintRequiredLevel
-                                : OtherClassesRequiredLevel)) {
-                            dialog.Text(
-                                "There are two kinds of rebirths. One is the normal one and the second one is blessed. The normal rebirth will give you the chance to get a Super Gem, and the blessed rebirth will set a -1 into one piece of equipment that you wear during the rebirth. What do you choose?");
-                            dialog.Option("Normal rebirth.", 15);
-                            dialog.Option("Blessed rebirth.", 13);
-                            dialog.Option("Nothing, thank you.", 255);
-                            dialog.Send();
-                        }
-                        else {
-                            dialog.Text(
-                                "You cannot be reborn unless you are a master in your class and your level is 110+ for Water Saints or 120+ for other classes.");
-                            dialog.Option("I understand.", 255);
-                            dialog.Send();
-                        }
-                    }
-                    else {
-                        dialog.Text("You already got the first rebirth.");
-                        dialog.Option("Thank you.", 255);
+                    if (!IsMaster(client.Entity.Class) || client.Entity.Level <
+                        (client.Entity.Class == Water_Saint_5
+                            ? WaterSaintRequiredLevel
+                            : OtherClassesRequiredLevel)) {
+                        dialog.Text(
+                            "You cannot be reborn unless you are a master in your class and your level is 110+ for Water Saints or 120+ for other classes.");
+                        dialog.Option("I understand.", 255);
                         dialog.Send();
+                        break;
                     }
 
+                    dialog.Text(
+                        "There are two kinds of rebirths. One is the normal one and the second one is blessed. The normal rebirth will give you the chance to get a Super Gem, and the blessed rebirth will set a -1 into one piece of equipment that you wear during the rebirth. What do you choose?");
+                    dialog.Option("Normal rebirth.", 15);
+                    dialog.Option("Blessed rebirth.", 13);
+                    dialog.Option("Nothing, thank you.", 255);
+                    dialog.Send();
                     break;
                 }
+
                 case 15: {
                     dialog.Text("Select the super gem you desire.");
                     dialog.Option("Phoenix Gem [Super].", 203);
@@ -73,131 +73,40 @@ namespace MTA.Game.Npcs.Handlers.Market {
                     dialog.Send();
                     break;
                 }
+
                 case 13: {
                     dialog.Text("Select the class you want to be reborn as.");
-                    dialog.Option("Trojan.", (byte)(Trojan_1 + npcRequest.OptionID));
-                    dialog.Option("Warrior.", (byte)(Warrior_1 + npcRequest.OptionID));
-                    dialog.Option("Archer.", (byte)(Archer_1 + npcRequest.OptionID));
-                    dialog.Option("Water Taoist.", (byte)(WaterTaoist_3 + npcRequest.OptionID));
-                    dialog.Option("Fire Taoist.", (byte)(FireTaoist_3 + npcRequest.OptionID));
-                    dialog.Option("Ninja.", (byte)(Ninja_1 + npcRequest.OptionID));
-                    dialog.Option("Monk.", (byte)(Monk_1 + npcRequest.OptionID));
-                    dialog.Option("Pirate.", (byte)(Pirate_1 + npcRequest.OptionID));
-                    dialog.Option("Dragon Warrior.", (byte)(DragonWarrior_1 + npcRequest.OptionID));
-                    dialog.Option("Windwalker.", (byte)(Windwalker_1 + npcRequest.OptionID));
+                    dialog.Option("Trojan.", 23);
+                    dialog.Option("Warrior.", 33);
+                    dialog.Option("Archer.", 43);
+                    dialog.Option("Water Taoist.", 145);
+                    dialog.Option("Fire Taoist.", 155);
+                    dialog.Option("Ninja.", 53);
+                    dialog.Option("Monk.", 63);
+                    dialog.Option("Pirate.", 73);
+                    dialog.Option("Dragon Warrior.", 93);
+                    dialog.Option("Windwalker.", 173);
                     dialog.Send();
                     break;
                 }
 
-                // Class selection for first rebirth (normal and blessed)
-                case 14: // Trojan (normal rebirth gem selection)
-                case 24: // Warrior (normal rebirth gem selection)
-                case 44: // Archer (normal rebirth gem selection)
-                case 54: // Ninja (normal rebirth gem selection)
-                case 64: // Monk (normal rebirth gem selection)
-                case 74: // Pirate (normal rebirth gem selection)
-                case 84: // Dragon-Warrior (normal rebirth gem selection)
-                case 136: // Water Taoist (normal rebirth gem selection)
-                case 146: // Fire Taoist (normal rebirth gem selection)
-                case 164: // Windwalker (normal rebirth gem selection)
-                case 23: // Trojan (blessed rebirth)
-                case 33: // Warrior (blessed rebirth)
-                case 43: // Archer (blessed rebirth)
-                case 53: // Ninja (blessed rebirth)
-                case 63: // Monk (blessed rebirth)
-                case 73: // Pirate (blessed rebirth)
-                case 93: // Dragon Warrior (blessed rebirth)
-                case 145: // Water Taoist (blessed rebirth)
-                case 155: // Fire Taoist (blessed rebirth)
-                case 173: // Windwalker (blessed rebirth)
-                {
-                    if (client.Entity.Reborn == 0) {
-                        if (IsMaster(client.Entity.Class) &&
-                            client.Entity.Level >= (client.Entity.Class == WaterTaoist_Master
-                                ? WaterSaintRequiredLevel
-                                : OtherClassesRequiredLevel)) {
-                            if (client.Inventory.Contains(CelestialStone, 1)) {
-                                var @class = (byte)(npcRequest.OptionID - npcRequest.OptionID % 10);
-                                if (@class > 100)
-                                    @class += 2;
-                                var type = (byte)(npcRequest.OptionID - @class);
-                                if (@class < 100)
-                                    @class++;
-                                if (type != 4) {
-                                    @class -= 10;
-                                }
-
-                                if (client.Reborn(@class)) {
-                                    client.Inventory.Remove(CelestialStone, 1);
-                                    if (type == 4) {
-                                        if (client.SelectedGem != 0) {
-                                            var gemId = client.SelectedGem + SuperGemBaseId;
-                                            client.Inventory.Add(gemId, 0, 1);
-                                        }
-                                    }
-                                    else {
-                                        var availableshots = 0;
-                                        for (byte count = 0; count < 12; count++)
-                                            if (!client.Equipment.Free(count))
-                                                if (client.Equipment.TryGetItem(count).Bless == 0)
-                                                    availableshots++;
-                                        if (availableshots != 0) {
-                                            var ex = (byte)Kernel.Random.Next(12);
-                                            if (!client.Equipment.Free(ex))
-                                                if (client.Equipment.TryGetItem(ex).Bless == 0) {
-                                                    var item = client.Equipment.TryGetItem(ex);
-                                                    item.Bless = 1;
-                                                    item.Mode = Enums.ItemMode.Update;
-                                                    item.Send(client);
-                                                    ConquerItemTable.UpdateBless(item);
-                                                }
-                                        }
-                                    }
-                                }
-                                else {
-                                    dialog.Text("Sorry, but you need at least 2 free slots in your inventory.");
-                                    dialog.Option("I understand.", 255);
-                                    dialog.Send();
-                                }
-                            }
-                            else {
-                                dialog.Text("You need a Celestial Stone to perform rebirth.");
-                                dialog.Option("I understand.", 255);
-                                dialog.Send();
-                            }
-                        }
-                        else {
-                            dialog.Text(
-                                "You cannot be reborn if your level is not 110+ for water saints and 120+ for other masters.");
-                            dialog.Option("I understand.", 255);
-                            dialog.Send();
-                        }
-                    }
-                    else {
-                        dialog.Text(
-                            "You cannot be reborn again here. Alex, an elder who lives in Ape Canyon, will tell you about the third life.");
-                        dialog.Option("Thank you.", 255);
-                        dialog.Send();
-                    }
-
-                    break;
-                }
-
-                // Gem selection (200-254) - shows class selection dialog
-                case 203: // Phoenix Gem [Super]
-                case 213: // Dragon Gem [Super]
-                case 223: // Fury Gem [Super]
-                case 233: // Rainbow Gem [Super]
-                case 243: // Kylin Gem [Super]
-                case 253: // Violet Gem [Super]
-                case 254: // Moon Gem [Super]
-                {
-                    // Only reachable from case 15, which is only reachable from case 1 (already validated)
-                    client.SelectedGem = (byte)(npcRequest.OptionID % 100);
-                    if (client.SelectedGem == 54) {
-                        client.SelectedGem = 63;
-                    }
-
+                case 203:
+                case 213:
+                case 223:
+                case 233:
+                case 243:
+                case 253:
+                case 254: {
+                    client.SelectedGem = npcRequest.OptionID switch {
+                        203 => 3,
+                        213 => 13,
+                        223 => 23,
+                        233 => 33,
+                        243 => 43,
+                        253 => 53,
+                        254 => 63,
+                        _ => 0
+                    };
                     dialog.Text("Select the class you want to be reborn as.");
                     dialog.Option("Trojan.", 14);
                     dialog.Option("Warrior.", 24);
@@ -213,51 +122,140 @@ namespace MTA.Game.Npcs.Handlers.Market {
                     break;
                 }
 
-                #endregion
+                case 14:
+                case 24:
+                case 44:
+                case 54:
+                case 64:
+                case 74:
+                case 84:
+                case 136:
+                case 146:
+                case 164:
+                case 23:
+                case 33:
+                case 43:
+                case 53:
+                case 63:
+                case 73:
+                case 93:
+                case 145:
+                case 155:
+                case 173: {
+                    if (!client.Inventory.Contains(CelestialStone, 1)) {
+                        dialog.Text("You need a Celestial Stone to perform rebirth.");
+                        dialog.Option("I understand.", 255);
+                        dialog.Send();
+                        break;
+                    }
 
-                #region 2nd Rebirth
+                    byte classId = npcRequest.OptionID switch {
+                        14 => Trojan_1,
+                        24 => Warrior_1,
+                        44 => Archer_1,
+                        54 => Ninja_1,
+                        64 => Monk_1,
+                        74 => Pirate_1,
+                        84 => DragonWarrior_1,
+                        136 => Water_1,
+                        146 => Fire_1,
+                        164 => Windwalker_Guard_1,
 
-                case 2: {
-                    if (client.Entity.Reborn == 1) {
-                        if (IsMaster(client.Entity.Class) && client.Entity.Level >=
-                            (client.Entity.Class == WaterTaoist_Master
-                                ? WaterSaintRequiredLevel
-                                : OtherClassesRequiredLevel)) {
-                            if (client.Inventory.Contains(ExemptionToken, 1)) {
-                                dialog.Text("Select the class you want to be reborn as.");
-                                dialog.Option("Trojan.", 11);
-                                dialog.Option("Warrior.", 21);
-                                dialog.Option("Archer.", 41);
-                                dialog.Option("Water Taoist.", 132);
-                                dialog.Option("Fire Taoist.", 142);
-                                dialog.Option("Ninja.", 51);
-                                dialog.Option("Monk.", 61);
-                                dialog.Option("Pirate.", 71);
-                                dialog.Option("Dragon Warrior.", 81);
-                                dialog.Option("Windwalker.", 161);
-                                dialog.Send();
-                            }
-                            else {
-                                dialog.Text("You need an Exemption Token to perform second rebirth.");
-                                dialog.Option("I understand.", 255);
-                                dialog.Send();
-                            }
-                        }
-                        else {
-                            dialog.Text(
-                                "You need to be a master in your class and your level is 110+ for Water Saints or 120+ for other classes.");
-                            dialog.Option("I'll just leave.", 255);
-                            dialog.Send();
+                        23 => Trojan_1,
+                        33 => Warrior_1,
+                        43 => Archer_1,
+                        53 => Ninja_1,
+                        63 => Monk_1,
+                        73 => Pirate_1,
+                        93 => DragonWarrior_1,
+                        145 => Water_1,
+                        155 => Fire_1,
+                        173 => Windwalker_Guard_1,
+                        _ => 0
+                    };
+
+                    var isNormalRebirth =
+                        npcRequest.OptionID is 14 or 24 or 44 or 54 or 64 or 74 or 84 or 136 or 146 or 164;
+
+                    if (!client.Reborn(classId)) {
+                        dialog.Text("Sorry, but you need at least 2 free slots in your inventory.");
+                        dialog.Option("I understand.", 255);
+                        dialog.Send();
+                        break;
+                    }
+
+                    client.Inventory.Remove(CelestialStone, 1);
+
+                    if (isNormalRebirth) {
+                        uint gemId = client.SelectedGem switch {
+                            3 => SuperPhoenixGem,
+                            13 => SuperDragonGem,
+                            23 => SuperFuryGem,
+                            33 => SuperRainbowGem,
+                            43 => SuperKylinGem,
+                            53 => SuperVioletGem,
+                            63 => SuperMoonGem,
+                            _ => 0
+                        };
+                        if (gemId != 0) {
+                            client.Inventory.Add(gemId, 0, 1);
                         }
                     }
                     else {
-                        dialog.Text("You need to get the first rebirth to be able to get the second rebirth");
-                        dialog.Option("I understand.", 255);
-                        dialog.Send();
+                        var blessableSlots = new List<byte>();
+                        for (byte slot = 0; slot < 12; slot++) {
+                            if (!client.Equipment.Free(slot) && client.Equipment.TryGetItem(slot).Bless == 0) {
+                                blessableSlots.Add(slot);
+                            }
+                        }
+
+                        if (blessableSlots.Count > 0) {
+                            var selectedSlot = blessableSlots[Kernel.Random.Next(blessableSlots.Count)];
+                            var item = client.Equipment.TryGetItem(selectedSlot);
+                            item.Bless = 1;
+                            item.Mode = Enums.ItemMode.Update;
+                            item.Send(client);
+                            ConquerItemTable.UpdateBless(item);
+                        }
                     }
 
                     break;
                 }
+
+                case 2: {
+                    if (!IsMaster(client.Entity.Class) || client.Entity.Level <
+                        (client.Entity.Class == Water_Saint_5
+                            ? WaterSaintRequiredLevel
+                            : OtherClassesRequiredLevel)) {
+                        dialog.Text(
+                            "You need to be a master in your class and your level is 110+ for Water Saints or 120+ for other classes.");
+                        dialog.Option("I'll just leave.", 255);
+                        dialog.Send();
+                        break;
+                    }
+
+                    if (!client.Inventory.Contains(ExemptionToken, 1)) {
+                        dialog.Text("You need an Exemption Token to perform second rebirth.");
+                        dialog.Option("I understand.", 255);
+                        dialog.Send();
+                        break;
+                    }
+
+                    dialog.Text("Select the class you want to be reborn as.");
+                    dialog.Option("Trojan.", 11);
+                    dialog.Option("Warrior.", 21);
+                    dialog.Option("Archer.", 41);
+                    dialog.Option("Water Taoist.", 132);
+                    dialog.Option("Fire Taoist.", 142);
+                    dialog.Option("Ninja.", 51);
+                    dialog.Option("Monk.", 61);
+                    dialog.Option("Pirate.", 71);
+                    dialog.Option("Dragon Warrior.", 81);
+                    dialog.Option("Windwalker.", 161);
+                    dialog.Send();
+                    break;
+                }
+
                 case 11:
                 case 21:
                 case 41:
@@ -268,91 +266,59 @@ namespace MTA.Game.Npcs.Handlers.Market {
                 case 132:
                 case 142:
                 case 161: {
-                    if (npcRequest.OptionID == 255)
-                        return;
-                    if (client.Entity.Reborn == 1) {
-                        if (IsMaster(client.Entity.Class) &&
-                            client.Entity.Level >= (client.Entity.Class == WaterTaoist_Master
-                                ? WaterSaintRequiredLevel
-                                : OtherClassesRequiredLevel)) {
-                            if (client.Inventory.Contains(ExemptionToken, 1)) {
-                                // Calculate the actual class ID from the option ID (same logic as first rebirth)
-                                var @class = (byte)(npcRequest.OptionID - npcRequest.OptionID % 10);
-                                if (@class > 100)
-                                    @class += 2;
-                                if (@class < 100)
-                                    @class++;
-
-                                if (client.Reborn(@class)) {
-                                    client.Inventory.Remove(ExemptionToken, 1);
-                                }
-                                else {
-                                    dialog.Text("You need two free slots in your inventory.");
-                                    dialog.Option("I'll just leave.", 255);
-                                    dialog.Send();
-                                }
-                            }
-                            else {
-                                dialog.Text("You need an Exemption Token to perform second rebirth.");
-                                dialog.Option("I understand.", 255);
-                                dialog.Send();
-                            }
-                        }
-                        else {
-                            dialog.Text("If you are a water saint, you need level 110+. Otherwise, you need 120+.");
-                            dialog.Option("I'll just leave.", 255);
-                            dialog.Send();
-                        }
-                    }
-                    else {
-                        dialog.Text("You need to be in the second life to be able to get the third life.");
+                    byte classOption = npcRequest.OptionID switch {
+                        11 => Trojan_Master_5,
+                        21 => Warrior_King_5,
+                        41 => Archer_Master_5,
+                        51 => Ninja_Master_5,
+                        61 => Monk_Nirvana_5,
+                        71 => Pirate_Lord_5,
+                        81 => DragonWarrior_King_5,
+                        132 => Water_Saint_5,
+                        142 => Fire_Saint_5,
+                        161 => Windwalker_Lord_5,
+                        _ => 0
+                    };
+                    if (!client.Reborn(classOption)) {
+                        dialog.Text("You need two free slots in your inventory.");
                         dialog.Option("I'll just leave.", 255);
                         dialog.Send();
+                        break;
                     }
 
+                    client.Inventory.Remove(ExemptionToken, 1);
                     break;
                 }
-
-                #endregion
-
-                #region Reincarnation
 
                 case 3: {
-                    if (client.Entity is { Reborn: 2, Level: >= 120 }) {
-                        dialog.Text(
-                            "I can help you change your class through, but first you need to have an Oblivion Dew in your inventory.");
-                        dialog.Option("Here is the Oblivion Dew.", 5);
-                        dialog.Option("I want to buy an Oblivion Dew.", 6);
-                        dialog.Option("Wait a minute.", 255);
-                    }
-                    else {
-                        dialog.Text("Sorry, you need to be second reborn and level 120+.");
+                    if (client.Entity.Level < 110) {
+                        dialog.Text("Sorry, you need to be level 110+.");
                         dialog.Option("All right.", 255);
-                    }
-
-                    dialog.Send();
-
-                    break;
-                }
-                case 5: {
-                    if (client.Inventory.Contains(OblivionDew, 1)) {
-                        client.Send(new Data(true) {
-                            UID = client.Entity.UID,
-                            ID = Data.OpenWindow,
-                            dwParam = Data.WindowCommands.Reincarnation,
-                            wParam1 = client.Entity.X,
-                            wParam2 = client.Entity.Y
-                        });
-                        client.Inventory.Remove(OblivionDew, 1);
-                    }
-                    else {
-                        dialog.Text("Sorry, you don't have an Oblivion Dew in your inventory.");
-                        dialog.Option("I understand.", 255);
                         dialog.Send();
+                        break;
                     }
+
+                    dialog.Text(
+                        "I can help you change your class through, but first you need to have an Oblivion Dew in your inventory.");
+                    dialog.Option("Okay, go ahead.", 5);
+                    dialog.Option("I want to buy an Oblivion Dew.", 6);
+                    dialog.Option("Wait a minute.", 255);
+                    dialog.Send();
+                    break;
+                }
+
+                case 5: {
+                    client.Send(new Data(true) {
+                        UID = client.Entity.UID,
+                        ID = Data.OpenWindow,
+                        dwParam = Data.WindowCommands.Reincarnation,
+                        wParam1 = client.Entity.X,
+                        wParam2 = client.Entity.Y
+                    });
 
                     break;
                 }
+
                 case 6: {
                     if (client.Entity.ConquerPoints >= OblivionDewPrice) {
                         dialog.Text($"Do you really want to buy Oblivion Dew? It costs {OblivionDewPrice} CPs.");
@@ -365,9 +331,9 @@ namespace MTA.Game.Npcs.Handlers.Market {
                     }
 
                     dialog.Send();
-
                     break;
                 }
+
                 case 7: {
                     if (client.Entity.ConquerPoints >= OblivionDewPrice) {
                         client.Entity.ConquerPoints -= OblivionDewPrice;
@@ -381,13 +347,8 @@ namespace MTA.Game.Npcs.Handlers.Market {
                     }
 
                     dialog.Send();
-
                     break;
                 }
-
-                #endregion
-
-                #region Attribute Reset
 
                 case 4: {
                     dialog.Text(
@@ -397,46 +358,42 @@ namespace MTA.Game.Npcs.Handlers.Market {
                     dialog.Send();
                     break;
                 }
+
                 case 8: {
-                    if (client.Entity is { Reborn: > 0, Level: >= 70 }) {
-                        if (client.Inventory.Contains(DragonBall, 1)) {
-                            client.Inventory.Remove(DragonBall, 1);
-                            client.Entity.Agility = 0;
-                            client.Entity.Strength = 0;
-                            client.Entity.Vitality = 1;
-                            client.Entity.Spirit = 0;
-                            if (client.Entity.Reborn == 1) {
-                                client.Entity.Atributes = (ushort)
-                                    (client.ExtraAtributePoints(client.Entity.FirstRebornLevel,
-                                         client.Entity.FirstRebornLevel)
-                                     + 52 + 3 * (client.Entity.Level - 15));
-                            }
-                            else {
-                                client.Entity.Atributes =
-                                    (ushort)
-                                    (client.ExtraAtributePoints(client.Entity.FirstRebornLevel,
-                                         client.Entity.FirstRebornClass) +
-                                     client.ExtraAtributePoints(client.Entity.SecondRebornLevel,
-                                         client.Entity.SecondRebornClass) + 52 +
-                                     3 * (client.Entity.Level - 15));
-                            }
-                        }
-                        else {
-                            dialog.Text("You don't have a Dragon Ball in your inventory.");
-                            dialog.Option("Sorry, I'll just leave.", 255);
-                            dialog.Send();
-                        }
-                    }
-                    else {
+                    if (client.Entity is not { Reborn: > 0, Level: >= 70 }) {
                         dialog.Text("You must get the first reborn and be level 70+ to reset your attribute points.");
                         dialog.Option("Okay.", 255);
                         dialog.Send();
+                        break;
+                    }
+
+                    if (!client.Inventory.Contains(DragonBall, 1)) {
+                        dialog.Text("You don't have a Dragon Ball in your inventory.");
+                        dialog.Option("Sorry, I'll just leave.", 255);
+                        dialog.Send();
+                        break;
+                    }
+
+                    client.Inventory.Remove(DragonBall, 1);
+                    client.Entity.Agility = 0;
+                    client.Entity.Strength = 0;
+                    client.Entity.Vitality = 1;
+                    client.Entity.Spirit = 0;
+                    if (client.Entity.Reborn == 1) {
+                        client.Entity.Atributes =
+                            (ushort)(client.ExtraAtributePoints(client.Entity.FirstRebornLevel,
+                                client.Entity.FirstRebornLevel) + 52 + 3 * (client.Entity.Level - 15));
+                    }
+                    else {
+                        client.Entity.Atributes =
+                            (ushort)(client.ExtraAtributePoints(client.Entity.FirstRebornLevel,
+                                         client.Entity.FirstRebornClass) +
+                                     client.ExtraAtributePoints(client.Entity.SecondRebornLevel,
+                                         client.Entity.SecondRebornClass) + 52 + 3 * (client.Entity.Level - 15));
                     }
 
                     break;
                 }
-
-                #endregion
             }
         }
     }
