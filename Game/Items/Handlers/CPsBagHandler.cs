@@ -10,7 +10,7 @@ namespace MTA.Game.Items.Handlers {
         FlareCPPack, CuteCPPack, GhostCPPack, DreamCPPack, DeityCPPack, SoulCPPack, DeityCPPack_2, BloodCPPack, FlowerCPPack,
         CloudCPPack, PureCPPack, JoyCPPack, HeartCPPack, JewelCPPack, FogCPPack, StarCPPack, ShadowCPPack, MoonCPPack,
         MysticCPPack, EarthCPPack, LifeCPPack, FantasyCPPack)]
-    public static class ConquerPointsBagHandler {
+    public static class CPsBagHandler {
         public static void Handle(GameState client, ConquerItem item) {
             if (item.ID == CuteCPPack) {
                 if (client.Entity.ConquerPoints <= 1000000050) {

@@ -14,7 +14,7 @@ namespace MTA.Game.Items.Handlers {
         public static void Handle(GameState client, ConquerItem item) {
             if (GameConstants.revnomap.Contains(client.Entity.MapID) ||
                 GameConstants.MemoryAgateNotAllowedMap.Contains(client.Entity.MapID)) {
-                client.Send(new Message("You Can't record here !", Color.Tan, 0x7dc));
+                client.Send(new Message("You can't record this location!", Color.Tan, 0x7dc));
                 return;
             }
 
@@ -22,4 +22,3 @@ namespace MTA.Game.Items.Handlers {
         }
     }
 }
-

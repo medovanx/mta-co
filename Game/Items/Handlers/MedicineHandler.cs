@@ -17,22 +17,23 @@ namespace MTA.Game.Items.Handlers {
             var infos = new ConquerItemInformation(item.ID, 0);
 
             // Check if HP medicines
-            var isHpMedicine = item.ID is Stancher or Stancher2 or Stancher3 or AmritaPill or PanaceaPill or GinsengPill or VanillaPill or MilGinsengPill or Stancher4 or SevenStarOintment;
+            var isHpMedicine = item.ID is Stancher or Stancher2 or Stancher3 or AmritaPill or PanaceaPill or GinsengPill
+                or VanillaPill or MilGinsengPill or Stancher4 or SevenStarOintment;
 
-            if (isHpMedicine) {
-                if (NoHp.Contains(client.Entity.MapID)) {
+            if (NoHp.Contains(client.Entity.MapID)) {
+                return;
+            }
+
+            if (client.Entity.NoDrugsTime > 0) {
+                if (Time32.Now > client.Entity.NoDrugsStamp.AddSeconds(client.Entity.NoDrugsTime)) {
+                    client.Entity.NoDrugsTime = 0;
+                }
+                else {
                     return;
                 }
+            }
 
-                if (client.Entity.NoDrugsTime > 0) {
-                    if (Time32.Now > client.Entity.NoDrugsStamp.AddSeconds(client.Entity.NoDrugsTime)) {
-                        client.Entity.NoDrugsTime = 0;
-                    }
-                    else {
-                        return;
-                    }
-                }
-
+            if (isHpMedicine) {
                 if (client.Entity.Hitpoints == client.Entity.MaxHitpoints)
                     return;
 
@@ -42,19 +43,6 @@ namespace MTA.Game.Items.Handlers {
             }
             else {
                 // MP medicines
-                if (NoHp.Contains(client.Entity.MapID)) {
-                    return;
-                }
-
-                if (client.Entity.NoDrugsTime > 0) {
-                    if (Time32.Now > client.Entity.NoDrugsStamp.AddSeconds(client.Entity.NoDrugsTime)) {
-                        client.Entity.NoDrugsTime = 0;
-                    }
-                    else {
-                        return;
-                    }
-                }
-
                 if (client.Entity.Mana == client.Entity.MaxMana)
                     return;
 
@@ -65,4 +53,3 @@ namespace MTA.Game.Items.Handlers {
         }
     }
 }
-

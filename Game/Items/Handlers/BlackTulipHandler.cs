@@ -10,8 +10,6 @@ namespace MTA.Game.Items.Handlers {
     [ItemHandler(BlackTulip)]
     public static class BlackTulipHandler {
         public static void Handle(GameState client, ConquerItem item) {
-            if (client.Equipment.TryGetItem(3) == null)
-                return;
             if (client.Equipment.TryGetItem(3).ID == 0)
                 return;
             client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
@@ -23,4 +21,3 @@ namespace MTA.Game.Items.Handlers {
         }
     }
 }
-

@@ -7,7 +7,7 @@ namespace MTA.Game.Items.Handlers {
     /// Handles MoneyBag items that grant silvers when used.
     /// </summary>
     [ItemHandler(Class1MoneyBag, Class2MoneyBag, Class3MoneyBag, Class4MoneyBag, Class5MoneyBag,
-        Class6MoneyBag, Class7MoneyBag, Class8MoneyBag, Class9MoneyBag, Class10MoneyBag)]
+        Class6MoneyBag, Class7MoneyBag, Class8MoneyBag, Class9MoneyBag, Class10MoneyBag, TopMoneyBag)]
     public static class MoneyBagHandler {
         public static void Handle(GameState client, ConquerItem item) {
             var amount = item.ID switch {
@@ -21,6 +21,7 @@ namespace MTA.Game.Items.Handlers {
                 Class8MoneyBag => 80000000u,
                 Class9MoneyBag => 100000000u,
                 Class10MoneyBag => 300000000u,
+                TopMoneyBag => 500000000u,
                 _ => 0u // Default case (should not occur)
             };
 

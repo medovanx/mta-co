@@ -9,11 +9,9 @@ namespace MTA.Game.Items.Handlers {
     [ItemHandler(PenitenceAmulet, PenitenceAmulet2)]
     public static class PenitenceAmuletHandler {
         public static void Handle(GameState client, ConquerItem item) {
-            if (client.Entity.PKPoints >= 30) {
-                client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                client.Entity.PKPoints -= 30;
-            }
+            if (client.Entity.PKPoints < 30) return;
+            client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
+            client.Entity.PKPoints -= 30;
         }
     }
 }
-

@@ -15,4 +15,3 @@ namespace MTA.Game.Items.Handlers {
         }
     }
 }
-

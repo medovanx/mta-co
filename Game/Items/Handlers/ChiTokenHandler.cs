@@ -14,18 +14,14 @@ namespace MTA.Game.Items.Handlers {
             if (item.StackSize >= 7) {
                 item.StackSize = 0;
                 client.Inventory.Remove(item, Enums.ItemUse.Remove);
-                client.Entity.ConquerPoints += 5000;
                 client.Entity.SubClasses.StudyPoints += 2500;
-                client.Entity.Money += 10000000;
-                client.Send(new Message(
-                    "Congratulations , you have got . 5000 Cps , 2500 StudyPoints and 10 Million Money",
+                client.Send(new Message("Congratulations, you have got 25000 Study Points.",
                     Color.Tan, Message.TopLeft));
             }
             else {
-                client.Send(new Message("You must have 7 ChiTokens stacked up Together.", Color.Tan,
-                    Message.TopLeft));
+                client.Send(new Message("You must have 7 Chi Tokens stacked up together to be able to exchange.",
+                    Color.Tan, Message.TopLeft));
             }
         }
     }
 }
-

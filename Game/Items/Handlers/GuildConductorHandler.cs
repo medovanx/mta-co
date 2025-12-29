@@ -10,7 +10,7 @@ namespace MTA.Game.Items.Handlers {
     /// </summary>
     [ItemHandler(GuildConductor1, GuildConductor2, GuildConductor3, GuildConductor4)]
     public static class GuildConductorHandler {
-        private static readonly Dictionary<uint, uint> ConductorToUID = new Dictionary<uint, uint> {
+        private static readonly Dictionary<uint, uint> ConductorToUid = new Dictionary<uint, uint> {
             { GuildConductor1, 9994 },
             { GuildConductor2, 9995 },
             { GuildConductor3, 9996 },
@@ -18,7 +18,7 @@ namespace MTA.Game.Items.Handlers {
         };
 
         public static void Handle(GameState client, ConquerItem item) {
-            if (!ConductorToUID.TryGetValue(item.ID, out var uid)) {
+            if (!ConductorToUid.TryGetValue(item.ID, out var uid)) {
                 return;
             }
 
@@ -34,4 +34,3 @@ namespace MTA.Game.Items.Handlers {
         }
     }
 }
-

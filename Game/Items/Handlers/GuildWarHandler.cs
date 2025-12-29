@@ -132,15 +132,17 @@ namespace MTA.Game.Items.Handlers {
                 if (GuildWar.IsWar) {
                     if (client.Entity.MapID == 1038 & client.Entity.X == 165 & client.Entity.Y == 213) {
                         GuildWar.LeftGate.Mesh = (ushort)(250 + GuildWar.LeftGate.Mesh % 10);
-                        var upd = new Update(true);
-                        upd.UID = GuildWar.LeftGate.UID;
+                        var upd = new Update(true) {
+                            UID = GuildWar.LeftGate.UID
+                        };
                         upd.Append(Update.Mesh, GuildWar.LeftGate.Mesh);
                         client.SendScreen(upd, true);
                         client.SendScreen(upd, true);
-                        var str = new _String(true);
-                        str.UID = client.Entity.UID;
-                        str.TextsCount = 1;
-                        str.Type = _String.Effect;
+                        var str = new _String(true) {
+                            UID = client.Entity.UID,
+                            TextsCount = 1,
+                            Type = _String.Effect
+                        };
                         str.Texts.Add("bombFranko");
                         client.Entity.SendScreen(str);
                         client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
@@ -148,14 +150,16 @@ namespace MTA.Game.Items.Handlers {
                     else {
                         if (client.Entity.MapID == 1038 & client.Entity.X == 225 & client.Entity.Y == 178) {
                             GuildWar.RightGate.Mesh = (ushort)(280 + GuildWar.RightGate.Mesh % 10);
-                            var upd = new Update(true);
-                            upd.UID = GuildWar.RightGate.UID;
+                            var upd = new Update(true) {
+                                UID = GuildWar.RightGate.UID
+                            };
                             upd.Append(Update.Mesh, GuildWar.RightGate.Mesh);
                             client.SendScreen(upd, true);
-                            var str = new _String(true);
-                            str.UID = client.Entity.UID;
-                            str.TextsCount = 1;
-                            str.Type = _String.Effect;
+                            var str = new _String(true) {
+                                UID = client.Entity.UID,
+                                TextsCount = 1,
+                                Type = _String.Effect
+                            };
                             str.Texts.Add("bombFranko");
                             client.Entity.SendScreen(str);
                             client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
@@ -170,4 +174,3 @@ namespace MTA.Game.Items.Handlers {
         }
     }
 }
-

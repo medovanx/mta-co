@@ -20,25 +20,26 @@ namespace MTA.Game.Items.Handlers {
 
             client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
 
-            if (item.ID == TwinCityGate) {
-                client.Entity.Teleport(1002, 303, 278);
-            }
-            else if (item.ID == DesertCityGate) {
-                client.Entity.Teleport(1000, 500, 650);
-            }
-            else if (item.ID == ApeCityGate) {
-                client.Entity.Teleport(1020, 565, 562);
-            }
-            else if (item.ID == CastleGate) {
-                client.Entity.Teleport(1011, 188, 264);
-            }
-            else if (item.ID == BirdIslandGate) {
-                client.Entity.Teleport(1015, 717, 571);
-            }
-            else if (item.ID == ArroyoScroll) {
-                client.Entity.Teleport(1217, 535, 558);
+            switch (item.ID) {
+                case TwinCityGate:
+                    client.Entity.Teleport(1002, 303, 278);
+                    break;
+                case DesertCityGate:
+                    client.Entity.Teleport(1000, 500, 650);
+                    break;
+                case ApeCityGate:
+                    client.Entity.Teleport(1020, 565, 562);
+                    break;
+                case CastleGate:
+                    client.Entity.Teleport(1011, 188, 264);
+                    break;
+                case BirdIslandGate:
+                    client.Entity.Teleport(1015, 717, 571);
+                    break;
+                case ArroyoScroll:
+                    client.Entity.Teleport(1217, 535, 558);
+                    break;
             }
         }
     }
 }
-

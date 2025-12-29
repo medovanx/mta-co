@@ -42,7 +42,7 @@ namespace MTA.Game.Items.Handlers {
                     client.Inventory.Add(soulId, 0, 1);
                 }
 
-                client.Send(new Message("Congratultions you have got P4DragonSoul.", Color.Red, Message.TopLeft));
+                client.Send(new Message("Congratulations you have got P4DragonSoul.", Color.Red, Message.TopLeft));
             }
             else if (item.ID == P6DragonSoulBag) {
                 var nr = r.Next(1, 8);
@@ -61,7 +61,7 @@ namespace MTA.Game.Items.Handlers {
                     client.Inventory.Add(soulId, 0, 1);
                 }
 
-                client.Send(new Message("Congratultions you have got P6DragonSoul.", Color.Red, Message.TopLeft));
+                client.Send(new Message("Congratulations you have got P6DragonSoul.", Color.Red, Message.TopLeft));
             }
             else if (item.ID == P7WeaponSoulPack) {
                 var nr = r.Next(1, 9);
@@ -81,7 +81,7 @@ namespace MTA.Game.Items.Handlers {
                     client.Inventory.Add(soulId, 0, 1);
                 }
 
-                client.Send(new Message("Congratultions you have got P7WeaponSoul.", Color.Red, Message.TopLeft));
+                client.Send(new Message("Congratulations you have got P7WeaponSoul.", Color.Red, Message.TopLeft));
             }
             else if (item.ID == P4DragonSoulPack) {
                 var nr = r.Next(1, 17);

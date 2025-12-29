@@ -17,7 +17,7 @@ namespace MTA.Game.Items.Handlers {
             if (DateTime.Now < client.matrixtime.AddMinutes(CooldownMinutes)) {
                 var remain = client.matrixtime.AddMinutes(CooldownMinutes) - DateTime.Now;
                 var message = "Time Till Next Usage :";
-                message += string.Format("{0} Minutes : {1} Seconds", remain.Minutes, remain.Seconds);
+                message += $"{remain.Minutes} Minutes : {remain.Seconds} Seconds";
                 client.MessageBox(message);
                 return;
             }
@@ -28,119 +28,121 @@ namespace MTA.Game.Items.Handlers {
             var monsterName = "";
             MonsterInformation monster = null;
 
-            if (item.ID == SuperMonsterBox) {
-                effectName = "fathitgtsyd";
-                monsterName = "SuperMonster";
-                monster = new MonsterInformation {
-                    Hitpoints = 7500000,
-                    Level = 200,
-                    Mesh = 984,
-                    Name = monsterName,
-                    MaxAttack = 80000,
-                    AttackRange = 10,
-                    AttackType = 2,
-                    SpellID = 10304,
-                    AttackSpeed = 1500,
-                    ViewRange = 10,
-                    MoveSpeed = 500,
-                    RunSpeed = 500,
-                    MinAttack = 70000
-                };
-            }
-            else if (item.ID == MonkeyMonsterBox) {
-                effectName = "fathitgtsyd";
-                monsterName = "MonkeyMonster";
-                monster = new MonsterInformation {
-                    Hitpoints = 7500000,
-                    Level = 200,
-                    Mesh = 981,
-                    Name = monsterName,
-                    MaxAttack = 70000,
-                    AttackRange = 10,
-                    AttackType = 2,
-                    SpellID = 10304,
-                    AttackSpeed = 1500,
-                    ViewRange = 10,
-                    MoveSpeed = 500,
-                    RunSpeed = 500,
-                    MinAttack = 60000
-                };
-            }
-            else if (item.ID == CrazyGhostBox) {
-                effectName = "fam_gain_special";
-                monsterName = "CrazyGhost";
-                monster = new MonsterInformation {
-                    Hitpoints = 6000000,
-                    Level = 200,
-                    Mesh = 982,
-                    Name = monsterName,
-                    MaxAttack = 60000,
-                    AttackRange = 10,
-                    AttackType = 2,
-                    SpellID = 10304,
-                    AttackSpeed = 1000,
-                    ViewRange = 5,
-                    MoveSpeed = 500,
-                    RunSpeed = 500,
-                    MinAttack = 50000
-                };
-            }
-            else if (item.ID == GoldenBirdBox) {
-                effectName = "fam_exp_special";
-                monsterName = "GoldenBird";
-                monster = new MonsterInformation {
-                    Hitpoints = 3500000,
-                    Level = 200,
-                    Mesh = 983,
-                    Name = monsterName,
-                    MaxAttack = 40000,
-                    AttackRange = 10,
-                    AttackType = 2,
-                    SpellID = 10304,
-                    AttackSpeed = 1000,
-                    ViewRange = 5,
-                    MoveSpeed = 500,
-                    RunSpeed = 500,
-                    MinAttack = 30000
-                };
-            }
-            else if (item.ID == BloodGhostBox) {
-                effectName = "fam_gain";
-                monsterName = "BloodGhost";
-                monster = new MonsterInformation {
-                    Hitpoints = 2500000,
-                    Level = 200,
-                    Mesh = 208,
-                    Name = monsterName,
-                    MaxAttack = 30000,
-                    AttackRange = 10,
-                    AttackType = 2,
-                    SpellID = 10304,
-                    AttackSpeed = 1000,
-                    ViewRange = 5,
-                    MoveSpeed = 500,
-                    RunSpeed = 500,
-                    MinAttack = 20000
-                };
-            }
-            else if (item.ID == HumanAideBox) {
-                effectName = "fam_exp";
-                monsterName = "HumanAide";
-                monster = new MonsterInformation {
-                    Hitpoints = 1500000,
-                    Level = 200,
-                    Mesh = 209,
-                    Name = monsterName,
-                    MaxAttack = 20000,
-                    AttackRange = 10,
-                    AttackType = 2,
-                    SpellID = 10304,
-                    AttackSpeed = 1000,
-                    ViewRange = 5,
-                    MoveSpeed = 500,
-                    RunSpeed = 500,
-                    MinAttack = 10000
-                };
+            switch (item.ID) {
+                case SuperMonsterBox:
+                    effectName = "fathitgtsyd";
+                    monsterName = "SuperMonster";
+                    monster = new MonsterInformation {
+                        Hitpoints = 7500000,
+                        Level = 200,
+                        Mesh = 984,
+                        Name = monsterName,
+                        MaxAttack = 80000,
+                        AttackRange = 10,
+                        AttackType = 2,
+                        SpellID = 10304,
+                        AttackSpeed = 1500,
+                        ViewRange = 10,
+                        MoveSpeed = 500,
+                        RunSpeed = 500,
+                        MinAttack = 70000
+                    };
+                    break;
+                case MonkeyMonsterBox:
+                    effectName = "fathitgtsyd";
+                    monsterName = "MonkeyMonster";
+                    monster = new MonsterInformation {
+                        Hitpoints = 7500000,
+                        Level = 200,
+                        Mesh = 981,
+                        Name = monsterName,
+                        MaxAttack = 70000,
+                        AttackRange = 10,
+                        AttackType = 2,
+                        SpellID = 10304,
+                        AttackSpeed = 1500,
+                        ViewRange = 10,
+                        MoveSpeed = 500,
+                        RunSpeed = 500,
+                        MinAttack = 60000
+                    };
+                    break;
+                case CrazyGhostBox:
+                    effectName = "fam_gain_special";
+                    monsterName = "CrazyGhost";
+                    monster = new MonsterInformation {
+                        Hitpoints = 6000000,
+                        Level = 200,
+                        Mesh = 982,
+                        Name = monsterName,
+                        MaxAttack = 60000,
+                        AttackRange = 10,
+                        AttackType = 2,
+                        SpellID = 10304,
+                        AttackSpeed = 1000,
+                        ViewRange = 5,
+                        MoveSpeed = 500,
+                        RunSpeed = 500,
+                        MinAttack = 50000
+                    };
+                    break;
+                case GoldenBirdBox:
+                    effectName = "fam_exp_special";
+                    monsterName = "GoldenBird";
+                    monster = new MonsterInformation {
+                        Hitpoints = 3500000,
+                        Level = 200,
+                        Mesh = 983,
+                        Name = monsterName,
+                        MaxAttack = 40000,
+                        AttackRange = 10,
+                        AttackType = 2,
+                        SpellID = 10304,
+                        AttackSpeed = 1000,
+                        ViewRange = 5,
+                        MoveSpeed = 500,
+                        RunSpeed = 500,
+                        MinAttack = 30000
+                    };
+                    break;
+                case BloodGhostBox:
+                    effectName = "fam_gain";
+                    monsterName = "BloodGhost";
+                    monster = new MonsterInformation {
+                        Hitpoints = 2500000,
+                        Level = 200,
+                        Mesh = 208,
+                        Name = monsterName,
+                        MaxAttack = 30000,
+                        AttackRange = 10,
+                        AttackType = 2,
+                        SpellID = 10304,
+                        AttackSpeed = 1000,
+                        ViewRange = 5,
+                        MoveSpeed = 500,
+                        RunSpeed = 500,
+                        MinAttack = 20000
+                    };
+                    break;
+                case HumanAideBox:
+                    effectName = "fam_exp";
+                    monsterName = "HumanAide";
+                    monster = new MonsterInformation {
+                        Hitpoints = 1500000,
+                        Level = 200,
+                        Mesh = 209,
+                        Name = monsterName,
+                        MaxAttack = 20000,
+                        AttackRange = 10,
+                        AttackType = 2,
+                        SpellID = 10304,
+                        AttackSpeed = 1000,
+                        ViewRange = 5,
+                        MoveSpeed = 500,
+                        RunSpeed = 500,
+                        MinAttack = 10000
+                    };
+                    break;
             }
 
             if (monster == null) return;

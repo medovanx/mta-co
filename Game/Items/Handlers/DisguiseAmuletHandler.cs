@@ -16,8 +16,8 @@ namespace MTA.Game.Items.Handlers {
 
             client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
 
-            var wasTransformated = client.Entity.Transformed;
-            if (wasTransformated) {
+            var entityTransformed = client.Entity.Transformed;
+            if (entityTransformed) {
                 client.Entity.Hitpoints = client.Entity.MaxHitpoints;
                 client.Entity.TransformationID = 0;
                 client.Entity.TransformationStamp = Time32.Now;

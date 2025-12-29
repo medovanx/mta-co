@@ -14,7 +14,7 @@ namespace MTA.Game.Items.Handlers {
         ElitePKChampion120, ElitePKSecond120, ElitePKThird120, ElitePKFourth120,
         ElitePKChampion110, ElitePKSecond110, ElitePKThird110, ElitePKFourth110,
         ElitePKChampion1, ElitePKSecond1, ElitePKThird1, ElitePKFourth1)]
-    public static class ElitePKPrizeHandler {
+    public static class ElitePkPrizeHandler {
         private const byte RequiredInventorySlots = 17; // Need at least 23 free slots (40 - 23 = 17)
 
         private struct PrizeReward {
@@ -62,7 +62,7 @@ namespace MTA.Game.Items.Handlers {
 
         public static void Handle(GameState client, ConquerItem item) {
             if (client.Inventory.Count > RequiredInventorySlots) {
-                client.Send("You need atleast 23 open spots!");
+                client.Send("You need at least 23 open spots!");
                 return;
             }
 

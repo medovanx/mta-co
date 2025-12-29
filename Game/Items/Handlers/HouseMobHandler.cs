@@ -11,16 +11,17 @@ namespace MTA.Game.Items.Handlers {
     /// <summary>
     /// Handles House Mob Pack items that spawn monsters in player houses.
     /// </summary>
-    [ItemHandler(HouseMobPack1, HouseMobPack2)]
+    [ItemHandler(BansheeSpirit, SwordSoul)]
     public static class HouseMobHandler {
         private const double CooldownHours = 3.0;
-        private static readonly Dictionary<uint, uint> PackToMonsterID = new Dictionary<uint, uint> {
-            { HouseMobPack1, 41710 },
-            { HouseMobPack2, 4170 }
+
+        private static readonly Dictionary<uint, uint> PackToMonsterId = new Dictionary<uint, uint> {
+            { BansheeSpirit, 41710 },
+            { SwordSoul, 4170 }
         };
 
         public static void Handle(GameState client, ConquerItem item) {
-            if (!PackToMonsterID.TryGetValue(item.ID, out var monsterID)) {
+            if (!PackToMonsterId.TryGetValue(item.ID, out var monsterId)) {
                 return;
             }
 
@@ -28,27 +29,26 @@ namespace MTA.Game.Items.Handlers {
             if (DateTime.Now < itemtime.AddHours(CooldownHours)) {
                 var remain = itemtime.AddHours(CooldownHours) - DateTime.Now;
                 var message = "Time Till Next Usage :";
-                message += string.Format("{1} Minutes : {2} Seconds", remain.Hours, remain.Minutes, remain.Seconds);
+                message += $"{remain.Minutes} Minutes : {remain.Seconds} Seconds";
                 client.MessageBox(message);
                 return;
             }
 
-            if (!House.Houses.ContainsKey(client.Entity.UID)) {
-                client.MessageBox("only in house.");
+            if (!House.Houses.TryGetValue(client.Entity.UID, out var myhouse)) {
+                client.MessageBox("You can spawn this monster only in your house.");
                 return;
             }
 
-            var myhouse = House.Houses[client.Entity.UID];
             if (client.Entity.MapID != myhouse.ID) {
-                client.MessageBox("only in your house.");
+                client.MessageBox("You can spawn this monster only in your house.");
                 return;
             }
 
-            if (!MonsterInformation.MonsterInformations.ContainsKey(monsterID)) {
+            if (!MonsterInformation.MonsterInformations.ContainsKey(monsterId)) {
                 return;
             }
 
-            var mt = MonsterInformation.MonsterInformations[monsterID];
+            var mt = MonsterInformation.MonsterInformations[monsterId];
             mt.BoundX = client.Entity.X;
             mt.BoundY = client.Entity.Y;
             mt.RespawnTime = 36000;
@@ -85,4 +85,3 @@ namespace MTA.Game.Items.Handlers {
         }
     }
 }
-

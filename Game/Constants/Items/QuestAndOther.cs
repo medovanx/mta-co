@@ -22,59 +22,9 @@ namespace MTA.Game.Constants.Items {
         public const uint UniqueMagnoliaSeed = 729308;
         public const uint EliteMagnoliaSeed = 729309;
         public const uint SuperMagnoliaSeed = 729310;
-        public const uint SmallCPBox = 720996;
-        public const uint KeyBag = 3000624;
-        public const uint IronKey = 3000625;
-        public const uint CopperKey = 3000626;
-        public const uint SilverKey = 3000627;
-        public const uint GoldKey = 3000628;
-        public const uint AnniversaryJoyPack = 3000593;
 
         #endregion Quest Items
 
-        #region Wedding Items
-
-        public const uint RedRose = 422020;
-        public const uint Kisses99 = 755099;
-
-        #endregion Wedding Items
-
-        #region Crafting Items
-
-        public const uint EmptyBottle = 3003735;
-        public const uint CommonSoap = 3003736;
-        public const uint FlowerSoap = 3003737;
-        public const uint FruitSoap = 3003738;
-        public const uint SoapPowder = 3003739;
-        public const uint RiverWater = 3003740;
-        public const uint BasicSoapyWater = 3003741;
-        public const uint SoilPigment = 3003742;
-        public const uint FlowerMudPigment = 3003743;
-        public const uint MineralPigment = 3003744;
-        public const uint BubbleWater = 3003746;
-
-        #endregion Crafting Items
-
-        #region Epic Weapon Items
-
-        public const uint NinjaScroll = 3004458;
-        public const uint TrojanScroll = 3003341;
-        public const uint LifesEye = 3004464;
-        public const uint TrojanEpic = 3003340;
-        public const uint DivinePanacea = 3006016;
-        public const uint EpicWeaponToken = 3006226;
-
-        #endregion Epic Weapon Items
-
-        #region Scrap and Crafting Materials
-
-        public const uint P7WeaponSoulPackScrap = 3004243;
-        public const uint P7EquipmentSoulScrap = 3004244;
-        public const uint SacredRefineryScrap = 3004245;
-        public const uint AncientStone = 3004246;
-        public const uint SoulScrolls = 3004260;
-
-        #endregion Scrap and Crafting Materials
 
         #region Sacred Refinery Materials
 
@@ -125,28 +75,11 @@ namespace MTA.Game.Constants.Items {
 
         #region House Mobs
 
-        public const uint HouseMobPack1 = 3004259;
-        public const uint HouseMobPack2 = 720842;
+        public const uint BansheeSpirit = 3004259;
+        public const uint SwordSoul = 720842;
 
         #endregion House Mobs
 
-        #region VIP Items
-
-        public const uint VIP7Item = 3002687;
-
-        #endregion VIP Items
-
-        #region Random CP Items
-
-        public const uint RandomCPItem = 3000776;
-
-        #endregion Random CP Items
-
-        #region Chi Power Items
-
-        public const uint ChiPowerMaxItem = 3001607;
-
-        #endregion Chi Power Items
 
         #region Elite PK Prize Items
 
@@ -193,4 +126,3 @@ namespace MTA.Game.Constants.Items {
         #endregion Elite PK Prize Items (Unknown)
     }
 }
-

@@ -5,17 +5,16 @@ using static MTA.Game.Constants.Items.BasicItems;
 
 namespace MTA.Game.Items.Handlers {
     /// <summary>
-    /// Handles ExpBall_B item that grants experience when used (max 10 per day, level < 137).
+    /// Handles ExpBall_B item that grants experience when used (max 10 per day, level less than 137).
     /// </summary>
     [ItemHandler(ExpBall_B)]
     public static class ExpBallHandler {
         public static void Handle(GameState client, ConquerItem item) {
             if (client.ExpBalls < 10) {
-                if (client.Entity.Level < 137) {
-                    client.IncreaseExperience(client.ExpBall, false);
-                    client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                    client.ExpBalls++;
-                }
+                if (client.Entity.Level >= 137) return;
+                client.IncreaseExperience(client.ExpBall, false);
+                client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
+                client.ExpBalls++;
             }
             else {
                 client.Send(ExpBallsUsed);
@@ -23,4 +22,3 @@ namespace MTA.Game.Items.Handlers {
         }
     }
 }
-

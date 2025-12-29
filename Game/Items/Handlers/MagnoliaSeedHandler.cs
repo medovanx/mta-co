@@ -21,7 +21,7 @@ namespace MTA.Game.Items.Handlers {
         public static void Handle(GameState client, ConquerItem item) {
             if (GetDistance(client.Entity.X, client.Entity.Y, LocationX1, LocationY1) > MaxDistance &&
                 GetDistance(client.Entity.X, client.Entity.Y, LocationX2, LocationY2) > MaxDistance) {
-                client.MessageBox("You Are To far Away.");
+                client.MessageBox("You are too far away!");
                 return;
             }
 
@@ -46,7 +46,7 @@ namespace MTA.Game.Items.Handlers {
                     _ => 5u
                 };
 
-                p.IncreaseExperience((ulong)(p.ExpBall / expDivisor), true);
+                p.IncreaseExperience(p.ExpBall / expDivisor, true);
 
                 switch (item.ID) {
                     case UniqueMagnoliaSeed:

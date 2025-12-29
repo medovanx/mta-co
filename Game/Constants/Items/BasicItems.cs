@@ -11,7 +11,6 @@ namespace MTA.Game.Constants.Items {
         public const uint CopperCoin = 711611;
         public const uint SmallLotteryTicket = 711504;
 
-        public const uint TopMoneyBag = 723723;
         public const uint HorseRacingPointsPack10K = 720874;
         public const uint HorseRacingPointsPack8K = 720875;
         public const uint HorseRacingPointsPack7K = 720876;
@@ -74,7 +73,6 @@ namespace MTA.Game.Constants.Items {
         public const uint ExcellentExploitPack = 3007109;
         public const uint SupremeExploitPack = 3007110;
         public const uint MemoryAgate = 720828;
-        public const uint BoothsItem = 3001523;
         public const uint PowerEXPBall = 722057;
         public const uint PowerEXPBallBound = 723744;
         public const uint DragonBall = 1088000;
