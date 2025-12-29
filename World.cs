@@ -2350,17 +2350,6 @@ namespace MTA {
 
             #endregion
 
-            #region LuckyMan
-
-            if (now64 is { Minute: 43, Second: 5 }) {
-                Kernel.SendWorldMessage(new Message("Lucky Man War began !", Color.White, Message.Center),
-                    Program.Values);
-                foreach (var client in Program.Values)
-                    client.MessageBox("Lucky Man began! Would you Like to join ...?",
-                        p => { p.Entity.Teleport(1002, 288, 360); }, null, 60);
-            }
-
-            #endregion
 
             #region SuperGuildWar
 
@@ -2485,18 +2474,6 @@ namespace MTA {
 
             #endregion
 
-            #region ConquerPK PK
-
-            if (DateTime.Now.Minute == 01 && now64.Second == 10) {
-                Kernel.SendWorldMessage(
-                    new Message(" ConquerPK Pk, Now Online All Go To Play PK, !", Color.White, Message.Center),
-                    Program.Values);
-                foreach (var client in Program.Values)
-                    client.MessageBox(" ConquerPK Pk, Now Online, like to Join? ",
-                        p => { p.Entity.Teleport(1002, 274, 360); }, null, 60);
-            }
-
-            #endregion
 
             #region PolePrize
 
@@ -2511,18 +2488,6 @@ namespace MTA {
 
             #endregion
 
-            #region Ghost PK
-
-            if (DateTime.Now.Minute == 06 && now64.Second == 10) {
-                Kernel.SendWorldMessage(
-                    new Message(" Ghost Pk, Now Online All Go To Play PK !", Color.White, Message.Center),
-                    Program.Values);
-                foreach (var client in Program.Values)
-                    client.MessageBox(" Ghostpk Pk, Now Online, like to Join? ",
-                        p => { p.Entity.Teleport(1002, 300, 361); }, null, 60);
-            }
-
-            #endregion
 
             #region Attackers QuesT
 
@@ -2537,18 +2502,6 @@ namespace MTA {
 
             #endregion
 
-            #region Rabbit PK
-
-            if (DateTime.Now.Minute == 38 && now64.Second == 1) {
-                Kernel.SendWorldMessage(
-                    new Message(" Rabbit Pk, Now Online All Go To Play PK !", Color.White, Message.Center),
-                    Program.Values);
-                foreach (var client in Program.Values)
-                    client.MessageBox(" Rabbit Pk, Now Online, like to Join? ",
-                        p => { p.Entity.Teleport(1002, 277, 360); }, null, 60);
-            }
-
-            #endregion
 
             #region [T]KingDom.GLD
 

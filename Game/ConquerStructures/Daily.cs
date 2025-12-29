@@ -20,13 +20,10 @@ namespace MTA.Game.ConquerStructures
         public static int howmanyinmap11;
         public static int howmanyinmap10;
         public static int howmanyinmap52;
-        public static int howmanyinmap180;
-        public static int howmanyinmap181;
         public static int howmanyinmap183;
         public static int howmanyinmap185;
         public static int howmanyinmap186;
         public static int howmanyinmap187;
-        public static int howmanyinmap188;
         public static int howmanyinmap189;
         public static int howmanyinmap190;
         public static int howmanyinmap191;
@@ -195,32 +192,6 @@ namespace MTA.Game.ConquerStructures
 
             }
         }
-        public static void CheackAlive180()
-        {
-            howmanyinmap180 = 0;
-            foreach (Client.GameState client in Program.Values)
-            {
-                if (client.Entity is { MapID: 8510, Hitpoints: >= 1 })
-                {
-                    howmanyinmap180 += 1;
-                    Kernel.SendWorldMessage(new Message("Players Alive in ConquerPK Now: " + howmanyinmap180 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
-                }
-
-            }
-        }
-        public static void CheackAlive181()
-        {
-            howmanyinmap181 = 0;
-            foreach (Client.GameState client in Program.Values)
-            {
-                if (client.Entity is { MapID: 8511, Hitpoints: >= 1 })
-                {
-                    howmanyinmap181 += 1;
-                    Kernel.SendWorldMessage(new Message("Players Alive in Ghostpk Now: " + howmanyinmap181 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
-                }
-
-            }
-        }
         public static void CheackAlive183()
         {
             howmanyinmap183 = 0;
@@ -269,19 +240,6 @@ namespace MTA.Game.ConquerStructures
                 {
                     howmanyinmap187 += 1;
                     Kernel.SendWorldMessage(new Message("Players Alive in [T]Final-WaR Now: " + howmanyinmap187 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
-                }
-
-            }
-        }
-        public static void CheackAlive188()
-        {
-            howmanyinmap188 = 0;
-            foreach (Client.GameState client in Program.Values)
-            {
-                if (client.Entity is { MapID: 8518, Hitpoints: >= 1 })
-                {
-                    howmanyinmap188 += 1;
-                    Kernel.SendWorldMessage(new Message("Players Alive in Rabbit Now: " + howmanyinmap188 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);
                 }
 
             }
