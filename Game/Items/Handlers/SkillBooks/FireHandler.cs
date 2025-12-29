@@ -1,7 +1,6 @@
-using System.Drawing;
 using MTA.Client;
+using MTA.Game.Constants;
 using MTA.Network.GamePackets;
-using Message = MTA.Network.GamePackets.Message;
 using static MTA.Game.Constants.Items.SkillBooks;
 
 namespace MTA.Game.Items.Handlers.SkillBooks {
@@ -13,12 +12,11 @@ namespace MTA.Game.Items.Handlers.SkillBooks {
         public static void Handle(GameState client, ConquerItem item) {
             if (client.Entity.Spirit >= 80) {
                 client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                client.AddSpell(new Spell(true) { ID = 1001 });
+                client.AddSpell(new Spell(true) { ID = Spells.Fire });
             }
             else {
-                client.Send(new Message("You need atleast 80 spirit!", Color.Tan, Message.TopLeft));
+                client.MessageBox("You need at least 80 spirit!");
             }
         }
     }
 }
-

@@ -1,6 +1,8 @@
 using MTA.Client;
+using MTA.Game.Constants;
 using MTA.Network.GamePackets;
 using static MTA.Game.Constants.Items.SkillBooks;
+using static MTA.Game.Constants.EntityClass;
 
 namespace MTA.Game.Items.Handlers.SkillBooks {
     /// <summary>
@@ -9,13 +11,24 @@ namespace MTA.Game.Items.Handlers.SkillBooks {
     [ItemHandler(Lightning)]
     public static class LightningHandler {
         public static void Handle(GameState client, ConquerItem item) {
-            if (client.Entity.Class is >= 130 and <= 135 ||
-                client.Entity.Class is >= 140 and <= 145 && client.Entity.Level >= 15 ||
-                client.Entity.Class == 100 || client.Entity.Class == 101) {
-                client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
-                client.AddSpell(new Spell(true) { ID = 1010 });
+            if (client.Entity.Spirit < 25) {
+                client.MessageBox("You need at least 25 spirit!");
+                return;
             }
+
+            if (IsWaterTaoist(client.Entity.Class) ||
+                IsFireTaoist(client.Entity.Class) && client.Entity.Level >= 15) {
+                client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
+                client.AddSpell(new Spell(true) { ID = Spells.Lightning });
+                return;
+            }
+
+            if (IsFireTaoist(client.Entity.Class) && client.Entity.Level < 15) {
+                client.MessageBox("Fire Taoists need to be at least level 15!");
+                return;
+            }
+
+            client.MessageBox("Only Taoists can learn this skill!");
         }
     }
 }
-
