@@ -10,7 +10,6 @@ namespace MTA.Game.Constants.Items {
         public const uint SilverCoin = 711610;
         public const uint CopperCoin = 711611;
         public const uint SmallLotteryTicket = 711504;
-
         public const uint HorseRacingPointsPack10K = 720874;
         public const uint HorseRacingPointsPack8K = 720875;
         public const uint HorseRacingPointsPack7K = 720876;
@@ -27,22 +26,9 @@ namespace MTA.Game.Constants.Items {
         public const uint DragonSoulTicket = 728917;
         public const uint ExpBall = 3001283;
         public const uint ExpBall_B = 723700;
-        public const uint SpeedArrow = 1050002;
-        public const uint SpeedArrowPack = 727000;
         public const uint LifeFruit = 723726;
-        public const uint Amrita = 720010;
-        public const uint Panacea = 720011;
-        public const uint Ginseng = 720012;
-        public const uint Vanilla = 720013;
-        public const uint RecoveryPill = 720014;
-        public const uint SoulPill = 720015;
-        public const uint RefreshingPill = 720016;
-        public const uint ChantPill = 720017;
-        public const uint MilGinseng = 721330;
         public const uint MeteorTear = 1088002;
         public const uint MeteorTearPack = 723711;
-        public const uint Plus1StonePack = 723712;
-        public const uint NobleSteedPack = 729990;
         public const uint Plus1SteedPack = 728525;
         public const uint Plus3SteedPack = 728526;
         public const uint Plus6SteedPack = 728527;
@@ -68,26 +54,12 @@ namespace MTA.Game.Constants.Items {
         public const uint HeavenDemonBox = 720671;
         public const uint ChaosDemonBox = 720672;
         public const uint SacredDemonBox = 720673;
-        public const uint StolenGift = 720159;
-        public const uint OutstandingExploitPack = 3007108;
-        public const uint ExcellentExploitPack = 3007109;
-        public const uint SupremeExploitPack = 3007110;
         public const uint MemoryAgate = 720828;
         public const uint PowerEXPBall = 722057;
         public const uint PowerEXPBallBound = 723744;
         public const uint DragonBall = 1088000;
         public const uint Emerald = 1080001;
-        public const uint MoonBox = 721090;
-        public const uint BladeSoulLv100 = 800010;
-        public const uint ShieldSoulLv100 = 800410;
-        public const uint BowSoulLv100 = 800610;
-        public const uint BackswordSoulLv100 = 800508;
-        public const uint BeginnerPackLv1 = 723753;
-        public const uint BeginnerPackLv10 = 723755;
-        public const uint BeginnerPackLv70 = 723767;
-        public const uint BeginnerPackLv100 = 723772;
-        public const uint BeginnerPackLv110 = 723774;
-        public const uint BeginnerPackLv120 = 723776;
+        public const uint MoonBox = 721080;
         public const uint CelestialStone = 721259;
         public const uint OblivionDew = 711083;
         public const uint ExemptionToken = 723701;
@@ -97,21 +69,16 @@ namespace MTA.Game.Constants.Items {
         public const uint MyWishFirework = 720032;
         public const uint StudyBook_Arena = 720774;
         public const uint DBScroll = 720028;
-        public const uint DragonBallPack11 = 3000714;
-        public const uint DragonBallPack3 = 720891;
         public const uint DragonGemPack = 727065;
         public const uint MeteorScrollPack = 3003869;
         public const uint MeteorScroll = 720027;
         public const uint ExpPotion = 723017;
-        public const uint SuperExpPotion = 728201;
         public const uint NinjaAmulet = 723583;
         public const uint PrayingStone_S = 1200000;
         public const uint PrayingStone_M = 1200001;
         public const uint PrayingStone_L = 1200002;
         public const uint PenitenceAmulet2 = 723727;
         public const uint DisguiseAmulet = 723724;
-        public const uint Plus8StonePack = 721222;
-        public const uint ToughDrillPack = 721223;
         public const uint DragonGem = 700013;
         public const uint ToughDrill = 1200005;
         public const uint Stone_1 = 730001;
@@ -130,6 +97,5 @@ namespace MTA.Game.Constants.Items {
         public const uint BrownDye = 1060070;
         public const uint RedDye = 1060080;
         public const uint WhiteDye = 1060090;
-        public const uint SweetLovePack = 3005134;
     }
 }
