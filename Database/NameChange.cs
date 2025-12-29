@@ -50,9 +50,6 @@ namespace MTA.Database
                         cmdupdate.Update("partners").Set("PartnerName", newname).Where("PartnerID", uid).Execute();
 
                         cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
-                        cmdupdate.Update("chi").Set("name", newname).Where("uid", uid).Execute();
-
-                        cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
                         cmdupdate.Update("teamarena").Set("EntityName", newname).Where("EntityID", uid).Execute();
 
                         if (!UPDATE.ContainsKey(name))

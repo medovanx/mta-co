@@ -95,13 +95,15 @@ namespace MTA.Database
             using (var cmd = new MySqlCommand(MySqlCommandType.SELECT))
             {
                 cmd.Select("chi");
+                cmd.Command = cmd.Command.Replace("SELECT * FROM `chi`",
+                    "SELECT c.uid, c.points, c.chipowers, c.rchipowers, e.Name FROM `chi` c INNER JOIN `entities` e ON c.uid = e.UID");
                 using (MySqlReader rdr = new MySqlReader(cmd))
                 {
                     while (rdr.Read())
                     {
                         ChiData chiData = new ChiData();
                         chiData.UID = rdr.ReadUInt32("uid");
-                        chiData.Name = rdr.ReadString("name");
+                        chiData.Name = rdr.ReadString("Name");
                         chiData.Powers = [];
                         byte[] data = rdr.ReadBlob("chipowers");
                         if (data.Length > 0)
@@ -164,7 +166,7 @@ namespace MTA.Database
                     {
                         using (var command = new MySqlCommand(MySqlCommandType.INSERT))
                         {
-                            command.Insert("chi").Insert("uid", client.Entity.UID).Insert("name", client.Entity.Name);
+                            command.Insert("chi").Insert("uid", client.Entity.UID);
                             command.Execute();
                         }
                     }
