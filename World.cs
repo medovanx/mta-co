@@ -1634,7 +1634,9 @@ namespace MTA {
                 #region MentorPrizeSave
 
                 if (now32 > client.LastMentorSave.AddSeconds(5)) {
-                    Database.KnownPersons.SaveApprenticeInfo(client.AsApprentice);
+                    if (client.AsApprentice != null) {
+                        Database.KnownPersons.SaveApprenticeInfo(client.AsApprentice);
+                    }
                     client.LastMentorSave = now32;
                 }
 
