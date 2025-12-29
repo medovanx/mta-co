@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using MTA.Client.Commands.TestCommands;
+using MTA.Database;
 using MTA.Game;
 using MTA.Game.ConquerStructures;
 using MTA.MaTrix;
