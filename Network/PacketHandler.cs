@@ -13143,10 +13143,6 @@ namespace MTA.Network {
                                 client.Entity.Hitpoints = ushort.MaxValue * 10;
                                 break;
                             }
-                            case "rankload": {
-                                NobilityTable.Load();
-                                break;
-                            }
                             case "obj": {
                                 var entity = new StaticEntity(400000, (ushort)(client.Entity.X + 2),
                                     (ushort)(client.Entity.Y + 2), 2057);

@@ -133,6 +133,10 @@ namespace MTA.Client.Commands
                             client.Send(new Message(client.testxx.ToString(), Message.Tip));
                             break;
                         }
+                    case "reloadnobility": {
+                        NobilityTable.Load();
+                        break;
+                    }
                     case "floor2":
                         {
                             FloorItem floorItem = new FloorItem(true);
