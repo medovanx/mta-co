@@ -90,8 +90,7 @@ namespace MTA.Database
             using (var cmd = new MySqlCommand(MySqlCommandType.INSERT).Insert("claimitems"))
                 cmd.Insert("ItemUID", item.UID).Insert("Date", Item.Date.Ticks)
                     .Insert("ConquerPointsCost", Item.ConquerPointsCost).Insert("OwnerUID", owner.Entity.UID)
-                    .Insert("OwnerName", owner.Entity.Name).Insert("GainerUID", gainer.Entity.UID)
-                    .Insert("GainerName", gainer.Entity.Name).Execute();
+                    .Insert("GainerUID", gainer.Entity.UID).Execute();
         }
 
         public static void Claim(DetainedItem item, Client.GameState owner)
