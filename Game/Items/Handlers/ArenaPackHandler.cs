@@ -1,8 +1,8 @@
 using System.Drawing;
 using MTA.Client;
 using MTA.Network.GamePackets;
-using Message = MTA.Network.GamePackets.Message;
 using static MTA.Game.Constants.Items.ArenaItems;
+using Message = MTA.Network.GamePackets.Message;
 
 namespace MTA.Game.Items.Handlers {
     /// <summary>
@@ -13,19 +13,18 @@ namespace MTA.Game.Items.Handlers {
         public static void Handle(GameState client, ConquerItem item) {
             switch (item.ID) {
                 case ArenaEXPPack:
-                    client.Entity.ConquerPoints += 1;
-                    client.Entity.killerpoints += 1;
+                    client.Entity.Money += 100000;
                     client.Send(new Message(
-                        "Congratulations! " + client.Entity.Name + " You get " + 1 +
-                        " ConquerPoints From Arena Pack and Get 1 Vip Point's .", Color.Red, Message.Whisper));
+                        "Congratulations! You have received 100,000 gold from the Arena Pack.",
+                        Color.Red,
+                        Message.Whisper));
                     client.Inventory.Remove(item, Enums.ItemUse.Delete);
                     break;
                 case ChampionPack:
-                    client.Entity.ConquerPoints += 500;
-                    client.Entity.killerpoints += 200;
+                    client.Entity.Money += 200000;
                     client.Send(new Message(
-                        "Congratulations! " + client.Entity.Name +
-                        " You get 500 ConquerPoints From Arena Pack and Get 100 Vip Point's.", Color.Red,
+                        "Congratulations! You have received 200,000 gold from the Arena Pack.",
+                        Color.Red,
                         Message.Whisper));
                     client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
                     break;
@@ -33,4 +32,3 @@ namespace MTA.Game.Items.Handlers {
         }
     }
 }
-

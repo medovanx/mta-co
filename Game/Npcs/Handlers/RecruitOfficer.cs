@@ -142,6 +142,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     uint itemid8 = 480019; //Club
                     uint itemid9 = 410019; //Blade
                     uint itemid10 = 204009; //TempestWing
+                    uint itemid11 = 203009; //Crop
 
                     if (client.Inventory.Count <= 30) {
                         //  if (client.Inventory.Contains(720356, 1))
@@ -230,6 +231,16 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                             item10.Durability = item10.MaximDurability =
                                 ConquerItemInformation.BaseInformations[itemid10].Durability;
                             client.Inventory.Add(item10, Enums.ItemUse.CreateAndAdd);
+
+                            ConquerItem item11 = new ConquerItem(true);
+                            item11.ID = itemid11;
+                            item11.Color = Enums.Color.White;
+                            item11.Bound = true;
+                            item11.Plus = 3;
+                            item11.Durability = item11.MaximDurability =
+                                ConquerItemInformation.BaseInformations[itemid11].Durability;
+                            client.Inventory.Add(item11, Enums.ItemUse.CreateAndAdd);
+
                             ConquerItem item = new ConquerItem(true);
                             item.ID = itemid;
                             item.Color = Enums.Color.White;
@@ -271,6 +282,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     uint itemid8 = 480019; //Club
                     uint itemid9 = 900009; //Shield
                     uint itemid10 = 204009; //TempestWing
+                    uint itemid11 = 203009; //Crop
                     if (client.Inventory.Count <= 30) {
                         //  if (client.Inventory.Contains(720356, 1))
                         {
@@ -359,6 +371,14 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                                 ConquerItemInformation.BaseInformations[itemid10].Durability;
                             client.Inventory.Add(item10, Enums.ItemUse.CreateAndAdd);
 
+                            ConquerItem item11 = new ConquerItem(true);
+                            item11.ID = itemid11;
+                            item11.Color = Enums.Color.White;
+                            item11.Bound = true;
+                            item11.Plus = 3;
+                            item11.Durability = item11.MaximDurability =
+                                ConquerItemInformation.BaseInformations[itemid11].Durability;
+                            client.Inventory.Add(item11, Enums.ItemUse.CreateAndAdd);
 
                             ConquerItem item = new ConquerItem(true);
                             item.ID = itemid;
@@ -401,6 +421,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     uint itemid8 = 500009; //Bow
                     //uint itemid9 = 900009;//Shield
                     uint itemid9 = 204009; //TempestWing
+                    uint itemid11 = 203009; //Crop
                     if (client.Inventory.Count <= 30) {
                         //    if (client.Inventory.Contains(720356, 1))
                         {
@@ -480,6 +501,14 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                                 ConquerItemInformation.BaseInformations[itemid9].Durability;
                             client.Inventory.Add(item9, Enums.ItemUse.CreateAndAdd);
 
+                            ConquerItem item11 = new ConquerItem(true);
+                            item11.ID = itemid11;
+                            item11.Color = Enums.Color.White;
+                            item11.Bound = true;
+                            item11.Plus = 3;
+                            item11.Durability = item11.MaximDurability =
+                                ConquerItemInformation.BaseInformations[itemid11].Durability;
+                            client.Inventory.Add(item11, Enums.ItemUse.CreateAndAdd);
 
                             ConquerItem item = new ConquerItem(true);
                             item.ID = itemid;
@@ -522,6 +551,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     uint itemid8 = 601019; //Katana
                     uint itemid9 = 601019; //Katana
                     uint itemid10 = 204009; //TempestWing
+                    uint itemid11 = 203009; //Crop
                     if (client.Inventory.Count <= 30) {
                         //   if (client.Inventory.Contains(720356, 1))
                         {
@@ -609,6 +639,14 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                                 ConquerItemInformation.BaseInformations[itemid10].Durability;
                             client.Inventory.Add(item10, Enums.ItemUse.CreateAndAdd);
 
+                            ConquerItem item11 = new ConquerItem(true);
+                            item11.ID = itemid11;
+                            item11.Color = Enums.Color.White;
+                            item11.Bound = true;
+                            item11.Plus = 3;
+                            item11.Durability = item11.MaximDurability =
+                                ConquerItemInformation.BaseInformations[itemid11].Durability;
+                            client.Inventory.Add(item11, Enums.ItemUse.CreateAndAdd);
 
                             ConquerItem item = new ConquerItem(true);
                             item.ID = itemid;
@@ -651,6 +689,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     uint itemid8 = 610019; //Katana
                     uint itemid9 = 610019; //Katana
                     uint itemid10 = 204009; //TempestWing
+                    uint itemid11 = 203009; //Crop
                     if (client.Inventory.Count <= 30) {
                         //     if (client.Inventory.Contains(720356, 1))
                         {
@@ -738,6 +777,14 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                                 ConquerItemInformation.BaseInformations[itemid10].Durability;
                             client.Inventory.Add(item10, Enums.ItemUse.CreateAndAdd);
 
+                            ConquerItem item11 = new ConquerItem(true);
+                            item11.ID = itemid11;
+                            item11.Color = Enums.Color.White;
+                            item11.Bound = true;
+                            item11.Plus = 3;
+                            item11.Durability = item11.MaximDurability =
+                                ConquerItemInformation.BaseInformations[itemid11].Durability;
+                            client.Inventory.Add(item11, Enums.ItemUse.CreateAndAdd);
 
                             ConquerItem item = new ConquerItem(true);
                             item.ID = itemid;
@@ -780,6 +827,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     uint itemid8 = 560019; //Spear
                     uint itemid9 = 421009; //BackSword
                     uint itemid10 = 204009; //TempestWing
+                    uint itemid11 = 203009; //Crop
                     if (client.Inventory.Count <= 30) {
                         //   if (client.Inventory.Contains(720356, 1))
                         {
@@ -867,6 +915,14 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                                 ConquerItemInformation.BaseInformations[itemid10].Durability;
                             client.Inventory.Add(item10, Enums.ItemUse.CreateAndAdd);
 
+                            ConquerItem item11 = new ConquerItem(true);
+                            item11.ID = itemid11;
+                            item11.Color = Enums.Color.White;
+                            item11.Bound = true;
+                            item11.Plus = 3;
+                            item11.Durability = item11.MaximDurability =
+                                ConquerItemInformation.BaseInformations[itemid11].Durability;
+                            client.Inventory.Add(item11, Enums.ItemUse.CreateAndAdd);
 
                             ConquerItem item = new ConquerItem(true);
                             item.ID = itemid;
@@ -909,6 +965,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     uint itemid8 = 560019; //Spear
                     uint itemid9 = 421009; //BackSword
                     uint itemid10 = 204009; //TempestWing
+                    uint itemid11 = 203009; //Crop
                     if (client.Inventory.Count <= 30) {
                         //  if (client.Inventory.Contains(720356, 1))
                         {
@@ -996,6 +1053,14 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                                 ConquerItemInformation.BaseInformations[itemid10].Durability;
                             client.Inventory.Add(item10, Enums.ItemUse.CreateAndAdd);
 
+                            ConquerItem item11 = new ConquerItem(true);
+                            item11.ID = itemid11;
+                            item11.Color = Enums.Color.White;
+                            item11.Bound = true;
+                            item11.Plus = 3;
+                            item11.Durability = item11.MaximDurability =
+                                ConquerItemInformation.BaseInformations[itemid11].Durability;
+                            client.Inventory.Add(item11, Enums.ItemUse.CreateAndAdd);
 
                             ConquerItem item = new ConquerItem(true);
                             item.ID = itemid;
@@ -1038,6 +1103,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     uint itemid8 = 611019; //Rapier
                     uint itemid9 = 612019; //Pistol
                     uint itemid10 = 204009; //TempestWing
+                    uint itemid11 = 203009; //Crop
                     if (client.Inventory.Count <= 30) {
                         //   if (client.Inventory.Contains(720356, 1))
                         {
@@ -1125,6 +1191,14 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                                 ConquerItemInformation.BaseInformations[itemid10].Durability;
                             client.Inventory.Add(item10, Enums.ItemUse.CreateAndAdd);
 
+                            ConquerItem item11 = new ConquerItem(true);
+                            item11.ID = itemid11;
+                            item11.Color = Enums.Color.White;
+                            item11.Bound = true;
+                            item11.Plus = 3;
+                            item11.Durability = item11.MaximDurability =
+                                ConquerItemInformation.BaseInformations[itemid11].Durability;
+                            client.Inventory.Add(item11, Enums.ItemUse.CreateAndAdd);
 
                             ConquerItem item = new ConquerItem(true);
                             item.ID = itemid;
@@ -1167,6 +1241,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     uint itemid8 = 617009; //Nunchaku
                     uint itemid9 = 617009; //Nunchaku
                     uint itemid10 = 204009; //TempestWing
+                    uint itemid11 = 203009; //Crop
                     if (client.Inventory.Count <= 30) {
                         //   if (client.Inventory.Contains(720356, 1))
                         {
@@ -1254,6 +1329,14 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                                 ConquerItemInformation.BaseInformations[itemid10].Durability;
                             client.Inventory.Add(item10, Enums.ItemUse.CreateAndAdd);
 
+                            ConquerItem item11 = new ConquerItem(true);
+                            item11.ID = itemid11;
+                            item11.Color = Enums.Color.White;
+                            item11.Bound = true;
+                            item11.Plus = 3;
+                            item11.Durability = item11.MaximDurability =
+                                ConquerItemInformation.BaseInformations[itemid11].Durability;
+                            client.Inventory.Add(item11, Enums.ItemUse.CreateAndAdd);
 
                             ConquerItem item = new ConquerItem(true);
                             item.ID = itemid;
@@ -1296,7 +1379,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     uint itemid8 = 626029; //DragonFan
                     uint itemid9 = 626029; //DragonFan
                     uint itemid10 = 204009; //Wing
-                    //uint itemid11 = 203009;//Crop
+                    uint itemid11 = 203009; //Crop
                     //uint itemid15 = 300000;//Steed
                     if (client.Inventory.Count <= 30) {
                         //   if (client.Inventory.Contains(720356, 1))
@@ -1385,6 +1468,14 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                                 ConquerItemInformation.BaseInformations[itemid10].Durability;
                             client.Inventory.Add(item10, Enums.ItemUse.CreateAndAdd);
 
+                            ConquerItem item11 = new ConquerItem(true);
+                            item11.ID = itemid11;
+                            item11.Color = Enums.Color.White;
+                            item11.Bound = true;
+                            item11.Plus = 3;
+                            item11.Durability = item11.MaximDurability =
+                                ConquerItemInformation.BaseInformations[itemid11].Durability;
+                            client.Inventory.Add(item11, Enums.ItemUse.CreateAndAdd);
 
                             ConquerItem item = new ConquerItem(true);
                             item.ID = itemid;

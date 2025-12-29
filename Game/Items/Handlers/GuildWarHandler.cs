@@ -129,12 +129,12 @@ namespace MTA.Game.Items.Handlers {
                 }
             }
             else if (item.ID == GuildWarBomb) {
-                if (Game.GuildWar.IsWar) {
+                if (GuildWar.IsWar) {
                     if (client.Entity.MapID == 1038 & client.Entity.X == 165 & client.Entity.Y == 213) {
-                        MTA.Game.GuildWar.LeftGate.Mesh = (ushort)(250 + MTA.Game.GuildWar.LeftGate.Mesh % 10);
+                        GuildWar.LeftGate.Mesh = (ushort)(250 + GuildWar.LeftGate.Mesh % 10);
                         var upd = new Update(true);
-                        upd.UID = MTA.Game.GuildWar.LeftGate.UID;
-                        upd.Append(Update.Mesh, MTA.Game.GuildWar.LeftGate.Mesh);
+                        upd.UID = GuildWar.LeftGate.UID;
+                        upd.Append(Update.Mesh, GuildWar.LeftGate.Mesh);
                         client.SendScreen(upd, true);
                         client.SendScreen(upd, true);
                         var str = new _String(true);
@@ -147,10 +147,10 @@ namespace MTA.Game.Items.Handlers {
                     }
                     else {
                         if (client.Entity.MapID == 1038 & client.Entity.X == 225 & client.Entity.Y == 178) {
-                            MTA.Game.GuildWar.RightGate.Mesh = (ushort)(280 + MTA.Game.GuildWar.RightGate.Mesh % 10);
+                            GuildWar.RightGate.Mesh = (ushort)(280 + GuildWar.RightGate.Mesh % 10);
                             var upd = new Update(true);
-                            upd.UID = MTA.Game.GuildWar.RightGate.UID;
-                            upd.Append(Update.Mesh, MTA.Game.GuildWar.RightGate.Mesh);
+                            upd.UID = GuildWar.RightGate.UID;
+                            upd.Append(Update.Mesh, GuildWar.RightGate.Mesh);
                             client.SendScreen(upd, true);
                             var str = new _String(true);
                             str.UID = client.Entity.UID;

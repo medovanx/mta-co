@@ -6,6 +6,10 @@ using static MTA.Game.Constants.Items.BasicItems;
 using static MTA.Game.Constants.Items.StudyBooks;
 using static MTA.Game.Constants.Items.ChiItems;
 using static MTA.Game.Constants.Items.CPsBags;
+using static MTA.Game.Constants.Items.DragonSouls.P4;
+using static MTA.Game.Constants.Items.DragonSouls.P5;
+using static MTA.Game.Constants.Items.DragonSouls.P6;
+using static MTA.Game.Constants.Items.DragonSouls.P7;
 using static MTA.Game.Constants.Items.Gems;
 
 namespace MTA.Game.Items.Handlers {
@@ -16,59 +20,58 @@ namespace MTA.Game.Items.Handlers {
     public static class AnniversaryJoyPackHandler {
         public static void Handle(GameState client, ConquerItem item) {
             client.Inventory.Remove(item, Enums.ItemUse.Remove);
-            uint uid = 0;
             var type = (byte)Kernel.Random.Next(1, 50);
-            uid = type switch {
-                1 => 800320u,
-                2 => 720891u,
-                3 => 800110u,
-                4 => 820056u,
-                5 => 822056u,
-                6 => 727100u,
-                7 => 822053u,
+            var uid = type switch {
+                1 => ArchonWand,
+                2 => DragonBallPack3,
+                3 => GrimHammer,
+                4 => AzureHat,
+                5 => OceanArmor,
+                6 => DragonBallPack,
+                7 => WhirlpoolArmor,
                 8 => MysticCPPack,
-                9 => 800050u,
-                10 => 800015u,
-                11 => 800090u,
+                9 => StiffSword,
+                10 => MoonHammer,
+                11 => BillowHammer,
                 12 => DeityCPPack,
-                13 => 800017u,
-                14 => 800071u,
-                15 => 800016u,
+                13 => StealthKatana,
+                14 => GiantAxe,
+                15 => OnimaKatana,
                 16 => GhostCPPack,
-                17 => 800130u,
+                17 => LunarKatana,
                 18 => DiligenceBook,
-                19 => 800141u,
-                20 => 800200u,
-                21 => 800310u,
+                19 => ScarKatana,
+                20 => BloodyGlaive,
+                21 => ResplendentWand,
                 22 => ModestyBook,
-                23 => 800214u,
-                24 => 800230u,
-                25 => 800414u,
+                23 => SnakeHalbert,
+                24 => CelestialSpear,
+                25 => WaveShield,
                 26 => DragonBall,
-                27 => 800420u,
-                28 => 800401u,
-                29 => 800512u,
-                30 => 823043u,
+                27 => CrystalShield,
+                28 => FlameShield,
+                29 => LotusBacksword,
+                30 => GrassBracelet,
                 31 => ChiPill_200,
-                32 => 800520u,
-                33 => 800521u,
+                32 => BurntBacksword,
+                33 => DarkBacksword,
                 34 => SoulCPPack,
-                35 => 800614u,
-                36 => 800615u,
+                35 => PhoenixBow,
+                36 => RuneBow,
                 37 => HopeCPPack,
-                38 => 800617u,
-                39 => 800720u,
-                40 => 700123u,
-                41 => 800070u,
-                42 => 800723u,
-                43 => 800724u,
-                44 => 800018u,
-                45 => 820001u,
-                46 => 700103u,
-                47 => 820053u,
-                48 => 820054u,
-                49 => 820055u,
-                50 => 800722u,
+                38 => AncientBow,
+                39 => HolyBeadsOfMagnanimity,
+                40 => SuperGloryGem,
+                41 => JadeAxe,
+                42 => HolyBeadsOfPercept,
+                43 => HolyBeadsOfDharma,
+                44 => RainbowBlade,
+                45 => FlameHat,
+                46 => SuperThunderGem,
+                47 => SurgeHeadgear,
+                48 => LotusHeadgear,
+                49 => FeatherHeadgear,
+                50 => HolyBeadsOfConsciousness,
                 _ => 0u
             };
 
@@ -84,4 +87,3 @@ namespace MTA.Game.Items.Handlers {
         }
     }
 }
-

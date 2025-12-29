@@ -13,7 +13,8 @@ namespace MTA.Game.Constants.Items.DragonSouls {
         public const uint GrimHammer = 800110;
         public const uint SufferingScythe = 800254;
         public const uint ArchonWand = 800320;
-        public const uint FlameShield = 800421;
+        public const uint FlameShield = 800401;
+        public const uint FlameShieldAlt = 800421;
         public const uint WingedBow = 800616;
         public const uint TimePistol = 800804;
         public const uint DominantKnifeSoul = 800916;
