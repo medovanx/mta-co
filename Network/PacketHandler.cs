@@ -16187,7 +16187,8 @@ namespace MTA.Network {
             }
 
             client.Entity.Update(0x80, 0x27b1, false);
-            client.Entity.Update(Update.Merchant, 255, false);
+            // TODO: Implement the Merchant handler and NPC 
+            // client.Entity.Update(Update.Merchant, 255, false);
             client.LoadItemStats();
 
             #region New Titles
