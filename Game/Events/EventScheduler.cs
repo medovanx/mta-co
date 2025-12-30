@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MTA.Client;
 using MTA.Database;
 using MTA.Game.Events.CaptainsCastleConquest;
 using MTA.Game.Events.DizzyLand;
+using MTA.Game.Events.GuildWar;
 using MTA.Game.Events.SteedRace;
 using MTA.Game.Events.TreasureInTheBlue;
 
@@ -119,6 +121,10 @@ public static class EventScheduler {
         RegisterEvent(new SteedRaceEvent());
         RegisterEvent(new DizzyLandEvent());
         RegisterEvent(new TreasureInTheBlueEvent());
+        var guildWarEvent = new GuildWarEvent();
+        RegisterEvent(guildWarEvent);
+        // Initialize Guild War event to restore pole keeper from database
+        guildWarEvent.Initialize();
     }
 
     /// <summary>
@@ -132,5 +138,31 @@ public static class EventScheduler {
         }
 
         return shouldSkip;
+    }
+
+    /// <summary>
+    ///     Notify all events of an entity attack and check if attack was handled
+    ///     Returns true if any event handled the attack (OR logic - skip normal damage processing)
+    /// </summary>
+    public static bool OnEntityAttacked(Entity attacker, Interfaces.IMapObject attacked, uint damage) {
+        var wasHandled = false;
+        foreach (var unused in Events.Where(gameEvent => gameEvent.OnEntityAttacked(attacker, attacked, damage))) {
+            wasHandled = true; // OR logic: if any event handles it, skip normal processing
+        }
+
+        return wasHandled;
+    }
+
+    /// <summary>
+    ///     Notify all events of player movement and check if movement should be blocked
+    ///     Returns true if any event blocks movement (OR logic - block if any event says block)
+    /// </summary>
+    public static bool OnPlayerMovement(GameState client, ushort oldX, ushort oldY) {
+        var shouldBlock = false;
+        foreach (var unused in Events.Where(gameEvent => gameEvent.OnPlayerMovement(client, oldX, oldY))) {
+            shouldBlock = true; // OR logic: if any event blocks it, block movement
+        }
+
+        return shouldBlock;
     }
 }

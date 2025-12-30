@@ -5,6 +5,8 @@ using System.Linq;
 using MTA.Client;
 using MTA.Database;
 using MTA.Game.ConquerStructures;
+using MTA.Game.Events;
+using MTA.Game.Events.GuildWar;
 using MTA.Interfaces;
 using MTA.MaTrix;
 using MTA.Network;
@@ -8493,14 +8495,9 @@ namespace MTA.Game.Attacking {
                 }
             }
 
-            if (attacker.MapID == 1038) {
-                if (attacked.UID == 810) {
-                    if (GuildWar.PoleKeeper == attacker.Owner.Guild)
-                        return;
-                    if (attacked.Hitpoints <= damage)
-                        attacked.Hitpoints = 0;
-                    GuildWar.AddScore(damage, attacker.Owner.Guild);
-                }
+            // Let events handle attacks (e.g., Guild War pole damage)
+            if (EventScheduler.OnEntityAttacked(attacker, attacked, damage)) {
+                return; // Event handled the attack, skip normal damage processing
             }
 
             if (attacker.MapID == 10380) {
@@ -8798,20 +8795,21 @@ namespace MTA.Game.Attacking {
             }
 
             if (attacker.MapID == 1038) {
-                if (attacker.GuildID == 0 || !GuildWar.IsWar) {
+                var gwEvent7 = GuildWarEvent.GetActiveEvent();
+                if (attacker.GuildID == 0 || gwEvent7?.IsActive != true) {
                     if (attacked.UID == 810) {
                         return false;
                     }
                 }
 
-                if (GuildWar.PoleKeeper != null) {
-                    if (GuildWar.PoleKeeper == attacker.Owner.Guild) {
+                if (gwEvent7?.PoleKeeper != null) {
+                    if (gwEvent7.PoleKeeper == attacker.Owner.Guild) {
                         if (attacked.UID == 810) {
                             return false;
                         }
                     }
                     else if (attacked.UID == 516075 || attacked.UID == 516074) {
-                        if (GuildWar.PoleKeeper == attacker.Owner.Guild) {
+                        if (gwEvent7.PoleKeeper == attacker.Owner.Guild) {
                             if (attacker.PKMode == Enums.PkMode.Team)
                                 return false;
                         }

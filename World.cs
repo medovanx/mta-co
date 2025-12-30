@@ -2492,42 +2492,6 @@ namespace MTA {
 
             #endregion
 
-            #region GuildWar
-
-            if (GuildWar.IsWar) {
-                if (Time32.Now > GuildWar.ScoreSendStamp.AddSeconds(3)) {
-                    GuildWar.ScoreSendStamp = Time32.Now;
-                    GuildWar.SendScores();
-                }
-            }
-
-            if (now64.Hour is >= 20 and <= 21 && now64.DayOfWeek == DayOfWeek.Friday) {
-                if (!GuildWar.IsWar) {
-                    GuildWar.Start();
-                    foreach (GameState client in Kernel.GamePool.Values) {
-                        client.Entity.DeputyLeader = 0;
-                        if (client.Map.BaseID != 6001 && client.Map.BaseID != 6000 && !client.Entity.Dead) {
-                            EventAlert alert = new EventAlert {
-                                StrResID = 10515,
-                                Countdown = 60,
-                                UK12 = 1
-                            };
-                            client.Entity.StrResID = 10515;
-                            client.Send(alert);
-                        }
-                    }
-                }
-            }
-
-            if (GuildWar.IsWar) {
-                if (now64 is { Hour: 21, Second: <= 2 }) {
-                    GuildWar.Flame10th = false;
-                    GuildWar.End();
-                }
-            }
-
-            #endregion
-
             #region SuperGuildWar
 
             if (SuperGuildWar.IsWar) {

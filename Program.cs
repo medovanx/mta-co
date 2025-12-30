@@ -267,14 +267,12 @@ internal abstract class Program {
                 _ = new Map(1038, DMaps.MapPaths[1038]);
                 _ = new Map(2071, DMaps.MapPaths[2071]);
                 _ = new Map(10380, DMaps.MapPaths[10380]);
-                GuildWar.Initiate();
                 SuperGuildWar.Initiate();
                 _ = new Map(1509, DMaps.MapPaths[1509]);
                 _ = new Map(10002, 2021, DMaps.MapPaths[2021]);
                 _ = new Map(8883, 1004, DMaps.MapPaths[1004]);
                 PKFreeMaps.Add(8883);
                 ClanWar.Initiate();
-                Console.WriteLine("Guild war initializated.");
                 EliteGuildWar.EliteGwint();
                 Console.WriteLine("Elite Guild war initializated.");
                 Furniture.Load();
@@ -291,7 +289,6 @@ internal abstract class Program {
             ArenaTable.Load();
             TeamArenaTable.Load();
             GuildTable.Load();
-            guildtop.Load();
             ChiTable.LoadAllChi();
             Console.WriteLine("Loading Game Clans.");
             Clan.LoadClans();
@@ -426,9 +423,6 @@ internal abstract class Program {
                                 0x7db), Values);
                         CommandsAi("@save");
 
-                        if (GuildWar.IsWar)
-                            GuildWar.End();
-
                         new MySqlCommand(MySqlCommandType.UPDATE).Update("configuration")
                             .Set("ItemUID", ConquerItem.ItemUID.Now).Where("Server", ServerName).Execute();
                     }
@@ -455,8 +449,6 @@ internal abstract class Program {
                                 foreach (var t in AuthServer)
                                     t.Disable();
 
-                            if (GuildWar.IsWar)
-                                GuildWar.End();
                             new MySqlCommand(MySqlCommandType.UPDATE).Update("configuration")
                                 .Set("ItemUID", ConquerItem.ItemUID.Now).Where("Server", ServerName)
                                 .Execute();

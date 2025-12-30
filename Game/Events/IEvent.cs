@@ -82,6 +82,18 @@ public interface IEvent {
     bool OnMonsterKilled(MonsterInformation monster, Entity killer);
 
     /// <summary>
+    ///     Called when an entity is attacked (optional - events can implement if they need to handle attacks)
+    ///     Returns true if the attack was handled by the event (should skip normal damage processing), false otherwise
+    /// </summary>
+    bool OnEntityAttacked(Entity attacker, Interfaces.IMapObject attacked, uint damage);
+
+    /// <summary>
+    ///     Called when a player moves (optional - events can implement if they need to handle movement/collision)
+    ///     Returns true if movement should be blocked, false otherwise
+    /// </summary>
+    bool OnPlayerMovement(GameState client, ushort oldX, ushort oldY);
+
+    /// <summary>
     ///     Called every second to allow events to send pre-event warnings (optional)
     ///     This is called for all events, even inactive ones, so they can send warnings before the event starts
     /// </summary>

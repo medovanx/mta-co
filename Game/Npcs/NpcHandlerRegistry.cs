@@ -45,7 +45,22 @@ namespace MTA.Game.Npcs {
         /// <returns>True if handler found and executed, false otherwise.</returns>
         public static bool TryHandle(uint npcId, GameState client, NpcRequest npcRequest, MTA.Npcs dialog) {
             if (!Handlers.TryGetValue(npcId, out var handler)) return false;
-            handler(client, npcRequest, dialog);
+            try {
+                handler(client, npcRequest, dialog);
+            }
+            catch (Exception ex) {
+                Console.WriteLine($"[NPC Handler Error] Exception in handler for NPC {npcId}, OptionID {npcRequest.OptionID}: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                try {
+                // Send error dialog to player
+                    dialog.Text("An error occurred while processing your request. Please try again.");
+                    dialog.Option("Okay.", 255);
+                    dialog.Send();
+                }
+                catch {
+                    Console.WriteLine($"[NPC Handler Error] Failed to send error dialog to player");
+                }
+            }
             return true;
         }
     }

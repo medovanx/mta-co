@@ -1,5 +1,6 @@
 ﻿using System;
-
+using MTA.Game.Events;
+using MTA.Game.Constants;
 
 namespace MTA.Game
 {
@@ -70,24 +71,9 @@ namespace MTA.Game
         }
         public static void IsBreaking(Client.GameState client, ushort oldX, ushort oldY)
         {
-            if (client.Entity.MapID == GuildWar.RightGate.MapID)
-            {
-                if (GuildWar.RightGate.Mesh == (270 + GuildWar.RightGate.Mesh % 10) && oldX >= GuildWar.RightGate.X && client.Entity.X <= GuildWar.RightGate.X && client.Entity.Y < GuildWar.LeftGate.Y)
-                {
-                    client.Entity.X = oldX;
-                    client.Entity.Y = oldY;
-                    client.Disconnect();
-                    return;
-                }
-
-                if (GuildWar.LeftGate.Mesh == (240 + GuildWar.LeftGate.Mesh % 10) && oldY >= GuildWar.LeftGate.Y && client.Entity.Y <= GuildWar.LeftGate.Y && client.Entity.X < GuildWar.RightGate.X)
-                {
-                    client.Entity.X = oldX;
-                    client.Entity.Y = oldY;
-                    client.Disconnect();
-                    return;
-                }
-            }
+            // Let event system handle Guild War gate collision
+            if (EventScheduler.OnPlayerMovement(client, oldX, oldY))
+                return;
             if (client.Entity.MapID == SuperGuildWar.RightGate.MapID)
             {
                 if (SuperGuildWar.RightGate.Mesh == (270 + SuperGuildWar.RightGate.Mesh % 10) && oldX >= SuperGuildWar.RightGate.X && client.Entity.X <= SuperGuildWar.RightGate.X && client.Entity.Y < SuperGuildWar.LeftGate.Y)

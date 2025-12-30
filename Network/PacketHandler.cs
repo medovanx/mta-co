@@ -18,6 +18,7 @@ using MTA.Game.ConquerStructures;
 using MTA.Game.ConquerStructures.House;
 using MTA.Game.ConquerStructures.Society;
 using MTA.Game.Events;
+using MTA.Game.Events.GuildWar;
 using MTA.Game.Events.SteedRace;
 using MTA.Game.Features;
 using MTA.Game.Features.Flowers;
@@ -1157,7 +1158,8 @@ namespace MTA.Network {
                             if (client.AsMember is { Rank: Enums.GuildMemberRank.GuildLeader } ||
                                 client.Account.State == AccountTable.AccountState.GM) {
                                 if (client.Guild.Name is { } and not "") {
-                                    if (client.Guild.Name == GuildWar.Pole.Name ||
+                                    var gwEvent6 = GuildWarEvent.GetActiveEvent();
+                                    if (client.Guild.Name == (gwEvent6?.Pole?.Name ?? "") ||
                                         client.Account.State == AccountTable.AccountState.GM) {
                                         var getnpc = GuildCondutors.GuildConductors[UID];
                                         var oldx = getnpc.npc.X;
@@ -3765,7 +3767,7 @@ namespace MTA.Network {
                                 return;
                             Npcs.GetDialog(req, client);
                             if (client.Account.State == AccountTable.AccountState.GM)
-                                client.Send(new Message($"#53 NPC ID : [{client.ActiveNpc}], Skin: [{npc.Mesh}]",
+                                client.Send(new Message($"#53 NPC ID : [{client.ActiveNpc}], Skin: [{npc.Mesh}], Effect: [{npc.Effect}], X: [{npc.X}], Y: [{npc.Y}], Map: [{npc.MapID}]",
                                     Color.White, Message.System));
                         }
                     }
@@ -15176,9 +15178,9 @@ namespace MTA.Network {
                 }
             }
 
-            if (client.Map.BaseID == 1038 && GuildWar.IsWar) {
-                Calculations.IsBreaking(client, oldX, oldY);
-            }
+            // Let event system handle movement/collision detection
+            if (EventScheduler.OnPlayerMovement(client, oldX, oldY))
+                return;
 
             if (!client.Entity.HasMagicDefender) {
                 if (client.Team != null) {
@@ -15374,9 +15376,9 @@ namespace MTA.Network {
                 }
             }
 
-            if (client.Map.BaseID == 1038 && GuildWar.IsWar) {
-                Calculations.IsBreaking(client, oldX, oldY);
-            }
+            // Let event system handle movement/collision detection
+            if (EventScheduler.OnPlayerMovement(client, oldX, oldY))
+                return;
 
             if (!client.Entity.HasMagicDefender) {
                 if (client.Team != null) {
@@ -15580,7 +15582,8 @@ namespace MTA.Network {
                 }
             }
             else {
-                if (client.Entity.MapID == 1038 && GuildWar.IsWar) {
+                var gwEventCheck = GuildWarEvent.GetActiveEvent();
+                if (client.Entity.MapID == 1038 && gwEventCheck?.IsActive == true) {
                     client.Entity.SetLocation(6001, 31, 74);
                 }
                 else {

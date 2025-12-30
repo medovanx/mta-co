@@ -89,6 +89,24 @@ public abstract class BaseEvent : IEvent {
 
     /// <inheritdoc />
     /// <remarks>
+    ///     Default implementation returns false (don't handle attack). Override in derived classes if they need to handle
+    ///     entity attacks. Return true to skip normal damage processing, false to let normal processing continue.
+    /// </remarks>
+    public virtual bool OnEntityAttacked(Entity attacker, Interfaces.IMapObject attacked, uint damage) {
+        return false;
+    }
+
+    /// <inheritdoc />
+    /// <remarks>
+    ///     Default implementation returns false (don't block movement). Override in derived classes if they need to handle
+    ///     player movement or collision detection. Return true to block movement, false to allow normal movement.
+    /// </remarks>
+    public virtual bool OnPlayerMovement(GameState client, ushort oldX, ushort oldY) {
+        return false;
+    }
+
+    /// <inheritdoc />
+    /// <remarks>
     ///     Default implementation does nothing. Override in derived classes if they need to send pre-event warnings.
     /// </remarks>
     public virtual void OnPreEventWarning(DateTime now) { }
@@ -180,8 +198,9 @@ public abstract class BaseEvent : IEvent {
     /// <param name="targetY">Y coordinate to teleport player to when they accept</param>
     /// <param name="timeoutSeconds">Timeout in seconds before the message box expires (default: 60)</param>
     protected static void AutoInviteAllPlayers(string message, ushort targetMapId, ushort targetX, ushort targetY,
-        uint timeoutSeconds = 60) {
+        uint timeoutSeconds = 60) {            
         foreach (var client in Program.Values) {
+            if (client.Map.BaseID == Maps.GuildWarPrison || client.Entity.Dead) continue;
             client.MessageBox(message, p => { p.Entity.Teleport(targetMapId, targetX, targetY); }, null,
                 timeoutSeconds);
         }

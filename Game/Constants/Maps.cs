@@ -40,6 +40,13 @@ namespace MTA.Game.Constants {
 
         #endregion Event Maps
 
+        #region Guild War
+
+        public const ushort GuildWarMap = 1038;
+        public const ushort GuildWarPrison = 6001;
+
+        #endregion Guild War
+
         public const ushort TrainingGround = 1039;
     }
 }

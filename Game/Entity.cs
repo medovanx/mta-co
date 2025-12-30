@@ -9,6 +9,7 @@ using MTA.Database;
 using System.Collections.Concurrent;
 using MTA.Client;
 using MTA.Game.Constants;
+using MTA.Game.Events.GuildWar;
 
 namespace MTA.Game {
     public class Entity : Writer, IBaseEntity, IMapObject {
@@ -6141,11 +6142,12 @@ namespace MTA.Game {
         }
 
         public bool IsThisLeftGate(int X, int Y) {
-            if (GuildWar.RightGate == null)
+            var gwEvent = GuildWarEvent.GetActiveEvent();
+            if (gwEvent?.EastGate == null)
                 return false;
-            if (MapID == 1038) {
+            if (MapID == Maps.GuildWarMap) {
                 if ((X == 223 || X == 222) && Y is >= 175 and <= 185) {
-                    if (GuildWar.RightGate.Mesh / 10 == 27) {
+                    if (gwEvent.EastGate.Mesh / 10 == 27) {
                         return true;
                     }
                 }
@@ -6165,11 +6167,12 @@ namespace MTA.Game {
         }
 
         public bool IsThisRightGate(int X, int Y) {
-            if (GuildWar.LeftGate == null)
+            var gwEvent = GuildWarEvent.GetActiveEvent();
+            if (gwEvent?.WestGate == null)
                 return false;
-            if (MapID == 1038) {
+            if (MapID == Maps.GuildWarMap) {
                 if ((Y == 210 || Y == 209) && X is >= 154 and <= 166) {
-                    if (GuildWar.LeftGate.Mesh / 10 == 24) {
+                    if (gwEvent.WestGate.Mesh / 10 == 24) {
                         return true;
                     }
                 }

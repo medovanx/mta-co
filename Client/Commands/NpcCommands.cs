@@ -296,7 +296,9 @@ namespace MTA.Client.Commands {
 
         private static bool HandleMoveNpcCommand(GameState client, string[] data) {
             if (data.Length < 2) {
-                client.Send(new Message("Usage: @movenpc <npc_id>", System.Drawing.Color.Yellow, Message.Tip));
+                client.Send(new Message("Usage: @movenpc <npc_id> [x] [y]", System.Drawing.Color.Yellow, Message.Tip));
+                client.Send(new Message("Example: @movenpc 1520 (moves to your position)", System.Drawing.Color.Yellow, Message.Tip));
+                client.Send(new Message("Example: @movenpc 1520 50 50 (moves to x50 y50)", System.Drawing.Color.Yellow, Message.Tip));
                 return true;
             }
 
@@ -318,12 +320,35 @@ namespace MTA.Client.Commands {
                 return true;
             }
 
+            // Determine target position
+            ushort targetX, targetY;
+            bool usePlayerPosition = true;
+
+            if (data.Length >= 4) {
+                // Try to parse x and y coordinates
+                if (ushort.TryParse(data[2], out var x) && ushort.TryParse(data[3], out var y)) {
+                    targetX = x;
+                    targetY = y;
+                    usePlayerPosition = false;
+                }
+                else {
+                    client.Send(new Message("Invalid x or y coordinate! Using your position instead.", System.Drawing.Color.Yellow, Message.Tip));
+                    targetX = client.Entity.X;
+                    targetY = client.Entity.Y;
+                }
+            }
+            else {
+                // Use player's position
+                targetX = client.Entity.X;
+                targetY = client.Entity.Y;
+            }
+
             // Remove NPC from old map
             foundMap?.Npcs.Remove(npcId);
 
-            // Update NPC position to player's position
-            foundNpc.X = client.Entity.X;
-            foundNpc.Y = client.Entity.Y;
+            // Update NPC position
+            foundNpc.X = targetX;
+            foundNpc.Y = targetY;
             foundNpc.MapID = client.Entity.MapID;
 
             // Add NPC to current map
@@ -349,9 +374,10 @@ namespace MTA.Client.Commands {
                     player.Screen.Reload();
                 }
 
-                client.Send(new Message(
-                    "NPC [" + (foundNpc.Name) + "] moved to your position",
-                    System.Drawing.Color.Green, Message.Tip));
+                var moveMessage = usePlayerPosition
+                    ? "NPC [" + (foundNpc.Name) + "] moved to your position"
+                    : "NPC [" + (foundNpc.Name) + "] moved to position (" + targetX + ", " + targetY + ")";
+                client.Send(new Message(moveMessage, System.Drawing.Color.Green, Message.Tip));
             }
             catch (Exception ex) {
                 client.Send(new Message("Error updating NPC in database: " + ex.Message,

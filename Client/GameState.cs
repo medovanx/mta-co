@@ -717,8 +717,8 @@ namespace MTA.Client {
         }
 
         public void MessageBox(string text, Action<GameState>? msg_ok = null, Action<GameState>? msg_cancel = null,
-            uint time = 0, Languages language = Languages.English, bool egbary = false) {
-            if (!egbary) {
+            uint time = 0, Languages language = Languages.English, bool force = false) {
+            if (!force) {
                 if (Entity.MapID == 6000 || Entity.MapID == 6001 || Entity.MapID == 6002 ||
                     Entity.MapID == 6003 || Entity.MapID == 6004 || Entity.MapID == 1038 ||
                     Entity.PokerTableUID > 0 || Entity.InJail() ||
@@ -2651,8 +2651,8 @@ namespace MTA.Client {
         public bool Effect3 = false;
         public uint eliterank = 0;
         public bool SentRequest = false;
-        public Guild Guild;
-        public Guild.Member AsMember;
+        public Guild? Guild;
+        public Guild.Member? AsMember;
         public uint Arsenal_Donation = 0;
         public Booth Booth;
 

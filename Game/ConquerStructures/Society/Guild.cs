@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using MTA.Database;
+using MTA.Game.Events.GuildWar;
 using MTA.Network.GamePackets;
 using MTA.Network;
 using System.IO;
@@ -444,7 +446,18 @@ namespace MTA.Game.ConquerStructures.Society {
 
         public bool SuperPoleKeeper => SuperGuildWar.Pole.Name == Name;
 
-        public bool PoleKeeper => GuildWar.Pole.Name == Name;
+        public bool PoleKeeper {
+            get {
+                // Check database history first (works even after server restart)
+                var latest = Database.GuildWarHistoryTable.GetLatest();
+                if (latest != null && latest.GuildId == ID) {
+                    return true;
+                }
+                // Fallback to active event (for during active war)
+                var gwEvent = GuildWarEvent.GetActiveEvent();
+                return gwEvent?.Pole?.Name == Name;
+            }
+        }
 
         public bool PoleKeeper2 => EliteGuildWar.Poles.Name == Name;
 
