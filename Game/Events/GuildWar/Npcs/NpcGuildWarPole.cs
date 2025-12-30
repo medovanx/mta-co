@@ -54,10 +54,9 @@ public static class NpcGuildWarPole {
                 }
 
                 var availableFunds = client.Guild.SilverFund;
-                dialog.Text($"Enter the amount of Silver to allocate for repair.\n\n" +
+                dialog.Text($"Enter the amount of Silver to allocate for repair (1 Silver per 10 HP).\n" +
                             $"Available Guild Fund: {availableFunds:N0} Silver\n" +
-                            $"Pole HP: {gwEvent.Pole.Hitpoints:N0} / {gwEvent.Pole.MaxHitpoints:N0}\n\n" +
-                            $"Cost: 1 Silver per 10 HP\n" +
+                            $"Pole HP: {gwEvent.Pole.Hitpoints:N0} / {gwEvent.Pole.MaxHitpoints:N0}\n" +
                             $"Repair rate: {PoleRepairHpPerInterval:N0} HP every {PoleRepairIntervalSeconds} seconds");
                 dialog.Input("Enter amount (Silver):", 2, 20);
                 dialog.Option("Cancel.", 255);

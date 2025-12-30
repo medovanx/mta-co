@@ -38,16 +38,11 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.GuildArea {
                                         dialog.Option("Claim Top Deputy Leader.", 2);
                                         break;
                                 }
-
-                                // Show Top Member Leader option for deputy leaders of winner guild
-                                if (member.Rank == GuildMemberRank.DeputyLeader) {
-                                    dialog.Option("Claim Top Member Leader.", 7);
-                                }
                             }
                         }
                     }
 
-                    dialog.Option("View Last 3 Guild War Wins.", 5);
+                    dialog.Option("View last 3 Guild War winners.", 3);
                     dialog.Send();
                     break;
                 }
@@ -94,13 +89,13 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.GuildArea {
                             System.Drawing.Color.White, Message.TopLeft), Program.Values);
                     break;
                 }
-                case 5: {
+                case 3: {
                     var lastWins = GuildWarHistoryTable.GetLastNWins(3);
                     if (lastWins.Count == 0) {
                         dialog.Text("No guild war history found.");
                     }
                     else {
-                        var text = "Last 3 Guild War Winners:\n\n";
+                        var text = "The last 3 Guild War winners are:\n\n";
                         for (var i = 0; i < lastWins.Count; i++) {
                             var win = lastWins[i];
                             var guild = Kernel.Guilds.GetValueOrDefault(win.GuildId);
@@ -121,33 +116,6 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.GuildArea {
                     dialog.Option("Okay.", 255);
 
                     dialog.Send();
-                    break;
-                }
-                case 7: {
-                    if (
-                        client.Guild != null &&
-                        client.Guild.Members.GetValueOrDefault(client.Entity.UID)?.Rank ==
-                        GuildMemberRank.DeputyLeader &&
-                        client.Guild.PoleKeeper) {
-                        client.Entity.AddTopStatus((int)TitlePacket.Titles.membmerguild, 0,
-                            DateTime.Now.AddDays(7));
-                        Kernel.SendWorldMessage(
-                            new Message(
-                                "Congratulations! " + client.Entity.Name + " From " +
-                                client.Guild.Name + " Has Claimed TopMemberLeader Title!",
-                                System.Drawing.Color.White, Message.TopLeft), Program.Values);
-
-                        dialog.Text("Congratulations! You have successfully claimed the Top Member Leader title!");
-                        dialog.Option("Thank you!", 255);
-                        dialog.Send();
-                    }
-                    else {
-                        dialog.Text(
-                            "Sorry you don't have Any Prize to claim only Member of the Winner Guild Can claim the halo After GW end.");
-                        dialog.Option("Ahh.", 255);
-                        dialog.Send();
-                    }
-
                     break;
                 }
             }

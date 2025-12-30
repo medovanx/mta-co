@@ -419,7 +419,7 @@ public class GuildWarEvent : BaseEvent {
             return;
         }
 
-        // Check if 10 seconds have passed
+        // Check if 10 seconds have passed (use > instead of <= for clarity)
         if (Time32.Now <= _lastRepairTime.AddSeconds(PoleRepairIntervalSeconds)) return;
 
         // Calculate HP needed
@@ -430,14 +430,20 @@ public class GuildWarEvent : BaseEvent {
         }
 
         // Calculate maximum HP we can restore with available funds
-        var maxHpFromFunds = (uint)(_repairAllocatedFunds * PoleRepairSilverPerHp);
+        var maxHpFromFunds = _repairAllocatedFunds * PoleRepairSilverPerHp;
 
         // Calculate HP to restore (10,000 HP, remaining needed, or what we can afford)
-        var hpToRestore = Math.Min(PoleRepairHpPerInterval, Math.Min(hpNeeded, maxHpFromFunds));
+        var hpToRestore = (uint)Math.Min(PoleRepairHpPerInterval, Math.Min(hpNeeded, maxHpFromFunds));
+
+        // If no HP can be restored, stop repair
+        if (hpToRestore == 0) {
+            StopRepair();
+            return;
+        }
 
         // Calculate actual cost based on HP to restore (10 HP = 1 Silver)
         var silverCost = hpToRestore / PoleRepairSilverPerHp;
-        if (silverCost == 0 && hpToRestore > 0) silverCost = 1; // Minimum 1 silver if restoring any HP
+        if (silverCost == 0) silverCost = 1; // Minimum 1 silver if restoring any HP
 
         // Ensure we don't exceed allocated funds
         if (silverCost > _repairAllocatedFunds) {
@@ -450,8 +456,8 @@ public class GuildWarEvent : BaseEvent {
         _repairAllocatedFunds -= silverCost;
 
         // Restore HP (add to current HP)
-        var newHp = Pole.Hitpoints + hpToRestore;
-        Pole.Hitpoints = Math.Min(Pole.MaxHitpoints, newHp);
+        var newHp = (ulong)Pole.Hitpoints + hpToRestore;
+        Pole.Hitpoints = (uint)Math.Min(Pole.MaxHitpoints, newHp);
 
         // Update guild fund in database (since we already deducted at start, we just need to update display)
         // The actual fund was already deducted, but we need to refresh the display
