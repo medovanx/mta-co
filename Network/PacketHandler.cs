@@ -19,6 +19,7 @@ using MTA.Game.ConquerStructures.House;
 using MTA.Game.ConquerStructures.Society;
 using MTA.Game.Events;
 using MTA.Game.Events.SteedRace;
+using MTA.Game.Features;
 using MTA.Game.Features.Flowers;
 using MTA.Game.Features.Reincarnation;
 using MTA.Game.Features.Tournaments;
@@ -15690,18 +15691,6 @@ namespace MTA.Network {
             }
         }
 
-        private static void HeaderUpdates(string update, GameState client) {
-            client.Send(new GameUpdates(GameUpdates.Header, update));
-        }
-
-        private static void BodyUpdates(string update, GameState client) {
-            client.Send(new GameUpdates(GameUpdates.Body, update));
-        }
-
-        private static void FooterUpdates(string update, GameState client) {
-            client.Send(new GameUpdates(GameUpdates.Footer, update));
-        }
-
         public static ConcurrentDictionary<string, byte[]> TreasurePointsAllowance =
             new ConcurrentDictionary<string, byte[]>();
 
@@ -15754,16 +15743,7 @@ namespace MTA.Network {
 
                     client.ReviewMentor();
 
-                    #region Game Updates
-
-                    {
-                        HeaderUpdates("Welcome to MTA CO!", client);
-                        BodyUpdates("GM: xFranko", client);
-                        BodyUpdates("PM: Dahshan, Ahmed", client);
-                        FooterUpdates("Enjoy!", client);
-                    }
-
-                    #endregion
+                    WelcomeMessage.SendToClient(client);
 
                     if (client.JustCreated) {
                         client.JustCreated = false;

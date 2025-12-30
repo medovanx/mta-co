@@ -12,6 +12,7 @@ using MTA.Client;
 using MTA.Database;
 using MTA.Extensions;
 using MTA.Game;
+using MTA.Game.Features;
 using MTA.Game.ConquerStructures;
 using MTA.Game.ConquerStructures.House;
 using MTA.Game.ConquerStructures.Society;
@@ -240,7 +241,7 @@ internal abstract class Program {
         {
             if (!ServerTransfer) {
                 QuestInfo.Load();
-                GameUpdatess.LoadRates();
+                WelcomeMessage.Load();
                 SpellTable.Load();
                 ShopFile.Load();
                 HonorShop.Load();
