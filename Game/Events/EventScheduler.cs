@@ -4,7 +4,6 @@ using System.Linq;
 using MTA.Client;
 using MTA.Database;
 using MTA.Game.Events.CaptainsCastleConquest;
-using MTA.Game.Events.DizzyLand;
 using MTA.Game.Events.GuildWar;
 using MTA.Game.Events.SteedRace;
 using MTA.Game.Events.TreasureInTheBlue;
@@ -119,7 +118,6 @@ public static class EventScheduler {
     public static void Initialize() {
         RegisterEvent(new CaptainsCastleConquestEvent());
         RegisterEvent(new SteedRaceEvent());
-        RegisterEvent(new DizzyLandEvent());
         RegisterEvent(new TreasureInTheBlueEvent());
         var guildWarEvent = new GuildWarEvent();
         RegisterEvent(guildWarEvent);

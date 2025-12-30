@@ -14,7 +14,6 @@ namespace MTA.Network.GamePackets.EventAlert {
             ClassPKWar = 10519,
             GuildWar = 10515,
             GuildWar2 = 10515,
-            DizzyLand = 10545,
             WeeklyPk = 10529;
 
 
@@ -22,25 +21,6 @@ namespace MTA.Network.GamePackets.EventAlert {
             EventAlert alert = new EventAlert(Data);
 
             switch (client.Entity.StrResID) {
-                case DizzyLand: {
-                    client.Entity.Teleport(5528, 50, 50);
-                    Data data = new Data(true);
-                    data.ID = GamePackets.Data.OpenCustom;
-                    data.UID = client.Entity.UID;
-                    data.TimeStamp = Time32.Now;
-                    data.dwParam = 3378;
-                    data.wParam1 = client.Entity.X;
-                    data.wParam2 = client.Entity.Y;
-                    client.Send(data);
-                    EventAlert alert2 = new EventAlert {
-                        StrResID = 10546,
-                        Countdown = 4,
-                        UK12 = 1
-                    };
-                    client.Entity.StrResID = 0;
-                    client.Send((byte[])alert2);
-                    break;
-                }
                 case ClassPKWar: {
                     if (client.Entity.Class is >= 10 and <= 15) {
                         client.Entity.Teleport(7001, 25, 40);
