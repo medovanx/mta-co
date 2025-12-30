@@ -4,6 +4,7 @@
 # Build results
 obj/
 bin/Debug
+bin/Release
 
 # NuGet Packages
 *.nupkg
