@@ -560,9 +560,6 @@ namespace MTA.Client {
                     if (newname != "") {
                         MySqlCommand cmdupdate = null;
                         cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
-                        cmdupdate.Update("enemy").Set("EnemyName", newname).Where("EnemyID", uid).Execute();
-
-                        cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
                         cmdupdate.Update("friends").Set("FriendName", newname).Where("FriendID", uid).Execute();
 
                         cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);

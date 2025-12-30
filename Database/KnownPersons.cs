@@ -11,9 +11,14 @@ namespace MTA.Database {
             using var reader = cmd.CreateReader();
             while (reader.Read()) {
                 var enemy = new Enemy {
-                    ID = reader.ReadUInt32("EnemyID"),
-                    Name = reader.ReadString("EnemyName")
+                    ID = reader.ReadUInt32("EnemyID")
                 };
+                // Get name from entities table
+                using (var nameCmd = new MySqlCommand(MySqlCommandType.SELECT).Select("entities")
+                           .Where("UID", enemy.ID))
+                using (var nameReader = nameCmd.CreateReader()) {
+                    enemy.Name = nameReader.Read() ? nameReader.ReadString("Name") : "";
+                }
                 client.Enemy.Add(enemy.ID, enemy);
             }
         }
@@ -180,8 +185,7 @@ namespace MTA.Database {
 
         public static void AddEnemy(Client.GameState client, Enemy enemy) {
             using var cmd = new MySqlCommand(MySqlCommandType.INSERT);
-            cmd.Insert("enemy").Insert("entityid", client.Entity.UID).Insert("enemyid", enemy.ID)
-                .Insert("enemyname", enemy.Name).Execute();
+            cmd.Insert("enemy").Insert("entityid", client.Entity.UID).Insert("enemyid", enemy.ID).Execute();
         }
 
         public static void UpdateMessageOnFriend(uint entityId, uint friendId, string message) {
