@@ -1,4 +1,6 @@
 using MTA.Client;
+using MTA.Database;
+using MTA.Game.Constants;
 using MTA.Network.GamePackets;
 
 namespace MTA.Game.Npcs.Handlers.TwinCity {
@@ -25,7 +27,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                 }
                 case 2: {
                     if (CaptureTheFlag.IsWar) {
-                        Program.World.Ctf.SignUp(client);
+                        Program.World?.Ctf.SignUp(client);
                     }
                     else {
                         dialog.Text(
@@ -40,11 +42,12 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     var latest = GuildWarHistoryTable.GetLatest();
                     if (client.Guild == null || latest == null || latest.GuildId != client.Guild.ID ||
                         client.Entity.GuildRank != (ushort)Enums.GuildMemberRank.GuildLeader) {
-                        dialog.Text("Sorry you need to be guildleader and the winner of the guildwar");
+                        dialog.Text("Sorry you need to be the guild leader of the Guild War winner.");
                         dialog.Option("Ahh.", 255);
                         dialog.Send();
                         return;
                     }
+
                     const uint statuePrice = 25000000;
                     if (client.Inventory.Count <= 1) {
                         if (client.Entity.ConquerPoints >= statuePrice) {

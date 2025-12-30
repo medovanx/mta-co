@@ -1,5 +1,3 @@
-using MTA.Game.Constants;
-
 namespace MTA.Game.Events.GuildWar;
 
 /// <summary>
@@ -12,14 +10,14 @@ public static class GuildWarConstants {
     public const uint PoleNpcId = 810;
 
     /// <summary>
-    ///     Left Gate NPC ID
+    ///     West Gate NPC ID
     /// </summary>
-    public const uint LeftGateNpcId = 516074;
+    public const uint WestGateNpcId = 516074;
 
     /// <summary>
-    ///     Right Gate NPC ID
+    ///     East Gate NPC ID
     /// </summary>
-    public const uint RightGateNpcId = 516075;
+    public const uint EastGateNpcId = 516075;
 
     /// <summary>
     ///     Event duration in minutes

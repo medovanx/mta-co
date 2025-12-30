@@ -14784,11 +14784,13 @@ namespace MTA.Network {
                     return;
                 }
 
-                var ReviveHere = generalData.dwParam == 1;
-                if (client.Entity.MapID == 1038 && DateTime.Now.DayOfWeek == DayOfWeek.Saturday) {
-                    client.Entity.Teleport(6001, 31, 74);
+                // Check if any event wants to handle the revive
+                if (EventScheduler.OnPlayerRevive(client, client.Entity.MapID)) {
+                    return; // Event handled the revive (teleported player)
                 }
-                else if (client.Entity.MapID == 2071) {
+
+                var ReviveHere = generalData.dwParam == 1;
+                if (client.Entity.MapID == 2071) {
                     client.Entity.Teleport(2071, 45, 130);
                 }
                 else if (client.Entity.MapID == 1512) {

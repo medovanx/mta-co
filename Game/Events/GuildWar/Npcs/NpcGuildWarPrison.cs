@@ -1,12 +1,13 @@
 using System;
 using MTA.Client;
+using MTA.Game.Constants;
 using MTA.Game.Npcs;
 using MTA.Network.GamePackets;
 
 namespace MTA.Game.Events.GuildWar.Npcs;
 
 /// <summary>
-///     Guild War Prsion NPC - Allows players to teleport out during pardon time
+///     Guild War Prison NPC - Allows players to teleport out during pardon time
 /// </summary>
 [NpcHandler(140)]
 public static class NpcGuildWarPrison {
@@ -15,15 +16,16 @@ public static class NpcGuildWarPrison {
             case 0: {
                 var gwEvent = GuildWarEvent.GetActiveEvent();
                 if (gwEvent?.IsActive == true) {
-                    if (DateTime.Now.Minute >= 0 && DateTime.Now.Minute <= 59) {
+                    var minute = DateTime.Now.Minute;
+                    if (minute is >= 0 and <= 5 or >= 30 and <= 35) {
                         dialog.Text("My friend, you may leave if you want.");
                         dialog.Option("Yes please.", 1);
                         dialog.Option("No need...", 255);
                     }
                     else {
                         dialog.Text(
-                            "You lost your chance. Now wait for the next pardon btw xx:00 to xx:05 and xx:30 to xx:35!");
-                        dialog.Option("No!!!", 255);
+                            "You lost your chance.\nNow wait for the next pardon between xx:00 to xx:05 and xx:30 to xx:35!");
+                        dialog.Option("I will rot here...!", 255);
                     }
                 }
                 else {
@@ -39,17 +41,18 @@ public static class NpcGuildWarPrison {
             case 1: {
                 var gwEvent = GuildWarEvent.GetActiveEvent();
                 if (gwEvent?.IsActive == true) {
-                    if (DateTime.Now.Minute >= 0 && DateTime.Now.Minute <= 59) {
-                        client.Entity.Teleport(1002, 430, 380);
+                    var minute = DateTime.Now.Minute;
+                    if (minute is >= 0 and <= 5 or >= 30 and <= 35) {
+                        client.Entity.Teleport(Maps.TwinCity, 304, 287);
                     }
                     else {
-                        dialog.Text("You lost your chance. Now wait for the next pardon!");
-                        dialog.Option("No!!!", 255);
+                        dialog.Text("You lost your chance.\nNow wait for the next pardon between xx:00 to xx:05 and xx:30 to xx:35!");
+                        dialog.Option("I will rot here...!", 255);
                         dialog.Send();
                     }
                 }
                 else {
-                    client.Entity.Teleport(1002, 430, 380);
+                    client.Entity.Teleport(Maps.TwinCity, 304, 287);
                 }
 
                 break;

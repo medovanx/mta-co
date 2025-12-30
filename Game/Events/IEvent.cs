@@ -94,6 +94,12 @@ public interface IEvent {
     bool OnPlayerMovement(GameState client, ushort oldX, ushort oldY);
 
     /// <summary>
+    ///     Called when a player revives (optional - events can implement if they need to handle player revives)
+    ///     Returns true if the event handled the revive (teleported player), false otherwise
+    /// </summary>
+    bool OnPlayerRevive(GameState client, ushort currentMapId);
+
+    /// <summary>
     ///     Called every second to allow events to send pre-event warnings (optional)
     ///     This is called for all events, even inactive ones, so they can send warnings before the event starts
     /// </summary>

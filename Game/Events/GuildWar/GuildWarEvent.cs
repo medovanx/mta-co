@@ -8,7 +8,6 @@ using MTA.Game.ConquerStructures.Society;
 using MTA.Game.Constants;
 using MTA.Interfaces;
 using MTA.Network.GamePackets;
-using MTA.Network.GamePackets.EventAlert;
 using static MTA.Game.Events.GuildWar.GuildWarConstants;
 
 namespace MTA.Game.Events.GuildWar;
@@ -100,8 +99,10 @@ public class GuildWarEvent : BaseEvent {
         }
 
         // Restore gates and set them to open (not attackable when event is not active)
-        WestGate = Kernel.Maps.GetValueOrDefault(Maps.GuildWarMap)?.Npcs.GetValueOrDefault(LeftGateNpcId) as SobNpcSpawn;
-        EastGate = Kernel.Maps.GetValueOrDefault(Maps.GuildWarMap)?.Npcs.GetValueOrDefault(RightGateNpcId) as SobNpcSpawn;
+        WestGate = Kernel.Maps.GetValueOrDefault(Maps.GuildWarMap)?.Npcs
+            .GetValueOrDefault(WestGateNpcId) as SobNpcSpawn;
+        EastGate =
+            Kernel.Maps.GetValueOrDefault(Maps.GuildWarMap)?.Npcs.GetValueOrDefault(EastGateNpcId) as SobNpcSpawn;
         if (WestGate != null) {
             WestGate.Mesh = WestGateOpenMesh;
             Kernel.SendWorldMessage(WestGate, Program.Values, Maps.GuildWarMap);
@@ -120,8 +121,10 @@ public class GuildWarEvent : BaseEvent {
         base.OnStart();
 
         Pole = Kernel.Maps.GetValueOrDefault(Maps.GuildWarMap)?.Npcs.GetValueOrDefault(PoleNpcId) as SobNpcSpawn;
-        WestGate = Kernel.Maps.GetValueOrDefault(Maps.GuildWarMap)?.Npcs.GetValueOrDefault(LeftGateNpcId) as SobNpcSpawn;
-        EastGate = Kernel.Maps.GetValueOrDefault(Maps.GuildWarMap)?.Npcs.GetValueOrDefault(RightGateNpcId) as SobNpcSpawn;
+        WestGate = Kernel.Maps.GetValueOrDefault(Maps.GuildWarMap)?.Npcs
+            .GetValueOrDefault(WestGateNpcId) as SobNpcSpawn;
+        EastGate =
+            Kernel.Maps.GetValueOrDefault(Maps.GuildWarMap)?.Npcs.GetValueOrDefault(EastGateNpcId) as SobNpcSpawn;
 
         if (WestGate == null || EastGate == null || Pole == null) {
             BroadcastMessage("Guild War: Failed to initialize - NPCs not found!", Color.Red, Message.Center);
@@ -248,8 +251,10 @@ public class GuildWarEvent : BaseEvent {
 
         // Get gate references if not already set
         if (WestGate == null || EastGate == null) {
-            WestGate = Kernel.Maps.GetValueOrDefault(Maps.GuildWarMap)?.Npcs.GetValueOrDefault(LeftGateNpcId) as SobNpcSpawn;
-            EastGate = Kernel.Maps.GetValueOrDefault(Maps.GuildWarMap)?.Npcs.GetValueOrDefault(RightGateNpcId) as SobNpcSpawn;
+            WestGate =
+                Kernel.Maps.GetValueOrDefault(Maps.GuildWarMap)?.Npcs.GetValueOrDefault(WestGateNpcId) as SobNpcSpawn;
+            EastGate =
+                Kernel.Maps.GetValueOrDefault(Maps.GuildWarMap)?.Npcs.GetValueOrDefault(EastGateNpcId) as SobNpcSpawn;
         }
 
         if (WestGate == null || EastGate == null) return false; // Gates not found
@@ -279,6 +284,21 @@ public class GuildWarEvent : BaseEvent {
     }
 
     /// <summary>
+    ///     Handle player revive - teleport to Guild War Prison during active war
+    /// </summary>
+    public override bool OnPlayerRevive(GameState client, ushort currentMapId) {
+        // Only handle revives during active Guild War
+        if (!IsActive) return false;
+
+        // Only teleport players who died on the Guild War map
+        if (currentMapId != Maps.GuildWarMap) return false;
+
+        // Teleport to Guild War Prison
+        client.Entity.Teleport(Maps.GuildWarPrison, 31, 74);
+        return true; // Event handled the revive
+    }
+
+    /// <summary>
     ///     Handle entity attacks - pole and gate damage in Guild War
     /// </summary>
     public override bool OnEntityAttacked(Entity attacker, IMapObject attacked, uint damage) {
@@ -290,7 +310,7 @@ public class GuildWarEvent : BaseEvent {
 
         // Prevent gate damage when event is not active (gates should be open and not attackable)
         if (!IsActive) {
-            if (npc.UID == LeftGateNpcId || npc.UID == RightGateNpcId) {
+            if (npc.UID == WestGateNpcId || npc.UID == EastGateNpcId) {
                 return true; // Block gate damage when event is not active
             }
 
@@ -329,7 +349,7 @@ public class GuildWarEvent : BaseEvent {
         }
 
         // Handle gate damage
-        if (npc.UID == LeftGateNpcId || npc.UID == RightGateNpcId) {
+        if (npc.UID == WestGateNpcId || npc.UID == EastGateNpcId) {
             // If pole keeper guild is attacking their own gates, skip damage
             // During active war, only check _poleKeeper (database check removed from active war path)
             if (attacker.Owner.Guild != null && _poleKeeper == attacker.Owner.Guild) {
@@ -340,10 +360,10 @@ public class GuildWarEvent : BaseEvent {
             if (npc.Hitpoints <= damage) {
                 npc.Hitpoints = 0;
                 // Set broken mesh when gate is destroyed
-                if (npc.UID == LeftGateNpcId) {
+                if (npc.UID == WestGateNpcId) {
                     npc.Mesh = WestGateBrokenMesh;
                 }
-                else if (npc.UID == RightGateNpcId) {
+                else if (npc.UID == EastGateNpcId) {
                     npc.Mesh = EastGateBrokenMesh;
                 }
             }

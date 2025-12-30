@@ -165,4 +165,17 @@ public static class EventScheduler {
 
         return shouldBlock;
     }
+
+    /// <summary>
+    ///     Notify all events of a player revive and check if revive was handled
+    ///     Returns true if any event handled the revive (OR logic - skip normal revive processing)
+    /// </summary>
+    public static bool OnPlayerRevive(GameState client, ushort currentMapId) {
+        var wasHandled = false;
+        foreach (var unused in Events.Where(gameEvent => gameEvent.OnPlayerRevive(client, currentMapId))) {
+            wasHandled = true; // OR logic: if any event handles it, skip normal processing
+        }
+
+        return wasHandled;
+    }
 }

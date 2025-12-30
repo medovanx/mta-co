@@ -110,42 +110,42 @@ namespace MTA.Game.Events.GuildWar.Items {
                                         Writer.WriteUInt32(0, 194 + 4, test);
                                     }
 
-                                    Writer.WriteUInt32(item.ID, 44 + 4, test); // Offset Correto.
-                                    Writer.WriteUInt16((byte)item.Color, 139 + 4, test); // Offset Correto.
+                                    Writer.WriteUInt32(item.ID, 44 + 4, test);
+                                    Writer.WriteUInt16((byte)item.Color, 139 + 4, test);
                                     break;
                                 }
                                 case ConquerItem.Garment: {
-                                    Writer.WriteUInt32(item.ID, 48 + 4, test); // Offset Correto.
+                                    Writer.WriteUInt32(item.ID, 48 + 4, test);
                                     break;
                                 }
                                 case ConquerItem.Armor: {
                                     if (item.Purification.Available) {
                                         Writer.WriteUInt32(item.Purification.PurificationItemID, 200 + 4,
-                                            test); // Offset Correto.
+                                            test);
                                     }
 
-                                    Writer.WriteUInt32(item.ID, 52 + 4, test); // Offset Correto.          
-                                    Writer.WriteUInt16((byte)item.Color, 137 + 4, test); // Offset Correto.
+                                    Writer.WriteUInt32(item.ID, 52 + 4, test);
+                                    Writer.WriteUInt16((byte)item.Color, 137 + 4, test);
                                     break;
                                 }
                                 case ConquerItem.RightWeapon: {
                                     if (item.Purification.Available) {
                                         Writer.WriteUInt32(item.Purification.PurificationItemID, 208 + 4,
-                                            test); // Offset Correto.
+                                            test);
                                     }
 
-                                    Writer.WriteUInt32(item.ID, 60 + 4, test); // Offset Correto.  
+                                    Writer.WriteUInt32(item.ID, 60 + 4, test);
                                     break;
                                 }
                                 case ConquerItem.LeftWeapon: {
                                     if (item.Purification.Available) {
                                         Writer.WriteUInt32(item.Purification.PurificationItemID, 204 + 4,
-                                            test); // Offset Correto.
+                                            test);
                                     }
 
-                                    Writer.WriteUInt32(item.ID, 56 + 4, test); // Offset Correto.
+                                    Writer.WriteUInt32(item.ID, 56 + 4, test);
                                     Writer.WriteUInt16((byte)item.Color, 137 + 4,
-                                        test); // Offset Correto.\                                                    
+                                        test);
                                     break;
                                 }
                                 case ConquerItem.RightWeaponAccessory: {

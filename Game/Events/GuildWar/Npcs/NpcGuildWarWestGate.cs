@@ -30,7 +30,7 @@ public static class NpcGuildWarWestGate {
                 dialog.Send();
                 break;
             case 1: {
-                if (gwEvent?.WestGate == null) break;
+                if (gwEvent.WestGate == null) break;
                 gwEvent.WestGate.Mesh = GuildWarConstants.WestGateOpenMesh;
 
                 var upd = new UpdatePacket(true) {
@@ -41,13 +41,14 @@ public static class NpcGuildWarWestGate {
                 break;
             }
             case 2: {
-                if (gwEvent?.WestGate == null) break;
+                if (gwEvent.WestGate == null) break;
                 if (gwEvent.WestGate.Hitpoints == 0) {
                     dialog.Text("The gate is broken and cannot be closed. Please repair it first.");
                     dialog.Option("Okay.", 255);
                     dialog.Send();
                     break;
                 }
+
                 gwEvent.WestGate.Mesh = GuildWarConstants.WestGateClosedMesh;
                 var upd = new UpdatePacket(true) {
                     UID = gwEvent.WestGate.UID
@@ -58,7 +59,7 @@ public static class NpcGuildWarWestGate {
                 break;
             }
             case 22: {
-                if (gwEvent?.WestGate == null) break;
+                if (gwEvent.WestGate == null) break;
                 gwEvent.WestGate.Mesh = GuildWarConstants.WestGateClosedMesh;
                 if (gwEvent.WestGate.Hitpoints == 0)
                     gwEvent.WestGate.Hitpoints = gwEvent.WestGate.MaxHitpoints;

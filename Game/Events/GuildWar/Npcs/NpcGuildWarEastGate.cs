@@ -30,7 +30,7 @@ public static class NpcGuildWarEastGate {
                 dialog.Send();
                 break;
             case 1: {
-                if (gwEvent?.EastGate == null) break;
+                if (gwEvent.EastGate == null) break;
                 gwEvent.EastGate.Mesh = GuildWarConstants.EastGateOpenMesh;
 
                 var upd = new UpdatePacket(true) {
@@ -41,13 +41,14 @@ public static class NpcGuildWarEastGate {
                 break;
             }
             case 2: {
-                if (gwEvent?.EastGate == null) break;
+                if (gwEvent.EastGate == null) break;
                 if (gwEvent.EastGate.Hitpoints == 0) {
                     dialog.Text("The gate is broken and cannot be closed. Please repair it first.");
                     dialog.Option("Okay.", 255);
                     dialog.Send();
                     break;
                 }
+
                 gwEvent.EastGate.Mesh = GuildWarConstants.EastGateClosedMesh;
                 var upd = new UpdatePacket(true) {
                     UID = gwEvent.EastGate.UID
@@ -58,7 +59,7 @@ public static class NpcGuildWarEastGate {
                 break;
             }
             case 22: {
-                if (gwEvent?.EastGate == null) break;
+                if (gwEvent.EastGate == null) break;
                 gwEvent.EastGate.Mesh = GuildWarConstants.EastGateClosedMesh;
                 if (gwEvent.EastGate.Hitpoints == 0)
                     gwEvent.EastGate.Hitpoints = gwEvent.EastGate.MaxHitpoints;
