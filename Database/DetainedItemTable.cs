@@ -9,26 +9,30 @@ namespace MTA.Database
         public static void LoadDetainedItems(Client.GameState client)
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("detaineditems").Where("OwnerUID", client.Entity.UID))
-            using (var reader = new MySqlReader(cmd))
             {
-                while (reader.Read())
+                cmd.Command = cmd.Command.Replace("SELECT * FROM `detaineditems`",
+                    "SELECT d.ItemUID, d.Date, d.ConquerPointsCost, d.OwnerUID, d.GainerUID, e1.Name as OwnerName, e2.Name as GainerName FROM `detaineditems` d LEFT JOIN `entities` e1 ON d.OwnerUID = e1.UID LEFT JOIN `entities` e2 ON d.GainerUID = e2.UID");
+                using (var reader = new MySqlReader(cmd))
                 {
-                    DetainedItem item = new DetainedItem(true);
-                    item.ItemUID = reader.ReadUInt32("ItemUID");
-                    item.UID = item.ItemUID - 1;
-                    item.Item = ConquerItemTable.LoadItem(item.ItemUID);
-                    item.ConquerPointsCost = reader.ReadUInt32("ConquerPointsCost");
-                    item.OwnerUID = reader.ReadUInt32("OwnerUID");
-                    item.GainerName = reader.ReadString("OwnerName");
-                    item.GainerUID = reader.ReadUInt32("GainerUID");
-                    item.OwnerName = reader.ReadString("GainerName");
-                    item.Date = DateTime.FromBinary(reader.ReadInt64("Date"));
-                    item.DaysLeft = (uint)(TimeSpan.FromTicks(DateTime.Now.Ticks).Days - TimeSpan.FromTicks(item.Date.Ticks).Days);
-                    if (DateTime.Now < item.Date.AddDays(7))
-                        client.DeatinedItem.Add(item.UID, item);
-                    else
-                        if (item.Bound)
-                        Claim(item, client);
+                    while (reader.Read())
+                    {
+                        DetainedItem item = new DetainedItem(true);
+                        item.ItemUID = reader.ReadUInt32("ItemUID");
+                        item.UID = item.ItemUID - 1;
+                        item.Item = ConquerItemTable.LoadItem(item.ItemUID);
+                        item.ConquerPointsCost = reader.ReadUInt32("ConquerPointsCost");
+                        item.OwnerUID = reader.ReadUInt32("OwnerUID");
+                        item.GainerName = reader.ReadString("GainerName");
+                        item.GainerUID = reader.ReadUInt32("GainerUID");
+                        item.OwnerName = reader.ReadString("OwnerName");
+                        item.Date = DateTime.FromBinary(reader.ReadInt64("Date"));
+                        item.DaysLeft = (uint)(TimeSpan.FromTicks(DateTime.Now.Ticks).Days - TimeSpan.FromTicks(item.Date.Ticks).Days);
+                        if (DateTime.Now < item.Date.AddDays(7))
+                            client.DeatinedItem.Add(item.UID, item);
+                        else
+                            if (item.Bound)
+                            Claim(item, client);
+                    }
                 }
             }
         }
@@ -85,8 +89,7 @@ namespace MTA.Database
             using (var cmd = new MySqlCommand(MySqlCommandType.INSERT).Insert("detaineditems"))
                 cmd.Insert("ItemUID", item.UID).Insert("Date", Item.Date.Ticks)
                 .Insert("ConquerPointsCost", Item.ConquerPointsCost).Insert("OwnerUID", owner.Entity.UID)
-                .Insert("OwnerName", owner.Entity.Name).Insert("GainerUID", gainer.Entity.UID)
-                .Insert("GainerName", gainer.Entity.Name).Execute();
+                .Insert("GainerUID", gainer.Entity.UID).Execute();
             using (var cmd = new MySqlCommand(MySqlCommandType.INSERT).Insert("claimitems"))
                 cmd.Insert("ItemUID", item.UID).Insert("Date", Item.Date.Ticks)
                     .Insert("ConquerPointsCost", Item.ConquerPointsCost).Insert("OwnerUID", owner.Entity.UID)
