@@ -203,17 +203,6 @@ internal abstract class Program {
                     ExtraExperienceRate = mySqlReader.ReadUInt32("ExperienceRate");
                     ExtraSpellRate = mySqlReader.ReadUInt32("ProficiencyExperienceRate");
                     ExtraProficiencyRate = mySqlReader.ReadUInt32("SpellExperienceRate");
-                    MoneyDropRate = mySqlReader.ReadUInt32("MoneyDropRate");
-                    MoneyDropMultiple = mySqlReader.ReadUInt32("MoneyDropMultiple");
-                    ConquerPointsDropRate = mySqlReader.ReadUInt32("ConquerPointsDropRate");
-                    ConquerPointsDropMultiple = mySqlReader.ReadUInt32("ConquerPointsDropMultiple");
-                    ItemDropRate = mySqlReader.ReadUInt32("ItemDropRate");
-                    ItemDropQualityRates = mySqlReader.ReadString("ItemDropQualityString").Split('~');
-                    WebAccExt = mySqlReader.ReadString("AccountWebExt");
-                    WebVoteExt = mySqlReader.ReadString("VoteWebExt");
-                    WebDonateExt = mySqlReader.ReadString("DonateWebExt");
-                    ServerWebsite = mySqlReader.ReadString("ServerWebsite");
-                    ServerGMPass = mySqlReader.ReadString("ServerGMPass");
                     PlayerCap = mySqlReader.ReadInt32("PlayerCap");
                     MaxOn = mySqlReader.ReadInt64("MaxOnline");
                     EntityVariableTable.Load(0, out Vars);

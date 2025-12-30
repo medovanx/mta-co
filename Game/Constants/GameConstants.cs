@@ -263,14 +263,7 @@ namespace MTA.Game.Constants {
 
         public static uint ExtraExperienceRate,
             ExtraSpellRate,
-            ExtraProficiencyRate,
-            ConquerPointsDropRate,
-            ConquerPointsDropMultiple,
-            ItemDropRate;
-
-        public static ulong MoneyDropRate, MoneyDropMultiple;
-        public static string[]? ItemDropQualityRates;
-        public static string? WebAccExt, ServerWebsite, WebVoteExt, WebDonateExt, ServerGMPass;
+            ExtraProficiencyRate;
         public const sbyte pScreenDistance = 19;
         public const sbyte nScreenDistance = 19;
         public const sbyte remScreenDistance = 19;

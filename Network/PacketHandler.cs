@@ -15784,8 +15784,6 @@ namespace MTA.Network {
                 Console.WriteLine(client.Entity.Name + " logged in. IP: " + client.Account.IP + "  ");
             }
 
-            new MySqlCommand(MySqlCommandType.UPDATE).Update("configuration").Set("LastPlayer", client.Entity.Name)
-                .Set("login", "has logged on").Execute();
             client.LoggedIn = true;
             client.Action = 2;
         }
