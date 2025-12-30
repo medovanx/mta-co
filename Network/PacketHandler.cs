@@ -6972,9 +6972,29 @@ namespace MTA.Network {
                             Online = friend.IsOnline
                         });
                         if (friend.Message != "") {
-                            client.Send(new Message(friend.Message, client.Entity.Name, friend.Name, Color.Red,
-                                Message.Whisper));
-                            Database.KnownPersons.UpdateMessageOnFriend(friend.ID, client.Entity.UID, "");
+                            uint senderMesh = 0;
+                            // Get sender's mesh from database to display avatar
+                            using (var meshCmd = new MySqlCommand(MySqlCommandType.SELECT).Select("entities")
+                                       .Where("UID", friend.ID))
+                            using (var meshReader = meshCmd.CreateReader()) {
+                                if (meshReader.Read()) {
+                                    ushort face = meshReader.ReadUInt16("Face");
+                                    var body = meshReader.ReadUInt16("Body");
+                                    senderMesh = (uint)face * 10000 + body;
+                                }
+                            }
+                            
+                            var messageText = $"You received the following message while you were offline: {friend.Message}";
+                            System.Threading.Tasks.Task.Run(async () => {
+                                // Delay sending the message to ensure dialog system is ready after login
+                                await System.Threading.Tasks.Task.Delay(10000);
+                                var message = new Message(messageText, client.Entity.Name, friend.Name, Color.Yellow, Message.Service)
+                                    {
+                                        Mesh = senderMesh
+                                    };
+                                message.Send(client);
+                                Database.KnownPersons.UpdateMessageOnFriend(friend.ID, client.Entity.UID, "");
+                            });
                         }
                     }
 
@@ -12318,6 +12338,7 @@ namespace MTA.Network {
                                 client.OnMessageBoxEventParams = new object[3];
                                 client.OnMessageBoxEventParams[0] = client.Entity.UID;
                                 client.OnMessageBoxEventParams[1] = friend.ID;
+                                client.OnMessageBoxEventParams[2] = message.__Message;
 
                                 client.MessageOK =
                                     delegate {
@@ -12325,13 +12346,14 @@ namespace MTA.Network {
                                             Convert.ToUInt32(client.OnMessageBoxEventParams[0]),
                                             Convert.ToUInt32(client.OnMessageBoxEventParams[1]),
                                             Convert.ToString(client.OnMessageBoxEventParams[2]));
-                                        client.Send(new Message("Message sent!", Color.Green, Message.TopLeft));
+                                        client.Send(new Message($"Message sent to {friend.Name}! They will see it when they come back online.", Color.Green, Message.TopLeft));
                                     };
                                 client.MessageCancel =
                                     delegate { client.OnMessageBoxEventParams = []; };
-                                client.Send(new NpcReply(NpcReply.MessageBox,
-                                    "To " + friend.Name + ": \r\n" + message.__Message +
-                                    "\r\n\r\nSend? (It will replace other messages.)"));
+                                client.Send(new NpcReply(
+                                    NpcReply.MessageBox,
+                                    $"Send message to {friend.Name}? The player is offline, but they will receive it when they come back online. (This will remove previous messages you have sent)"
+                                ));
                                 return;
                             }
                         }
