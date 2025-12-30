@@ -11,7 +11,8 @@ namespace MTA.Database
             using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("claimitems").Where("GainerUID", client.Entity.UID))
             {
                 cmd.Command = cmd.Command.Replace("SELECT * FROM `claimitems`",
-                    "SELECT c.ItemUID, c.Date, c.ConquerPointsCost, c.OwnerUID, c.GainerUID, e1.Name as OwnerName, e2.Name as GainerName FROM `claimitems` c LEFT JOIN `entities` e1 ON c.OwnerUID = e1.UID LEFT JOIN `entities` e2 ON c.GainerUID = e2.UID");
+                    "SELECT c.ItemUID, c.Date, c.ConquerPointsCost, c.OwnerUID, c.GainerUID, e1.Name as OwnerName, e2.Name as GainerName FROM `claimitems` c LEFT JOIN `entities` e1 ON c.OwnerUID = e1.UID LEFT JOIN `entities` e2 ON c.GainerUID = e2.UID ");
+                cmd.Command = cmd.Command.Replace("WHERE", " WHERE");
                 using (var reader = new MySqlReader(cmd))
             {
                 while (reader.Read())
