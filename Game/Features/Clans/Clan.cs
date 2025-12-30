@@ -404,27 +404,31 @@ namespace MTA
                 }
             }
             using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("clans"))
-            using (var reader = cmd.CreateReader())
             {
-                while (reader.Read())
+                cmd.Command = cmd.Command.Replace("SELECT * FROM `clans`",
+                    "SELECT c.Identifier, c.LeaderId, c.Name, c.Fund, c.Announcement, c.BPTower, c.Level, c.polekeeper, e.Name as LeaderName FROM `clans` c INNER JOIN `entities` e ON c.LeaderId = e.UID");
+                using (var reader = cmd.CreateReader())
                 {
-                    UInt32 HeroId = reader.ReadUInt32("LeaderId");
-                    Clan c = new Clan(HeroId, reader.ReadUInt32("Identifier"), reader.ReadString("Name"), reader.ReadString("LeaderName"));
+                    while (reader.Read())
                     {
-                        c.Announcement = reader.ReadString("Announcement");
-                        c.BPTower = reader.ReadByte("BPTower");
-                        c.ID = reader.ReadUInt32("Identifier");
-                        c.Fund = reader.ReadUInt32("Fund");
-                        c.LeaderId = reader.ReadUInt32("LeaderId");
-                        c.Level = reader.ReadByte("Level");
-                        c.LeaderName = reader.ReadString("LeaderName");
-                        c.PoleKeeper = reader.ReadBoolean("PoleKeeper");
+                        UInt32 HeroId = reader.ReadUInt32("LeaderId");
+                        Clan c = new Clan(HeroId, reader.ReadUInt32("Identifier"), reader.ReadString("Name"), reader.ReadString("LeaderName"));
+                        {
+                            c.Announcement = reader.ReadString("Announcement");
+                            c.BPTower = reader.ReadByte("BPTower");
+                            c.ID = reader.ReadUInt32("Identifier");
+                            c.Fund = reader.ReadUInt32("Fund");
+                            c.LeaderId = reader.ReadUInt32("LeaderId");
+                            c.Level = reader.ReadByte("Level");
+                            c.LeaderName = reader.ReadString("LeaderName");
+                            c.PoleKeeper = reader.ReadBoolean("PoleKeeper");
+                        }
+                        Kernel.Clans.Add(c.ID, c);
+                        if (dict.ContainsKey(c.ID))
+                            c.mMembers = dict[c.ID];
+                        else
+                            c.mMembers = new Dictionary<uint, ClanMember>();
                     }
-                    Kernel.Clans.Add(c.ID, c);
-                    if (dict.ContainsKey(c.ID))
-                        c.mMembers = dict[c.ID];
-                    else
-                        c.mMembers = new Dictionary<uint, ClanMember>();
                 }
             }
             foreach (Clan c in Kernel.Clans.Values)

@@ -575,7 +575,6 @@ namespace MTA.Client {
                         cmdupdate.Update("guilds").Set("LeaderName", newname).Where("LeaderName", name200).Execute();
 
                         cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
-                        cmdupdate.Update("clans").Set("LeaderName", newname).Where("LeaderName", name200).Execute();
 
                         if (p.Entity.MyFlowers != null)
                             p.Entity.MyFlowers.Name = newname;
