@@ -109,9 +109,14 @@ namespace MTA.Database {
             while (reader.Read()) {
                 var person = new Friend {
                     ID = reader.ReadUInt32("FriendID"),
-                    Name = reader.ReadString("FriendName"),
                     Message = reader.ReadString("Message")
                 };
+                // Get name from entities table
+                using (var nameCmd = new MySqlCommand(MySqlCommandType.SELECT).Select("entities")
+                           .Where("UID", person.ID))
+                using (var nameReader = nameCmd.CreateReader()) {
+                    person.Name = nameReader.Read() ? nameReader.ReadString("Name") : "";
+                }
                 client.Friends.Add(person.ID, person);
             }
         }
@@ -165,11 +170,9 @@ namespace MTA.Database {
 
         public static void AddFriend(Client.GameState client, Friend friend) {
             using (var cmd = new MySqlCommand(MySqlCommandType.INSERT).Insert("friends"))
-                cmd.Insert("friendid", friend.ID).Insert("entityid", client.Entity.UID)
-                    .Insert("friendname", friend.Name).Execute();
+                cmd.Insert("friendid", friend.ID).Insert("entityid", client.Entity.UID).Execute();
             using (var cmd = new MySqlCommand(MySqlCommandType.INSERT).Insert("friends"))
-                cmd.Insert("entityid", friend.ID).Insert("friendid", client.Entity.UID)
-                    .Insert("friendname", client.Entity.Name).Execute();
+                cmd.Insert("entityid", friend.ID).Insert("friendid", client.Entity.UID).Execute();
         }
 
         public static void AddPartner(Client.GameState client, TradePartner partner) {
