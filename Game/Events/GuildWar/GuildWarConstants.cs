@@ -103,4 +103,14 @@ public static class GuildWarConstants {
     ///     Number of bombs required to destroy a gate
     /// </summary>
     public const int BombsRequiredToDestroyGate = 4;
+
+    /// <summary>
+    ///     Silver reward per damage point when attacking the pole
+    /// </summary>
+    public const uint PoleAttackRewardPerDamage = 1;
+
+    /// <summary>
+    ///     Damage multiplier when pole keeper's guild fund is empty (10x damage)
+    /// </summary>
+    public const uint PoleDamageMultiplierWhenFundsEmpty = 10;
 }

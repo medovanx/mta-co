@@ -325,60 +325,87 @@ public class GuildWarEvent : BaseEvent {
             return false; // Allow normal processing for other cases when event is not active
         }
 
-        // From here on, event is active
-
-        // Handle pole damage
-        if (npc.UID == PoleNpcId) {
+        switch (npc.UID) {
+            // Handle pole damage
             // If pole keeper guild is attacking, skip damage
             // During active war, only check _poleKeeper (database check removed from active war path)
-            if (attacker.Owner.Guild != null && _poleKeeper == attacker.Owner.Guild) {
+            case PoleNpcId when attacker.Owner.Guild != null && _poleKeeper == attacker.Owner.Guild:
                 return true; // Skip normal damage processing
-            }
+            // From here on, event is active
+            case PoleNpcId: {
+                var actualDamage = damage;
 
-            // Apply damage to pole
-            if (npc.Hitpoints <= damage)
-                npc.Hitpoints = 0;
-            else
-                npc.Hitpoints -= damage;
+                // Check if pole keeper has funds
+                if (_poleKeeper is { SilverFund: > 0 }) {
+                    // Calculate reward
+                    var reward = (ulong)damage * PoleAttackRewardPerDamage;
 
-            // Add score for the attacking guild
-            AddScore(damage, attacker.Owner.Guild);
+                    // Ensure reward doesn't exceed available funds
+                    reward = Math.Min(reward, _poleKeeper.SilverFund);
 
-            // Event handled this attack
-            return true;
-        }
+                    // Give money to attacker
+                    attacker.Owner.Entity.Money += reward;
 
-        // Handle gate damage
-        if (npc.UID == WestGateNpcId || npc.UID == EastGateNpcId) {
-            // If pole keeper guild is attacking their own gates, skip damage
-            // During active war, only check _poleKeeper (database check removed from active war path)
-            if (attacker.Owner.Guild != null && _poleKeeper == attacker.Owner.Guild) {
-                return true; // Skip normal damage processing
-            }
+                    // Deduct from pole keeper's fund
+                    _poleKeeper.SilverFund -= reward;
+                    GuildTable.SaveFunds(_poleKeeper);
 
-            // Apply damage to gate
-            if (npc.Hitpoints <= damage) {
-                npc.Hitpoints = 0;
-                // Set broken mesh when gate is destroyed
-                if (npc.UID == WestGateNpcId) {
-                    npc.Mesh = WestGateBrokenMesh;
+                    // Send guild update to all online members of pole keeper guild
+                    foreach (var member in _poleKeeper.Members.Values.Where(member => member.IsOnline)) {
+                        if (member.Client != null) {
+                            _poleKeeper.SendGuild(member.Client);
+                        }
+                    }
                 }
-                else if (npc.UID == EastGateNpcId) {
-                    npc.Mesh = EastGateBrokenMesh;
+                else {
+                    // Pole keeper has no funds - apply 10x damage
+                    actualDamage = damage * PoleDamageMultiplierWhenFundsEmpty;
                 }
-            }
-            else {
-                npc.Hitpoints -= damage;
-            }
 
-            // Broadcast gate update
-            Kernel.SendWorldMessage(npc, Program.Values, Maps.GuildWarMap);
+                // Apply damage to pole
+                if (npc.Hitpoints <= actualDamage)
+                    npc.Hitpoints = 0;
+                else
+                    npc.Hitpoints -= actualDamage;
 
-            // Event handled this attack
-            return true;
+                // Add score for the attacking guild (use original damage for scoring)
+                AddScore(damage, attacker.Owner.Guild);
+
+                // Event handled this attack
+                return true;
+            }
+            // Handle gate damage
+            case WestGateNpcId:
+            case EastGateNpcId: {
+                // If pole keeper guild is attacking their own gates, skip damage
+                // During active war, only check _poleKeeper (database check removed from active war path)
+                if (attacker.Owner.Guild != null && _poleKeeper == attacker.Owner.Guild) {
+                    return true; // Skip normal damage processing
+                }
+
+                // Apply damage to gate
+                if (npc.Hitpoints <= damage) {
+                    npc.Hitpoints = 0;
+                    npc.Mesh = npc.UID switch {
+                        // Set broken mesh when gate is destroyed
+                        WestGateNpcId => WestGateBrokenMesh,
+                        EastGateNpcId => EastGateBrokenMesh,
+                        _ => npc.Mesh
+                    };
+                }
+                else {
+                    npc.Hitpoints -= damage;
+                }
+
+                // Broadcast gate update
+                Kernel.SendWorldMessage(npc, Program.Values, Maps.GuildWarMap);
+
+                // Event handled this attack
+                return true;
+            }
+            default:
+                return false; // Not a pole or gate, let normal damage processing handle it
         }
-
-        return false; // Not a pole or gate, let normal damage processing handle it
     }
 
     /// <summary>
@@ -495,12 +522,46 @@ public class GuildWarEvent : BaseEvent {
             StopRepair();
         }
 
+        // Give 10% bonus from previous pole keeper's fund to new pole keeper
+        if (previousPoleKeeper != null && _poleKeeper != null && previousPoleKeeper != _poleKeeper &&
+            previousPoleKeeper.SilverFund > 0) {
+            // Calculate 10% bonus using integer division to avoid precision issues
+            var bonus = previousPoleKeeper.SilverFund / 10; // 10% of fund
+
+            // Ensure we don't transfer more than available
+            if (bonus > 0 && bonus <= previousPoleKeeper.SilverFund) {
+                // Deduct bonus from previous pole keeper's fund first
+                previousPoleKeeper.SilverFund -= bonus;
+                GuildTable.SaveFunds(previousPoleKeeper);
+
+                // Add bonus to new pole keeper's fund
+                _poleKeeper.SilverFund += bonus;
+                GuildTable.SaveFunds(_poleKeeper);
+
+                // Send guild updates to all online members of both guilds
+                foreach (var member in _poleKeeper.Members.Values.Where(member => member.IsOnline)) {
+                    if (member.Client != null) {
+                        _poleKeeper.SendGuild(member.Client);
+                    }
+                }
+
+                foreach (var member in previousPoleKeeper.Members.Values.Where(member => member.IsOnline)) {
+                    if (member.Client != null) {
+                        previousPoleKeeper.SendGuild(member.Client);
+                    }
+                }
+
+                // Broadcast bonus message
+                BroadcastMessage(
+                    $"{_poleKeeper.Name} has received {bonus:N0} silver (10% of {previousPoleKeeper.Name}'s guild fund) for knocking down the pole!",
+                    Color.Gold, Message.Center);
+            }
+        }
+
         if (_poleKeeper != null) {
             BroadcastMessage(
                 $"The guild, {_poleKeeper.Name}, owned by {_poleKeeper.LeaderName} has won this guild war round!",
                 Color.Red, Message.Center);
-            BroadcastMessage("It is generald pardon time. You have 5 minutes to leave, run for your life!",
-                Color.White, Message.TopLeft);
 
             // Update winner stats
             if (_poleKeeper.Losts == 0)
