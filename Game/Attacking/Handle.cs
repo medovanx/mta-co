@@ -12,6 +12,7 @@ using MTA.MaTrix;
 using MTA.Network;
 using MTA.Network.GamePackets;
 using MTA.Game.Constants;
+using MTA.Game.Features.Guilds.Database;
 
 namespace MTA.Game.Attacking {
     public class Handle {
@@ -8327,20 +8328,6 @@ namespace MTA.Game.Attacking {
 
         public static void ReceiveAttack(Entity attacker, SobNpcSpawn attacked, Attack attack, uint damage,
             SpellInformation spell) {
-            #region PolePrize
-
-            if (attacker.MapID == 1024) {
-                if (attacked.UID == 8120) {
-                    attacked.Die(attacker);
-                    {
-                        attacker.ConquerPoints += 2;
-                        attacker.Send(new Message("You received 2 CPs! for Hit PolePrize " + Kernel.GamePool.Count,
-                            Message.TopLeft));
-                    }
-                }
-            }
-
-            #endregion
 
             #region Satke Cps
 
@@ -8429,38 +8416,6 @@ namespace MTA.Game.Attacking {
 
             ////////////////////////////////////////////////
 
-            if (attacker.MapID == 2075) {
-                if (attacked.UID == 815) {
-                    if (PoleIslanD.PoleKeeper == attacker.Owner.Guild)
-                        return;
-                    if (attacked.Hitpoints <= damage)
-                        attacked.Hitpoints = 0;
-
-                    PoleIslanD.AddScore(damage, attacker.Owner.Guild);
-                }
-            }
-
-            if (attacker.MapID == 3990) {
-                if (attacked.UID == 819) {
-                    if (PoleRakion.PoleKeeper == attacker.Owner.Guild)
-                        return;
-                    if (attacked.Hitpoints <= damage)
-                        attacked.Hitpoints = 0;
-
-                    PoleRakion.AddScore(damage, attacker.Owner.Guild);
-                }
-            }
-
-            if (attacker.MapID == 3995) {
-                if (attacked.UID == 818) {
-                    if (PoleMagice.PoleKeeper == attacker.Owner.Guild)
-                        return;
-                    if (attacked.Hitpoints <= damage)
-                        attacked.Hitpoints = 0;
-
-                    PoleMagice.AddScore(damage, attacker.Owner.Guild);
-                }
-            }
 
 
             if (attacker.MapID == 1509) {
@@ -8615,8 +8570,8 @@ namespace MTA.Game.Attacking {
         public static bool CanAttack(Entity attacker, SobNpcSpawn attacked, SpellInformation spell) {
             if (attacked == null)
                 return false;
-            if (GuildCondutors.GuildConductors != null)
-                if (GuildCondutors.GuildConductors.ContainsKey(attacked.UID))
+            if (GuildConductors.GuildConductorsDict != null)
+                if (GuildConductors.GuildConductorsDict.ContainsKey(attacked.UID))
                     return false;
             if (attacker.MapID == CaptureTheFlag.MapID) {
                 if (Program.World.Ctf.Bases.ContainsKey(attacked.UID)) {
@@ -8636,71 +8591,6 @@ namespace MTA.Game.Attacking {
                 else return false;
 
 
-            if (attacker.MapID == 2075) {
-                if (attacker.GuildID == 0 || !PoleIslanD.IsWar) {
-                    if (attacked.UID == 815) {
-                        return false;
-                    }
-                }
-
-                if (PoleIslanD.PoleKeeper != null) {
-                    if (PoleIslanD.PoleKeeper == attacker.Owner.Guild) {
-                        if (attacked.UID == 815) {
-                            return false;
-                        }
-                    }
-                    else if (attacked.UID == 516020 || attacked.UID == 516021) {
-                        if (PoleIslanD.PoleKeeper == attacker.Owner.Guild) {
-                            if (attacker.PKMode == Enums.PkMode.Team)
-                                return false;
-                        }
-                    }
-                }
-            }
-
-            if (attacker.MapID == 3990) {
-                if (attacker.GuildID == 0 || !PoleRakion.IsWar) {
-                    if (attacked.UID == 819) {
-                        return false;
-                    }
-                }
-
-                if (PoleRakion.PoleKeeper != null) {
-                    if (PoleRakion.PoleKeeper == attacker.Owner.Guild) {
-                        if (attacked.UID == 819) {
-                            return false;
-                        }
-                    }
-                    else if (attacked.UID == 516025 || attacked.UID == 516026) {
-                        if (PoleRakion.PoleKeeper == attacker.Owner.Guild) {
-                            if (attacker.PKMode == Enums.PkMode.Team)
-                                return false;
-                        }
-                    }
-                }
-            }
-
-            if (attacker.MapID == 3995) {
-                if (attacker.GuildID == 0 || !PoleMagice.IsWar) {
-                    if (attacked.UID == 818) {
-                        return false;
-                    }
-                }
-
-                if (PoleMagice.PoleKeeper != null) {
-                    if (PoleMagice.PoleKeeper == attacker.Owner.Guild) {
-                        if (attacked.UID == 818) {
-                            return false;
-                        }
-                    }
-                    else if (attacked.UID == 516028 || attacked.UID == 516024) {
-                        if (PoleMagice.PoleKeeper == attacker.Owner.Guild) {
-                            if (attacker.PKMode == Enums.PkMode.Team)
-                                return false;
-                        }
-                    }
-                }
-            }
 
             #region Satke Cps
 

@@ -288,7 +288,7 @@ namespace MTA.Database
             {
                 if (client.Guild != null)
                 {
-                    int itemPosition = Network.PacketHandler.ArsenalPosition(item.ID);
+                    int itemPosition = Game.Features.Guilds.Handlers.GuildArsenalHandler.ArsenalPosition(item.ID);
                     if (itemPosition != -1)
                     {
                         var arsenal = client.Guild.Arsenals[itemPosition];

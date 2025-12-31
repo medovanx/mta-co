@@ -1,12 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using MTA.Network.GamePackets;
 using MTA.Client;
 using System.Collections.Concurrent;
-using MTA.Game.ConquerStructures.Society;
+using MTA.Game.Features.Guilds;
 using MTA.Network;
 using MTA.Database;
+using MTA.Game.Features.Guilds.Database;
 
 namespace MTA.Game
 {

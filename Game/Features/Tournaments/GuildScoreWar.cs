@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using MTA.Client;
-using MTA.Game.ConquerStructures.Society;
+using MTA.Game.Features.Guilds;
 using MTA.Game.Constants;
 using MTA.Network.GamePackets;
 

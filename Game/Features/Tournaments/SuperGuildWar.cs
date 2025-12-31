@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using MTA.Network.GamePackets;
-using MTA.Game.ConquerStructures.Society;
+using MTA.Game.Features.Guilds;
 
 namespace MTA.Game
 {

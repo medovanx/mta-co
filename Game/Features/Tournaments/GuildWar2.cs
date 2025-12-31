@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using MTA.Network.GamePackets;
-using MTA.Game.ConquerStructures.Society;
+using MTA.Game.Features.Guilds;
+using MTA.Game.Features.Guilds.Database;
 
 namespace MTA.Game
 {
@@ -57,7 +58,7 @@ namespace MTA.Game
             StartTime = DateTime.Now;
             LeftGate.Mesh = (ushort)(240 + LeftGate.Mesh % 10);
             RightGate.Mesh = (ushort)(270 + LeftGate.Mesh % 10);
-            Kernel.SendWorldMessage(new Message("حرب النقابة قد بدائت!", System.Drawing.Color.Red, Message.Center), Program.Values);
+            Kernel.SendWorldMessage(new Message("??? ??????? ?? ?????!", System.Drawing.Color.Red, Message.Center), Program.Values);
             FirstRound = true;
             foreach (Guild guild in Kernel.Guilds.Values)
             {
@@ -115,7 +116,7 @@ namespace MTA.Game
                     PoleKeeper3.Loses++;
                 else
                     PoleKeeper3.Wins--;
-                Database.GuildTable.UpdateGuildWarStats(PoleKeeper3);
+                GuildTable.UpdateGuildWarStats(PoleKeeper3);
             }
             LastWin = Time32.Now;
 
@@ -124,13 +125,13 @@ namespace MTA.Game
             if (PoleKeeper3 != null)
             {
                 KeeperID = PoleKeeper3.Id;
-                Kernel.SendWorldMessage(new Message("نقابة, " + PoleKeeper3.Name + ", بواسطة " + PoleKeeper3.LeaderName + " قد فاز بهذه الجولة!", System.Drawing.Color.Red, Message.Center), Program.Values);
+                Kernel.SendWorldMessage(new Message("?????, " + PoleKeeper3.Name + ", ?????? " + PoleKeeper3.LeaderName + " ?? ??? ???? ??????!", System.Drawing.Color.Red, Message.Center), Program.Values);
                 Kernel.SendWorldMessage(new Message("It is generald pardon time. You have 5 minutes to leave, run for your life!", System.Drawing.Color.White, Message.TopLeft), Program.Values, 6001);
                 if (PoleKeeper3.Loses == 0)
                     PoleKeeper3.Wins++;
                 else
                     PoleKeeper3.Loses--;
-                Database.GuildTable.UpdateGuildWarStats(PoleKeeper3);
+                GuildTable.UpdateGuildWarStats(PoleKeeper3);
                 Pole.Name = PoleKeeper3.Name;
             }
             Pole.Hitpoints = Pole.MaxHitpoints;
@@ -142,12 +143,12 @@ namespace MTA.Game
         {
             if (PoleKeeper3 != null)
             {
-                Kernel.SendWorldMessage(new Message("نقابة, " + PoleKeeper3.Name + ", بواسطة " + PoleKeeper3.LeaderName + " قد فاز بحرب النقابة وقد انتهت حرب النقابة!", System.Drawing.Color.White, Message.Center), Program.Values);
+                Kernel.SendWorldMessage(new Message("?????, " + PoleKeeper3.Name + ", ?????? " + PoleKeeper3.LeaderName + " ?? ??? ???? ??????? ??? ????? ??? ???????!", System.Drawing.Color.White, Message.Center), Program.Values);
                 //Conquer_Online_Server.Database.EntityTable.Status2();
             }
             else
             {
-                Kernel.SendWorldMessage(new Message("حرب النقابة قد انتهت ولايوجد فائز!", System.Drawing.Color.Red, Message.Center), Program.Values);
+                Kernel.SendWorldMessage(new Message("??? ??????? ?? ????? ??????? ????!", System.Drawing.Color.Red, Message.Center), Program.Values);
                 //Conquer_Online_Server.Database.EntityTable.Status2();
             }
             IsWar = false;

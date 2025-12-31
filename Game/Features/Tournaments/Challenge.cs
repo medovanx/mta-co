@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using MTA.Client;
 using MTA.Database;
 using MTA.Network.GamePackets;

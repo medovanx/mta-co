@@ -5,6 +5,7 @@ using System.IO;
 using MTA.Network.GamePackets;
 using System.Collections.Concurrent;
 using MTA.Database;
+using MTA.Game.Features.Guilds;
 
 namespace MTA.Game.ConquerStructures.Society
 {

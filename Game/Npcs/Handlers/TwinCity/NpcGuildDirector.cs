@@ -1,5 +1,5 @@
 using MTA.Client;
-using MTA.Game.ConquerStructures.Society;
+using MTA.Game.Features.Guilds;
 using MTA.Network.GamePackets;
 using static MTA.Game.Enums;
 

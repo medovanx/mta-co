@@ -1,4 +1,5 @@
-﻿using MTA.Game.ConquerStructures.Society;
+using MTA.Game.Features.Guilds;
+using MTA.Game.ConquerStructures.Society;
 
 namespace MTA.Network.GamePackets
 {

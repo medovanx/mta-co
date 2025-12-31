@@ -1,4 +1,4 @@
-﻿/*
+/*
  * The following code belongs to Ultimation and impulse.
  * Ultimation is credited for most of this piece of code.
  * Thanks to him, we have arena implented.

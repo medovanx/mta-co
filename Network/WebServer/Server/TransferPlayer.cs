@@ -7,6 +7,7 @@ using MTA.Interfaces;
 using MTA.Network;
 using MTA.Game.ConquerStructures;
 using MTA.Game.Constants;
+using MTA.Game.Features.Guilds;
 
 namespace MTA.WebServer
 {
@@ -212,10 +213,10 @@ namespace MTA.WebServer
 
             if (GuildID != 0 && GuildName != "")
             {
-                client.Guild = new Game.ConquerStructures.Society.Guild(GuildLeaderName);
+                client.Guild = new Guild(GuildLeaderName);
                 client.Guild.Id = (GuildID + Server.Key);
                 client.Guild.Name = GuildName;
-                client.AsMember = new Game.ConquerStructures.Society.Guild.Member(client.Guild.Id);
+                client.AsMember = new Guild.Member(client.Guild.Id);
                 client.AsMember.Name = client.Entity.Name;
                 client.AsMember.Id = client.Entity.UID;
                 client.AsMember.Level = client.Entity.Level;
@@ -259,7 +260,7 @@ namespace MTA.WebServer
                     }
                     if (item.Inscribed)
                     {
-                        int arsenalRealPosition = PacketHandler.ArsenalPosition(item.ID);
+                        int arsenalRealPosition = Game.Features.Guilds.Handlers.GuildArsenalHandler.ArsenalPosition(item.ID);
                         if ((item.ID % 10) >= 8 && !item.Inscribed)
                         {
                             if (client.Entity.GuildID != 0 && client.Guild != null && client.Guild.Arsenals[arsenalRealPosition].Unlocked)

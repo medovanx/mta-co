@@ -1,4 +1,4 @@
-﻿using MTA.Game.ConquerStructures.Society;
+using MTA.Game.Features.Guilds;
 
 namespace MTA.Network.GamePackets {
     public class GuildRanks : Writer {

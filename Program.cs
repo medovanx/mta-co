@@ -10,12 +10,14 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using MTA.Client;
 using MTA.Database;
+using MTA.Game.Features.Guilds.Database;
 using MTA.Extensions;
 using MTA.Game;
 using MTA.Game.Features;
 using MTA.Game.ConquerStructures;
 using MTA.Game.ConquerStructures.House;
 using MTA.Game.ConquerStructures.Society;
+using MTA.Game.Features.Guilds;
 using MTA.Game.Items;
 using MTA.Game.Npcs;
 using MTA.Game.Npcs.ScriptEngine;
@@ -25,6 +27,7 @@ using MTA.Network;
 using MTA.Network.AuthPackets;
 using MTA.Network.Cryptography;
 using MTA.Network.GamePackets;
+using MTA.Network.PacketHandlers;
 using MTA.Network.Sockets;
 using MTA.ServerBase;
 using MTA.WebServer;
@@ -252,14 +255,8 @@ internal abstract class Program {
                 StorageManager.Load();
                 _ = new Map(2073, DMaps.MapPaths[1015]);
                 _ = new Map(2075, DMaps.MapPaths[2075]);
-                PoleIslanD.PoleIslanDIni(); // PoleIslanD
-                Console.WriteLine("PoleIslanD initializated.");
                 _ = new Map(3990, DMaps.MapPaths[3990]);
-                PoleRakion.PoleRakionIni(); // PoleRakion
-                Console.WriteLine("PoleRakion initializated.");
                 _ = new Map(3995, DMaps.MapPaths[3995]);
-                PoleMagice.PoleMagiceIni(); // PoleRakion
-                Console.WriteLine("PoleMagice initializated.");
                 Kernel.QuizShow = new QuizShow();
                 Refinery.Load();
                 Values = [];
@@ -299,6 +296,8 @@ internal abstract class Program {
             NpcHandlerRegistry.Initialize();
             Console.WriteLine("Initializing Item handlers...");
             ItemHandlerRegistry.Initialize();
+            Console.WriteLine("Initializing Packet handlers...");
+            PacketHandlerRegistry.Initialize();
             _ = new Map(700, DMaps.MapPaths[700]);
             _ = new Map(1730, DMaps.MapPaths[1730]);
             _ = new Map(2068, DMaps.MapPaths[2068]);

@@ -12,6 +12,7 @@ using System.Drawing;
 using MTA.Franko;
 using MTA.Game.Constants;
 using MTA.Game.Features.Tournaments;
+using MTA.Game.Features.Guilds;
 using MTA.Game.Npcs.ScriptEngine;
 using MTA.Network.GamePackets.EventAlert;
 
@@ -372,18 +373,6 @@ namespace MTA {
                 }
             }
 
-            #region Exit PolePrize
-
-            if (DateTime.Now.Minute >= 10 && DateTime.Now.Second == 07) {
-                if (c.Entity.MapID == 1024) {
-                    c.Entity.Teleport(1002, 301, 279);
-                    Kernel.SendWorldMessage(
-                        new Message("PolePrize Is ended ,, Start This War at xx:05 Every Hour", Color.Black,
-                            Message.Center), Program.Values);
-                }
-            }
-
-            #endregion
 
             #region Arena Quit
 
@@ -2275,83 +2264,6 @@ namespace MTA {
             //    #endregion
             //////////////////////
 
-            #region PoleIslanD
-
-            if (!PoleIslanD.IsWar) {
-                if (now64 is { Hour: 16, Minute: 00, Second: 35 }) {
-                    PoleIslanD.Start();
-
-                    foreach (var client in Program.Values)
-                        if (client.Entity.MapID == 6000 || client.Entity.MapID == 6001 || client.Entity.MapID == 6002 ||
-                            client.Entity.MapID == 6003 || client.Entity.MapID == 6004)
-                            return;
-                    foreach (var client in Program.Values)
-                        if (client.Entity.GuildID != 0)
-                            client.MessageBox("PoleIslanD has begun! Would you like to join? ",
-                                p => { p.Entity.Teleport(1002, 298, 230); });
-                }
-            }
-
-            if (PoleIslanD.IsWar) {
-                if (Time32.Now > PoleIslanD.ScoreSendStamp.AddSeconds(3)) {
-                    PoleIslanD.ScoreSendStamp = Time32.Now;
-                    PoleIslanD.SendScores();
-                }
-
-                if (now64 is { Hour: 16, Minute: 50, Second: <= 2 }) {
-                    Kernel.SendWorldMessage(
-                        new Message("10 Minutes left till PoleIslanD End Hurry kick other Guild's Ass!.", Color.White,
-                            Message.Center), Program.Values);
-                }
-            }
-
-            if (PoleIslanD.IsWar) {
-                if (now64 is { Hour: 17, Minute: 00, Second: 04 }) {
-                    PoleIslanD.End();
-                    { }
-                }
-            }
-
-            #endregion
-
-            #region PoleRakion
-
-            if (!PoleRakion.IsWar) {
-                if (now64 is { Hour: 22, Minute: 00, Second: 35 }) {
-                    PoleRakion.Start();
-
-                    foreach (var client in Program.Values)
-                        if (client.Entity.MapID == 6000 || client.Entity.MapID == 6001 || client.Entity.MapID == 6002 ||
-                            client.Entity.MapID == 6003 || client.Entity.MapID == 6004)
-                            return;
-                    foreach (var client in Program.Values)
-                        if (client.Entity.GuildID != 0)
-                            client.MessageBox("PoleRakion has begun! Would you like to join? ",
-                                p => { p.Entity.Teleport(1002, 249, 215); });
-                }
-            }
-
-            if (PoleRakion.IsWar) {
-                if (Time32.Now > PoleRakion.ScoreSendStamp.AddSeconds(3)) {
-                    PoleRakion.ScoreSendStamp = Time32.Now;
-                    PoleRakion.SendScores();
-                }
-
-                if (now64 is { Hour: 22, Minute: 50, Second: <= 2 }) {
-                    Kernel.SendWorldMessage(
-                        new Message("10 Minutes left till PoleRakion End Hurry kick other Guild's Ass!.", Color.White,
-                            Message.Center), Program.Values);
-                }
-            }
-
-            if (PoleRakion.IsWar) {
-                if (now64 is { Hour: 23, Minute: 00, Second: 04 }) {
-                    PoleRakion.End();
-                    { }
-                }
-            }
-
-            #endregion
 
             /////////////////////
             ////////////////////New Quests Adedd By Franko///////////////////
@@ -2370,18 +2282,6 @@ namespace MTA {
             #endregion
 
 
-            #region PolePrize
-
-            if (DateTime.Now.Minute == 05 && now64.Second == 01) {
-                Kernel.SendWorldMessage(
-                    new Message("The War PolePrize Is Started Now ,, End This War at xx:10", Color.White,
-                        Message.Center), Program.Values);
-                foreach (var client in Program.Values)
-                    client.MessageBox("PolePrize Start Now Let's go Fast? ",
-                        p => { p.Entity.Teleport(1002, 230, 227); }, null, 60);
-            }
-
-            #endregion
 
 
             #region Attackers QuesT
@@ -2707,7 +2607,7 @@ namespace MTA {
                             " (Peak: " + Program.MaxOn + ")";
             if (GameConstants.ServerName != null)
                 new Database.MySqlCommand(Database.MySqlCommandType.UPDATE).Update("configuration")
-                    .Set("GuildID", Game.ConquerStructures.Society.Guild.GuildCounter.Now)
+                    .Set("GuildID", Guild.GuildCounter.Now)
                     .Set("MaxOnline", Program.MaxOn).Set("ItemUID", Program.NextItemId)
                     .Where("Server", GameConstants.ServerName).Execute();
             if (Program.Vars != null) Database.EntityVariableTable.Save(0, Program.Vars);

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using MTA.Client;
 using MTA.Database;
+using MTA.Game.Features.Guilds.Database;
 using MTA.Game.Items;
 using MTA.Network;
 using MTA.Network.GamePackets;
