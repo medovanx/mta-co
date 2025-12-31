@@ -186,7 +186,7 @@ public class GuildWarEvent : BaseEvent {
         Kernel.SendWorldMessage(EastGate, Program.Values, Maps.GuildWarMap);
 
         // Broadcast start message
-        BroadcastMessage("Guild war has began!", Color.Red, Message.Center);
+        BroadcastMessage("The Guild War has begun!", Color.Red, Message.Center);
 
         // Send event alert to all players
         foreach (var client in Kernel.GamePool.Values) {
@@ -205,12 +205,12 @@ public class GuildWarEvent : BaseEvent {
 
         if (_poleKeeper != null) {
             BroadcastMessage(
-                $"The guild, {_poleKeeper.Name}, owned by {_poleKeeper.LeaderName} has won this guild war!",
+                $"The guild [{_poleKeeper.Name}] and leader [{_poleKeeper.LeaderName}] has won the Guild War!",
                 Color.White, Message.Center);
             GuildWarHistoryTable.Create(_poleKeeper, _poleKeeper.Leader.ID, _poleKeeper.LeaderName, DateTime.Now);
         }
         else {
-            BroadcastMessage("Guild war has ended and there was no winner!", Color.Red, Message.Center);
+            BroadcastMessage("The Guild War has ended and there was no winner!", Color.Red, Message.Center);
         }
 
         // Stop repair if active
@@ -566,7 +566,7 @@ public class GuildWarEvent : BaseEvent {
 
         if (_poleKeeper != null) {
             BroadcastMessage(
-                $"The guild, {_poleKeeper.Name}, owned by {_poleKeeper.LeaderName} has won this guild war round!",
+                $"The guild [{_poleKeeper.Name}] and leader [{_poleKeeper.LeaderName}] has won the Guild War round!",
                 Color.Red, Message.Center);
 
             // Update winner stats

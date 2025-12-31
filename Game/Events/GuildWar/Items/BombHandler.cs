@@ -1,9 +1,7 @@
-using System.Drawing;
 using MTA.Client;
 using MTA.Game.Constants;
 using MTA.Game.Items;
 using MTA.Network.GamePackets;
-using Message = MTA.Network.GamePackets.Message;
 using Update = MTA.Network.GamePackets.Update;
 using _String = MTA.Network.GamePackets._String;
 using static MTA.Game.Constants.Items.GuildItems;
@@ -60,7 +58,7 @@ namespace MTA.Game.Events.GuildWar.Items {
         private static void HandleBombConfirmation(GameState client, SobNpcSpawn gate,
             ushort brokenMesh, ConquerItem item) {
             client.MessageBox(
-                "Are you sure you want to use the bomb? This will damage the gate and kill you!",
+                "Are you sure you want to use the bomb?\nThis will damage the gate and kill you!",
                 p => { ActivateBomb(p, item, gate, brokenMesh); }, // OK callback - activate bomb
                 null, // Cancel callback - do nothing
                 30, // 30 second timeout
@@ -111,9 +109,7 @@ namespace MTA.Game.Events.GuildWar.Items {
             }
 
             // Player is not at either bomb location
-            client.Send(new Message(
-                $"You need to be closer to the gate to use the bomb.",
-                Color.Red, Message.TopLeft));
+            client.MessageBox("You need to be closer to the guild gate to use the bomb.");
         }
     }
 }

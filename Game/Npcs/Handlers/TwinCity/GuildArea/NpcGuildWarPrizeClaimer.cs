@@ -64,7 +64,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.GuildArea {
                         DateTime.Now.AddDays(7));
                     Kernel.SendWorldMessage(
                         new Message(
-                            $"Well done! {client.Entity.Name}, leader of {client.Guild!.Name}, has claimed the Guild War top prize of {prizeAmount} CPs!",
+                            $"Well done! [{client.Entity.Name}] from [{client.Guild!.Name}] has claimed the Guild War Leader prize and received {prizeAmount:N0} gold!",
                             System.Drawing.Color.White, Message.TopLeft), Program.Values);
 
                     break;
@@ -85,7 +85,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.GuildArea {
                         DateTime.Now.AddDays(7));
                     Kernel.SendWorldMessage(
                         new Message(
-                            $"Well done! {client.Entity.Name} from {client.Guild!.Name} has successfully claimed the Top Deputy Leader halo!",
+                            $"Well done! [{client.Entity.Name}] from [{client.Guild!.Name}] has successfully claimed the Top Deputy Leader prize!",
                             System.Drawing.Color.White, Message.TopLeft), Program.Values);
                     break;
                 }
@@ -105,7 +105,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.GuildArea {
                                 : "Unknown Player";
                             var dateStr = win.WarEndTime.ToString("yyyy-MM-dd HH:mm");
 
-                            text += $"{i + 1}. {guildName}\n";
+                            text += $"{i + 1}. Guild: {guildName}\n";
                             text += $"   Leader: {leaderName}\n";
                             text += $"   Date: {dateStr}\n\n";
                         }
