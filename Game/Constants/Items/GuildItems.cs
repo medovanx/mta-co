@@ -5,8 +5,8 @@ namespace MTA.Game.Constants.Items {
     public static class GuildItems {
         #region Guild War Items
 
-        public const uint GuildWarStatue = 720020;
-        public const uint GuildWarBomb = 721261;
+        public const uint StatueScroll = 720020;
+        public const uint Bomb = 721261;
 
         #endregion Guild War Items
 
