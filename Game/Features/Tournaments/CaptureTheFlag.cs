@@ -226,7 +226,7 @@ namespace MTA.Game
             for (int i = 0; i < Math.Min(8, array.Length); i++)
             {
                 array[i].CalculateCTFRank(true);
-                GuildTable.SaveCTFPoins(array[i]);
+                GuildTable.SaveCtfPoins(array[i]);
 
                 if (i == 0)
                 {
@@ -276,7 +276,7 @@ namespace MTA.Game
                     array[i].ConquerPointFund += 200;
                     array[i].SilverFund += 20000000;
                 }
-                GuildTable.SaveCTFReward(array[i]);
+                GuildTable.SaveCtfReward(array[i]);
                 array[i].CTFDonationCPs = array[i].CTFDonationCPSold;
                 array[i].CTFDonationSilver = array[i].CTFDonationSilverOld;
                 array[i].CTFDonationCPSold = 0;

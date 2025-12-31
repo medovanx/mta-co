@@ -1,6 +1,6 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=0B21AD8E_002D332D_002D483B_002DB7CB_002D6ACA1769DF4D_002Fd_003AGame_002Fd_003AAttacking_002Ff_003AHandle_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
-	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=0B21AD8E_002D332D_002D483B_002DB7CB_002D6ACA1769DF4D_002Fd_003ANetwork_002Ff_003APacketHandler_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
+	
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=0B21AD8E_002D332D_002D483B_002DB7CB_002D6ACA1769DF4D_002Ff_003AProgram_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Nevermind/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Npcs/@EntryIndexedValue">True</s:Boolean>

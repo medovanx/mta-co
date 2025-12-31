@@ -943,7 +943,7 @@ namespace MTA {
 
                                                 client.Entity.ConquerPoints += Reaward;
                                                 client.Guild.CtfReward = 0;
-                                                GuildTable.SaveCTFReward(client.Guild);
+                                                GuildTable.SaveCtfReward(client.Guild);
                                                 foreach (var clients in Kernel.GamePool.Values) {
                                                     client.Send(messaje);
                                                 }

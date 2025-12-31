@@ -1280,7 +1280,7 @@ namespace MTA.Game.ConquerStructures.Society {
             if (time == 0) {
                 var timers = DateTime.Now;
                 time = GetTime((uint)timers.Year, (uint)timers.Month, (uint)timers.Day);
-                Database.GuildTable.SaveEnroles(this);
+                Database.GuildTable.SaveEnrolls(this);
             }
 
             BulletinEnroll = time;
@@ -1290,7 +1290,7 @@ namespace MTA.Game.ConquerStructures.Society {
             if (time == 0) {
                 var timers = DateTime.Now;
                 time = GetTime((uint)timers.Year, (uint)timers.Month, (uint)timers.Day);
-                Database.GuildTable.SaveEnroles(this);
+                Database.GuildTable.SaveEnrolls(this);
             }
 
             GuildEnroll = time;
@@ -1517,21 +1517,14 @@ namespace MTA.Game.ConquerStructures.Society {
 
         public void AddAlly(string name) {
             foreach (var guild in Kernel.Guilds.Values.Where(guild => guild.Name == name)) {
-                /*if (Enemy.ContainsKey(guild.ID))
-                        RemoveEnemy(guild.Name);
-                    if (!Ally.ContainsKey(guild.ID))
-                    {
-                        Database.GuildTable.AddAlly(this, guild.ID);
-                        Ally.Add(guild.ID, guild);
-                        _String stringPacket = new _String(true);
-                        stringPacket.UID = guild.ID;
-                        stringPacket.Type = _String.GuildAllies;
-                        stringPacket.Texts.Add(guild.Name + " " + guild.LeaderName + " " + guild.Level + " " + guild.MemberCount);
-                        SendGuildMessage(stringPacket);
-                    }
-                    return;*/
+                // Remove enemy relationship from initiator's side (if exists)
                 if (Enemy.ContainsKey(guild.Id)) {
                     RemoveEnemy(guild.Name);
+                }
+
+                // Remove enemy relationship from target guild's side (if they had marked us as enemy)
+                if (guild.Enemy.ContainsKey(Id)) {
+                    guild.RemoveEnemy(Name);
                 }
 
                 Ally.Add(guild.Id, guild);
@@ -1579,6 +1572,17 @@ namespace MTA.Game.ConquerStructures.Society {
                 SendGuildMessage(stringPacket);
                 SendGuildMessage(stringPacket);
                 Database.GuildTable.AddEnemy(this, guild.Id);
+
+                // Also add to target guild's enemy list for display (even though they can't remove it)
+                guild.Enemy.Add(Id, this);
+                var targetPacket = new _String(true) {
+                    UID = Id,
+                    Type = _String.GuildEnemies
+                };
+                targetPacket.Texts.Add(Name + " " + LeaderName + " " + Level + " " + MemberCount);
+                guild.SendGuildMessage(targetPacket);
+                guild.SendGuildMessage(targetPacket);
+
                 return;
             }
         }
@@ -1594,6 +1598,16 @@ namespace MTA.Game.ConquerStructures.Society {
                 SendGuildMessage(cmd);
                 Database.GuildTable.RemoveEnemy(this, guild.Id);
                 Enemy.Remove(guild.Id);
+
+                // Also remove from target guild's enemy list (for display consistency)
+                if (!guild.Enemy.Remove(Id)) return;
+                var targetCmd = new GuildCommand(true) {
+                    Type = GuildCommand.Neutral2,
+                    dwParam = Id
+                };
+                guild.SendGuildMessage(targetCmd);
+                guild.SendGuildMessage(targetCmd);
+
                 return;
             }
         }

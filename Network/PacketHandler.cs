@@ -2509,6 +2509,16 @@ namespace MTA.Network {
                                     }
                                 }
 
+                                // Check if this is an enemy removal and verify authorization
+                                var targetGuild = Kernel.Guilds.Values.FirstOrDefault(g => g.Name == name);
+                                if (targetGuild != null && client.Guild.Enemy.ContainsKey(targetGuild.Id)) {
+                                    // This is an enemy removal - check if this guild is the initiator
+                                    if (!Database.GuildTable.IsEnemyInitiator(client.Guild, targetGuild.Id)) {
+                                        client.MessageBox("You cannot remove this enemy relationship. Only the guild that initiated it can remove it.");
+                                        break;
+                                    }
+                                }
+
                                 client.Guild.RemoveEnemy(name);
                             }
 
@@ -8017,65 +8027,6 @@ namespace MTA.Network {
             }
         }
 
-        #region Guilds
-
-        /*    private static void AllyGuilds(string name, GameState client)
-        {
-            using (Dictionary<uint, MTA.Game.ConquerStructures.Society.Guild>.ValueCollection.Enumerator enumerator = Kernel.Guilds.Values.GetEnumerator())
-            {
-                Action action = null;
-                MTA.Game.ConquerStructures.Society.Guild guild;
-                while (enumerator.MoveNext())
-                {
-                    guild = enumerator.Current;
-                    if ((((guild.Name == name) && (client.Guild.Name != name)) && (guild.Leader != null)) && Kernel.TryGetPlayer(guild.Leader.Id, out var leaderClient))
-                    {
-                        leaderClient.OnMessageBoxEventParams = new object[] { guild, client.Guild };
-                        client.OnMessageBoxEventParams = new object[] { guild, client.Guild };
-                        GameState Leader = leaderClient;
-                        Leader.MessageOK = delegate
-                        {
-                            MTA.Game.ConquerStructures.Society.Guild guild1 = Leader.OnMessageBoxEventParams[0] as MTA.Game.ConquerStructures.Society.Guild;
-                            MTA.Game.ConquerStructures.Society.Guild guild2 = Leader.OnMessageBoxEventParams[1] as MTA.Game.ConquerStructures.Society.Guild;
-                            guild1.AddAlly(guild2.Name);
-                            guild2.AddAlly(guild1.Name);
-                            if (((guild1.Leader.Client != null) && guild1.Leader.Client.Socket.Connected) && ((guild2.Leader.Client != null) && guild2.Leader.Client.Socket.Connected))
-                            {
-                                guild2.Leader.Client.Send(new MTA.Network.GamePackets.Message(guild1.Leader.Name + " has accepted your alliance request.", System.Drawing.Color.Blue, 0x7dc));
-                            }
-                        };
-                        if (action == null)
-                        {
-                            action = delegate
-                            {
-                                try
-                                {
-                                    if (Kernel.TryGetPlayer(guild.Leader.Id, out var guildLeader) && guildLeader.Socket.Connected && (guildLeader.OnMessageBoxEventParams != null))
-                                    {
-                                        Game.ConquerStructures.Society.Guild guild1 = guildLeader.OnMessageBoxEventParams[1] as Game.ConquerStructures.Society.Guild;
-                                        Game.ConquerStructures.Society.Guild guild2 = guildLeader.OnMessageBoxEventParams[0] as Game.ConquerStructures.Society.Guild;
-                                        if (guild1 != null && Kernel.TryGetPlayer(guild1.Leader.Id, out var guild1LeaderClient))
-                                        {
-                                            guild1LeaderClient.Send(new MTA.Network.GamePackets.Message(guild2.Leader.Name + " has declined your alliance request.", System.Drawing.Color.Blue, 0x7dc));
-                                        }
-                                    }
-                                }
-                                catch (Exception exception)
-                                {
-                                    Program.SaveException(exception);
-                                }
-                            };
-                        }
-                        leaderClient.MessageCancel = action;
-                        leaderClient.Send(new NpcReply(6, client.Entity.Name + " , GuildLeader of " + client.Guild.Name + " wants to make with you an alliance."));
-                    }
-                }
-            }
-        }
-        */
-
-        #region Guilds
-
         static void AllyGuilds(string name, GameState client) {
             foreach (var guild in Kernel.Guilds.Values) {
                 if (guild.Name == name && client.Guild.Name != name) {
@@ -8102,7 +8053,7 @@ namespace MTA.Network {
                             if (Kernel.TryGetPlayer(Guild1.Leader.Id, out var guild1Leader) && guild1Leader.Socket.Alive) {
                                 if (Kernel.TryGetPlayer(Guild2.Leader.Id, out var guild2Leader) && guild2Leader.Socket.Alive) {
                                     guild2Leader.Send(new Message(
-                                        Guild1.Leader.Name + " has accepted your ally request.", Color.Blue,
+                                        $"{Guild1.Leader.Name} has accepted your ally request.", Color.Blue,
                                         Message.TopLeft));
                                 }
                             }
@@ -8117,7 +8068,7 @@ namespace MTA.Network {
 
                                     if (Guild2 != null && Kernel.TryGetPlayer(Guild2.Leader.Id, out var guild2LeaderClient)) {
                                         guild2LeaderClient.Send(new Message(
-                                            Guild1.Leader.Name + " has declined your ally request.",
+                                            $"{Guild1.Leader.Name} has declined your ally request.",
                                             Color.Blue, Message.TopLeft));
                                     }
                                 }
@@ -8126,17 +8077,16 @@ namespace MTA.Network {
                                 Program.SaveException(e);
                             }
                         };
-                        guildLeaderClient.Send(new NpcReply(NpcReply.MessageBox,
-                            client.Entity.Name + " , GuildLeader of " + client.Guild.Name +
-                            " wants to make with you an alliance."));
+                        guildLeaderClient.Send(new NpcReply(
+                            NpcReply.MessageBox,
+                            $"{client.Entity.Name}, the Guild Leader of {client.Guild.Name}, wants to form an alliance with your guild."
+                        ));
                     }
                 }
             }
         }
 
-        #endregion
 
-        #endregion
 
         private static void Teleport(GameState client, VIPTeleportLocations Location) {
             switch (Location) {
