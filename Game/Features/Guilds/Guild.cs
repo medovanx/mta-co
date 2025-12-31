@@ -103,9 +103,7 @@ public class Guild : Writer {
 
     private int _arsenalBp;
     private string _leaderName;
-    public uint ApScore;
     public bool ArsenalBpChanged = true;
-    public uint BiScore;
 
     public string? Bulletin;
     public uint BulletinEnroll;
@@ -125,8 +123,6 @@ public class Guild : Writer {
     public uint CtfFlagScore;
     public uint CtfPoints;
     public uint CtfReward = 0;
-    public uint DcScore;
-    public uint DpScore;
 
     public uint EWarScore;
 
@@ -137,7 +133,6 @@ public class Guild : Writer {
     public Member? Leader;
     public uint LiliesDonation = 0;
     public uint Loses;
-    public uint MaScore;
 
     public SafeDictionary<uint, Member> Members;
     public ulong MoneyDonation = 0;
@@ -145,11 +140,8 @@ public class Guild : Writer {
     public string Name;
     public uint OrchidDonation = 0;
     public uint PaScore;
-    public uint PhScore;
-    public uint PiScore;
     public uint PkpDonation = 0;
     public uint PpScore;
-    public uint PtScore;
     public Member[] RankArsenalDonations = [];
     public Member[] RankCpDonations = [];
     public Member[] RankGuideDonations = [];
@@ -162,7 +154,6 @@ public class Guild : Writer {
     public Member[] RankSilversDonations = [];
     public Member[] RankTotalDonations = [];
     public Member[] RankTulipsDonations = [];
-    public uint RaScore;
     public uint RoseDonation = 0;
     public uint SWarScore;
     public uint TulipDonation = 0;

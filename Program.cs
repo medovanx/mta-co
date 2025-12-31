@@ -255,14 +255,8 @@ internal abstract class Program {
                 StorageManager.Load();
                 _ = new Map(2073, DMaps.MapPaths[1015]);
                 _ = new Map(2075, DMaps.MapPaths[2075]);
-                PoleIslanD.PoleIslanDIni(); // PoleIslanD
-                Console.WriteLine("PoleIslanD initializated.");
                 _ = new Map(3990, DMaps.MapPaths[3990]);
-                PoleRakion.PoleRakionIni(); // PoleRakion
-                Console.WriteLine("PoleRakion initializated.");
                 _ = new Map(3995, DMaps.MapPaths[3995]);
-                PoleMagice.PoleMagiceIni(); // PoleRakion
-                Console.WriteLine("PoleMagice initializated.");
                 Kernel.QuizShow = new QuizShow();
                 Refinery.Load();
                 Values = [];
