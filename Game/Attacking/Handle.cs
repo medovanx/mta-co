@@ -532,7 +532,7 @@ namespace MTA.Game.Attacking {
 
                         if (attacked.Hitpoints <= damage) {
                             attacked.Owner.SendScreen(attack);
-                            attacked.Die(attacker.UID);
+                            attacked.Die(attacker);
                         }
                         else {
                             attacked.Hitpoints -= damage;
@@ -547,7 +547,7 @@ namespace MTA.Game.Attacking {
                         suse.Effect1 = attack.Effect1;
 
                         if (attacked.Hitpoints <= damage) {
-                            attacked.Die(attacker.UID);
+                            attacked.Die(attacker);
                         }
                         else {
                             attacked.Hitpoints -= damage;

@@ -48,7 +48,7 @@ namespace MTA.Game.Events.GuildWar.Items {
             // Kill the player who used the bomb
             client.Entity.Update(_String.Effect, "firemagic", true);
             client.Entity.Update(_String.Effect, "bombarrow7", true);
-            client.Entity.Die(0);
+            client.Entity.Die(null);
             client.Inventory.Remove(item, Enums.ItemUse.RemoveFromStack);
         }
 

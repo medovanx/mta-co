@@ -651,7 +651,7 @@ namespace MTA.Client.Commands {
         }
 
         private static bool HandleDieCommand(GameState client) {
-            client.Entity.Die(0);
+            client.Entity.Die(null);
             return true;
         }
 

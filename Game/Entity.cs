@@ -3155,143 +3155,12 @@ namespace MTA.Game {
             return v;
         }
 
-        public void Die(UInt32 killer) //replace this one too for die delay
-        {
-            if (EntityFlag == EntityFlag.Player) {
-                Owner.XPCount = 0;
-                if (Owner.Booth != null) {
-                    Owner.Booth.Remove();
-                    Owner.Booth = null;
-                }
-            }
-
-            Killed = true;
-            Hitpoints = 0;
-            DeathStamp = Time32.Now;
-            ToxicFogLeft = 0;
-            if (Companion) {
-                AddFlag(Network.GamePackets.Update.Flags.Ghost | Network.GamePackets.Update.Flags.Dead |
-                        Network.GamePackets.Update.Flags.FadeAway);
-                Attack attack = new Attack(true) {
-                    Attacked = UID,
-                    AttackType = Network.GamePackets.Attack.Kill,
-                    X = X,
-                    Y = Y
-                };
-                MonsterInfo.SendScreen(attack);
-                if (Owner.Entity.MyClones.Remove(UID)) {
-                    return;
-                }
-
-                Owner.Pet.RemovePet(pettype);
-            }
-
-            if (EntityFlag == EntityFlag.Player) {
-                Owner.Pet.ClearAll();
-                if (MyClones.Count > 0) {
-                    foreach (var item in MyClones.Values) {
-                        Data data = new Data(true) {
-                            UID = item.UID,
-                            ID = Data.RemoveEntity
-                        };
-                        item.MonsterInfo.SendScreen(data);
-                    }
-
-                    MyClones.Clear();
-                }
-            }
-
-            if (EntityFlag == EntityFlag.Player) {
-                if (GameConstants.PKFreeMaps.Contains(MapID))
-                    goto Over;
-
-                //DropRandomStuff(Killer);
-
-                Over:
-                AddFlag(Network.GamePackets.Update.Flags.Dead);
-                RemoveFlag(Network.GamePackets.Update.Flags.Fly);
-                RemoveFlag(Network.GamePackets.Update.Flags.Ride);
-                RemoveFlag(Network.GamePackets.Update.Flags.Cyclone);
-                RemoveFlag(Network.GamePackets.Update.Flags.Superman);
-                RemoveFlag(Network.GamePackets.Update.Flags.FatalStrike);
-                RemoveFlag(Network.GamePackets.Update.Flags.FlashingName);
-                RemoveFlag(Network.GamePackets.Update.Flags.ShurikenVortex);
-                RemoveFlag2(Network.GamePackets.Update.Flags2.Oblivion);
-                RemoveFlag2(Network.GamePackets.Update.Flags2.AzureShield);
-                RemoveFlag2(Network.GamePackets.Update.Flags2.CarryingFlag);
-                RemoveFlag(Network.GamePackets.Update.Flags.CastPray);
-                RemoveFlag(Network.GamePackets.Update.Flags.Praying);
-                RemoveFlag3(Network.GamePackets.Update.Flags3.SuperCyclone);
-                RemoveFlag3(Network.GamePackets.Update.Flags3.DragonCyclone);
-                RemoveFlag3(Network.GamePackets.Update.Flags3.DragonFlow);
-                RemoveFlag3(Network.GamePackets.Update.Flags3.DragonSwing);
-                RemoveFlag2(Network.GamePackets.Update.Flags2.ChainBoltActive);
-                RemoveFlag(Network.GamePackets.Update.Flags.Stigma);
-                RemoveFlag(Network.GamePackets.Update.Flags.MagicShield);
-                RemoveFlag2(Network.GamePackets.Update.Flags2.EffectBall);
-                RemoveFlag2(Network.GamePackets.Update.Flags2.CannonBarrage);
-                RemoveFlag2(Network.GamePackets.Update.Flags2.BlackbeardsRage);
-                RemoveFlag(Network.GamePackets.Update.Flags.StarOfAccuracy);
-                RemoveFlag3(Network.GamePackets.Update.Flags3.MagicDefender);
-                RemoveFlag3(Network.GamePackets.Update.Flags3.KineticSpark);
-                RemoveFlag3(Network.GamePackets.Update.Flags3.BladeFlurry);
-                RemoveFlag2(Network.GamePackets.Update.Flags2.Fatigue);
-                RemoveFlag3(Network.GamePackets.Update.Flags3.lianhuaran01);
-                RemoveFlag3(Network.GamePackets.Update.Flags3.lianhuaran02);
-                RemoveFlag3(Network.GamePackets.Update.Flags3.lianhuaran03);
-                RemoveFlag3(Network.GamePackets.Update.Flags3.lianhuaran04);
-                if (ContainsFlag3(Network.GamePackets.Update.Flags3.AuroraLotus)) {
-                    AuroraLotusEnergy = 0;
-                    Lotus(AuroraLotusEnergy);
-                }
-
-                if (ContainsFlag3(Network.GamePackets.Update.Flags3.FlameLotus)) {
-                    FlameLotusEnergy = 0;
-                    Lotus(FlameLotusEnergy, Network.GamePackets.Update.FlameLotus);
-                }
-
-                Attack attack = new Attack(true) {
-                    AttackType = Network.GamePackets.Attack.Kill,
-                    X = X,
-                    Y = Y,
-                    Attacked = UID,
-                    Attacker = killer,
-                    Damage = 0
-                };
-                Owner.SendScreen(attack);
-
-                //  if (Body % 10 < 3)
-                //     TransformationID = 99;
-                // else
-                //    TransformationID = 98;
-
-                Owner.Send(new MapStatus() {
-                    BaseID = Owner.Map.BaseID,
-                    ID = Owner.Map.ID,
-                    Status = MapsTable.MapInformations[Owner.Map.ID].Status,
-                    Weather = MapsTable.MapInformations[Owner.Map.ID].Weather
-                });
-                if (CLanArenaBattleFight != null)
-                    CLanArenaBattleFight.CheakToEnd(Owner);
-                if (GuildArenaBattleFight != null)
-                    GuildArenaBattleFight.CheakToEnd(Owner);
-                Owner.EndQualifier();
-            }
-            else {
-                Kernel.Maps[MapID].Floor[X, Y, MapObjType, this] = true;
-            }
-
-            if (EntityFlag == EntityFlag.Player)
-                if (OnDeath != null)
-                    OnDeath(this);
-        }
-
         public Entity Killer;
 
 
-        public void Die(Entity killer) //just replace this whole void for die delay
+        public void Die(Entity killer)
         {
-            if (killer.EntityFlag == EntityFlag.Player) {
+            if (killer != null && killer.EntityFlag == EntityFlag.Player) {
                 if (ContainsFlag3(1UL << 53))
                     RemoveFlag3(1UL << 53);
                 if (killer.MapID == 1234) {
@@ -3484,7 +3353,7 @@ namespace MTA.Game {
 
                 #region CaptureTheFlag
 
-                if (killer.GuildID != 0 && killer.MapID == CaptureTheFlag.MapID && CaptureTheFlag.IsWar) {
+                if (killer != null && killer.GuildID != 0 && killer.MapID == CaptureTheFlag.MapID && CaptureTheFlag.IsWar) {
                     if (GuildID != 0) {
                         if (killer.Owner.Guild.Enemy.ContainsKey(GuildID))
                             killer.Owner.Guild.CTFPoints += 1;
@@ -3519,10 +3388,12 @@ namespace MTA.Game {
 
             if (EntityFlag == EntityFlag.Player && Owner is { Fake: true, Booth: not null })
                 return;
-            if (killer.MapID == 7777)
-                killer.Owner.elitepoints += 1;
-            if (killer.MapID == 3072)
-                killer.Owner.KillerPoints += 1;
+            if (killer != null) {
+                if (killer.MapID == 7777)
+                    killer.Owner.elitepoints += 1;
+                if (killer.MapID == 3072)
+                    killer.Owner.KillerPoints += 1;
+            }
 
             if (EntityFlag == EntityFlag.Player) {
                 Owner.XPCount = 0;
@@ -3532,11 +3403,19 @@ namespace MTA.Game {
                 }
             }
 
-            killer.KillCount++;
-            killer.KillCount2++;
+            if (killer != null) {
+                killer.KillCount++;
+                killer.KillCount2++;
+            }
             Killer = killer;
             Hitpoints = 0;
             DeathStamp = Time32.Now;
+            
+            // Set death state immediately to synchronize Dead property and Dead flag
+            if (EntityFlag == EntityFlag.Player) {
+                AddFlag(Network.GamePackets.Update.Flags.Dead);
+                AddFlag(Network.GamePackets.Update.Flags.Ghost);
+            }
 
             //DieString();
             ToxicFogLeft = 0;
@@ -3574,7 +3453,7 @@ namespace MTA.Game {
             }
 
             if (EntityFlag == EntityFlag.Player) {
-                if (killer.EntityFlag == EntityFlag.Player) {
+                if (killer != null && killer.EntityFlag == EntityFlag.Player) {
                     int[] dropAllowedMaps = [Maps.ProudSea];
                     bool allowDrops = dropAllowedMaps.Contains(killer.MapID);
 
@@ -3674,7 +3553,7 @@ namespace MTA.Game {
             Over:
 
             Attack attack = new Attack(true) {
-                Attacker = killer.UID,
+                Attacker = killer?.UID ?? 0,
                 Attacked = UID,
                 AttackType = Network.GamePackets.Attack.Kill,
                 X = X,
@@ -3682,8 +3561,7 @@ namespace MTA.Game {
             };
 
             if (EntityFlag == EntityFlag.Player) {
-                AddFlag(Network.GamePackets.Update.Flags.Ghost);
-                AddFlag(Network.GamePackets.Update.Flags.Dead);
+                // Dead and Ghost flags already set earlier after Hitpoints = 0
                 RemoveFlag(Network.GamePackets.Update.Flags.Fly);
                 RemoveFlag(Network.GamePackets.Update.Flags.Ride);
                 RemoveFlag(Network.GamePackets.Update.Flags.Cyclone);
@@ -3746,7 +3624,7 @@ namespace MTA.Game {
                 if (!Companion && !IsDropped && MonsterInfo != null)
                     MonsterInfo.Drop(killer);
                 Kernel.Maps[MapID].Floor[X, Y, MapObjType, this] = true;
-                if (killer.EntityFlag == EntityFlag.Player) {
+                if (killer != null && killer.EntityFlag == EntityFlag.Player) {
                     if (Name != "SwordMaster" && Name != "ThrillingSpook" && Name != "LavaBeast" &&
                         Name != "SnowBanshee" && Name != "SnowBansheeSoul" && Name != "TeratoDragon") {
                         killer.Owner.IncreaseExperience(MaxHitpoints, true);
