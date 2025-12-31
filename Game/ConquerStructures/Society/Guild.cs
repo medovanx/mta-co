@@ -8,6 +8,7 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using MTA.Client;
+using MTA.Database;
 using static MTA.Game.Constants.EntityClass;
 
 namespace MTA.Game.ConquerStructures.Society {
@@ -82,7 +83,7 @@ namespace MTA.Game.ConquerStructures.Society {
         public abstract class Advertise {
             private static readonly System.Collections.Concurrent.ConcurrentDictionary<uint, Guild> AGuilds = new();
 
-            public static Guild[] AdvertiseRanks = [];
+            private static Guild[] _advertiseRanks = [];
 
             public static void Add(Guild obj) {
                 if (!AGuilds.ContainsKey(obj.Id))
@@ -91,7 +92,7 @@ namespace MTA.Game.ConquerStructures.Society {
             }
 
             private static void CalculateRanks() {
-                lock (AdvertiseRanks) {
+                lock (_advertiseRanks) {
                     var array = AGuilds.Values.ToArray();
                     array =
                         (from guild in array orderby guild.AdvertiseRecruit.Donations descending select guild)
@@ -102,13 +103,13 @@ namespace MTA.Game.ConquerStructures.Society {
                         if (x == 40) break;
                     }
 
-                    AdvertiseRanks = guilds.ToArray();
+                    _advertiseRanks = guilds.ToArray();
                 }
             }
 
             public static void FixedRank() {
                 AGuilds.Clear();
-                foreach (var guild in AdvertiseRanks) {
+                foreach (var guild in _advertiseRanks) {
                     AGuilds.TryAdd(guild.Id, guild);
                 }
             }
@@ -382,7 +383,7 @@ namespace MTA.Game.ConquerStructures.Society {
         }
 
         public void SaveArsenal() {
-            Database.GuildArsenalTable.Save(this);
+            GuildArsenalTable.Save(this);
         }
 
         public static Counter GuildCounter = new Counter(0);
@@ -464,7 +465,7 @@ namespace MTA.Game.ConquerStructures.Society {
         public bool PoleKeeper {
             get {
                 // Check database history first (works even after server restart)
-                var latest = Database.GuildWarHistoryTable.GetLatest();
+                var latest = GuildWarHistoryTable.GetLatest();
                 if (latest != null && latest.GuildId == Id) {
                     return true;
                 }
@@ -1122,6 +1123,7 @@ namespace MTA.Game.ConquerStructures.Society {
         public string? Bulletin;
 
         public Member? Leader;
+        public ulong LeaderId { get; set; }
         private string _leaderName;
         public uint PtScore;
         public uint PhScore;
@@ -1141,7 +1143,35 @@ namespace MTA.Game.ConquerStructures.Society {
         public uint CtfFlagScore;
 
         public string LeaderName {
-            get => _leaderName;
+            get {
+                // First try to get name from Leader object if available
+                if (Leader != null) {
+                    return Leader.Name;
+                }
+
+                // If Leader is null, but we have a cached name, return it
+                if (!string.IsNullOrEmpty(_leaderName)) {
+                    return _leaderName;
+                }
+
+                // If we have LeaderID, query the database for the name
+                if (LeaderId <= 0) return string.Empty;
+                try {
+                    using var cmd = new MySqlCommand(MySqlCommandType.SELECT)
+                        .Select("entities")
+                        .Where("UID", LeaderId);
+                    using var reader = new MySqlReader(cmd);
+                    if (reader.Read()) {
+                        _leaderName = reader.ReadString("Name");
+                        return _leaderName;
+                    }
+                }
+                catch {
+                    // If query fails, return empty string
+                }
+
+                return string.Empty;
+            }
             set {
                 _leaderName = value;
                 WriteString(value, 32, _buffer);
@@ -1157,9 +1187,10 @@ namespace MTA.Game.ConquerStructures.Society {
             if (Leader == null) return false;
             Name = name;
             SilverFund = 500000;
+            LeaderId = Leader.Id;
             Members.Add(Leader.Id, Leader);
             try {
-                Database.GuildTable.Create(this);
+                GuildTable.Create(this);
             }
             catch {
                 return false;
@@ -1191,7 +1222,8 @@ namespace MTA.Game.ConquerStructures.Society {
             // Create guild
             var guild = new Guild(client.Entity.Name) {
                 Id = GuildCounter.Next,
-                SilverFund = initialFund
+                SilverFund = initialFund,
+                LeaderId = client.Entity.UID
             };
 
             // Create leader member
@@ -1225,13 +1257,13 @@ namespace MTA.Game.ConquerStructures.Society {
             }
 
             // Update entity in database
-            Database.EntityTable.UpdateGuildID(client);
-            Database.EntityTable.UpdateGuildRank(client);
+            EntityTable.UpdateGuildID(client);
+            EntityTable.UpdateGuildRank(client);
             guild.Name = guildName;
             guild.MemberCount++;
             guild.SendGuild(client);
             guild.SendName(client);
-            Database.GuildArsenalTable.Insert(guild.Id);
+            GuildArsenalTable.Insert(guild.Id);
             client.Screen.FullWipe();
             client.Screen.Reload();
 
@@ -1256,7 +1288,7 @@ namespace MTA.Game.ConquerStructures.Society {
             if (CheckNameExist(newName)) return false;
 
             var oldName = Name;
-            Database.GuildTable.ChangeName(client, newName);
+            GuildTable.ChangeName(client, newName);
             Name = newName;
             SendGuild(client);
             SendName(client);
@@ -1280,7 +1312,7 @@ namespace MTA.Game.ConquerStructures.Society {
             if (time == 0) {
                 var timers = DateTime.Now;
                 time = GetTime((uint)timers.Year, (uint)timers.Month, (uint)timers.Day);
-                Database.GuildTable.SaveEnrolls(this);
+                GuildTable.SaveEnrolls(this);
             }
 
             BulletinEnroll = time;
@@ -1290,7 +1322,7 @@ namespace MTA.Game.ConquerStructures.Society {
             if (time == 0) {
                 var timers = DateTime.Now;
                 time = GetTime((uint)timers.Year, (uint)timers.Month, (uint)timers.Day);
-                Database.GuildTable.SaveEnrolls(this);
+                GuildTable.SaveEnrolls(this);
             }
 
             GuildEnroll = time;
@@ -1323,8 +1355,8 @@ namespace MTA.Game.ConquerStructures.Society {
                 client.Entity.GuildBattlePower = GetSharedBattlePower(client.AsMember.Rank);
             for (var i = 0; i < client.ArsenalDonations.Length; i++)
                 client.ArsenalDonations[i] = 0;
-            Database.EntityTable.UpdateGuildID(client);
-            Database.EntityTable.UpdateGuildRank(client);
+            EntityTable.UpdateGuildID(client);
+            EntityTable.UpdateGuildRank(client);
             Members.Add(client.Entity.UID, client.AsMember);
             SendGuild(client);
             client.Screen.FullWipe();
@@ -1454,7 +1486,7 @@ namespace MTA.Game.ConquerStructures.Society {
             }
             else {
                 member.GuildId = 0;
-                Database.EntityTable.UpdateData(member.Id, "GuildID", 0);
+                EntityTable.UpdateData(member.Id, "GuildID", 0);
             }
 
             MemberCount--;
@@ -1489,7 +1521,7 @@ namespace MTA.Game.ConquerStructures.Society {
                     foreach (var arsenal in Arsenals)
                         arsenal.RemoveInscribedItemsBy(member.Id);
                     member.GuildId = 0;
-                    Database.EntityTable.UpdateData(member.Id, "GuildID", 0);
+                    EntityTable.UpdateData(member.Id, "GuildID", 0);
                 }
 
                 MemberCount--;
@@ -1502,7 +1534,7 @@ namespace MTA.Game.ConquerStructures.Society {
                 ally.RemoveAlly(Name);
             }
 
-            Database.GuildTable.Disband(this);
+            GuildTable.Disband(this);
             Kernel.Guilds.Remove(Id);
 
             // Send world message if disbanded by a player
@@ -1536,7 +1568,7 @@ namespace MTA.Game.ConquerStructures.Society {
                     { guild.Name, " ", guild.LeaderName, " 0 ", guild.MemberCount }));
                 SendGuildMessage(message);
                 SendGuildMessage(message);
-                Database.GuildTable.AddAlly(this, guild.Id);
+                GuildTable.AddAlly(this, guild.Id);
                 return;
             }
         }
@@ -1549,7 +1581,7 @@ namespace MTA.Game.ConquerStructures.Society {
                     dwParam = guild.Id
                 };
                 SendGuildMessage(cmd);
-                Database.GuildTable.RemoveAlly(this, guild.Id);
+                GuildTable.RemoveAlly(this, guild.Id);
                 Ally.Remove(guild.Id);
                 return;
             }
@@ -1571,7 +1603,7 @@ namespace MTA.Game.ConquerStructures.Society {
                                        guild.MemberCount);
                 SendGuildMessage(stringPacket);
                 SendGuildMessage(stringPacket);
-                Database.GuildTable.AddEnemy(this, guild.Id);
+                GuildTable.AddEnemy(this, guild.Id);
 
                 // Also add to target guild's enemy list for display (even though they can't remove it)
                 guild.Enemy.Add(Id, this);
@@ -1596,7 +1628,7 @@ namespace MTA.Game.ConquerStructures.Society {
                 };
                 SendGuildMessage(cmd);
                 SendGuildMessage(cmd);
-                Database.GuildTable.RemoveEnemy(this, guild.Id);
+                GuildTable.RemoveEnemy(this, guild.Id);
                 Enemy.Remove(guild.Id);
 
                 // Also remove from target guild's enemy list (for display consistency)

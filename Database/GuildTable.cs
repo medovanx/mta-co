@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace MTA.Database {
     using Member = Game.ConquerStructures.Society.Guild.Member;
@@ -50,7 +51,25 @@ namespace MTA.Database {
             using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("guilds"))
             using (var reader = new MySqlReader(cmd)) {
                 while (reader.Read()) {
-                    var guild = new Guild(reader.ReadString("LeaderName")) {
+                    var leaderId = reader.ReadUInt64("LeaderID");
+                    // Get leader name from entities table using LeaderID (LeaderName column is deprecated)
+                    var leaderName = string.Empty;
+                    if (leaderId > 0) {
+                        try {
+                            using var nameCmd = new MySqlCommand(MySqlCommandType.SELECT)
+                                .Select("entities")
+                                .Where("UID", leaderId);
+                            using var nameReader = new MySqlReader(nameCmd);
+                            if (nameReader.Read()) {
+                                leaderName = nameReader.ReadString("Name");
+                            }
+                        }
+                        catch {
+                            // If query fails, use empty string (computed property will handle it)
+                        }
+                    }
+
+                    var guild = new Guild(leaderName) {
                         Id = reader.ReadUInt32("Id"),
                         Name = reader.ReadString("Name"),
                         Wins = reader.ReadUInt32("Wins"),
@@ -62,7 +81,8 @@ namespace MTA.Database {
                         ConquerPointFund = reader.ReadUInt32("ConquerPointFund"),
                         LevelRequirement = reader.ReadUInt32("LevelRequirement"),
                         RebornRequirement = reader.ReadUInt32("RebornRequirement"),
-                        ClassRequirement = reader.ReadUInt32("ClassRequirement")
+                        ClassRequirement = reader.ReadUInt32("ClassRequirement"),
+                        LeaderId = leaderId
                     };
                     guild.AdvertiseRecruit.Load(reader.ReadString("Advertise"));
                     guild.GuildEnroll = reader.ReadUInt32("GuildEnroll");
@@ -83,8 +103,13 @@ namespace MTA.Database {
 
                     Kernel.Guilds.Add(guild.Id, guild);
                     foreach (var member in guild.Members.Values) {
-                        if (member.Rank == Game.Enums.GuildMemberRank.GuildLeader)
+                        if (member.Rank == Game.Enums.GuildMemberRank.GuildLeader) {
                             guild.Leader = member;
+                            // Ensure LeaderID matches the leader's ID
+                            if (guild.LeaderId == 0 || guild.LeaderId != member.Id) {
+                                guild.LeaderId = member.Id;
+                            }
+                        }
 
                         guild.RanksCounts[(ushort)member.Rank]++;
                     }
@@ -119,27 +144,23 @@ namespace MTA.Database {
             Guild.Advertise.FixedRank();
             //create leader spouse
             foreach (var guild in Kernel.Guilds.Values) {
-                foreach (var member in guild.Members.Values) {
-                    if (member.Spouse == "None" || member.Spouse == "No")
-                        continue;
-                    if (member.Rank == Game.Enums.GuildMemberRank.GuildLeader)
-                        continue;
-                    foreach (var findSpouse in guild.Members.Values) {
-                        if (member.Spouse == findSpouse.Name) {
-                            if (findSpouse.Rank == Game.Enums.GuildMemberRank.GuildLeader) {
-                                member.Rank = Game.Enums.GuildMemberRank.LeaderSpouse;
-                                break;
-                            }
-
-                            if (findSpouse.Rank == Game.Enums.GuildMemberRank.DeputyLeader) {
-                                if (member.Rank == Game.Enums.GuildMemberRank.DeputyLeader)
-                                    break;
-                                if (member.Rank > Game.Enums.GuildMemberRank.DLeaderSpouse)
-                                    break;
-                                member.Rank = Game.Enums.GuildMemberRank.DLeaderSpouse;
-                                break;
-                            }
+                foreach (var member in guild.Members.Values
+                             .Where(member => member.Spouse != "None").Where(member =>
+                                 member.Rank != Game.Enums.GuildMemberRank.GuildLeader)) {
+                    foreach (var findSpouse in
+                             guild.Members.Values.Where(findSpouse => member.Spouse == findSpouse.Name)) {
+                        if (findSpouse.Rank == Game.Enums.GuildMemberRank.GuildLeader) {
+                            member.Rank = Game.Enums.GuildMemberRank.LeaderSpouse;
+                            break;
                         }
+
+                        if (findSpouse.Rank != Game.Enums.GuildMemberRank.DeputyLeader) continue;
+                        if (member.Rank == Game.Enums.GuildMemberRank.DeputyLeader)
+                            break;
+                        if (member.Rank > Game.Enums.GuildMemberRank.DLeaderSpouse)
+                            break;
+                        member.Rank = Game.Enums.GuildMemberRank.DLeaderSpouse;
+                        break;
                     }
                 }
             }
@@ -251,7 +272,7 @@ namespace MTA.Database {
 
             using (var cmd = new MySqlCommand(MySqlCommandType.INSERT).Insert("guilds")
                        .Insert("ID", guild.Id).Insert("name", guild.Name).Insert("Bulletin", "")
-                       .Insert("SilverFund", 500000).Insert("LeaderName", guild.LeaderName))
+                       .Insert("SilverFund", 500000).Insert("LeaderID", guild.LeaderId))
                 cmd.Execute();
         }
 
@@ -350,7 +371,7 @@ namespace MTA.Database {
 
         public static void SaveLeader(Guild guild) {
             using var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds")
-                .Set("LeaderName", guild.LeaderName)
+                .Set("LeaderID", guild.LeaderId)
                 .Where("id", guild.Id);
             cmd.Execute();
         }

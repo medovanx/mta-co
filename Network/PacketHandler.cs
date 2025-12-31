@@ -2746,6 +2746,8 @@ namespace MTA.Network {
                                                     return;
                                                 MemberPromote.Rank = Enums.GuildMemberRank.GuildLeader;
 
+                                                client.Guild.LeaderId = MemberPromote.Id;
+                                                client.Guild.Leader = MemberPromote;
                                                 client.Guild.LeaderName = MemberPromote.Name;
                                                 if (Kernel.TryGetPlayer(MemberPromote.Id, out var promoteClient)) {
                                                     client.Guild.SendGuild(promoteClient);
