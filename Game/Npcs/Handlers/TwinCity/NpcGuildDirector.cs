@@ -1,5 +1,4 @@
 using MTA.Client;
-using MTA.Database;
 using MTA.Game.ConquerStructures.Society;
 using MTA.Network.GamePackets;
 using static MTA.Game.Enums;
@@ -37,62 +36,40 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     break;
                 }
                 case 2: {
-                    if (client.Guild == null && client.Entity is { Level: >= 90, Money: >= guildCost }) {
-                        if (npcRequest.Input != "" && npcRequest.Input.Length is >= 1 and <= 16) {
-                            if (!Guild.CheckNameExist(npcRequest.Input)) {
-                                client.Entity.Money -= guildCost;
-                                var guild = new Guild(client.Entity.Name) {
-                                    ID = Guild.GuildCounter.Next,
-                                    SilverFund = guildCost
-                                };
-                                client.AsMember = new Guild.Member(guild.ID) {
-                                    SilverDonation = 500000,
-                                    ID = client.Entity.UID,
-                                    Level = client.Entity.Level,
-                                    Name = client.Entity.Name,
-                                    Rank = GuildMemberRank.GuildLeader,
-                                };
-                                if (client.NobilityInformation != null) {
-                                    client.AsMember.Gender = client.NobilityInformation.Gender;
-                                    client.AsMember.NobilityRank = client.NobilityInformation.Rank;
-                                }
-
-                                client.Entity.GuildID = (ushort)guild.ID;
-                                client.Entity.GuildRank = (ushort)GuildMemberRank.GuildLeader;
-                                guild.Leader = client.AsMember;
-                                client.Guild = guild;
-                                guild.Create(npcRequest.Input);
-                                EntityTable.UpdateGuildID(client);
-                                EntityTable.UpdateGuildRank(client);
-                                guild.Name = npcRequest.Input;
-                                guild.MemberCount++;
-                                guild.SendGuild(client);
-                                guild.SendName(client);
-                                GuildArsenalTable.Insert(guild.ID);
-                                client.Screen.FullWipe();
-                                client.Screen.Reload();
-                                Kernel.SendWorldMessage(
-                                    new Message(
-                                        $"A new guild [{npcRequest.Input}] has been created by {client.Entity.Name}!",
-                                        System.Drawing.Color.Red, Message.Center),
-                                    Program.Values);
-                            }
-                            else {
-                                dialog.Text(
-                                    "Sorry, there is already a guild with this name. Please choose a different name.");
-                                dialog.Option("Choose another name", 1);
-                                dialog.Option("Cancel", 255);
-                                dialog.Send();
-                            }
-                        }
-                    }
-                    else {
-                        dialog.Text(
-                            $"You don't meet the requirements. You need to be level 90, have {guildCost:N0} silver, and not be in any guild.");
+                    // Validate requirements
+                    if (client.Entity.Level < 90) {
+                        dialog.Text("You need to be level 90 to create a guild.");
                         dialog.Option("I understand", 255);
                         dialog.Send();
+                        break;
                     }
 
+                    if (client.Entity.Money < guildCost) {
+                        dialog.Text($"You don't have enough silver. You need {guildCost:N0} silver.");
+                        dialog.Option("I understand", 255);
+                        dialog.Send();
+                        break;
+                    }
+
+                    if (string.IsNullOrEmpty(npcRequest.Input) || npcRequest.Input.Length is < 1 or > 16) {
+                        dialog.Text("Invalid guild name. The name must be 16 characters at maximum.");
+                        dialog.Option("I understand", 255);
+                        dialog.Send();
+                        break;
+                    }
+
+                    if (Guild.CheckNameExist(npcRequest.Input)) {
+                        dialog.Text(
+                            "Sorry, there is already a guild with this name. Please choose a different name.");
+                        dialog.Option("Choose another name", 1);
+                        dialog.Option("Cancel", 255);
+                        dialog.Send();
+                        break;
+                    }
+
+                    // All validations passed, deduct cost and create the guild
+                    client.Entity.Money -= guildCost;
+                    Guild.CreateGuild(client, npcRequest.Input, guildCost);
                     break;
                 }
                 case 3: {
@@ -104,66 +81,54 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                 }
                 case 4: {
                     if (client is { Guild: not null, AsMember.Rank: GuildMemberRank.GuildLeader }) {
-                        var guildName = client.Guild.Name;
-                        client.Guild.Disband();
-                        Kernel.SendWorldMessage(
-                            new Message(
-                                $"The guild [{guildName}] has been disbanded by {client.Entity.Name}.",
-                                System.Drawing.Color.Red, Message.Center),
-                            Program.Values);
+                        client.Guild.Disband(client.Entity.Name);
                     }
 
                     break;
                 }
                 case 5: {
-                    dialog.Text($"Name your guild. The name must be less than 16 characters.\nThis will cost 215 CPs.");
+                    dialog.Text(
+                        $"Name your guild. The name must be a maximum of 16 characters.\nThis will cost 215 CPs.");
                     dialog.Input("Enter new guild name:", 6, 16);
                     dialog.Option("Cancel", 255);
                     dialog.Send();
                     break;
                 }
                 case 6: {
-                    if (client is {
-                            Guild: not null, AsMember.Rank: GuildMemberRank.GuildLeader, Entity.ConquerPoints: >= 215
-                        }) {
-                        if (npcRequest.Input != "" && npcRequest.Input.Length is >= 1 and <= 16) {
-                            if (!Guild.CheckNameExist(npcRequest.Input)) {
-                                var oldGuildName = client.Guild.Name;
-                                client.Entity.ConquerPoints -= 215;
-                                GuildTable.ChangeName(client, npcRequest.Input);
-                                client.Guild.Name = npcRequest.Input;
-                                client.Guild.SendGuild(client);
-                                client.Guild.SendName(client);
-                                client.Screen.FullWipe();
-                                client.Screen.Reload();
-                                Kernel.SendWorldMessage(
-                                    new Message(
-                                        $"The guild [{oldGuildName}] has been renamed to [{npcRequest.Input}] by {client.Entity.Name}.",
-                                        System.Drawing.Color.Red, Message.Center),
-                                    Program.Values);
-                            }
-                            else {
-                                dialog.Text("Sorry, there is already a guild with this name.");
-                                dialog.Option("Choose Another Name", 5);
-                                dialog.Option("Cancel", 255);
-                                dialog.Send();
-                            }
-                        }
-                        else {
-                            dialog.Text("Invalid guild name. The name must be between 1 and 15 characters.");
-                            dialog.Option("Try Again", 5);
-                            dialog.Option("Cancel", 255);
-                            dialog.Send();
-                        }
+                    const uint nameChangeCost = 215;
+                    if (client.AsMember?.Rank != GuildMemberRank.GuildLeader) {
+                        dialog.Text("You must be the Guild Leader to change the guild name.");
+                        dialog.Option("I understand", 255);
+                        dialog.Send();
+                        break;
                     }
-                    else {
-                        dialog.Text(
-                            "You must be in a guild, be the Guild Leader, and have at least 215 Conquer Points.");
+
+                    if (client.Entity.ConquerPoints < nameChangeCost) {
+                        dialog.Text($"You don't have enough Conquer Points. You need {nameChangeCost} CPs.");
+                        dialog.Option("I understand", 255);
+                        dialog.Send();
+                        break;
+                    }
+
+                    if (string.IsNullOrEmpty(npcRequest.Input) || npcRequest.Input.Length is < 1 or > 16) {
+                        dialog.Text("Invalid guild name. The name must be between 1 and 15 characters.");
                         dialog.Option("Try Again", 5);
                         dialog.Option("Cancel", 255);
                         dialog.Send();
+                        break;
                     }
 
+                    if (Guild.CheckNameExist(npcRequest.Input)) {
+                        dialog.Text("Sorry, there is already a guild with this name.");
+                        dialog.Option("Choose Another Name", 5);
+                        dialog.Option("Cancel", 255);
+                        dialog.Send();
+                        break;
+                    }
+
+                    // All validations passed, deduct cost and change the name
+                    client.Entity.ConquerPoints -= nameChangeCost;
+                    client.Guild!.ChangeName(client, npcRequest.Input);
                     break;
                 }
             }
