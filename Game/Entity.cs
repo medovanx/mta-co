@@ -3265,8 +3265,8 @@ namespace MTA.Game {
 
                 if (killer.EntityFlag == EntityFlag.Player && EntityFlag == EntityFlag.Player) {
                     if (Owner.Guild != null && killer.Owner.Guild != null && Owner.Map.ID == 1015) {
-                        Owner.Guild.pkp_donation += 2;
-                        Owner.Guild.pkp_donation -= 2;
+                        Owner.Guild.PkpDonation += 2;
+                        Owner.Guild.PkpDonation -= 2;
                         killer.Money += 20;
                         Kernel.SendWorldMessage(
                             new Message(
@@ -3277,8 +3277,8 @@ namespace MTA.Game {
                     }
 
                     if (Owner.Guild != null && killer.Owner.Guild != null && Owner.Map.ID == 1020) {
-                        Owner.Guild.pkp_donation += 2;
-                        Owner.Guild.pkp_donation -= 2;
+                        Owner.Guild.PkpDonation += 2;
+                        Owner.Guild.PkpDonation -= 2;
                         killer.Money += 20;
                         Kernel.SendWorldMessage(
                             new Message(
@@ -3289,8 +3289,8 @@ namespace MTA.Game {
                     }
 
                     if (Owner.Guild != null && killer.Owner.Guild != null && Owner.Map.ID == 1011) {
-                        Owner.Guild.pkp_donation += 2;
-                        Owner.Guild.pkp_donation -= 2;
+                        Owner.Guild.PkpDonation += 2;
+                        Owner.Guild.PkpDonation -= 2;
                         killer.Money += 20;
                         Kernel.SendWorldMessage(
                             new Message(
@@ -3301,8 +3301,8 @@ namespace MTA.Game {
                     }
 
                     if (Owner.Guild != null && killer.Owner.Guild != null && Owner.Map.ID == 1000) {
-                        Owner.Guild.pkp_donation += 2;
-                        Owner.Guild.pkp_donation -= 2;
+                        Owner.Guild.PkpDonation += 2;
+                        Owner.Guild.PkpDonation -= 2;
                         killer.Money += 20;
                         Kernel.SendWorldMessage(
                             new Message(
@@ -3313,8 +3313,8 @@ namespace MTA.Game {
                     }
 
                     if (Owner.Guild != null && killer.Owner.Guild != null && Owner.Map.ID == 1001) {
-                        Owner.Guild.pkp_donation += 2;
-                        Owner.Guild.pkp_donation -= 2;
+                        Owner.Guild.PkpDonation += 2;
+                        Owner.Guild.PkpDonation -= 2;
                         killer.Money += 20;
                         Kernel.SendWorldMessage(
                             new Message(
@@ -3325,8 +3325,8 @@ namespace MTA.Game {
                     }
 
                     if (Owner.Guild != null && killer.Owner.Guild != null && Owner.Map.ID == 1762) {
-                        Owner.Guild.pkp_donation += 2;
-                        Owner.Guild.pkp_donation -= 2;
+                        Owner.Guild.PkpDonation += 2;
+                        Owner.Guild.PkpDonation -= 2;
                         killer.Money += 20;
                         Kernel.SendWorldMessage(
                             new Message(
@@ -3337,8 +3337,8 @@ namespace MTA.Game {
                     }
 
                     if (Owner.Guild != null && killer.Owner.Guild != null && Owner.Map.ID == 2056) {
-                        Owner.Guild.pkp_donation += 2;
-                        Owner.Guild.pkp_donation -= 2;
+                        Owner.Guild.PkpDonation += 2;
+                        Owner.Guild.PkpDonation -= 2;
                         killer.Money += 20;
                         Kernel.SendWorldMessage(
                             new Message(
@@ -3356,9 +3356,9 @@ namespace MTA.Game {
                 if (killer != null && killer.GuildID != 0 && killer.MapID == CaptureTheFlag.MapID && CaptureTheFlag.IsWar) {
                     if (GuildID != 0) {
                         if (killer.Owner.Guild.Enemy.ContainsKey(GuildID))
-                            killer.Owner.Guild.CTFPoints += 1;
+                            killer.Owner.Guild.CtfPoints += 1;
                         else if (killer.Owner.Guild.Ally.ContainsKey(GuildID))
-                            killer.Owner.Guild.CTFPoints += 1;
+                            killer.Owner.Guild.CtfPoints += 1;
                     }
 
                     if (ContainsFlag2(Network.GamePackets.Update.Flags2.CarryingFlag)) {
@@ -3374,7 +3374,7 @@ namespace MTA.Game {
                             killer.FlagStamp = end;
                             killer.Owner.Send(Program.World.Ctf.generateTimer((uint)end.Value));
                             killer.Owner.Send(Program.World.Ctf.generateEffect(killer.Owner));
-                            killer.Owner.Guild.CTFPoints += 3;
+                            killer.Owner.Guild.CtfPoints += 3;
                         }
                     }
                 }

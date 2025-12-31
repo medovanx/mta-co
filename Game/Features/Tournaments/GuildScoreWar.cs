@@ -89,7 +89,7 @@ namespace MTA.Game {
             if (PoleKeeper != null) {
                 Kernel.SendWorldMessage(
                     new Message(PoleKeeper.Name + " GuildScoreWar End !", Color.White, Message.Center), Program.Values);
-                Winner = PoleKeeper.ID;
+                Winner = PoleKeeper.Id;
             }
             else
                 Kernel.SendWorldMessage(new Message("No Winner at GuildScoreWar and ended!", Color.Red, Message.Center),
@@ -127,8 +127,8 @@ namespace MTA.Game {
         public static void AddScore(uint addScore, Guild Guild) {
             if (Guild != null) {
                 Guild.GuildScoreWar += addScore;
-                if (!Scores.ContainsKey(Guild.ID))
-                    Scores.Add(Guild.ID, Guild);
+                if (!Scores.ContainsKey(Guild.Id))
+                    Scores.Add(Guild.Id, Guild);
             }
         }
 

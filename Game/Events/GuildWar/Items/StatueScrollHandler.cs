@@ -24,7 +24,7 @@ namespace MTA.Game.Events.GuildWar.Items {
 
             // Check database history first (works even after server restart)
             var latest = GuildWarHistoryTable.GetLatest();
-            var isWinnerGuildFromHistory = latest?.GuildId == client.Guild.ID;
+            var isWinnerGuildFromHistory = latest?.GuildId == client.Guild.Id;
 
             // Also check active event (for during active war)
             var gwEvent = GuildWarEvent.GetActiveEvent();

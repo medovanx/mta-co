@@ -7,7 +7,7 @@ namespace MTA.Database
     {
         public static void Load(Guild guild)
         {
-            using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("guildarsenal").Where("ID", guild.ID))
+            using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("guildarsenal").Where("ID", guild.Id))
             using (var rdr = new MySqlReader(cmd))
             {
                 if (rdr.Read())
@@ -19,11 +19,11 @@ namespace MTA.Database
                     for (int i = 0; i < 8; i++)
                         guild.Arsenals[i].Load(reader);
                     guild.ArsenalBpChanged = true;
-                    guild.GetMaxSharedBattlepower();
+                    guild.GetMaxSharedBattlePower();
                 }
                 else
                 {
-                    Insert(guild.ID);
+                    Insert(guild.Id);
                 }
             }
         }
@@ -33,7 +33,7 @@ namespace MTA.Database
             BinaryWriter writer = new BinaryWriter(stream);
             for (int i = 0; i < 8; i++)
                 guild.Arsenals[i].Save(writer);
-            string SQL = "UPDATE `guildarsenal` SET data=@Data, datalength=@DataLength where ID = " + guild.ID + " ;";
+            string SQL = "UPDATE `guildarsenal` SET data=@Data, datalength=@DataLength where ID = " + guild.Id + " ;";
             byte[] rawData = stream.ToArray();
             using (var conn = DataHolder.MySqlConnection)
             {

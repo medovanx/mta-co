@@ -505,7 +505,7 @@ namespace MTA.Network {
                             break;
                         }
                         case Enums.GuildRanksTop20Type.CpRank: {
-                            var rank_members = client.Guild.RankCPDonations;
+                            var rank_members = client.Guild.RankCpDonations;
                             var offset = displyPage * Enums.GuildRanksTop20Type.MaxCounts;
                             var count = (ushort)Math.Min(Enums.GuildRanksTop20Type.MaxCounts, rank_members.Length);
                             if (displyPage == 2 && rank_members.Length < 10)
@@ -593,7 +593,7 @@ namespace MTA.Network {
                             break;
                         }
                         case Enums.GuildRanksTop20Type.RosesRank: {
-                            var rank_members = client.Guild.RankRosseDonations;
+                            var rank_members = client.Guild.RankRoseDonations;
                             var offset = displyPage * Enums.GuildRanksTop20Type.MaxCounts;
                             var count = (ushort)Math.Min(Enums.GuildRanksTop20Type.MaxCounts, rank_members.Length);
                             if (displyPage == 2 && rank_members.Length < 10)
@@ -607,7 +607,7 @@ namespace MTA.Network {
                                 if (rank_members.Length < offset + x)
                                     break;
                                 var element = rank_members[offset + x];
-                                ranks.Aprend(element, element.Rouses);
+                                ranks.Aprend(element, element.Roses);
                             }
 
                             client.Send(ranks.ToArray());
@@ -2438,7 +2438,7 @@ namespace MTA.Network {
                                 //  var array = client.Guild.Members.Values.Where(p => p.Rank == (Enums.GuildMemberRank)command.dwParam).ToArray();
                                 foreach (var p in client.Guild.Members.Values) {
                                     if (p.Rank == (Enums.GuildMemberRank)command.dwParam) {
-                                        array2.Add(p.ID, p);
+                                        array2.Add(p.Id, p);
                                     }
                                 }
 
@@ -2453,10 +2453,10 @@ namespace MTA.Network {
                                     foreach (var t in array) {
                                         Writer.Uint(t.Level, offset, Buffer); //level
                                         offset += 4;
-                                        Writer.Uint((uint)(t.IsOnline ? 1 : 0), offset, Buffer); //online
+                                        Writer.Uint((uint)(Kernel.TryGetPlayer(t.Id, out _) ? 1 : 0), offset, Buffer); //online
                                         offset += 4;
-                                        if (t.IsOnline)
-                                            Writer.Uint((uint)t.Client.Entity.BattlePower, offset,
+                                        if (Kernel.TryGetPlayer(t.Id, out var tClient))
+                                            Writer.Uint((uint)tClient.Entity.BattlePower, offset,
                                                 Buffer); //bp  
                                         offset += 4;
                                         //  Writer.Uint((uint)Enums.GuildMemberRank.DeputyLeader, offset, Buffer);//unkown1
@@ -2491,8 +2491,8 @@ namespace MTA.Network {
                                 client.Guild.RebornRequirement = Math.Min(command.dwParam3, 2);
                                 client.Guild.ClassRequirement = Math.Min(command.dwParam4, 127);
                                 foreach (var member in client.Guild.Members.Values)
-                                    if (member.IsOnline)
-                                        client.Guild.SendGuild(member.Client);
+                                    if (Kernel.TryGetPlayer(member.Id, out var memberClient))
+                                        client.Guild.SendGuild(memberClient);
                                 GuildTable.SaveRequirements(client.Guild);
                             }
 
@@ -2566,7 +2566,7 @@ namespace MTA.Network {
                             var message = Encoding.Default.GetString(packet, 26, packet[25]);
                             if (client is { Guild: not null, AsMember.Rank: Enums.GuildMemberRank.GuildLeader }) {
                                 client.Guild.Bulletin = message;
-                                client.Guild.CreateBuletinTime();
+                                client.Guild.CreateBulletinTime();
                                 client.Guild.SendGuild(client);
                                 GuildTable.UpdateBulletin(client.Guild, client.Guild.Bulletin);
                             }
@@ -2612,20 +2612,20 @@ namespace MTA.Network {
                             var name = Encoding.Default.GetString(packet, 26, packet[25]);
                             if (client is { Guild: not null, AsMember.Rank: Enums.GuildMemberRank.GuildLeader }) {
                                 var member = client.Guild.GetMemberByName(name);
-                                if (member.ID != client.Entity.UID) {
+                                if (member.Id != client.Entity.UID) {
                                     if (member.Rank == Enums.GuildMemberRank.DeputyLeader) {
                                         client.Guild.RanksCounts[(ushort)Enums.GuildMemberRank.DeputyLeader]--;
                                         member.Rank = Enums.GuildMemberRank.Member;
-                                        if (member.IsOnline) {
-                                            client.Guild.SendGuild(member.Client);
-                                            member.Client.Entity.GuildRank = (ushort)member.Rank;
+                                        if (Kernel.TryGetPlayer(member.Id, out var memberClient)) {
+                                            client.Guild.SendGuild(memberClient);
+                                            memberClient.Entity.GuildRank = (ushort)member.Rank;
                                             member.Client.Screen.FullWipe();
                                             member.Client.Screen.Reload();
                                             member.Client.Entity.GuildBattlePower =
-                                                member.Guild.GetSharedBattlepower(member.Rank);
+                                                member.Guild.GetSharedBattlePower(member.Rank);
                                         }
 
-                                        EntityTable.UpdateData(member.ID, "GuildRank", (int)member.Rank);
+                                        EntityTable.UpdateData(member.Id, "GuildRank", (int)member.Rank);
                                     }
                                 }
                             }
@@ -2657,13 +2657,13 @@ namespace MTA.Network {
                                                 client.Guild.RanksCounts[(ushort)MemberPromote.Rank]--;
                                                 MemberPromote.Rank = (Enums.GuildMemberRank)GetMemberRank;
                                                 client.Guild.RanksCounts[(ushort)MemberPromote.Rank]++;
-                                                if (MemberPromote.IsOnline) {
-                                                    client.Guild.SendGuild(MemberPromote.Client);
-                                                    MemberPromote.Client.Entity.GuildBattlePower =
-                                                        client.Guild.GetSharedBattlepower(MemberPromote.Rank);
-                                                    MemberPromote.Client.Entity.GuildRank = (ushort)MemberPromote.Rank;
-                                                    MemberPromote.Client.Screen.FullWipe();
-                                                    MemberPromote.Client.Screen.Reload();
+                                                if (Kernel.TryGetPlayer(MemberPromote.Id, out var promoteClient)) {
+                                                    client.Guild.SendGuild(promoteClient);
+                                                    promoteClient.Entity.GuildBattlePower =
+                                                        client.Guild.GetSharedBattlePower(MemberPromote.Rank);
+                                                    promoteClient.Entity.GuildRank = (ushort)MemberPromote.Rank;
+                                                    promoteClient.Screen.FullWipe();
+                                                    promoteClient.Screen.Reload();
                                                 }
                                             }
 
@@ -2677,13 +2677,13 @@ namespace MTA.Network {
                                                 client.Guild.RanksCounts[(ushort)MemberPromote.Rank]--;
                                                 MemberPromote.Rank = (Enums.GuildMemberRank)GetMemberRank;
                                                 client.Guild.RanksCounts[(ushort)MemberPromote.Rank]++;
-                                                if (MemberPromote.IsOnline) {
-                                                    client.Guild.SendGuild(MemberPromote.Client);
-                                                    MemberPromote.Client.Entity.GuildBattlePower =
-                                                        client.Guild.GetSharedBattlepower(MemberPromote.Rank);
-                                                    MemberPromote.Client.Entity.GuildRank = (ushort)MemberPromote.Rank;
-                                                    MemberPromote.Client.Screen.FullWipe();
-                                                    MemberPromote.Client.Screen.Reload();
+                                                if (Kernel.TryGetPlayer(MemberPromote.Id, out var promoteClient)) {
+                                                    client.Guild.SendGuild(promoteClient);
+                                                    promoteClient.Entity.GuildBattlePower =
+                                                        client.Guild.GetSharedBattlePower(MemberPromote.Rank);
+                                                    promoteClient.Entity.GuildRank = (ushort)MemberPromote.Rank;
+                                                    promoteClient.Screen.FullWipe();
+                                                    promoteClient.Screen.Reload();
                                                 }
                                             }
 
@@ -2696,13 +2696,13 @@ namespace MTA.Network {
                                                 client.Guild.RanksCounts[(ushort)MemberPromote.Rank]--;
                                                 MemberPromote.Rank = (Enums.GuildMemberRank)GetMemberRank;
                                                 client.Guild.RanksCounts[(ushort)MemberPromote.Rank]++;
-                                                if (MemberPromote.IsOnline) {
-                                                    client.Guild.SendGuild(MemberPromote.Client);
-                                                    MemberPromote.Client.Entity.GuildBattlePower =
-                                                        client.Guild.GetSharedBattlepower(MemberPromote.Rank);
-                                                    MemberPromote.Client.Entity.GuildRank = (ushort)MemberPromote.Rank;
-                                                    MemberPromote.Client.Screen.FullWipe();
-                                                    MemberPromote.Client.Screen.Reload();
+                                                if (Kernel.TryGetPlayer(MemberPromote.Id, out var promoteClient)) {
+                                                    client.Guild.SendGuild(promoteClient);
+                                                    promoteClient.Entity.GuildBattlePower =
+                                                        client.Guild.GetSharedBattlePower(MemberPromote.Rank);
+                                                    promoteClient.Entity.GuildRank = (ushort)MemberPromote.Rank;
+                                                    promoteClient.Screen.FullWipe();
+                                                    promoteClient.Screen.Reload();
                                                 }
                                             }
                                         }
@@ -2718,13 +2718,13 @@ namespace MTA.Network {
                                                 client.Guild.RanksCounts[(ushort)MemberPromote.Rank]--;
                                                 MemberPromote.Rank = (Enums.GuildMemberRank)GetMemberRank;
                                                 client.Guild.RanksCounts[(ushort)MemberPromote.Rank]++;
-                                                if (MemberPromote.IsOnline) {
-                                                    client.Guild.SendGuild(MemberPromote.Client);
-                                                    MemberPromote.Client.Entity.GuildBattlePower =
-                                                        client.Guild.GetSharedBattlepower(MemberPromote.Rank);
-                                                    MemberPromote.Client.Entity.GuildRank = (ushort)MemberPromote.Rank;
-                                                    MemberPromote.Client.Screen.FullWipe();
-                                                    MemberPromote.Client.Screen.Reload();
+                                                if (Kernel.TryGetPlayer(MemberPromote.Id, out var promoteClient)) {
+                                                    client.Guild.SendGuild(promoteClient);
+                                                    promoteClient.Entity.GuildBattlePower =
+                                                        client.Guild.GetSharedBattlePower(MemberPromote.Rank);
+                                                    promoteClient.Entity.GuildRank = (ushort)MemberPromote.Rank;
+                                                    promoteClient.Screen.FullWipe();
+                                                    promoteClient.Screen.Reload();
                                                 }
                                             }
                                         }
@@ -2737,13 +2737,13 @@ namespace MTA.Network {
                                                 MemberPromote.Rank = Enums.GuildMemberRank.GuildLeader;
 
                                                 client.Guild.LeaderName = MemberPromote.Name;
-                                                if (MemberPromote.IsOnline) {
-                                                    client.Guild.SendGuild(MemberPromote.Client);
-                                                    MemberPromote.Client.Entity.GuildBattlePower =
-                                                        client.Guild.GetSharedBattlepower(MemberPromote.Rank);
-                                                    MemberPromote.Client.Entity.GuildRank = (ushort)MemberPromote.Rank;
-                                                    MemberPromote.Client.Screen.FullWipe();
-                                                    MemberPromote.Client.Screen.Reload();
+                                                if (Kernel.TryGetPlayer(MemberPromote.Id, out var promoteClient)) {
+                                                    client.Guild.SendGuild(promoteClient);
+                                                    promoteClient.Entity.GuildBattlePower =
+                                                        client.Guild.GetSharedBattlePower(MemberPromote.Rank);
+                                                    promoteClient.Entity.GuildRank = (ushort)MemberPromote.Rank;
+                                                    promoteClient.Screen.FullWipe();
+                                                    promoteClient.Screen.Reload();
                                                 }
 
                                                 client.AsMember.Rank = Enums.GuildMemberRank.DeputyLeader;
@@ -2766,13 +2766,13 @@ namespace MTA.Network {
                                                 client.Guild.RanksCounts[(ushort)MemberPromote.Rank]--;
                                                 MemberPromote.Rank = (Enums.GuildMemberRank)GetMemberRank;
                                                 client.Guild.RanksCounts[(ushort)MemberPromote.Rank]++;
-                                                if (MemberPromote.IsOnline) {
-                                                    client.Guild.SendGuild(MemberPromote.Client);
-                                                    MemberPromote.Client.Entity.GuildBattlePower =
-                                                        client.Guild.GetSharedBattlepower(MemberPromote.Rank);
-                                                    MemberPromote.Client.Entity.GuildRank = (ushort)MemberPromote.Rank;
-                                                    MemberPromote.Client.Screen.FullWipe();
-                                                    MemberPromote.Client.Screen.Reload();
+                                                if (Kernel.TryGetPlayer(MemberPromote.Id, out var promoteClient)) {
+                                                    client.Guild.SendGuild(promoteClient);
+                                                    promoteClient.Entity.GuildBattlePower =
+                                                        client.Guild.GetSharedBattlePower(MemberPromote.Rank);
+                                                    promoteClient.Entity.GuildRank = (ushort)MemberPromote.Rank;
+                                                    promoteClient.Screen.FullWipe();
+                                                    promoteClient.Screen.Reload();
                                                 }
                                             }
 
@@ -2787,13 +2787,13 @@ namespace MTA.Network {
                                                 client.Guild.RanksCounts[(ushort)MemberPromote.Rank]--;
                                                 MemberPromote.Rank = (Enums.GuildMemberRank)GetMemberRank;
                                                 client.Guild.RanksCounts[(ushort)MemberPromote.Rank]++;
-                                                if (MemberPromote.IsOnline) {
-                                                    client.Guild.SendGuild(MemberPromote.Client);
-                                                    MemberPromote.Client.Entity.GuildBattlePower =
-                                                        client.Guild.GetSharedBattlepower(MemberPromote.Rank);
-                                                    MemberPromote.Client.Entity.GuildRank = (ushort)MemberPromote.Rank;
-                                                    MemberPromote.Client.Screen.FullWipe();
-                                                    MemberPromote.Client.Screen.Reload();
+                                                if (Kernel.TryGetPlayer(MemberPromote.Id, out var promoteClient)) {
+                                                    client.Guild.SendGuild(promoteClient);
+                                                    promoteClient.Entity.GuildBattlePower =
+                                                        client.Guild.GetSharedBattlePower(MemberPromote.Rank);
+                                                    promoteClient.Entity.GuildRank = (ushort)MemberPromote.Rank;
+                                                    promoteClient.Screen.FullWipe();
+                                                    promoteClient.Screen.Reload();
                                                 }
                                             }
 
@@ -2807,13 +2807,13 @@ namespace MTA.Network {
                                                 client.Guild.RanksCounts[(ushort)MemberPromote.Rank]--;
                                                 MemberPromote.Rank = (Enums.GuildMemberRank)GetMemberRank;
                                                 client.Guild.RanksCounts[(ushort)MemberPromote.Rank]++;
-                                                if (MemberPromote.IsOnline) {
-                                                    client.Guild.SendGuild(MemberPromote.Client);
-                                                    MemberPromote.Client.Entity.GuildBattlePower =
-                                                        client.Guild.GetSharedBattlepower(MemberPromote.Rank);
-                                                    MemberPromote.Client.Entity.GuildRank = (ushort)MemberPromote.Rank;
-                                                    MemberPromote.Client.Screen.FullWipe();
-                                                    MemberPromote.Client.Screen.Reload();
+                                                if (Kernel.TryGetPlayer(MemberPromote.Id, out var promoteClient)) {
+                                                    client.Guild.SendGuild(promoteClient);
+                                                    promoteClient.Entity.GuildBattlePower =
+                                                        client.Guild.GetSharedBattlePower(MemberPromote.Rank);
+                                                    promoteClient.Entity.GuildRank = (ushort)MemberPromote.Rank;
+                                                    promoteClient.Screen.FullWipe();
+                                                    promoteClient.Screen.Reload();
                                                 }
                                             }
 
@@ -2827,13 +2827,13 @@ namespace MTA.Network {
                                                 client.Guild.RanksCounts[(ushort)MemberPromote.Rank]--;
                                                 MemberPromote.Rank = (Enums.GuildMemberRank)GetMemberRank;
                                                 client.Guild.RanksCounts[(ushort)MemberPromote.Rank]++;
-                                                if (MemberPromote.IsOnline) {
-                                                    client.Guild.SendGuild(MemberPromote.Client);
-                                                    MemberPromote.Client.Entity.GuildBattlePower =
-                                                        client.Guild.GetSharedBattlepower(MemberPromote.Rank);
-                                                    MemberPromote.Client.Entity.GuildRank = (ushort)MemberPromote.Rank;
-                                                    MemberPromote.Client.Screen.FullWipe();
-                                                    MemberPromote.Client.Screen.Reload();
+                                                if (Kernel.TryGetPlayer(MemberPromote.Id, out var promoteClient)) {
+                                                    client.Guild.SendGuild(promoteClient);
+                                                    promoteClient.Entity.GuildBattlePower =
+                                                        client.Guild.GetSharedBattlePower(MemberPromote.Rank);
+                                                    promoteClient.Entity.GuildRank = (ushort)MemberPromote.Rank;
+                                                    promoteClient.Screen.FullWipe();
+                                                    promoteClient.Screen.Reload();
                                                 }
                                             }
 
@@ -2841,19 +2841,19 @@ namespace MTA.Network {
                                                 client.Guild.RanksCounts[(ushort)MemberPromote.Rank]--;
                                                 MemberPromote.Rank = (Enums.GuildMemberRank)GetMemberRank;
                                                 client.Guild.RanksCounts[(ushort)MemberPromote.Rank]++;
-                                                if (MemberPromote.IsOnline) {
-                                                    client.Guild.SendGuild(MemberPromote.Client);
-                                                    MemberPromote.Client.Entity.GuildBattlePower =
-                                                        client.Guild.GetSharedBattlepower(MemberPromote.Rank);
-                                                    MemberPromote.Client.Entity.GuildRank = (ushort)MemberPromote.Rank;
-                                                    MemberPromote.Client.Screen.FullWipe();
-                                                    MemberPromote.Client.Screen.Reload();
+                                                if (Kernel.TryGetPlayer(MemberPromote.Id, out var promoteClient)) {
+                                                    client.Guild.SendGuild(promoteClient);
+                                                    promoteClient.Entity.GuildBattlePower =
+                                                        client.Guild.GetSharedBattlePower(MemberPromote.Rank);
+                                                    promoteClient.Entity.GuildRank = (ushort)MemberPromote.Rank;
+                                                    promoteClient.Screen.FullWipe();
+                                                    promoteClient.Screen.Reload();
                                                 }
                                             }
                                         }
 
                                         client.Entity.GuildBattlePower =
-                                            client.Guild.GetSharedBattlepower(client.Entity.GuildRank);
+                                            client.Guild.GetSharedBattlePower(client.Entity.GuildRank);
                                     }
                                     else {
                                         client.Entity.SendSysMesage("Sorry Can't Find " + GetMemberName);
@@ -4245,12 +4245,12 @@ namespace MTA.Network {
                             Writer.WriteUInt32((uint)client.AsMember.ConquerPointDonation, 12, packet);
                             Writer.WriteUInt32(client.AsMember.ArsenalDonation, 24, packet);
                             Writer.WriteUInt32(client.AsMember.PkDonation, 20, packet);
-                            Writer.WriteUInt32(client.AsMember.Rouses, 28, packet);
+                            Writer.WriteUInt32(client.AsMember.Roses, 28, packet);
                             Writer.WriteUInt32(client.AsMember.Tulips, 32, packet);
                             Writer.WriteUInt32(client.AsMember.Lilies, 36, packet);
                             Writer.WriteUInt32(client.AsMember.Orchids, 40, packet);
                             Writer.WriteUInt32(client.AsMember.Orchids
-                                               + client.AsMember.Rouses
+                                               + client.AsMember.Roses
                                                + client.AsMember.Tulips
                                                + client.AsMember.Lilies, 44, packet);
                         }
@@ -4938,7 +4938,7 @@ namespace MTA.Network {
                                 break;
                             if (client.Guild.ConquerPointFund > setCTFCps) {
                                 client.Guild.ConquerPointFund -= setCTFCps;
-                                client.Guild.CTFdonationCPsold += setCTFCps;
+                                client.Guild.CTFDonationCPSold += setCTFCps;
                                 GuildTable.SaveFunds(client.Guild);
                             }
 
@@ -4950,7 +4950,7 @@ namespace MTA.Network {
                                 break;
                             if (client.Guild.SilverFund > setCTFMoney) {
                                 client.Guild.SilverFund -= setCTFMoney;
-                                client.Guild.CTFdonationSilverold += setCTFMoney;
+                                client.Guild.CTFDonationSilverOld += setCTFMoney;
                                 GuildTable.SaveFunds(client.Guild);
                             }
 
@@ -4962,7 +4962,7 @@ namespace MTA.Network {
                                 break;
                             if (client.Guild.ConquerPointFund > setCTFCps) {
                                 client.Guild.ConquerPointFund -= setCTFCps;
-                                client.Guild.CTFdonationCPsold += setCTFCps;
+                                client.Guild.CTFDonationCPSold += setCTFCps;
                                 GuildTable.SaveFunds(client.Guild);
                             }
 
@@ -4970,7 +4970,7 @@ namespace MTA.Network {
 
                             if (client.Guild.SilverFund > setCTFMoney) {
                                 client.Guild.SilverFund -= setCTFMoney;
-                                client.Guild.CTFdonationSilverold += setCTFMoney;
+                                client.Guild.CTFDonationSilverOld += setCTFMoney;
                                 GuildTable.SaveFunds(client.Guild);
                             }
 
@@ -5181,7 +5181,7 @@ namespace MTA.Network {
 
                     if (client.Guild.SilverFund >= donation) {
                         client.Guild.SilverFund -= donation;
-                        client.Guild.AdvertiseRecruit.Buletin = buletin;
+                        client.Guild.AdvertiseRecruit.Bulletin = buletin;
                         client.Guild.AdvertiseRecruit.AutoJoin = Auto_join;
                         client.Guild.AdvertiseRecruit.Level = Level;
                         client.Guild.AdvertiseRecruit.Reborn = Reborn;
@@ -8028,11 +8028,11 @@ namespace MTA.Network {
                 while (enumerator.MoveNext())
                 {
                     guild = enumerator.Current;
-                    if ((((guild.Name == name) && (client.Guild.Name != name)) && (guild.Leader != null)) && guild.Leader.IsOnline)
+                    if ((((guild.Name == name) && (client.Guild.Name != name)) && (guild.Leader != null)) && Kernel.TryGetPlayer(guild.Leader.Id, out var leaderClient))
                     {
-                        guild.Leader.Client.OnMessageBoxEventParams = new object[] { guild, client.Guild };
+                        leaderClient.OnMessageBoxEventParams = new object[] { guild, client.Guild };
                         client.OnMessageBoxEventParams = new object[] { guild, client.Guild };
-                        GameState Leader = guild.Leader.Client;
+                        GameState Leader = leaderClient;
                         Leader.MessageOK = delegate
                         {
                             MTA.Game.ConquerStructures.Society.Guild guild1 = Leader.OnMessageBoxEventParams[0] as MTA.Game.ConquerStructures.Society.Guild;
@@ -8050,13 +8050,13 @@ namespace MTA.Network {
                             {
                                 try
                                 {
-                                    if (((guild.Leader.Client != null) && guild.Leader.Client.Socket.Connected) && (guild.Leader.Client.OnMessageBoxEventParams != null))
+                                    if (Kernel.TryGetPlayer(guild.Leader.Id, out var guildLeader) && guildLeader.Socket.Connected && (guildLeader.OnMessageBoxEventParams != null))
                                     {
-                                        Game.ConquerStructures.Society.Guild guild1 = guild.Leader.Client.OnMessageBoxEventParams[1] as Game.ConquerStructures.Society.Guild;
-                                        Game.ConquerStructures.Society.Guild guild2 = guild.Leader.Client.OnMessageBoxEventParams[0] as Game.ConquerStructures.Society.Guild;
-                                        if (guild1.Leader.IsOnline)
+                                        Game.ConquerStructures.Society.Guild guild1 = guildLeader.OnMessageBoxEventParams[1] as Game.ConquerStructures.Society.Guild;
+                                        Game.ConquerStructures.Society.Guild guild2 = guildLeader.OnMessageBoxEventParams[0] as Game.ConquerStructures.Society.Guild;
+                                        if (guild1 != null && Kernel.TryGetPlayer(guild1.Leader.Id, out var guild1LeaderClient))
                                         {
-                                            guild1.Leader.Client.Send(new MTA.Network.GamePackets.Message(guild2.Leader.Name + " has declined your alliance request.", System.Drawing.Color.Blue, 0x7dc));
+                                            guild1LeaderClient.Send(new MTA.Network.GamePackets.Message(guild2.Leader.Name + " has declined your alliance request.", System.Drawing.Color.Blue, 0x7dc));
                                         }
                                     }
                                 }
@@ -8066,8 +8066,8 @@ namespace MTA.Network {
                                 }
                             };
                         }
-                        guild.Leader.Client.MessageCancel = action;
-                        guild.Leader.Client.Send(new NpcReply(6, client.Entity.Name + " , GuildLeader of " + client.Guild.Name + " wants to make with you an alliance."));
+                        leaderClient.MessageCancel = action;
+                        leaderClient.Send(new NpcReply(6, client.Entity.Name + " , GuildLeader of " + client.Guild.Name + " wants to make with you an alliance."));
                     }
                 }
             }
@@ -8079,8 +8079,8 @@ namespace MTA.Network {
         static void AllyGuilds(string name, GameState client) {
             foreach (var guild in Kernel.Guilds.Values) {
                 if (guild.Name == name && client.Guild.Name != name) {
-                    if (guild.Leader is { IsOnline: true }) {
-                        guild.Leader.Client.OnMessageBoxEventParams = [
+                    if (guild.Leader != null && Kernel.TryGetPlayer(guild.Leader.Id, out var guildLeaderClient)) {
+                        guildLeaderClient.OnMessageBoxEventParams = [
                             guild,
                             client.Guild
                         ];
@@ -8088,7 +8088,7 @@ namespace MTA.Network {
                             guild,
                             client.Guild
                         ];
-                        var Leader = guild.Leader.Client;
+                        var Leader = guildLeaderClient;
                         Leader.MessageOK = delegate {
                             var Guild1 =
                                 Leader.OnMessageBoxEventParams[0] as Guild;
@@ -8099,24 +8099,24 @@ namespace MTA.Network {
                             Guild1.AddAlly(Guild2.Name);
                             Guild2.AddAlly(Guild1.Name);
 
-                            if (Guild1.Leader.Client is { Socket.Alive: true }) {
-                                if (Guild2.Leader.Client is { Socket.Alive: true }) {
-                                    Guild2.Leader.Client.Send(new Message(
+                            if (Kernel.TryGetPlayer(Guild1.Leader.Id, out var guild1Leader) && guild1Leader.Socket.Alive) {
+                                if (Kernel.TryGetPlayer(Guild2.Leader.Id, out var guild2Leader) && guild2Leader.Socket.Alive) {
+                                    guild2Leader.Send(new Message(
                                         Guild1.Leader.Name + " has accepted your ally request.", Color.Blue,
                                         Message.TopLeft));
                                 }
                             }
                         };
-                        guild.Leader.Client.MessageCancel = delegate {
+                        guildLeaderClient.MessageCancel = delegate {
                             try {
-                                if (guild.Leader.Client is { Socket.Alive: true, OnMessageBoxEventParams: not null }) {
+                                if (guildLeaderClient.Socket.Alive && guildLeaderClient.OnMessageBoxEventParams != null) {
                                     var Guild2 =
-                                        guild.Leader.Client.OnMessageBoxEventParams[1] as Guild;
+                                        guildLeaderClient.OnMessageBoxEventParams[1] as Guild;
                                     var Guild1 =
-                                        guild.Leader.Client.OnMessageBoxEventParams[0] as Guild;
+                                        guildLeaderClient.OnMessageBoxEventParams[0] as Guild;
 
-                                    if (Guild2.Leader.IsOnline) {
-                                        Guild2.Leader.Client.Send(new Message(
+                                    if (Guild2 != null && Kernel.TryGetPlayer(Guild2.Leader.Id, out var guild2LeaderClient)) {
+                                        guild2LeaderClient.Send(new Message(
                                             Guild1.Leader.Name + " has declined your ally request.",
                                             Color.Blue, Message.TopLeft));
                                     }
@@ -8126,7 +8126,7 @@ namespace MTA.Network {
                                 Program.SaveException(e);
                             }
                         };
-                        guild.Leader.Client.Send(new NpcReply(NpcReply.MessageBox,
+                        guildLeaderClient.Send(new NpcReply(NpcReply.MessageBox,
                             client.Entity.Name + " , GuildLeader of " + client.Guild.Name +
                             " wants to make with you an alliance."));
                     }
@@ -8367,7 +8367,7 @@ namespace MTA.Network {
 
                                 Arsenal.RemoveItem(item, client);
                                 client.Guild.ArsenalBpChanged = true;
-                                client.Guild.GetMaxSharedBattlepower();
+                                client.Guild.GetMaxSharedBattlePower();
                                 client.Guild.SaveArsenal();
                             }
                         }
@@ -8392,7 +8392,7 @@ namespace MTA.Network {
                 Guild.SendGuild(client);
 
                 Guild.ArsenalBpChanged = true;
-                Guild.GetMaxSharedBattlepower();
+                Guild.GetMaxSharedBattlePower();
                 client.Guild.SaveArsenal();
             }
             else {
@@ -8404,7 +8404,7 @@ namespace MTA.Network {
             if (client.Entity.GuildID == 0) return;
             if (client.Guild == null) return;
             var view = new ArsenalTab(true) {
-                SharedBattlepower = (uint)client.Guild.GetMaxSharedBattlepower(),
+                SharedBattlepower = (uint)client.Guild.GetMaxSharedBattlePower(),
                 ArsenalCount = 8
             };
             foreach (var arsenal in client.Guild.Arsenals)
@@ -8437,7 +8437,7 @@ namespace MTA.Network {
                     UninscribeItem(item, client);
 
             client.Guild.ArsenalBpChanged = true;
-            client.Guild.GetMaxSharedBattlepower();
+            client.Guild.GetMaxSharedBattlePower();
             client.Guild.SaveArsenal();
         }
 
@@ -8454,7 +8454,7 @@ namespace MTA.Network {
                 arsenal.EnhancementExpDate = DateTime.Now.AddDays(30);
 
                 guild.ArsenalBpChanged = true;
-                guild.GetMaxSharedBattlepower();
+                guild.GetMaxSharedBattlePower();
                 client.Guild.SaveArsenal();
             }
         }
@@ -15220,7 +15220,7 @@ namespace MTA.Network {
 
                         client.Send(Program.World.Ctf.generateTimer(60));
                         client.Send(Program.World.Ctf.generateEffect(client));
-                        client.Guild.CTFPoints += 3;
+                        client.Guild.CtfPoints += 3;
                         client.Entity.AddFlag2(Update.Flags2.CarryingFlag);
                         client.Entity.nAddFlag(118);
                         client.Map.RemoveStaticItem(item);
@@ -15743,7 +15743,7 @@ namespace MTA.Network {
                     client.SetNewWeaponLook2(client.WeaponLook2);
 
                     if (client.Entity.GuildID != 0) {
-                        client.Entity.GuildBattlePower = client.Guild.GetSharedBattlepower(client.Entity.GuildRank);
+                        client.Entity.GuildBattlePower = client.Guild.GetSharedBattlePower(client.Entity.GuildRank);
                     }
 
                     client.ReviewMentor();
@@ -16278,7 +16278,7 @@ namespace MTA.Network {
                 client.Entity.Update(Update.MentorBattlePower, client.Entity.MentorBattlePower, false);
             if (client.Guild != null) {
                 client.Guild.SendAllyAndEnemy(client);
-                client.Entity.GuildBattlePower = client.Guild.GetSharedBattlepower(client.AsMember.Rank);
+                client.Entity.GuildBattlePower = client.Guild.GetSharedBattlePower(client.AsMember.Rank);
             }
 
             if (Game.ConquerStructures.Broadcast.CurrentBroadcast.EntityID > 2)
@@ -16380,7 +16380,7 @@ namespace MTA.Network {
                                 FType = (byte)FlowersT.Rouse
                             };
                             if (target_client.AsMember != null)
-                                target_client.AsMember.Rouses += 1;
+                                target_client.AsMember.Roses += 1;
 
                             client.SendScreen(flow.ToArray());
                         }
@@ -16422,7 +16422,7 @@ namespace MTA.Network {
                                             Flowers.CulculateRankRouse(target_client.Entity.MyFlowers);
 
                                         if (target_client.AsMember != null)
-                                            target_client.AsMember.Rouses += Amount;
+                                            target_client.AsMember.Roses += Amount;
                                         break;
                                     }
                                     case (byte)FlowersT.Lilies: {
@@ -16520,7 +16520,7 @@ namespace MTA.Network {
                             };
 
                             if (target_client.AsMember != null)
-                                target_client.AsMember.Rouses += 1;
+                                target_client.AsMember.Roses += 1;
 
                             client.SendScreen(flow.ToArray());
                         }
@@ -16562,7 +16562,7 @@ namespace MTA.Network {
                                             Flowers.CulculateRankKiss(target_client.Entity.MyFlowers);
 
                                         if (target_client.AsMember != null)
-                                            target_client.AsMember.Rouses += Amount;
+                                            target_client.AsMember.Roses += Amount;
                                         break;
                                     }
                                     case (byte)FlowersT.Lilies: {

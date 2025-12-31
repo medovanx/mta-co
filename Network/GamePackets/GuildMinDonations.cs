@@ -63,22 +63,22 @@ namespace MTA.Network.GamePackets {
             else Aprend(Enums.GuildMemberRank.ArsFollower, 0);
 
 
-            if (guild.RankCPDonations.Length >= 3) {
-                var obj = guild.RankCPDonations[2];
+            if (guild.RankCpDonations.Length >= 3) {
+                var obj = guild.RankCpDonations[2];
                 Aprend(Enums.GuildMemberRank.CPSupervisor, (uint)obj.ConquerPointDonation);
             }
             else
                 Aprend(Enums.GuildMemberRank.CPSupervisor, 0);
 
-            if (guild.RankCPDonations.Length >= 5) {
-                var obj = guild.RankCPDonations[4];
+            if (guild.RankCpDonations.Length >= 5) {
+                var obj = guild.RankCpDonations[4];
                 Aprend(Enums.GuildMemberRank.CPAgent, (uint)obj.ConquerPointDonation);
             }
             else
                 Aprend(Enums.GuildMemberRank.CPAgent, 0);
 
-            if (guild.RankCPDonations.Length >= 7) {
-                var obj = guild.RankCPDonations[6];
+            if (guild.RankCpDonations.Length >= 7) {
+                var obj = guild.RankCpDonations[6];
                 Aprend(Enums.GuildMemberRank.CPFollower, (uint)obj.ConquerPointDonation);
             }
             else
@@ -105,23 +105,23 @@ namespace MTA.Network.GamePackets {
             else Aprend(Enums.GuildMemberRank.PKFollower, 0);
 
 
-            if (guild.RankRosseDonations.Length >= 3) {
-                var obj = guild.RankRosseDonations[2];
-                Aprend(Enums.GuildMemberRank.RoseSupervisor, obj.Rouses);
+            if (guild.RankRoseDonations.Length >= 3) {
+                var obj = guild.RankRoseDonations[2];
+                Aprend(Enums.GuildMemberRank.RoseSupervisor, obj.Roses);
             }
             else
                 Aprend(Enums.GuildMemberRank.RoseSupervisor, 0);
 
-            if (guild.RankRosseDonations.Length >= 5) {
-                var obj = guild.RankRosseDonations[4];
-                Aprend(Enums.GuildMemberRank.RoseAgent, obj.Rouses);
+            if (guild.RankRoseDonations.Length >= 5) {
+                var obj = guild.RankRoseDonations[4];
+                Aprend(Enums.GuildMemberRank.RoseAgent, obj.Roses);
             }
             else
                 Aprend(Enums.GuildMemberRank.RoseAgent, 0);
 
-            if (guild.RankRosseDonations.Length >= 7) {
-                var obj = guild.RankRosseDonations[6];
-                Aprend(Enums.GuildMemberRank.RoseFollower, obj.Rouses);
+            if (guild.RankRoseDonations.Length >= 7) {
+                var obj = guild.RankRoseDonations[6];
+                Aprend(Enums.GuildMemberRank.RoseFollower, obj.Roses);
             }
             else
                 Aprend(Enums.GuildMemberRank.RoseFollower, 0);

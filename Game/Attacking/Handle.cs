@@ -166,7 +166,7 @@ namespace MTA.Game.Attacking {
                         client.Guild.Members.ContainsKey(p.Entity.UID) ||
                         client.Guild.Ally.ContainsKey(p.Entity.GuildID)).ToArray();
                 else
-                    deads = deads.Where(p => client.Guild.ID == p.Entity.GuildID).ToArray();
+                    deads = deads.Where(p => client.Guild.Id == p.Entity.GuildID).ToArray();
             deads = deads.Take(count).ToArray();
 
             if (deads != null) {
@@ -8417,7 +8417,7 @@ namespace MTA.Game.Attacking {
                 }
 
             if (attacked.UID == 123456) {
-                if (Program.World.PoleDomination.KillerGuildID == attacker.Owner.Guild.ID)
+                if (Program.World.PoleDomination.KillerGuildID == attacker.Owner.Guild.Id)
                     return;
                 Program.World.PoleDomination.AddScore(damage, attacker.Owner.Guild);
             }
@@ -9423,8 +9423,7 @@ namespace MTA.Game.Attacking {
                 client.Entity.InteractionType = 0;
                 client.InteractionEffect = attack.ResponseDamage;
 
-                if (Kernel.GamePool.ContainsKey(attack.Attacked)) {
-                    GameState clienttarget = Kernel.GamePool[attack.Attacked];
+                if (Kernel.TryGetPlayer(attack.Attacked, out var clienttarget)) {
                     clienttarget.Entity.InteractionInProgress = false;
                     clienttarget.Entity.InteractionWith = client.Entity.UID;
                     clienttarget.Entity.InteractionType = 0;
@@ -9443,8 +9442,7 @@ namespace MTA.Game.Attacking {
             public InteractionEffect(Attack attack, Entity a_client) {
                 GameState client = a_client.Owner;
 
-                if (Kernel.GamePool.ContainsKey(client.Entity.InteractionWith)) {
-                    GameState clienttarget = Kernel.GamePool[client.Entity.InteractionWith];
+                if (Kernel.TryGetPlayer(client.Entity.InteractionWith, out var clienttarget)) {
 
                     if (clienttarget.Entity.X == client.Entity.X && clienttarget.Entity.Y == client.Entity.Y) {
                         attack.Damage = client.Entity.InteractionType;
@@ -9481,8 +9479,7 @@ namespace MTA.Game.Attacking {
                     return;
                 attack.ResponseDamage = client.InteractionEffect;
                 client.Entity.InteractionSet = false;
-                if (Kernel.GamePool.ContainsKey(attack.Attacked)) {
-                    GameState clienttarget = Kernel.GamePool[attack.Attacked];
+                if (Kernel.TryGetPlayer(attack.Attacked, out var clienttarget)) {
                     if (clienttarget.Entity.ContainsFlag(Update.Flags.Ride))
                         clienttarget.Entity.RemoveFlag(Update.Flags.Ride);
                     clienttarget.Entity.InteractionSet = false;
@@ -9559,8 +9556,7 @@ namespace MTA.Game.Attacking {
             public InteractionStopEffect(Attack attack, Entity a_client) {
                 GameState client = a_client.Owner;
 
-                if (Kernel.GamePool.ContainsKey(attack.Attacked)) {
-                    GameState clienttarget = Kernel.GamePool[attack.Attacked];
+                if (Kernel.TryGetPlayer(attack.Attacked, out var clienttarget)) {
                     attack.Attacker = client.Entity.UID;
                     attack.Attacked = clienttarget.Entity.UID;
                     attack.Damage = client.Entity.InteractionType;
@@ -9593,8 +9589,7 @@ namespace MTA.Game.Attacking {
                 client.Entity.InteractionWith = 0;
                 client.Entity.InteractionInProgress = false;
 
-                if (Kernel.GamePool.ContainsKey(attack.Attacked)) {
-                    GameState clienttarget = Kernel.GamePool[attack.Attacked];
+                if (Kernel.TryGetPlayer(attack.Attacked, out var clienttarget)) {
                     clienttarget.Entity.InteractionType = 0;
                     clienttarget.Entity.InteractionWith = 0;
                     clienttarget.Entity.InteractionInProgress = false;

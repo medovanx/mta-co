@@ -72,6 +72,8 @@ namespace MTA {
 
         public static ConcurrentDictionary<uint, GameState> GamePool = new ConcurrentDictionary<uint, GameState>();
 
+        public static bool TryGetPlayer(uint id, out GameState player) => GamePool.TryGetValue(id, out player);
+
         public static ConcurrentDictionary<uint, GameState>
             DisconnectPool = new ConcurrentDictionary<uint, GameState>();
 

@@ -42,9 +42,9 @@ namespace MTA.Game.ConquerStructures.Society {
         GuideFollower = 0x1ee,
         GuildLeader = 0x3e8,
         HDeputyLeader = 980,
-        HonoraryManager = 880,
-        HonorarySteward = 680,
-        HonorarySuperv = 840,
+        HManager = 880,
+        HSteward = 680,
+        HSupervisor = 840,
         LeaderSpouse = 920,
         LilyAgent = 0x24f,
         LilyFollower = 0x1eb,
@@ -72,7 +72,7 @@ namespace MTA.Game.ConquerStructures.Society {
         StewardSpouse = 420,
         Supervisor = 850,
         SupervisorAide = 0x1ff,
-        SupervSpouse = 0x209,
+        SupervisorSpouse = 0x209,
         TSupervisor = 0x35b,
         TulipAgent = 0x257,
         TulipFollower = 0x1f3
@@ -85,8 +85,8 @@ namespace MTA.Game.ConquerStructures.Society {
             public static Guild[] AdvertiseRanks = [];
 
             public static void Add(Guild obj) {
-                if (!AGuilds.ContainsKey(obj.ID))
-                    AGuilds.TryAdd(obj.ID, obj);
+                if (!AGuilds.ContainsKey(obj.Id))
+                    AGuilds.TryAdd(obj.Id, obj);
                 CalculateRanks();
             }
 
@@ -94,21 +94,22 @@ namespace MTA.Game.ConquerStructures.Society {
                 lock (AdvertiseRanks) {
                     var array = AGuilds.Values.ToArray();
                     array =
-                        (from guil in array orderby guil.AdvertiseRecruit.Donations descending select guil).ToArray();
-                    List<Guild> listarray = [];
+                        (from guild in array orderby guild.AdvertiseRecruit.Donations descending select guild)
+                        .ToArray();
+                    List<Guild> guilds = [];
                     for (ushort x = 0; x < array.Length; x++) {
-                        listarray.Add(array[x]);
+                        guilds.Add(array[x]);
                         if (x == 40) break;
                     }
 
-                    AdvertiseRanks = listarray.ToArray();
+                    AdvertiseRanks = guilds.ToArray();
                 }
             }
 
             public static void FixedRank() {
                 AGuilds.Clear();
-                foreach (var guil in AdvertiseRanks) {
-                    AGuilds.TryAdd(guil.ID, guil);
+                foreach (var guild in AdvertiseRanks) {
+                    AGuilds.TryAdd(guild.Id, guild);
                 }
             }
         }
@@ -132,7 +133,7 @@ namespace MTA.Game.ConquerStructures.Society {
             }
 
             public bool AutoJoin = true;
-            public string Buletin = "Nothing";
+            public string Bulletin = "Nothing";
             public int NotAllowFlag;
             public byte Level;
             public byte Reborn;
@@ -204,7 +205,7 @@ namespace MTA.Game.ConquerStructures.Society {
             public override string ToString() {
                 var build = new StringBuilder();
                 build.Append(NotAllowFlag + "^" + Level + "^" + Reborn + "^" + Grade + "^" + Donations + "^"
-                             + (byte)(AutoJoin ? 1 : 0) + "^" + Buletin + "^0" + "^0");
+                             + (byte)(AutoJoin ? 1 : 0) + "^" + Bulletin + "^0" + "^0");
                 return build.ToString();
             }
 
@@ -220,7 +221,7 @@ namespace MTA.Game.ConquerStructures.Society {
                 Grade = byte.Parse(data[3]);
                 Donations = ulong.Parse(data[4]);
                 AutoJoin = byte.Parse(data[5]) == 1;
-                Buletin = data[6];
+                Bulletin = data[6];
                 WasLoad = true;
             }
 
@@ -230,11 +231,11 @@ namespace MTA.Game.ConquerStructures.Society {
 
         public Member[] RankSilversDonations = [];
         public Member[] RankArsenalDonations = [];
-        public Member[] RankCPDonations = [];
+        public Member[] RankCpDonations = [];
         public Member[] RankPkDonations = [];
         public Member[] RankLiliesDonations = [];
         public Member[] RankOrchidsDonations = [];
-        public Member[] RankRosseDonations = [];
+        public Member[] RankRoseDonations = [];
         public Member[] RankTulipsDonations = [];
         public Member[] RankGuideDonations = [];
         public Member[] RankTotalDonations = [];
@@ -281,23 +282,24 @@ namespace MTA.Game.ConquerStructures.Society {
         private int _arsenalBp;
 
         public override int GetHashCode() {
-            return (int)ID;
+            return (int)Id;
         }
 
-        public int ArsenalTotalBattlepower {
+        public int ArsenalTotalBattlePower {
             get => _arsenalBp;
             set {
                 _arsenalBp = value;
-                foreach (var member in Members.Values.Where(member => member.IsOnline)) {
-                    member.Client.Entity.GuildBattlePower = GetSharedBattlepower(member.Rank);
+                foreach (var member in Members.Values) {
+                    if (Kernel.TryGetPlayer(member.Id, out var client))
+                        client.Entity.GuildBattlePower = GetSharedBattlePower(member.Rank);
                 }
             }
         }
 
-        public int GetMaxSharedBattlepower(bool force = false) {
+        public int GetMaxSharedBattlePower(bool force = false) {
             if (!ArsenalBpChanged && !force) return _arsenalBp;
             var aBp = 0;
-            var arsenals = Arsenals.OrderByDescending(p => p.TotalSharedBattlePower);
+            var arsenals = Arsenals.OrderByDescending(p => p.TotalSharedBattlePower).ToArray();
             var a = 0;
             foreach (var arsenal in arsenals) {
                 if (a == 5) break;
@@ -305,15 +307,15 @@ namespace MTA.Game.ConquerStructures.Society {
                 a++;
             }
 
-            ArsenalTotalBattlepower = aBp;
+            ArsenalTotalBattlePower = aBp;
             ArsenalBpChanged = false;
 
-            byte lev = 1;
-            foreach (var getlev in arsenals)
-                if (getlev.TotalSharedBattlePower >= 2)
-                    lev++;
+            byte level = 1;
+            foreach (var arsenal in arsenals)
+                if (arsenal.TotalSharedBattlePower >= 2)
+                    level++;
 
-            Level = lev;
+            Level = level;
 
             return _arsenalBp;
         }
@@ -329,11 +331,11 @@ namespace MTA.Game.ConquerStructures.Society {
             //if (RankMember == Enums.GuildMemberRank.HDeputyLeader)
             //    return (uint)Math.Ceiling((double)(GetArsenalPotency * 90 / 100));
 
-            //if (RankMember == Enums.GuildMemberRank.Manager || RankMember == Enums.GuildMemberRank.HonoraryManager
+            //if (RankMember == Enums.GuildMemberRank.Manager || RankMember == Enums.GuildMemberRank.HManager
             //    || RankMember == Enums.GuildMemberRank.Supervisor)
             //    return (uint)Math.Ceiling((double)(GetArsenalPotency * 80 / 100));
 
-            //if ((ushort)RankMember <= 859 && (ushort)RankMember >= 850 || RankMember == Enums.GuildMemberRank.ASupervisor || RankMember == Enums.GuildMemberRank.HonorarySuperv)
+            //if ((ushort)RankMember <= 859 && (ushort)RankMember >= 850 || RankMember == Enums.GuildMemberRank.ASupervisor || RankMember == Enums.GuildMemberRank.HSupervisor)
             //    return (uint)Math.Ceiling((double)(GetArsenalPotency * 70 / 100));
 
             //if (RankMember == Enums.GuildMemberRank.Steward || RankMember == Enums.GuildMemberRank.DLeaderSpouse
@@ -357,14 +359,14 @@ namespace MTA.Game.ConquerStructures.Society {
             //return (uint)Math.Ceiling((double)(GetArsenalPotency * 20 / 100));//Fallower
         }
 
-        public uint GetSharedBattlepower(int rank) {
+        public uint GetSharedBattlePower(int rank) {
             return
                 GetMemberPotency(
-                    (Enums.GuildMemberRank)rank); //(uint)(arsenal_bp * SharedBattlepowerPercentage[rank / 100]);
+                    (Enums.GuildMemberRank)rank); //(uint)(arsenal_bp * SharedBattlePowerPercentage[rank / 100]);
         }
 
-        public uint GetSharedBattlepower(Enums.GuildMemberRank rank) {
-            return GetSharedBattlepower((int)rank);
+        public uint GetSharedBattlePower(Enums.GuildMemberRank rank) {
+            return GetSharedBattlePower((int)rank);
         }
 
         /// <summary>
@@ -383,7 +385,7 @@ namespace MTA.Game.ConquerStructures.Society {
             Database.GuildArsenalTable.Save(this);
         }
 
-        public static Counter GuildCounter;
+        public static Counter GuildCounter = new Counter(0);
 
         public static void GuildProfile(byte[] packet, GameState client) {
             var p = new GuildProfilePacket();
@@ -404,28 +406,28 @@ namespace MTA.Game.ConquerStructures.Society {
             client.Send(packet);
         }
 
-        public class Member //: Interfaces.IKnownPerson
+        public class Member(uint guildId) //: Interfaces.IKnownPerson
         {
-            public Member(uint GuildID) {
-                this.GuildID = GuildID;
-            }
-
             public uint ExploitsRank;
             public uint Exploits = 0;
-            public uint ID { get; set; }
-            public string Name { get; set; }
-            public string Spouse;
+            public uint Id { get; set; }
+            public string Name { get; set; } = string.Empty;
+            public string Spouse = string.Empty;
 
-            public bool IsOnline => Kernel.GamePool.ContainsKey(ID);
-
-            public GameState? Client => !IsOnline ? null : Kernel.GamePool[ID];
+            public GameState? Client {
+                get {
+                    if (Kernel.TryGetPlayer(Id, out var client))
+                        return client;
+                    return null;
+                }
+            }
 
             public ulong SilverDonation { get; set; }
             public ulong ConquerPointDonation { get; set; }
             public ulong LastLogin = 0;
-            public uint GuildID { get; set; }
+            public uint GuildId { get; set; } = guildId;
 
-            public Guild Guild => Kernel.Guilds[GuildID];
+            public Guild Guild => Kernel.Guilds[GuildId];
 
             public Enums.GuildMemberRank Rank { get; set; }
             public byte Level { get; set; }
@@ -437,25 +439,25 @@ namespace MTA.Game.ConquerStructures.Society {
             public uint VirtuePoints;
 
             public uint Lilies;
-            public uint Rouses;
+            public uint Roses;
             public uint Orchids;
             public uint Tulips;
             public uint ArsenalDonation;
             public uint PkDonation;
 
             public uint TotalDonation =>
-                (uint)(Lilies + Orchids + Tulips + Rouses + ConquerPointDonation + VirtuePoints +
+                (uint)(Lilies + Orchids + Tulips + Roses + ConquerPointDonation + VirtuePoints +
                        (uint)SilverDonation + ArsenalDonation + PkDonation);
 
-            public uint CTFSilverReward;
-            public uint CTFCpsReward;
+            public uint CtfSilverReward;
+            public uint CtfCpsReward;
             public uint WarScore;
         }
 
-        private byte[] Buffer;
+        private readonly byte[] _buffer;
         public uint GuildScoreWar;
         public uint WarScore;
-        public uint sWarScore;
+        public uint SWarScore;
 
         public bool SuperPoleKeeper => SuperGuildWar.Pole.Name == Name;
 
@@ -463,7 +465,7 @@ namespace MTA.Game.ConquerStructures.Society {
             get {
                 // Check database history first (works even after server restart)
                 var latest = Database.GuildWarHistoryTable.GetLatest();
-                if (latest != null && latest.GuildId == ID) {
+                if (latest != null && latest.GuildId == Id) {
                     return true;
                 }
 
@@ -475,14 +477,18 @@ namespace MTA.Game.ConquerStructures.Society {
 
         public bool PoleKeeper2 => EliteGuildWar.Poles.Name == Name;
 
-        public Guild(string leadername) {
-            Buffer = new byte[92 + 8];
+        public Guild(string leaderName) {
+            _buffer = new byte[92 + 8];
             Members = new SafeDictionary<uint, Member>();
             Enemy = new SafeDictionary<uint, Guild>();
-            LeaderName = leadername;
-            WriteUInt16(92, 0, Buffer);
-            WriteUInt16(1106, 2, Buffer);
-            Buffer[48] = 0x2;
+            _leaderName = leaderName;
+            Name = string.Empty;
+            Bulletin = null; // Will be set later or defaulted in SendGuild
+            Leader = null; // Will be set later in Create or CreateGuild
+            LeaderName = leaderName;
+            WriteUInt16(92, 0, _buffer);
+            WriteUInt16(1106, 2, _buffer);
+            _buffer[48] = 0x2;
             //  Buffer[49] = 0x1;
 
             //            Buffer[75] = 0x1;
@@ -502,31 +508,37 @@ namespace MTA.Game.ConquerStructures.Society {
             AdvertiseRecruit = new Recruitment();
         }
 
-        public uint CTFdonationCPs = 0;
-        public uint CTFdonationSilver = 0;
+        // ReSharper disable once InconsistentNaming
+        public uint CTFDonationCPs = 0;
 
+        // ReSharper disable once InconsistentNaming
+        public uint CTFDonationSilver = 0;
 
-        public uint CTFdonationCPsold = 0;
-        public uint CTFdonationSilverold = 0;
+        // ReSharper disable once InconsistentNaming
+        public uint CTFDonationCPSold = 0;
 
-        public void CalculateCtfrank(bool createPlayersReward = false) {
+        // ReSharper disable once InconsistentNaming
+        public uint CTFDonationSilverOld = 0;
+
+        // ReSharper disable once InconsistentNaming
+        public void CalculateCTFRank(bool createPlayersReward = false) {
             var rankCtf = Members.Values.Where(p => p.Exploits != 0).OrderByDescending(p => p.Exploits).ToArray();
             for (ushort x = 0; x < rankCtf.Length; x++) {
                 var aMem = rankCtf[x];
-                var mem = Members[aMem.ID];
+                var mem = Members[aMem.Id];
                 mem.ExploitsRank = (uint)(x + 1);
 
                 if (!createPlayersReward) continue;
-                var rewardCtf = CalculateRewardCTF(mem.ExploitsRank);
-                mem.CTFSilverReward = rewardCtf[0];
-                mem.CTFCpsReward = rewardCtf[1];
+                var rewardCtf = CalculateRewardCtf(mem.ExploitsRank);
+                mem.CtfSilverReward = rewardCtf[0];
+                mem.CtfCpsReward = rewardCtf[1];
             }
         }
 
-        private uint[] CalculateRewardCTF(uint Rank) {
+        private uint[] CalculateRewardCtf(uint rank) {
             var rew = new uint[2];
-            rew[0] = (CTFdonationSilverold / (Rank + 1));
-            rew[1] = (CTFdonationCPsold / (Rank + 1));
+            rew[0] = (CTFDonationSilverOld / (rank + 1));
+            rew[1] = (CTFDonationCPSold / (rank + 1));
             return rew;
         }
 
@@ -535,63 +547,63 @@ namespace MTA.Game.ConquerStructures.Society {
         public void CreateMembersRank() {
             lock (this) {
                 //remove all ranks
-                foreach (var memb in Members.Values.Where(memb => (ushort)memb.Rank < 920)) {
-                    if (RanksCounts[(ushort)memb.Rank] > 0)
-                        RanksCounts[(ushort)memb.Rank]--;
-                    memb.Rank = Enums.GuildMemberRank.Member;
-                    RanksCounts[(ushort)memb.Rank]++;
+                foreach (var member in Members.Values.Where(member => (ushort)member.Rank < 920)) {
+                    if (RanksCounts[(ushort)member.Rank] > 0)
+                        RanksCounts[(ushort)member.Rank]--;
+                    member.Rank = Enums.GuildMemberRank.Member;
+                    RanksCounts[(ushort)member.Rank]++;
                 }
 
                 //calculate manager`s
-                const byte maxMannager = 5; //0,1,2,3,4
+                const byte maxManager = 5; //0,1,2,3,4
                 const byte maxHonorManager = 2; //5,6,
                 const byte maxSupervisor = 2; //7,8,
                 const byte maxSteward = 4; //9,10,11,12
                 const byte maxArsFollower = 2; //13,14
                 byte amount = 0; //8
-                Member[] poll = (from memb in Members.Values orderby memb.ArsenalDonation descending select memb)
+                Member[] poll = (from member in Members.Values orderby member.ArsenalDonation descending select member)
                     .ToArray();
                 for (byte x = 0; x < poll.Length; x++) {
-                    var membru = poll[x];
-                    if (membru.Rank > Enums.GuildMemberRank.Manager)
+                    var member = poll[x];
+                    if (member.Rank > Enums.GuildMemberRank.Manager)
                         continue;
-                    if (amount < maxMannager) {
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.Manager;
-                        RanksCounts[(ushort)membru.Rank]++;
+                    if (amount < maxManager) {
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.Manager;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
-                    else if (amount < maxMannager + maxHonorManager) {
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.HonoraryManager;
-                        RanksCounts[(ushort)membru.Rank]++;
+                    else if (amount < maxManager + maxHonorManager) {
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.HonoraryManager;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
-                    else if (amount < maxHonorManager + maxMannager + maxSupervisor) {
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.Supervisor;
-                        RanksCounts[(ushort)membru.Rank]++;
+                    else if (amount < maxHonorManager + maxManager + maxSupervisor) {
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.Supervisor;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
-                    else if (amount < maxHonorManager + maxMannager + maxSupervisor + maxSteward) {
-                        if (membru.Rank > Enums.GuildMemberRank.Steward)
+                    else if (amount < maxHonorManager + maxManager + maxSupervisor + maxSteward) {
+                        if (member.Rank > Enums.GuildMemberRank.Steward)
                             continue;
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.Steward;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.Steward;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
-                    else if (amount < maxHonorManager + maxMannager + maxSupervisor + maxSteward + maxArsFollower) {
-                        if (membru.Rank > Enums.GuildMemberRank.ArsFollower)
+                    else if (amount < maxHonorManager + maxManager + maxSupervisor + maxSteward + maxArsFollower) {
+                        if (member.Rank > Enums.GuildMemberRank.ArsFollower)
                             continue;
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.ArsFollower;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.ArsFollower;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
                     else
@@ -605,75 +617,76 @@ namespace MTA.Game.ConquerStructures.Society {
                 const byte maxCpAgent = 2; //3,4
                 const byte maxCpFollower = 2; //5,6
                 amount = 0; //3
-                poll = (from memb in Members.Values orderby memb.ConquerPointDonation descending select memb).ToArray();
+                poll = (from member in Members.Values orderby member.ConquerPointDonation descending select member)
+                    .ToArray();
                 for (byte x = 0; x < poll.Length; x++) {
-                    var membru = poll[x];
-                    if (membru.Rank > Enums.GuildMemberRank.CPSupervisor)
+                    var member = poll[x];
+                    if (member.Rank > Enums.GuildMemberRank.CPSupervisor)
                         continue;
                     if (amount < maxCpSupervisor) {
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.CPSupervisor;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.CPSupervisor;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
                     else if (amount < maxCpSupervisor + maxCpAgent) {
-                        if (membru.Rank > Enums.GuildMemberRank.CPAgent)
+                        if (member.Rank > Enums.GuildMemberRank.CPAgent)
                             continue;
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.CPAgent;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.CPAgent;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
                     else if (amount < maxCpSupervisor + maxCpAgent + maxCpFollower) {
-                        if (membru.Rank > Enums.GuildMemberRank.CPFollower)
+                        if (member.Rank > Enums.GuildMemberRank.CPFollower)
                             continue;
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.CPFollower;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.CPFollower;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
                     else
                         break;
                 }
 
-                RankCPDonations = poll.ToArray();
+                RankCpDonations = poll.ToArray();
 
                 //calculate pk ranks
                 const byte maxPkSupervisor = 3; //0,1,2
                 const byte maxPkAgent = 2; //3,4,
                 const byte maxPkFollower = 2; //5,6
                 amount = 0; //3
-                poll = (from memb in Members.Values orderby memb.PkDonation descending select memb).ToArray();
+                poll = (from member in Members.Values orderby member.PkDonation descending select member).ToArray();
                 for (byte x = 0; x < poll.Length; x++) {
-                    var membru = poll[x];
-                    if (membru.Rank > Enums.GuildMemberRank.PKSupervisor)
+                    var member = poll[x];
+                    if (member.Rank > Enums.GuildMemberRank.PKSupervisor)
                         continue;
                     if (amount < maxPkSupervisor) {
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.PKSupervisor;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.PKSupervisor;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
                     else if (amount < maxPkSupervisor + maxPkAgent) {
-                        if (membru.Rank > Enums.GuildMemberRank.PKAgent)
+                        if (member.Rank > Enums.GuildMemberRank.PKAgent)
                             continue;
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.PKAgent;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.PKAgent;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
                     else if (amount < maxPkSupervisor + maxPkAgent + maxPkFollower) {
-                        if (membru.Rank > Enums.GuildMemberRank.PKFollower)
+                        if (member.Rank > Enums.GuildMemberRank.PKFollower)
                             continue;
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.PKFollower;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.PKFollower;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
                     else
@@ -687,75 +700,75 @@ namespace MTA.Game.ConquerStructures.Society {
                 const byte maxRoseAgent = 2; //3,4
                 const byte maxRoseFollower = 2; //5,6
                 amount = 0; //3
-                poll = (from memb in Members.Values orderby memb.Rouses descending select memb).ToArray();
+                poll = (from member in Members.Values orderby member.Roses descending select member).ToArray();
                 for (byte x = 0; x < poll.Length; x++) {
-                    var membru = poll[x];
-                    if (membru.Rank > Enums.GuildMemberRank.RoseSupervisor)
+                    var member = poll[x];
+                    if (member.Rank > Enums.GuildMemberRank.RoseSupervisor)
                         continue;
                     if (amount < maxRoseSupervisor) {
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.RoseSupervisor;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.RoseSupervisor;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
                     else if (amount < maxRoseSupervisor + maxRoseAgent) {
-                        if (membru.Rank > Enums.GuildMemberRank.RoseAgent)
+                        if (member.Rank > Enums.GuildMemberRank.RoseAgent)
                             continue;
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.RoseAgent;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.RoseAgent;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
                     else if (amount < maxRoseSupervisor + maxRoseAgent + maxRoseFollower) {
-                        if (membru.Rank > Enums.GuildMemberRank.RoseFollower)
+                        if (member.Rank > Enums.GuildMemberRank.RoseFollower)
                             continue;
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.RoseFollower;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.RoseFollower;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
                     else
                         break;
                 }
 
-                RankRosseDonations = poll.ToArray();
+                RankRoseDonations = poll.ToArray();
 
                 //calculate LilySupervisor
                 const byte maxLilySupervisor = 3;
                 const byte maxLilyAgent = 2;
                 const byte maxLilyFollower = 2;
                 amount = 0; //3
-                poll = (from memb in Members.Values orderby memb.Lilies descending select memb).ToArray();
+                poll = (from member in Members.Values orderby member.Lilies descending select member).ToArray();
                 for (byte x = 0; x < poll.Length; x++) {
-                    var membru = poll[x];
-                    if (membru.Rank > Enums.GuildMemberRank.LilySupervisor)
+                    var member = poll[x];
+                    if (member.Rank > Enums.GuildMemberRank.LilySupervisor)
                         continue;
                     if (amount < maxLilySupervisor) {
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.LilySupervisor;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.LilySupervisor;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
                     else if (amount < maxLilySupervisor + maxLilyAgent) {
-                        if (membru.Rank > Enums.GuildMemberRank.LilyAgent)
+                        if (member.Rank > Enums.GuildMemberRank.LilyAgent)
                             continue;
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.LilyAgent;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.LilyAgent;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
                     else if (amount < maxLilySupervisor + maxLilyAgent + maxLilyFollower) {
-                        if (membru.Rank > Enums.GuildMemberRank.LilyFollower)
+                        if (member.Rank > Enums.GuildMemberRank.LilyFollower)
                             continue;
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.LilyFollower;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.LilyFollower;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
                     else
@@ -767,36 +780,36 @@ namespace MTA.Game.ConquerStructures.Society {
                 //calculate TulipAgent
                 const byte maxTSupervisor = 3;
                 const byte maxTulipAgent = 2;
-                const byte maxTulupFollower = 2;
+                const byte maxTulipFollower = 2;
                 amount = 0; //3
-                poll = (from memb in Members.Values orderby memb.Tulips descending select memb).ToArray();
+                poll = (from member in Members.Values orderby member.Tulips descending select member).ToArray();
                 for (byte x = 0; x < poll.Length; x++) {
-                    var membru = poll[x];
-                    if (membru.Rank > Enums.GuildMemberRank.TSupervisor)
+                    var member = poll[x];
+                    if (member.Rank > Enums.GuildMemberRank.TSupervisor)
                         continue;
                     if (amount < maxTSupervisor) {
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.TSupervisor;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.TSupervisor;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
                     else if (amount < maxTSupervisor + maxTulipAgent) {
-                        if (membru.Rank > Enums.GuildMemberRank.TulipAgent)
+                        if (member.Rank > Enums.GuildMemberRank.TulipAgent)
                             continue;
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.TulipAgent;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.TulipAgent;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
-                    else if (amount < maxTSupervisor + maxTulipAgent + maxTulupFollower) {
-                        if (membru.Rank > Enums.GuildMemberRank.TulipFollower)
+                    else if (amount < maxTSupervisor + maxTulipAgent + maxTulipFollower) {
+                        if (member.Rank > Enums.GuildMemberRank.TulipFollower)
                             continue;
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.TulipFollower;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.TulipFollower;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
                     else
@@ -810,36 +823,36 @@ namespace MTA.Game.ConquerStructures.Society {
                 const byte maxOrchidAgent = 2;
                 const byte maxOrchidFollower = 2;
                 amount = 0; //3
-                poll = (from memb in Members.Values
-                    orderby memb.Tulips descending
-                    select memb).ToArray();
+                poll = (from member in Members.Values
+                    orderby member.Tulips descending
+                    select member).ToArray();
                 for (byte x = 0; x < poll.Length; x++) {
-                    var membru = poll[x];
-                    if (membru.Rank > Enums.GuildMemberRank.OSupervisor)
+                    var member = poll[x];
+                    if (member.Rank > Enums.GuildMemberRank.OSupervisor)
                         continue;
                     if (amount < maxOSupervisor) {
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.OSupervisor;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.OSupervisor;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
                     else if (amount < maxOSupervisor + maxOrchidAgent) {
-                        if (membru.Rank > Enums.GuildMemberRank.OrchidAgent)
+                        if (member.Rank > Enums.GuildMemberRank.OrchidAgent)
                             continue;
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.OrchidAgent;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.OrchidAgent;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
                     else if (amount < maxOSupervisor + maxOrchidFollower + maxOrchidAgent) {
-                        if (membru.Rank > Enums.GuildMemberRank.OrchidFollower)
+                        if (member.Rank > Enums.GuildMemberRank.OrchidFollower)
                             continue;
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.OrchidFollower;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.OrchidFollower;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
                     else
@@ -849,31 +862,31 @@ namespace MTA.Game.ConquerStructures.Society {
                 RankOrchidsDonations = poll.ToArray();
 
 
-                poll = (from memb in Members.Values
-                    orderby memb.TotalDonation descending
-                    select memb).ToArray();
+                poll = (from member in Members.Values
+                    orderby member.TotalDonation descending
+                    select member).ToArray();
 
                 const byte hDeputyLeader = 2; //0,1
                 const byte maxHonorarySteward = 2; //2,3
                 amount = 0; //20
                 for (byte x = 0; x < poll.Length; x++) {
-                    var membru = poll[x];
-                    if (membru.Rank > Enums.GuildMemberRank.HDeputyLeader)
+                    var member = poll[x];
+                    if (member.Rank > Enums.GuildMemberRank.HDeputyLeader)
                         continue;
                     if (amount < hDeputyLeader) {
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.HDeputyLeader;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.HDeputyLeader;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
                     else if (amount < hDeputyLeader + maxHonorarySteward) {
-                        if (membru.Rank > Enums.GuildMemberRank.HonorarySteward)
+                        if (member.Rank > Enums.GuildMemberRank.HonorarySteward)
                             continue;
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.HonorarySteward;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.HonorarySteward;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
                     else
@@ -885,38 +898,38 @@ namespace MTA.Game.ConquerStructures.Society {
 
                 const byte sSupervisor = 5; //0,1,2,3
                 const byte maxSilverAgent = 2; //4,5
-                const byte maxSilverFollowr = 2; //6,7
+                const byte maxSilverFollower = 2; //6,7
                 amount = 0; //20
-                poll = (from memb in Members.Values
-                    orderby memb.SilverDonation descending
-                    select memb).ToArray();
+                poll = (from member in Members.Values
+                    orderby member.SilverDonation descending
+                    select member).ToArray();
                 for (byte x = 0; x < poll.Length; x++) {
-                    var membru = poll[x];
-                    if (membru.Rank > Enums.GuildMemberRank.SSupervisor)
+                    var member = poll[x];
+                    if (member.Rank > Enums.GuildMemberRank.SSupervisor)
                         continue;
                     if (amount < sSupervisor) {
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.SSupervisor;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.SSupervisor;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
                     else if (amount < sSupervisor + maxSilverAgent) {
-                        if (membru.Rank > Enums.GuildMemberRank.SilverAgent)
+                        if (member.Rank > Enums.GuildMemberRank.SilverAgent)
                             continue;
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.SilverAgent;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.SilverAgent;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
-                    else if (amount < sSupervisor + maxSilverAgent + maxSilverFollowr) {
-                        if (membru.Rank > Enums.GuildMemberRank.SilverFollower)
+                    else if (amount < sSupervisor + maxSilverAgent + maxSilverFollower) {
+                        if (member.Rank > Enums.GuildMemberRank.SilverFollower)
                             continue;
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.SilverFollower;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.SilverFollower;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
                     else
@@ -929,37 +942,37 @@ namespace MTA.Game.ConquerStructures.Society {
                 const byte maxGAgent = 2; //3,4
                 const byte maxGFollower = 2; //5,6
                 amount = 0; //20
-                poll = (from memb in Members.Values
-                    orderby memb.VirtuePoints descending
-                    select memb).ToArray();
+                poll = (from member in Members.Values
+                    orderby member.VirtuePoints descending
+                    select member).ToArray();
 
                 for (byte x = 0; x < poll.Length; x++) {
-                    var membru = poll[x];
-                    if (membru.Rank > Enums.GuildMemberRank.GSupervisor)
+                    var member = poll[x];
+                    if (member.Rank > Enums.GuildMemberRank.GSupervisor)
                         continue;
                     if (amount < gSupervisor) {
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.GSupervisor;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.GSupervisor;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
                     else if (amount < gSupervisor + maxGAgent) {
-                        if (membru.Rank > Enums.GuildMemberRank.GuideAgent)
+                        if (member.Rank > Enums.GuildMemberRank.GuideAgent)
                             continue;
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.GuideAgent;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.GuideAgent;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
                     else if (amount < gSupervisor + maxGAgent + maxGFollower) {
-                        if (membru.Rank > Enums.GuildMemberRank.GuideFollower)
+                        if (member.Rank > Enums.GuildMemberRank.GuideFollower)
                             continue;
-                        if (RanksCounts[(ushort)membru.Rank] > 0)
-                            RanksCounts[(ushort)membru.Rank]--;
-                        membru.Rank = Enums.GuildMemberRank.GuideFollower;
-                        RanksCounts[(ushort)membru.Rank]++;
+                        if (RanksCounts[(ushort)member.Rank] > 0)
+                            RanksCounts[(ushort)member.Rank]--;
+                        member.Rank = Enums.GuildMemberRank.GuideFollower;
+                        RanksCounts[(ushort)member.Rank]++;
                         amount++;
                     }
                     else
@@ -970,89 +983,124 @@ namespace MTA.Game.ConquerStructures.Society {
             }
         }
 
-        public uint ID {
-            get => BitConverter.ToUInt32(Buffer, 4);
-            set => WriteUInt32(value, 4, Buffer);
+        public uint Id {
+            get => BitConverter.ToUInt32(_buffer, 4);
+            set => WriteUInt32(value, 4, _buffer);
         }
 
         public ulong SilverFund {
-            get => BitConverter.ToUInt64(Buffer, 12);
-            set => WriteUInt64(value, 12, Buffer);
+            get => BitConverter.ToUInt64(_buffer, 12);
+            set => WriteUInt64(value, 12, _buffer);
         }
 
         public uint ConquerPointFund {
-            get => BitConverter.ToUInt32(Buffer, 20);
-            set => WriteUInt32(value, 20, Buffer);
+            get => BitConverter.ToUInt32(_buffer, 20);
+            set => WriteUInt32(value, 20, _buffer);
         }
 
         public uint MemberCount {
-            get => BitConverter.ToUInt32(Buffer, 24);
-            set => WriteUInt32(value, 24, Buffer);
+            get => BitConverter.ToUInt32(_buffer, 24);
+            set => WriteUInt32(value, 24, _buffer);
         }
 
         public uint LevelRequirement {
-            get => BitConverter.ToUInt32(Buffer, 48);
-            set => WriteUInt32(value, 48, Buffer);
+            get => BitConverter.ToUInt32(_buffer, 48);
+            set => WriteUInt32(value, 48, _buffer);
         }
 
-        public bool GetMember(string name, out Member getmem) {
+        public bool GetMember(string name, out Member? member) {
             foreach (var mem in Members.Values.Where(mem => mem.Name == name)) {
-                getmem = mem;
+                member = mem;
                 return true;
             }
 
-            getmem = null;
+            member = null;
             return false;
         }
 
         public uint RebornRequirement {
-            get => BitConverter.ToUInt32(Buffer, 52);
-            set => WriteUInt32(value, 52, Buffer);
+            get => BitConverter.ToUInt32(_buffer, 52);
+            set => WriteUInt32(value, 52, _buffer);
         }
 
         public uint ClassRequirement {
-            get => BitConverter.ToUInt32(Buffer, 56);
-            set => WriteUInt32(value, 56, Buffer);
+            get => BitConverter.ToUInt32(_buffer, 56);
+            set => WriteUInt32(value, 56, _buffer);
         }
 
         public bool AllowTrojans {
             get => ((ClassRequirement & ClassRequirements.Trojan) != ClassRequirements.Trojan);
-            set => ClassRequirement ^= ClassRequirements.Trojan;
+            set {
+                if (value)
+                    ClassRequirement &= ~ClassRequirements.Trojan;
+                else
+                    ClassRequirement |= ClassRequirements.Trojan;
+            }
         }
 
         public bool AllowWarriors {
             get => ((ClassRequirement & ClassRequirements.Warrior) != ClassRequirements.Warrior);
-            set => ClassRequirement ^= ClassRequirements.Warrior;
+            set {
+                if (value)
+                    ClassRequirement &= ~ClassRequirements.Warrior;
+                else
+                    ClassRequirement |= ClassRequirements.Warrior;
+            }
         }
 
         public bool AllowTaoists {
             get => ((ClassRequirement & ClassRequirements.Taoist) != ClassRequirements.Taoist);
-            set => ClassRequirement ^= ClassRequirements.Taoist;
+            set {
+                if (value)
+                    ClassRequirement &= ~ClassRequirements.Taoist;
+                else
+                    ClassRequirement |= ClassRequirements.Taoist;
+            }
         }
 
         public bool AllowArchers {
             get => ((ClassRequirement & ClassRequirements.Archer) != ClassRequirements.Archer);
-            set => ClassRequirement ^= ClassRequirements.Archer;
+            set {
+                if (value)
+                    ClassRequirement &= ~ClassRequirements.Archer;
+                else
+                    ClassRequirement |= ClassRequirements.Archer;
+            }
         }
 
         public bool AllowNinjas {
             get => ((ClassRequirement & ClassRequirements.Ninja) != ClassRequirements.Ninja);
-            set => ClassRequirement ^= ClassRequirements.Ninja;
+            set {
+                if (value)
+                    ClassRequirement &= ~ClassRequirements.Ninja;
+                else
+                    ClassRequirement |= ClassRequirements.Ninja;
+            }
         }
 
         public bool AllowMonks {
             get => ((ClassRequirement & ClassRequirements.Monk) != ClassRequirements.Monk);
-            set => ClassRequirement ^= ClassRequirements.Monk;
+            set {
+                if (value)
+                    ClassRequirement &= ~ClassRequirements.Monk;
+                else
+                    ClassRequirement |= ClassRequirements.Monk;
+            }
         }
 
         public bool AllowPirates {
             get => ((ClassRequirement & ClassRequirements.Pirate) != ClassRequirements.Pirate);
-            set => ClassRequirement ^= ClassRequirements.Pirate;
+            set {
+                if (value)
+                    ClassRequirement &= ~ClassRequirements.Pirate;
+                else
+                    ClassRequirement |= ClassRequirements.Pirate;
+            }
         }
 
         public byte Level {
-            get => Buffer[60];
-            set => Buffer[60] = value;
+            get => _buffer[60];
+            set => _buffer[60] = value;
         }
 
         public string Name;
@@ -1061,43 +1109,42 @@ namespace MTA.Game.ConquerStructures.Society {
         public SafeDictionary<uint, Guild> Ally;
         public SafeDictionary<uint, Guild> Enemy;
         public uint Wins;
-        public uint Losts;
-        public uint cp_donation = 0;
-        public ulong money_donation = 0;
-        public uint honor_donation = 0;
-        public uint pkp_donation = 0;
-        public uint rose_donation = 0;
-        public uint tuil_donation = 0;
-        public uint orchid_donation = 0;
-        public uint lilies_donation = 0;
+        public uint Loses;
+        public uint CpDonation = 0;
+        public ulong MoneyDonation = 0;
+        public uint HonorDonation = 0;
+        public uint PkpDonation = 0;
+        public uint RoseDonation = 0;
+        public uint TulipDonation = 0;
+        public uint OrchidDonation = 0;
+        public uint LiliesDonation = 0;
 
-        public string Bulletin;
+        public string? Bulletin;
 
-        public Member Leader;
-        private string leaderName;
+        public Member? Leader;
+        private string _leaderName;
         public uint PtScore;
         public uint PhScore;
         public uint PaScore;
         public uint BiScore;
 
         public uint EWarScore;
-        public uint PTScore;
-        public uint DCScore;
-        public uint DPScore;
-        public uint PIScore;
-        public uint PPScore;
-        public uint APScore;
+        public uint DcScore;
+        public uint DpScore;
+        public uint PiScore;
+        public uint PpScore;
+        public uint ApScore;
         public uint RaScore;
         public uint MaScore;
-        public uint CTFPoints;
-        public uint CTFReward = 0;
-        public uint CTFFlagScore;
+        public uint CtfPoints;
+        public uint CtfReward = 0;
+        public uint CtfFlagScore;
 
         public string LeaderName {
-            get => leaderName;
+            get => _leaderName;
             set {
-                leaderName = value;
-                WriteString(value, 32, Buffer);
+                _leaderName = value;
+                WriteString(value, 32, _buffer);
             }
         }
 
@@ -1107,9 +1154,10 @@ namespace MTA.Game.ConquerStructures.Society {
 
         public bool Create(string name) {
             if (name.Length >= 16) return false;
+            if (Leader == null) return false;
             Name = name;
             SilverFund = 500000;
-            Members.Add(Leader.ID, Leader);
+            Members.Add(Leader.Id, Leader);
             try {
                 Database.GuildTable.Create(this);
             }
@@ -1117,9 +1165,9 @@ namespace MTA.Game.ConquerStructures.Society {
                 return false;
             }
 
-            Kernel.Guilds.Add(ID, this);
+            Kernel.Guilds.Add(Id, this);
             var message = new Message(
-                "Congratulations, " + leaderName + " has created guild " + name + " Successfully!",
+                "Congratulations, " + _leaderName + " has created guild " + name + " Successfully!",
                 System.Drawing.Color.White, Message.World);
             foreach (var client in Program.Values) {
                 client.Send(message);
@@ -1142,14 +1190,14 @@ namespace MTA.Game.ConquerStructures.Society {
 
             // Create guild
             var guild = new Guild(client.Entity.Name) {
-                ID = GuildCounter.Next,
+                Id = GuildCounter.Next,
                 SilverFund = initialFund
             };
 
             // Create leader member
-            client.AsMember = new Member(guild.ID) {
+            client.AsMember = new Member(guild.Id) {
                 SilverDonation = 500000,
-                ID = client.Entity.UID,
+                Id = client.Entity.UID,
                 Level = client.Entity.Level,
                 Name = client.Entity.Name,
                 Rank = Enums.GuildMemberRank.GuildLeader,
@@ -1161,7 +1209,7 @@ namespace MTA.Game.ConquerStructures.Society {
             }
 
             // Set up entity
-            client.Entity.GuildID = (ushort)guild.ID;
+            client.Entity.GuildID = (ushort)guild.Id;
             client.Entity.GuildRank = (ushort)Enums.GuildMemberRank.GuildLeader;
             guild.Leader = client.AsMember;
             client.Guild = guild;
@@ -1183,7 +1231,7 @@ namespace MTA.Game.ConquerStructures.Society {
             guild.MemberCount++;
             guild.SendGuild(client);
             guild.SendName(client);
-            Database.GuildArsenalTable.Insert(guild.ID);
+            Database.GuildArsenalTable.Insert(guild.Id);
             client.Screen.FullWipe();
             client.Screen.Reload();
 
@@ -1225,17 +1273,17 @@ namespace MTA.Game.ConquerStructures.Society {
             return true;
         }
 
-        public uint GuildEnrole;
-        public uint BuletinEnrole;
+        public uint GuildEnroll;
+        public uint BulletinEnroll;
 
-        public void CreateBuletinTime(uint time = 0) {
+        public void CreateBulletinTime(uint time = 0) {
             if (time == 0) {
                 var timers = DateTime.Now;
                 time = GetTime((uint)timers.Year, (uint)timers.Month, (uint)timers.Day);
                 Database.GuildTable.SaveEnroles(this);
             }
 
-            BuletinEnrole = time;
+            BulletinEnroll = time;
         }
 
         public void CreateTime(uint time = 0) {
@@ -1245,8 +1293,8 @@ namespace MTA.Game.ConquerStructures.Society {
                 Database.GuildTable.SaveEnroles(this);
             }
 
-            GuildEnrole = time;
-            WriteUInt32(time, 67, Buffer);
+            GuildEnroll = time;
+            WriteUInt32(time, 67, _buffer);
         }
 
         public static uint GetTime(uint year, uint month, uint day) {
@@ -1255,8 +1303,8 @@ namespace MTA.Game.ConquerStructures.Society {
         }
 
         public void AddMember(GameState client) {
-            client.AsMember = new Member(ID) {
-                ID = client.Entity.UID,
+            client.AsMember = new Member(Id) {
+                Id = client.Entity.UID,
                 Level = client.Entity.Level,
                 Name = client.Entity.Name,
                 Rank = Enums.GuildMemberRank.Member,
@@ -1269,10 +1317,10 @@ namespace MTA.Game.ConquerStructures.Society {
 
             MemberCount++;
             client.Guild = this;
-            client.Entity.GuildID = (ushort)client.Guild.ID;
+            client.Entity.GuildID = (ushort)client.Guild.Id;
             client.Entity.GuildRank = (ushort)client.AsMember.Rank;
             if (client.Entity.BattlePower < 405)
-                client.Entity.GuildBattlePower = GetSharedBattlepower(client.AsMember.Rank);
+                client.Entity.GuildBattlePower = GetSharedBattlePower(client.AsMember.Rank);
             for (var i = 0; i < client.ArsenalDonations.Length; i++)
                 client.ArsenalDonations[i] = 0;
             Database.EntityTable.UpdateGuildID(client);
@@ -1284,16 +1332,16 @@ namespace MTA.Game.ConquerStructures.Society {
             SendGuildMessage(new Message(client.AsMember.Name + " has joined our guild.",
                 System.Drawing.Color.Black, Message.Guild));
 
-            var mindonation = new GuildMinDonations(31);
-            mindonation.AprendGuild(this);
-            client.Send(mindonation.ToArray());
+            var minGuildDonation = new GuildMinDonations(31);
+            minGuildDonation.AprendGuild(this);
+            client.Send(minGuildDonation.ToArray());
         }
 
 
         public void SendMembers(GameState client, ushort page) {
-            var timernow = (ulong)DateTime.Now.Ticks;
-            var strm = new MemoryStream();
-            var wtr = new BinaryWriter(strm);
+            var currentTime = (ulong)DateTime.Now.Ticks;
+            var memoryStream = new MemoryStream();
+            var wtr = new BinaryWriter(memoryStream);
             wtr.Write((ushort)0);
             wtr.Write((ushort)2102);
             wtr.Write((uint)0);
@@ -1303,21 +1351,21 @@ namespace MTA.Game.ConquerStructures.Society {
             if (left < 0) left = 0;
             wtr.Write((uint)left);
             var count = 0;
-            var maxmem = page + 12;
-            int minmem = page;
+            var maxMembers = page + 12;
+            int minMembers = page;
             var online = new List<Member>(250);
             var offline = new List<Member>(250);
             foreach (var member in Members.Values) {
-                if (member.IsOnline)
+                if (Kernel.TryGetPlayer(member.Id, out _))
                     online.Add(member);
                 else
                     offline.Add(member);
             }
 
-            online.OrderByDescending((mem) => mem.Rank);
+            online = online.OrderByDescending((mem) => mem.Rank).ToList();
             var unite = online.Union(offline);
             foreach (var member in unite) {
-                if (count >= minmem && count < maxmem) {
+                if (count >= minMembers && count < maxMembers) {
                     wtr.Write((uint)0);
                     var name = Encoding.Default.GetBytes(member.Name);
 
@@ -1326,7 +1374,7 @@ namespace MTA.Game.ConquerStructures.Society {
                         else wtr.Write((byte)0);
                     }
 
-                    wtr.Write((uint)(member.IsOnline ? 1 : 0));
+                    wtr.Write((uint)(Kernel.TryGetPlayer(member.Id, out _) ? 1 : 0));
                     wtr.Write((uint)member.NobilityRank);
                     if (member.Gender == 3)
                         wtr.Write((uint)(member.Gender - 2));
@@ -1339,70 +1387,74 @@ namespace MTA.Game.ConquerStructures.Society {
                     wtr.Write((uint)0);
                     wtr.Write((uint)0);
                     wtr.Write((uint)member.Class);
-                    wtr.Write((uint)(((timernow - member.LastLogin) / 10000000)));
+                    wtr.Write((uint)(((currentTime - member.LastLogin) / 10000000)));
                     wtr.Write(client.Entity.Mesh);
                 }
 
                 count++;
             }
 
-            var packetlength = (int)strm.Length;
-            strm.Position = 0;
-            wtr.Write((ushort)packetlength);
-            strm.Position = strm.Length;
+            var packetLength = (int)memoryStream.Length;
+            memoryStream.Position = 0;
+            wtr.Write((ushort)packetLength);
+            memoryStream.Position = memoryStream.Length;
             wtr.Write(Encoding.Default.GetBytes("TQServer"));
-            strm.Position = 0;
-            var buf = new byte[strm.Length];
-            strm.ReadExactly(buf, 0, buf.Length);
+            memoryStream.Position = 0;
+            var buf = new byte[memoryStream.Length];
+            memoryStream.ReadExactly(buf, 0, buf.Length);
             wtr.Close();
-            strm.Close();
+            memoryStream.Close();
             client.Send(buf);
         }
 
         public void SendGuildMessage(Interfaces.IPacket message) {
-            foreach (var member in Members.Values.Where(member => member.IsOnline)) {
-                member.Client.Send(message);
+            foreach (var member in Members.Values) {
+                if (Kernel.TryGetPlayer(member.Id, out var client))
+                    client.Send(message);
             }
         }
 
-        public Member? GetMemberByName(string membername) {
-            return Members.Values.FirstOrDefault(member => member.Name == membername);
+        public Member? GetMemberByName(string memberName) {
+            return Members.Values.FirstOrDefault(member => member.Name == memberName);
         }
 
-        public void ExpelMember(string membername, bool ownquit) {
-            var member = GetMemberByName(membername);
-            if (member is { IsOnline: true })
-                PacketHandler.UninscribeAllItems(member.Client);
-            else
+        public void ExpelMember(string memberName, bool quit) {
+            var member = GetMemberByName(memberName);
+            if (member == null) return;
+            if (Kernel.TryGetPlayer(member.Id, out var client)) {
+                PacketHandler.UninscribeAllItems(client);
+            }
+            else {
                 foreach (var arsenal in Arsenals)
-                    arsenal.RemoveInscribedItemsBy(member.ID);
+                    arsenal.RemoveInscribedItemsBy(member.Id);
+            }
 
-            if (ownquit)
+            if (quit)
                 SendGuildMessage(new Message(member.Name + " has quit our guild.", System.Drawing.Color.Black,
                     Message.Guild));
             else
                 SendGuildMessage(new Message(member.Name + " have been expelled from our guild.",
                     System.Drawing.Color.Black, Message.Guild));
-            var uid = member.ID;
+            var uid = member.Id;
             if (member.Rank == Enums.GuildMemberRank.DeputyLeader)
                 RanksCounts[(ushort)Enums.GuildMemberRank.DeputyLeader]--;
-            if (member.IsOnline) {
+            if (Kernel.TryGetPlayer(member.Id, out var onlineClient)) {
                 var command = new GuildCommand(true) {
                     Type = GuildCommand.Disband,
-                    dwParam = ID
+                    dwParam = Id
                 };
-                member.Client.Send(command);
-                member.Client.AsMember = null;
-                member.Client.Guild = null;
-                member.Client.Entity.GuildID = 0;
-                member.Client.Entity.GuildRank = 0;
-                member.Client.Screen.FullWipe();
-                member.Client.Screen.Reload();
-                member.Client.Entity.GuildBattlePower = 0;
+                onlineClient.Send(command);
+                onlineClient.AsMember = null;
+                onlineClient.Guild = null;
+                onlineClient.Entity.GuildID = 0;
+                onlineClient.Entity.GuildRank = 0;
+                onlineClient.Screen.FullWipe();
+                onlineClient.Screen.Reload();
+                onlineClient.Entity.GuildBattlePower = 0;
             }
             else {
-                member.GuildID = 0;
-                Database.EntityTable.UpdateData(member.ID, "GuildID", 0);
+                member.GuildId = 0;
+                Database.EntityTable.UpdateData(member.Id, "GuildID", 0);
             }
 
             MemberCount--;
@@ -1417,27 +1469,27 @@ namespace MTA.Game.ConquerStructures.Society {
             var guildName = Name;
             var members = Members.Values.ToArray();
             foreach (var member in members) {
-                var uid = member.ID;
-                if (member.IsOnline) {
-                    PacketHandler.UninscribeAllItems(member.Client);
-                    member.Client.Entity.GuildBattlePower = 0;
+                var uid = member.Id;
+                if (Kernel.TryGetPlayer(member.Id, out var client)) {
+                    PacketHandler.UninscribeAllItems(client);
+                    client.Entity.GuildBattlePower = 0;
                     var command = new GuildCommand(true) {
                         Type = GuildCommand.Disband,
-                        dwParam = ID
+                        dwParam = Id
                     };
-                    member.Client.Entity.GuildID = 0;
-                    member.Client.Entity.GuildRank = 0;
-                    member.Client.Send(command);
-                    member.Client.Screen.FullWipe();
-                    member.Client.Screen.Reload();
-                    member.Client.AsMember = null;
-                    member.Client.Guild = null;
+                    client.Entity.GuildID = 0;
+                    client.Entity.GuildRank = 0;
+                    client.Send(command);
+                    client.Screen.FullWipe();
+                    client.Screen.Reload();
+                    client.AsMember = null;
+                    client.Guild = null;
                 }
                 else {
                     foreach (var arsenal in Arsenals)
-                        arsenal.RemoveInscribedItemsBy(member.ID);
-                    member.GuildID = 0;
-                    Database.EntityTable.UpdateData(member.ID, "GuildID", 0);
+                        arsenal.RemoveInscribedItemsBy(member.Id);
+                    member.GuildId = 0;
+                    Database.EntityTable.UpdateData(member.Id, "GuildID", 0);
                 }
 
                 MemberCount--;
@@ -1451,7 +1503,7 @@ namespace MTA.Game.ConquerStructures.Society {
             }
 
             Database.GuildTable.Disband(this);
-            Kernel.GamePool.Remove(ID);
+            Kernel.GamePool.Remove(Id);
 
             // Send world message if disbanded by a player
             if (!string.IsNullOrEmpty(disbandedBy)) {
@@ -1478,20 +1530,20 @@ namespace MTA.Game.ConquerStructures.Society {
                         SendGuildMessage(stringPacket);
                     }
                     return;*/
-                if (Enemy.ContainsKey(guild.ID)) {
+                if (Enemy.ContainsKey(guild.Id)) {
                     RemoveEnemy(guild.Name);
                 }
 
-                Ally.Add(guild.ID, guild);
+                Ally.Add(guild.Id, guild);
                 var message = new _String(true) {
-                    UID = guild.ID,
+                    UID = guild.Id,
                     Type = 0x15
                 };
                 message.Texts.Add(string.Concat(new object[]
                     { guild.Name, " ", guild.LeaderName, " 0 ", guild.MemberCount }));
                 SendGuildMessage(message);
                 SendGuildMessage(message);
-                Database.GuildTable.AddAlly(this, guild.ID);
+                Database.GuildTable.AddAlly(this, guild.Id);
                 return;
             }
         }
@@ -1501,32 +1553,32 @@ namespace MTA.Game.ConquerStructures.Society {
                 if (guild.Name != name) continue;
                 var cmd = new GuildCommand(true) {
                     Type = GuildCommand.Neutral1,
-                    dwParam = guild.ID
+                    dwParam = guild.Id
                 };
                 SendGuildMessage(cmd);
-                Database.GuildTable.RemoveAlly(this, guild.ID);
-                Ally.Remove(guild.ID);
+                Database.GuildTable.RemoveAlly(this, guild.Id);
+                Ally.Remove(guild.Id);
                 return;
             }
         }
 
         public void AddEnemy(string name) {
             foreach (var guild in Kernel.Guilds.Values.Where(guild => guild.Name == name)) {
-                if (Ally.ContainsKey(guild.ID)) {
+                if (Ally.ContainsKey(guild.Id)) {
                     RemoveAlly(guild.Name);
                     guild.RemoveAlly(Name);
                 }
 
-                Enemy.Add(guild.ID, guild);
+                Enemy.Add(guild.Id, guild);
                 var stringPacket = new _String(true) {
-                    UID = guild.ID,
+                    UID = guild.Id,
                     Type = _String.GuildEnemies
                 };
                 stringPacket.Texts.Add(guild.Name + " " + guild.LeaderName + " " + guild.Level + " " +
                                        guild.MemberCount);
                 SendGuildMessage(stringPacket);
                 SendGuildMessage(stringPacket);
-                Database.GuildTable.AddEnemy(this, guild.ID);
+                Database.GuildTable.AddEnemy(this, guild.Id);
                 return;
             }
         }
@@ -1536,12 +1588,12 @@ namespace MTA.Game.ConquerStructures.Society {
                 if (guild.Name != name) continue;
                 var cmd = new GuildCommand(true) {
                     Type = GuildCommand.Neutral2,
-                    dwParam = guild.ID
+                    dwParam = guild.Id
                 };
                 SendGuildMessage(cmd);
                 SendGuildMessage(cmd);
-                Database.GuildTable.RemoveEnemy(this, guild.ID);
-                Enemy.Remove(guild.ID);
+                Database.GuildTable.RemoveEnemy(this, guild.Id);
+                Enemy.Remove(guild.Id);
                 return;
             }
         }
@@ -1549,7 +1601,7 @@ namespace MTA.Game.ConquerStructures.Society {
 
         public void SendName(GameState client) {
             var stringPacket = new _String(true) {
-                UID = ID,
+                UID = Id,
                 Type = _String.GuildName
             };
             stringPacket.Texts.Add(Name + " " + LeaderName + " 0 " + MemberCount);
@@ -1558,20 +1610,21 @@ namespace MTA.Game.ConquerStructures.Society {
 
         public void SendGuild(GameState client) {
             if (!Members.ContainsKey(client.Entity.UID)) return;
+            if (client.AsMember == null) return;
             Bulletin ??= "This is a new guild!";
 
             client.Send(new GuildCommand((uint)Bulletin.Length)
-                { Type = GuildCommand.Bulletin, dwParam = BuletinEnrole, Str_ = Bulletin });
+                { Type = GuildCommand.Bulletin, dwParam = BulletinEnroll, Str_ = Bulletin });
             //client.Send(new Message(Bulletin, System.Drawing.Color.White, Message.GuildAnnouncement));
-            WriteUInt32((uint)client.AsMember.SilverDonation, 8, Buffer);
-            WriteUInt32((ushort)client.AsMember.Rank, 28, Buffer);
-            client.Send(Buffer);
+            WriteUInt32((uint)client.AsMember.SilverDonation, 8, _buffer);
+            WriteUInt32((ushort)client.AsMember.Rank, 28, _buffer);
+            client.Send(_buffer);
         }
 
         public void SendAllyAndEnemy(GameState client) {
             foreach (var guild in Enemy.Values) {
                 var stringPacket = new _String(true) {
-                    UID = guild.ID,
+                    UID = guild.Id,
                     Type = _String.GuildEnemies
                 };
                 stringPacket.Texts.Add(guild.Name + " " + guild.LeaderName + " 0 " + guild.MemberCount);
@@ -1581,7 +1634,7 @@ namespace MTA.Game.ConquerStructures.Society {
 
             foreach (var guild in Ally.Values) {
                 var stringPacket = new _String(true) {
-                    UID = guild.ID,
+                    UID = guild.Id,
                     Type = _String.GuildAllies
                 };
                 stringPacket.Texts.Add(guild.Name + " " + guild.LeaderName + " 0 " + guild.MemberCount);

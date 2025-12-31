@@ -49,7 +49,7 @@ namespace MTA.Database {
         public static void Create(Game.ConquerStructures.Society.Guild winnerGuild, uint leaderEntityId,
             string leaderName, DateTime warEndTime) {
             using var cmd = new MySqlCommand(MySqlCommandType.INSERT).Insert("guild_war_history")
-                .Insert("guild_id", winnerGuild.ID)
+                .Insert("guild_id", winnerGuild.Id)
                 .Insert("guild_leader_entity_id", leaderEntityId)
                 .Insert("guild_leader_name", leaderName)
                 .Insert("guild_leader_claimed", 0)

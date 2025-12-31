@@ -933,7 +933,7 @@ namespace MTA {
                                 case 3: {
                                     if (client is { Guild: not null, AsMember: not null }) {
                                         if (client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader) {
-                                            uint Reaward = client.Guild.CTFReward * Rates.Ctf;
+                                            uint Reaward = client.Guild.CtfReward * Rates.Ctf;
                                             if (Reaward != 0) {
                                                 byte[] messaje =
                                                     new Message(
@@ -942,7 +942,7 @@ namespace MTA {
                                                         "", Color.Red, Message.System).ToArray();
 
                                                 client.Entity.ConquerPoints += Reaward;
-                                                client.Guild.CTFReward = 0;
+                                                client.Guild.CtfReward = 0;
                                                 GuildTable.SaveCTFReward(client.Guild);
                                                 foreach (var clients in Kernel.GamePool.Values) {
                                                     client.Send(messaje);
@@ -12696,7 +12696,7 @@ namespace MTA {
                                     if (PoleIslanD.KeeperID != 0) {
                                         if (PoleIslanD.Claim &&
                                             client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader &&
-                                            client.Guild.ID == PoleIslanD.KeeperID) {
+                                            client.Guild.Id == PoleIslanD.KeeperID) {
                                             PoleIslanD.Claim = false;
                                             PoleIslanD.KeeperID = 0;
                                             Kernel.SendWorldMessage(
@@ -12785,7 +12785,7 @@ namespace MTA {
                                     if (PoleRakion.KeeperID != 0) {
                                         if (PoleRakion.Claim &&
                                             client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader &&
-                                            client.Guild.ID == PoleRakion.KeeperID) {
+                                            client.Guild.Id == PoleRakion.KeeperID) {
                                             PoleRakion.Claim = false;
                                             PoleRakion.KeeperID = 0;
                                             Kernel.SendWorldMessage(
@@ -12874,7 +12874,7 @@ namespace MTA {
                                     if (PoleMagice.KeeperID != 0) {
                                         if (PoleMagice.Claim &&
                                             client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader &&
-                                            client.Guild.ID == PoleMagice.KeeperID) {
+                                            client.Guild.Id == PoleMagice.KeeperID) {
                                             PoleMagice.Claim = false;
                                             PoleMagice.KeeperID = 0;
                                             Kernel.SendWorldMessage(
@@ -24425,7 +24425,7 @@ namespace MTA {
                                     if (EliteGuildWar.KeeperID != 0) {
                                         if (EliteGuildWar.Claim &&
                                             client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader &&
-                                            client.Guild.ID == EliteGuildWar.KeeperID) {
+                                            client.Guild.Id == EliteGuildWar.KeeperID) {
                                             //#warning ELITEGW PRIZE
                                             EliteGuildWar.Claim = false;
                                             EliteGuildWar.KeeperID = 0;

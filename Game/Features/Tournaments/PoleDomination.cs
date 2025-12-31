@@ -44,7 +44,7 @@ namespace MTA.Game
         private Coordinate currentCoordinate;
         private uint prize;
         private Guild lastKiller;
-        public uint KillerGuildID { get { if (lastKiller == null) return 0; return lastKiller.ID; } }
+        public uint KillerGuildID { get { if (lastKiller == null) return 0; return lastKiller.Id; } }
         private ConcurrentDictionary<Guild, ulong> damages;
         private List<string> winners;
 

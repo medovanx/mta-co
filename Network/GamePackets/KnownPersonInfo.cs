@@ -99,7 +99,7 @@
                 Spouse = person.Client.Entity.Spouse;
                 if (person.Client is { Guild: not null, AsMember: not null })
                 {
-                    GuildID = person.Client.Guild.ID;
+                    GuildID = person.Client.Guild.Id;
                     GuildRank = (ushort)person.Client.AsMember.Rank;
                 }
                 Enemy = enemy;

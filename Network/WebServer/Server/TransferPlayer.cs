@@ -213,11 +213,11 @@ namespace MTA.WebServer
             if (GuildID != 0 && GuildName != "")
             {
                 client.Guild = new Game.ConquerStructures.Society.Guild(GuildLeaderName);
-                client.Guild.ID = (GuildID + Server.Key);
+                client.Guild.Id = (GuildID + Server.Key);
                 client.Guild.Name = GuildName;
-                client.AsMember = new Game.ConquerStructures.Society.Guild.Member(client.Guild.ID);
+                client.AsMember = new Game.ConquerStructures.Society.Guild.Member(client.Guild.Id);
                 client.AsMember.Name = client.Entity.Name;
-                client.AsMember.ID = client.Entity.UID;
+                client.AsMember.Id = client.Entity.UID;
                 client.AsMember.Level = client.Entity.Level;
                 client.AsMember.Spouse = client.Entity.Spouse;
                 client.AsMember.Rank = (Enums.GuildMemberRank)GuildRank;

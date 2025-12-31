@@ -227,14 +227,14 @@ namespace MTA.Database
                             client.AsMember = client.Guild.Members[client.Entity.UID];
                             client.AsMember.ArsenalDonation = client.GetArsenalDonation();
                             client.AsMember.LastLogin = reader.ReadUInt32("GuildLastLogin");
-                            if (client.AsMember.GuildID == 0)
+                            if (client.AsMember.GuildId == 0)
                             {
                                 client.AsMember = null;
                                 client.Guild = null;
                             }
                             else
                             {
-                                client.Entity.GuildID = (ushort)client.Guild.ID;
+                                client.Entity.GuildID = (ushort)client.Guild.Id;
                                 client.Entity.GuildRank = (ushort)client.AsMember.Rank;
                             }
                         }
@@ -710,18 +710,18 @@ namespace MTA.Database
 
                 if (c.AsMember != null)
                 {
-                    cmd.Set("GuildID", c.AsMember.GuildID)
+                    cmd.Set("GuildID", c.AsMember.GuildId)
                         .Set("GuildRank", (ushort)c.AsMember.Rank)
                         .Set("GuildSilverDonation", c.AsMember.SilverDonation)
                         .Set("GuildConquerPointDonation", c.AsMember.ConquerPointDonation)
                         .Set("GuildLilies", c.AsMember.Lilies)
-                        .Set("GuildRouses", c.AsMember.Rouses)
+                        .Set("GuildRouses", c.AsMember.Roses)
                         .Set("GuildOrchids", c.AsMember.Orchids)
                         .Set("GuildTulips", c.AsMember.Tulips)
                         .Set("Exploits", c.AsMember.Exploits)
                         .Set("GuildPkDonation", c.AsMember.PkDonation)
-                        .Set("CTFCpsReward", c.AsMember.CTFCpsReward)
-                        .Set("CTFSilverReward", c.AsMember.CTFSilverReward)
+                        .Set("CTFCpsReward", c.AsMember.CtfCpsReward)
+                        .Set("CTFSilverReward", c.AsMember.CtfSilverReward)
                         .Set("GuildLastlod", (ulong)DateTime.Now.Ticks);
                     c.AsMember.LastLogin = (ulong)DateTime.Now.Ticks;
                 }

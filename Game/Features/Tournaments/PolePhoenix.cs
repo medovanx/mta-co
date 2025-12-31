@@ -118,7 +118,7 @@ namespace MTA.Game
             if (PoleKeeperPh != null && !FirstRound)
             {
                 if (PoleKeeperPh.Wins == 0)
-                    PoleKeeperPh.Losts++;
+                    PoleKeeperPh.Loses++;
                 else
                     PoleKeeperPh.Wins--;
                 Database.GuildTable.UpdateGuildWarStats(PoleKeeperPh);
@@ -129,7 +129,7 @@ namespace MTA.Game
             SortScores(out PoleKeeperPh);
             if (PoleKeeperPh != null)
             {
-                KeeperID = PoleKeeperPh.ID;
+                KeeperID = PoleKeeperPh.Id;
                 Kernel.SendWorldMessage(
                     new Message(
                         "The guild, " + PoleKeeperPh.Name + ", owned by " + PoleKeeperPh.LeaderName +
@@ -138,10 +138,10 @@ namespace MTA.Game
                     new Message("It is generald pardon time. You have 5 minutes to leave, run for your life!",
                         System.Drawing.Color.White, Message.TopLeft), Program.Values, 6001);
 
-                if (PoleKeeperPh.Losts == 0)
+                if (PoleKeeperPh.Loses == 0)
                     PoleKeeperPh.Wins++;
                 else
-                    PoleKeeperPh.Losts--;
+                    PoleKeeperPh.Loses--;
                 Database.GuildTable.UpdateGuildWarStats(PoleKeeperPh);
                 Pole.Name = PoleKeeperPh.Name;
             }
@@ -178,8 +178,8 @@ namespace MTA.Game
             {
                 guild.PhScore += addScore;
                 changed = true;
-                if (!Scores.ContainsKey(guild.ID))
-                    Scores.Add(guild.ID, guild);
+                if (!Scores.ContainsKey(guild.Id))
+                    Scores.Add(guild.Id, guild);
                 if ((int)Pole.Hitpoints <= 0)
                 {
                     FinishRound();

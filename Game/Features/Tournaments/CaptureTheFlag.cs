@@ -23,7 +23,7 @@ namespace MTA.Game
                 Packet[4] = 9;
                 Packet[6] = 1;
                 Packet[14] = 8;
-                WriteUInt32(client.Guild.CTFPoints, 18, Packet);
+                WriteUInt32(client.Guild.CtfPoints, 18, Packet);
             }
             public void Send(GameState client)
             {
@@ -34,8 +34,8 @@ namespace MTA.Game
                 ushort num = 30;
                 Guild[] array = (
                     from p in Kernel.Guilds.Values
-                    where p.CTFPoints != 0u
-                    orderby p.CTFPoints descending
+                    where p.CtfPoints != 0u
+                    orderby p.CtfPoints descending
                     select p).ToArray<Guild>();
                 if (array != null)
                 {
@@ -44,13 +44,13 @@ namespace MTA.Game
                     {
                         WriteString(array[b].Name, num, Packet);
                         num += 16;
-                        WriteUInt32(array[b].CTFPoints, num, Packet);
+                        WriteUInt32(array[b].CtfPoints, num, Packet);
                         num += 4;
                         WriteUInt32(array[b].MemberCount, num, Packet);
                         num += 4;
-                        WriteUInt64(array[b].CTFdonationSilverold, num, Packet);
+                        WriteUInt64(array[b].CTFDonationSilverOld, num, Packet);
                         num += 8;
-                        WriteUInt32(array[b].CTFdonationCPsold, num, Packet);
+                        WriteUInt32(array[b].CTFDonationCPSold, num, Packet);
                         num += 4;
                         b += 1;
                     }
@@ -151,7 +151,7 @@ namespace MTA.Game
                             client.Send(generateEffect(client));
                             client.Entity.RemoveFlag2(Update.Flags2.CarryingFlag);
                             // client.Entity.nRemoveFlag(91);
-                            client.Guild.CTFPoints += 15;
+                            client.Guild.CtfPoints += 15;
                             Program.World.Ctf.SendUpdates();
                             client.Send(generatePacket(7, client.Entity.UID));
                             client.AsMember.Exploits += (ushort)(client.Entity.Level / 2);
@@ -170,7 +170,7 @@ namespace MTA.Game
 
                                 client.Send(Program.World.Ctf.generateTimer(60));
                                 client.Send(Program.World.Ctf.generateEffect(client));
-                                client.Guild.CTFPoints += 3;
+                                client.Guild.CtfPoints += 3;
                                 client.Map.RemoveStaticItem(item);
                                 client.RemoveScreenSpawn(item, true);
                             }
@@ -191,10 +191,10 @@ namespace MTA.Game
             {
                 {
                     var _base = Program.World.Ctf.Bases[attacked.UID];
-                    if (!_base.Scores.ContainsKey(guild.ID))
-                        _base.Scores.Add(guild.ID, damage);
+                    if (!_base.Scores.ContainsKey(guild.Id))
+                        _base.Scores.Add(guild.Id, damage);
                     else
-                        _base.Scores[guild.ID] += damage;
+                        _base.Scores[guild.Id] += damage;
                 }
 
 
@@ -221,72 +221,72 @@ namespace MTA.Game
                 if (player.Entity.MapID == MapID)
                     player.Entity.Teleport(1002, 439, 390);
 
-            var array = Kernel.Guilds.Values.Where(p => p.CTFPoints != 0).OrderByDescending(p => p.CTFPoints).ToArray();
+            var array = Kernel.Guilds.Values.Where(p => p.CtfPoints != 0).OrderByDescending(p => p.CtfPoints).ToArray();
 
             for (int i = 0; i < Math.Min(8, array.Length); i++)
             {
-                array[i].CalculateCtfrank(true);
+                array[i].CalculateCTFRank(true);
                 GuildTable.SaveCTFPoins(array[i]);
 
                 if (i == 0)
                 {
-                    array[i].CTFReward += 10;
+                    array[i].CtfReward += 10;
                     array[i].ConquerPointFund += 3000;
                     array[i].SilverFund += 120000000;
                 }
                 else if (i == 1)
                 {
-                    array[i].CTFReward += 9;
+                    array[i].CtfReward += 9;
                     array[i].ConquerPointFund += 2000;
                     array[i].SilverFund += 100000000;
                 }
                 else if (i == 2)
                 {
-                    array[i].CTFReward += 8;
+                    array[i].CtfReward += 8;
                     array[i].ConquerPointFund += 1000;
                     array[i].SilverFund += 80000000;
                 }
                 else if (i == 3)
                 {
-                    array[i].CTFReward += 7;
+                    array[i].CtfReward += 7;
                     array[i].ConquerPointFund += 600;
                     array[i].SilverFund += 65000000;
                 }
                 else if (i == 4)
                 {
-                    array[i].CTFReward += 6;
+                    array[i].CtfReward += 6;
                     array[i].ConquerPointFund += 500;
                     array[i].SilverFund += 50000000;
                 }
                 else if (i == 5)
                 {
-                    array[i].CTFReward += 5;
+                    array[i].CtfReward += 5;
                     array[i].ConquerPointFund += 400;
                     array[i].SilverFund += 40000000;
                 }
                 else if (i == 6)
                 {
-                    array[i].CTFReward += 4;
+                    array[i].CtfReward += 4;
                     array[i].ConquerPointFund += 300;
                     array[i].SilverFund += 30000000;
                 }
                 else if (i == 7)
                 {
-                    array[i].CTFReward += 3;
+                    array[i].CtfReward += 3;
                     array[i].ConquerPointFund += 200;
                     array[i].SilverFund += 20000000;
                 }
                 GuildTable.SaveCTFReward(array[i]);
-                array[i].CTFdonationCPs = array[i].CTFdonationCPsold;
-                array[i].CTFdonationSilver = array[i].CTFdonationSilverold;
-                array[i].CTFdonationCPsold = 0;
-                array[i].CTFdonationSilverold = 0;
+                array[i].CTFDonationCPs = array[i].CTFDonationCPSold;
+                array[i].CTFDonationSilver = array[i].CTFDonationSilverOld;
+                array[i].CTFDonationCPSold = 0;
+                array[i].CTFDonationSilverOld = 0;
             }
             if (array.Length > 8)
             {
                 for (int x = 8; x < array.Length; x++)
                 {
-                    array[x].CTFPoints = 0;
+                    array[x].CtfPoints = 0;
                     foreach (var meme in array[x].Members.Values)
                     {
                         meme.Exploits = 0;
@@ -316,14 +316,14 @@ namespace MTA.Game
 
         public byte[] generateCTFRanking4()
         {
-            var array = Kernel.Guilds.Values.Where(p => p.CTFPoints != 0).OrderByDescending(p => p.CTFPoints).ToArray();
-            return generateList4(2, array, p => p.CTFPoints);
+            var array = Kernel.Guilds.Values.Where(p => p.CtfPoints != 0).OrderByDescending(p => p.CtfPoints).ToArray();
+            return generateList4(2, array, p => p.CtfPoints);
         }
 
         public byte[] generateCTFRanking()
         {
-            var array = Kernel.Guilds.Values.Where(p => p.CTFPoints != 0).OrderByDescending(p => p.CTFPoints).ToArray();
-            return generateList(2, array, p => p.CTFPoints);
+            var array = Kernel.Guilds.Values.Where(p => p.CtfPoints != 0).OrderByDescending(p => p.CtfPoints).ToArray();
+            return generateList(2, array, p => p.CtfPoints);
         }
 
         private byte[] generateFlagRanking(Base flag)
@@ -333,9 +333,9 @@ namespace MTA.Game
             for (int i = 0; i < array.Length; i++)
             {
                 array[i] = Kernel.Guilds[scores[i].Key];
-                array[i].CTFFlagScore = scores[i].Value;
+                array[i].CtfFlagScore = scores[i].Value;
             }
-            return generateList(1, array, p => p.CTFFlagScore);
+            return generateList(1, array, p => p.CtfFlagScore);
         }
 
         private byte[] generateList(int type, Guild[] array = null, Func<Guild, UInt32> select = null)
@@ -433,7 +433,7 @@ namespace MTA.Game
 
         public static void CTFGuildsRank(GameState client, byte[] packet)
         {
-            var array = Kernel.Guilds.Values.Where(p => p.CTFPoints != 0).OrderByDescending(p => p.CTFPoints).ToArray();
+            var array = Kernel.Guilds.Values.Where(p => p.CtfPoints != 0).OrderByDescending(p => p.CtfPoints).ToArray();
 
             const byte maxcount = 5;
             byte page = packet[10];
@@ -449,21 +449,21 @@ namespace MTA.Game
             Writer.WriteUInt32((uint)(array.Length), 10, buffer);
             Writer.WriteUInt32((uint)(array.Length), 14, buffer);
 
-            Writer.WriteUInt32(client.Guild.CTFdonationCPsold, 18, buffer);
-            Writer.WriteUInt64(client.Guild.CTFdonationSilverold, 22, buffer);
+            Writer.WriteUInt32(client.Guild.CTFDonationCPSold, 18, buffer);
+            Writer.WriteUInt64(client.Guild.CTFDonationSilverOld, 22, buffer);
 
             int offset = 30;
             for (ushort x = (ushort)(page * maxcount - maxcount); x < page * maxcount; x++)
             {
                 if (x >= array.Length) break;
                 var guild = array[x];
-                Writer.WriteUInt32(guild.CTFdonationCPs, offset, buffer);
+                Writer.WriteUInt32(guild.CTFDonationCPs, offset, buffer);
                 offset += 4;
-                Writer.WriteUInt64(guild.CTFdonationSilver, offset, buffer);
+                Writer.WriteUInt64(guild.CTFDonationSilver, offset, buffer);
                 offset += 8;
                 Writer.WriteString(guild.Name, offset, buffer);
                 offset += 0x24;
-                Writer.WriteUInt32(guild.ID, offset, buffer);
+                Writer.WriteUInt32(guild.Id, offset, buffer);
                 offset += 4;
             }
             client.Send(buffer);
@@ -475,7 +475,7 @@ namespace MTA.Game
             byte page = packet[10];
 
 
-            var guild_array = Kernel.Guilds.Values.Where(p => p.CTFPoints != 0).OrderByDescending(p => p.CTFPoints).ToArray();
+            var guild_array = Kernel.Guilds.Values.Where(p => p.CtfPoints != 0).OrderByDescending(p => p.CtfPoints).ToArray();
             if (guild_array.Length == 0)
                 return;
             byte[] buffer2 = new byte[0x38c];
@@ -486,21 +486,21 @@ namespace MTA.Game
             Writer.WriteUInt32(10, 10, buffer2);
             Writer.WriteUInt32((uint)guild_array.Length, 14, buffer2);
             client.Guild = client.AsMember.Guild;
-            Writer.WriteUInt32(client.Guild.CTFdonationCPsold, 0x12, buffer2);
-            Writer.WriteUInt64(client.Guild.CTFdonationSilverold, 0x16, buffer2);
+            Writer.WriteUInt32(client.Guild.CTFDonationCPSold, 0x12, buffer2);
+            Writer.WriteUInt64(client.Guild.CTFDonationSilverOld, 0x16, buffer2);
             ushort offset = 30;
 
             for (ushort x = (ushort)(page * maxcount - maxcount); x < page * maxcount; x++)
             {
                 if (x >= guild_array.Length) break;
                 var guild = guild_array[x];
-                Writer.WriteUInt32(guild.CTFdonationCPsold, offset, buffer2);
+                Writer.WriteUInt32(guild.CTFDonationCPSold, offset, buffer2);
                 offset += 4;
-                Writer.WriteUInt64(guild.CTFdonationSilverold, offset, buffer2);
+                Writer.WriteUInt64(guild.CTFDonationSilverOld, offset, buffer2);
                 offset += 8;
                 Writer.WriteString(guild.Name, offset, buffer2);
                 offset += 0x24;
-                Writer.WriteUInt32(guild.ID, offset, buffer2);
+                Writer.WriteUInt32(guild.Id, offset, buffer2);
                 offset += 4;
             }
 
@@ -509,7 +509,7 @@ namespace MTA.Game
 
         public static void CTFsRank(GameState client, byte[] packet)
         {
-            var array = Kernel.Guilds.Values.Where(p => p.CTFPoints != 0).OrderByDescending(p => p.CTFPoints).ToArray();
+            var array = Kernel.Guilds.Values.Where(p => p.CtfPoints != 0).OrderByDescending(p => p.CtfPoints).ToArray();
             byte[] Packet = new byte[356];
             Writer.WriteUInt16(348, 0, Packet);
             Writer.WriteUInt16(1063, 2, Packet);
@@ -529,7 +529,7 @@ namespace MTA.Game
                 index = (ushort)(index + 4);
                 Writer.WriteString(guild.Name, index, Packet);
                 index = (ushort)(index + 16);
-                Writer.WriteUInt32(guild.CTFPoints, index, Packet);
+                Writer.WriteUInt32(guild.CtfPoints, index, Packet);
                 index = (ushort)(index + 4);
                 Writer.WriteUInt32(guild.MemberCount, index, Packet);
                 index = (ushort)(index + 12);
@@ -585,8 +585,8 @@ namespace MTA.Game
             Writer.WriteUInt32(page, 6, buffer);
             Writer.WriteUInt32((uint)array.Length, 10, buffer);
             Writer.WriteUInt32(5, 14, buffer);
-            Writer.WriteUInt32(client.Guild.CTFdonationCPsold, 0x12, buffer);
-            Writer.WriteUInt64(client.Guild.CTFdonationSilverold, 0x16, buffer);
+            Writer.WriteUInt32(client.Guild.CTFDonationCPSold, 0x12, buffer);
+            Writer.WriteUInt64(client.Guild.CTFDonationSilverOld, 0x16, buffer);
 
             Writer.WriteUInt32((ushort)array.Length, 30, buffer);
 
@@ -601,11 +601,11 @@ namespace MTA.Game
 
                 Writer.WriteUInt32(member.Exploits, offset, buffer);
                 offset += 4;
-                Writer.WriteUInt32(member.CTFCpsReward, offset, buffer);
+                Writer.WriteUInt32(member.CtfCpsReward, offset, buffer);
                 offset += 4;
-                Writer.WriteUInt64(member.CTFSilverReward, offset, buffer);
+                Writer.WriteUInt64(member.CtfSilverReward, offset, buffer);
                 offset += 8;
-                Writer.WriteUInt32(member.ID, offset, buffer);
+                Writer.WriteUInt32(member.Id, offset, buffer);
                 offset += 4;
                 Writer.WriteString(member.Name, offset, buffer);
                 offset += 0x24;

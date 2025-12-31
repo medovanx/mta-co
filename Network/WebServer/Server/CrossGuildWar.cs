@@ -55,7 +55,7 @@ namespace MTA.Game
             FirstRound = true;
             foreach (Guild guild in Kernel.Guilds.Values)
             {
-                guild.sWarScore = 0;
+                guild.SWarScore = 0;
             }
             Update upd = new Update(true);
             upd.UID = LeftGate.UID;
@@ -95,7 +95,7 @@ namespace MTA.Game
 
             foreach (Guild guild in Kernel.Guilds.Values)
             {
-                guild.sWarScore = 0;
+                guild.SWarScore = 0;
             }
 
             IsWar = true;
@@ -110,7 +110,7 @@ namespace MTA.Game
             SortScores(out PoleKeeper);
             if (PoleKeeper != null)
             {
-                KeeperID = PoleKeeper.ID;
+                KeeperID = PoleKeeper.Id;
                 Kernel.SendWorldMessage(new Message("The guild, " + PoleKeeper.Name + ", owned by " + PoleKeeper.LeaderName + " has won this Super guild war round!", System.Drawing.Color.Red, Message.Center), Program.Values);
                 Kernel.SendWorldMessage(new Message("It is generald pardon time. You have 5 minutes to leave, run for your life!", System.Drawing.Color.White, Message.TopLeft), Program.Values, 6001);
 
@@ -142,10 +142,10 @@ namespace MTA.Game
         {
             if (guild != null)
             {
-                guild.sWarScore += addScore;
+                guild.SWarScore += addScore;
                 changed = true;
-                if (!Scores.ContainsKey(guild.ID))
-                    Scores.Add(guild.ID, guild);
+                if (!Scores.ContainsKey(guild.Id))
+                    Scores.Add(guild.Id, guild);
                 if ((int)Pole.Hitpoints <= 0)
                 {
                     FinishRound();
@@ -178,11 +178,11 @@ namespace MTA.Game
             List<string> ret = [];
 
             int Place = 0;
-            foreach (Guild guild in Scores.Values.OrderByDescending((p) => p.sWarScore))
+            foreach (Guild guild in Scores.Values.OrderByDescending((p) => p.SWarScore))
             {
                 if (Place == 0)
                     winner = guild;
-                string str = "No  " + (Place + 1).ToString() + ": " + guild.Name + "(" + guild.sWarScore + ")";
+                string str = "No  " + (Place + 1).ToString() + ": " + guild.Name + "(" + guild.SWarScore + ")";
                 ret.Add(str);
                 Place++;
                 if (Place == 4)

@@ -28,9 +28,9 @@ namespace MTA.Network.GamePackets {
         }
 
         public void Aprend(Guild guild) {
-            WriteUInt32(guild.ID, Position, packet);
+            WriteUInt32(guild.Id, Position, packet);
             Position += 4;
-            WriteString(guild.AdvertiseRecruit.Buletin, Position, packet);
+            WriteString(guild.AdvertiseRecruit.Bulletin, Position, packet);
             Position += 255; //9
             WriteString(guild.Name, Position, packet);
             Position += 36;

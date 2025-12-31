@@ -147,7 +147,7 @@ public class GuildWarEvent : BaseEvent {
         if (_repairAllocatedFunds > 0) StopRepair();
 
         // Reset all guild scores
-        foreach (var guild in Kernel.Guilds.Values) guild.sWarScore = 0;
+        foreach (var guild in Kernel.Guilds.Values) guild.SWarScore = 0;
 
         // Reset all Guild War titles from all players (database-wide)
         // Remove Top Guild Leader title (flagtype 1) from all players
@@ -207,7 +207,7 @@ public class GuildWarEvent : BaseEvent {
             BroadcastMessage(
                 $"The guild [{_poleKeeper.Name}] and leader [{_poleKeeper.LeaderName}] has won the Guild War!",
                 Color.White, Message.Center);
-            GuildWarHistoryTable.Create(_poleKeeper, _poleKeeper.Leader.ID, _poleKeeper.LeaderName, DateTime.Now);
+            GuildWarHistoryTable.Create(_poleKeeper, _poleKeeper.Leader!.Id, _poleKeeper.LeaderName, DateTime.Now);
         }
         else {
             BroadcastMessage("The Guild War has ended and there was no winner!", Color.Red, Message.Center);
@@ -317,7 +317,7 @@ public class GuildWarEvent : BaseEvent {
             // For pole, check database history to prevent pole keeper from attacking when event is not active
             if (npc.UID == PoleNpcId && attacker.Owner.Guild != null) {
                 var latest = GuildWarHistoryTable.GetLatest();
-                if (latest != null && latest.GuildId == attacker.Owner.Guild.ID) {
+                if (latest != null && latest.GuildId == attacker.Owner.Guild.Id) {
                     return true; // Block pole damage for pole keeper when event is not active
                 }
             }
@@ -351,9 +351,9 @@ public class GuildWarEvent : BaseEvent {
                     GuildTable.SaveFunds(_poleKeeper);
 
                     // Send guild update to all online members of pole keeper guild
-                    foreach (var member in _poleKeeper.Members.Values.Where(member => member.IsOnline)) {
-                        if (member.Client != null) {
-                            _poleKeeper.SendGuild(member.Client);
+                    foreach (var member in _poleKeeper.Members.Values) {
+                        if (Kernel.TryGetPlayer(member.Id, out var memberClient)) {
+                            _poleKeeper.SendGuild(memberClient);
                         }
                     }
                 }
@@ -475,9 +475,9 @@ public class GuildWarEvent : BaseEvent {
 
         // Send guild update to all online members to refresh fund display
         if (_repairingGuild != null) {
-            foreach (var member in _repairingGuild.Members.Values.Where(member => member.IsOnline)) {
-                if (member.Client != null) {
-                    _repairingGuild.SendGuild(member.Client);
+            foreach (var member in _repairingGuild.Members.Values) {
+                if (Kernel.TryGetPlayer(member.Id, out var memberClient)) {
+                    _repairingGuild.SendGuild(memberClient);
                 }
             }
         }
@@ -494,9 +494,9 @@ public class GuildWarEvent : BaseEvent {
     private void AddScore(uint addScore, Guild? guild) {
         if (!IsActive || guild == null || Pole == null) return;
 
-        guild.sWarScore += addScore;
+        guild.SWarScore += addScore;
         _scoresChanged = true;
-        if (!_scores.ContainsKey(guild.ID)) _scores.Add(guild.ID, guild);
+        if (!_scores.ContainsKey(guild.Id)) _scores.Add(guild.Id, guild);
 
         // Check if pole is destroyed
         if ((int)Pole.Hitpoints <= 0) FinishRound();
@@ -511,7 +511,7 @@ public class GuildWarEvent : BaseEvent {
         // Update previous round winner stats
         if (_poleKeeper != null && !_isFirstRound) {
             if (_poleKeeper.Wins == 0)
-                _poleKeeper.Losts++;
+                _poleKeeper.Loses++;
             else
                 _poleKeeper.Wins--;
             GuildTable.UpdateGuildWarStats(_poleKeeper);
@@ -545,15 +545,15 @@ public class GuildWarEvent : BaseEvent {
                 GuildTable.SaveFunds(_poleKeeper);
 
                 // Send guild updates to all online members of both guilds
-                foreach (var member in _poleKeeper.Members.Values.Where(member => member.IsOnline)) {
-                    if (member.Client != null) {
-                        _poleKeeper.SendGuild(member.Client);
+                foreach (var member in _poleKeeper.Members.Values) {
+                    if (Kernel.TryGetPlayer(member.Id, out var memberClient)) {
+                        _poleKeeper.SendGuild(memberClient);
                     }
                 }
 
-                foreach (var member in previousPoleKeeper.Members.Values.Where(member => member.IsOnline)) {
-                    if (member.Client != null) {
-                        previousPoleKeeper.SendGuild(member.Client);
+                foreach (var member in previousPoleKeeper.Members.Values) {
+                    if (Kernel.TryGetPlayer(member.Id, out var memberClient)) {
+                        previousPoleKeeper.SendGuild(memberClient);
                     }
                 }
 
@@ -570,10 +570,10 @@ public class GuildWarEvent : BaseEvent {
                 Color.Red, Message.Center);
 
             // Update winner stats
-            if (_poleKeeper.Losts == 0)
+            if (_poleKeeper.Loses == 0)
                 _poleKeeper.Wins++;
             else
-                _poleKeeper.Losts--;
+                _poleKeeper.Loses--;
             GuildTable.UpdateGuildWarStats(_poleKeeper);
 
             // Update pole name
@@ -619,7 +619,7 @@ public class GuildWarEvent : BaseEvent {
         Kernel.SendWorldMessage(upd, Program.Values, Maps.GuildWarMap);
 
         // Reset all guild scores
-        foreach (var guild in Kernel.Guilds.Values) guild.sWarScore = 0;
+        foreach (var guild in Kernel.Guilds.Values) guild.SWarScore = 0;
     }
 
     /// <summary>
@@ -646,9 +646,9 @@ public class GuildWarEvent : BaseEvent {
         var ret = new List<string>();
 
         var place = 0;
-        foreach (var guild in _scores.Values.OrderByDescending(p => p.sWarScore)) {
+        foreach (var guild in _scores.Values.OrderByDescending(p => p.SWarScore)) {
             if (place == 0) winner = guild;
-            var str = $"No  {place + 1}: {guild.Name}({guild.sWarScore})";
+            var str = $"No  {place + 1}: {guild.Name}({guild.SWarScore})";
             ret.Add(str);
             place++;
             if (place >= 4) break;
@@ -691,9 +691,9 @@ public class GuildWarEvent : BaseEvent {
         GuildTable.SaveFunds(guild);
 
         // Send guild update to all online members immediately
-        foreach (var member in guild.Members.Values.Where(member => member.IsOnline)) {
-            if (member.Client != null) {
-                guild.SendGuild(member.Client);
+        foreach (var member in guild.Members.Values) {
+            if (Kernel.TryGetPlayer(member.Id, out var memberClient)) {
+                guild.SendGuild(memberClient);
             }
         }
 
@@ -725,9 +725,9 @@ public class GuildWarEvent : BaseEvent {
         GuildTable.SaveFunds(guildToUpdate);
 
         // Send guild update to all online members
-        foreach (var member in guildToUpdate.Members.Values.Where(member => member.IsOnline)) {
-            if (member.Client != null) {
-                guildToUpdate.SendGuild(member.Client);
+        foreach (var member in guildToUpdate.Members.Values) {
+            if (Kernel.TryGetPlayer(member.Id, out var memberClient)) {
+                guildToUpdate.SendGuild(memberClient);
             }
         }
 

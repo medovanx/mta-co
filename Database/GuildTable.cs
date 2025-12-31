@@ -17,15 +17,15 @@ namespace MTA.Database
                 while (reader.Read())
                 {
                     Member member = new Member(reader.ReadUInt16("guildid"));
-                    member.ID = reader.ReadUInt32("uid");
+                    member.Id = reader.ReadUInt32("uid");
                     member.Name = reader.ReadString("name");
                     member.Level = reader.ReadByte("level");
                     member.Spouse = reader.ReadString("Spouse");
 
-                    if (Game.ConquerStructures.Nobility.Board.ContainsKey(member.ID))
+                    if (Game.ConquerStructures.Nobility.Board.ContainsKey(member.Id))
                     {
-                        member.NobilityRank = Game.ConquerStructures.Nobility.Board[member.ID].Rank;
-                        member.Gender = Game.ConquerStructures.Nobility.Board[member.ID].Gender;
+                        member.NobilityRank = Game.ConquerStructures.Nobility.Board[member.Id].Rank;
+                        member.Gender = Game.ConquerStructures.Nobility.Board[member.Id].Gender;
                     }
 
                     member.Rank = (Game.Enums.GuildMemberRank)reader.ReadUInt16("guildrank");
@@ -36,19 +36,19 @@ namespace MTA.Database
                     member.VirtuePoints = reader.ReadUInt32("VirtuePoints");
 
                     member.Lilies = reader.ReadUInt32("GuildLilies");
-                    member.Rouses = reader.ReadUInt32("GuildRouses");
+                    member.Roses = reader.ReadUInt32("GuildRouses");
                     member.Orchids = reader.ReadUInt32("GuildOrchids");
                     member.Tulips = reader.ReadUInt32("GuildTulips");
                     member.PkDonation = reader.ReadUInt32("GuildPkDonation");
                     member.LastLogin = reader.ReadUInt64("GuildLastlod");
 
                     member.Exploits = reader.ReadUInt32("Exploits");
-                    member.CTFCpsReward = reader.ReadUInt32("CTFCpsReward");
-                    member.CTFSilverReward = reader.ReadUInt32("CTFSilverReward");
+                    member.CtfCpsReward = reader.ReadUInt32("CTFCpsReward");
+                    member.CtfSilverReward = reader.ReadUInt32("CTFSilverReward");
 
                     member.Mesh = uint.Parse(reader.ReadUInt16("Face").ToString() + reader.ReadUInt16("Body").ToString());
-                    if (!dict.ContainsKey(member.GuildID)) dict.Add(member.GuildID, new SafeDictionary<uint, Member>());
-                    dict[member.GuildID].Add(member.ID, member);
+                    if (!dict.ContainsKey(member.GuildId)) dict.Add(member.GuildId, new SafeDictionary<uint, Member>());
+                    dict[member.GuildId].Add(member.Id, member);
                 }
             }
             using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("guilds"))
@@ -57,36 +57,36 @@ namespace MTA.Database
                 while (reader.Read())
                 {
                     Guild guild = new Guild(reader.ReadString("LeaderName"));
-                    guild.ID = reader.ReadUInt32("Id");
+                    guild.Id = reader.ReadUInt32("Id");
                     guild.Name = reader.ReadString("Name");
                     guild.Wins = reader.ReadUInt32("Wins");
-                    guild.Losts = reader.ReadUInt32("Losts");
+                    guild.Loses = reader.ReadUInt32("Losts");
                     guild.Bulletin = reader.ReadString("Bulletin");
                     guild.SilverFund = reader.ReadUInt64("SilverFund");
-                    guild.CTFPoints = reader.ReadUInt32("CTFPoints");
-                    guild.CTFReward = reader.ReadUInt32("CTFReward");
+                    guild.CtfPoints = reader.ReadUInt32("CTFPoints");
+                    guild.CtfReward = reader.ReadUInt32("CTFReward");
                     guild.ConquerPointFund = reader.ReadUInt32("ConquerPointFund");
                     guild.LevelRequirement = reader.ReadUInt32("LevelRequirement");
                     guild.RebornRequirement = reader.ReadUInt32("RebornRequirement");
                     guild.ClassRequirement = reader.ReadUInt32("ClassRequirement");
                     guild.AdvertiseRecruit.Load(reader.ReadString("Advertise"));
-                    guild.GuildEnrole = reader.ReadUInt32("GuildEnrole");
-                    guild.CreateTime(guild.GuildEnrole);
-                    guild.BuletinEnrole = reader.ReadUInt32("BuletinEnrole");
-                    guild.CTFdonationCPs = reader.ReadUInt32("CTFdonationCPs");
-                    guild.CTFdonationSilver = reader.ReadUInt32("CTFdonationSilver");
-                    guild.CTFdonationSilverold = reader.ReadUInt32("CTFdonationSilverold");
-                    guild.CTFdonationCPsold = reader.ReadUInt32("CTFdonationCPsold");
+                    guild.GuildEnroll = reader.ReadUInt32("GuildEnroll");
+                    guild.CreateTime(guild.GuildEnroll);
+                    guild.BulletinEnroll = reader.ReadUInt32("BulletinEnroll");
+                    guild.CTFDonationCPs = reader.ReadUInt32("CTFdonationCPs");
+                    guild.CTFDonationSilver = reader.ReadUInt32("CTFdonationSilver");
+                    guild.CTFDonationSilverOld = reader.ReadUInt32("CTFdonationSilverold");
+                    guild.CTFDonationCPSold = reader.ReadUInt32("CTFdonationCPsold");
 
-                    guild.CreateTime(guild.BuletinEnrole);
-                    if (dict.ContainsKey(guild.ID))
+                    guild.CreateTime(guild.BulletinEnroll);
+                    if (dict.ContainsKey(guild.Id))
                     {
-                        guild.Members = dict[guild.ID];
+                        guild.Members = dict[guild.Id];
                         guild.MemberCount = (uint)guild.Members.Count;
                     }
                     else
                         guild.Members = new SafeDictionary<uint, Member>();
-                    Kernel.Guilds.Add(guild.ID, guild);
+                    Kernel.Guilds.Add(guild.Id, guild);
                     foreach (var member in guild.Members.Values)
                     {
                         if (member.Rank == Game.Enums.GuildMemberRank.GuildLeader)
@@ -119,7 +119,7 @@ namespace MTA.Database
                 guild.CreateMembersRank();
                 if (guild.AdvertiseRecruit.WasLoad)
                     Guild.Advertise.Add(guild);
-                guild.CalculateCtfrank();
+                guild.CalculateCTFRank();
             }
             Guild.Advertise.FixedRank();
             //create leader spouse
@@ -186,7 +186,7 @@ namespace MTA.Database
 
         public static void UpdateBulletin(Guild guild, string bulletin)
         {
-            using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds").Set("Bulletin", bulletin).Set("BuletinEnrole", guild.BuletinEnrole).Where("ID", guild.ID))
+            using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds").Set("Bulletin", bulletin).Set("BulletinEnroll", guild.BulletinEnroll).Where("ID", guild.Id))
                 cmd.Execute();
         }
         public static void SaveFunds(Guild guild)
@@ -194,19 +194,19 @@ namespace MTA.Database
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds")
                 .Set("ConquerPointFund", guild.ConquerPointFund)
                 .Set("SilverFund", guild.SilverFund)
-                .Set("CTFdonationCPsold", guild.CTFdonationCPsold)
-                .Set("CTFdonationSilverold", guild.CTFdonationSilverold)
-                  .Set("CTFdonationCPs", guild.CTFdonationCPs)
-                    .Set("CTFdonationSilver", guild.CTFdonationSilver)
-                .Where("ID", guild.ID))
+                .Set("CTFdonationCPsold", guild.CTFDonationCPSold)
+                .Set("CTFdonationSilverold", guild.CTFDonationSilverOld)
+                  .Set("CTFdonationCPs", guild.CTFDonationCPs)
+                    .Set("CTFdonationSilver", guild.CTFDonationSilver)
+                .Where("ID", guild.Id))
                 cmd.Execute();
         }
         public static void SaveEnroles(Guild guild)
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds")
-                .Set("GuildEnrole", guild.GuildEnrole)
-                .Set("BuletinEnrole", guild.BuletinEnrole)
-                .Where("ID", guild.ID))
+                .Set("GuildEnroll", guild.GuildEnroll)
+                .Set("BulletinEnroll", guild.BulletinEnroll)
+                .Where("ID", guild.Id))
                 cmd.Execute();
         }
 
@@ -215,54 +215,54 @@ namespace MTA.Database
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds")
 .Set("Advertise", guild.AdvertiseRecruit.ToString())
 .Set("SilverFund", guild.SilverFund)
-.Where("ID", guild.ID))
+.Where("ID", guild.Id))
                 cmd.Execute();
         }
         public static void SaveCTFPoins(Guild guild)
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds")
-                .Set("CTFPoints", guild.CTFPoints)
-                .Where("ID", guild.ID))
+                .Set("CTFPoints", guild.CtfPoints)
+                .Where("ID", guild.Id))
                 cmd.Execute();
         }
         public static void SaveCTFReward(Guild guild)
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds")
-                .Set("CTFReward", guild.CTFReward).Set("CTFPoints", guild.CTFPoints)
-                .Where("ID", guild.ID))
+                .Set("CTFReward", guild.CtfReward).Set("CTFPoints", guild.CtfPoints)
+                .Where("ID", guild.Id))
                 cmd.Execute();
         }
         public static void Disband(Guild guild)
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("entities")
                 .Set("guildid", 0)
-                .Where("guildid", guild.ID))
+                .Where("guildid", guild.Id))
                 cmd.Execute();
-            using (var cmd = new MySqlCommand(MySqlCommandType.DELETE).Delete("guilds", "id", guild.ID))
+            using (var cmd = new MySqlCommand(MySqlCommandType.DELETE).Delete("guilds", "id", guild.Id))
                 cmd.Execute();
         }
         public static void Create(Guild guild)
         {
             while (true)
             {
-                using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("guilds").Where("id", guild.ID))
+                using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("guilds").Where("id", guild.Id))
                 using (var reader = cmd.CreateReader())
                 {
                     if (reader.Read())
-                        guild.ID = Guild.GuildCounter.Next;
+                        guild.Id = Guild.GuildCounter.Next;
                     else
                         break;
                 }
             }
             using (var cmd = new MySqlCommand(MySqlCommandType.INSERT).Insert("guilds")
-                .Insert("ID", guild.ID).Insert("name", guild.Name).Insert("Bulletin", "")
+                .Insert("ID", guild.Id).Insert("name", guild.Name).Insert("Bulletin", "")
                 .Insert("SilverFund", 500000).Insert("LeaderName", guild.LeaderName))
                 cmd.Execute();
         }
         public static void ChangeName(Client.GameState client, string name)
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds")
-                .Set("name", name).Where("ID", client.Guild.ID))
+                .Set("name", name).Where("ID", client.Guild.Id))
                 cmd.Execute();
             using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("guilds"))
             using (var reader = new MySqlReader(cmd))
@@ -282,35 +282,35 @@ namespace MTA.Database
         public static void AddEnemy(Guild guild, uint enemy)
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.INSERT).Insert("guildenemy")
-                .Insert("guildID", guild.ID).Insert("enemyID", enemy))
+                .Insert("guildID", guild.Id).Insert("enemyID", enemy))
                 cmd.Execute();
         }
         public static void AddAlly(Guild guild, uint ally)
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.INSERT).Insert("guildally")
-                .Insert("guildID", guild.ID).Insert("allyID", ally))
+                .Insert("guildID", guild.Id).Insert("allyID", ally))
                 cmd.Execute();
         }
         public static void RemoveEnemy(Guild guild, uint enemy)
         {
             using (var command = new MySqlCommand(MySqlCommandType.DELETE))
-                command.Delete("guildenemy", "GuildID", guild.ID).And("EnemyID", enemy)
+                command.Delete("guildenemy", "GuildID", guild.Id).And("EnemyID", enemy)
                     .Execute();
         }
         public static void RemoveAlly(Guild guild, uint ally)
         {
             using (var command = new MySqlCommand(MySqlCommandType.DELETE))
-                command.Delete("guildally", "GuildID", guild.ID).And("AllyID", ally)
+                command.Delete("guildally", "GuildID", guild.Id).And("AllyID", ally)
                     .Execute();
             using (var command = new MySqlCommand(MySqlCommandType.DELETE))
-                command.Delete("guildally", "GuildID", ally).And("AllyID", guild.ID)
+                command.Delete("guildally", "GuildID", ally).And("AllyID", guild.Id)
                     .Execute();
         }
         public static void UpdateGuildWarStats(Guild guild)
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds")
-                .Set("wins", guild.Wins).Set("losts", guild.Losts)
-                .Where("id", guild.ID))
+                .Set("wins", guild.Wins).Set("losts", guild.Loses)
+                .Where("id", guild.Id))
                 cmd.Execute();
         }
         public static void UpdatePoleKeeperTc(Guild guild)
@@ -319,7 +319,7 @@ namespace MTA.Database
                 .Set("PoleKeeperTc", 0))
                 cmd.Execute();
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds")
-                .Set("PoleKeeperTc", 1).Where("id", guild.ID))
+                .Set("PoleKeeperTc", 1).Where("id", guild.Id))
                 cmd.Execute();
         }
         public static void UpdatePoleKeeperPh(Guild guild)
@@ -328,7 +328,7 @@ namespace MTA.Database
                 .Set("PoleKeeperPh", 0))
                 cmd.Execute();
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds")
-                .Set("PoleKeeperPh", 1).Where("id", guild.ID))
+                .Set("PoleKeeperPh", 1).Where("id", guild.Id))
                 cmd.Execute();
         }
         public static void UpdatePoleKeeperAp(Guild guild)
@@ -337,14 +337,14 @@ namespace MTA.Database
                 .Set("PoleKeeperAp", 0))
                 cmd.Execute();
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds")
-                .Set("PoleKeeperAp", 1).Where("id", guild.ID))
+                .Set("PoleKeeperAp", 1).Where("id", guild.Id))
                 cmd.Execute();
         }
         public static void SaveLeader(Guild guild)
         {
             using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds")
                 .Set("LeaderName", guild.LeaderName)
-                .Where("id", guild.ID))
+                .Where("id", guild.Id))
                 cmd.Execute();
         }
         internal static void SaveRequirements(Guild guild)
@@ -352,7 +352,7 @@ namespace MTA.Database
             using (var command = new MySqlCommand(MySqlCommandType.UPDATE))
                 command.Update("guilds").Set("LevelRequirement", guild.LevelRequirement)
                     .Set("RebornRequirement", guild.RebornRequirement).Set("ClassRequirement", guild.ClassRequirement)
-                    .Where("ID", guild.ID).Execute();
+                    .Where("ID", guild.Id).Execute();
         }
     }
 }

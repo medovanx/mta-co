@@ -22,7 +22,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.GuildArea {
                     var isWarActive = EventScheduler.GetEvent("GUILD_WAR") is GuildWarEvent { IsActive: true };
                     if (!isWarActive) {
                         var latest = GuildWarHistoryTable.GetLatest();
-                        if (latest != null && client.Guild != null && latest.GuildId == client.Guild.ID) {
+                        if (latest != null && client.Guild != null && latest.GuildId == client.Guild.Id) {
                             var member = client.Guild.Members.GetValueOrDefault(client.Entity.UID);
                             if (member != null) {
                                 // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault

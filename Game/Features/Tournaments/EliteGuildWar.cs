@@ -60,7 +60,7 @@ namespace MTA.Game
             if (PoleKeeper != null && !FirstRound)
             {
                 if (PoleKeeper.Wins == 0)
-                    PoleKeeper.Losts++;
+                    PoleKeeper.Loses++;
                 else
                     PoleKeeper.Wins--;
                 Database.GuildTable.UpdateGuildWarStats(PoleKeeper);
@@ -70,12 +70,12 @@ namespace MTA.Game
             SortScores(out PoleKeeper);
             if (PoleKeeper != null)
             {
-                KeeperID = PoleKeeper.ID;
+                KeeperID = PoleKeeper.Id;
                 Kernel.SendWorldMessage(new Message("The guild, " + PoleKeeper.Name + ", owned by " + PoleKeeper.LeaderName + " has won this guild war round!", System.Drawing.Color.Red, Message.Center), Program.Values);
-                if (PoleKeeper.Losts == 0)
+                if (PoleKeeper.Loses == 0)
                     PoleKeeper.Wins++;
                 else
-                    PoleKeeper.Losts--;
+                    PoleKeeper.Loses--;
                 Database.GuildTable.UpdateGuildWarStats(PoleKeeper);
                 Poles.Name = PoleKeeper.Name;
             }
@@ -103,8 +103,8 @@ namespace MTA.Game
             {
                 guild.EWarScore += addScore;
                 changed = true;
-                if (!Scores.ContainsKey(guild.ID))
-                    Scores.Add(guild.ID, guild);
+                if (!Scores.ContainsKey(guild.Id))
+                    Scores.Add(guild.Id, guild);
                 if ((int)Poles.Hitpoints <= 0)
                 {
                     FinishRound();

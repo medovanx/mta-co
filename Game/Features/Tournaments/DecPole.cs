@@ -61,7 +61,7 @@ namespace MTA.Game
             FirstRound = true;
             foreach (Guild guild in Kernel.Guilds.Values)
             {
-                guild.DPScore = 0;
+                guild.DpScore = 0;
             }
             Update upd = new Update(true);
             upd.UID = LeftGate.UID;
@@ -101,7 +101,7 @@ namespace MTA.Game
 
             foreach (Guild guild in Kernel.Guilds.Values)
             {
-                guild.DCScore = 0;
+                guild.DcScore = 0;
             }
 
             IsWar = true;
@@ -112,7 +112,7 @@ namespace MTA.Game
             if (PoleKeeper != null && !FirstRound)
             {
                 if (PoleKeeper.Wins == 0)
-                    PoleKeeper.Losts++;
+                    PoleKeeper.Loses++;
                 else
                     PoleKeeper.Wins--;
                 Database.GuildTable.UpdateGuildWarStats(PoleKeeper);
@@ -123,13 +123,13 @@ namespace MTA.Game
             SortScores(out PoleKeeper);
             if (PoleKeeper != null)
             {
-                KeeperID = PoleKeeper.ID;
+                KeeperID = PoleKeeper.Id;
                 Kernel.SendWorldMessage(new Message("The guild, " + PoleKeeper.Name + ", owned by " + PoleKeeper.LeaderName + " has won this DecPole round!", System.Drawing.Color.Red, Message.Center), Program.Values);
                 Kernel.SendWorldMessage(new Message("It is generald pardon time. You have 5 minutes to leave, run for your life!", System.Drawing.Color.White, Message.TopLeft), Program.Values, 6001);
-                if (PoleKeeper.Losts == 0)
+                if (PoleKeeper.Loses == 0)
                     PoleKeeper.Wins++;
                 else
-                    PoleKeeper.Losts--;
+                    PoleKeeper.Loses--;
                 Database.GuildTable.UpdateGuildWarStats(PoleKeeper);
                 Pole.Name = PoleKeeper.Name;
             }
@@ -165,10 +165,10 @@ namespace MTA.Game
         {
             if (guild != null)
             {
-                guild.DPScore += addScore;
+                guild.DpScore += addScore;
                 changed = true;
-                if (!Scores.ContainsKey(guild.ID))
-                    Scores.Add(guild.ID, guild);
+                if (!Scores.ContainsKey(guild.Id))
+                    Scores.Add(guild.Id, guild);
                 if ((int)Pole.Hitpoints <= 0)
                 {
                     FinishRound();
@@ -201,11 +201,11 @@ namespace MTA.Game
             List<string> ret = [];
 
             int Place = 0;
-            foreach (Guild guild in Scores.Values.OrderByDescending((p) => p.PTScore))
+            foreach (Guild guild in Scores.Values.OrderByDescending((p) => p.PtScore))
             {
                 if (Place == 0)
                     winner = guild;
-                string str = "No  " + (Place + 1).ToString() + ": " + guild.Name + "(" + guild.PTScore + ")";
+                string str = "No  " + (Place + 1).ToString() + ": " + guild.Name + "(" + guild.PtScore + ")";
                 ret.Add(str);
                 Place++;
                 if (Place == 4)

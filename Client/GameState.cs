@@ -597,10 +597,10 @@ namespace MTA.Client {
 
                         if (p.Guild != null) {
                             if (p.Guild.LeaderName == name200) {
-                                Kernel.Guilds[p.Guild.ID].LeaderName = p.NewName;
+                                Kernel.Guilds[p.Guild.Id].LeaderName = p.NewName;
                             }
 
-                            Kernel.Guilds[p.Guild.ID].Members[p.Entity.UID].Name = p.NewName;
+                            Kernel.Guilds[p.Guild.Id].Members[p.Entity.UID].Name = p.NewName;
                         }
                     }
                 }
@@ -807,7 +807,7 @@ namespace MTA.Client {
                         LoadData(enterserver);
 
                         if (Entity.GuildID != 0)
-                            Entity.GuildBattlePower = Guild.GetSharedBattlepower(Entity.GuildRank);
+                            Entity.GuildBattlePower = Guild.GetSharedBattlePower(Entity.GuildRank);
 
                         ReviewMentor();
 
@@ -1135,7 +1135,7 @@ namespace MTA.Client {
                         LoadData(true);
 
                         if (Entity.GuildID != 0)
-                            Entity.GuildBattlePower = Guild.GetSharedBattlepower(Entity.GuildRank);
+                            Entity.GuildBattlePower = Guild.GetSharedBattlePower(Entity.GuildRank);
 
                         ReviewMentor();
 

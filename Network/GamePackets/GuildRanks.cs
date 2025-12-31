@@ -32,7 +32,7 @@ namespace MTA.Network.GamePackets {
         }
 
         public void Aprend(Guild.Member member, ulong Donation) {
-            WriteUInt32(member.ID, Position, packet);
+            WriteUInt32(member.Id, Position, packet);
             Position += 4;
             WriteUInt32((ushort)member.Rank, Position, packet);
             ushort move_pos = (ushort)(4 * Rank);
