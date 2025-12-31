@@ -29,7 +29,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     break;
                 }
                 case 1: {
-                    dialog.Text("Name your guild. The name must be between 1 and 15 characters.");
+                    dialog.Text("Name your guild. The name must be 16 characters at maximum.");
                     dialog.Input("Guild name:", 2, 16);
                     dialog.Option("Cancel", 255);
                     dialog.Send();
@@ -88,7 +88,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                 }
                 case 5: {
                     dialog.Text(
-                        $"Name your guild. The name must be a maximum of 16 characters.\nThis will cost 215 CPs.");
+                        $"Name your guild. The name must be 16 characters at maximum.\nThis will cost 215 CPs.");
                     dialog.Input("Enter new guild name:", 6, 16);
                     dialog.Option("Cancel", 255);
                     dialog.Send();
@@ -111,7 +111,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     }
 
                     if (string.IsNullOrEmpty(npcRequest.Input) || npcRequest.Input.Length is < 1 or > 16) {
-                        dialog.Text("Invalid guild name. The name must be between 1 and 15 characters.");
+                        dialog.Text("Invalid guild name. The name must be 16 characters at maximum.");
                         dialog.Option("Try Again", 5);
                         dialog.Option("Cancel", 255);
                         dialog.Send();

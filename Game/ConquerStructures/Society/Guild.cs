@@ -1503,7 +1503,7 @@ namespace MTA.Game.ConquerStructures.Society {
             }
 
             Database.GuildTable.Disband(this);
-            Kernel.GamePool.Remove(Id);
+            Kernel.Guilds.Remove(Id);
 
             // Send world message if disbanded by a player
             if (!string.IsNullOrEmpty(disbandedBy)) {
