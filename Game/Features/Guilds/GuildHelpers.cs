@@ -9,6 +9,7 @@ namespace MTA.Game.Features.Guilds;
 
 public static class GuildHelpers {
     public static void AllyGuilds(string name, GameState client) {
+        if (client.Guild == null) return;
         foreach (var guild in Kernel.Guilds.Values.Where(guild => guild.Name == name && client.Guild.Name != name))
             if (guild.Leader != null && Kernel.TryGetPlayer(guild.Leader.Id, out var guildLeaderClient)) {
                 guildLeaderClient.OnMessageBoxEventParams = [
@@ -21,18 +22,22 @@ public static class GuildHelpers {
                 ];
                 var leader = guildLeaderClient;
                 leader.MessageOK = delegate {
-                    var guild1 =
-                        leader.OnMessageBoxEventParams[0] as Guild;
-                    var guild2 =
-                        leader.OnMessageBoxEventParams[1] as Guild;
+                    if (leader.OnMessageBoxEventParams[0] is not Guild guild1 ||
+                        leader.OnMessageBoxEventParams[1] is not Guild guild2)
+                        return;
+
                     if (guild1.Ally.Count == 6 || guild2.Ally.Count == 6)
                         return;
+
                     guild1.AddAlly(guild2.Name);
                     guild2.AddAlly(guild1.Name);
 
-                    if (!Kernel.TryGetPlayer(guild1.Leader.Id, out var guild1Leader) ||
+                    if (guild1.Leader == null ||
+                        !Kernel.TryGetPlayer(guild1.Leader.Id, out var guild1Leader) ||
                         !guild1Leader.Socket.Alive) return;
-                    if (Kernel.TryGetPlayer(guild2.Leader.Id, out var guild2Leader) &&
+
+                    if (guild2.Leader != null &&
+                        Kernel.TryGetPlayer(guild2.Leader.Id, out var guild2Leader) &&
                         guild2Leader.Socket.Alive)
                         guild2Leader.Send(new Message(
                             $"{guild1.Leader.Name} has accepted your ally request.", Color.Blue,
@@ -41,13 +46,13 @@ public static class GuildHelpers {
                 guildLeaderClient.MessageCancel = delegate {
                     try {
                         if (!guildLeaderClient.Socket.Alive) return;
-                        var guild1 =
-                            guildLeaderClient.OnMessageBoxEventParams[0] as Guild;
+                        if (guildLeaderClient.OnMessageBoxEventParams[0] is not Guild guild1)
+                            return;
 
-                        if (guildLeaderClient.OnMessageBoxEventParams[1] is Guild guild2 &&
+                        if (guildLeaderClient.OnMessageBoxEventParams[1] is Guild { Leader: not null } guild2 &&
                             Kernel.TryGetPlayer(guild2.Leader.Id, out var guild2LeaderClient))
                             guild2LeaderClient.Send(new Message(
-                                $"{guild1.Leader.Name} has declined your ally request.",
+                                $"{guild1.Leader?.Name ?? "Unknown"} has declined your ally request.",
                                 Color.Blue, Message.TopLeft));
                     }
                     catch (Exception e) {
