@@ -92,17 +92,20 @@ public class Guild : Writer {
 
     private readonly byte[] _buffer;
 
-    private int _arsenalBp;
-    private string _leaderName;
-
     public readonly Recruitment AdvertiseRecruit;
     public readonly SafeDictionary<uint, Guild> Ally;
-    public uint ApScore;
-    public bool ArsenalBpChanged = true;
 
     public readonly Arsenal[] Arsenals;
-    public uint BiScore;
     public readonly List<uint> BlackList = [];
+    public readonly SafeDictionary<uint, Guild> Enemy;
+
+    public readonly ushort[] RanksCounts = new ushort[(ushort)Enums.GuildMemberRank.GuildLeader + 1];
+
+    private int _arsenalBp;
+    private string _leaderName;
+    public uint ApScore;
+    public bool ArsenalBpChanged = true;
+    public uint BiScore;
 
     public string? Bulletin;
     public uint BulletinEnroll;
@@ -124,7 +127,6 @@ public class Guild : Writer {
     public uint CtfReward = 0;
     public uint DcScore;
     public uint DpScore;
-    public readonly SafeDictionary<uint, Guild> Enemy;
 
     public uint EWarScore;
 
@@ -155,8 +157,6 @@ public class Guild : Writer {
     public Member[] RankOrchidsDonations = [];
     public Member[] RankPkDonations = [];
     public Member[] RankRoseDonations = [];
-
-    public readonly ushort[] RanksCounts = new ushort[(ushort)Enums.GuildMemberRank.GuildLeader + 1];
 
 
     public Member[] RankSilversDonations = [];
@@ -225,7 +225,7 @@ public class Guild : Writer {
         get {
             // Check database history first (works even after server restart)
             var latest = GuildWarHistoryTable.GetLatest();
-            if (latest != null && latest.GuildId == Id) return true;
+            if (latest is { GuildId: var guildId } && guildId == Id) return true;
 
             // Fallback to active event (for during active war)
             var gwEvent = GuildWarEvent.GetActiveEvent();

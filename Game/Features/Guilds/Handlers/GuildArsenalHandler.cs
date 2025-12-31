@@ -137,7 +137,7 @@ public static class GuildArsenalHandler {
         if (!arsenal.Unlocked) return;
         if (!arsenal.ItemDictionary.TryGetValue(command.dwParam2, out var item)) return;
         if (item.OwnerUID != client.Entity.UID) return;
-        
+
         // Find the item
         if (!client.Inventory.TryGetItem(item.UID, out var foundItem)) {
             var found = false;
@@ -237,14 +237,17 @@ public static class GuildArsenalHandler {
 
     public static void UniscribeAllItems(GameState client) {
         if (client.Guild == null) return;
-        
+
         foreach (var item in client.Inventory.Objects)
             if (item.Inscribed)
                 UniscribeItem(item, client);
         foreach (var item in client.Equipment.Objects)
             if (item is { Inscribed: true })
                 UniscribeItem(item, client);
-        foreach (var item in from wh in client.Warehouses.Values from item in wh.Objects where item.Inscribed select item)
+        foreach (var item in from wh in client.Warehouses.Values
+                 from item in wh.Objects
+                 where item.Inscribed
+                 select item)
             UniscribeItem(item, client);
 
         client.Guild.ArsenalBpChanged = true;

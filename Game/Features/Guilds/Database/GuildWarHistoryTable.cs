@@ -1,19 +1,12 @@
 using System;
 using System.Collections.Generic;
 using MTA.Database;
+using MTA.Game.Features.Guilds.Database.Mappers;
+using MTA.Game.Features.Guilds.Database.Models;
+using MTA.Game.Features.Guilds.Database.Schema;
 using MTA.Game.Features.Guilds.Models;
 
 namespace MTA.Game.Features.Guilds.Database;
-
-public class GuildWarHistory {
-    public uint Id { get; init; }
-    public uint GuildId { get; init; }
-    public uint GuildLeaderEntityId { get; init; }
-    public required string GuildLeaderName { get; init; }
-    public bool GuildLeaderClaimed { get; init; }
-    public List<uint> DeputyClaimedIds { get; init; } = [];
-    public DateTime WarEndTime { get; init; }
-}
 
 public static class GuildWarHistoryTable {
     private static string SerializeDeputyIds(List<uint>? ids) {
@@ -41,52 +34,37 @@ public static class GuildWarHistoryTable {
         return result;
     }
 
-    private static DateTime ReadDateTime(MySqlReader reader, string columnName) {
-        var dateStr = reader.ReadString(columnName);
-        if (string.IsNullOrEmpty(dateStr))
-            return DateTime.MinValue;
-        return DateTime.TryParse(dateStr, out var result) ? result : DateTime.MinValue;
-    }
-
     public static void Create(Guild winnerGuild, uint leaderEntityId,
         string leaderName, DateTime warEndTime) {
-        using var cmd = new MySqlCommand(MySqlCommandType.INSERT).Insert("guild_war_history")
-            .Insert("guild_id", winnerGuild.Id)
-            .Insert("guild_leader_entity_id", leaderEntityId)
-            .Insert("guild_leader_name", leaderName)
-            .Insert("guild_leader_claimed", 0)
-            .Insert("deputy_claimed_ids", "[]")
-            .Insert("war_end_time", warEndTime.ToString("yyyy-MM-dd HH:mm:ss"));
+        using var cmd = new MySqlCommand(MySqlCommandType.INSERT).Insert(GuildSchema.Tables.GuildWarHistoryTable)
+            .Insert(GuildSchema.GuildWarHistory.GuildId, winnerGuild.Id)
+            .Insert(GuildSchema.GuildWarHistory.GuildLeaderEntityId, leaderEntityId)
+            .Insert(GuildSchema.GuildWarHistory.GuildLeaderName, leaderName)
+            .Insert(GuildSchema.GuildWarHistory.GuildLeaderClaimed, 0)
+            .Insert(GuildSchema.GuildWarHistory.DeputyClaimedIds, "[]")
+            .Insert(GuildSchema.GuildWarHistory.WarEndTime, warEndTime.ToString("yyyy-MM-dd HH:mm:ss"));
         cmd.Execute();
     }
 
-    public static GuildWarHistory? GetLatest() {
+    public static GuildWarHistoryRecord? GetLatest() {
         var cmd = new MySqlCommand(MySqlCommandType.SELECT)
-            .Select("guild_war_history")
-            .Order("war_end_time DESC");
+            .Select(GuildSchema.Tables.GuildWarHistoryTable)
+            .Order($"{GuildSchema.GuildWarHistory.WarEndTime} DESC");
         cmd.Command = cmd.Command + " LIMIT 1";
         using (cmd)
         using (var reader = new MySqlReader(cmd)) {
-            if (!reader.Read()) return null; // No rows found
-
-            var history = new GuildWarHistory {
-                Id = reader.ReadUInt32("id"),
-                GuildId = reader.ReadUInt32("guild_id"),
-                GuildLeaderEntityId = reader.ReadUInt32("guild_leader_entity_id"),
-                GuildLeaderName = reader.ReadString("guild_leader_name"),
-                GuildLeaderClaimed = reader.ReadBoolean("guild_leader_claimed"),
-                WarEndTime = ReadDateTime(reader, "war_end_time"),
-                DeputyClaimedIds = DeserializeDeputyIds(reader.ReadString("deputy_claimed_ids"))
-            };
-            return history;
+            return !reader.Read()
+                ? null
+                : // No rows found
+                GuildMappers.MapGuildWarHistory(reader, _ => DateTime.MinValue, DeserializeDeputyIds);
         }
     }
 
     public static void SetGuildLeaderClaimed(uint historyId) {
         using var cmd = new MySqlCommand(MySqlCommandType.UPDATE)
-            .Update("guild_war_history")
-            .Set("guild_leader_claimed", 1)
-            .Where("id", historyId);
+            .Update(GuildSchema.Tables.GuildWarHistoryTable)
+            .Set(GuildSchema.GuildWarHistory.GuildLeaderClaimed, 1)
+            .Where(GuildSchema.GuildWarHistory.Id, historyId);
         cmd.Execute();
     }
 
@@ -97,28 +75,19 @@ public static class GuildWarHistoryTable {
         history.DeputyClaimedIds.Add(deputyEntityId);
         var json = SerializeDeputyIds(history.DeputyClaimedIds);
         using var cmd = new MySqlCommand(MySqlCommandType.UPDATE)
-            .Update("guild_war_history")
-            .Set("deputy_claimed_ids", json)
-            .Where("id", historyId);
+            .Update(GuildSchema.Tables.GuildWarHistoryTable)
+            .Set(GuildSchema.GuildWarHistory.DeputyClaimedIds, json)
+            .Where(GuildSchema.GuildWarHistory.Id, historyId);
         cmd.Execute();
     }
 
-    private static GuildWarHistory? GetById(uint historyId) {
+    private static GuildWarHistoryRecord? GetById(uint historyId) {
         using var cmd = new MySqlCommand(MySqlCommandType.SELECT)
-            .Select("guild_war_history")
-            .Where("id", historyId);
+            .Select(GuildSchema.Tables.GuildWarHistoryTable)
+            .Where(GuildSchema.GuildWarHistory.Id, historyId);
         using var reader = new MySqlReader(cmd);
         if (!reader.Read()) return null; // No rows found
-        var history = new GuildWarHistory {
-            Id = reader.ReadUInt32("id"),
-            GuildId = reader.ReadUInt32("guild_id"),
-            GuildLeaderEntityId = reader.ReadUInt32("guild_leader_entity_id"),
-            GuildLeaderName = reader.ReadString("guild_leader_name"),
-            GuildLeaderClaimed = reader.ReadBoolean("guild_leader_claimed"),
-            WarEndTime = ReadDateTime(reader, "war_end_time"),
-            DeputyClaimedIds = DeserializeDeputyIds(reader.ReadString("deputy_claimed_ids"))
-        };
-        return history;
+        return GuildMappers.MapGuildWarHistory(reader, _ => DateTime.MinValue, DeserializeDeputyIds);
     }
 
     public static List<uint> GetDeputyClaimedIds(uint historyId) {
@@ -136,24 +105,16 @@ public static class GuildWarHistoryTable {
         return history is { DeputyClaimedIds.Count: < 5 };
     }
 
-    public static List<GuildWarHistory> GetLastNWins(int count) {
-        var results = new List<GuildWarHistory>();
+    public static List<GuildWarHistoryRecord> GetLastNWins(int count) {
+        var results = new List<GuildWarHistoryRecord>();
         var cmd = new MySqlCommand(MySqlCommandType.SELECT)
-            .Select("guild_war_history")
-            .Order("war_end_time DESC");
+            .Select(GuildSchema.Tables.GuildWarHistoryTable)
+            .Order($"{GuildSchema.GuildWarHistory.WarEndTime} DESC");
         cmd.Command = cmd.Command + " LIMIT " + count;
         using (cmd)
         using (var reader = new MySqlReader(cmd)) {
             while (reader.Read()) {
-                var history = new GuildWarHistory {
-                    Id = reader.ReadUInt32("id"),
-                    GuildId = reader.ReadUInt32("guild_id"),
-                    GuildLeaderEntityId = reader.ReadUInt32("guild_leader_entity_id"),
-                    GuildLeaderName = reader.ReadString("guild_leader_name"),
-                    GuildLeaderClaimed = reader.ReadBoolean("guild_leader_claimed"),
-                    WarEndTime = ReadDateTime(reader, "war_end_time"),
-                    DeputyClaimedIds = DeserializeDeputyIds(reader.ReadString("deputy_claimed_ids"))
-                };
+                var history = GuildMappers.MapGuildWarHistory(reader, _ => DateTime.MinValue, DeserializeDeputyIds);
                 results.Add(history);
             }
         }

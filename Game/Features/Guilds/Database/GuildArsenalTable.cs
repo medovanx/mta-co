@@ -1,15 +1,19 @@
 ﻿using System.IO;
 using MTA.Database;
+using MTA.Game.Features.Guilds.Database.Mappers;
+using MTA.Game.Features.Guilds.Database.Schema;
 using MTA.Game.Features.Guilds.Models;
 
 namespace MTA.Game.Features.Guilds.Database;
 
 public class GuildArsenalTable {
     public static void Load(Guild guild) {
-        using var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("guildarsenal").Where("ID", guild.Id);
+        using var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select(GuildSchema.Tables.GuildArsenalTable)
+            .Where(GuildSchema.GuildArsenal.Id, guild.Id);
         using var rdr = new MySqlReader(cmd);
         if (rdr.Read()) {
-            var stream = new MemoryStream(rdr.ReadBlob("Data"));
+            var record = GuildMappers.MapGuildArsenal(rdr);
+            var stream = new MemoryStream(record.Data);
             var reader = new BinaryReader(stream);
             for (var i = 0; i < 8; i++)
                 guild.Arsenals[i].Load(reader);
@@ -26,7 +30,8 @@ public class GuildArsenalTable {
         var writer = new BinaryWriter(stream);
         for (var i = 0; i < 8; i++)
             guild.Arsenals[i].Save(writer);
-        var sql = "UPDATE `guildarsenal` SET data=@Data, datalength=@DataLength where ID = " + guild.Id + " ;";
+        var sql =
+            $"UPDATE `{GuildSchema.Tables.GuildArsenalTable}` SET {GuildSchema.GuildArsenal.Data}=@Data, {GuildSchema.GuildArsenal.DataLength}=@DataLength where {GuildSchema.GuildArsenal.Id} = {guild.Id} ;";
         var rawData = stream.ToArray();
         using var conn = DataHolder.MySqlConnection;
         conn.Open();
@@ -45,7 +50,7 @@ public class GuildArsenalTable {
 
     public static void Insert(uint id) {
         using var cmd = new MySqlCommand(MySqlCommandType.INSERT);
-        cmd.Insert("guildarsenal").Insert("ID", id);
+        cmd.Insert(GuildSchema.Tables.GuildArsenalTable).Insert(GuildSchema.GuildArsenal.Id, id);
         cmd.Execute();
     }
 }

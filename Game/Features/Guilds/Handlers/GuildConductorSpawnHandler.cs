@@ -8,7 +8,7 @@ using MTA.Network.PacketHandlers;
 namespace MTA.Game.Features.Guilds.Handlers;
 
 /// <summary>
-/// Handles guild conductor NPC spawn/move requests (packet 2030 when mesh / 10 == 147).
+///     Handles guild conductor NPC spawn/move requests (packet 2030 when mesh / 10 == 147).
 /// </summary>
 [PacketHandler(2030)]
 public static class GuildConductorSpawnHandler {
@@ -21,7 +21,7 @@ public static class GuildConductorSpawnHandler {
         spawn.Deserialize(packet);
 
         // Only handle guild conductor spawns (mesh / 10 == 147)
-        if ((spawn.Mesh / 10) != 147)
+        if (spawn.Mesh / 10 != 147)
             return false;
 
         // This is a guild conductor spawn - handle it
@@ -37,9 +37,10 @@ public static class GuildConductorSpawnHandler {
                         var oldmap = getnpc.Npc.MapID;
 
                         if (!GuildConductors.MoveNpc(getnpc.Npc.UID, client.Entity.MapID, spawn.X,
-                                spawn.Y))
+                                spawn.Y)) {
                             client.Entity.SendSysMesage(
                                 "Invalid New location ! or Invalid map, try again ");
+                        }
                         else {
                             var removeoldnpc = new Data(true) { UID = uid, ID = Data.RemoveEntity };
 
@@ -55,17 +56,21 @@ public static class GuildConductorSpawnHandler {
                             client.SendScreen(getnpc.Npc.ToArray());
                         }
                     }
-                    else
+                    else {
                         client.Entity.SendSysMesage("Sorry, you guild not dominate the Guild War");
+                    }
                 }
-                else
+                else {
                     client.Entity.SendSysMesage("Sorry, you guild not dominate the Guild War");
+                }
             }
-            else
+            else {
                 client.Entity.SendSysMesage("Sorry, you guild not dominate the Guild War");
+            }
         }
-        else
+        else {
             client.Entity.SendSysMesage("Sorry, you guild not dominate the Guild War");
+        }
 
         return true; // Handled (even if validation failed, we processed it)
     }

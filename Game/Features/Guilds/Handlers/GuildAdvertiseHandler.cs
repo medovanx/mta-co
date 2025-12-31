@@ -170,7 +170,8 @@ public static class GuildAdvertiseHandler {
                                     Kernel.TryGetPlayer(guild.Leader.Id, out var guildLeaderClient)) {
                                     guildLeaderClient.OnMessageBoxEventParams = [guild, client];
                                     guildLeaderClient.MessageOK = delegate {
-                                        if (guildLeaderClient.OnMessageBoxEventParams[0] is Guild guild1 && client.Entity.GuildID == 0) guild1.AddMember(client);
+                                        if (guildLeaderClient.OnMessageBoxEventParams[0] is Guild guild1 &&
+                                            client.Entity.GuildID == 0) guild1.AddMember(client);
                                     };
                                     guildLeaderClient.Send(new NpcReply(
                                         NpcReply.MessageBox,

@@ -35,7 +35,6 @@ public static class GuildConductors {
             .Set("cellx", npc.Npc.X)
             .Set("celly", npc.Npc.Y).Where("id", uid).Execute();
         return true;
-
     }
 
     private static bool MapAllowThatLocation(Map mapBase, ushort x, ushort y) {
@@ -68,4 +67,3 @@ public static class GuildConductors {
         public ushort TeleportY;
     }
 }
-

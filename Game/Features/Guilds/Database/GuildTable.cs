@@ -3,6 +3,8 @@ using System.Linq;
 using MTA.Client;
 using MTA.Database;
 using MTA.Game.ConquerStructures;
+using MTA.Game.Features.Guilds.Database.Mappers;
+using MTA.Game.Features.Guilds.Database.Schema;
 using MTA.Game.Features.Guilds.Models;
 
 namespace MTA.Game.Features.Guilds.Database;
@@ -52,10 +54,11 @@ public static class GuildTable {
             }
         }
 
-        using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("guilds"))
+        using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select(GuildSchema.Tables.GuildsTable))
         using (var reader = new MySqlReader(cmd)) {
             while (reader.Read()) {
-                var leaderId = reader.ReadUInt64("LeaderID");
+                var record = GuildMappers.MapGuild(reader);
+                var leaderId = record.LeaderID;
                 // Get leader name from entities table using LeaderID (LeaderName column is deprecated)
                 var leaderName = string.Empty;
                 if (leaderId > 0) {
@@ -74,28 +77,28 @@ public static class GuildTable {
                 }
 
                 var guild = new Guild(leaderName) {
-                    Id = reader.ReadUInt32("Id"),
-                    Name = reader.ReadString("Name"),
-                    Wins = reader.ReadUInt32("Wins"),
-                    Loses = reader.ReadUInt32("Losts"),
-                    Bulletin = reader.ReadString("Bulletin"),
-                    SilverFund = reader.ReadUInt64("SilverFund"),
-                    CtfPoints = reader.ReadUInt32("CTFPoints"),
-                    CtfReward = reader.ReadUInt32("CTFReward"),
-                    ConquerPointFund = reader.ReadUInt32("ConquerPointFund"),
-                    LevelRequirement = reader.ReadUInt32("LevelRequirement"),
-                    RebornRequirement = reader.ReadUInt32("RebornRequirement"),
-                    ClassRequirement = reader.ReadUInt32("ClassRequirement"),
+                    Id = record.Id,
+                    Name = record.Name,
+                    Wins = record.Wins,
+                    Loses = record.Loses,
+                    Bulletin = record.Bulletin,
+                    SilverFund = record.SilverFund,
+                    CtfPoints = record.CTFPoints,
+                    CtfReward = record.CTFReward,
+                    ConquerPointFund = record.ConquerPointFund,
+                    LevelRequirement = record.LevelRequirement,
+                    RebornRequirement = record.RebornRequirement,
+                    ClassRequirement = record.ClassRequirement,
                     LeaderId = leaderId
                 };
-                guild.AdvertiseRecruit.Load(reader.ReadString("Advertise"));
-                guild.GuildEnroll = reader.ReadUInt32("GuildEnroll");
+                guild.AdvertiseRecruit.Load(record.Advertise);
+                guild.GuildEnroll = uint.TryParse(record.GuildEnroll, out var guildEnroll) ? guildEnroll : 0;
                 guild.CreateTime(guild.GuildEnroll);
-                guild.BulletinEnroll = reader.ReadUInt32("BulletinEnroll");
-                guild.CTFDonationCPs = reader.ReadUInt32("CTFdonationCPs");
-                guild.CTFDonationSilver = reader.ReadUInt32("CTFdonationSilver");
-                guild.CTFDonationSilverOld = reader.ReadUInt32("CTFdonationSilverold");
-                guild.CTFDonationCPSold = reader.ReadUInt32("CTFdonationCPsold");
+                guild.BulletinEnroll = uint.TryParse(record.BulletinEnroll, out var bulletinEnroll) ? bulletinEnroll : 0;
+                guild.CTFDonationCPs = uint.TryParse(record.CTFDonationCps, out var ctfCps) ? ctfCps : 0;
+                guild.CTFDonationSilver = uint.TryParse(record.CTFDonationSilver, out var ctfSilver) ? ctfSilver : 0;
+                guild.CTFDonationSilverOld = uint.TryParse(record.CTFdonationSilverold, out var ctfSilverOld) ? ctfSilverOld : 0;
+                guild.CTFDonationCPSold = uint.TryParse(record.CTFdonationCpsold, out var ctfCpsOld) ? ctfCpsOld : 0;
 
                 guild.CreateTime(guild.BulletinEnroll);
                 if (dict.TryGetValue(guild.Id, out var value)) {
@@ -174,12 +177,13 @@ public static class GuildTable {
 
     private static void LoadAllyEnemy() {
         // Load allies from guild_relations (bidirectional - relation_type=1)
-        using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("guild_relations")
-                   .Where("relation_type", 1))
+        using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select(GuildSchema.Tables.GuildRelationsTable)
+                   .Where(GuildSchema.GuildRelations.RelationType, 1))
         using (var reader = new MySqlReader(cmd)) {
             while (reader.Read()) {
-                var guildId = reader.ReadUInt32("guild_id");
-                var allyId = reader.ReadUInt32("related_guild_id");
+                var record = GuildMappers.MapGuildRelation(reader);
+                var guildId = record.GuildId;
+                var allyId = record.RelatedGuildId;
                 if (!Kernel.Guilds.TryGetValue(guildId, out var guild)) continue;
                 if (Kernel.Guilds.TryGetValue(allyId, out var ally))
                     guild.Ally.Add(allyId, ally);
@@ -187,12 +191,13 @@ public static class GuildTable {
         }
 
         // Load enemies from guild_relations (one-way storage, but display on both sides)
-        using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("guild_relations")
-                   .Where("relation_type", 0))
+        using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select(GuildSchema.Tables.GuildRelationsTable)
+                   .Where(GuildSchema.GuildRelations.RelationType, 0))
         using (var reader = new MySqlReader(cmd)) {
             while (reader.Read()) {
-                var guildId = reader.ReadUInt32("guild_id");
-                var enemyId = reader.ReadUInt32("related_guild_id");
+                var record = GuildMappers.MapGuildRelation(reader);
+                var guildId = record.GuildId;
+                var enemyId = record.RelatedGuildId;
 
                 // Add to initiator's enemy list (for removal permissions)
                 if (Kernel.Guilds.TryGetValue(guildId, out var initiatorGuild))
@@ -208,50 +213,53 @@ public static class GuildTable {
     }
 
     public static void UpdateBulletin(Guild guild, string bulletin) {
-        using var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds").Set("Bulletin", bulletin)
-            .Set("BulletinEnroll", guild.BulletinEnroll).Where("ID", guild.Id);
+        using var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update(GuildSchema.Tables.GuildsTable)
+            .Set(GuildSchema.Guilds.Bulletin, bulletin)
+            .Set(GuildSchema.Guilds.BulletinEnroll, guild.BulletinEnroll)
+            .Where(GuildSchema.Guilds.Id, guild.Id);
         cmd.Execute();
     }
 
     public static void SaveFunds(Guild guild) {
-        using var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds")
-            .Set("ConquerPointFund", guild.ConquerPointFund)
-            .Set("SilverFund", guild.SilverFund)
-            .Set("CTFdonationCPsold", guild.CTFDonationCPSold)
-            .Set("CTFdonationSilverold", guild.CTFDonationSilverOld)
-            .Set("CTFdonationCPs", guild.CTFDonationCPs)
-            .Set("CTFdonationSilver", guild.CTFDonationSilver)
-            .Where("ID", guild.Id);
+        using var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update(GuildSchema.Tables.GuildsTable)
+            .Set(GuildSchema.Guilds.ConquerPointFund, guild.ConquerPointFund)
+            .Set(GuildSchema.Guilds.SilverFund, guild.SilverFund)
+            .Set(GuildSchema.Guilds.CTFdonationCpsold, guild.CTFDonationCPSold.ToString())
+            .Set(GuildSchema.Guilds.CTFdonationSilverold, guild.CTFDonationSilverOld.ToString())
+            .Set(GuildSchema.Guilds.CTFDonationCps, guild.CTFDonationCPs.ToString())
+            .Set(GuildSchema.Guilds.CTFDonationSilver, guild.CTFDonationSilver.ToString())
+            .Where(GuildSchema.Guilds.Id, guild.Id);
         cmd.Execute();
     }
 
     public static void SaveEnrolls(Guild guild) {
-        using var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds")
-            .Set("GuildEnroll", guild.GuildEnroll)
-            .Set("BulletinEnroll", guild.BulletinEnroll)
-            .Where("ID", guild.Id);
+        using var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update(GuildSchema.Tables.GuildsTable)
+            .Set(GuildSchema.Guilds.GuildEnroll, guild.GuildEnroll.ToString())
+            .Set(GuildSchema.Guilds.BulletinEnroll, guild.BulletinEnroll.ToString())
+            .Where(GuildSchema.Guilds.Id, guild.Id);
         cmd.Execute();
     }
 
     public static void SaveAdvertise(Guild guild) {
-        using var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds")
-            .Set("Advertise", guild.AdvertiseRecruit.ToString())
-            .Set("SilverFund", guild.SilverFund)
-            .Where("ID", guild.Id);
+        using var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update(GuildSchema.Tables.GuildsTable)
+            .Set(GuildSchema.Guilds.Advertise, guild.AdvertiseRecruit.ToString())
+            .Set(GuildSchema.Guilds.SilverFund, guild.SilverFund)
+            .Where(GuildSchema.Guilds.Id, guild.Id);
         cmd.Execute();
     }
 
     public static void SaveCtfPoins(Guild guild) {
-        using var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds")
-            .Set("CTFPoints", guild.CtfPoints)
-            .Where("ID", guild.Id);
+        using var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update(GuildSchema.Tables.GuildsTable)
+            .Set(GuildSchema.Guilds.CTFPoints, guild.CtfPoints)
+            .Where(GuildSchema.Guilds.Id, guild.Id);
         cmd.Execute();
     }
 
     public static void SaveCtfReward(Guild guild) {
-        using var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds")
-            .Set("CTFReward", guild.CtfReward).Set("CTFPoints", guild.CtfPoints)
-            .Where("ID", guild.Id);
+        using var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update(GuildSchema.Tables.GuildsTable)
+            .Set(GuildSchema.Guilds.CTFReward, guild.CtfReward)
+            .Set(GuildSchema.Guilds.CTFPoints, guild.CtfPoints)
+            .Where(GuildSchema.Guilds.Id, guild.Id);
         cmd.Execute();
     }
 
@@ -260,13 +268,15 @@ public static class GuildTable {
                    .Set("guildid", 0)
                    .Where("guildid", guild.Id))
             cmd.Execute();
-        using (var cmd = new MySqlCommand(MySqlCommandType.DELETE).Delete("guilds", "id", guild.Id))
+        using (var cmd = new MySqlCommand(MySqlCommandType.DELETE).Delete(GuildSchema.Tables.GuildsTable,
+                   GuildSchema.Guilds.Id, guild.Id))
             cmd.Execute();
     }
 
     public static void Create(Guild guild) {
         while (true) {
-            using var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("guilds").Where("id", guild.Id);
+            using var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select(GuildSchema.Tables.GuildsTable)
+                .Where(GuildSchema.Guilds.Id, guild.Id);
             using var reader = cmd.CreateReader();
             if (reader.Read())
                 guild.Id = Guild.GuildCounter.Next;
@@ -274,47 +284,60 @@ public static class GuildTable {
                 break;
         }
 
-        using (var cmd = new MySqlCommand(MySqlCommandType.INSERT).Insert("guilds")
-                   .Insert("ID", guild.Id).Insert("name", guild.Name).Insert("Bulletin", "")
-                   .Insert("SilverFund", 500000).Insert("LeaderID", guild.LeaderId))
+        using (var cmd = new MySqlCommand(MySqlCommandType.INSERT).Insert(GuildSchema.Tables.GuildsTable)
+                   .Insert(GuildSchema.Guilds.Id, guild.Id)
+                   .Insert(GuildSchema.Guilds.Name, guild.Name)
+                   .Insert(GuildSchema.Guilds.Bulletin, "")
+                   .Insert(GuildSchema.Guilds.SilverFund, 500000)
+                   .Insert(GuildSchema.Guilds.LeaderID, guild.LeaderId))
             cmd.Execute();
     }
 
     public static void ChangeName(GameState client, string name) {
-        using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds")
-                   .Set("name", name).Where("ID", client.Guild!.Id))
+        using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update(GuildSchema.Tables.GuildsTable)
+                   .Set(GuildSchema.Guilds.Name, name).Where(GuildSchema.Guilds.Id, client.Guild!.Id))
             cmd.Execute();
-        using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("guilds"))
+        using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select(GuildSchema.Tables.GuildsTable))
         using (var reader = new MySqlReader(cmd)) {
             while (reader.Read()) {
-                client.Guild.Name = reader.ReadString("Name");
+                var record = GuildMappers.MapGuild(reader);
+                if (record.Id == client.Guild.Id) {
+                    client.Guild.Name = record.Name;
+                    break;
+                }
             }
         }
     }
 
     public static void AddEnemy(Guild guild, uint enemy) {
         // Insert one-way enemy relationship (only initiator can remove)
-        using var cmd = new MySqlCommand(MySqlCommandType.INSERT).Insert("guild_relations")
-            .Insert("guild_id", guild.Id).Insert("related_guild_id", enemy).Insert("relation_type", 0);
+        using var cmd = new MySqlCommand(MySqlCommandType.INSERT).Insert(GuildSchema.Tables.GuildRelationsTable)
+            .Insert(GuildSchema.GuildRelations.GuildId, guild.Id)
+            .Insert(GuildSchema.GuildRelations.RelatedGuildId, enemy)
+            .Insert(GuildSchema.GuildRelations.RelationType, 0);
         cmd.Execute();
     }
 
     public static void AddAlly(Guild guild, uint ally) {
         // Insert bidirectional ally relationship (both directions)
-        using (var cmd = new MySqlCommand(MySqlCommandType.INSERT).Insert("guild_relations")
-                   .Insert("guild_id", guild.Id).Insert("related_guild_id", ally).Insert("relation_type", 1))
+        using (var cmd = new MySqlCommand(MySqlCommandType.INSERT).Insert(GuildSchema.Tables.GuildRelationsTable)
+                   .Insert(GuildSchema.GuildRelations.GuildId, guild.Id)
+                   .Insert(GuildSchema.GuildRelations.RelatedGuildId, ally)
+                   .Insert(GuildSchema.GuildRelations.RelationType, 1))
             cmd.Execute();
-        using (var cmd = new MySqlCommand(MySqlCommandType.INSERT).Insert("guild_relations")
-                   .Insert("guild_id", ally).Insert("related_guild_id", guild.Id).Insert("relation_type", 1))
+        using (var cmd = new MySqlCommand(MySqlCommandType.INSERT).Insert(GuildSchema.Tables.GuildRelationsTable)
+                   .Insert(GuildSchema.GuildRelations.GuildId, ally)
+                   .Insert(GuildSchema.GuildRelations.RelatedGuildId, guild.Id)
+                   .Insert(GuildSchema.GuildRelations.RelationType, 1))
             cmd.Execute();
     }
 
     public static bool IsEnemyInitiator(Guild guild, uint enemyId) {
         using var cmd = new MySqlCommand(MySqlCommandType.SELECT)
-            .Select("guild_relations")
-            .Where("guild_id", guild.Id)
-            .And("related_guild_id", enemyId)
-            .And("relation_type", 0);
+            .Select(GuildSchema.Tables.GuildRelationsTable)
+            .Where(GuildSchema.GuildRelations.GuildId, guild.Id)
+            .And(GuildSchema.GuildRelations.RelatedGuildId, enemyId)
+            .And(GuildSchema.GuildRelations.RelationType, 0);
         using var reader = new MySqlReader(cmd);
         return reader.Read();
     }
@@ -322,68 +345,82 @@ public static class GuildTable {
     public static void RemoveEnemy(Guild guild, uint enemy) {
         // Remove one-way enemy relationship (only from initiator)
         using var command = new MySqlCommand(MySqlCommandType.DELETE);
-        command.Delete("guild_relations", "guild_id", guild.Id).And("related_guild_id", enemy)
-            .And("relation_type", 0)
+        command.Delete(GuildSchema.Tables.GuildRelationsTable, GuildSchema.GuildRelations.GuildId, guild.Id)
+            .And(GuildSchema.GuildRelations.RelatedGuildId, enemy)
+            .And(GuildSchema.GuildRelations.RelationType, 0)
             .Execute();
     }
 
     public static void RemoveAlly(Guild guild, uint ally) {
         // Remove bidirectional ally relationship (both directions)
         using (var command = new MySqlCommand(MySqlCommandType.DELETE))
-            command.Delete("guild_relations", "guild_id", guild.Id).And("related_guild_id", ally)
-                .And("relation_type", 1)
+            command.Delete(GuildSchema.Tables.GuildRelationsTable, GuildSchema.GuildRelations.GuildId, guild.Id)
+                .And(GuildSchema.GuildRelations.RelatedGuildId, ally)
+                .And(GuildSchema.GuildRelations.RelationType, 1)
                 .Execute();
         using (var command = new MySqlCommand(MySqlCommandType.DELETE))
-            command.Delete("guild_relations", "guild_id", ally).And("related_guild_id", guild.Id)
-                .And("relation_type", 1)
+            command.Delete(GuildSchema.Tables.GuildRelationsTable, GuildSchema.GuildRelations.GuildId, ally)
+                .And(GuildSchema.GuildRelations.RelatedGuildId, guild.Id)
+                .And(GuildSchema.GuildRelations.RelationType, 1)
                 .Execute();
     }
 
     public static void UpdateGuildWarStats(Guild guild) {
-        using var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds")
-            .Set("wins", guild.Wins).Set("losts", guild.Loses)
-            .Where("id", guild.Id);
+        using var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update(GuildSchema.Tables.GuildsTable)
+            .Set(GuildSchema.Guilds.Wins, guild.Wins)
+            .Set(GuildSchema.Guilds.Losts, guild.Loses)
+            .Where(GuildSchema.Guilds.Id, guild.Id);
         cmd.Execute();
     }
 
+    // NOTE: PoleKeeper columns (PoleKeeperTc, PoleKeeperPh, PoleKeeperAp) do not exist in the database.
+    // These methods are kept for API compatibility but will need the columns added to the database to function.
     public static void UpdatePoleKeeperTc(Guild guild) {
-        using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds")
-                   .Set("PoleKeeperTc", 0))
-            cmd.Execute();
-        using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds")
-                   .Set("PoleKeeperTc", 1).Where("id", guild.Id))
-            cmd.Execute();
+        // Columns don't exist in database - method disabled
+        // TODO: Add PoleKeeperTc column to guilds table if this functionality is needed
+        // using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update(GuildSchema.Tables.GuildsTable)
+        //            .Set("PoleKeeperTc", 0))
+        //     cmd.Execute();
+        // using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update(GuildSchema.Tables.GuildsTable)
+        //            .Set("PoleKeeperTc", 1).Where(GuildSchema.Guilds.Id, guild.Id))
+        //     cmd.Execute();
     }
 
     public static void UpdatePoleKeeperPh(Guild guild) {
-        using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds")
-                   .Set("PoleKeeperPh", 0))
-            cmd.Execute();
-        using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds")
-                   .Set("PoleKeeperPh", 1).Where("id", guild.Id))
-            cmd.Execute();
+        // Columns don't exist in database - method disabled
+        // TODO: Add PoleKeeperPh column to guilds table if this functionality is needed
+        // using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update(GuildSchema.Tables.GuildsTable)
+        //            .Set("PoleKeeperPh", 0))
+        //     cmd.Execute();
+        // using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update(GuildSchema.Tables.GuildsTable)
+        //            .Set("PoleKeeperPh", 1).Where(GuildSchema.Guilds.Id, guild.Id))
+        //     cmd.Execute();
     }
 
     public static void UpdatePoleKeeperAp(Guild guild) {
-        using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds")
-                   .Set("PoleKeeperAp", 0))
-            cmd.Execute();
-        using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds")
-                   .Set("PoleKeeperAp", 1).Where("id", guild.Id))
-            cmd.Execute();
+        // Columns don't exist in database - method disabled
+        // TODO: Add PoleKeeperAp column to guilds table if this functionality is needed
+        // using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update(GuildSchema.Tables.GuildsTable)
+        //            .Set("PoleKeeperAp", 0))
+        //     cmd.Execute();
+        // using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update(GuildSchema.Tables.GuildsTable)
+        //            .Set("PoleKeeperAp", 1).Where(GuildSchema.Guilds.Id, guild.Id))
+        //     cmd.Execute();
     }
 
     public static void SaveLeader(Guild guild) {
-        using var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("guilds")
-            .Set("LeaderID", guild.LeaderId)
-            .Where("id", guild.Id);
+        using var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update(GuildSchema.Tables.GuildsTable)
+            .Set(GuildSchema.Guilds.LeaderID, guild.LeaderId)
+            .Where(GuildSchema.Guilds.Id, guild.Id);
         cmd.Execute();
     }
 
     internal static void SaveRequirements(Guild guild) {
         using var command = new MySqlCommand(MySqlCommandType.UPDATE);
-        command.Update("guilds").Set("LevelRequirement", guild.LevelRequirement)
-            .Set("RebornRequirement", guild.RebornRequirement).Set("ClassRequirement", guild.ClassRequirement)
-            .Where("ID", guild.Id).Execute();
+        command.Update(GuildSchema.Tables.GuildsTable)
+            .Set(GuildSchema.Guilds.LevelRequirement, guild.LevelRequirement)
+            .Set(GuildSchema.Guilds.RebornRequirement, guild.RebornRequirement)
+            .Set(GuildSchema.Guilds.ClassRequirement, guild.ClassRequirement)
+            .Where(GuildSchema.Guilds.Id, guild.Id).Execute();
     }
 }

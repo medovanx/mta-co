@@ -81,7 +81,7 @@ public static class GuildPromotionHandler {
                 return;
             }
 
-            if (client.AsMember.Rank == Enums.GuildMemberRank.DeputyLeader) {
+            if (client.AsMember.Rank == Enums.GuildMemberRank.DeputyLeader)
                 switch (getMemberRank) {
                     case (ushort)Enums.GuildMemberRank.Steward when client.Guild.RanksCounts[getMemberRank] >= 3:
                         client.Entity.SendSysMesage(
@@ -140,7 +140,6 @@ public static class GuildPromotionHandler {
                         break;
                     }
                 }
-            }
 
             if (client.AsMember.Rank is Enums.GuildMemberRank.Manager
                 or Enums.GuildMemberRank.HonoraryManager)
@@ -164,7 +163,7 @@ public static class GuildPromotionHandler {
                 }
 
             if (client.AsMember.Rank is Enums.GuildMemberRank.GuildLeader
-                or Enums.GuildMemberRank.LeaderSpouse) {
+                or Enums.GuildMemberRank.LeaderSpouse)
                 switch (getMemberRank) {
                     case (ushort)Enums.GuildMemberRank.GuildLeader
                         when client.AsMember.Rank == Enums.GuildMemberRank.LeaderSpouse:
@@ -274,7 +273,6 @@ public static class GuildPromotionHandler {
                         break;
                     }
                 }
-            }
 
             client.Entity.GuildBattlePower =
                 client.Guild.GetSharedBattlePower(client.Entity.GuildRank);
