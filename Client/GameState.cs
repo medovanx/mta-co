@@ -3053,7 +3053,7 @@ namespace MTA.Client {
         public Time32 ReviveStamp = Time32.Now;
         public bool Attackable;
         public int KillCount = 0, KC2 = 0;
-        public NobilityInformation NobilityInformation;
+        public NobilityInformation? NobilityInformation;
         public Entity Entity;
         public Screen Screen;
         public Time32 LastPing = Time32.Now;

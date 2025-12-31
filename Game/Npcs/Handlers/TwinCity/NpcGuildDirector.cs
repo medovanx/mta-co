@@ -1,4 +1,3 @@
-using System.Linq;
 using MTA.Client;
 using MTA.Database;
 using MTA.Game.ConquerStructures.Society;
@@ -12,238 +11,40 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
     [NpcHandler(10003)]
     public static class NpcGuildDirector {
         public static void Handle(GameState client, NpcRequest npcRequest, MTA.Npcs dialog) {
+            const uint guildCost = 1000000;
             switch (npcRequest.OptionID) {
                 case 0: {
                     dialog.Text(
-                        "Hello there. Do you want to create a new guild? You need to be level 90, have 500,000 silver, and not belong to any guild. If you are a guild leader, you can manage your guild here.");
-                    dialog.Option("Create Guild", 1);
-                    dialog.Option("Disband Guild", 9);
-                    dialog.Option("Change Guild Name", 17);
+                        $"Hello there. Do you want to create a new guild? You need to be level 90, have {guildCost:N0} silver, and not belong to any guild. If you are a guild leader, you can manage your guild here.");
+                    if (client.Guild == null) {
+                        dialog.Option("Create a Guild", 1);
+                    }
+
+                    if (client is { Guild: not null, AsMember.Rank: GuildMemberRank.GuildLeader }) {
+                        dialog.Option("Disband my Guild", 3);
+                        dialog.Option("Change my Guild Name", 5);
+                    }
+
                     dialog.Option("Nevermind", 255);
                     dialog.Send();
                     break;
                 }
-                default: {
-                    var member =
-                        client.Guild.Members.Values.Where(x => x.Name.StartsWith("~")).OrderBy(z => z.ID).ToArray()[
-                            npcRequest.OptionID - 100];
-                    if (member.Rank != GuildMemberRank.Member) {
-                        dialog.Text("You cannot promote this member anymore.");
-                        dialog.Option("Ah, nevermind.", 255);
-                        dialog.Send();
-                        return;
-                    }
-                    else {
-                        member.Rank = GuildMemberRank.DeputyLeader;
-                        if (member.IsOnline) {
-                            client.Guild.SendGuild(member.Client);
-                            member.Client.Entity.GuildRank = (ushort)member.Rank;
-                            member.Client.Screen.FullWipe();
-                            member.Client.Screen.Reload();
-                        }
-
-                        dialog.Text("You have promoted " + member.Name + " to be a Deputy Leader.");
-                        dialog.Option("Great!", 255);
-                        dialog.Send();
-                        client.Guild.RanksCounts[(ushort)GuildMemberRank.DeputyLeader]++;
-                        EntityTable.UpdateGuildRank(member.ID, member.Rank);
-                    }
-
-                    break;
-                }
-                case 17: {
-                    if (client is { Guild: not null, AsMember.Rank: GuildMemberRank.GuildLeader, Entity.ConquerPoints: >= 215 }) {
-                        dialog.Text("Name your guild. The name must be less than 16 characters.");
-                        dialog.Text("This will cost 215 Conquer Points.");
-                        dialog.Input("Enter new guild name:", 18, 16);
-                        dialog.Option("Cancel", 255);
-                        dialog.Send();
-                    }
-                    else {
-                        dialog.Text(
-                            "You don't meet the requirements. You must be a Guild Leader and have at least 215 Conquer Points.");
-                        dialog.Option("I understand", 255);
-                        dialog.Send();
-                    }
-
-                    break;
-                }
-                case 18: {
-                    if (client is { Guild: not null, AsMember.Rank: GuildMemberRank.GuildLeader, Entity.ConquerPoints: >= 215 }) {
-                        if (npcRequest.Input != "" && npcRequest.Input.Length < 16) {
-                            if (!Guild.CheckNameExist(npcRequest.Input)) {
-                                GuildTable.ChangeName(client, npcRequest.Input);
-                                client.Guild.Name = npcRequest.Input;
-                                client.Guild.SendGuild(client);
-                                client.Guild.SendName(client);
-                                client.Screen.FullWipe();
-                                client.Screen.Reload();
-                            }
-                            else {
-                                dialog.Text("Sorry, there is already a guild with this name.");
-                                dialog.Option("Choose Another Name", 1);
-                                dialog.Option("Cancel", 255);
-                                dialog.Send();
-                            }
-                        }
-                        else {
-                            dialog.Text("Invalid guild name. The name must be between 1 and 15 characters.");
-                            dialog.Option("Try Again", 1);
-                            dialog.Option("Cancel", 255);
-                            dialog.Send();
-                        }
-                    }
-                    else {
-                        dialog.Text(
-                            "Error: You must be in a guild, be the Guild Leader, and have at least 215 Conquer Points.");
-                        dialog.Option("Try Again", 1);
-                        dialog.Option("Cancel", 255);
-                        dialog.Send();
-                    }
-
-                    break;
-                }
-                case 9: {
-                    if (client is { Guild: not null, AsMember.Rank: GuildMemberRank.GuildLeader }) {
-                        dialog.Text("Are you sure you want to disband your guild? This action cannot be undone!");
-                        dialog.Option("Yes, disband my guild", 10);
-                        dialog.Option("No, cancel", 255);
-                        dialog.Send();
-                    }
-                    else {
-                        dialog.Text("You don't meet the requirements. You must be a Guild Leader.");
-                        dialog.Option("I understand", 255);
-                        dialog.Send();
-                    }
-
-                    break;
-                }
-                case 10: {
-                    if (client is { Guild: not null, AsMember.Rank: GuildMemberRank.GuildLeader }) {
-                        client.Guild.Disband();
-                    }
-
-                    break;
-                }
-                case 7: {
-                    if (client is { Guild: not null, AsMember.Rank: GuildMemberRank.GuildLeader }) {
-                        if (npcRequest.Input != "") {
-                            string lookingFor = npcRequest.Input.Replace(" ", "").Replace("~", "");
-                            var member = client.Guild.Members.Values.FirstOrDefault((p) =>
-                                p.Name.Replace(" ", "").Replace("~", "") == lookingFor);
-
-                            if (member == null) {
-                                dialog.Text("There is no such member in your guild.");
-                                dialog.Option("Ah, nevermind.", 255);
-                                dialog.Send();
-                                return;
-                            }
-                            else {
-                                if (member.Rank == GuildMemberRank.GuildLeader) {
-                                    dialog.Text("You cannot promote this member anymore.");
-                                    dialog.Option("Ah, nevermind.", 255);
-                                    dialog.Send();
-                                    return;
-                                }
-                                else {
-                                    client.Entity.GuildBattlePower = 0;
-                                    client.AsMember.Rank = member.Rank;
-                                    EntityTable.UpdateGuildRank(client.Entity.UID, member.Rank);
-                                    member.Rank = GuildMemberRank.GuildLeader;
-                                    EntityTable.UpdateGuildRank(member.ID, member.Rank);
-                                    if (member.IsOnline) {
-                                        var memberClient = member.Client;
-                                        member.Client.Entity.GuildBattlePower = 0;
-                                        memberClient.Entity.GuildRank = (ushort)member.Rank;
-                                        memberClient.Screen.FullWipe();
-                                        memberClient.Screen.Reload();
-                                        memberClient.Guild.SendGuild(memberClient);
-                                    }
-
-                                    client.Entity.GuildRank = (ushort)client.AsMember.Rank;
-                                    client.Screen.FullWipe();
-                                    client.Screen.Reload();
-                                    client.Guild.SendGuild(client);
-                                    client.Guild.GetMaxSharedBattlepower(true);
-                                }
-                            }
-                        }
-                    }
-
-                    break;
-                }
-                case 4: {
-                    if (client is { Guild: not null, AsMember.Rank: GuildMemberRank.GuildLeader }) {
-                        if (npcRequest.Input != "") {
-                            string lookingFor = npcRequest.Input.Replace(" ", "~");
-                            var member = client.Guild.Members.Values.FirstOrDefault((p) => p.Name == lookingFor);
-
-                            if (member == null) {
-                                dialog.Text("There is no such member in your guild.");
-                                dialog.Option("Ah, nevermind.", 255);
-                                dialog.Send();
-                                return;
-                            }
-                            else {
-                                if (member.Rank != GuildMemberRank.Member) {
-                                    dialog.Text("You cannot promote this member anymore.");
-                                    dialog.Option("Ah, nevermind.", 255);
-                                    dialog.Send();
-                                    return;
-                                }
-                                else {
-                                    member.Rank = GuildMemberRank.DeputyLeader;
-                                    if (member.IsOnline) {
-                                        client.Guild.SendGuild(member.Client);
-                                        member.Client.Entity.GuildRank = (ushort)member.Rank;
-                                        member.Client.Screen.FullWipe();
-                                        member.Client.Screen.Reload();
-                                        member.Client.Entity.GuildBattlePower =
-                                            member.Guild.GetSharedBattlepower(member.Rank);
-                                    }
-
-                                    client.Guild.RanksCounts[(ushort)GuildMemberRank.DeputyLeader]++;
-                                }
-                            }
-                        }
-                        else {
-                            dialog.Text("Please enter the name of the member you want to promote to Deputy Leader.");
-                            dialog.Option("I understand", 255);
-                            dialog.Send();
-                        }
-                    }
-                    else {
-                        dialog.Text("You are not the Guild Leader of your current guild.");
-                        dialog.Option("I understand", 255);
-                        dialog.Send();
-                    }
-
-                    break;
-                }
                 case 1: {
-                    if (client.Guild == null && client.Entity is { Level: >= 90, Money: >= 500000 }) {
-                        dialog.Text("Name your guild. The name must be between 1 and 15 characters.");
-                        dialog.Input("Guild name:", 2, 16);
-                        dialog.Option("Cancel", 255);
-                        dialog.Send();
-                    }
-                    else {
-                        dialog.Text(
-                            "You don't meet the requirements. You need to be level 90, have 500,000 silver, and not be in any guild.");
-                        dialog.Option("I understand", 255);
-                        dialog.Send();
-                    }
-
+                    dialog.Text("Name your guild. The name must be between 1 and 15 characters.");
+                    dialog.Input("Guild name:", 2, 16);
+                    dialog.Option("Cancel", 255);
+                    dialog.Send();
                     break;
                 }
                 case 2: {
-                    if (client.Guild == null && client.Entity is { Level: >= 90, Money: >= 500000 }) {
-                        if (npcRequest.Input != "" && npcRequest.Input.Length is >= 1 and < 16) {
+                    if (client.Guild == null && client.Entity is { Level: >= 90, Money: >= guildCost }) {
+                        if (npcRequest.Input != "" && npcRequest.Input.Length is >= 1 and <= 16) {
                             if (!Guild.CheckNameExist(npcRequest.Input)) {
-                                client.Entity.Money -= 500000;
-                                Guild guild = new Guild(client.Entity.Name);
-                                guild.ID = Guild.GuildCounter.Next;
-                                guild.SilverFund = 1000000;
+                                client.Entity.Money -= guildCost;
+                                var guild = new Guild(client.Entity.Name) {
+                                    ID = Guild.GuildCounter.Next,
+                                    SilverFund = guildCost
+                                };
                                 client.AsMember = new Guild.Member(guild.ID) {
                                     SilverDonation = 500000,
                                     ID = client.Entity.UID,
@@ -270,15 +71,97 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                                 GuildArsenalTable.Insert(guild.ID);
                                 client.Screen.FullWipe();
                                 client.Screen.Reload();
+                                Kernel.SendWorldMessage(
+                                    new Message(
+                                        $"A new guild [{npcRequest.Input}] has been created by {client.Entity.Name}!",
+                                        System.Drawing.Color.Red, Message.Center),
+                                    Program.Values);
                             }
                             else {
                                 dialog.Text(
                                     "Sorry, there is already a guild with this name. Please choose a different name.");
-                                dialog.Option("Choose Another Name", 1);
+                                dialog.Option("Choose another name", 1);
                                 dialog.Option("Cancel", 255);
                                 dialog.Send();
                             }
                         }
+                    }
+                    else {
+                        dialog.Text(
+                            $"You don't meet the requirements. You need to be level 90, have {guildCost:N0} silver, and not be in any guild.");
+                        dialog.Option("I understand", 255);
+                        dialog.Send();
+                    }
+
+                    break;
+                }
+                case 3: {
+                    dialog.Text("Are you sure you want to disband your guild? This action cannot be undone!");
+                    dialog.Option("Yes, disband my guild", 4);
+                    dialog.Option("No, cancel", 255);
+                    dialog.Send();
+                    break;
+                }
+                case 4: {
+                    if (client is { Guild: not null, AsMember.Rank: GuildMemberRank.GuildLeader }) {
+                        var guildName = client.Guild.Name;
+                        client.Guild.Disband();
+                        Kernel.SendWorldMessage(
+                            new Message(
+                                $"The guild [{guildName}] has been disbanded by {client.Entity.Name}.",
+                                System.Drawing.Color.Red, Message.Center),
+                            Program.Values);
+                    }
+
+                    break;
+                }
+                case 5: {
+                    dialog.Text($"Name your guild. The name must be less than 16 characters.\nThis will cost 215 CPs.");
+                    dialog.Input("Enter new guild name:", 6, 16);
+                    dialog.Option("Cancel", 255);
+                    dialog.Send();
+                    break;
+                }
+                case 6: {
+                    if (client is {
+                            Guild: not null, AsMember.Rank: GuildMemberRank.GuildLeader, Entity.ConquerPoints: >= 215
+                        }) {
+                        if (npcRequest.Input != "" && npcRequest.Input.Length is >= 1 and <= 16) {
+                            if (!Guild.CheckNameExist(npcRequest.Input)) {
+                                var oldGuildName = client.Guild.Name;
+                                client.Entity.ConquerPoints -= 215;
+                                GuildTable.ChangeName(client, npcRequest.Input);
+                                client.Guild.Name = npcRequest.Input;
+                                client.Guild.SendGuild(client);
+                                client.Guild.SendName(client);
+                                client.Screen.FullWipe();
+                                client.Screen.Reload();
+                                Kernel.SendWorldMessage(
+                                    new Message(
+                                        $"The guild [{oldGuildName}] has been renamed to [{npcRequest.Input}] by {client.Entity.Name}.",
+                                        System.Drawing.Color.Red, Message.Center),
+                                    Program.Values);
+                            }
+                            else {
+                                dialog.Text("Sorry, there is already a guild with this name.");
+                                dialog.Option("Choose Another Name", 5);
+                                dialog.Option("Cancel", 255);
+                                dialog.Send();
+                            }
+                        }
+                        else {
+                            dialog.Text("Invalid guild name. The name must be between 1 and 15 characters.");
+                            dialog.Option("Try Again", 5);
+                            dialog.Option("Cancel", 255);
+                            dialog.Send();
+                        }
+                    }
+                    else {
+                        dialog.Text(
+                            "You must be in a guild, be the Guild Leader, and have at least 215 Conquer Points.");
+                        dialog.Option("Try Again", 5);
+                        dialog.Option("Cancel", 255);
+                        dialog.Send();
                     }
 
                     break;

@@ -71,7 +71,7 @@ namespace MTA.Network.GamePackets
             {
                 list.Add(CreatePromotionString(builder, Game.Enums.GuildMemberRank.GuildLeader, 1, 1, (int)client.Guild.GetMemberPotency(Game.Enums.GuildMemberRank.GuildLeader), 0));
                 //  list.Add(CreatePromotionString(builder, Game.Enums.GuildMemberRank.Aide, (int)client.Guild.RanksCounts[(ushort)Game.Enums.GuildMemberRank.Aide], 6, (int)client.Guild.GetMemberPotency(Game.Enums.GuildMemberRank.Aide), 0));
-                list.Add(CreatePromotionString(builder, Game.Enums.GuildMemberRank.DeputyLeader, client.Guild.RanksCounts[(ushort)Game.Enums.GuildMemberRank.DeputyLeader], 7, (int)client.Guild.GetMemberPotency(Game.Enums.GuildMemberRank.DeputyLeader), 0));
+                list.Add(CreatePromotionString(builder, Game.Enums.GuildMemberRank.DeputyLeader, client.Guild.RanksCounts[(ushort)Game.Enums.GuildMemberRank.DeputyLeader], client.Guild.GetMaxDeputyLeaders(), (int)client.Guild.GetMemberPotency(Game.Enums.GuildMemberRank.DeputyLeader), 0));
                 list.Add(CreatePromotionString(builder, Game.Enums.GuildMemberRank.Steward, client.Guild.RanksCounts[(ushort)Game.Enums.GuildMemberRank.Steward], 3, (int)client.Guild.GetMemberPotency(Game.Enums.GuildMemberRank.Steward), 0));
                 list.Add(CreatePromotionString(builder, Game.Enums.GuildMemberRank.Follower, client.Guild.RanksCounts[(ushort)Game.Enums.GuildMemberRank.Follower], 10, (int)client.Guild.GetMemberPotency(Game.Enums.GuildMemberRank.Follower), 0));
                 list.Add(CreatePromotionString(builder, Game.Enums.GuildMemberRank.Member, client.Guild.RanksCounts[(ushort)Game.Enums.GuildMemberRank.Member], 300, (int)client.Guild.GetMemberPotency(Game.Enums.GuildMemberRank.Member), 0));

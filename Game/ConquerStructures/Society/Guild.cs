@@ -366,6 +366,18 @@ namespace MTA.Game.ConquerStructures.Society {
             return GetSharedBattlepower((int)rank);
         }
 
+        /// <summary>
+        /// Gets the maximum number of deputy leaders allowed based on guild level
+        /// </summary>
+        public byte GetMaxDeputyLeaders() {
+            return Level switch {
+                >= 1 and <= 3 => 2,
+                >= 4 and <= 6 => 3,
+                >= 7 and <= 9 => 4,
+                _ => 2 // Default fallback
+            };
+        }
+
         public void SaveArsenal() {
             Database.GuildArsenalTable.Save(this);
         }
@@ -453,6 +465,7 @@ namespace MTA.Game.ConquerStructures.Society {
                 if (latest != null && latest.GuildId == ID) {
                     return true;
                 }
+
                 // Fallback to active event (for during active war)
                 var gwEvent = GuildWarEvent.GetActiveEvent();
                 return gwEvent?.Pole?.Name == Name;
@@ -1317,11 +1330,6 @@ namespace MTA.Game.ConquerStructures.Society {
                     member.Client.Screen.Reload();
                     member.Client.AsMember = null;
                     member.Client.Guild = null;
-                    var message = new Message("guild " + Name + " has been Disbanded!", System.Drawing.Color.White,
-                        Message.World);
-                    foreach (var client in Program.Values) {
-                        client.Send(message);
-                    }
                 }
                 else {
                     foreach (var arsenal in Arsenals)
