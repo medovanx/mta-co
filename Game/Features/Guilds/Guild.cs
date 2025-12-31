@@ -18,7 +18,7 @@ using MTA.Network;
 using MTA.Network.GamePackets;
 using static MTA.Game.Constants.EntityClass;
 
-namespace MTA.Game.Features.Guilds.Models;
+namespace MTA.Game.Features.Guilds;
 
 public enum ArsenalType {
     Headgear,

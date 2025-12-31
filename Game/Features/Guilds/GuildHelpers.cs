@@ -2,7 +2,6 @@ using System;
 using System.Drawing;
 using System.Linq;
 using MTA.Client;
-using MTA.Game.Features.Guilds.Models;
 using MTA.Network.GamePackets;
 using Message = MTA.Network.GamePackets.Message;
 

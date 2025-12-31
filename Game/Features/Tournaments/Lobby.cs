@@ -12,7 +12,7 @@ using MTA.Game;
 using MTA.Game.Attacking;
 using MTA.Game.ConquerStructures;
 using MTA.Game.ConquerStructures.Society;
-using MTA.Game.Features.Guilds.Models;
+using MTA.Game.Features.Guilds;
 using MTA.Game.Constants;
 using MTA.Interfaces;
 using MTA.Network.GamePackets;

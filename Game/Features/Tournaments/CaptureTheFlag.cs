@@ -4,7 +4,7 @@ using System.Linq;
 using MTA.Network.GamePackets;
 using MTA.Client;
 using System.Collections.Concurrent;
-using MTA.Game.Features.Guilds.Models;
+using MTA.Game.Features.Guilds;
 using MTA.Network;
 using MTA.Database;
 using MTA.Game.Features.Guilds.Database;

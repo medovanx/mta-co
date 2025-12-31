@@ -17,7 +17,7 @@ using MTA.Game.Constants;
 using MTA.Game.ConquerStructures;
 using MTA.Game.ConquerStructures.House;
 using MTA.Game.ConquerStructures.Society;
-using MTA.Game.Features.Guilds.Models;
+using MTA.Game.Features.Guilds;
 using MTA.Game.Events;
 using MTA.Game.Events.GuildWar;
 using MTA.Game.Events.SteedRace;

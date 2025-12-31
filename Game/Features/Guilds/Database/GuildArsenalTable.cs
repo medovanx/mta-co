@@ -2,7 +2,7 @@
 using MTA.Database;
 using MTA.Game.Features.Guilds.Database.Mappers;
 using MTA.Game.Features.Guilds.Database.Schema;
-using MTA.Game.Features.Guilds.Models;
+using MTA.Game.Features.Guilds;
 
 namespace MTA.Game.Features.Guilds.Database;
 

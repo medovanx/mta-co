@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using MTA.Client;
 using MTA.Database;
-using MTA.Game.Features.Guilds.Models;
+using MTA.Game.Features.Guilds;
 using MTA.Game.Constants;
 using MTA.Network.GamePackets;
 

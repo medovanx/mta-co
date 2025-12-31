@@ -7,7 +7,7 @@ using MTA.Interfaces;
 using MTA.Network;
 using MTA.Game.ConquerStructures;
 using MTA.Game.Constants;
-using MTA.Game.Features.Guilds.Models;
+using MTA.Game.Features.Guilds;
 
 namespace MTA.WebServer
 {

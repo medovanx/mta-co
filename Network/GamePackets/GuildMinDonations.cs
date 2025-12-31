@@ -1,5 +1,5 @@
 using MTA.Game;
-using MTA.Game.Features.Guilds.Models;
+using MTA.Game.Features.Guilds;
 
 namespace MTA.Network.GamePackets {
     public class GuildMinDonations : Writer {
