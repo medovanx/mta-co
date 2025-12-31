@@ -39,10 +39,10 @@ public static class GuildCommandHandler {
             case GuildCommand.Enemied:
                 GuildRelationsHandler.HandleEnemied(command, packet, client);
                 break;
-            case 48: // Deny (blacklist add)
+            case GuildCommand.AddToBlacklist:
                 GuildBlacklistHandler.HandleBlacklistAdd(command, client);
                 break;
-            case 50: // Remove from blacklist
+            case GuildCommand.RemoveFromBlacklist:
                 GuildBlacklistHandler.HandleBlacklistRemove(command, client);
                 break;
             case GuildCommand.Bulletin:

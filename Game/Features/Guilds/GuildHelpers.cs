@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Linq;
 using MTA.Client;
+using MTA.Game.Constants;
 using MTA.Network.GamePackets;
 using Message = MTA.Network.GamePackets.Message;
 
@@ -40,7 +41,7 @@ public static class GuildHelpers {
                         Kernel.TryGetPlayer(guild2.Leader.Id, out var guild2Leader) &&
                         guild2Leader.Socket.Alive)
                         guild2Leader.Send(new Message(
-                            $"{guild1.Leader.Name} has accepted your ally request.", Color.Blue,
+                            $"{guild1.Leader.Name} has accepted your alliance request.", Color.Blue,
                             Message.TopLeft));
                 };
                 guildLeaderClient.MessageCancel = delegate {
@@ -52,7 +53,7 @@ public static class GuildHelpers {
                         if (guildLeaderClient.OnMessageBoxEventParams[1] is Guild { Leader: not null } guild2 &&
                             Kernel.TryGetPlayer(guild2.Leader.Id, out var guild2LeaderClient))
                             guild2LeaderClient.Send(new Message(
-                                $"{guild1.Leader?.Name ?? "Unknown"} has declined your ally request.",
+                                $"{guild1.Leader!.Name} has declined your alliance request.",
                                 Color.Blue, Message.TopLeft));
                     }
                     catch (Exception e) {
@@ -73,13 +74,13 @@ public static class GuildHelpers {
             dwParam3 = guild.RebornRequirement,
             dwParam4 = guild.ClassRequirement
         };
-        if ((client.Entity.Class is < 10 or > 15 || guild.AllowTrojans) &&
-            (client.Entity.Class is < 20 or > 25 || guild.AllowWarriors) &&
-            (client.Entity.Class is < 40 or > 45 || guild.AllowArchers) &&
-            (client.Entity.Class is < 50 or > 55 || guild.AllowNinjas) &&
-            (client.Entity.Class is < 60 or > 65 || guild.AllowMonks) &&
-            (client.Entity.Class is < 70 or > 75 || guild.AllowPirates) &&
-            (client.Entity.Class is < 100 or > 190 || guild.AllowTaoists) &&
+        if ((!EntityClass.IsTrojan(client.Entity.Class) || guild.AllowTrojans) &&
+            (!EntityClass.IsWarrior(client.Entity.Class) || guild.AllowWarriors) &&
+            (!EntityClass.IsArcher(client.Entity.Class) || guild.AllowArchers) &&
+            (!EntityClass.IsNinja(client.Entity.Class) || guild.AllowNinjas) &&
+            (!EntityClass.IsMonk(client.Entity.Class) || guild.AllowMonks) &&
+            (!EntityClass.IsPirate(client.Entity.Class) || guild.AllowPirates) &&
+            (!EntityClass.IsTaoist(client.Entity.Class) || guild.AllowTaoists) &&
             client.Entity.Reborn >= guild.RebornRequirement &&
             client.Entity.Level >= guild.LevelRequirement) return true;
         client.Send(cmd);

@@ -3,28 +3,30 @@ using System.Text;
 
 namespace MTA.Network.GamePackets
 {
-    public class GuildCommand : Writer, Interfaces.IPacket
-    {
+    public class GuildCommand : Writer, Interfaces.IPacket {
         public const uint
-                    JoinRequest = 1,
-                    InviteRequest = 2,
-                    Quit = 3,
-                    Info = 6,
-                    Allied = 7,
-                    Neutral1 = 8,
-                    Enemied = 9,
-                    Neutral2 = 10,
-                    DonateSilvers = 11,
-                    Refresh = 12,
-                    Disband = 19,
-                    DonateConquerPoints = 20,
-                    ChangeGuildRequirements = 24,
-                    GuildRequirements = 25,
-                    Bulletin = 27,
-                    Promote = 28,
-                    Discharge = 30,
-                    PromoteInfo = 38,
-                    RequestPromote = 37;
+            JoinRequest = 1,
+            InviteRequest = 2,
+            Quit = 3,
+            Info = 6,
+            Allied = 7,
+            Neutral1 = 8,
+            Enemied = 9,
+            Neutral2 = 10,
+            DonateSilvers = 11,
+            Refresh = 12,
+            Disband = 19,
+            DonateConquerPoints = 20,
+            ChangeGuildRequirements = 24,
+            GuildRequirements = 25,
+            Bulletin = 27,
+            Promote = 28,
+            Discharge = 30,
+            PromoteInfo = 38,
+            RequestPromote = 37,
+            AddToBlacklist = 48,
+            RemoveFromBlacklist = 50;
+                        
 
 
         private byte[] Buffer;

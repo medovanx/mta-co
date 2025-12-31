@@ -408,43 +408,8 @@ public class Guild : Writer {
         return _arsenalBp;
     }
 
-    public uint GetMemberPotency(Enums.GuildMemberRank rankMember) {
-        var getArsenalPotency = (uint)_arsenalBp;
-
-        return getArsenalPotency;
-
-        //if (RankMember == Enums.GuildMemberRank.GuildLeader || RankMember == Enums.GuildMemberRank.LeaderSpouse || RankMember == Enums.GuildMemberRank.DeputyLeader  )
-        //    return GetArsenalPotency;
-
-        //if (RankMember == Enums.GuildMemberRank.HDeputyLeader)
-        //    return (uint)Math.Ceiling((double)(GetArsenalPotency * 90 / 100));
-
-        //if (RankMember == Enums.GuildMemberRank.Manager || RankMember == Enums.GuildMemberRank.HManager
-        //    || RankMember == Enums.GuildMemberRank.Supervisor)
-        //    return (uint)Math.Ceiling((double)(GetArsenalPotency * 80 / 100));
-
-        //if ((ushort)RankMember <= 859 && (ushort)RankMember >= 850 || RankMember == Enums.GuildMemberRank.ASupervisor || RankMember == Enums.GuildMemberRank.HSupervisor)
-        //    return (uint)Math.Ceiling((double)(GetArsenalPotency * 70 / 100));
-
-        //if (RankMember == Enums.GuildMemberRank.Steward || RankMember == Enums.GuildMemberRank.DLeaderSpouse
-        //    || RankMember == Enums.GuildMemberRank.DLeaderAide)
-        //    return (uint)Math.Ceiling((double)(GetArsenalPotency * 50 / 100));
-
-        //if (RankMember == Enums.GuildMemberRank.DeputySteward)
-        //    return (uint)Math.Ceiling((double)(GetArsenalPotency * 40 / 100));
-
-        //if (RankMember == Enums.GuildMemberRank.Agent || (ushort)RankMember <= 599 && (ushort)RankMember >= 590
-        //    || RankMember == Enums.GuildMemberRank.SSupervisor || RankMember == Enums.GuildMemberRank.ManagerSpouse
-        //    || RankMember == Enums.GuildMemberRank.SupervisorAide || RankMember == Enums.GuildMemberRank.ManagerAide)
-        //    return (uint)Math.Ceiling((double)(GetArsenalPotency * 30 / 100));
-
-        //if (RankMember == Enums.GuildMemberRank.StewardSpouse || RankMember == Enums.GuildMemberRank.SeniorMember)
-        //    return (uint)Math.Ceiling((double)(GetArsenalPotency * 15 / 100));
-
-        //if (RankMember == Enums.GuildMemberRank.Member)
-        //    return (uint)Math.Ceiling((double)(GetArsenalPotency * 10 / 100));
-
-        //return (uint)Math.Ceiling((double)(GetArsenalPotency * 20 / 100));//Fallower
+    public uint GetMemberPotency() {
+        return (uint)_arsenalBp;
     }
 
     public uint GetSharedBattlePower(int rank) {

@@ -4545,17 +4545,6 @@ namespace MTA.Network {
 
                 #endregion
 
-                #region Guild members (2102)
-
-                case 2102: {
-                    var Page = BitConverter.ToUInt16(packet, 8);
-                    if (client is { Guild: not null, AsMember: not null }) client.Guild.SendMembers(client, Page);
-
-                    break;
-                }
-
-                #endregion
-
                 #region Arena (2207<->2211)
 
                 case 2207: //Request Arena ranking List
