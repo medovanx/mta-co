@@ -49,7 +49,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     }
 
                     const uint statuePrice = 25000000;
-                    if (client.Inventory.Count <= 1) {
+                    if (client.Inventory.Count < 40) {
                         if (client.Entity.ConquerPoints >= statuePrice) {
                             client.Entity.ConquerPoints -= statuePrice;
                             client.Inventory.Add(720020, 0, 1);

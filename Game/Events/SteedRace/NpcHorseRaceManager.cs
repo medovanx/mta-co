@@ -9,7 +9,7 @@ namespace MTA.Game.Events.SteedRace;
 /// <summary>
 ///     Horse Race Manager - Allows players to join the Horse Race
 /// </summary>
-[NpcHandler(115522008)]
+[NpcHandler(20)]
 public static class NpcHorseRaceManager {
     public static void Handle(GameState client, NpcRequest npcRequest, MTA.Npcs dialog) {
         switch (npcRequest.OptionID) {
