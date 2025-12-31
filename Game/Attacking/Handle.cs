@@ -3553,8 +3553,6 @@ namespace MTA.Game.Attacking {
                                             if (attacker.Owner.Map.ID == 1036 &&
                                                 attacker.Owner.Equipment.TryGetItem(12).Plus < 6)
                                                 break;
-                                            if (attacker.Owner.Map.ID == 1038)
-                                                return;
                                             if (attacker.Stamina >= 100) {
                                                 attacker.AddFlag(Update.Flags.Ride);
                                                 attacker.Stamina -= 100;
