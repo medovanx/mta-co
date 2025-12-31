@@ -38,15 +38,6 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     break;
                 }
                 case 3: {
-                    var latest = GuildWarHistoryTable.GetLatest();
-                    if (client.Guild == null || latest == null || latest.GuildId != client.Guild.ID ||
-                        client.Entity.GuildRank != (ushort)Enums.GuildMemberRank.GuildLeader) {
-                        dialog.Text("Sorry you need to be the guild leader of the Guild War winner.");
-                        dialog.Option("Ahh.", 255);
-                        dialog.Send();
-                        return;
-                    }
-
                     const uint statuePrice = 50000;
                     if (client.Inventory.Count < 40) {
                         if (client.Entity.Money >= statuePrice) {
