@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using MTA.Client;
 using MTA.Database;
+using MTA.Game.Features.Guilds.Database;
 using MTA.Network.GamePackets;
 using static MTA.Game.Constants.Items.GuildItems;
 
@@ -22,13 +23,13 @@ namespace MTA.Game.Items.Handlers {
                 return;
             }
 
-            var getnpc = GuildCondutors.GuildConductors[uid];
+            var getnpc = GuildConductors.GuildConductorsDict[uid];
             var npc = new NpcRequest(5) {
-                NpcID = getnpc.npc.UID,
-                Mesh = getnpc.npc.Mesh
+                NpcID = getnpc.Npc.UID,
+                Mesh = getnpc.Npc.Mesh
             };
 
-            client.Entity.OnMoveNpc = getnpc.npc.UID;
+            client.Entity.OnMoveNpc = getnpc.Npc.UID;
             client.spwansitem = item;
             client.Send(npc.ToArray());
         }

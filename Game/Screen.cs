@@ -9,6 +9,7 @@ using MTA.Game.Attacking;
 using MTA.Game.ConquerStructures;
 using MTA.Game.ConquerStructures.House;
 using MTA.Game.Constants;
+using MTA.Game.Features.Guilds.Database;
 using MTA.Interfaces;
 using MTA.MaTrix;
 using MTA.Network.GamePackets;
@@ -1340,14 +1341,14 @@ namespace MTA.Game {
                     npc.SendSpawn(Owner, false);
                 }
 
-                foreach (var npc in GuildCondutors.GuildConductors.Values) {
+                foreach (var npc in GuildConductors.GuildConductorsDict.Values) {
                     if (npc == null) continue;
-                    if (npc.npc.MapID == Owner.Entity.MapID) {
-                        if (Kernel.GetDistance(npc.npc.X, npc.npc.Y, Owner.Entity.X, Owner.Entity.Y) > 16)
+                    if (npc.Npc.MapID == Owner.Entity.MapID) {
+                        if (Kernel.GetDistance(npc.Npc.X, npc.Npc.Y, Owner.Entity.X, Owner.Entity.Y) > 16)
                             continue;
-                        if (Contains(npc.npc.UID))
+                        if (Contains(npc.Npc.UID))
                             continue;
-                        npc.npc.SendSpawn(Owner, false);
+                        npc.Npc.SendSpawn(Owner, false);
                     }
                 }
 

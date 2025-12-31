@@ -4,6 +4,7 @@ using MTA.Client;
 using MTA.Database;
 using MTA.Game.Events;
 using MTA.Game.Events.GuildWar;
+using MTA.Game.Features.Guilds.Database;
 using MTA.Network.GamePackets;
 using static MTA.Game.Enums;
 

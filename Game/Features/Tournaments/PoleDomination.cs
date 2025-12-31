@@ -12,6 +12,7 @@ namespace MTA.Game
     using Coordinate = Tuple<ushort, ushort, ushort>;
     using System.Drawing;
     using ConquerStructures.Society;
+    using MTA.Game.Features.Guilds.Models;
     using System.Collections.Concurrent;
     using System.IO;
 

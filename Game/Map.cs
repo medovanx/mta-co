@@ -10,6 +10,7 @@ using System.Collections.Concurrent;
 using MTA.Database;
 using MTA.Extensions;
 using MTA.Game.Constants;
+using MTA.Game.Features.Guilds.Database;
 
 namespace MTA.Game {
     public class Map {
@@ -710,8 +711,8 @@ namespace MTA.Game {
                         npc.MaxHitpoints = reader.ReadUInt32("maxlife");
                         npc._isprize = reader.ReadBoolean("prize");
                         if (npc.UID is >= 9994 and <= 9997) {
-                            GuildCondutors.GuildConductors.Add(npc.UID, new GuildCondutors.Conductor() { npc = npc });
-                            GuildCondutors.MoveNpc(npc.UID, npc.MapID, npc.X, npc.Y);
+                            GuildConductors.GuildConductorsDict.Add(npc.UID, new GuildConductors.Conductor() { Npc = npc });
+                            GuildConductors.MoveNpc(npc.UID, npc.MapID, npc.X, npc.Y);
                             AddNpc(npc, true);
                         }
                         else

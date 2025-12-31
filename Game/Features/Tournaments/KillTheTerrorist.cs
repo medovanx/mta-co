@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using MTA.Network.GamePackets;
 
 namespace MTA.Game

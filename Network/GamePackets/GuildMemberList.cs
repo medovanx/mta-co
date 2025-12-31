@@ -1,5 +1,5 @@
-﻿using System.IO;
-using MTA.Game.ConquerStructures.Society;
+using System.IO;
+using MTA.Game.Features.Guilds.Models;
 
 namespace MTA.Network.GamePackets
 {

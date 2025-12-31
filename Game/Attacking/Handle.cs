@@ -12,6 +12,7 @@ using MTA.MaTrix;
 using MTA.Network;
 using MTA.Network.GamePackets;
 using MTA.Game.Constants;
+using MTA.Game.Features.Guilds.Database;
 
 namespace MTA.Game.Attacking {
     public class Handle {
@@ -8615,8 +8616,8 @@ namespace MTA.Game.Attacking {
         public static bool CanAttack(Entity attacker, SobNpcSpawn attacked, SpellInformation spell) {
             if (attacked == null)
                 return false;
-            if (GuildCondutors.GuildConductors != null)
-                if (GuildCondutors.GuildConductors.ContainsKey(attacked.UID))
+            if (GuildConductors.GuildConductorsDict != null)
+                if (GuildConductors.GuildConductorsDict.ContainsKey(attacked.UID))
                     return false;
             if (attacker.MapID == CaptureTheFlag.MapID) {
                 if (Program.World.Ctf.Bases.ContainsKey(attacked.UID)) {

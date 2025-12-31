@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using MTA.Client;
 
 namespace MTA.Game
@@ -39,7 +39,7 @@ namespace MTA.Game
         //    //                 var obj_client = Tops[x];
         //    //                 if (obj_client.UID == client.Entity.UID)
         //    //                 { 
-        //    //                 //الاكونت في التوب
+        //    //                 //??????? ?? ?????
 
         //    //                 }
         //    //             }

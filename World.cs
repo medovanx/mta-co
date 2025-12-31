@@ -12,6 +12,7 @@ using System.Drawing;
 using MTA.Franko;
 using MTA.Game.Constants;
 using MTA.Game.Features.Tournaments;
+using MTA.Game.Features.Guilds.Models;
 using MTA.Game.Npcs.ScriptEngine;
 using MTA.Network.GamePackets.EventAlert;
 
@@ -2707,7 +2708,7 @@ namespace MTA {
                             " (Peak: " + Program.MaxOn + ")";
             if (GameConstants.ServerName != null)
                 new Database.MySqlCommand(Database.MySqlCommandType.UPDATE).Update("configuration")
-                    .Set("GuildID", Game.ConquerStructures.Society.Guild.GuildCounter.Now)
+                    .Set("GuildID", Guild.GuildCounter.Now)
                     .Set("MaxOnline", Program.MaxOn).Set("ItemUID", Program.NextItemId)
                     .Where("Server", GameConstants.ServerName).Execute();
             if (Program.Vars != null) Database.EntityVariableTable.Save(0, Program.Vars);

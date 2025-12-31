@@ -1,5 +1,6 @@
 using MTA.Client;
 using MTA.Database;
+using MTA.Game.Features.Guilds.Database;
 using MTA.Game.Npcs;
 using MTA.Network.GamePackets;
 
@@ -61,9 +62,9 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.GuildArea {
                     if (client.Entity.Money >= 1000) {
                         client.Entity.Money -= 1000;
 
-                        GuildCondutors.Conductor cond = null;
-                        if (GuildCondutors.GuildConductors.TryGetValue(client.ActiveNpc + 110, out cond)) {
-                            client.Entity.Teleport(cond.Teleport_MapId, cond.Teleport_X, cond.Teleport_Y);
+                        GuildConductors.Conductor cond = null;
+                        if (GuildConductors.GuildConductorsDict.TryGetValue(client.ActiveNpc + 110, out cond)) {
+                            client.Entity.Teleport(cond.TeleportMapId, cond.TeleportX, cond.TeleportY);
                         }
 
                         break;

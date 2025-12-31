@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using MTA.Network.GamePackets;
-using MTA.Game.ConquerStructures.Society;
+using MTA.Game.Features.Guilds.Models;
+using MTA.Game.Features.Guilds.Database;
 
 namespace MTA.Game
 {
@@ -115,7 +116,7 @@ namespace MTA.Game
                     PoleKeeper.Loses++;
                 else
                     PoleKeeper.Wins--;
-                Database.GuildTable.UpdateGuildWarStats(PoleKeeper);
+                GuildTable.UpdateGuildWarStats(PoleKeeper);
             }
             LastWin = Time32.Now;
 
@@ -130,7 +131,7 @@ namespace MTA.Game
                     PoleKeeper.Wins++;
                 else
                     PoleKeeper.Loses--;
-                Database.GuildTable.UpdateGuildWarStats(PoleKeeper);
+                GuildTable.UpdateGuildWarStats(PoleKeeper);
                 Pole.Name = PoleKeeper.Name;
             }
             Pole.Hitpoints = Pole.MaxHitpoints;

@@ -7,7 +7,7 @@ using MTA.Client;
 using MTA.Database;
 using MTA.Game;
 using MTA.Game.ConquerStructures;
-using MTA.Game.ConquerStructures.Society;
+using MTA.Game.Features.Guilds.Models;
 using MTA.Game.Constants;
 using MTA.Game.Features.Reincarnation;
 using MTA.Interfaces;

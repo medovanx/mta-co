@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using MTA.Network.GamePackets;
-using MTA.Game.ConquerStructures.Society;
+using MTA.Game.Features.Guilds.Models;
+using MTA.Game.Features.Guilds.Database;
 
 namespace MTA.Game
 {
@@ -121,7 +122,7 @@ namespace MTA.Game
                     PoleKeeperPh.Loses++;
                 else
                     PoleKeeperPh.Wins--;
-                Database.GuildTable.UpdateGuildWarStats(PoleKeeperPh);
+                GuildTable.UpdateGuildWarStats(PoleKeeperPh);
             }
             LastWin = Time32.Now;
 
@@ -142,7 +143,7 @@ namespace MTA.Game
                     PoleKeeperPh.Wins++;
                 else
                     PoleKeeperPh.Loses--;
-                Database.GuildTable.UpdateGuildWarStats(PoleKeeperPh);
+                GuildTable.UpdateGuildWarStats(PoleKeeperPh);
                 Pole.Name = PoleKeeperPh.Name;
             }
             Pole.Hitpoints = Pole.MaxHitpoints;
@@ -159,7 +160,7 @@ namespace MTA.Game
                         "The Guild War, " + PoleKeeperPh.Name + ", owned by " + PoleKeeperPh.LeaderName +
                         " has won this guild war!---Guild war has ended!", System.Drawing.Color.White, Message.Center),
                     Program.Values);
-                Database.GuildTable.UpdatePoleKeeperPh(PoleKeeperPh);
+                GuildTable.UpdatePoleKeeperPh(PoleKeeperPh);
             }
             else
             {
