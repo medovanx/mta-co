@@ -478,6 +478,34 @@ public class Guild : Writer {
         };
     }
 
+    /// <summary>
+    ///     Gets the maximum number of allies allowed based on guild level
+    /// </summary>
+    public byte GetMaxAllies() {
+        return Level switch {
+            1 => 5,
+            2 => 7,
+            3 => 9,
+            4 => 12,
+            >= 5 => 15,
+            _ => 5 // Default fallback
+        };
+    }
+
+    /// <summary>
+    ///     Gets the maximum number of enemies allowed based on guild level
+    /// </summary>
+    public byte GetMaxEnemies() {
+        return Level switch {
+            1 => 5,
+            2 => 7,
+            3 => 9,
+            4 => 12,
+            >= 5 => 15,
+            _ => 5 // Default fallback
+        };
+    }
+
     public void SaveArsenal() {
         GuildArsenalTable.Save(this);
     }
@@ -1394,16 +1422,6 @@ public class Guild : Writer {
             SendGuildMessage(stringPacket);
             GuildTable.AddEnemy(this, guild.Id);
 
-            // Also add to target guild's enemy list for display (even though they can't remove it)
-            guild.Enemy.Add(Id, this);
-            var targetPacket = new _String(true) {
-                UID = Id,
-                Type = _String.GuildEnemies
-            };
-            targetPacket.Texts.Add(Name + " " + LeaderName + " " + Level + " " + MemberCount);
-            guild.SendGuildMessage(targetPacket);
-            guild.SendGuildMessage(targetPacket);
-
             return;
         }
     }
@@ -1419,15 +1437,6 @@ public class Guild : Writer {
             SendGuildMessage(cmd);
             GuildTable.RemoveEnemy(this, guild.Id);
             Enemy.Remove(guild.Id);
-
-            // Also remove from target guild's enemy list (for display consistency)
-            if (!guild.Enemy.Remove(Id)) return;
-            var targetCmd = new GuildCommand(true) {
-                Type = GuildCommand.Neutral2,
-                dwParam = Id
-            };
-            guild.SendGuildMessage(targetCmd);
-            guild.SendGuildMessage(targetCmd);
 
             return;
         }

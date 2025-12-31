@@ -5,7 +5,6 @@ using MTA.Database;
 using MTA.Game.ConquerStructures;
 using MTA.Game.Features.Guilds.Database.Mappers;
 using MTA.Game.Features.Guilds.Database.Schema;
-using MTA.Game.Features.Guilds;
 
 namespace MTA.Game.Features.Guilds.Database;
 
@@ -310,7 +309,7 @@ public static class GuildTable {
     }
 
     public static void AddEnemy(Guild guild, uint enemy) {
-        // Insert one-way enemy relationship (only initiator can remove)
+        // Insert one-way enemy relationship (independent per guild)
         using var cmd = new MySqlCommand(MySqlCommandType.INSERT).Insert(GuildSchema.Tables.GuildRelationsTable)
             .Insert(GuildSchema.GuildRelations.GuildId, guild.Id)
             .Insert(GuildSchema.GuildRelations.RelatedGuildId, enemy)
