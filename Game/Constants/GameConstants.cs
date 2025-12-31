@@ -264,9 +264,30 @@ namespace MTA.Game.Constants {
         public static uint ExtraExperienceRate,
             ExtraSpellRate,
             ExtraProficiencyRate;
-        public const sbyte pScreenDistance = 19;
-        public const sbyte nScreenDistance = 19;
-        public const sbyte remScreenDistance = 19;
+        /// <summary>
+        /// View distance in tiles, determines the maximum distance at which players and entities are visible to each other.
+        /// Used for sending packets, attack range checks, and general screen update logic.
+        /// </summary>
+        /// <remarks>
+        /// <b>This is a client-side limitation, increasing it won't work as intended.</b>
+        /// </remarks>
+        public const sbyte playerViewRange = 19;
+        /// <summary>
+        /// View distance in tiles, determines the maximum distance at which NPCs and monsters become visible to players.
+        /// Used specifically for NPC/monster spawning visibility and event system entity visibility.
+        /// </summary>
+        /// <remarks>
+        /// <b>This is a client-side limitation, increasing it won't work as intended.</b>
+        /// </remarks>
+        public const sbyte npcViewRange = 19;
+        /// <summary>
+        /// View distance in tiles, determines when entities should be removed from a player's screen.
+        /// Used for cleaning up entities that have moved beyond the viewing range to optimize network traffic.
+        /// </summary>
+        /// <remarks>
+        /// <b>This is a client-side limitation, increasing it won't work as intended.</b>
+        /// </remarks>
+        public const sbyte outsideViewRange = 19;
 
         public const ushort DisconnectTimeOutSeconds = 10,
             FloorItemSeconds = 20,

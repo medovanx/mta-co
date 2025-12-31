@@ -394,7 +394,7 @@ namespace MTA.MaTrix {
                 if (Owner.Entity.MapID == ai.Bot.Entity.MapID) {
                     var pClient = ai.Bot;
                     short dist = Kernel.GetDistance(ai.Bot.Entity.X, ai.Bot.Entity.Y, Owner.Entity.X, Owner.Entity.Y);
-                    if (dist <= GameConstants.pScreenDistance) {
+                    if (dist <= GameConstants.playerViewRange) {
                         Owner.Entity.SendSpawn(pClient);
                         pClient.Entity.SendSpawn(Owner);
 

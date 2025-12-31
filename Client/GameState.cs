@@ -491,7 +491,7 @@ namespace MTA.Client {
                         if (!Auras.ContainsKey(aura)) {
                             if (Entity.UID != monk.Entity.UID &&
                                 Kernel.GetDistance(Entity.X, Entity.Y, monk.Entity.X, monk.Entity.Y) <=
-                                GameConstants.pScreenDistance) {
+                                GameConstants.playerViewRange) {
                                 Auras Aura = new Auras();
                                 Aura.TeamAuraOwner = monk;
                                 Aura.TeamAuraStatusFlag = monk.Entity.Aura_actType;
@@ -537,7 +537,7 @@ namespace MTA.Client {
                             (pthis.Team == null || (pthis.Team != null && !pthis.Team.IsTeammate(Entity.UID))) ||
                             Entity.Dead ||
                             Kernel.GetDistance(Entity.X, Entity.Y, pthis.Entity.X, pthis.Entity.Y) >
-                            GameConstants.pScreenDistance) {
+                            GameConstants.playerViewRange) {
                             new Update(true).Aura(Entity, Update.AuraDataTypes.Remove, Aura.aura,
                                 Aura.TeamAuraLevel, Aura.TeamAuraPower);
                             removeAuraBonuses(Aura.TeamAuraStatusFlag, Aura.TeamAuraPower, 1);

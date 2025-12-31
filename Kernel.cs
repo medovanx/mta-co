@@ -297,7 +297,7 @@ namespace MTA {
             foreach (var pClient in values) {
                 if (!pClient.Socket.Alive) continue;
                 if (pClient.Entity.MapID != obj.MapID) continue;
-                if (GetDistance(pClient.Entity.X, pClient.Entity.Y, obj.X, obj.Y) > GameConstants.pScreenDistance) continue;
+                if (GetDistance(pClient.Entity.X, pClient.Entity.Y, obj.X, obj.Y) > GameConstants.playerViewRange) continue;
                 pClient.Send(packet);
             }
         }
@@ -341,7 +341,7 @@ namespace MTA {
         internal static void SendSpawn(StaticEntity item) {
             foreach (var client in Program.Values)
                 if (client.Map.ID == item.MapID)
-                    if (GetDistance(item.X, item.Y, client.Entity.X, client.Entity.Y) <= GameConstants.pScreenDistance)
+                    if (GetDistance(item.X, item.Y, client.Entity.X, client.Entity.Y) <= GameConstants.playerViewRange)
                         item.SendSpawn(client);
         }
 

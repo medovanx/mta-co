@@ -307,7 +307,7 @@ public abstract class BaseEvent : IEvent {
                 foreach (var client in Program.Values) {
                     if (client.Entity.MapID != mapId) continue;
                     if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, entity.X, entity.Y) >=
-                        GameConstants.nScreenDistance) continue;
+                        GameConstants.npcViewRange) continue;
                     entity.SendSpawn(client, false);
                     var stringPacket = new _String(true) {
                         UID = entity.UID,
@@ -340,7 +340,7 @@ public abstract class BaseEvent : IEvent {
                     foreach (var client in Program.Values) {
                         if (client.Entity.MapID != mapId) continue;
                         if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, entity.X, entity.Y) >=
-                            GameConstants.nScreenDistance) continue;
+                            GameConstants.npcViewRange) continue;
                         entity.SendSpawn(client, false);
                         var stringPacket = new _String(true) {
                             UID = entity.UID,

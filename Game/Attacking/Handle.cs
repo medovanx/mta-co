@@ -1523,7 +1523,7 @@ namespace MTA.Game.Attacking {
                             #endregion
 
                             if (Kernel.GetDistance(attacker.X, attacker.Y, attacked.X, attacked.Y) <=
-                                GameConstants.pScreenDistance) {
+                                GameConstants.playerViewRange) {
                                 attack.Effect1 = Attack.AttackEffects1.None;
                                 uint damage = 0;
 
@@ -1645,7 +1645,7 @@ namespace MTA.Game.Attacking {
                                 #endregion
 
                                 if (Kernel.GetDistance(attacker.X, attacker.Y, attackedsob.X, attackedsob.Y) <=
-                                    GameConstants.pScreenDistance) {
+                                    GameConstants.playerViewRange) {
                                     attack.Effect1 = Attack.AttackEffects1.None;
                                     uint damage = 0;
                                     //   if (!attacker.Assassin())

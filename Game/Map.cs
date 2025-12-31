@@ -945,7 +945,7 @@ namespace MTA.Game {
                             foreach (GameState client in Program.Values) {
                                 if (client.Map.ID == map.ID) {
                                     if (Kernel.GetDistance(client.Entity.X, client.Entity.Y, monster.X, monster.Y) <
-                                        GameConstants.nScreenDistance) {
+                                        GameConstants.npcViewRange) {
                                         monster.CauseOfDeathIsMagic = false;
                                         monster.SendSpawn(client, false);
                                         client.Send(stringPacket);

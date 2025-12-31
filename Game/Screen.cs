@@ -491,7 +491,7 @@ namespace MTA.Game {
                         }
 
                         short distance = Kernel.GetDistance(monster.X, monster.Y, client.Entity.X, client.Entity.Y);
-                        if (distance > GameConstants.pScreenDistance) {
+                        if (distance > GameConstants.playerViewRange) {
                             client.Screen.Remove(obj);
                             continue;
                         }
@@ -501,7 +501,7 @@ namespace MTA.Game {
                                 GameState cl;
                                 if (Kernel.GamePool.TryGetValue(monster.MonsterInfo.InSight, out cl)) {
                                     short dst = Kernel.GetDistance(monster.X, monster.Y, cl.Entity.X, cl.Entity.Y);
-                                    if (dst > GameConstants.pScreenDistance)
+                                    if (dst > GameConstants.playerViewRange)
                                         monster.MonsterInfo.InSight = 0;
                                 }
                                 else
@@ -513,7 +513,7 @@ namespace MTA.Game {
                             //    if (companion != null)
                             //    {
                             //        short dst = Kernel.GetDistance(monster.X, monster.Y, companion.X, companion.Y);
-                            //        if (dst > GameConstants.pScreenDistance)
+                            //        if (dst > GameConstants.playerViewRange)
                             //            monster.MonsterInfo.InSight = 0;
                             //    }
                             //    else
@@ -522,7 +522,7 @@ namespace MTA.Game {
                         }
 
                         if (Now >= monster.MonsterInfo.LastMove.AddMilliseconds(monster.MonsterInfo.MinimumSpeed)) {
-                            if (distance <= GameConstants.pScreenDistance) {
+                            if (distance <= GameConstants.playerViewRange) {
                                 #region Companions
 
                                 foreach (var pet in client.Pet.Pets.Values) {
@@ -540,7 +540,7 @@ namespace MTA.Game {
                                                 }
                                                 else {
                                                     if (monster.MonsterInfo.InSight == pet.Entity.UID) {
-                                                        if (distance2 > GameConstants.pScreenDistance) {
+                                                        if (distance2 > GameConstants.playerViewRange) {
                                                             monster.MonsterInfo.InSight = 0;
                                                         }
                                                         else {
@@ -559,7 +559,7 @@ namespace MTA.Game {
                                                             }
                                                             else {
                                                                 if (distance2 > monster.MonsterInfo.ViewRange / 2) {
-                                                                    if (distance2 < GameConstants.pScreenDistance) {
+                                                                    if (distance2 < GameConstants.playerViewRange) {
                                                                         if (Now >= monster.MonsterInfo.LastMove
                                                                                 .AddMilliseconds(monster.MonsterInfo
                                                                                     .RunSpeed)) {
@@ -671,7 +671,7 @@ namespace MTA.Game {
                                             return;
                                         }
 
-                                        if (distance > GameConstants.pScreenDistance) {
+                                        if (distance > GameConstants.playerViewRange) {
                                             monster.MonsterInfo.InSight = 0;
                                         }
                                         else {
@@ -731,7 +731,7 @@ namespace MTA.Game {
                                             }
                                             else {
                                                 if (distance > monster.MonsterInfo.ViewRange / 2) {
-                                                    if (distance < GameConstants.pScreenDistance) {
+                                                    if (distance < GameConstants.playerViewRange) {
                                                         if (Now >= monster.MonsterInfo.LastMove.AddMilliseconds(
                                                                 monster.MonsterInfo.RunSpeed)) {
                                                             monster.MonsterInfo.LastMove = Time32.Now;
@@ -1083,7 +1083,7 @@ namespace MTA.Game {
 
             if (!_objectDictionary.ContainsKey(_object.UID)) {
                 if (Kernel.GetDistance(_object.X, _object.Y, Owner.Entity.X, Owner.Entity.Y) <=
-                    GameConstants.pScreenDistance) {
+                    GameConstants.playerViewRange) {
                     _objectDictionary[_object.UID] = _object;
                     updateBase();
                     return true;
@@ -1243,7 +1243,7 @@ namespace MTA.Game {
                         }
 
                         if (Kernel.GetDistance(Owner.Entity.X, Owner.Entity.Y, Base.X, Base.Y) >=
-                            GameConstants.remScreenDistance)
+                            GameConstants.outsideViewRange)
                             remove = true;
                         if (remove) {
                             if ((Base as Entity).MonsterInfo.InSight == Owner.Entity.UID)
@@ -1252,7 +1252,7 @@ namespace MTA.Game {
                     }
                     else if (Base.MapObjType == MapObjectType.Player) {
                         if (remove = (Kernel.GetDistance(Owner.Entity.X, Owner.Entity.Y, Base.X, Base.Y) >=
-                                      GameConstants.pScreenDistance)) {
+                                      GameConstants.playerViewRange)) {
                             GameState pPlayer = Base.Owner as GameState;
                             pPlayer.Screen.Remove(Owner.Entity);
                         }
@@ -1262,7 +1262,7 @@ namespace MTA.Game {
                     }
                     else {
                         remove = (Kernel.GetDistance(Owner.Entity.X, Owner.Entity.Y, Base.X, Base.Y) >=
-                                  GameConstants.remScreenDistance);
+                                  GameConstants.outsideViewRange);
                     }
 
                     if (Base.MapID != Owner.Map.ID)
@@ -1313,7 +1313,7 @@ namespace MTA.Game {
                         var info = House.Houses[Owner.Entity.UID];
                         foreach (var fur in info.Furnitures.Values) {
                             if (fur == null) continue;
-                            if (Kernel.GetDistance(fur.X, fur.Y, Owner.Entity.X, Owner.Entity.Y) > 16) continue;
+                            if (Kernel.GetDistance(fur.X, fur.Y, Owner.Entity.X, Owner.Entity.Y) > GameConstants.playerViewRange) continue;
                             if (Contains(fur.UID)) continue;
                             fur.SendSpawn(Owner, false);
                         }
@@ -1323,7 +1323,7 @@ namespace MTA.Game {
                     if (Owner.Map.ID == spouse.ID) {
                         foreach (var fur in spouse.Furnitures.Values) {
                             if (fur == null) continue;
-                            if (Kernel.GetDistance(fur.X, fur.Y, Owner.Entity.X, Owner.Entity.Y) > 16) continue;
+                            if (Kernel.GetDistance(fur.X, fur.Y, Owner.Entity.X, Owner.Entity.Y) > GameConstants.playerViewRange) continue;
                             if (Contains(fur.UID)) continue;
                             fur.SendSpawn(Owner, false);
                         }
@@ -1336,7 +1336,7 @@ namespace MTA.Game {
 
                 foreach (INpc npc in Map.Npcs.Values) {
                     if (npc == null) continue;
-                    if (Kernel.GetDistance(npc.X, npc.Y, Owner.Entity.X, Owner.Entity.Y) > 16) continue;
+                    if (Kernel.GetDistance(npc.X, npc.Y, Owner.Entity.X, Owner.Entity.Y) > GameConstants.playerViewRange) continue;
                     if (Contains(npc.UID)) continue;
                     npc.SendSpawn(Owner, false);
                 }
@@ -1344,7 +1344,7 @@ namespace MTA.Game {
                 foreach (var npc in GuildConductors.GuildConductorsDict.Values) {
                     if (npc == null) continue;
                     if (npc.Npc.MapID == Owner.Entity.MapID) {
-                        if (Kernel.GetDistance(npc.Npc.X, npc.Npc.Y, Owner.Entity.X, Owner.Entity.Y) > 16)
+                        if (Kernel.GetDistance(npc.Npc.X, npc.Npc.Y, Owner.Entity.X, Owner.Entity.Y) > GameConstants.playerViewRange)
                             continue;
                         if (Contains(npc.Npc.UID))
                             continue;
@@ -1358,7 +1358,7 @@ namespace MTA.Game {
 
                 foreach (var item in Map.FloorItems.Values) {
                     if (item == null) continue;
-                    if (Kernel.GetDistance(item.X, item.Y, Owner.Entity.X, Owner.Entity.Y) > 16) continue;
+                    if (Kernel.GetDistance(item.X, item.Y, Owner.Entity.X, Owner.Entity.Y) > GameConstants.playerViewRange) continue;
                     if (Contains(item.UID)) continue;
                     if (item.Type == FloorItem.Effect) {
                         if (item.ItemID == FloorItem.DaggerStorm || item.ItemID == FloorItem.FuryofEgg ||
@@ -1410,7 +1410,7 @@ namespace MTA.Game {
                 if (Owner.Map.ID == Roulettes.RouletteTable.MapID) {
                     foreach (var R in Roulettes.RoulettesPoll.Values) {
                         if (Kernel.GetDistance(R.SpawnPacket.X, R.SpawnPacket.Y, Owner.Entity.X, Owner.Entity.Y) <=
-                            GameConstants.nScreenDistance && !Contains(R.SpawnPacket.UID)) {
+                            GameConstants.npcViewRange && !Contains(R.SpawnPacket.UID)) {
                             Owner.Send(R.SpawnPacket);
                         }
                     }
@@ -1422,7 +1422,7 @@ namespace MTA.Game {
                     foreach (var item in Owner.Map.StaticEntities.Values) {
                         if (item == null) continue;
                         if (!item.Viable) continue;
-                        if (Kernel.GetDistance(item.X, item.Y, Owner.Entity.X, Owner.Entity.Y) > 16) continue;
+                        if (Kernel.GetDistance(item.X, item.Y, Owner.Entity.X, Owner.Entity.Y) > GameConstants.playerViewRange) continue;
                         if (Contains(item.UID)) continue;
                         item.SendSpawn(Owner);
                     }
@@ -1435,7 +1435,7 @@ namespace MTA.Game {
                 if (Owner.Map.ID == 1858 || Owner.Map.ID == 8881) {
                     foreach (PokerTable T in Database.PokerTables.Tables.Values.ToList()) {
                         if (T.Map == Owner.Map.ID) {
-                            if (Kernel.GetDistance(T.X, T.Y, Owner.Entity.X, Owner.Entity.Y) <= 16) {
+                            if (Kernel.GetDistance(T.X, T.Y, Owner.Entity.X, Owner.Entity.Y) <= GameConstants.playerViewRange) {
                                 if (!PokerTables.ContainsKey(T.UID)) {
                                     T.Spawn(Owner);
                                     PokerTables.Add(T.UID, T);
@@ -1486,7 +1486,7 @@ namespace MTA.Game {
                         if (pClient.Map.ID == Owner.Map.ID) {
                             short dist = Kernel.GetDistance(pClient.Entity.X, pClient.Entity.Y, Owner.Entity.X,
                                 Owner.Entity.Y);
-                            if (dist <= GameConstants.pScreenDistance && !Contains(pClient.Entity)) {
+                            if (dist <= GameConstants.playerViewRange && !Contains(pClient.Entity)) {
                                 if (pClient.Guild != null)
                                     pClient.Guild.SendName(Owner);
 

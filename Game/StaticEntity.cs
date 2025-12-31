@@ -149,7 +149,7 @@ namespace MTA.Game
                 if (pClient == null) continue;
                 if (!pClient.Socket.Alive) continue;
                 if (pClient.Entity.MapID != MapID) continue;
-                if (Kernel.GetDistance(pClient.Entity.X, pClient.Entity.Y, X, Y) > GameConstants.pScreenDistance) continue;
+                if (Kernel.GetDistance(pClient.Entity.X, pClient.Entity.Y, X, Y) > GameConstants.playerViewRange) continue;
                 pClient.Send(packet);
             }
         }

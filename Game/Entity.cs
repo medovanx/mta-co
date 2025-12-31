@@ -3635,7 +3635,7 @@ namespace MTA.Game {
                             if (teammate == null)
                                 continue;
                             if (Kernel.GetDistance(killer.X, killer.Y, teammate.Entity.X, teammate.Entity.Y) <=
-                                GameConstants.pScreenDistance) {
+                                GameConstants.playerViewRange) {
                                 if (killer.UID != teammate.Entity.UID) {
                                     uint extraExperience = MaxHitpoints / 2;
                                     if (killer.Spouse == teammate.Entity.Name)

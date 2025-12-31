@@ -6051,7 +6051,7 @@ namespace MTA.Network {
 
                     if (Kernel.GamePool.TryGetValue(gData.dwParam, out var pClient)) {
                         if (Kernel.GetDistance(pClient.Entity.X, pClient.Entity.Y, client.Entity.X, client.Entity.Y) <=
-                            GameConstants.pScreenDistance && client.Map.ID == pClient.Map.ID) {
+                            GameConstants.playerViewRange && client.Map.ID == pClient.Map.ID) {
                             if (pClient.Guild != null)
                                 pClient.Guild.SendName(client);
                             if (client.Guild != null)
@@ -6100,13 +6100,13 @@ namespace MTA.Network {
                     else {
                         if (client.Map.Entities.TryGetValue(gData.dwParam, out var monster)) {
                             if (Kernel.GetDistance(monster.X, monster.Y, client.Entity.X, client.Entity.Y) <=
-                                GameConstants.pScreenDistance) {
+                                GameConstants.playerViewRange) {
                                 monster.SendSpawn(client, false);
                             }
                         }
                         //if (client.Map.Companions.TryGetValue(gData.dwParam, out monster))
                         //{
-                        //    if (Kernel.GetDistance(monster.X, monster.Y, client.Entity.X, client.Entity.Y) <= GameConstants.pScreenDistance)
+                        //    if (Kernel.GetDistance(monster.X, monster.Y, client.Entity.X, client.Entity.Y) <= GameConstants.playerViewRange)
                         //    {
                         //        monster.SendSpawn(client, false);
                         //    }
@@ -7776,7 +7776,7 @@ namespace MTA.Network {
             if (Kernel.GamePool.TryGetValue(trade.dwParam, out var _client)) {
                 if (_client.Trade.InTrade || client.Trade.InTrade || client.Entity.UID == trade.dwParam ||
                     Kernel.GetDistance(client.Entity.X, client.Entity.Y, _client.Entity.X, _client.Entity.Y) >
-                    GameConstants.pScreenDistance) {
+                    GameConstants.playerViewRange) {
                     client.Send(GameConstants.TradeInProgress);
                     return;
                 }
