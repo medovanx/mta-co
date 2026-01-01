@@ -13,6 +13,7 @@ using MTA.Game.ConquerStructures.Society;
 using MTA.Game.Events.GuildWar;
 using MTA.Game.Features.Guilds.Database;
 using MTA.Game.Features.Guilds.Handlers;
+using MTA.Game.Features.Guilds.Packets;
 using MTA.Interfaces;
 using MTA.Network;
 using MTA.Network.GamePackets;
@@ -409,6 +410,12 @@ public class Guild : Writer {
     }
 
     public uint GetMemberPotency() {
+        return (uint)_arsenalBp;
+    }
+
+    public uint GetMemberPotency(Enums.GuildMemberRank rank) {
+        // Calculate potency based on rank and arsenal BP
+        // This is a placeholder - the actual calculation may need to be implemented based on game logic
         return (uint)_arsenalBp;
     }
 

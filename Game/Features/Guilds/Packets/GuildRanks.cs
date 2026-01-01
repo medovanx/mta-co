@@ -1,6 +1,7 @@
 using MTA.Game.Features.Guilds;
+using MTA.Network;
 
-namespace MTA.Network.GamePackets {
+namespace MTA.Game.Features.Guilds.Packets {
     public class GuildRanks : Writer {
         byte[] packet;
         ushort Position = 12;
@@ -18,13 +19,13 @@ namespace MTA.Network.GamePackets {
         }
 
         public ushort Rank {
-            get { return BitConverter.ToUInt16(packet, 4); }
-            set { WriteUInt16(value, 4, packet); }
+            get => BitConverter.ToUInt16(packet, 4);
+            set => WriteUInt16(value, 4, packet);
         }
 
         public ushort Page {
-            get { return BitConverter.ToUInt16(packet, 10); }
-            set { WriteUInt16(value, 10, packet); }
+            get => BitConverter.ToUInt16(packet, 10);
+            set => WriteUInt16(value, 10, packet);
         }
 
         public byte[] ToArray() {
@@ -35,7 +36,7 @@ namespace MTA.Network.GamePackets {
             WriteUInt32(member.Id, Position, packet);
             Position += 4;
             WriteUInt32((ushort)member.Rank, Position, packet);
-            ushort move_pos = (ushort)(4 * Rank);
+            var move_pos = (ushort)(4 * Rank);
             Position += (ushort)(8 + move_pos);
             WriteUInt64(Donation, Position, packet);
             Position -= (ushort)(8 + move_pos);

@@ -1,7 +1,8 @@
 using MTA.Game;
 using MTA.Game.Features.Guilds;
+using MTA.Network;
 
-namespace MTA.Network.GamePackets {
+namespace MTA.Game.Features.Guilds.Packets {
     public class GuildMinDonations : Writer {
         byte[] packet;
         ushort Position = 8;

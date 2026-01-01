@@ -1,5 +1,6 @@
 using System;
 using MTA.Client;
+using MTA.Game.Features.Guilds.Packets;
 using MTA.Network.GamePackets;
 
 namespace MTA.Game.Features.Guilds.Handlers;

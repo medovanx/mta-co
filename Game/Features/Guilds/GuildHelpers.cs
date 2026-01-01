@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using MTA.Client;
 using MTA.Game.Constants;
+using MTA.Game.Features.Guilds.Packets;
 using MTA.Network.GamePackets;
 using Message = MTA.Network.GamePackets.Message;
 

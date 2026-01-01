@@ -29,6 +29,7 @@ using MTA.Game.Features.Tournaments;
 using MTA.Game.Items;
 using MTA.Interfaces;
 using MTA.MaTrix;
+using MTA.Game.Features.Guilds.Packets;
 using MTA.Network.GamePackets;
 using MTA.Network.GamePackets.EventAlert;
 using MTA.Network.GamePackets.Roulette;

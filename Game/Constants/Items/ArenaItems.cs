@@ -9,3 +9,4 @@ namespace MTA.Game.Constants.Items {
         public const uint ChampionPack = 3001046;
     }
 }
+
