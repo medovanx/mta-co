@@ -14,8 +14,10 @@ namespace MTA.Game.Constants {
 
         #region Market
 
+        public const ushort Market = 1036;
         public const ushort POKER_GOLD = 1858;
         public const ushort POKER_CPs = 8881;
+        public const ushort Lottery = 700;
 
         #endregion Market
 

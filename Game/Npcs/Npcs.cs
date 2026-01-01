@@ -13890,38 +13890,6 @@ namespace MTA {
 
                 #endregion
 
-                #region LadyLuck
-
-                case 924: {
-                    switch (npcRequest.OptionID) {
-                        case 0: {
-                            if (client.InLottery) {
-                                dialog.Text(
-                                    "You may come back later, if you still want to try your luck. It will be free next time you want.");
-                                dialog.Option("Yes please, let me out.", 1);
-                                dialog.Option("No thank you.", 255);
-                                dialog.Send();
-                            }
-                            else {
-                                dialog.Text(
-                                    "Thank you for trying out the lottery. Please come back any other time, we will wait you.");
-                                dialog.Option("Take me out.", 1);
-                                dialog.Send();
-                            }
-
-                            break;
-                        }
-                        case 1: {
-                            client.Entity.Teleport(1036, 219, 189);
-                            break;
-                        }
-                    }
-
-                    break;
-                }
-
-                #endregion
-
                 #endregion
 
                 #region Labirinth
