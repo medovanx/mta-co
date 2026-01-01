@@ -362,17 +362,6 @@ public class Guild : Writer {
         return GetSharedBattlePower((int)rank);
     }
 
-    /// <summary>
-    ///     Gets the maximum number of deputy leaders allowed based on guild level
-    /// </summary>
-    public byte GetMaxDeputyLeaders() {
-        return Level switch {
-            >= 1 and <= 3 => 2,
-            >= 4 and <= 6 => 3,
-            >= 7 and <= 9 => 4,
-            _ => 2 // Default fallback
-        };
-    }
 
     /// <summary>
     ///     Gets the maximum number of allies allowed based on guild level
@@ -458,11 +447,12 @@ public class Guild : Writer {
             }
 
             //calculate manager`s
-            const byte maxManager = 5; //0,1,2,3,4
-            const byte maxHonorManager = 2; //5,6,
-            const byte maxSupervisor = 2; //7,8,
-            const byte maxSteward = 4; //9,10,11,12
-            const byte maxArsFollower = 2; //13,14
+            // According to guide.json: "When a player's donation reaches the 1st place, he or she will be appointed as Guild Manager, automatically."
+            var maxManager = GuildRankLimits.GetMaxManager(Level);
+            // Note: HonoraryManager should NOT be auto-assigned - it requires 320 CPs to appoint manually by Guild Leader
+            var maxSupervisor = GuildRankLimits.GetMaxSupervisorPerType(Level); // Per type (Arsenal, CP, PK, etc.)
+            var maxSteward = GuildRankLimits.GetMaxSteward(Level);
+            const byte maxArsFollower = 2; //13,14 - No limit specified in JSON, keeping existing logic
             byte amount = 0; //8
             Member[] poll = (from member in Members.Values orderby member.ArsenalDonation descending select member)
                 .ToArray();
@@ -477,21 +467,14 @@ public class Guild : Writer {
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
-                else if (amount < maxManager + maxHonorManager) {
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.HonoraryManager;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else if (amount < maxHonorManager + maxManager + maxSupervisor) {
+                else if (amount < maxManager + maxSupervisor) {
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
                     member.Rank = MemberRank.Supervisor;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
-                else if (amount < maxHonorManager + maxManager + maxSupervisor + maxSteward) {
+                else if (amount < maxManager + maxSupervisor + maxSteward) {
                     if (member.Rank > MemberRank.Steward)
                         continue;
                     if (RanksCounts[(ushort)member.Rank] > 0)
@@ -500,7 +483,7 @@ public class Guild : Writer {
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
-                else if (amount < maxHonorManager + maxManager + maxSupervisor + maxSteward + maxArsFollower) {
+                else if (amount < maxManager + maxSupervisor + maxSteward + maxArsFollower) {
                     if (member.Rank > MemberRank.ArsFollower)
                         continue;
                     if (RanksCounts[(ushort)member.Rank] > 0)
@@ -517,9 +500,9 @@ public class Guild : Writer {
             RankArsenalDonations = poll.ToArray();
 
             //calculate rank cps
-            const byte maxCpSupervisor = 3; //0,1,2
-            const byte maxCpAgent = 2; //3,4
-            const byte maxCpFollower = 2; //5,6
+            var maxCpSupervisor = GuildRankLimits.GetMaxSupervisorPerType(Level); // Per type limit based on guild level
+            const byte maxCpAgent = 2; //3,4 - No limit specified in JSON, keeping existing logic
+            const byte maxCpFollower = 2; //5,6 - No limit specified in JSON, keeping existing logic
             amount = 0; //3
             poll = (from member in Members.Values orderby member.ConquerPointDonation descending select member)
                 .ToArray();
@@ -560,9 +543,9 @@ public class Guild : Writer {
             RankCpDonations = poll.ToArray();
 
             //calculate pk ranks
-            const byte maxPkSupervisor = 3; //0,1,2
-            const byte maxPkAgent = 2; //3,4,
-            const byte maxPkFollower = 2; //5,6
+            var maxPkSupervisor = GuildRankLimits.GetMaxSupervisorPerType(Level); // Per type limit based on guild level
+            const byte maxPkAgent = 2; //3,4, - No limit specified in JSON, keeping existing logic
+            const byte maxPkFollower = 2; //5,6 - No limit specified in JSON, keeping existing logic
             amount = 0; //3
             poll = (from member in Members.Values orderby member.PkDonation descending select member).ToArray();
             for (byte x = 0; x < poll.Length; x++) {
@@ -602,9 +585,9 @@ public class Guild : Writer {
             RankPkDonations = poll.ToArray();
 
             //calculate RoseSupervisor
-            const byte maxRoseSupervisor = 3; //0,1,2
-            const byte maxRoseAgent = 2; //3,4
-            const byte maxRoseFollower = 2; //5,6
+            var maxRoseSupervisor = GuildRankLimits.GetMaxSupervisorPerType(Level); // Per type limit based on guild level
+            const byte maxRoseAgent = 2; //3,4 - No limit specified in JSON, keeping existing logic
+            const byte maxRoseFollower = 2; //5,6 - No limit specified in JSON, keeping existing logic
             amount = 0; //3
             poll = (from member in Members.Values orderby member.Roses descending select member).ToArray();
             for (byte x = 0; x < poll.Length; x++) {
@@ -644,9 +627,9 @@ public class Guild : Writer {
             RankRoseDonations = poll.ToArray();
 
             //calculate LilySupervisor
-            const byte maxLilySupervisor = 3;
-            const byte maxLilyAgent = 2;
-            const byte maxLilyFollower = 2;
+            var maxLilySupervisor = GuildRankLimits.GetMaxSupervisorPerType(Level); // Per type limit based on guild level
+            const byte maxLilyAgent = 2; // No limit specified in JSON, keeping existing logic
+            const byte maxLilyFollower = 2; // No limit specified in JSON, keeping existing logic
             amount = 0; //3
             poll = (from member in Members.Values orderby member.Lilies descending select member).ToArray();
             for (byte x = 0; x < poll.Length; x++) {
@@ -686,9 +669,9 @@ public class Guild : Writer {
             RankLiliesDonations = poll.ToArray();
 
             //calculate TulipAgent
-            const byte maxTSupervisor = 3;
-            const byte maxTulipAgent = 2;
-            const byte maxTulipFollower = 2;
+            var maxTSupervisor = GuildRankLimits.GetMaxSupervisorPerType(Level); // Per type limit based on guild level
+            const byte maxTulipAgent = 2; // No limit specified in JSON, keeping existing logic
+            const byte maxTulipFollower = 2; // No limit specified in JSON, keeping existing logic
             amount = 0; //3
             poll = (from member in Members.Values orderby member.Tulips descending select member).ToArray();
             for (byte x = 0; x < poll.Length; x++) {
@@ -728,12 +711,12 @@ public class Guild : Writer {
             RankTulipsDonations = poll.ToArray();
 
             // calculate OrchidAgent
-            const byte maxOSupervisor = 3;
-            const byte maxOrchidAgent = 2;
-            const byte maxOrchidFollower = 2;
+            var maxOSupervisor = GuildRankLimits.GetMaxSupervisorPerType(Level); // Per type limit based on guild level
+            const byte maxOrchidAgent = 2; // No limit specified in JSON, keeping existing logic
+            const byte maxOrchidFollower = 2; // No limit specified in JSON, keeping existing logic
             amount = 0; //3
             poll = (from member in Members.Values
-                orderby member.Tulips descending
+                orderby member.Orchids descending
                 select member).ToArray();
             for (byte x = 0; x < poll.Length; x++) {
                 var member = poll[x];
@@ -755,7 +738,7 @@ public class Guild : Writer {
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
-                else if (amount < maxOSupervisor + maxOrchidFollower + maxOrchidAgent) {
+                else if (amount < maxOSupervisor + maxOrchidAgent + maxOrchidFollower) {
                     if (member.Rank > MemberRank.OrchidFollower)
                         continue;
                     if (RanksCounts[(ushort)member.Rank] > 0)
@@ -776,40 +759,18 @@ public class Guild : Writer {
                 orderby member.TotalDonation descending
                 select member).ToArray();
 
-            const byte hDeputyLeader = 2; //0,1
-            const byte maxHonorarySteward = 2; //2,3
-            amount = 0; //20
-            for (byte x = 0; x < poll.Length; x++) {
-                var member = poll[x];
-                if (member.Rank > MemberRank.HDeputyLeader)
-                    continue;
-                if (amount < hDeputyLeader) {
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.HDeputyLeader;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else if (amount < hDeputyLeader + maxHonorarySteward) {
-                    if (member.Rank > MemberRank.HonorarySteward)
-                        continue;
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.HonorarySteward;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else {
-                    break;
-                }
-            }
+            // Note: HDeputyLeader and HonorarySteward should NOT be auto-assigned
+            // They can only be manually appointed by Guild Leader with CP cost:
+            // - HDeputyLeader: 650 CPs
+            // - HonorarySteward: 100 CPs
+            // These ranks are excluded from automatic assignment to prevent overwriting manual appointments
 
             RankTotalDonations = poll.ToArray();
 
 
-            const byte sSupervisor = 5; //0,1,2,3
-            const byte maxSilverAgent = 2; //4,5
-            const byte maxSilverFollower = 2; //6,7
+            var sSupervisor = GuildRankLimits.GetMaxSupervisorPerType(Level); // Per type limit based on guild level
+            const byte maxSilverAgent = 2; //4,5 - No limit specified in JSON, keeping existing logic
+            const byte maxSilverFollower = 2; //6,7 - No limit specified in JSON, keeping existing logic
             amount = 0; //20
             poll = (from member in Members.Values
                 orderby member.SilverDonation descending
@@ -850,9 +811,9 @@ public class Guild : Writer {
 
             RankSilversDonations = poll.ToArray();
 
-            const byte gSupervisor = 3; //0,1,2
-            const byte maxGAgent = 2; //3,4
-            const byte maxGFollower = 2; //5,6
+            var gSupervisor = GuildRankLimits.GetMaxSupervisorPerType(Level); // Per type limit based on guild level
+            const byte maxGAgent = 2; //3,4 - No limit specified in JSON, keeping existing logic
+            const byte maxGFollower = 2; //5,6 - No limit specified in JSON, keeping existing logic
             amount = 0; //20
             poll = (from member in Members.Values
                 orderby member.VirtuePoints descending

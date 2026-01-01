@@ -20,7 +20,7 @@ public enum MemberRank : ushort {
     RoseSupervisor = 852,
     LilySupervisor = 851,
     Supervisor = 850,
-    HonorarySuperv = 840,
+    HonorarySupervisor = 840,
     Steward = 690,
     HonorarySteward = 680,
     DeputySteward = 650,

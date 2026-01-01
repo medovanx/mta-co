@@ -7,12 +7,6 @@ namespace MTA.Game.Features.Guilds.Handlers;
 [PacketHandler(1107)]
 public static class GuildCommandHandler {
     public static bool Handle(ushort packetId, byte[] packet, GameState client) {
-        // Skip if in specific map (original logic from PacketHandler)
-        if (client.Map.BaseID == 700) {
-            client.Send(packet);
-            return true;
-        }
-
         var command = new GuildCommand(false);
         command.Deserialize(packet);
 
@@ -22,6 +16,9 @@ public static class GuildCommandHandler {
                 break;
             case GuildCommand.RequestPromote:
                 GuildPromotionHandler.HandleRequestPromote(command, client);
+                break;
+            case GuildCommand.PromoteWithCP:
+                GuildPromotionHandler.HandlePromote(command, packet, client);
                 break;
             case GuildCommand.Info:
                 GuildSettingsHandler.HandleInfo(command, client);

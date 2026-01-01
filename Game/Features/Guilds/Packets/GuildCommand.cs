@@ -1,7 +1,9 @@
-using System.Collections.Generic;
+// ReSharper disable InconsistentNaming
+
 using System.Linq;
 using System.Text;
 using MTA.Game.Features.Guilds.Constants;
+using MTA.Game.Features.Guilds.Handlers;
 using MTA.Network;
 
 namespace MTA.Game.Features.Guilds.Packets {
@@ -23,6 +25,7 @@ namespace MTA.Game.Features.Guilds.Packets {
             GuildRequirements = 25,
             Bulletin = 27,
             Promote = 28,
+            PromoteWithCP = 34,
             Discharge = 30,
             PromoteInfo = 38,
             RequestPromote = 37,
@@ -62,54 +65,19 @@ namespace MTA.Game.Features.Guilds.Packets {
         }
 
         public void SendPromote(Client.GameState client, ushort typ) {
-            if (client.AsMember == null) return;
-            List<string> list = [];
+            if (client.AsMember == null || client.Guild == null) return;
+
             var builder = new StringBuilder();
+            var promotionOptions = GuildPromotionOptions.GetPromotionOptions(client.AsMember.Rank);
 
-            #region Guild Leader
+            var list = promotionOptions.Select(option => {
+                var currentCount = client.Guild.RanksCounts[(ushort)option.Rank];
+                var maxLimit = GuildPromotionOptions.GetMaxLimit(option, client.Guild.Level);
+                var potency = (int)client.Guild.GetMemberPotency(option.Rank);
 
-            if (client.AsMember.Rank == MemberRank.GuildLeader) {
-                list.Add(CreatePromotionString(builder, MemberRank.GuildLeader, 1, 1,
-                    (int)client.Guild!.GetMemberPotency(MemberRank.GuildLeader), 0));
-                //  list.Add(CreatePromotionString(builder, Game.GuildMemberRank.Aide, (int)client.Guild.RanksCounts[(ushort)Game.GuildMemberRank.Aide], 6, (int)client.Guild.GetMemberPotency(Game.GuildMemberRank.Aide), 0));
-                list.Add(CreatePromotionString(builder, MemberRank.DeputyLeader,
-                    client.Guild.RanksCounts[(ushort)MemberRank.DeputyLeader],
-                    client.Guild.GetMaxDeputyLeaders(),
-                    (int)client.Guild.GetMemberPotency(MemberRank.DeputyLeader), 0));
-                list.Add(CreatePromotionString(builder, MemberRank.Steward,
-                    client.Guild.RanksCounts[(ushort)MemberRank.Steward], 3,
-                    (int)client.Guild.GetMemberPotency(MemberRank.Steward), 0));
-                list.Add(CreatePromotionString(builder, MemberRank.Follower,
-                    client.Guild.RanksCounts[(ushort)MemberRank.Follower], 10,
-                    (int)client.Guild.GetMemberPotency(MemberRank.Follower), 0));
-                list.Add(CreatePromotionString(builder, MemberRank.Member,
-                    client.Guild.RanksCounts[(ushort)MemberRank.Member], 300,
-                    (int)client.Guild.GetMemberPotency(MemberRank.Member), 0));
-            }
-
-            #endregion
-
-            #region Leader's Spouse
-
-            switch (client.AsMember.Rank) {
-                case MemberRank.LeaderSpouse:
-                    //  list.Add(CreatePromotionString(builder, Game.GuildMemberRank.DeputyLeader, (int)(int)client.Guild.RanksCounts[(ushort)Game.GuildMemberRank.DeputyLeader], 4, (int)client.Guild.GetMemberPotency(Game.GuildMemberRank.DeputyLeader), 0));
-                    //  list.Add(CreatePromotionString(builder, Game.GuildMemberRank.Steward, (int)(int)client.Guild.RanksCounts[(ushort)Game.GuildMemberRank.Steward], 3, (int)client.Guild.GetMemberPotency(Game.GuildMemberRank.Steward), 0));
-                    //    list.Add(CreatePromotionString(builder, Game.GuildMemberRank.Follower, (int)(int)client.Guild.RanksCounts[(ushort)Game.GuildMemberRank.Follower], 10, (int)client.Guild.GetMemberPotency(Game.GuildMemberRank.Follower), 0));
-                    // list.Add(CreatePromotionString(builder, Game.GuildMemberRank.Member, (int)(int)client.Guild.RanksCounts[(ushort)Game.GuildMemberRank.Member], (int)300, (int)client.Guild.GetMemberPotency(Game.GuildMemberRank.Member), 0));
-                    break;
-                case MemberRank.Manager:
-                case MemberRank.HonoraryManager:
-                    // list.Add(CreatePromotionString(builder, Game.GuildMemberRank.Aide, (int)client.Guild.RanksCounts[(ushort)Game.GuildMemberRank.Aide], 6, (int)client.Guild.GetMemberPotency(Game.GuildMemberRank.Aide), 0));
-                    break;
-                case MemberRank.DeputyLeader:
-                    // list.Add(CreatePromotionString(builder, Game.GuildMemberRank.Aide, (int)client.Guild.RanksCounts[(ushort)Game.GuildMemberRank.Aide], 6, (int)client.Guild.GetMemberPotency(Game.GuildMemberRank.Aide), 0));
-                    // list.Add(CreatePromotionString(builder, Game.GuildMemberRank.Steward, (int)(int)client.Guild.RanksCounts[(ushort)Game.GuildMemberRank.Steward], 3, (int)client.Guild.GetMemberPotency(Game.GuildMemberRank.Steward), 0));
-                    //    list.Add(CreatePromotionString(builder, Game.GuildMemberRank.Follower, (int)(int)client.Guild.RanksCounts[(ushort)Game.GuildMemberRank.Follower], 10, (int)client.Guild.GetMemberPotency(Game.GuildMemberRank.Follower), 0));
-                    break;
-            }
-
-            #endregion
+                return CreatePromotionString(builder, option.Rank, currentCount, maxLimit, potency,
+                    option.ConquerPointsCost);
+            }).ToList();
 
             var extraLength = list.Sum(str => str.Length + 1);
             var packet = new byte[28 + 8 + extraLength];

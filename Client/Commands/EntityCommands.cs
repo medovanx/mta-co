@@ -24,6 +24,7 @@ namespace MTA.Client.Commands {
                 "xp" => HandleXpCommand(client, data),
                 "rev" => HandleRevCommand(client, data),
                 "class" => HandleClassCommand(client, data, mess),
+                "grank" => HandleGrankCommand(client, data),
                 _ => false,
             };
         }
@@ -890,6 +891,49 @@ namespace MTA.Client.Commands {
             if (classId is >= 140 and <= 145) return "Fire";
             if (classId is >= 160 and <= 165) return "Windwalker";
             return "Unknown";
+        }
+
+        private static bool HandleGrankCommand(GameState client, string[] data) {
+            if (data.Length < 2) {
+                client.Send(new Network.GamePackets.Message("Usage: @grank <rank_id>",
+                    System.Drawing.Color.Red, Network.GamePackets.Message.Tip));
+                return true;
+            }
+
+            if (!ushort.TryParse(data[1], out var rankId)) {
+                client.Send(new Network.GamePackets.Message("Invalid rank ID. Must be a number.",
+                    System.Drawing.Color.Red, Network.GamePackets.Message.Tip));
+                return true;
+            }
+
+            // Check if player is in a guild
+            if (client.Guild == null || client.AsMember == null) {
+                client.Send(new Network.GamePackets.Message("You must be in a guild to use this command.",
+                    System.Drawing.Color.Red, Network.GamePackets.Message.Tip));
+                return true;
+            }
+
+            // Update rank in memory only (not saved to database) - direct injection
+            var oldRank = client.Entity.GuildRank;
+            client.Entity.GuildRank = rankId;
+            client.AsMember.Rank = (Game.Features.Guilds.Constants.MemberRank)rankId;
+
+            // Update guild battle power based on new rank
+            client.Entity.GuildBattlePower = client.Guild.GetSharedBattlePower(client.AsMember.Rank);
+
+            // Send guild info packet to refresh display (like promotion does)
+            client.Guild.SendGuild(client);
+            client.Guild.SendMembers(client, 0);
+
+            // Refresh screen to show changes
+            client.Screen.FullWipe();
+            client.Screen.Reload();
+
+            client.Send(new Network.GamePackets.Message(
+                $"Guild rank updated from {oldRank} to {rankId} [In-memory only, not saved]",
+                System.Drawing.Color.Green, Network.GamePackets.Message.Tip));
+
+            return true;
         }
     }
 }
