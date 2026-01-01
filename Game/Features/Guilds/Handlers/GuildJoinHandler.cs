@@ -1,5 +1,6 @@
 using System;
 using MTA.Client;
+using MTA.Game.Features.Guilds.Constants;
 using MTA.Game.Features.Guilds.Packets;
 using MTA.Network.GamePackets;
 
@@ -21,13 +22,13 @@ public static class GuildJoinHandler {
             }
 
             if (!Kernel.Guilds.TryGetValue(target.Entity.GuildID, out var g)) return;
-            if (target.AsMember!.Rank == Enums.GuildMemberRank.Member) return;
+            if (target.AsMember!.Rank == MemberRank.Member) return;
             if (client.Entity.GuildID == 0)
                 g.AddMember(client);
         }
         else {
             if (!Kernel.Guilds.TryGetValue(target.Entity.GuildID, out var tG)) return;
-            if (target.AsMember!.Rank == Enums.GuildMemberRank.Member) return;
+            if (target.AsMember!.Rank == MemberRank.Member) return;
             if (target.Guild!.BlackList.Contains(client.Entity.UID)) {
                 command.Type = 47;
                 client.Send(command);
@@ -65,11 +66,11 @@ public static class GuildJoinHandler {
             }
 
             if (!Kernel.Guilds.TryGetValue(client.Entity.GuildID, out var g)) return;
-            if (client.AsMember!.Rank != Enums.GuildMemberRank.Member)
+            if (client.AsMember!.Rank != MemberRank.Member)
                 g.AddMember(target);
         }
         else {
-            if (client.AsMember!.Rank == Enums.GuildMemberRank.Member) return;
+            if (client.AsMember!.Rank == MemberRank.Member) return;
             if (client.Guild!.BlackList.Contains(target.Entity.UID)) {
                 command.Type = 49;
                 client.Send(command);
@@ -91,7 +92,7 @@ public static class GuildJoinHandler {
     }
 
     public static void HandleQuit(GameState client) {
-        if (client is { Guild: not null, AsMember.Rank: not Enums.GuildMemberRank.GuildLeader })
+        if (client is { Guild: not null, AsMember.Rank: not MemberRank.GuildLeader })
             client.Guild.ExpelMember(client.Entity.Name, true);
     }
 
@@ -101,14 +102,14 @@ public static class GuildJoinHandler {
 
         // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
         switch (clientMember.Rank) {
-            case Enums.GuildMemberRank.GuildLeader:
+            case MemberRank.GuildLeader:
                 client.Guild.ExpelMember(memberName, false);
                 break;
-            case Enums.GuildMemberRank.DeputyLeader: {
+            case MemberRank.DeputyLeader: {
                 var member = client.Guild.GetMemberByName(memberName);
                 if (member != null) {
-                    if (member.Rank is Enums.GuildMemberRank.DeputyLeader
-                        or Enums.GuildMemberRank.GuildLeader)
+                    if (member.Rank is MemberRank.DeputyLeader
+                        or MemberRank.GuildLeader)
                         return;
                     client.Guild.ExpelMember(memberName, false);
                 }

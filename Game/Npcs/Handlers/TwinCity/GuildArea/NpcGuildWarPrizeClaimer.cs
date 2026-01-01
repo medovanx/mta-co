@@ -4,6 +4,8 @@ using MTA.Client;
 using MTA.Database;
 using MTA.Game.Events;
 using MTA.Game.Events.GuildWar;
+using MTA.Game.Features.Guilds;
+using MTA.Game.Features.Guilds.Constants;
 using MTA.Game.Features.Guilds.Database;
 using MTA.Network.GamePackets;
 using static MTA.Game.Enums;
@@ -28,12 +30,12 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.GuildArea {
                             if (member != null) {
                                 // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
                                 switch (member.Rank) {
-                                    case GuildMemberRank.GuildLeader when
+                                    case MemberRank.GuildLeader when
                                         latest.GuildLeaderEntityId == client.Entity.UID &&
                                         !latest.GuildLeaderClaimed:
                                         dialog.Option("Claim Top Guild Leader.", 1);
                                         break;
-                                    case GuildMemberRank.DeputyLeader when
+                                    case MemberRank.DeputyLeader when
                                         !GuildWarHistoryTable.HasDeputyClaimed(latest.Id, client.Entity.UID) &&
                                         GuildWarHistoryTable.CanDeputyClaim(latest.Id):
                                         dialog.Option("Claim Top Deputy Leader.", 2);

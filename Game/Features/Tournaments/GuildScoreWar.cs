@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using MTA.Client;
 using MTA.Game.Features.Guilds;
 using MTA.Game.Constants;
+using MTA.Game.Features.Guilds.Constants;
 using MTA.Network.GamePackets;
 
 namespace MTA.Game {
@@ -99,7 +100,7 @@ namespace MTA.Game {
         }
 
         public static void GetReward(GameState client, uint cps) {
-            if (client.Entity.GuildRank == (ushort)GuildRank.GuildLeader) {
+            if (client.Entity.GuildRank == (ushort)MemberRank.GuildLeader) {
                 if (client.Entity.GuildID == Winner) {
                     client.Entity.ConquerPoints += 2000000;
                     Winner = 0;

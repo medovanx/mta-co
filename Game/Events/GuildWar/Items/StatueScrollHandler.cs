@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using MTA.Client;
 using MTA.Database;
+using MTA.Game.Features.Guilds;
+using MTA.Game.Features.Guilds.Constants;
 using MTA.Game.Features.Guilds.Database;
 using MTA.Game.Items;
 using MTA.Network;
@@ -17,7 +19,7 @@ namespace MTA.Game.Events.GuildWar.Items {
     public static class StatueScrollHandler {
         public static void Handle(GameState client, ConquerItem item) {
             if (client.Guild?.Members.GetValueOrDefault(client.Entity.UID)?.Rank !=
-                Enums.GuildMemberRank.GuildLeader) {
+                MemberRank.GuildLeader) {
                 client.Send(new Message("You can't use this item unless you're a guild leader!", Color.Tan,
                     Message.TopLeft));
                 return;
@@ -35,7 +37,7 @@ namespace MTA.Game.Events.GuildWar.Items {
 
             if (isWinnerGuild && client.Guild != null &&
                 client.Guild.Members.GetValueOrDefault(client.Entity.UID)?.Rank ==
-                Enums.GuildMemberRank.GuildLeader &&
+                MemberRank.GuildLeader &&
                 GuildWarEvent.GetActiveEvent()?.IsActive != true) {
                 var test = new byte[((ushort)(247 + client.Entity.Name.Length + 8))];
                 Writer.WriteUshort((ushort)(test.Length - 8), 0, test);

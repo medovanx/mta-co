@@ -8,6 +8,7 @@ using MTA.Network;
 using MTA.Game.ConquerStructures;
 using MTA.Game.Constants;
 using MTA.Game.Features.Guilds;
+using MTA.Game.Features.Guilds.Constants;
 
 namespace MTA.WebServer
 {
@@ -221,7 +222,7 @@ namespace MTA.WebServer
                 client.AsMember.Id = client.Entity.UID;
                 client.AsMember.Level = client.Entity.Level;
                 client.AsMember.Spouse = client.Entity.Spouse;
-                client.AsMember.Rank = (Enums.GuildMemberRank)GuildRank;
+                client.AsMember.Rank = (MemberRank)GuildRank;
 
                 client.Entity.GuildID = (ushort)(GuildID + Server.Key);
                 client.Entity.GuildRank = GuildRank;

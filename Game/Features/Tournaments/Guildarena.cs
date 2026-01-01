@@ -1,9 +1,10 @@
-using System;
+﻿using System;
 using System.Linq;
 using MTA.Client;
 using MTA.Database;
 using MTA.Game.Features.Guilds;
 using MTA.Game.Constants;
+using MTA.Game.Features.Guilds.Constants;
 using MTA.Network.GamePackets;
 
 namespace MTA.Game {
@@ -115,7 +116,7 @@ namespace MTA.Game {
         public void CheakToEnd(GameState gameClient, bool dc = false) {
             bool GuildSurive1 = false;
             bool GuildSurive2 = false;
-            if (dc && gameClient.Entity.GuildRank == (ushort)Enums.GuildMemberRank.GuildLeader) {
+            if (dc && gameClient.Entity.GuildRank == (ushort)MemberRank.GuildLeader) {
                 if (Guildleader1 == gameClient)
                     End(Guild2, Guild1);
                 else if (Guildleader2 == gameClient)

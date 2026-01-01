@@ -3,6 +3,8 @@ using MTA.Network.GamePackets;
 using System.Collections.Concurrent;
 using MTA.Game;
 using MTA.Game.Constants;
+using MTA.Game.Features.Guilds;
+using MTA.Game.Features.Guilds.Constants;
 
 namespace MTA.Database
 {
@@ -469,7 +471,7 @@ namespace MTA.Database
             }
         }
 
-        public static void UpdateGuildRank(uint UID, Enums.GuildMemberRank rank)
+        public static void UpdateGuildRank(uint UID, MemberRank rank)
         {
             UpdateData(UID, "GuildRank", (int)rank);
         }

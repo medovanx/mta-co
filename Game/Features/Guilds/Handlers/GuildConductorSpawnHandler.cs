@@ -1,6 +1,7 @@
 using MTA.Client;
 using MTA.Database;
 using MTA.Game.Events.GuildWar;
+using MTA.Game.Features.Guilds.Constants;
 using MTA.Game.Features.Guilds.Database;
 using MTA.Network.GamePackets;
 using MTA.Network.PacketHandlers;
@@ -27,7 +28,7 @@ public static class GuildConductorSpawnHandler {
         // This is a guild conductor spawn - handle it
         var uid = client.Entity.OnMoveNpc;
         if (client.Guild != null || client.Account.State == AccountTable.AccountState.GM) {
-            if (client.AsMember is { Rank: Enums.GuildMemberRank.GuildLeader } ||
+            if (client.AsMember is { Rank: MemberRank.GuildLeader } ||
                 client.Account.State == AccountTable.AccountState.GM) {
                 if (client.Guild?.Name is not null and not "") {
                     var gwEvent6 = GuildWarEvent.GetActiveEvent();

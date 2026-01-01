@@ -1,3 +1,4 @@
+using MTA.Game.Features.Guilds.Constants;
 using MTA.Network;
 
 namespace MTA.Game.Features.Guilds.Packets {
@@ -17,7 +18,7 @@ namespace MTA.Game.Features.Guilds.Packets {
             return _packet;
         }
 
-        private void Aprend(Enums.GuildMemberRank rank, uint amount) {
+        private void Aprend(MemberRank rank, uint amount) {
             WriteUInt32((ushort)rank, _position, _packet);
             _position += 4;
             //WriteUint(uint.MaxValue, Position);//for not apprend
@@ -28,227 +29,227 @@ namespace MTA.Game.Features.Guilds.Packets {
         public void AprendGuild(Guild guild) {
             if (guild.RankArsenalDonations.Length >= 5) {
                 var obj = guild.RankArsenalDonations[4];
-                Aprend(Enums.GuildMemberRank.Manager, obj.ArsenalDonation);
+                Aprend(MemberRank.Manager, obj.ArsenalDonation);
             }
             else
-                Aprend(Enums.GuildMemberRank.Manager, 0);
+                Aprend(MemberRank.Manager, 0);
 
             if (guild.RankArsenalDonations.Length >= 7) {
                 var obj = guild.RankArsenalDonations[6];
-                Aprend(Enums.GuildMemberRank.HonoraryManager, obj.ArsenalDonation);
+                Aprend(MemberRank.HonoraryManager, obj.ArsenalDonation);
             }
             else
-                Aprend(Enums.GuildMemberRank.HonoraryManager, 0);
+                Aprend(MemberRank.HonoraryManager, 0);
 
 
             if (guild.RankArsenalDonations.Length >= 8) {
                 var obj = guild.RankArsenalDonations[7];
-                Aprend(Enums.GuildMemberRank.Supervisor, obj.ArsenalDonation);
+                Aprend(MemberRank.Supervisor, obj.ArsenalDonation);
             }
             else
-                Aprend(Enums.GuildMemberRank.Supervisor, 0);
+                Aprend(MemberRank.Supervisor, 0);
 
             if (guild.RankArsenalDonations.Length >= 13) {
                 var obj = guild.RankArsenalDonations[12];
-                Aprend(Enums.GuildMemberRank.Steward, obj.ArsenalDonation);
+                Aprend(MemberRank.Steward, obj.ArsenalDonation);
             }
             else
-                Aprend(Enums.GuildMemberRank.Steward, 0);
+                Aprend(MemberRank.Steward, 0);
 
             if (guild.RankArsenalDonations.Length >= 15) {
                 var obj = guild.RankArsenalDonations[14];
-                Aprend(Enums.GuildMemberRank.ArsFollower, obj.ArsenalDonation);
+                Aprend(MemberRank.ArsFollower, obj.ArsenalDonation);
             }
-            else Aprend(Enums.GuildMemberRank.ArsFollower, 0);
+            else Aprend(MemberRank.ArsFollower, 0);
 
 
             if (guild.RankCpDonations.Length >= 3) {
                 var obj = guild.RankCpDonations[2];
-                Aprend(Enums.GuildMemberRank.CPSupervisor, (uint)obj.ConquerPointDonation);
+                Aprend(MemberRank.CPSupervisor, (uint)obj.ConquerPointDonation);
             }
             else
-                Aprend(Enums.GuildMemberRank.CPSupervisor, 0);
+                Aprend(MemberRank.CPSupervisor, 0);
 
             if (guild.RankCpDonations.Length >= 5) {
                 var obj = guild.RankCpDonations[4];
-                Aprend(Enums.GuildMemberRank.CPAgent, (uint)obj.ConquerPointDonation);
+                Aprend(MemberRank.CPAgent, (uint)obj.ConquerPointDonation);
             }
             else
-                Aprend(Enums.GuildMemberRank.CPAgent, 0);
+                Aprend(MemberRank.CPAgent, 0);
 
             if (guild.RankCpDonations.Length >= 7) {
                 var obj = guild.RankCpDonations[6];
-                Aprend(Enums.GuildMemberRank.CPFollower, (uint)obj.ConquerPointDonation);
+                Aprend(MemberRank.CPFollower, (uint)obj.ConquerPointDonation);
             }
             else
-                Aprend(Enums.GuildMemberRank.CPFollower, 0);
+                Aprend(MemberRank.CPFollower, 0);
 
 
             if (guild.RankPkDonations.Length >= 3) {
                 var obj = guild.RankPkDonations[2];
-                Aprend(Enums.GuildMemberRank.PKSupervisor, obj.PkDonation);
+                Aprend(MemberRank.PKSupervisor, obj.PkDonation);
             }
             else
-                Aprend(Enums.GuildMemberRank.PKSupervisor, 0);
+                Aprend(MemberRank.PKSupervisor, 0);
 
             if (guild.RankPkDonations.Length >= 5) {
                 var obj = guild.RankPkDonations[4];
-                Aprend(Enums.GuildMemberRank.PKAgent, obj.PkDonation);
+                Aprend(MemberRank.PKAgent, obj.PkDonation);
             }
-            else Aprend(Enums.GuildMemberRank.PKAgent, 0);
+            else Aprend(MemberRank.PKAgent, 0);
 
             if (guild.RankPkDonations.Length >= 7) {
                 var obj = guild.RankPkDonations[6];
-                Aprend(Enums.GuildMemberRank.PKFollower, obj.PkDonation);
+                Aprend(MemberRank.PKFollower, obj.PkDonation);
             }
-            else Aprend(Enums.GuildMemberRank.PKFollower, 0);
+            else Aprend(MemberRank.PKFollower, 0);
 
 
             if (guild.RankRoseDonations.Length >= 3) {
                 var obj = guild.RankRoseDonations[2];
-                Aprend(Enums.GuildMemberRank.RoseSupervisor, obj.Roses);
+                Aprend(MemberRank.RoseSupervisor, obj.Roses);
             }
             else
-                Aprend(Enums.GuildMemberRank.RoseSupervisor, 0);
+                Aprend(MemberRank.RoseSupervisor, 0);
 
             if (guild.RankRoseDonations.Length >= 5) {
                 var obj = guild.RankRoseDonations[4];
-                Aprend(Enums.GuildMemberRank.RoseAgent, obj.Roses);
+                Aprend(MemberRank.RoseAgent, obj.Roses);
             }
             else
-                Aprend(Enums.GuildMemberRank.RoseAgent, 0);
+                Aprend(MemberRank.RoseAgent, 0);
 
             if (guild.RankRoseDonations.Length >= 7) {
                 var obj = guild.RankRoseDonations[6];
-                Aprend(Enums.GuildMemberRank.RoseFollower, obj.Roses);
+                Aprend(MemberRank.RoseFollower, obj.Roses);
             }
             else
-                Aprend(Enums.GuildMemberRank.RoseFollower, 0);
+                Aprend(MemberRank.RoseFollower, 0);
 
 
             if (guild.RankLiliesDonations.Length >= 3) {
                 var obj = guild.RankLiliesDonations[2];
-                Aprend(Enums.GuildMemberRank.LilySupervisor, obj.Lilies);
+                Aprend(MemberRank.LilySupervisor, obj.Lilies);
             }
             else
-                Aprend(Enums.GuildMemberRank.LilySupervisor, 0);
+                Aprend(MemberRank.LilySupervisor, 0);
 
             if (guild.RankLiliesDonations.Length >= 5) {
                 var obj = guild.RankLiliesDonations[4];
-                Aprend(Enums.GuildMemberRank.LilyAgent, obj.Lilies);
+                Aprend(MemberRank.LilyAgent, obj.Lilies);
             }
             else
-                Aprend(Enums.GuildMemberRank.LilyAgent, 0);
+                Aprend(MemberRank.LilyAgent, 0);
 
             if (guild.RankLiliesDonations.Length >= 7) {
                 var obj = guild.RankLiliesDonations[6];
-                Aprend(Enums.GuildMemberRank.LilyFollower, obj.Lilies);
+                Aprend(MemberRank.LilyFollower, obj.Lilies);
             }
             else
-                Aprend(Enums.GuildMemberRank.LilyFollower, 0);
+                Aprend(MemberRank.LilyFollower, 0);
 
 
             if (guild.RankTulipsDonations.Length >= 3) {
                 var obj = guild.RankTulipsDonations[2];
-                Aprend(Enums.GuildMemberRank.TSupervisor, obj.Tulips);
+                Aprend(MemberRank.TSupervisor, obj.Tulips);
             }
             else
-                Aprend(Enums.GuildMemberRank.TSupervisor, 0);
+                Aprend(MemberRank.TSupervisor, 0);
 
             if (guild.RankTulipsDonations.Length >= 5) {
                 var obj = guild.RankTulipsDonations[4];
-                Aprend(Enums.GuildMemberRank.TulipAgent, obj.Tulips);
+                Aprend(MemberRank.TulipAgent, obj.Tulips);
             }
             else
-                Aprend(Enums.GuildMemberRank.TulipAgent, 0);
+                Aprend(MemberRank.TulipAgent, 0);
 
             if (guild.RankTulipsDonations.Length >= 7) {
                 var obj = guild.RankTulipsDonations[6];
-                Aprend(Enums.GuildMemberRank.TulipFollower, obj.Tulips);
+                Aprend(MemberRank.TulipFollower, obj.Tulips);
             }
             else
-                Aprend(Enums.GuildMemberRank.TulipFollower, 0);
+                Aprend(MemberRank.TulipFollower, 0);
 
 
             if (guild.RankOrchidsDonations.Length >= 3) {
                 var obj = guild.RankOrchidsDonations[2];
-                Aprend(Enums.GuildMemberRank.OSupervisor, obj.Orchids);
+                Aprend(MemberRank.OSupervisor, obj.Orchids);
             }
             else
-                Aprend(Enums.GuildMemberRank.OSupervisor, 0);
+                Aprend(MemberRank.OSupervisor, 0);
 
             if (guild.RankOrchidsDonations.Length >= 5) {
                 var obj = guild.RankOrchidsDonations[4];
-                Aprend(Enums.GuildMemberRank.OrchidAgent, obj.Orchids);
+                Aprend(MemberRank.OrchidAgent, obj.Orchids);
             }
             else
-                Aprend(Enums.GuildMemberRank.OrchidAgent, 0);
+                Aprend(MemberRank.OrchidAgent, 0);
 
             if (guild.RankOrchidsDonations.Length >= 7) {
                 var obj = guild.RankOrchidsDonations[6];
-                Aprend(Enums.GuildMemberRank.OrchidFollower, obj.Orchids);
+                Aprend(MemberRank.OrchidFollower, obj.Orchids);
             }
             else
-                Aprend(Enums.GuildMemberRank.OrchidFollower, 0);
+                Aprend(MemberRank.OrchidFollower, 0);
 
 
             if (guild.RankTotalDonations.Length >= 2) {
                 var obj = guild.RankTotalDonations[1];
-                Aprend(Enums.GuildMemberRank.HDeputyLeader, obj.TotalDonation);
+                Aprend(MemberRank.HDeputyLeader, obj.TotalDonation);
             }
             else
-                Aprend(Enums.GuildMemberRank.HDeputyLeader, 0);
+                Aprend(MemberRank.HDeputyLeader, 0);
 
             if (guild.RankTotalDonations.Length >= 4) {
                 var obj = guild.RankTotalDonations[3];
-                Aprend(Enums.GuildMemberRank.HonorarySteward, obj.TotalDonation);
+                Aprend(MemberRank.HonorarySteward, obj.TotalDonation);
             }
             else
-                Aprend(Enums.GuildMemberRank.HonorarySteward, 0);
+                Aprend(MemberRank.HonorarySteward, 0);
 
 
             if (guild.RankSilversDonations.Length >= 4) {
                 var obj = guild.RankSilversDonations[3];
-                Aprend(Enums.GuildMemberRank.SSupervisor, (uint)obj.SilverDonation);
+                Aprend(MemberRank.SSupervisor, (uint)obj.SilverDonation);
             }
             else
-                Aprend(Enums.GuildMemberRank.SSupervisor, 0);
+                Aprend(MemberRank.SSupervisor, 0);
 
             if (guild.RankSilversDonations.Length >= 6) {
                 var obj = guild.RankSilversDonations[5];
-                Aprend(Enums.GuildMemberRank.SilverAgent, (uint)obj.SilverDonation);
+                Aprend(MemberRank.SilverAgent, (uint)obj.SilverDonation);
             }
             else
-                Aprend(Enums.GuildMemberRank.SilverAgent, 0);
+                Aprend(MemberRank.SilverAgent, 0);
 
             if (guild.RankSilversDonations.Length >= 8) {
                 var obj = guild.RankSilversDonations[7];
-                Aprend(Enums.GuildMemberRank.SilverFollower, (uint)obj.SilverDonation);
+                Aprend(MemberRank.SilverFollower, (uint)obj.SilverDonation);
             }
             else
-                Aprend(Enums.GuildMemberRank.SilverFollower, 0);
+                Aprend(MemberRank.SilverFollower, 0);
 
 
             if (guild.RankGuideDonations.Length >= 3) {
                 var obj = guild.RankGuideDonations[2];
-                Aprend(Enums.GuildMemberRank.GSupervisor, obj.VirtuePoints);
+                Aprend(MemberRank.GSupervisor, obj.VirtuePoints);
             }
             else
-                Aprend(Enums.GuildMemberRank.GSupervisor, 0);
+                Aprend(MemberRank.GSupervisor, 0);
 
             if (guild.RankGuideDonations.Length >= 5) {
                 var obj = guild.RankGuideDonations[4];
-                Aprend(Enums.GuildMemberRank.GuideAgent, obj.VirtuePoints);
+                Aprend(MemberRank.GuideAgent, obj.VirtuePoints);
             }
             else
-                Aprend(Enums.GuildMemberRank.GuideAgent, 0);
+                Aprend(MemberRank.GuideAgent, 0);
 
             if (guild.RankGuideDonations.Length >= 7) {
                 var obj = guild.RankGuideDonations[6];
-                Aprend(Enums.GuildMemberRank.GuideFollower, obj.VirtuePoints);
+                Aprend(MemberRank.GuideFollower, obj.VirtuePoints);
             }
             else
-                Aprend(Enums.GuildMemberRank.GuideFollower, 0);
+                Aprend(MemberRank.GuideFollower, 0);
         }
     }
 }

@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using MTA.Client;
+using MTA.Game.Features.Guilds;
+using MTA.Game.Features.Guilds.Constants;
 using MTA.Game.Npcs;
 using MTA.Network.GamePackets;
 using static MTA.Game.Enums;
@@ -20,7 +22,7 @@ public static class NpcGuildWarEastGate {
             case 0:
                 dialog.Text("Select the option you want to pursue.");
                 var member = client.Guild?.Members.GetValueOrDefault(client.Entity.UID);
-                if (member?.Rank is GuildMemberRank.GuildLeader or GuildMemberRank.DeputyLeader) {
+                if (member?.Rank is MemberRank.GuildLeader or MemberRank.DeputyLeader) {
                     dialog.Option("Open gate.", 1);
                     dialog.Option("Close gate.", 2);
                 }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -7,6 +7,7 @@ using MTA.Game;
 using MTA.Game.Features.Guilds;
 using MTA.Network.GamePackets;
 using MTA.Game.Constants;
+using MTA.Game.Features.Guilds.Constants;
 
 namespace MTA.MaTrix {
     public class GuildPoleWar {
@@ -99,9 +100,9 @@ namespace MTA.MaTrix {
             if (!IsWar)
                 return false;
             int _rank = Member;
-            if (entity.GuildRank == (ushort)GuildRank.GuildLeader)
+            if (entity.GuildRank == (ushort)MemberRank.GuildLeader)
                 _rank = GuildLeader;
-            else if (entity.GuildRank == (ushort)GuildRank.DeputyLeader)
+            else if (entity.GuildRank == (ushort)MemberRank.DeputyLeader)
                 _rank = DeputyLeader;
             var pole = Poles[_rank];
             if (pole != null) {
@@ -177,11 +178,11 @@ namespace MTA.MaTrix {
         }
 
         public static void Reset(int _Class) {
-            var rank = GuildRank.Member;
+            var rank = MemberRank.Member;
             if (_Class == DeputyLeader)
-                rank = GuildRank.DeputyLeader;
+                rank = MemberRank.DeputyLeader;
             if (_Class == GuildLeader)
-                rank = GuildRank.GuildLeader;
+                rank = MemberRank.GuildLeader;
             foreach (var c in Program.Values.Where(p => p.Entity.GuildRank == (ushort)rank))
                 c.Entity.WarScore = 0;
             IsWar = true;
@@ -212,9 +213,9 @@ namespace MTA.MaTrix {
         public static void AddScore(uint addScore, Entity entity, SobNpcSpawn Pole) {
             if (entity != null) {
                 int _rank = Member;
-                if (entity.GuildRank == (ushort)GuildRank.GuildLeader)
+                if (entity.GuildRank == (ushort)MemberRank.GuildLeader)
                     _rank = GuildLeader;
-                else if (entity.GuildRank == (ushort)GuildRank.DeputyLeader)
+                else if (entity.GuildRank == (ushort)MemberRank.DeputyLeader)
                     _rank = DeputyLeader;
 
                 if (Pole.Hitpoints <= addScore)
@@ -256,16 +257,16 @@ namespace MTA.MaTrix {
                         if (client != null) {
                             if (client.Map.ID == Map.ID) {
                                 if (i == DeputyLeader) {
-                                    if (client.Entity.GuildRank == (ushort)GuildRank.DeputyLeader)
+                                    if (client.Entity.GuildRank == (ushort)MemberRank.DeputyLeader)
                                         client.Send(msg);
                                 }
                                 else if (i == GuildLeader) {
-                                    if (client.Entity.GuildRank == (ushort)GuildRank.GuildLeader)
+                                    if (client.Entity.GuildRank == (ushort)MemberRank.GuildLeader)
                                         client.Send(msg);
                                 }
                                 else {
-                                    if (client.Entity.GuildRank != (ushort)GuildRank.GuildLeader &&
-                                        client.Entity.GuildRank != (ushort)GuildRank.DeputyLeader)
+                                    if (client.Entity.GuildRank != (ushort)MemberRank.GuildLeader &&
+                                        client.Entity.GuildRank != (ushort)MemberRank.DeputyLeader)
                                         client.Send(msg);
                                 }
                             }

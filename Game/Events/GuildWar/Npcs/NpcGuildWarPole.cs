@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using MTA.Client;
+using MTA.Game.Features.Guilds;
+using MTA.Game.Features.Guilds.Constants;
 using MTA.Game.Npcs;
 using MTA.Network.GamePackets;
 using static MTA.Game.Enums;
@@ -19,7 +21,7 @@ public static class NpcGuildWarPole {
         // Only allow guild leader of current pole keeper during active war
         if (client.Guild == null || gwEvent.PoleKeeper != client.Guild) return;
         var member = client.Guild.Members.GetValueOrDefault(client.Entity.UID);
-        if (member?.Rank != GuildMemberRank.GuildLeader) return;
+        if (member?.Rank != MemberRank.GuildLeader) return;
         if (gwEvent.Pole == null) return;
 
         switch (npcRequest.OptionID) {

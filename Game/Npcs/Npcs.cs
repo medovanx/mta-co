@@ -16,6 +16,8 @@ using MTA.Game.Constants;
 using MTA.Game.Events;
 using MTA.Game.Events.GuildWar;
 using MTA.Game.Features;
+using MTA.Game.Features.Guilds;
+using MTA.Game.Features.Guilds.Constants;
 using MTA.Game.Features.Guilds.Database;
 using MTA.Game.Features.Tournaments;
 using MTA.Game.Npcs;
@@ -669,7 +671,7 @@ namespace MTA {
                                         return;
                                     }
 
-                                    if (client.Entity.GuildRank != (int)Enums.GuildMemberRank.GuildLeader) {
+                                    if (client.Entity.GuildRank != (int)MemberRank.GuildLeader) {
                                         dialog.Text("You have to be the guild leader!");
                                         dialog.Option("Ahh!", 255);
                                         dialog.Send();
@@ -933,7 +935,7 @@ namespace MTA {
                                 }
                                 case 3: {
                                     if (client is { Guild: not null, AsMember: not null }) {
-                                        if (client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader) {
+                                        if (client.AsMember.Rank == MemberRank.GuildLeader) {
                                             uint Reaward = client.Guild.CtfReward * Rates.Ctf;
                                             if (Reaward != 0) {
                                                 byte[] messaje =
@@ -5787,8 +5789,8 @@ namespace MTA {
                                 switch (npcRequest.OptionID) {
                                     case 0:
                                         dialog.Text("Select the option you want to pursue.");
-                                        if (client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader ||
-                                            client.AsMember.Rank == Enums.GuildMemberRank.DeputyLeader) {
+                                        if (client.AsMember.Rank == MemberRank.GuildLeader ||
+                                            client.AsMember.Rank == MemberRank.DeputyLeader) {
                                             dialog.Option("Open gate.", 1);
                                             // if (Game.SuperGuildWar.LeftGate.Hitpoints == 0)
                                             //  dialog.Option("Repair gate.", 22);
@@ -5848,8 +5850,8 @@ namespace MTA {
                                 switch (npcRequest.OptionID) {
                                     case 0:
                                         dialog.Text("Select the option you want to pursue.");
-                                        if (client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader ||
-                                            client.AsMember.Rank == Enums.GuildMemberRank.DeputyLeader) {
+                                        if (client.AsMember.Rank == MemberRank.GuildLeader ||
+                                            client.AsMember.Rank == MemberRank.DeputyLeader) {
                                             dialog.Option("Open gate.", 1);
                                             //if (Game.SuperGuildWar.RightGate.Hitpoints == 0)
                                             //  dialog.Option("Repair gate.", 22);
@@ -22592,7 +22594,7 @@ namespace MTA {
                         }
                         case 1: {
                             if (DateTime.Now.Minute >= 35 && DateTime.Now.Minute <= 38) {
-                                if (client.Entity.GuildRank == (ushort)Enums.GuildMemberRank.GuildLeader) {
+                                if (client.Entity.GuildRank == (ushort)MemberRank.GuildLeader) {
                                     //MeToOo
                                     client.Entity.Teleport(1458, 96, 113);
                                     client.Entity.PKMode = Enums.PkMode.PK;
@@ -22601,7 +22603,7 @@ namespace MTA {
                                         dwParam = (uint)client.Entity.PKMode
                                     });
                                 } //MeToOo
-                                else if (client.Entity.GuildRank == (ushort)Enums.GuildMemberRank.DeputyLeader) {
+                                else if (client.Entity.GuildRank == (ushort)MemberRank.DeputyLeader) {
                                     client.Entity.Teleport(1459, 96, 113);
                                     client.Entity.PKMode = Enums.PkMode.PK;
                                     client.Send(new Data(true) {
@@ -24102,7 +24104,7 @@ namespace MTA {
                         case 1: {
                             if (client.Guild != null) {
                                 if (client.Guild.PoleKeeper2 && client.Guild != null &&
-                                    client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader) {
+                                    client.AsMember.Rank == MemberRank.GuildLeader) {
                                     dialog.Text("Are you sure you want to Claim your Prize?");
                                     dialog.Option("Yes.", 2);
                                     dialog.Option("Ah, nevermind.", 255);
@@ -24128,7 +24130,7 @@ namespace MTA {
                                 if (client.Guild != null) {
                                     if (EliteGuildWar.KeeperID != 0) {
                                         if (EliteGuildWar.Claim &&
-                                            client.AsMember.Rank == Enums.GuildMemberRank.GuildLeader &&
+                                            client.AsMember.Rank == MemberRank.GuildLeader &&
                                             client.Guild.Id == EliteGuildWar.KeeperID) {
                                             //#warning ELITEGW PRIZE
                                             EliteGuildWar.Claim = false;
@@ -24171,7 +24173,7 @@ namespace MTA {
                         case 3: {
                             if (client.Guild != null) {
                                 if (client.Guild.PoleKeeper2 && client.Guild != null &&
-                                    client.AsMember.Rank == Enums.GuildMemberRank.DeputyLeader) {
+                                    client.AsMember.Rank == MemberRank.DeputyLeader) {
                                     dialog.Text("Are you sure you want to Claim your Prize?");
                                     dialog.Option("Yes.", 4);
                                     dialog.Option("Ah, nevermind.", 255);
@@ -24195,7 +24197,7 @@ namespace MTA {
                         case 4: {
                             {
                                 if (EliteGuildWar.IsWar && client.Guild.PoleKeeper2 && client.Guild != null &&
-                                    client.AsMember.Rank == Enums.GuildMemberRank.DeputyLeader &&
+                                    client.AsMember.Rank == MemberRank.DeputyLeader &&
                                     ClassPk.TopDlClaim <= 25) {
                                     ClassPk.AddDl();
                                     if (client.Entity.ContainsFlag3(Update.Flags3.rygh_syzs)) // Created By jiMMy
@@ -24219,8 +24221,8 @@ namespace MTA {
                         case 6: {
                             if (client.Guild != null) {
                                 if (client.Guild.PoleKeeper2 && client.Guild != null &&
-                                    client.AsMember.Rank != Enums.GuildMemberRank.GuildLeader &&
-                                    client.AsMember.Rank != Enums.GuildMemberRank.DeputyLeader) {
+                                    client.AsMember.Rank != MemberRank.GuildLeader &&
+                                    client.AsMember.Rank != MemberRank.DeputyLeader) {
                                     dialog.Text("Are you sure you want to Claim your Prize?");
                                     dialog.Option("Yes.", 7);
                                     dialog.Option("Ah, nevermind.", 255);
@@ -24244,7 +24246,7 @@ namespace MTA {
                         case 7: {
                             {
                                 if (!EliteGuildWar.IsWar && client.Guild.PoleKeeper2 && client.Guild != null &&
-                                    client.AsMember.Rank == Enums.GuildMemberRank.DeputyLeader &&
+                                    client.AsMember.Rank == MemberRank.DeputyLeader &&
                                     ClassPk.TopDlClaim <= 20) {
                                     //ClassPk.AddDl();
                                     client.Entity.AddTopStatus((int)Titles.membmerguild, 0,

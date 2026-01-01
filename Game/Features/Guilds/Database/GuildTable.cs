@@ -3,6 +3,7 @@ using System.Linq;
 using MTA.Client;
 using MTA.Database;
 using MTA.Game.ConquerStructures;
+using MTA.Game.Features.Guilds.Constants;
 using MTA.Game.Features.Guilds.Database.Mappers;
 using MTA.Game.Features.Guilds.Database.Schema;
 
@@ -28,7 +29,7 @@ public static class GuildTable {
                     member.Gender = value.Gender;
                 }
 
-                member.Rank = (Enums.GuildMemberRank)reader.ReadUInt16("guildrank");
+                member.Rank = (MemberRank)reader.ReadUInt16("guildrank");
                 member.SilverDonation = reader.ReadUInt64("GuildSilverDonation");
                 member.ConquerPointDonation = reader.ReadUInt64("GuildConquerPointDonation");
                 member.ArsenalDonation = reader.ReadUInt32("GuildArsenalDonation");
@@ -109,7 +110,7 @@ public static class GuildTable {
 
                 Kernel.Guilds.Add(guild.Id, guild);
                 foreach (var member in guild.Members.Values) {
-                    if (member.Rank == Enums.GuildMemberRank.GuildLeader) {
+                    if (member.Rank == MemberRank.GuildLeader) {
                         guild.Leader = member;
                         // Ensure LeaderID matches the leader's ID
                         if (guild.LeaderId == 0 || guild.LeaderId != member.Id) {
@@ -152,20 +153,20 @@ public static class GuildTable {
         foreach (var guild in Kernel.Guilds.Values) {
             foreach (var member in guild.Members.Values
                          .Where(member => member.Spouse != "None").Where(member =>
-                             member.Rank != Enums.GuildMemberRank.GuildLeader)) {
+                             member.Rank != MemberRank.GuildLeader)) {
                 foreach (var findSpouse in
                          guild.Members.Values.Where(findSpouse => member.Spouse == findSpouse.Name)) {
-                    if (findSpouse.Rank == Enums.GuildMemberRank.GuildLeader) {
-                        member.Rank = Enums.GuildMemberRank.LeaderSpouse;
+                    if (findSpouse.Rank == MemberRank.GuildLeader) {
+                        member.Rank = MemberRank.LeaderSpouse;
                         break;
                     }
 
-                    if (findSpouse.Rank != Enums.GuildMemberRank.DeputyLeader) continue;
-                    if (member.Rank == Enums.GuildMemberRank.DeputyLeader)
+                    if (findSpouse.Rank != MemberRank.DeputyLeader) continue;
+                    if (member.Rank == MemberRank.DeputyLeader)
                         break;
-                    if (member.Rank > Enums.GuildMemberRank.DLeaderSpouse)
+                    if (member.Rank > MemberRank.DLeaderSpouse)
                         break;
-                    member.Rank = Enums.GuildMemberRank.DLeaderSpouse;
+                    member.Rank = MemberRank.DLeaderSpouse;
                     break;
                 }
             }

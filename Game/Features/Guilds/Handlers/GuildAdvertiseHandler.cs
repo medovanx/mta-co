@@ -3,6 +3,7 @@ using System.Linq;
 using MTA.Client;
 using MTA.Game.Features.Guilds.Database;
 using MTA.Game.Features.Guilds;
+using MTA.Game.Features.Guilds.Constants;
 using MTA.Network;
 using MTA.Network.GamePackets;
 using MTA.Network.PacketHandlers;
@@ -111,7 +112,7 @@ public static class GuildAdvertiseHandler {
 
     private static void HandleAdvertiseRegister(byte[] packet, GameState client) {
         if (client.Guild == null) return;
-        if (client.AsMember is not { Rank: Enums.GuildMemberRank.GuildLeader }) return;
+        if (client.AsMember is not { Rank: MemberRank.GuildLeader }) return;
 
         BitConverter.ToUInt32(packet, 4);
         var buletin = PacketHandler.ReadString(packet, 8, 254);

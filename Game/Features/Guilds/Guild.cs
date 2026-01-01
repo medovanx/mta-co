@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -11,6 +10,7 @@ using MTA.Database;
 using MTA.Game.ConquerStructures;
 using MTA.Game.ConquerStructures.Society;
 using MTA.Game.Events.GuildWar;
+using MTA.Game.Features.Guilds.Constants;
 using MTA.Game.Features.Guilds.Database;
 using MTA.Game.Features.Guilds.Handlers;
 using MTA.Game.Features.Guilds.Packets;
@@ -20,73 +20,6 @@ using MTA.Network.GamePackets;
 using static MTA.Game.Constants.EntityClass;
 
 namespace MTA.Game.Features.Guilds;
-
-public enum ArsenalType {
-    Headgear,
-    Armor,
-    Weapon,
-    Ring,
-    Boots,
-    Necklace,
-    Fan,
-    Tower
-}
-
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-public enum GuildRank {
-    Agent = 590,
-    Aide = 0x25a,
-    ArsenalAgent = 0x254,
-    ArsFollower = 0x1f0,
-    ASupervisor = 0x358,
-    CPAgent = 0x255,
-    CPFollower = 0x1f1,
-    CPSupervisor = 0x359,
-    DeputyLeader = 990,
-    DeputySteward = 650,
-    DLeaderAide = 0x263,
-    DLeaderSpouse = 620,
-    Follower = 490,
-    GSupervisor = 0x356,
-    GuideAgent = 0x252,
-    GuideFollower = 0x1ee,
-    GuildLeader = 0x3e8,
-    HDeputyLeader = 980,
-    HManager = 880,
-    HSteward = 680,
-    HSupervisor = 840,
-    LeaderSpouse = 920,
-    LilyAgent = 0x24f,
-    LilyFollower = 0x1eb,
-    LilySupervisor = 0x353,
-    LSpouseAide = 610,
-    Manager = 890,
-    ManagerAide = 510,
-    ManagerSpouse = 520,
-    Member = 200,
-    None = 0,
-    OrchidAgent = 0x256,
-    OrchidFollower = 0x1f2,
-    OSupervisor = 0x35a,
-    PKAgent = 0x251,
-    PKFollower = 0x1ed,
-    PKSupervisor = 0x355,
-    RoseAgent = 0x250,
-    RoseFollower = 0x1ec,
-    RoseSupervisor = 0x354,
-    SeniorMember = 210,
-    SilverAgent = 0x253,
-    SilverFollower = 0x1ef,
-    SSupervisor = 0x357,
-    Steward = 690,
-    StewardSpouse = 420,
-    Supervisor = 850,
-    SupervisorAide = 0x1ff,
-    SupervisorSpouse = 0x209,
-    TSupervisor = 0x35b,
-    TulipAgent = 0x257,
-    TulipFollower = 0x1f3
-}
 
 public class Guild : Writer {
     public static Counter GuildCounter = new(0);
@@ -100,7 +33,7 @@ public class Guild : Writer {
     public readonly List<uint> BlackList = [];
     public readonly SafeDictionary<uint, Guild> Enemy;
 
-    public readonly ushort[] RanksCounts = new ushort[(ushort)Enums.GuildMemberRank.GuildLeader + 1];
+    public readonly ushort[] RanksCounts = new ushort[(ushort)MemberRank.GuildLeader + 1];
 
     private int _arsenalBp;
     private string _leaderName;
@@ -413,7 +346,7 @@ public class Guild : Writer {
         return (uint)_arsenalBp;
     }
 
-    public uint GetMemberPotency(Enums.GuildMemberRank rank) {
+    public uint GetMemberPotency(MemberRank rank) {
         // Calculate potency based on rank and arsenal BP
         // This is a placeholder - the actual calculation may need to be implemented based on game logic
         return (uint)_arsenalBp;
@@ -422,10 +355,10 @@ public class Guild : Writer {
     public uint GetSharedBattlePower(int rank) {
         return
             GetMemberPotency(
-                (Enums.GuildMemberRank)rank); //(uint)(arsenal_bp * SharedBattlePowerPercentage[rank / 100]);
+                (MemberRank)rank); //(uint)(arsenal_bp * SharedBattlePowerPercentage[rank / 100]);
     }
 
-    public uint GetSharedBattlePower(Enums.GuildMemberRank rank) {
+    public uint GetSharedBattlePower(MemberRank rank) {
         return GetSharedBattlePower((int)rank);
     }
 
@@ -520,7 +453,7 @@ public class Guild : Writer {
             foreach (var member in Members.Values.Where(member => (ushort)member.Rank < 920)) {
                 if (RanksCounts[(ushort)member.Rank] > 0)
                     RanksCounts[(ushort)member.Rank]--;
-                member.Rank = Enums.GuildMemberRank.Member;
+                member.Rank = MemberRank.Member;
                 RanksCounts[(ushort)member.Rank]++;
             }
 
@@ -535,44 +468,44 @@ public class Guild : Writer {
                 .ToArray();
             for (byte x = 0; x < poll.Length; x++) {
                 var member = poll[x];
-                if (member.Rank > Enums.GuildMemberRank.Manager)
+                if (member.Rank > MemberRank.Manager)
                     continue;
                 if (amount < maxManager) {
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.Manager;
+                    member.Rank = MemberRank.Manager;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
                 else if (amount < maxManager + maxHonorManager) {
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.HonoraryManager;
+                    member.Rank = MemberRank.HonoraryManager;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
                 else if (amount < maxHonorManager + maxManager + maxSupervisor) {
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.Supervisor;
+                    member.Rank = MemberRank.Supervisor;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
                 else if (amount < maxHonorManager + maxManager + maxSupervisor + maxSteward) {
-                    if (member.Rank > Enums.GuildMemberRank.Steward)
+                    if (member.Rank > MemberRank.Steward)
                         continue;
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.Steward;
+                    member.Rank = MemberRank.Steward;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
                 else if (amount < maxHonorManager + maxManager + maxSupervisor + maxSteward + maxArsFollower) {
-                    if (member.Rank > Enums.GuildMemberRank.ArsFollower)
+                    if (member.Rank > MemberRank.ArsFollower)
                         continue;
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.ArsFollower;
+                    member.Rank = MemberRank.ArsFollower;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
@@ -592,30 +525,30 @@ public class Guild : Writer {
                 .ToArray();
             for (byte x = 0; x < poll.Length; x++) {
                 var member = poll[x];
-                if (member.Rank > Enums.GuildMemberRank.CPSupervisor)
+                if (member.Rank > MemberRank.CPSupervisor)
                     continue;
                 if (amount < maxCpSupervisor) {
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.CPSupervisor;
+                    member.Rank = MemberRank.CPSupervisor;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
                 else if (amount < maxCpSupervisor + maxCpAgent) {
-                    if (member.Rank > Enums.GuildMemberRank.CPAgent)
+                    if (member.Rank > MemberRank.CPAgent)
                         continue;
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.CPAgent;
+                    member.Rank = MemberRank.CPAgent;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
                 else if (amount < maxCpSupervisor + maxCpAgent + maxCpFollower) {
-                    if (member.Rank > Enums.GuildMemberRank.CPFollower)
+                    if (member.Rank > MemberRank.CPFollower)
                         continue;
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.CPFollower;
+                    member.Rank = MemberRank.CPFollower;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
@@ -634,30 +567,30 @@ public class Guild : Writer {
             poll = (from member in Members.Values orderby member.PkDonation descending select member).ToArray();
             for (byte x = 0; x < poll.Length; x++) {
                 var member = poll[x];
-                if (member.Rank > Enums.GuildMemberRank.PKSupervisor)
+                if (member.Rank > MemberRank.PKSupervisor)
                     continue;
                 if (amount < maxPkSupervisor) {
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.PKSupervisor;
+                    member.Rank = MemberRank.PKSupervisor;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
                 else if (amount < maxPkSupervisor + maxPkAgent) {
-                    if (member.Rank > Enums.GuildMemberRank.PKAgent)
+                    if (member.Rank > MemberRank.PKAgent)
                         continue;
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.PKAgent;
+                    member.Rank = MemberRank.PKAgent;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
                 else if (amount < maxPkSupervisor + maxPkAgent + maxPkFollower) {
-                    if (member.Rank > Enums.GuildMemberRank.PKFollower)
+                    if (member.Rank > MemberRank.PKFollower)
                         continue;
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.PKFollower;
+                    member.Rank = MemberRank.PKFollower;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
@@ -676,30 +609,30 @@ public class Guild : Writer {
             poll = (from member in Members.Values orderby member.Roses descending select member).ToArray();
             for (byte x = 0; x < poll.Length; x++) {
                 var member = poll[x];
-                if (member.Rank > Enums.GuildMemberRank.RoseSupervisor)
+                if (member.Rank > MemberRank.RoseSupervisor)
                     continue;
                 if (amount < maxRoseSupervisor) {
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.RoseSupervisor;
+                    member.Rank = MemberRank.RoseSupervisor;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
                 else if (amount < maxRoseSupervisor + maxRoseAgent) {
-                    if (member.Rank > Enums.GuildMemberRank.RoseAgent)
+                    if (member.Rank > MemberRank.RoseAgent)
                         continue;
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.RoseAgent;
+                    member.Rank = MemberRank.RoseAgent;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
                 else if (amount < maxRoseSupervisor + maxRoseAgent + maxRoseFollower) {
-                    if (member.Rank > Enums.GuildMemberRank.RoseFollower)
+                    if (member.Rank > MemberRank.RoseFollower)
                         continue;
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.RoseFollower;
+                    member.Rank = MemberRank.RoseFollower;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
@@ -718,30 +651,30 @@ public class Guild : Writer {
             poll = (from member in Members.Values orderby member.Lilies descending select member).ToArray();
             for (byte x = 0; x < poll.Length; x++) {
                 var member = poll[x];
-                if (member.Rank > Enums.GuildMemberRank.LilySupervisor)
+                if (member.Rank > MemberRank.LilySupervisor)
                     continue;
                 if (amount < maxLilySupervisor) {
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.LilySupervisor;
+                    member.Rank = MemberRank.LilySupervisor;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
                 else if (amount < maxLilySupervisor + maxLilyAgent) {
-                    if (member.Rank > Enums.GuildMemberRank.LilyAgent)
+                    if (member.Rank > MemberRank.LilyAgent)
                         continue;
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.LilyAgent;
+                    member.Rank = MemberRank.LilyAgent;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
                 else if (amount < maxLilySupervisor + maxLilyAgent + maxLilyFollower) {
-                    if (member.Rank > Enums.GuildMemberRank.LilyFollower)
+                    if (member.Rank > MemberRank.LilyFollower)
                         continue;
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.LilyFollower;
+                    member.Rank = MemberRank.LilyFollower;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
@@ -760,30 +693,30 @@ public class Guild : Writer {
             poll = (from member in Members.Values orderby member.Tulips descending select member).ToArray();
             for (byte x = 0; x < poll.Length; x++) {
                 var member = poll[x];
-                if (member.Rank > Enums.GuildMemberRank.TSupervisor)
+                if (member.Rank > MemberRank.TSupervisor)
                     continue;
                 if (amount < maxTSupervisor) {
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.TSupervisor;
+                    member.Rank = MemberRank.TSupervisor;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
                 else if (amount < maxTSupervisor + maxTulipAgent) {
-                    if (member.Rank > Enums.GuildMemberRank.TulipAgent)
+                    if (member.Rank > MemberRank.TulipAgent)
                         continue;
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.TulipAgent;
+                    member.Rank = MemberRank.TulipAgent;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
                 else if (amount < maxTSupervisor + maxTulipAgent + maxTulipFollower) {
-                    if (member.Rank > Enums.GuildMemberRank.TulipFollower)
+                    if (member.Rank > MemberRank.TulipFollower)
                         continue;
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.TulipFollower;
+                    member.Rank = MemberRank.TulipFollower;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
@@ -804,30 +737,30 @@ public class Guild : Writer {
                 select member).ToArray();
             for (byte x = 0; x < poll.Length; x++) {
                 var member = poll[x];
-                if (member.Rank > Enums.GuildMemberRank.OSupervisor)
+                if (member.Rank > MemberRank.OSupervisor)
                     continue;
                 if (amount < maxOSupervisor) {
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.OSupervisor;
+                    member.Rank = MemberRank.OSupervisor;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
                 else if (amount < maxOSupervisor + maxOrchidAgent) {
-                    if (member.Rank > Enums.GuildMemberRank.OrchidAgent)
+                    if (member.Rank > MemberRank.OrchidAgent)
                         continue;
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.OrchidAgent;
+                    member.Rank = MemberRank.OrchidAgent;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
                 else if (amount < maxOSupervisor + maxOrchidFollower + maxOrchidAgent) {
-                    if (member.Rank > Enums.GuildMemberRank.OrchidFollower)
+                    if (member.Rank > MemberRank.OrchidFollower)
                         continue;
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.OrchidFollower;
+                    member.Rank = MemberRank.OrchidFollower;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
@@ -848,21 +781,21 @@ public class Guild : Writer {
             amount = 0; //20
             for (byte x = 0; x < poll.Length; x++) {
                 var member = poll[x];
-                if (member.Rank > Enums.GuildMemberRank.HDeputyLeader)
+                if (member.Rank > MemberRank.HDeputyLeader)
                     continue;
                 if (amount < hDeputyLeader) {
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.HDeputyLeader;
+                    member.Rank = MemberRank.HDeputyLeader;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
                 else if (amount < hDeputyLeader + maxHonorarySteward) {
-                    if (member.Rank > Enums.GuildMemberRank.HonorarySteward)
+                    if (member.Rank > MemberRank.HonorarySteward)
                         continue;
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.HonorarySteward;
+                    member.Rank = MemberRank.HonorarySteward;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
@@ -883,30 +816,30 @@ public class Guild : Writer {
                 select member).ToArray();
             for (byte x = 0; x < poll.Length; x++) {
                 var member = poll[x];
-                if (member.Rank > Enums.GuildMemberRank.SSupervisor)
+                if (member.Rank > MemberRank.SSupervisor)
                     continue;
                 if (amount < sSupervisor) {
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.SSupervisor;
+                    member.Rank = MemberRank.SSupervisor;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
                 else if (amount < sSupervisor + maxSilverAgent) {
-                    if (member.Rank > Enums.GuildMemberRank.SilverAgent)
+                    if (member.Rank > MemberRank.SilverAgent)
                         continue;
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.SilverAgent;
+                    member.Rank = MemberRank.SilverAgent;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
                 else if (amount < sSupervisor + maxSilverAgent + maxSilverFollower) {
-                    if (member.Rank > Enums.GuildMemberRank.SilverFollower)
+                    if (member.Rank > MemberRank.SilverFollower)
                         continue;
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.SilverFollower;
+                    member.Rank = MemberRank.SilverFollower;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
@@ -927,30 +860,30 @@ public class Guild : Writer {
 
             for (byte x = 0; x < poll.Length; x++) {
                 var member = poll[x];
-                if (member.Rank > Enums.GuildMemberRank.GSupervisor)
+                if (member.Rank > MemberRank.GSupervisor)
                     continue;
                 if (amount < gSupervisor) {
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.GSupervisor;
+                    member.Rank = MemberRank.GSupervisor;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
                 else if (amount < gSupervisor + maxGAgent) {
-                    if (member.Rank > Enums.GuildMemberRank.GuideAgent)
+                    if (member.Rank > MemberRank.GuideAgent)
                         continue;
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.GuideAgent;
+                    member.Rank = MemberRank.GuideAgent;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
                 else if (amount < gSupervisor + maxGAgent + maxGFollower) {
-                    if (member.Rank > Enums.GuildMemberRank.GuideFollower)
+                    if (member.Rank > MemberRank.GuideFollower)
                         continue;
                     if (RanksCounts[(ushort)member.Rank] > 0)
                         RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = Enums.GuildMemberRank.GuideFollower;
+                    member.Rank = MemberRank.GuideFollower;
                     RanksCounts[(ushort)member.Rank]++;
                     amount++;
                 }
@@ -1025,7 +958,7 @@ public class Guild : Writer {
             Id = client.Entity.UID,
             Level = client.Entity.Level,
             Name = client.Entity.Name,
-            Rank = Enums.GuildMemberRank.GuildLeader
+            Rank = MemberRank.GuildLeader
         };
 
         if (client.NobilityInformation != null) {
@@ -1035,7 +968,7 @@ public class Guild : Writer {
 
         // Set up entity
         client.Entity.GuildID = (ushort)guild.Id;
-        client.Entity.GuildRank = (ushort)Enums.GuildMemberRank.GuildLeader;
+        client.Entity.GuildRank = (ushort)MemberRank.GuildLeader;
         guild.Leader = client.AsMember;
         client.Guild = guild;
 
@@ -1129,7 +1062,7 @@ public class Guild : Writer {
             Id = client.Entity.UID,
             Level = client.Entity.Level,
             Name = client.Entity.Name,
-            Rank = Enums.GuildMemberRank.Member,
+            Rank = MemberRank.Member,
             Mesh = client.Entity.Mesh
         };
         if (Nobility.Board.TryGetValue(client.Entity.UID, out var value)) {
@@ -1253,8 +1186,8 @@ public class Guild : Writer {
             SendGuildMessage(new Message(member.Name + " have been expelled from our guild.",
                 Color.Black, Message.Guild));
         var uid = member.Id;
-        if (member.Rank == Enums.GuildMemberRank.DeputyLeader)
-            RanksCounts[(ushort)Enums.GuildMemberRank.DeputyLeader]--;
+        if (member.Rank == MemberRank.DeputyLeader)
+            RanksCounts[(ushort)MemberRank.DeputyLeader]--;
         if (Kernel.TryGetPlayer(member.Id, out var onlineClient)) {
             var command = new GuildCommand(true) {
                 Type = GuildCommand.Disband,
@@ -1657,7 +1590,7 @@ public class Guild : Writer {
 
         public Guild Guild => Kernel.Guilds[GuildId];
 
-        public Enums.GuildMemberRank Rank { get; set; }
+        public MemberRank Rank { get; set; }
         public byte Level { get; set; }
         public NobilityRank NobilityRank { get; set; }
         public byte Gender { get; set; }

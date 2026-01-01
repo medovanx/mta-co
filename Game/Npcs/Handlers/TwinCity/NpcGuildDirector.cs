@@ -1,5 +1,6 @@
 using MTA.Client;
 using MTA.Game.Features.Guilds;
+using MTA.Game.Features.Guilds.Constants;
 using MTA.Network.GamePackets;
 using static MTA.Game.Enums;
 
@@ -19,7 +20,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                         dialog.Option("Create a Guild", 1);
                     }
 
-                    if (client is { Guild: not null, AsMember.Rank: GuildMemberRank.GuildLeader }) {
+                    if (client is { Guild: not null, AsMember.Rank: MemberRank.GuildLeader }) {
                         dialog.Option("Disband my Guild", 3);
                         dialog.Option("Change my Guild Name", 5);
                     }
@@ -80,7 +81,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     break;
                 }
                 case 4: {
-                    if (client is { Guild: not null, AsMember.Rank: GuildMemberRank.GuildLeader }) {
+                    if (client is { Guild: not null, AsMember.Rank: MemberRank.GuildLeader }) {
                         client.Guild.Disband(client.Entity.Name);
                     }
 
@@ -96,7 +97,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                 }
                 case 6: {
                     const uint nameChangeCost = 215;
-                    if (client.AsMember?.Rank != GuildMemberRank.GuildLeader) {
+                    if (client.AsMember?.Rank != MemberRank.GuildLeader) {
                         dialog.Text("You must be the Guild Leader to change the guild name.");
                         dialog.Option("I understand", 255);
                         dialog.Send();

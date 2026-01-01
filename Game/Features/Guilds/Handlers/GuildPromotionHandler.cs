@@ -2,6 +2,7 @@ using System.Linq;
 using System.Text;
 using MTA.Client;
 using MTA.Database;
+using MTA.Game.Features.Guilds.Constants;
 using MTA.Game.Features.Guilds.Database;
 using MTA.Game.Features.Guilds.Packets;
 using MTA.Network.GamePackets;
@@ -11,8 +12,8 @@ namespace MTA.Game.Features.Guilds.Handlers;
 
 public static class GuildPromotionHandler {
     public static void HandlePromoteInfo(GuildCommand command, byte[] packet, GameState client) {
-        if (client.AsMember!.Rank == Enums.GuildMemberRank.GuildLeader) {
-            var array2 = client.Guild!.Members.Values.Where(p => p.Rank == (Enums.GuildMemberRank)command.DwParam)
+        if (client.AsMember!.Rank == MemberRank.GuildLeader) {
+            var array2 = client.Guild!.Members.Values.Where(p => p.Rank == (MemberRank)command.DwParam)
                 .ToDictionary(p => p.Id);
 
             var array = array2.Values.ToArray();
@@ -52,12 +53,12 @@ public static class GuildPromotionHandler {
 
     public static void HandleDischarge(GuildCommand command, byte[] packet, GameState client) {
         var name = Encoding.Default.GetString(packet, 26, packet[25]);
-        if (client is not { Guild: not null, AsMember.Rank: Enums.GuildMemberRank.GuildLeader }) return;
+        if (client is not { Guild: not null, AsMember.Rank: MemberRank.GuildLeader }) return;
         var member = client.Guild.GetMemberByName(name);
         if (member?.Id == client.Entity.UID) return;
-        if (member?.Rank != Enums.GuildMemberRank.DeputyLeader) return;
-        client.Guild.RanksCounts[(ushort)Enums.GuildMemberRank.DeputyLeader]--;
-        member.Rank = Enums.GuildMemberRank.Member;
+        if (member?.Rank != MemberRank.DeputyLeader) return;
+        client.Guild.RanksCounts[(ushort)MemberRank.DeputyLeader]--;
+        member.Rank = MemberRank.Member;
         if (Kernel.TryGetPlayer(member.Id, out var memberClient)) {
             client.Guild.SendGuild(memberClient);
             memberClient.Entity.GuildRank = (ushort)member.Rank;
@@ -82,15 +83,15 @@ public static class GuildPromotionHandler {
                 return;
             }
 
-            if (client.AsMember.Rank == Enums.GuildMemberRank.DeputyLeader)
+            if (client.AsMember.Rank == MemberRank.DeputyLeader)
                 switch (getMemberRank) {
-                    case (ushort)Enums.GuildMemberRank.Steward when client.Guild.RanksCounts[getMemberRank] >= 3:
+                    case (ushort)MemberRank.Steward when client.Guild.RanksCounts[getMemberRank] >= 3:
                         client.Entity.SendSysMesage(
                             "Sorry all Steward`s ranks its ocupated!");
                         return;
-                    case (ushort)Enums.GuildMemberRank.Steward: {
+                    case (ushort)MemberRank.Steward: {
                         client.Guild.RanksCounts[(ushort)memberPromote.Rank]--;
-                        memberPromote.Rank = (Enums.GuildMemberRank)getMemberRank;
+                        memberPromote.Rank = (MemberRank)getMemberRank;
                         client.Guild.RanksCounts[(ushort)memberPromote.Rank]++;
                         if (Kernel.TryGetPlayer(memberPromote.Id, out var promoteClient)) {
                             client.Guild.SendGuild(promoteClient);
@@ -103,13 +104,13 @@ public static class GuildPromotionHandler {
 
                         break;
                     }
-                    case (ushort)Enums.GuildMemberRank.Follower when client.Guild.RanksCounts[getMemberRank] >= 10:
+                    case (ushort)MemberRank.Follower when client.Guild.RanksCounts[getMemberRank] >= 10:
                         client.Entity.SendSysMesage(
                             "Sorry all Follower`s ranks its ocupated!");
                         return;
-                    case (ushort)Enums.GuildMemberRank.Follower: {
+                    case (ushort)MemberRank.Follower: {
                         client.Guild.RanksCounts[(ushort)memberPromote.Rank]--;
-                        memberPromote.Rank = (Enums.GuildMemberRank)getMemberRank;
+                        memberPromote.Rank = (MemberRank)getMemberRank;
                         client.Guild.RanksCounts[(ushort)memberPromote.Rank]++;
                         if (Kernel.TryGetPlayer(memberPromote.Id, out var promoteClient)) {
                             client.Guild.SendGuild(promoteClient);
@@ -122,12 +123,12 @@ public static class GuildPromotionHandler {
 
                         break;
                     }
-                    case (ushort)Enums.GuildMemberRank.Aide when client.Guild.RanksCounts[getMemberRank] >= 6:
+                    case (ushort)MemberRank.Aide when client.Guild.RanksCounts[getMemberRank] >= 6:
                         client.Entity.SendSysMesage("Sorry all Aide`s ranks its ocupated!");
                         return;
-                    case (ushort)Enums.GuildMemberRank.Aide: {
+                    case (ushort)MemberRank.Aide: {
                         client.Guild.RanksCounts[(ushort)memberPromote.Rank]--;
-                        memberPromote.Rank = (Enums.GuildMemberRank)getMemberRank;
+                        memberPromote.Rank = (MemberRank)getMemberRank;
                         client.Guild.RanksCounts[(ushort)memberPromote.Rank]++;
                         if (Kernel.TryGetPlayer(memberPromote.Id, out var promoteClient)) {
                             client.Guild.SendGuild(promoteClient);
@@ -142,16 +143,16 @@ public static class GuildPromotionHandler {
                     }
                 }
 
-            if (client.AsMember.Rank is Enums.GuildMemberRank.Manager
-                or Enums.GuildMemberRank.HonoraryManager)
-                if (getMemberRank == (ushort)Enums.GuildMemberRank.Aide) {
+            if (client.AsMember.Rank is MemberRank.Manager
+                or MemberRank.HonoraryManager)
+                if (getMemberRank == (ushort)MemberRank.Aide) {
                     if (client.Guild.RanksCounts[getMemberRank] >= 6) {
                         client.Entity.SendSysMesage("Sorry all Aide`s ranks its ocupated!");
                         return;
                     }
 
                     client.Guild.RanksCounts[(ushort)memberPromote.Rank]--;
-                    memberPromote.Rank = (Enums.GuildMemberRank)getMemberRank;
+                    memberPromote.Rank = (MemberRank)getMemberRank;
                     client.Guild.RanksCounts[(ushort)memberPromote.Rank]++;
                     if (Kernel.TryGetPlayer(memberPromote.Id, out var promoteClient)) {
                         client.Guild.SendGuild(promoteClient);
@@ -163,14 +164,14 @@ public static class GuildPromotionHandler {
                     }
                 }
 
-            if (client.AsMember.Rank is Enums.GuildMemberRank.GuildLeader
-                or Enums.GuildMemberRank.LeaderSpouse)
+            if (client.AsMember.Rank is MemberRank.GuildLeader
+                or MemberRank.LeaderSpouse)
                 switch (getMemberRank) {
-                    case (ushort)Enums.GuildMemberRank.GuildLeader
-                        when client.AsMember.Rank == Enums.GuildMemberRank.LeaderSpouse:
+                    case (ushort)MemberRank.GuildLeader
+                        when client.AsMember.Rank == MemberRank.LeaderSpouse:
                         return;
-                    case (ushort)Enums.GuildMemberRank.GuildLeader: {
-                        memberPromote.Rank = Enums.GuildMemberRank.GuildLeader;
+                    case (ushort)MemberRank.GuildLeader: {
+                        memberPromote.Rank = MemberRank.GuildLeader;
 
                         client.Guild.LeaderId = memberPromote.Id;
                         client.Guild.Leader = memberPromote;
@@ -184,7 +185,7 @@ public static class GuildPromotionHandler {
                             promoteClient.Screen.Reload();
                         }
 
-                        client.AsMember.Rank = Enums.GuildMemberRank.DeputyLeader;
+                        client.AsMember.Rank = MemberRank.DeputyLeader;
 
                         client.Entity.GuildRank = (ushort)client.AsMember.Rank;
 
@@ -194,13 +195,13 @@ public static class GuildPromotionHandler {
                         GuildTable.SaveLeader(client.Guild);
                         break;
                     }
-                    case (ushort)Enums.GuildMemberRank.DeputyLeader when client.Guild.RanksCounts[getMemberRank] >= 6:
+                    case (ushort)MemberRank.DeputyLeader when client.Guild.RanksCounts[getMemberRank] >= 6:
                         client.Entity.SendSysMesage(
                             "Sorry all DeputyLeader`s ranks its ocupated!");
                         return;
-                    case (ushort)Enums.GuildMemberRank.DeputyLeader: {
+                    case (ushort)MemberRank.DeputyLeader: {
                         client.Guild.RanksCounts[(ushort)memberPromote.Rank]--;
-                        memberPromote.Rank = (Enums.GuildMemberRank)getMemberRank;
+                        memberPromote.Rank = (MemberRank)getMemberRank;
                         client.Guild.RanksCounts[(ushort)memberPromote.Rank]++;
                         if (Kernel.TryGetPlayer(memberPromote.Id, out var promoteClient)) {
                             client.Guild.SendGuild(promoteClient);
@@ -213,15 +214,15 @@ public static class GuildPromotionHandler {
 
                         break;
                     }
-                    case (ushort)Enums.GuildMemberRank.Aide
-                        when client.AsMember.Rank == Enums.GuildMemberRank.LeaderSpouse:
+                    case (ushort)MemberRank.Aide
+                        when client.AsMember.Rank == MemberRank.LeaderSpouse:
                         return;
-                    case (ushort)Enums.GuildMemberRank.Aide when client.Guild.RanksCounts[getMemberRank] >= 6:
+                    case (ushort)MemberRank.Aide when client.Guild.RanksCounts[getMemberRank] >= 6:
                         client.Entity.SendSysMesage("Sorry all Aide`s ranks its ocupated!");
                         return;
-                    case (ushort)Enums.GuildMemberRank.Aide: {
+                    case (ushort)MemberRank.Aide: {
                         client.Guild.RanksCounts[(ushort)memberPromote.Rank]--;
-                        memberPromote.Rank = (Enums.GuildMemberRank)getMemberRank;
+                        memberPromote.Rank = (MemberRank)getMemberRank;
                         client.Guild.RanksCounts[(ushort)memberPromote.Rank]++;
                         if (Kernel.TryGetPlayer(memberPromote.Id, out var promoteClient)) {
                             client.Guild.SendGuild(promoteClient);
@@ -234,13 +235,13 @@ public static class GuildPromotionHandler {
 
                         break;
                     }
-                    case (ushort)Enums.GuildMemberRank.Steward when client.Guild.RanksCounts[getMemberRank] >= 3:
+                    case (ushort)MemberRank.Steward when client.Guild.RanksCounts[getMemberRank] >= 3:
                         client.Entity.SendSysMesage(
                             "Sorry all Steward`s ranks its ocupated!");
                         return;
-                    case (ushort)Enums.GuildMemberRank.Steward: {
+                    case (ushort)MemberRank.Steward: {
                         client.Guild.RanksCounts[(ushort)memberPromote.Rank]--;
-                        memberPromote.Rank = (Enums.GuildMemberRank)getMemberRank;
+                        memberPromote.Rank = (MemberRank)getMemberRank;
                         client.Guild.RanksCounts[(ushort)memberPromote.Rank]++;
                         if (Kernel.TryGetPlayer(memberPromote.Id, out var promoteClient)) {
                             client.Guild.SendGuild(promoteClient);
@@ -253,14 +254,14 @@ public static class GuildPromotionHandler {
 
                         break;
                     }
-                    case (ushort)Enums.GuildMemberRank.Follower when client.Guild.RanksCounts[getMemberRank] >= 10:
+                    case (ushort)MemberRank.Follower when client.Guild.RanksCounts[getMemberRank] >= 10:
                         client.Entity.SendSysMesage(
                             "Sorry all Follower`s ranks its ocupated!");
                         return;
-                    case (ushort)Enums.GuildMemberRank.Follower:
-                    case (ushort)Enums.GuildMemberRank.Member: {
+                    case (ushort)MemberRank.Follower:
+                    case (ushort)MemberRank.Member: {
                         client.Guild.RanksCounts[(ushort)memberPromote.Rank]--;
-                        memberPromote.Rank = (Enums.GuildMemberRank)getMemberRank;
+                        memberPromote.Rank = (MemberRank)getMemberRank;
                         client.Guild.RanksCounts[(ushort)memberPromote.Rank]++;
                         if (Kernel.TryGetPlayer(memberPromote.Id, out var promoteClient)) {
                             client.Guild.SendGuild(promoteClient);

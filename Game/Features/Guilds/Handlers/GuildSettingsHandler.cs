@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using MTA.Client;
+using MTA.Game.Features.Guilds.Constants;
 using MTA.Game.Features.Guilds.Database;
 using MTA.Game.Features.Guilds.Packets;
 using MTA.Network.GamePackets;
@@ -16,7 +17,7 @@ public static class GuildSettingsHandler {
     }
 
     public static void HandleChangeRequirements(GuildCommand command, GameState client) {
-        if (client.AsMember!.Rank != Enums.GuildMemberRank.GuildLeader) return;
+        if (client.AsMember!.Rank != MemberRank.GuildLeader) return;
         client.Guild!.LevelRequirement = Math.Min(command.DwParam2, 140);
         client.Guild.RebornRequirement = Math.Min(command.DwParam3, 2);
         client.Guild.ClassRequirement = Math.Min(command.DwParam4, 127);
@@ -28,7 +29,7 @@ public static class GuildSettingsHandler {
 
     public static void HandleBulletin(GuildCommand command, byte[] packet, GameState client) {
         var message = Encoding.Default.GetString(packet, 26, packet[25]);
-        if (client is not { Guild: not null, AsMember.Rank: Enums.GuildMemberRank.GuildLeader }) return;
+        if (client is not { Guild: not null, AsMember.Rank: MemberRank.GuildLeader }) return;
         client.Guild.Bulletin = message;
         client.Guild.CreateBulletinTime();
         client.Guild.SendGuild(client);
