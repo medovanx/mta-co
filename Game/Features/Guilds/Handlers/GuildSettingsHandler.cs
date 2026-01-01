@@ -12,14 +12,14 @@ namespace MTA.Game.Features.Guilds.Handlers;
 [PacketHandler(1058)]
 public static class GuildSettingsHandler {
     public static void HandleInfo(GuildCommand command, GameState client) {
-        if (Kernel.Guilds.TryGetValue(command.dwParam, out var guild)) guild.SendName(client);
+        if (Kernel.Guilds.TryGetValue(command.DwParam, out var guild)) guild.SendName(client);
     }
 
     public static void HandleChangeRequirements(GuildCommand command, GameState client) {
         if (client.AsMember!.Rank != Enums.GuildMemberRank.GuildLeader) return;
-        client.Guild!.LevelRequirement = Math.Min(command.dwParam2, 140);
-        client.Guild.RebornRequirement = Math.Min(command.dwParam3, 2);
-        client.Guild.ClassRequirement = Math.Min(command.dwParam4, 127);
+        client.Guild!.LevelRequirement = Math.Min(command.DwParam2, 140);
+        client.Guild.RebornRequirement = Math.Min(command.DwParam3, 2);
+        client.Guild.ClassRequirement = Math.Min(command.DwParam4, 127);
         foreach (var member in client.Guild.Members.Values)
             if (Kernel.TryGetPlayer(member.Id, out var memberClient))
                 client.Guild.SendGuild(memberClient);

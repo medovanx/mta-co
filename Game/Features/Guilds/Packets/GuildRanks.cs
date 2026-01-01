@@ -1,50 +1,49 @@
-using MTA.Game.Features.Guilds;
 using MTA.Network;
 
 namespace MTA.Game.Features.Guilds.Packets {
     public class GuildRanks : Writer {
-        byte[] packet;
-        ushort Position = 12;
+        private readonly byte[] _packet;
+        private ushort _position = 12;
 
-        public GuildRanks(ushort lenghts_count = 0) {
-            packet = new byte[(ushort)(24 + lenghts_count * 68)];
-            WriteUInt16((ushort)(packet.Length - 8), 0, packet);
-            WriteUInt16(2101, 2, packet);
-            WriteUInt16(lenghts_count, 6, packet); //counts
-            WriteUInt16(20, 8, packet); //registred count(top 20 members)
+        public GuildRanks(ushort lengthsCount = 0) {
+            _packet = new byte[(ushort)(24 + lengthsCount * 68)];
+            WriteUInt16((ushort)(_packet.Length - 8), 0, _packet);
+            WriteUInt16(2101, 2, _packet);
+            WriteUInt16(lengthsCount, 6, _packet); //counts
+            WriteUInt16(20, 8, _packet); //registred count(top 20 members)
         }
 
         public GuildRanks(byte[] buffer) {
-            packet = buffer;
+            _packet = buffer;
         }
 
         public ushort Rank {
-            get => BitConverter.ToUInt16(packet, 4);
-            set => WriteUInt16(value, 4, packet);
+            get => BitConverter.ToUInt16(_packet, 4);
+            init => WriteUInt16(value, 4, _packet);
         }
 
         public ushort Page {
-            get => BitConverter.ToUInt16(packet, 10);
-            set => WriteUInt16(value, 10, packet);
+            get => BitConverter.ToUInt16(_packet, 10);
+            set => WriteUInt16(value, 10, _packet);
         }
 
         public byte[] ToArray() {
-            return packet;
+            return _packet;
         }
 
-        public void Aprend(Guild.Member member, ulong Donation) {
-            WriteUInt32(member.Id, Position, packet);
-            Position += 4;
-            WriteUInt32((ushort)member.Rank, Position, packet);
-            var move_pos = (ushort)(4 * Rank);
-            Position += (ushort)(8 + move_pos);
-            WriteUInt64(Donation, Position, packet);
-            Position -= (ushort)(8 + move_pos);
-            Position += 44;
-            WriteUInt64(Donation, Position, packet);
-            Position += 4;
-            WriteString(member.Name, Position, packet);
-            Position += 16;
+        public void Aprend(Guild.Member member, ulong donation) {
+            WriteUInt32(member.Id, _position, _packet);
+            _position += 4;
+            WriteUInt32((ushort)member.Rank, _position, _packet);
+            var movePos = (ushort)(4 * Rank);
+            _position += (ushort)(8 + movePos);
+            WriteUInt64(donation, _position, _packet);
+            _position -= (ushort)(8 + movePos);
+            _position += 44;
+            WriteUInt64(donation, _position, _packet);
+            _position += 4;
+            WriteString(member.Name, _position, _packet);
+            _position += 16;
         }
     }
 }

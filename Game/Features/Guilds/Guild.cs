@@ -334,7 +334,7 @@ public class Guild : Writer {
 
     public byte Level {
         get => _buffer[60];
-        set => _buffer[60] = value;
+        private set => _buffer[60] = value;
     }
 
     public ulong LeaderId { get; set; }
@@ -474,7 +474,7 @@ public class Guild : Writer {
     }
 
     public static void GuildProfile(byte[] packet, GameState client) {
-        var p = new GuildProfilePacket();
+        var p = new GuildProfilePacket(packet);
         p.Deserialize(packet);
         p.Silver = 0;
         p.Pk = client.Entity.PKPoints;
@@ -1258,7 +1258,7 @@ public class Guild : Writer {
         if (Kernel.TryGetPlayer(member.Id, out var onlineClient)) {
             var command = new GuildCommand(true) {
                 Type = GuildCommand.Disband,
-                dwParam = Id
+                DwParam = Id
             };
             onlineClient.Send(command);
             onlineClient.AsMember = null;
@@ -1292,7 +1292,7 @@ public class Guild : Writer {
                 client.Entity.GuildBattlePower = 0;
                 var command = new GuildCommand(true) {
                     Type = GuildCommand.Disband,
-                    dwParam = Id
+                    DwParam = Id
                 };
                 client.Entity.GuildID = 0;
                 client.Entity.GuildRank = 0;
@@ -1358,7 +1358,7 @@ public class Guild : Writer {
             if (guild.Name != name) continue;
             var cmd = new GuildCommand(true) {
                 Type = GuildCommand.Neutral1,
-                dwParam = guild.Id
+                DwParam = guild.Id
             };
             SendGuildMessage(cmd);
             GuildTable.RemoveAlly(this, guild.Id);
@@ -1394,7 +1394,7 @@ public class Guild : Writer {
             if (guild.Name != name) continue;
             var cmd = new GuildCommand(true) {
                 Type = GuildCommand.Neutral2,
-                dwParam = guild.Id
+                DwParam = guild.Id
             };
             SendGuildMessage(cmd);
             SendGuildMessage(cmd);
@@ -1421,7 +1421,7 @@ public class Guild : Writer {
         Bulletin ??= "This is a new guild!";
 
         client.Send(new GuildCommand((uint)Bulletin.Length)
-            { Type = GuildCommand.Bulletin, dwParam = BulletinEnroll, Str_ = Bulletin });
+            { Type = GuildCommand.Bulletin, DwParam = BulletinEnroll, Str = Bulletin });
         //client.Send(new Message(Bulletin, System.Drawing.Color.White, Message.GuildAnnouncement));
         WriteUInt32((uint)client.AsMember.SilverDonation, 8, _buffer);
         WriteUInt32((ushort)client.AsMember.Rank, 28, _buffer);

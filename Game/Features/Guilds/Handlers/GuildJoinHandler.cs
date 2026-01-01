@@ -7,7 +7,7 @@ namespace MTA.Game.Features.Guilds.Handlers;
 
 public static class GuildJoinHandler {
     public static void HandleJoinRequest(GuildCommand command, GameState client) {
-        if (!Kernel.GamePool.TryGetValue(command.dwParam, out var target)) return;
+        if (!Kernel.GamePool.TryGetValue(command.DwParam, out var target)) return;
         client.GuildJoinTarget = target.Entity.UID;
         if (client.GuildJoinTarget == target.Entity.UID &&
             target.GuildJoinTarget == client.Entity.UID) {
@@ -36,7 +36,7 @@ public static class GuildJoinHandler {
 
             if (!GuildHelpers.PassJoinRequirements(client, tG)) return;
             client.Entity.GuildRequest = Time32.Now;
-            command.dwParam = client.Entity.UID;
+            command.DwParam = client.Entity.UID;
 
             var inf = new PopupLevelandBP {
                 Level = client.Entity.Level,
@@ -51,7 +51,7 @@ public static class GuildJoinHandler {
     }
 
     public static void HandleInviteRequest(GuildCommand command, GameState client) {
-        if (!Kernel.GamePool.TryGetValue(command.dwParam, out var target)) return;
+        if (!Kernel.GamePool.TryGetValue(command.DwParam, out var target)) return;
         client.GuildJoinTarget = target.Entity.UID;
         if (client.GuildJoinTarget == target.Entity.UID &&
             target.GuildJoinTarget == client.Entity.UID) {
@@ -77,7 +77,7 @@ public static class GuildJoinHandler {
             }
 
             client.Entity.GuildRequest = Time32.Now;
-            command.dwParam = client.Entity.UID;
+            command.DwParam = client.Entity.UID;
             var inf = new PopupLevelandBP {
                 Level = client.Entity.Level,
                 BattlePower = (uint)client.Entity.BattlePower,

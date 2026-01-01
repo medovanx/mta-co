@@ -10,11 +10,11 @@ public static class GuildDonationHandler {
         if (client.Guild == null) return;
         if (client.Trade.InTrade)
             return;
-        if (client.Entity.Money < command.dwParam) return;
-        client.Guild.SilverFund += command.dwParam;
+        if (client.Entity.Money < command.DwParam) return;
+        client.Guild.SilverFund += command.DwParam;
         GuildTable.SaveFunds(client.Guild);
-        client.AsMember!.SilverDonation += command.dwParam;
-        client.Entity.Money -= command.dwParam;
+        client.AsMember!.SilverDonation += command.DwParam;
+        client.Entity.Money -= command.DwParam;
         client.Guild.SendGuild(client);
     }
 
@@ -22,11 +22,11 @@ public static class GuildDonationHandler {
         if (client.Guild == null) return;
         if (client.Trade.InTrade)
             return;
-        if (client.Entity.ConquerPoints < command.dwParam) return;
-        client.Guild.ConquerPointFund += command.dwParam;
+        if (client.Entity.ConquerPoints < command.DwParam) return;
+        client.Guild.ConquerPointFund += command.DwParam;
         GuildTable.SaveFunds(client.Guild);
-        client.AsMember!.ConquerPointDonation += command.dwParam;
-        client.Entity.ConquerPoints -= command.dwParam;
+        client.AsMember!.ConquerPointDonation += command.DwParam;
+        client.Entity.ConquerPoints -= command.DwParam;
         client.Guild.SendGuild(client);
     }
 }

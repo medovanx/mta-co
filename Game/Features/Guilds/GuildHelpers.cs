@@ -71,9 +71,9 @@ public static class GuildHelpers {
     public static bool PassJoinRequirements(GameState client, Guild guild) {
         var cmd = new GuildCommand(true) {
             Type = GuildCommand.GuildRequirements,
-            dwParam2 = guild.LevelRequirement,
-            dwParam3 = guild.RebornRequirement,
-            dwParam4 = guild.ClassRequirement
+            DwParam2 = guild.LevelRequirement,
+            DwParam3 = guild.RebornRequirement,
+            DwParam4 = guild.ClassRequirement
         };
         if ((!EntityClass.IsTrojan(client.Entity.Class) || guild.AllowTrojans) &&
             (!EntityClass.IsWarrior(client.Entity.Class) || guild.AllowWarriors) &&

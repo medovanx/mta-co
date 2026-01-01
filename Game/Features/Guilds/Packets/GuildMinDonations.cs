@@ -1,30 +1,28 @@
-using MTA.Game;
-using MTA.Game.Features.Guilds;
 using MTA.Network;
 
 namespace MTA.Game.Features.Guilds.Packets {
     public class GuildMinDonations : Writer {
-        byte[] packet;
-        ushort Position = 8;
+        private readonly byte[] _packet;
+        private ushort _position = 8;
 
         public GuildMinDonations(ushort counts = 0) //31
         {
-            packet = new byte[(ushort)(16 + counts * 8)];
-            WriteUInt16((ushort)(packet.Length - 8), 0, packet);
-            WriteUInt16(1061, 2, packet);
-            WriteUInt16(counts, 6, packet);
+            _packet = new byte[(ushort)(16 + counts * 8)];
+            WriteUInt16((ushort)(_packet.Length - 8), 0, _packet);
+            WriteUInt16(1061, 2, _packet);
+            WriteUInt16(counts, 6, _packet);
         }
 
         public byte[] ToArray() {
-            return packet;
+            return _packet;
         }
 
-        public void Aprend(Enums.GuildMemberRank Rank, uint amount) {
-            WriteUInt32((ushort)Rank, Position, packet);
-            Position += 4;
+        private void Aprend(Enums.GuildMemberRank rank, uint amount) {
+            WriteUInt32((ushort)rank, _position, _packet);
+            _position += 4;
             //WriteUint(uint.MaxValue, Position);//for not apprend
-            WriteUInt32(amount, Position, packet);
-            Position += 4;
+            WriteUInt32(amount, _position, _packet);
+            _position += 4;
         }
 
         public void AprendGuild(Guild guild) {

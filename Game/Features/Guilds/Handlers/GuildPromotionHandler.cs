@@ -12,7 +12,7 @@ namespace MTA.Game.Features.Guilds.Handlers;
 public static class GuildPromotionHandler {
     public static void HandlePromoteInfo(GuildCommand command, byte[] packet, GameState client) {
         if (client.AsMember!.Rank == Enums.GuildMemberRank.GuildLeader) {
-            var array2 = client.Guild!.Members.Values.Where(p => p.Rank == (Enums.GuildMemberRank)command.dwParam)
+            var array2 = client.Guild!.Members.Values.Where(p => p.Rank == (Enums.GuildMemberRank)command.DwParam)
                 .ToDictionary(p => p.Id);
 
             var array = array2.Values.ToArray();
