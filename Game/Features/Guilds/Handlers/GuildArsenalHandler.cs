@@ -136,13 +136,13 @@ public static class GuildArsenalHandler {
         var arsenal = client.Guild.Arsenals[command.dwParam];
         if (!arsenal.Unlocked) return;
         if (!arsenal.ItemDictionary.TryGetValue(command.dwParam2, out var item)) return;
-        if (item.OwnerUID != client.Entity.UID) return;
+        if (item.OwnerUid != client.Entity.UID) return;
 
         // Find the item
-        if (!client.Inventory.TryGetItem(item.UID, out var foundItem)) {
+        if (!client.Inventory.TryGetItem(item.Uid, out var foundItem)) {
             var found = false;
             foreach (var eqItem in client.Equipment.Objects)
-                if (eqItem.UID == item.UID) {
+                if (eqItem.UID == item.Uid) {
                     foundItem = eqItem;
                     found = true;
                     break;
@@ -151,7 +151,7 @@ public static class GuildArsenalHandler {
             if (!found)
                 foreach (var wh in client.Warehouses.Values)
                 foreach (var eqItem in wh.Objects)
-                    if (eqItem.UID == item.UID) {
+                    if (eqItem.UID == item.Uid) {
                         foundItem = eqItem;
                         break;
                     }
@@ -228,11 +228,12 @@ public static class GuildArsenalHandler {
     public static void UniscribeItem(ConquerItem item, GameState client) {
         if (client.Entity.GuildID == 0 || client.Guild == null) return;
         var arsenalPosition = ArsenalPosition(item.ID);
-        client.Guild.Arsenals[arsenalPosition].RemoveItem(item, client);
+        var arsenal = client.Guild.Arsenals[arsenalPosition];
+        if (arsenal.ItemDictionary.TryGetValue(item.UID, out var arsenalItem))
+            arsenal.RemoveItem(arsenalItem, client);
         item.Inscribed = false;
         item.Mode = Enums.ItemMode.Update;
         item.Send(client);
-        //Save is done other else.
     }
 
     public static void UniscribeAllItems(GameState client) {

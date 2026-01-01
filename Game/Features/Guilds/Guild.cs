@@ -7,7 +7,6 @@ using System.Text;
 using MTA.Client;
 using MTA.Database;
 using MTA.Game.ConquerStructures;
-using MTA.Game.ConquerStructures.Society;
 using MTA.Game.Events.GuildWar;
 using MTA.Game.Features.Guilds.Constants;
 using MTA.Game.Features.Guilds.Database;

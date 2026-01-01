@@ -1,5 +1,4 @@
-using MTA.Game.Features.Guilds;
-using MTA.Game.ConquerStructures.Society;
+﻿using MTA.Game.Features.Guilds;
 
 namespace MTA.Network.GamePackets
 {
@@ -85,11 +84,11 @@ namespace MTA.Network.GamePackets
         public void AppendItem(Arsenal.ArsenalItem item)
         {
             int offset = (int)(44 + 40 * Count); Count++;
-            WriteUInt32(item.UID, offset, Buffer); offset += 4;
+            WriteUInt32(item.Uid, offset, Buffer); offset += 4;
             WriteUInt32(item.Rank, offset, Buffer); offset += 4;
             WriteString(item.Owner, offset, Buffer); offset += 16;
-            WriteUInt32(item.ID, offset, Buffer); offset += 4;
-            Buffer[offset] = (byte)(item.ID % 10); offset++;
+            WriteUInt32(item.Id, offset, Buffer); offset += 4;
+            Buffer[offset] = (byte)(item.Id % 10); offset++;
             Buffer[offset] = item.Plus; offset++;
             Buffer[offset] = item.SocketOne; offset++;
             Buffer[offset] = item.SocketTwo; offset++;
