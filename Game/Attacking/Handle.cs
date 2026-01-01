@@ -12,7 +12,7 @@ using MTA.MaTrix;
 using MTA.Network;
 using MTA.Network.GamePackets;
 using MTA.Game.Constants;
-using MTA.Game.Features.Guilds.Database;
+using MTA.Game.Features.Guilds.Conductors;
 
 namespace MTA.Game.Attacking {
     public class Handle {

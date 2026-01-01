@@ -1,6 +1,6 @@
 using MTA.Client;
 using MTA.Database;
-using MTA.Game.Features.Guilds.Database;
+using MTA.Game.Features.Guilds.Conductors;
 using MTA.Game.Npcs;
 using MTA.Network.GamePackets;
 

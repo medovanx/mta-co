@@ -15,6 +15,7 @@ public static class GuildSchema {
         public const string GuildRelationsTable = "guild_relations";
         public const string GuildArsenalTable = "guildarsenal";
         public const string GuildWarHistoryTable = "guild_war_history";
+        public const string GuildMembersTable = "guild_members";
     }
 
     /// <summary>
@@ -72,5 +73,26 @@ public static class GuildSchema {
         public const string GuildLeaderClaimed = "guild_leader_claimed";
         public const string DeputyClaimedIds = "deputy_claimed_ids";
         public const string WarEndTime = "war_end_time";
+    }
+
+    /// <summary>
+    ///     Column names for the `guild_members` table
+    /// </summary>
+    public static class GuildMembers {
+        public const string EntityId = "entity_id";
+        public const string GuildId = "guild_id";
+        public const string Rank = "rank";
+        public const string SilverDonation = "silver_donation";
+        public const string ConquerPointDonation = "conquer_point_donation";
+        public const string ArsenalDonation = "arsenal_donation";
+        public const string Lilies = "lilies";
+        public const string Roses = "roses";
+        public const string Orchids = "orchids";
+        public const string Tulips = "tulips";
+        public const string PkDonation = "pk_donation";
+        public const string LastLogin = "last_login";
+        public const string Exploits = "exploits";
+        public const string CtfCpsReward = "ctf_cps_reward";
+        public const string CtfSilverReward = "ctf_silver_reward";
     }
 }

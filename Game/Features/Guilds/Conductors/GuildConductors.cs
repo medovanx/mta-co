@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using MTA.Database;
 using MTA.Network.GamePackets;
 
-namespace MTA.Game.Features.Guilds.Database;
+namespace MTA.Game.Features.Guilds.Conductors;
 
 public static class GuildConductors {
     private static readonly List<ushort> AllowMaps =

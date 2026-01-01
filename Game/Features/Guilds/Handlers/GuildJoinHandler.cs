@@ -1,5 +1,6 @@
 using System;
 using MTA.Client;
+using MTA.Game.Constants;
 using MTA.Game.Features.Guilds.Constants;
 using MTA.Game.Features.Guilds.Packets;
 using MTA.Network.GamePackets;
@@ -35,7 +36,7 @@ public static class GuildJoinHandler {
                 return;
             }
 
-            if (!GuildHelpers.PassJoinRequirements(client, tG)) return;
+            if (!PassJoinRequirements(client, tG)) return;
             client.Entity.GuildRequest = Time32.Now;
             command.DwParam = client.Entity.UID;
 
@@ -117,5 +118,25 @@ public static class GuildJoinHandler {
                 break;
             }
         }
+    }
+
+    private static bool PassJoinRequirements(GameState client, Guild guild) {
+        var cmd = new GuildCommand(true) {
+            Type = GuildCommand.GuildRequirements,
+            DwParam2 = guild.LevelRequirement,
+            DwParam3 = guild.RebornRequirement,
+            DwParam4 = guild.ClassRequirement
+        };
+        if ((!EntityClass.IsTrojan(client.Entity.Class) || guild.AllowTrojans) &&
+            (!EntityClass.IsWarrior(client.Entity.Class) || guild.AllowWarriors) &&
+            (!EntityClass.IsArcher(client.Entity.Class) || guild.AllowArchers) &&
+            (!EntityClass.IsNinja(client.Entity.Class) || guild.AllowNinjas) &&
+            (!EntityClass.IsMonk(client.Entity.Class) || guild.AllowMonks) &&
+            (!EntityClass.IsPirate(client.Entity.Class) || guild.AllowPirates) &&
+            (!EntityClass.IsTaoist(client.Entity.Class) || guild.AllowTaoists) &&
+            client.Entity.Reborn >= guild.RebornRequirement &&
+            client.Entity.Level >= guild.LevelRequirement) return true;
+        client.Send(cmd);
+        return false;
     }
 }

@@ -6,6 +6,7 @@ using MTA.Network.GamePackets;
 using System.Collections.Concurrent;
 using MTA.Database;
 using MTA.Game.Features.Guilds;
+using MTA.Game.Features.Guilds.Database;
 
 namespace MTA.Game.ConquerStructures.Society
 {
@@ -220,9 +221,10 @@ namespace MTA.Game.ConquerStructures.Society
                 {
                     client.ArsenalDonations[Position] += aItem.DonationWorth;
                     Donation += aItem.DonationWorth;
-                    using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE))
-                        cmd.Update("entities").Set("GuildArsenalDonation", Donation).Where("UID", client.Entity.UID)
-                            .Execute();
+                    if (client.AsMember != null) {
+                        client.AsMember.ArsenalDonation = Donation;
+                        Game.Features.Guilds.Database.GuildMemberTable.Save(client.AsMember);
+                    }
                 }
             }
             OrderList();
@@ -235,9 +237,10 @@ namespace MTA.Game.ConquerStructures.Society
             {
                 client.ArsenalDonations[Position] -= item.DonationWorth;
                 Donation -= item.DonationWorth;
-                using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE))
-                    cmd.Update("entities").Set("GuildArsenalDonation", Donation).Where("UID", client.Entity.UID)
-                        .Execute();
+                if (client.AsMember != null) {
+                    client.AsMember.ArsenalDonation = Donation;
+                    Game.Features.Guilds.Database.GuildMemberTable.Save(client.AsMember);
+                }
             }
             OrderList();
         }

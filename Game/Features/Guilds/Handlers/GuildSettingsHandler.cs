@@ -4,7 +4,6 @@ using MTA.Client;
 using MTA.Game.Features.Guilds.Constants;
 using MTA.Game.Features.Guilds.Database;
 using MTA.Game.Features.Guilds.Packets;
-using MTA.Network.GamePackets;
 using MTA.Network.PacketHandlers;
 using Writer = MTA.Network.Writer;
 

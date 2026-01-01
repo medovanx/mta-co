@@ -217,7 +217,7 @@ namespace MTA.WebServer
                 client.Guild = new Guild(GuildLeaderName);
                 client.Guild.Id = (GuildID + Server.Key);
                 client.Guild.Name = GuildName;
-                client.AsMember = new Guild.Member(client.Guild.Id);
+                client.AsMember = new GuildMember(client.Guild.Id);
                 client.AsMember.Name = client.Entity.Name;
                 client.AsMember.Id = client.Entity.UID;
                 client.AsMember.Level = client.Entity.Level;

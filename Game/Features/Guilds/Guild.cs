@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -17,7 +16,6 @@ using MTA.Game.Features.Guilds.Packets;
 using MTA.Interfaces;
 using MTA.Network;
 using MTA.Network.GamePackets;
-using static MTA.Game.Constants.EntityClass;
 
 namespace MTA.Game.Features.Guilds;
 
@@ -26,7 +24,7 @@ public class Guild : Writer {
 
     private readonly byte[] _buffer;
 
-    public readonly Recruitment AdvertiseRecruit;
+    public readonly GuildRecruitment AdvertiseRecruit;
     public readonly SafeDictionary<uint, Guild> Ally;
 
     public readonly Arsenal[] Arsenals;
@@ -64,11 +62,11 @@ public class Guild : Writer {
     public uint GuildScoreWar;
     public uint HonorDonation = 0;
 
-    public Member? Leader;
+    public GuildMember? Leader;
     public uint LiliesDonation = 0;
     public uint Loses;
 
-    public SafeDictionary<uint, Member> Members;
+    public SafeDictionary<uint, GuildMember> Members;
     public ulong MoneyDonation = 0;
 
     public string Name;
@@ -76,18 +74,18 @@ public class Guild : Writer {
     public uint PaScore;
     public uint PkpDonation = 0;
     public uint PpScore;
-    public Member[] RankArsenalDonations = [];
-    public Member[] RankCpDonations = [];
-    public Member[] RankGuideDonations = [];
-    public Member[] RankLiliesDonations = [];
-    public Member[] RankOrchidsDonations = [];
-    public Member[] RankPkDonations = [];
-    public Member[] RankRoseDonations = [];
+    public GuildMember[] RankArsenalDonations = [];
+    public GuildMember[] RankCpDonations = [];
+    public GuildMember[] RankGuideDonations = [];
+    public GuildMember[] RankLiliesDonations = [];
+    public GuildMember[] RankOrchidsDonations = [];
+    public GuildMember[] RankPkDonations = [];
+    public GuildMember[] RankRoseDonations = [];
 
 
-    public Member[] RankSilversDonations = [];
-    public Member[] RankTotalDonations = [];
-    public Member[] RankTulipsDonations = [];
+    public GuildMember[] RankSilversDonations = [];
+    public GuildMember[] RankTotalDonations = [];
+    public GuildMember[] RankTulipsDonations = [];
     public uint RoseDonation = 0;
     public uint SWarScore;
     public uint TulipDonation = 0;
@@ -96,7 +94,7 @@ public class Guild : Writer {
 
     public Guild(string leaderName) {
         _buffer = new byte[92 + 8];
-        Members = new SafeDictionary<uint, Member>();
+        Members = new SafeDictionary<uint, GuildMember>();
         Enemy = new SafeDictionary<uint, Guild>();
         _leaderName = leaderName;
         Name = string.Empty;
@@ -111,7 +109,7 @@ public class Guild : Writer {
         //            Buffer[75] = 0x1;
         //            Buffer[87] = 0x20;
         LevelRequirement = 1;
-        Members = new SafeDictionary<uint, Member>(1000);
+        Members = new SafeDictionary<uint, GuildMember>(1000);
         Ally = new SafeDictionary<uint, Guild>(1000);
         Enemy = new SafeDictionary<uint, Guild>(1000);
 
@@ -121,7 +119,7 @@ public class Guild : Writer {
                 Position = (byte)(i + 1)
             };
 
-        AdvertiseRecruit = new Recruitment();
+        AdvertiseRecruit = new GuildRecruitment();
     }
 
     private int UnlockedArsenals {
@@ -196,72 +194,72 @@ public class Guild : Writer {
     }
 
     public bool AllowTrojans {
-        get => (ClassRequirement & ClassRequirements.Trojan) != ClassRequirements.Trojan;
+        get => (ClassRequirement & GuildClassRequirements.Trojan) != GuildClassRequirements.Trojan;
         set {
             if (value)
-                ClassRequirement &= ~ClassRequirements.Trojan;
+                ClassRequirement &= ~GuildClassRequirements.Trojan;
             else
-                ClassRequirement |= ClassRequirements.Trojan;
+                ClassRequirement |= GuildClassRequirements.Trojan;
         }
     }
 
     public bool AllowWarriors {
-        get => (ClassRequirement & ClassRequirements.Warrior) != ClassRequirements.Warrior;
+        get => (ClassRequirement & GuildClassRequirements.Warrior) != GuildClassRequirements.Warrior;
         set {
             if (value)
-                ClassRequirement &= ~ClassRequirements.Warrior;
+                ClassRequirement &= ~GuildClassRequirements.Warrior;
             else
-                ClassRequirement |= ClassRequirements.Warrior;
+                ClassRequirement |= GuildClassRequirements.Warrior;
         }
     }
 
     public bool AllowTaoists {
-        get => (ClassRequirement & ClassRequirements.Taoist) != ClassRequirements.Taoist;
+        get => (ClassRequirement & GuildClassRequirements.Taoist) != GuildClassRequirements.Taoist;
         set {
             if (value)
-                ClassRequirement &= ~ClassRequirements.Taoist;
+                ClassRequirement &= ~GuildClassRequirements.Taoist;
             else
-                ClassRequirement |= ClassRequirements.Taoist;
+                ClassRequirement |= GuildClassRequirements.Taoist;
         }
     }
 
     public bool AllowArchers {
-        get => (ClassRequirement & ClassRequirements.Archer) != ClassRequirements.Archer;
+        get => (ClassRequirement & GuildClassRequirements.Archer) != GuildClassRequirements.Archer;
         set {
             if (value)
-                ClassRequirement &= ~ClassRequirements.Archer;
+                ClassRequirement &= ~GuildClassRequirements.Archer;
             else
-                ClassRequirement |= ClassRequirements.Archer;
+                ClassRequirement |= GuildClassRequirements.Archer;
         }
     }
 
     public bool AllowNinjas {
-        get => (ClassRequirement & ClassRequirements.Ninja) != ClassRequirements.Ninja;
+        get => (ClassRequirement & GuildClassRequirements.Ninja) != GuildClassRequirements.Ninja;
         set {
             if (value)
-                ClassRequirement &= ~ClassRequirements.Ninja;
+                ClassRequirement &= ~GuildClassRequirements.Ninja;
             else
-                ClassRequirement |= ClassRequirements.Ninja;
+                ClassRequirement |= GuildClassRequirements.Ninja;
         }
     }
 
     public bool AllowMonks {
-        get => (ClassRequirement & ClassRequirements.Monk) != ClassRequirements.Monk;
+        get => (ClassRequirement & GuildClassRequirements.Monk) != GuildClassRequirements.Monk;
         set {
             if (value)
-                ClassRequirement &= ~ClassRequirements.Monk;
+                ClassRequirement &= ~GuildClassRequirements.Monk;
             else
-                ClassRequirement |= ClassRequirements.Monk;
+                ClassRequirement |= GuildClassRequirements.Monk;
         }
     }
 
     public bool AllowPirates {
-        get => (ClassRequirement & ClassRequirements.Pirate) != ClassRequirements.Pirate;
+        get => (ClassRequirement & GuildClassRequirements.Pirate) != GuildClassRequirements.Pirate;
         set {
             if (value)
-                ClassRequirement &= ~ClassRequirements.Pirate;
+                ClassRequirement &= ~GuildClassRequirements.Pirate;
             else
-                ClassRequirement |= ClassRequirements.Pirate;
+                ClassRequirement |= GuildClassRequirements.Pirate;
         }
     }
 
@@ -426,6 +424,7 @@ public class Guild : Writer {
             var rewardCtf = CalculateRewardCtf(mem.ExploitsRank);
             mem.CtfSilverReward = rewardCtf[0];
             mem.CtfCpsReward = rewardCtf[1];
+            GuildMemberTable.Save(mem);
         }
     }
 
@@ -436,428 +435,13 @@ public class Guild : Writer {
         return rew;
     }
 
+    // CreateMembersRank has been moved to GuildRankAssignment.AssignRanks()
+    // This method is kept for backward compatibility but delegates to the new location
     public void CreateMembersRank() {
-        lock (this) {
-            //remove all ranks
-            foreach (var member in Members.Values.Where(member => (ushort)member.Rank < 920)) {
-                if (RanksCounts[(ushort)member.Rank] > 0)
-                    RanksCounts[(ushort)member.Rank]--;
-                member.Rank = MemberRank.Member;
-                RanksCounts[(ushort)member.Rank]++;
-            }
-
-            //calculate manager`s
-            // According to guide.json: "When a player's donation reaches the 1st place, he or she will be appointed as Guild Manager, automatically."
-            var maxManager = GuildRankLimits.GetMaxManager(Level);
-            // Note: HonoraryManager should NOT be auto-assigned - it requires 320 CPs to appoint manually by Guild Leader
-            var maxSupervisor = GuildRankLimits.GetMaxSupervisorPerType(Level); // Per type (Arsenal, CP, PK, etc.)
-            var maxSteward = GuildRankLimits.GetMaxSteward(Level);
-            const byte maxArsFollower = 2; //13,14 - No limit specified in JSON, keeping existing logic
-            byte amount = 0; //8
-            Member[] poll = (from member in Members.Values orderby member.ArsenalDonation descending select member)
-                .ToArray();
-            for (byte x = 0; x < poll.Length; x++) {
-                var member = poll[x];
-                if (member.Rank > MemberRank.Manager)
-                    continue;
-                if (amount < maxManager) {
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.Manager;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else if (amount < maxManager + maxSupervisor) {
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.Supervisor;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else if (amount < maxManager + maxSupervisor + maxSteward) {
-                    if (member.Rank > MemberRank.Steward)
-                        continue;
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.Steward;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else if (amount < maxManager + maxSupervisor + maxSteward + maxArsFollower) {
-                    if (member.Rank > MemberRank.ArsFollower)
-                        continue;
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.ArsFollower;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else {
-                    break;
-                }
-            }
-
-            RankArsenalDonations = poll.ToArray();
-
-            //calculate rank cps
-            var maxCpSupervisor = GuildRankLimits.GetMaxSupervisorPerType(Level); // Per type limit based on guild level
-            const byte maxCpAgent = 2; //3,4 - No limit specified in JSON, keeping existing logic
-            const byte maxCpFollower = 2; //5,6 - No limit specified in JSON, keeping existing logic
-            amount = 0; //3
-            poll = (from member in Members.Values orderby member.ConquerPointDonation descending select member)
-                .ToArray();
-            for (byte x = 0; x < poll.Length; x++) {
-                var member = poll[x];
-                if (member.Rank > MemberRank.CPSupervisor)
-                    continue;
-                if (amount < maxCpSupervisor) {
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.CPSupervisor;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else if (amount < maxCpSupervisor + maxCpAgent) {
-                    if (member.Rank > MemberRank.CPAgent)
-                        continue;
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.CPAgent;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else if (amount < maxCpSupervisor + maxCpAgent + maxCpFollower) {
-                    if (member.Rank > MemberRank.CPFollower)
-                        continue;
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.CPFollower;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else {
-                    break;
-                }
-            }
-
-            RankCpDonations = poll.ToArray();
-
-            //calculate pk ranks
-            var maxPkSupervisor = GuildRankLimits.GetMaxSupervisorPerType(Level); // Per type limit based on guild level
-            const byte maxPkAgent = 2; //3,4, - No limit specified in JSON, keeping existing logic
-            const byte maxPkFollower = 2; //5,6 - No limit specified in JSON, keeping existing logic
-            amount = 0; //3
-            poll = (from member in Members.Values orderby member.PkDonation descending select member).ToArray();
-            for (byte x = 0; x < poll.Length; x++) {
-                var member = poll[x];
-                if (member.Rank > MemberRank.PKSupervisor)
-                    continue;
-                if (amount < maxPkSupervisor) {
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.PKSupervisor;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else if (amount < maxPkSupervisor + maxPkAgent) {
-                    if (member.Rank > MemberRank.PKAgent)
-                        continue;
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.PKAgent;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else if (amount < maxPkSupervisor + maxPkAgent + maxPkFollower) {
-                    if (member.Rank > MemberRank.PKFollower)
-                        continue;
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.PKFollower;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else {
-                    break;
-                }
-            }
-
-            RankPkDonations = poll.ToArray();
-
-            //calculate RoseSupervisor
-            var maxRoseSupervisor = GuildRankLimits.GetMaxSupervisorPerType(Level); // Per type limit based on guild level
-            const byte maxRoseAgent = 2; //3,4 - No limit specified in JSON, keeping existing logic
-            const byte maxRoseFollower = 2; //5,6 - No limit specified in JSON, keeping existing logic
-            amount = 0; //3
-            poll = (from member in Members.Values orderby member.Roses descending select member).ToArray();
-            for (byte x = 0; x < poll.Length; x++) {
-                var member = poll[x];
-                if (member.Rank > MemberRank.RoseSupervisor)
-                    continue;
-                if (amount < maxRoseSupervisor) {
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.RoseSupervisor;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else if (amount < maxRoseSupervisor + maxRoseAgent) {
-                    if (member.Rank > MemberRank.RoseAgent)
-                        continue;
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.RoseAgent;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else if (amount < maxRoseSupervisor + maxRoseAgent + maxRoseFollower) {
-                    if (member.Rank > MemberRank.RoseFollower)
-                        continue;
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.RoseFollower;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else {
-                    break;
-                }
-            }
-
-            RankRoseDonations = poll.ToArray();
-
-            //calculate LilySupervisor
-            var maxLilySupervisor = GuildRankLimits.GetMaxSupervisorPerType(Level); // Per type limit based on guild level
-            const byte maxLilyAgent = 2; // No limit specified in JSON, keeping existing logic
-            const byte maxLilyFollower = 2; // No limit specified in JSON, keeping existing logic
-            amount = 0; //3
-            poll = (from member in Members.Values orderby member.Lilies descending select member).ToArray();
-            for (byte x = 0; x < poll.Length; x++) {
-                var member = poll[x];
-                if (member.Rank > MemberRank.LilySupervisor)
-                    continue;
-                if (amount < maxLilySupervisor) {
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.LilySupervisor;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else if (amount < maxLilySupervisor + maxLilyAgent) {
-                    if (member.Rank > MemberRank.LilyAgent)
-                        continue;
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.LilyAgent;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else if (amount < maxLilySupervisor + maxLilyAgent + maxLilyFollower) {
-                    if (member.Rank > MemberRank.LilyFollower)
-                        continue;
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.LilyFollower;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else {
-                    break;
-                }
-            }
-
-            RankLiliesDonations = poll.ToArray();
-
-            //calculate TulipAgent
-            var maxTSupervisor = GuildRankLimits.GetMaxSupervisorPerType(Level); // Per type limit based on guild level
-            const byte maxTulipAgent = 2; // No limit specified in JSON, keeping existing logic
-            const byte maxTulipFollower = 2; // No limit specified in JSON, keeping existing logic
-            amount = 0; //3
-            poll = (from member in Members.Values orderby member.Tulips descending select member).ToArray();
-            for (byte x = 0; x < poll.Length; x++) {
-                var member = poll[x];
-                if (member.Rank > MemberRank.TSupervisor)
-                    continue;
-                if (amount < maxTSupervisor) {
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.TSupervisor;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else if (amount < maxTSupervisor + maxTulipAgent) {
-                    if (member.Rank > MemberRank.TulipAgent)
-                        continue;
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.TulipAgent;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else if (amount < maxTSupervisor + maxTulipAgent + maxTulipFollower) {
-                    if (member.Rank > MemberRank.TulipFollower)
-                        continue;
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.TulipFollower;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else {
-                    break;
-                }
-            }
-
-            RankTulipsDonations = poll.ToArray();
-
-            // calculate OrchidAgent
-            var maxOSupervisor = GuildRankLimits.GetMaxSupervisorPerType(Level); // Per type limit based on guild level
-            const byte maxOrchidAgent = 2; // No limit specified in JSON, keeping existing logic
-            const byte maxOrchidFollower = 2; // No limit specified in JSON, keeping existing logic
-            amount = 0; //3
-            poll = (from member in Members.Values
-                orderby member.Orchids descending
-                select member).ToArray();
-            for (byte x = 0; x < poll.Length; x++) {
-                var member = poll[x];
-                if (member.Rank > MemberRank.OSupervisor)
-                    continue;
-                if (amount < maxOSupervisor) {
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.OSupervisor;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else if (amount < maxOSupervisor + maxOrchidAgent) {
-                    if (member.Rank > MemberRank.OrchidAgent)
-                        continue;
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.OrchidAgent;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else if (amount < maxOSupervisor + maxOrchidAgent + maxOrchidFollower) {
-                    if (member.Rank > MemberRank.OrchidFollower)
-                        continue;
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.OrchidFollower;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else {
-                    break;
-                }
-            }
-
-            RankOrchidsDonations = poll.ToArray();
-
-
-            poll = (from member in Members.Values
-                orderby member.TotalDonation descending
-                select member).ToArray();
-
-            // Note: HDeputyLeader and HonorarySteward should NOT be auto-assigned
-            // They can only be manually appointed by Guild Leader with CP cost:
-            // - HDeputyLeader: 650 CPs
-            // - HonorarySteward: 100 CPs
-            // These ranks are excluded from automatic assignment to prevent overwriting manual appointments
-
-            RankTotalDonations = poll.ToArray();
-
-
-            var sSupervisor = GuildRankLimits.GetMaxSupervisorPerType(Level); // Per type limit based on guild level
-            const byte maxSilverAgent = 2; //4,5 - No limit specified in JSON, keeping existing logic
-            const byte maxSilverFollower = 2; //6,7 - No limit specified in JSON, keeping existing logic
-            amount = 0; //20
-            poll = (from member in Members.Values
-                orderby member.SilverDonation descending
-                select member).ToArray();
-            for (byte x = 0; x < poll.Length; x++) {
-                var member = poll[x];
-                if (member.Rank > MemberRank.SSupervisor)
-                    continue;
-                if (amount < sSupervisor) {
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.SSupervisor;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else if (amount < sSupervisor + maxSilverAgent) {
-                    if (member.Rank > MemberRank.SilverAgent)
-                        continue;
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.SilverAgent;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else if (amount < sSupervisor + maxSilverAgent + maxSilverFollower) {
-                    if (member.Rank > MemberRank.SilverFollower)
-                        continue;
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.SilverFollower;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else {
-                    break;
-                }
-            }
-
-            RankSilversDonations = poll.ToArray();
-
-            var gSupervisor = GuildRankLimits.GetMaxSupervisorPerType(Level); // Per type limit based on guild level
-            const byte maxGAgent = 2; //3,4 - No limit specified in JSON, keeping existing logic
-            const byte maxGFollower = 2; //5,6 - No limit specified in JSON, keeping existing logic
-            amount = 0; //20
-            poll = (from member in Members.Values
-                orderby member.VirtuePoints descending
-                select member).ToArray();
-
-            for (byte x = 0; x < poll.Length; x++) {
-                var member = poll[x];
-                if (member.Rank > MemberRank.GSupervisor)
-                    continue;
-                if (amount < gSupervisor) {
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.GSupervisor;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else if (amount < gSupervisor + maxGAgent) {
-                    if (member.Rank > MemberRank.GuideAgent)
-                        continue;
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.GuideAgent;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else if (amount < gSupervisor + maxGAgent + maxGFollower) {
-                    if (member.Rank > MemberRank.GuideFollower)
-                        continue;
-                    if (RanksCounts[(ushort)member.Rank] > 0)
-                        RanksCounts[(ushort)member.Rank]--;
-                    member.Rank = MemberRank.GuideFollower;
-                    RanksCounts[(ushort)member.Rank]++;
-                    amount++;
-                }
-                else {
-                    break;
-                }
-            }
-
-            RankGuideDonations = poll.ToArray();
-        }
+        GuildRankAssignment.AssignRanks(this);
     }
 
-    public bool GetMember(string name, out Member? member) {
+    public bool GetMember(string name, out GuildMember? member) {
         foreach (var mem in Members.Values.Where(mem => mem.Name == name)) {
             member = mem;
             return true;
@@ -914,7 +498,7 @@ public class Guild : Writer {
         };
 
         // Create leader member
-        client.AsMember = new Member(guild.Id) {
+        client.AsMember = new GuildMember(guild.Id) {
             SilverDonation = 500000,
             Id = client.Entity.UID,
             Level = client.Entity.Level,
@@ -1019,12 +603,13 @@ public class Guild : Writer {
     }
 
     public void AddMember(GameState client) {
-        client.AsMember = new Member(Id) {
+        client.AsMember = new GuildMember(Id) {
             Id = client.Entity.UID,
             Level = client.Entity.Level,
             Name = client.Entity.Name,
             Rank = MemberRank.Member,
-            Mesh = client.Entity.Mesh
+            Mesh = client.Entity.Mesh,
+            LastLogin = (ulong)DateTime.Now.Ticks
         };
         if (Nobility.Board.TryGetValue(client.Entity.UID, out var value)) {
             client.AsMember.Gender = value.Gender;
@@ -1039,8 +624,9 @@ public class Guild : Writer {
             client.Entity.GuildBattlePower = GetSharedBattlePower(client.AsMember.Rank);
         for (var i = 0; i < client.ArsenalDonations.Length; i++)
             client.ArsenalDonations[i] = 0;
-        EntityTable.UpdateGuildID(client);
-        EntityTable.UpdateGuildRank(client);
+
+        // Insert member into guild_members table
+        GuildMemberTable.Insert(client.AsMember);
         Members.Add(client.Entity.UID, client.AsMember);
         SendGuild(client);
         client.Screen.FullWipe();
@@ -1069,8 +655,8 @@ public class Guild : Writer {
         var count = 0;
         var maxMembers = page + 12;
         int minMembers = page;
-        var online = new List<Member>(250);
-        var offline = new List<Member>(250);
+        var online = new List<GuildMember>(250);
+        var offline = new List<GuildMember>(250);
         foreach (var member in Members.Values)
             if (Kernel.TryGetPlayer(member.Id, out _))
                 online.Add(member);
@@ -1127,7 +713,7 @@ public class Guild : Writer {
                 client.Send(message);
     }
 
-    public Member? GetMemberByName(string memberName) {
+    public GuildMember? GetMemberByName(string memberName) {
         return Members.Values.FirstOrDefault(member => member.Name == memberName);
     }
 
@@ -1165,7 +751,8 @@ public class Guild : Writer {
         }
         else {
             member.GuildId = 0;
-            EntityTable.UpdateData(member.Id, "GuildID", 0);
+            // Delete from guild_members table
+            GuildMemberTable.Delete(uid);
         }
 
         MemberCount--;
@@ -1200,7 +787,8 @@ public class Guild : Writer {
                 foreach (var arsenal in Arsenals)
                     arsenal.RemoveInscribedItemsBy(member.Id);
                 member.GuildId = 0;
-                EntityTable.UpdateData(member.Id, "GuildID", 0);
+                // Delete from guild_members table
+                GuildMemberTable.Delete(uid);
             }
 
             MemberCount--;
@@ -1351,213 +939,5 @@ public class Guild : Writer {
                 '[', ']'
             ]) > 0) return false;
         return true;
-    }
-
-    public abstract class Advertise {
-        private static readonly ConcurrentDictionary<uint, Guild> AGuilds = new();
-
-        private static Guild[] _advertiseRanks = [];
-
-        public static Guild[] AdvertiseRanks {
-            get {
-                lock (_advertiseRanks) {
-                    return _advertiseRanks;
-                }
-            }
-        }
-
-        public static void Add(Guild obj) {
-            if (!AGuilds.ContainsKey(obj.Id))
-                AGuilds.TryAdd(obj.Id, obj);
-            CalculateRanks();
-        }
-
-        private static void CalculateRanks() {
-            lock (_advertiseRanks) {
-                var array = AGuilds.Values.ToArray();
-                array =
-                    (from guild in array orderby guild.AdvertiseRecruit.Donations descending select guild)
-                    .ToArray();
-                List<Guild> guilds = [];
-                for (ushort x = 0; x < array.Length; x++) {
-                    guilds.Add(array[x]);
-                    if (x == 40) break;
-                }
-
-                _advertiseRanks = guilds.ToArray();
-            }
-        }
-
-        public static void FixedRank() {
-            AGuilds.Clear();
-            foreach (var guild in _advertiseRanks) AGuilds.TryAdd(guild.Id, guild);
-        }
-    }
-
-    public class Recruitment {
-        public enum Mode {
-            Requirements,
-            Recruit
-        }
-
-        public bool AutoJoin = true;
-        public string Bulletin = "Nothing";
-        public ulong Donations;
-        public byte Grade;
-        public byte Level;
-        public int NotAllowFlag;
-        public byte Reborn;
-
-        public bool WasLoad;
-
-        public bool ContainFlag(int val) {
-            return (NotAllowFlag & val) == val;
-        }
-
-        public void AddFlag(int val) {
-            if (!ContainFlag(val))
-                NotAllowFlag |= val;
-        }
-
-        public void Remove(int val) {
-            if (ContainFlag(val))
-                NotAllowFlag &= ~val;
-        }
-
-        public void SetFlag(int mFlag, Mode mod) {
-            switch (mod) {
-                case Mode.Requirements: {
-                    switch (mFlag) {
-                        case 0:
-                            NotAllowFlag = Flags.NoneBlock;
-                            break;
-                        case >= 127:
-                            AddFlag(Flags.Trojan | Flags.Warrior | Flags.Taoist | Flags.Archer | Flags.Ninja |
-                                    Flags.Monk | Flags.Pirate);
-                            break;
-                    }
-
-                    var nFlag = 127 - mFlag;
-                    AddFlag(nFlag);
-                    break;
-                }
-                case Mode.Recruit: {
-                    if (mFlag == 0) NotAllowFlag = Flags.NoneBlock;
-                    AddFlag(mFlag);
-                    break;
-                }
-            }
-        }
-
-        public bool Compare(Entity player, Mode mod) {
-            if (player.Level < Level)
-                return false;
-            if (player.Reborn < Reborn && Reborn != 0)
-                return false;
-            if (IsArcher(player.Class) && ContainFlag(Flags.Archer))
-                return false;
-            if (IsTaoist(player.Class) && ContainFlag(Flags.Taoist))
-                return false;
-            if (IsWarrior(player.Class) && ContainFlag(Flags.Warrior))
-                return false;
-            if (IsTrojan(player.Class) && ContainFlag(Flags.Trojan))
-                return false;
-            if (IsPirate(player.Class) && ContainFlag(Flags.Pirate))
-                return false;
-            if (IsMonk(player.Class) && ContainFlag(Flags.Monk))
-                return false;
-            if (IsNinja(player.Class) && ContainFlag(Flags.Ninja))
-                return false;
-            if (mod != Mode.Recruit) return true;
-            return Grade == 0 || true;
-        }
-
-        public override string ToString() {
-            var build = new StringBuilder();
-            build.Append(NotAllowFlag + "^" + Level + "^" + Reborn + "^" + Grade + "^" + Donations + "^"
-                         + (byte)(AutoJoin ? 1 : 0) + "^" + Bulletin + "^0" + "^0");
-            return build.ToString();
-        }
-
-        public void Load(string line) {
-            if (line == "") return;
-            if (!line.Contains('^')) return;
-            var data = line.Split('^');
-            NotAllowFlag = int.Parse(data[0]);
-            Level = byte.Parse(data[1]);
-            Reborn = byte.Parse(data[2]);
-            Grade = byte.Parse(data[3]);
-            Donations = ulong.Parse(data[4]);
-            AutoJoin = byte.Parse(data[5]) == 1;
-            Bulletin = data[6];
-            WasLoad = true;
-        }
-
-        public static void Save() { }
-
-        private abstract class Flags {
-            public const int
-                NoneBlock = 0,
-                Trojan = 1,
-                Warrior = 2,
-                Taoist = 4,
-                Archer = 8,
-                Ninja = 16,
-                Monk = 32,
-                Pirate = 64;
-        }
-    }
-
-    private abstract class ClassRequirements {
-        public const uint
-            Trojan = 1,
-            Warrior = 2,
-            Taoist = 4,
-            Archer = 8,
-            Ninja = 16,
-            Monk = 32,
-            Pirate = 64;
-    }
-
-    public class Member(uint guildId) //: Interfaces.IKnownPerson
-    {
-        public uint ArsenalDonation;
-
-        public byte Class;
-        public uint CtfCpsReward;
-
-        public uint CtfSilverReward;
-        public uint Exploits = 0;
-        public uint ExploitsRank;
-        public ulong LastLogin = 0;
-
-        public uint Lilies;
-        public uint Mesh;
-        public uint Orchids;
-        public uint PkDonation;
-        public uint Roses;
-        public string Spouse = string.Empty;
-        public uint Tulips;
-        public uint VirtuePoints;
-        public uint WarScore;
-        public uint Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-
-        public GameState? Client => Kernel.TryGetPlayer(Id, out var client) ? client : null;
-
-        public ulong SilverDonation { get; set; }
-        public ulong ConquerPointDonation { get; set; }
-        public uint GuildId { get; set; } = guildId;
-
-        public Guild Guild => Kernel.Guilds[GuildId];
-
-        public MemberRank Rank { get; set; }
-        public byte Level { get; set; }
-        public NobilityRank NobilityRank { get; set; }
-        public byte Gender { get; set; }
-
-        public uint TotalDonation =>
-            (uint)(Lilies + Orchids + Tulips + Roses + ConquerPointDonation + VirtuePoints +
-                   (uint)SilverDonation + ArsenalDonation + PkDonation);
     }
 }

@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using MTA.Client;
-using MTA.Game.Features.Guilds.Database;
-using MTA.Game.Features.Guilds;
 using MTA.Game.Features.Guilds.Constants;
+using MTA.Game.Features.Guilds.Database;
 using MTA.Network;
 using MTA.Network.GamePackets;
 using MTA.Network.PacketHandlers;
@@ -37,15 +36,15 @@ public static class GuildAdvertiseHandler {
         List<Guild> advGuilds = [];
         for (ushort x = 0; x < 4; x++) {
             var getposition = (ushort)(receiveCount + x);
-            if (Guild.Advertise.AdvertiseRanks.Length <= getposition)
+            if (GuildAdvertise.AdvertiseRanks.Length <= getposition)
                 break;
-            advGuilds.Add(Guild.Advertise.AdvertiseRanks[getposition]);
+            advGuilds.Add(GuildAdvertise.AdvertiseRanks[getposition]);
         }
 
         switch (advGuilds.Count) {
             case <= 2: {
                 var adv = new Advertise((ushort)advGuilds.Count) {
-                    AllRegistred = (ushort)Guild.Advertise.AdvertiseRanks.Length,
+                    AllRegistred = (ushort)GuildAdvertise.AdvertiseRanks.Length,
                     AtCount = (ushort)receiveCount,
                     PacketNo = 1
                 };
@@ -60,7 +59,7 @@ public static class GuildAdvertiseHandler {
             }
             case 3: {
                 var adv = new Advertise(2) {
-                    AllRegistred = (ushort)Guild.Advertise.AdvertiseRanks.Length,
+                    AllRegistred = (ushort)GuildAdvertise.AdvertiseRanks.Length,
                     AtCount = (ushort)receiveCount,
                     PacketNo = 1
                 };
@@ -73,7 +72,7 @@ public static class GuildAdvertiseHandler {
                 client.Send(adv.ToArray());
 
                 var ndadv = new Advertise(1) {
-                    AllRegistred = (ushort)Guild.Advertise.AdvertiseRanks.Length,
+                    AllRegistred = (ushort)GuildAdvertise.AdvertiseRanks.Length,
                     AtCount = (ushort)receiveCount
                 };
 
@@ -83,7 +82,7 @@ public static class GuildAdvertiseHandler {
             }
             case 4: {
                 var adv = new Advertise(2) {
-                    AllRegistred = (ushort)Guild.Advertise.AdvertiseRanks.Length,
+                    AllRegistred = (ushort)GuildAdvertise.AdvertiseRanks.Length,
                     AtCount = (ushort)receiveCount,
                     PacketNo = 1
                 };
@@ -95,7 +94,7 @@ public static class GuildAdvertiseHandler {
                 client.Send(adv.ToArray());
 
                 var ddddadv = new Advertise(2) {
-                    AllRegistred = (ushort)Guild.Advertise.AdvertiseRanks.Length,
+                    AllRegistred = (ushort)GuildAdvertise.AdvertiseRanks.Length,
                     AtCount = (ushort)receiveCount
                 };
 
@@ -135,11 +134,11 @@ public static class GuildAdvertiseHandler {
             guild.AdvertiseRecruit.AutoJoin = autoJoin;
             guild.AdvertiseRecruit.Level = level;
             guild.AdvertiseRecruit.Reborn = reborn;
-            guild.AdvertiseRecruit.SetFlag(flag, Guild.Recruitment.Mode.Recruit);
+            guild.AdvertiseRecruit.SetFlag(flag, GuildRecruitment.Mode.Recruit);
             guild.AdvertiseRecruit.Grade = grade;
             guild.AdvertiseRecruit.Donations += donation;
 
-            Guild.Advertise.Add(guild);
+            GuildAdvertise.Add(guild);
             GuildTable.SaveAdvertise(guild);
         }
         else {
@@ -161,7 +160,7 @@ public static class GuildAdvertiseHandler {
             {
                 var guildId = BitConverter.ToUInt32(packet, 8);
                 if (Kernel.Guilds.TryGetValue(guildId, out var guild))
-                    if (guild.AdvertiseRecruit.Compare(client.Entity, Guild.Recruitment.Mode.Recruit)) {
+                    if (guild.AdvertiseRecruit.Compare(client.Entity, GuildRecruitment.Mode.Recruit)) {
                         if (guild.AdvertiseRecruit.AutoJoin) {
                             if (client.Entity.GuildID == 0) guild.AddMember(client);
                         }

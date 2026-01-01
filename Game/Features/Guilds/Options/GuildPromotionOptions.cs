@@ -1,24 +1,14 @@
 using System.Collections.Generic;
 using MTA.Game.Features.Guilds.Constants;
 
-namespace MTA.Game.Features.Guilds.Handlers;
+namespace MTA.Game.Features.Guilds.Options;
 
 /// <summary>
-/// Defines promotion options for each rank in a data-driven way.
+///     Defines promotion options for each rank in a data-driven way.
 /// </summary>
 public static class GuildPromotionOptions {
     /// <summary>
-    /// Represents a promotion option with its configuration.
-    /// </summary>
-    public record PromotionOption(
-        MemberRank Rank,
-        int MaxLimit, // Use 999 for unlimited, or call GuildRankLimits method
-        int ConquerPointsCost,
-        bool UseGuildRankLimits = false // If true, MaxLimit will be calculated from GuildRankLimits
-    );
-
-    /// <summary>
-    /// Gets all promotion options available for a given rank.
+    ///     Gets all promotion options available for a given rank.
     /// </summary>
     public static IEnumerable<PromotionOption> GetPromotionOptions(MemberRank promotingRank) {
         return promotingRank switch {
@@ -42,27 +32,27 @@ public static class GuildPromotionOptions {
             new PromotionOption(MemberRank.GuildLeader, 1, 0),
 
             // Deputy Leaders
-            new PromotionOption(MemberRank.DeputyLeader, 0, 0, UseGuildRankLimits: true),
+            new PromotionOption(MemberRank.DeputyLeader, 0, 0, true),
 
             // Honorary officials (cost CPs)
-            new PromotionOption(MemberRank.HDeputyLeader, 0, 650, UseGuildRankLimits: true),
-            new PromotionOption(MemberRank.HonoraryManager, 0, 320, UseGuildRankLimits: true),
-            new PromotionOption(MemberRank.HonorarySupervisor, 0, 270, UseGuildRankLimits: true),
-            new PromotionOption(MemberRank.HonorarySteward, 0, 100, UseGuildRankLimits: true),
+            new PromotionOption(MemberRank.HDeputyLeader, 0, 650, true),
+            new PromotionOption(MemberRank.HonoraryManager, 0, 320, true),
+            new PromotionOption(MemberRank.HonorarySupervisor, 0, 270, true),
+            new PromotionOption(MemberRank.HonorarySteward, 0, 100, true),
 
             // Leader Aides
-            new PromotionOption(MemberRank.LSpouseAide, 0, 0, UseGuildRankLimits: true),
+            new PromotionOption(MemberRank.LSpouseAide, 0, 0, true),
 
             // Stewards
-            new PromotionOption(MemberRank.Steward, 0, 0, UseGuildRankLimits: true),
+            new PromotionOption(MemberRank.Steward, 0, 0, true),
             new PromotionOption(MemberRank.DeputySteward, 999, 0), // No limit
             new PromotionOption(MemberRank.DLeaderSpouse, 1, 0),
-            new PromotionOption(MemberRank.DLeaderAide, 0, 0, UseGuildRankLimits: true),
+            new PromotionOption(MemberRank.DLeaderAide, 0, 0, true),
 
             // Aides
-            new PromotionOption(MemberRank.Aide, 0, 0, UseGuildRankLimits: true),
-            new PromotionOption(MemberRank.ManagerAide, 0, 0, UseGuildRankLimits: true),
-            new PromotionOption(MemberRank.SupervisorAide, 0, 0, UseGuildRankLimits: true),
+            new PromotionOption(MemberRank.Aide, 0, 0, true),
+            new PromotionOption(MemberRank.ManagerAide, 0, 0, true),
+            new PromotionOption(MemberRank.SupervisorAide, 0, 0, true),
 
             // Agents (no limit per guide)
             new PromotionOption(MemberRank.Agent, 999, 0),
@@ -82,7 +72,7 @@ public static class GuildPromotionOptions {
             new PromotionOption(MemberRank.StewardSpouse, 1, 0),
 
             // Followers
-            new PromotionOption(MemberRank.Follower, 0, 0, UseGuildRankLimits: true),
+            new PromotionOption(MemberRank.Follower, 0, 0, true),
             new PromotionOption(MemberRank.TulipFollower, 1, 0), // 1 per flower type
             new PromotionOption(MemberRank.OrchidFollower, 1, 0),
             new PromotionOption(MemberRank.RoseFollower, 1, 0),
@@ -97,45 +87,43 @@ public static class GuildPromotionOptions {
             new PromotionOption(MemberRank.SeniorMember, 999, 0), // No limit
 
             // Members
-            new PromotionOption(MemberRank.Member, 0, 0, UseGuildRankLimits: true)
+            new PromotionOption(MemberRank.Member, 0, 0, true)
         ];
     }
 
     private static IEnumerable<PromotionOption> GetDeputyLeaderOptions() {
         return [
-            new PromotionOption(MemberRank.Steward, 0, 0, UseGuildRankLimits: true),
-            new PromotionOption(MemberRank.HonorarySteward, 0, 0, UseGuildRankLimits: true),
-            new PromotionOption(MemberRank.DLeaderAide, 0, 0, UseGuildRankLimits: true),
-            new PromotionOption(MemberRank.Follower, 0, 0, UseGuildRankLimits: true),
-            new PromotionOption(MemberRank.Member, 0, 0, UseGuildRankLimits: true)
+            new PromotionOption(MemberRank.Steward, 0, 0, true),
+            new PromotionOption(MemberRank.HonorarySteward, 0, 0, true),
+            new PromotionOption(MemberRank.DLeaderAide, 0, 0, true),
+            new PromotionOption(MemberRank.Follower, 0, 0, true),
+            new PromotionOption(MemberRank.Member, 0, 0, true)
         ];
     }
 
     private static IEnumerable<PromotionOption> GetManagerOptions() {
         return [
-            new PromotionOption(MemberRank.ManagerAide, 0, 0, UseGuildRankLimits: true)
+            new PromotionOption(MemberRank.ManagerAide, 0, 0, true)
         ];
     }
 
     private static IEnumerable<PromotionOption> GetSupervisorOptions() {
         return [
-            new PromotionOption(MemberRank.SupervisorAide, 0, 0, UseGuildRankLimits: true)
+            new PromotionOption(MemberRank.SupervisorAide, 0, 0, true)
         ];
     }
 
     private static IEnumerable<PromotionOption> GetAgentOptions() {
         return [
-            new PromotionOption(MemberRank.Aide, 0, 0, UseGuildRankLimits: true)
+            new PromotionOption(MemberRank.Aide, 0, 0, true)
         ];
     }
 
     /// <summary>
-    /// Gets the max limit for a promotion option, using GuildRankLimits if needed.
+    ///     Gets the max limit for a promotion option, using GuildRankLimits if needed.
     /// </summary>
     public static int GetMaxLimit(PromotionOption option, byte guildLevel) {
-        if (!option.UseGuildRankLimits) {
-            return option.MaxLimit;
-        }
+        if (!option.UseGuildRankLimits) return option.MaxLimit;
 
         return option.Rank switch {
             MemberRank.DeputyLeader => GuildRankLimits.GetMaxDeputyLeader(guildLevel),
@@ -151,4 +139,14 @@ public static class GuildPromotionOptions {
             _ => option.MaxLimit
         };
     }
+
+    /// <summary>
+    ///     Represents a promotion option with its configuration.
+    /// </summary>
+    public record PromotionOption(
+        MemberRank Rank,
+        int MaxLimit, // Use 999 for unlimited, or call GuildRankLimits method
+        int ConquerPointsCost,
+        bool UseGuildRankLimits = false // If true, MaxLimit will be calculated from GuildRankLimits
+    );
 }

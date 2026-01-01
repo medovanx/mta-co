@@ -2653,7 +2653,7 @@ namespace MTA.Client {
         public uint eliterank = 0;
         public bool SentRequest = false;
         public Guild? Guild;
-        public Guild.Member? AsMember;
+        public GuildMember? AsMember;
         public uint Arsenal_Donation = 0;
         public Booth Booth;
 
@@ -4991,11 +4991,10 @@ namespace MTA.Client {
             foreach (var Uint in ArsenalDonations)
                 val += Uint;
 
-            using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE))
-                cmd.Update("entities").Set("GuildArsenalDonation", val).Where("UID", Entity.UID)
-                    .Execute();
-            if (AsMember != null)
+            if (AsMember != null) {
                 AsMember.ArsenalDonation = val;
+                Game.Features.Guilds.Database.GuildMemberTable.Save(AsMember);
+            }
             return val;
         }
 

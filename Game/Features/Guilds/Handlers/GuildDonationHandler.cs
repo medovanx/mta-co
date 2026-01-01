@@ -1,7 +1,6 @@
 using MTA.Client;
 using MTA.Game.Features.Guilds.Database;
 using MTA.Game.Features.Guilds.Packets;
-using MTA.Network.GamePackets;
 
 namespace MTA.Game.Features.Guilds.Handlers;
 
@@ -15,6 +14,7 @@ public static class GuildDonationHandler {
         GuildTable.SaveFunds(client.Guild);
         client.AsMember!.SilverDonation += command.DwParam;
         client.Entity.Money -= command.DwParam;
+        GuildMemberTable.Save(client.AsMember);
         client.Guild.SendGuild(client);
     }
 
@@ -27,6 +27,7 @@ public static class GuildDonationHandler {
         GuildTable.SaveFunds(client.Guild);
         client.AsMember!.ConquerPointDonation += command.DwParam;
         client.Entity.ConquerPoints -= command.DwParam;
+        GuildMemberTable.Save(client.AsMember);
         client.Guild.SendGuild(client);
     }
 }

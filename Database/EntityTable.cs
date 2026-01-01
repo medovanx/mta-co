@@ -221,27 +221,18 @@ namespace MTA.Database
                         client.OfflineTGEnterTime = DateTime.FromBinary(reader.ReadInt64("OfflineTGEnterTime"));
                     Game.ConquerStructures.Nobility.Sort(client.Entity.UID);
 
-                    if (Kernel.Guilds.ContainsKey(reader.ReadUInt32("GuildID")))
+                    // Check if player is in a guild by looking up in guild_members table
+                    // Guild data is now loaded from guild_members, so check if member exists in any guild
+                    foreach (var guild in Kernel.Guilds.Values)
                     {
-                        client.Guild = Kernel.Guilds[reader.ReadUInt32("GuildID")];
-                        if (client.Guild.Members.ContainsKey(client.Entity.UID))
+                        if (guild.Members.TryGetValue(client.Entity.UID, out var member))
                         {
-                            client.AsMember = client.Guild.Members[client.Entity.UID];
-                            client.AsMember.ArsenalDonation = client.GetArsenalDonation();
-                            client.AsMember.LastLogin = reader.ReadUInt32("GuildLastLogin");
-                            if (client.AsMember.GuildId == 0)
-                            {
-                                client.AsMember = null;
-                                client.Guild = null;
-                            }
-                            else
-                            {
-                                client.Entity.GuildID = (ushort)client.Guild.Id;
-                                client.Entity.GuildRank = (ushort)client.AsMember.Rank;
-                            }
+                            client.Guild = guild;
+                            client.AsMember = member;
+                            client.Entity.GuildID = (ushort)client.Guild.Id;
+                            client.Entity.GuildRank = (ushort)client.AsMember.Rank;
+                            break;
                         }
-                        else
-                            client.Guild = null;
                     }
 
                     if (!Game.ConquerStructures.Nobility.Board.TryGetValue(client.Entity.UID,
@@ -473,7 +464,17 @@ namespace MTA.Database
 
         public static void UpdateGuildRank(uint UID, MemberRank rank)
         {
-            UpdateData(UID, "GuildRank", (int)rank);
+            // Guild rank is now stored in guild_members table
+            // Find the member and update via GuildMemberTable
+            foreach (var guild in Kernel.Guilds.Values)
+            {
+                if (guild.Members.TryGetValue(UID, out var member))
+                {
+                    member.Rank = rank;
+                    Game.Features.Guilds.Database.GuildMemberTable.UpdateGuildAndRank(UID, member.GuildId, (ushort)rank);
+                    return;
+                }
+            }
         }
 
         public static void UpdateOnlineStatus(Client.GameState client, bool online,
@@ -495,9 +496,13 @@ namespace MTA.Database
 
         public static void LoginNow(Client.GameState client)
         {
-            MySqlCommand cmd = new MySqlCommand(MySqlCommandType.UPDATE);
-            cmd.Update("entities").Set("GuildLastLogin", Network.PacketHandler.UnixTimestamp)
-                .Where("UID", client.Entity.UID).Execute();
+            // Update last login in guild_members table if member exists
+            if (client.AsMember != null)
+            {
+                var lastLogin = (ulong)(Network.PacketHandler.UnixTimestamp * 10000000L); // Convert to ticks
+                client.AsMember.LastLogin = lastLogin;
+                Game.Features.Guilds.Database.GuildMemberTable.UpdateLastLogin(client.Entity.UID, lastLogin);
+            }
         }
 
         public static void UpdateCps(Client.GameState client)
@@ -522,7 +527,9 @@ namespace MTA.Database
 
         public static void UpdateGuildID(Client.GameState client)
         {
-            UpdateData(client, "guildid", client.Entity.GuildID);
+            // Guild ID is now stored in guild_members table
+            // This method is kept for compatibility but does nothing
+            // Actual updates should use GuildMemberTable methods
         }
 
         public static void UpdateClanID(Client.GameState client)
@@ -575,7 +582,15 @@ namespace MTA.Database
 
         public static void UpdateGuildRank(Client.GameState client)
         {
-            UpdateData(client, "GuildRank", client.Entity.GuildRank);
+            // Guild rank is now stored in guild_members table
+            if (client.AsMember != null)
+            {
+                client.AsMember.Rank = (Game.Features.Guilds.Constants.MemberRank)client.Entity.GuildRank;
+                Game.Features.Guilds.Database.GuildMemberTable.UpdateGuildAndRank(
+                    client.Entity.UID, 
+                    client.AsMember.GuildId, 
+                    client.Entity.GuildRank);
+            }
         }
 
         public static void UpdateSkillExp(Client.GameState client, uint spellid, uint exp)
@@ -710,29 +725,12 @@ namespace MTA.Database
 
                 e.LastLogin = DateTime.Now;
 
+                // Guild member data is now stored in guild_members table, not entities table
+                // Update guild_members table if member exists
                 if (c.AsMember != null)
                 {
-                    cmd.Set("GuildID", c.AsMember.GuildId)
-                        .Set("GuildRank", (ushort)c.AsMember.Rank)
-                        .Set("GuildSilverDonation", c.AsMember.SilverDonation)
-                        .Set("GuildConquerPointDonation", c.AsMember.ConquerPointDonation)
-                        .Set("GuildLilies", c.AsMember.Lilies)
-                        .Set("GuildRouses", c.AsMember.Roses)
-                        .Set("GuildOrchids", c.AsMember.Orchids)
-                        .Set("GuildTulips", c.AsMember.Tulips)
-                        .Set("Exploits", c.AsMember.Exploits)
-                        .Set("GuildPkDonation", c.AsMember.PkDonation)
-                        .Set("CTFCpsReward", c.AsMember.CtfCpsReward)
-                        .Set("CTFSilverReward", c.AsMember.CtfSilverReward)
-                        .Set("GuildLastlod", (ulong)DateTime.Now.Ticks);
                     c.AsMember.LastLogin = (ulong)DateTime.Now.Ticks;
-                }
-                else
-                {
-                    cmd.Set("GuildID", 0)
-                        .Set("GuildRank", 0)
-                        .Set("GuildSilverDonation", 0)
-                        .Set("GuildConquerPointDonation", 0);
+                    Game.Features.Guilds.Database.GuildMemberTable.Save(c.AsMember);
                 }
 
                 cmd.Where("UID", e.UID);

@@ -1,6 +1,6 @@
+using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Drawing;
 using MTA.Client;
 using MTA.Database;
 using MTA.Game.Features.Guilds.Constants;
@@ -69,10 +69,10 @@ public static class GuildPromotionHandler {
                 member.Guild.GetSharedBattlePower(member.Rank);
         }
 
-        EntityTable.UpdateData(member.Id, "GuildRank", (int)member.Rank);
+        GuildMemberTable.UpdateGuildAndRank(member.Id, member.GuildId, (ushort)member.Rank);
     }
 
-    private static void ApplyPromotion(Guild guild, Guild.Member member, MemberRank newRank,
+    private static void ApplyPromotion(Guild guild, GuildMember member, MemberRank newRank,
         GameState promotingClient) {
         // Update rank counts
         if (member.Rank != newRank) {
@@ -80,16 +80,12 @@ public static class GuildPromotionHandler {
             var newRankIndex = (ushort)newRank;
 
             // Bounds check
-            if (oldRankIndex < guild.RanksCounts.Length) {
-                guild.RanksCounts[oldRankIndex]--;
-            }
+            if (oldRankIndex < guild.RanksCounts.Length) guild.RanksCounts[oldRankIndex]--;
 
             member.Rank = newRank;
 
             // Bounds check
-            if (newRankIndex < guild.RanksCounts.Length) {
-                guild.RanksCounts[newRankIndex]++;
-            }
+            if (newRankIndex < guild.RanksCounts.Length) guild.RanksCounts[newRankIndex]++;
         }
 
         // Update online member
@@ -102,7 +98,7 @@ public static class GuildPromotionHandler {
         }
 
         // Update database
-        EntityTable.UpdateData(member.Id, "GuildRank", (int)member.Rank);
+        GuildMemberTable.UpdateGuildAndRank(member.Id, member.GuildId, (ushort)member.Rank);
 
         // Refresh member list for the promoting client
         guild.SendMembers(promotingClient, 0);
@@ -121,23 +117,12 @@ public static class GuildPromotionHandler {
             return;
         }
 
-        if (client.AsMember.Rank < memberPromote!.Rank) {
-            client.Send(new Message(
-                $"Sorry, you have small rank for change position! Your rank: {client.AsMember.Rank} (ID: {(ushort)client.AsMember.Rank}), Member rank: {memberPromote.Rank} (ID: {(ushort)memberPromote.Rank})",
-                Color.White, Message.System));
-            return;
-        }
-
-        // Check if member is already at the target rank
-        if (memberPromote.Rank == targetRank) {
-            client.Send(new Message($"{memberPromote.Name} is already at that rank!",
-                Color.White, Message.System));
-            return;
-        }
+        // GetMember returns true only when member is found, so memberPromote is guaranteed non-null here
+        var member = memberPromote!;
 
         // Check if trying to promote to Manager or Supervisor (Guild Leader cannot promote to these)
         if (client.AsMember.Rank == MemberRank.GuildLeader &&
-            (targetRank == MemberRank.Manager || targetRank == MemberRank.Supervisor)) {
+            targetRank is MemberRank.Manager or MemberRank.Supervisor) {
             client.Send(new Message("Guild Leader cannot appoint Manager or Supervisor!",
                 Color.White, Message.System));
             return;
@@ -147,19 +132,19 @@ public static class GuildPromotionHandler {
 
         #region Guild Leader Promotions
 
-        if (client.AsMember.Rank == MemberRank.GuildLeader) {
+        if (client.AsMember.Rank == MemberRank.GuildLeader)
             switch (targetRank) {
                 case MemberRank.GuildLeader: {
                     // Transfer leadership
-                    memberPromote.Rank = MemberRank.GuildLeader;
-                    client.Guild.LeaderId = memberPromote.Id;
-                    client.Guild.Leader = memberPromote;
-                    client.Guild.LeaderName = memberPromote.Name;
+                    member.Rank = MemberRank.GuildLeader;
+                    client.Guild.LeaderId = member.Id;
+                    client.Guild.Leader = member;
+                    client.Guild.LeaderName = member.Name;
 
-                    if (Kernel.TryGetPlayer(memberPromote.Id, out var promoteClient)) {
+                    if (Kernel.TryGetPlayer(member.Id, out var promoteClient)) {
                         client.Guild.SendGuild(promoteClient);
-                        promoteClient.Entity.GuildBattlePower = client.Guild.GetSharedBattlePower(memberPromote.Rank);
-                        promoteClient.Entity.GuildRank = (ushort)memberPromote.Rank;
+                        promoteClient.Entity.GuildBattlePower = client.Guild.GetSharedBattlePower(member.Rank);
+                        promoteClient.Entity.GuildRank = (ushort)member.Rank;
                         promoteClient.Screen.FullWipe();
                         promoteClient.Screen.Reload();
                     }
@@ -181,7 +166,7 @@ public static class GuildPromotionHandler {
                         return;
                     }
 
-                    ApplyPromotion(client.Guild, memberPromote, targetRank, client);
+                    ApplyPromotion(client.Guild, member, targetRank, client);
                     promotionApplied = true;
                     break;
                 }
@@ -209,7 +194,7 @@ public static class GuildPromotionHandler {
 
                     client.Entity.ConquerPoints -= 650;
                     EntityTable.UpdateData(client.Entity.UID, "ConquerPoints", (int)client.Entity.ConquerPoints);
-                    ApplyPromotion(client.Guild, memberPromote, targetRank, client);
+                    ApplyPromotion(client.Guild, member, targetRank, client);
                     promotionApplied = true;
                     break;
                 }
@@ -230,7 +215,7 @@ public static class GuildPromotionHandler {
 
                     client.Entity.ConquerPoints -= 320;
                     EntityTable.UpdateData(client.Entity.UID, "ConquerPoints", (int)client.Entity.ConquerPoints);
-                    ApplyPromotion(client.Guild, memberPromote, targetRank, client);
+                    ApplyPromotion(client.Guild, member, targetRank, client);
                     promotionApplied = true;
                     break;
                 }
@@ -251,7 +236,7 @@ public static class GuildPromotionHandler {
 
                     client.Entity.ConquerPoints -= 270;
                     EntityTable.UpdateData(client.Entity.UID, "ConquerPoints", (int)client.Entity.ConquerPoints);
-                    ApplyPromotion(client.Guild, memberPromote, targetRank, client);
+                    ApplyPromotion(client.Guild, member, targetRank, client);
                     promotionApplied = true;
                     break;
                 }
@@ -272,7 +257,7 @@ public static class GuildPromotionHandler {
 
                     client.Entity.ConquerPoints -= 100;
                     EntityTable.UpdateData(client.Entity.UID, "ConquerPoints", (int)client.Entity.ConquerPoints);
-                    ApplyPromotion(client.Guild, memberPromote, targetRank, client);
+                    ApplyPromotion(client.Guild, member, targetRank, client);
                     promotionApplied = true;
                     break;
                 }
@@ -284,7 +269,7 @@ public static class GuildPromotionHandler {
                         return;
                     }
 
-                    ApplyPromotion(client.Guild, memberPromote, targetRank, client);
+                    ApplyPromotion(client.Guild, member, targetRank, client);
                     promotionApplied = true;
                     break;
                 }
@@ -296,7 +281,7 @@ public static class GuildPromotionHandler {
                         return;
                     }
 
-                    ApplyPromotion(client.Guild, memberPromote, targetRank, client);
+                    ApplyPromotion(client.Guild, member, targetRank, client);
                     promotionApplied = true;
                     break;
                 }
@@ -309,49 +294,42 @@ public static class GuildPromotionHandler {
                         return;
                     }
 
-                    ApplyPromotion(client.Guild, memberPromote, targetRank, client);
+                    ApplyPromotion(client.Guild, member, targetRank, client);
                     promotionApplied = true;
                     break;
                 }
                 case MemberRank.Member: {
-                    ApplyPromotion(client.Guild, memberPromote, targetRank, client);
+                    ApplyPromotion(client.Guild, member, targetRank, client);
                     promotionApplied = true;
                     break;
                 }
                 default: {
                     // Guild Leader can promote to all other officials except Manager and Supervisor
                     // Check if target rank is Manager or any Supervisor type
-                    if (targetRank == MemberRank.Manager ||
-                        targetRank == MemberRank.Supervisor ||
-                        targetRank == MemberRank.TSupervisor ||
-                        targetRank == MemberRank.OSupervisor ||
-                        targetRank == MemberRank.CPSupervisor ||
-                        targetRank == MemberRank.ASupervisor ||
-                        targetRank == MemberRank.SSupervisor ||
-                        targetRank == MemberRank.GSupervisor ||
-                        targetRank == MemberRank.PKSupervisor ||
-                        targetRank == MemberRank.RoseSupervisor ||
-                        targetRank == MemberRank.LilySupervisor) {
+                    if (targetRank is MemberRank.Manager or MemberRank.Supervisor or MemberRank.TSupervisor
+                        or MemberRank.OSupervisor or MemberRank.CPSupervisor or MemberRank.ASupervisor
+                        or MemberRank.SSupervisor or MemberRank.GSupervisor or MemberRank.PKSupervisor
+                        or MemberRank.RoseSupervisor or MemberRank.LilySupervisor)
                         // Cannot promote to Manager or Supervisor types
                         break;
-                    }
-                    
+
                     // Check if rank is below Steward (690) and above Member (200)
                     // This covers DeputySteward, Agents, Aides, Followers, SeniorMember, etc.
-                    if ((ushort)targetRank < (ushort)MemberRank.Steward && (ushort)targetRank > (ushort)MemberRank.Member) {
+                    if ((ushort)targetRank < (ushort)MemberRank.Steward &&
+                        (ushort)targetRank > (ushort)MemberRank.Member) {
                         // Check rank limits for specific ranks that have limits
                         var targetRankIndex = (ushort)targetRank;
                         if (targetRankIndex < client.Guild.RanksCounts.Length) {
                             // For ranks with no specific limit, allow promotion
                             // Some ranks like DeputySteward, Agent, SeniorMember have no limits per guide
-                            ApplyPromotion(client.Guild, memberPromote, targetRank, client);
+                            ApplyPromotion(client.Guild, member, targetRank, client);
                             promotionApplied = true;
                         }
                     }
+
                     break;
                 }
             }
-        }
 
         #endregion
 
@@ -359,7 +337,7 @@ public static class GuildPromotionHandler {
 
         if (client.AsMember.Rank == MemberRank.DeputyLeader ||
             client.AsMember.Rank == MemberRank.HDeputyLeader ||
-            client.AsMember.Rank == MemberRank.LeaderSpouse) {
+            client.AsMember.Rank == MemberRank.LeaderSpouse)
             switch (targetRank) {
                 case MemberRank.Steward: {
                     if (client.Guild.RanksCounts[(ushort)targetRank] >=
@@ -369,7 +347,7 @@ public static class GuildPromotionHandler {
                         return;
                     }
 
-                    ApplyPromotion(client.Guild, memberPromote, targetRank, client);
+                    ApplyPromotion(client.Guild, member, targetRank, client);
                     promotionApplied = true;
                     break;
                 }
@@ -381,7 +359,7 @@ public static class GuildPromotionHandler {
                         return;
                     }
 
-                    ApplyPromotion(client.Guild, memberPromote, targetRank, client);
+                    ApplyPromotion(client.Guild, member, targetRank, client);
                     promotionApplied = true;
                     break;
                 }
@@ -393,7 +371,7 @@ public static class GuildPromotionHandler {
                         return;
                     }
 
-                    ApplyPromotion(client.Guild, memberPromote, targetRank, client);
+                    ApplyPromotion(client.Guild, member, targetRank, client);
                     promotionApplied = true;
                     break;
                 }
@@ -406,33 +384,32 @@ public static class GuildPromotionHandler {
                         return;
                     }
 
-                    ApplyPromotion(client.Guild, memberPromote, targetRank, client);
+                    ApplyPromotion(client.Guild, member, targetRank, client);
                     promotionApplied = true;
                     break;
                 }
                 case MemberRank.Member: {
-                    ApplyPromotion(client.Guild, memberPromote, targetRank, client);
+                    ApplyPromotion(client.Guild, member, targetRank, client);
                     promotionApplied = true;
                     break;
                 }
                 // Can also promote to ranks below Steward
                 default: {
-                    if (targetRank < MemberRank.Steward && targetRank > MemberRank.Member) {
-                        ApplyPromotion(client.Guild, memberPromote, targetRank, client);
+                    if (targetRank is < MemberRank.Steward and > MemberRank.Member) {
+                        ApplyPromotion(client.Guild, member, targetRank, client);
                         promotionApplied = true;
                     }
 
                     break;
                 }
             }
-        }
 
         #endregion
 
         #region Manager & Honorary Manager Promotions
 
         if (client.AsMember.Rank == MemberRank.Manager ||
-            client.AsMember.Rank == MemberRank.HonoraryManager) {
+            client.AsMember.Rank == MemberRank.HonoraryManager)
             if (targetRank == MemberRank.ManagerAide) {
                 if (client.Guild.RanksCounts[(ushort)targetRank] >= GuildRankLimits.GetMaxAide(client.Guild.Level)) {
                     client.Send(new Message("Sorry all Manager Aide ranks are occupied!",
@@ -440,10 +417,9 @@ public static class GuildPromotionHandler {
                     return;
                 }
 
-                ApplyPromotion(client.Guild, memberPromote, targetRank, client);
+                ApplyPromotion(client.Guild, member, targetRank, client);
                 promotionApplied = true;
             }
-        }
 
         #endregion
 
@@ -459,7 +435,7 @@ public static class GuildPromotionHandler {
             client.AsMember.Rank == MemberRank.GSupervisor ||
             client.AsMember.Rank == MemberRank.PKSupervisor ||
             client.AsMember.Rank == MemberRank.RoseSupervisor ||
-            client.AsMember.Rank == MemberRank.LilySupervisor) {
+            client.AsMember.Rank == MemberRank.LilySupervisor)
             if (targetRank == MemberRank.SupervisorAide) {
                 if (client.Guild.RanksCounts[(ushort)targetRank] >= GuildRankLimits.GetMaxAide(client.Guild.Level)) {
                     client.Send(new Message("Sorry all Supervisor Aide ranks are occupied!",
@@ -467,16 +443,15 @@ public static class GuildPromotionHandler {
                     return;
                 }
 
-                ApplyPromotion(client.Guild, memberPromote, targetRank, client);
+                ApplyPromotion(client.Guild, member, targetRank, client);
                 promotionApplied = true;
             }
-        }
 
         #endregion
 
         #region Agent Promotions
 
-        if (client.AsMember.Rank == MemberRank.Agent) {
+        if (client.AsMember.Rank == MemberRank.Agent)
             if (targetRank == MemberRank.Aide) {
                 if (client.Guild.RanksCounts[(ushort)targetRank] >= GuildRankLimits.GetMaxAide(client.Guild.Level)) {
                     client.Send(new Message("Sorry all Aide ranks are occupied!",
@@ -484,17 +459,20 @@ public static class GuildPromotionHandler {
                     return;
                 }
 
-                ApplyPromotion(client.Guild, memberPromote, targetRank, client);
+                ApplyPromotion(client.Guild, member, targetRank, client);
                 promotionApplied = true;
             }
-        }
 
         #endregion
 
         if (!promotionApplied) {
-            client.Send(new Message(
-                $"You don't have permission to promote to {targetRank} (ID: {(ushort)targetRank})! Your rank: {client.AsMember.Rank}, Target member rank: {memberPromote.Rank}",
-                Color.White, Message.System));
+            var targetRankId = ((ushort)targetRank).ToString();
+            var targetRankStr = targetRank.ToString();
+            var clientRankStr = client.AsMember.Rank.ToString();
+            var memberRankStr = member.Rank.ToString();
+            var message = "You don't have permission to promote to " + targetRankStr + " (ID: " + targetRankId +
+                          ")! Your rank: " + clientRankStr + ", Target member rank: " + memberRankStr;
+            client.Send(new Message(message, Color.White, Message.System));
         }
         else {
             client.Entity.GuildBattlePower = client.Guild.GetSharedBattlePower(client.Entity.GuildRank);

@@ -2,55 +2,28 @@
 using System.Linq;
 using MTA.Client;
 using MTA.Database;
-using MTA.Game.ConquerStructures;
 using MTA.Game.Features.Guilds.Constants;
 using MTA.Game.Features.Guilds.Database.Mappers;
 using MTA.Game.Features.Guilds.Database.Schema;
+using static MTA.Game.Features.Guilds.GuildAdvertise;
 
 namespace MTA.Game.Features.Guilds.Database;
 
-using Member = Guild.Member;
+using GuildMember = GuildMember;
 
 public static class GuildTable {
     public static void Load() {
-        var dict = new Dictionary<uint, SafeDictionary<uint, Member>>();
-        using (var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select("entities").Where("guildid", 0, true))
-        using (var reader = new MySqlReader(cmd)) {
-            while (reader.Read()) {
-                var member = new Member(reader.ReadUInt16("guildid")) {
-                    Id = reader.ReadUInt32("uid"),
-                    Name = reader.ReadString("name"),
-                    Level = reader.ReadByte("level"),
-                    Spouse = reader.ReadString("Spouse")
-                };
+        // Load all guild members from the dedicated guild_members table
+        var dict = GuildMemberTable.LoadAll();
 
-                if (Nobility.Board.TryGetValue(member.Id, out var value)) {
-                    member.NobilityRank = value.Rank;
-                    member.Gender = value.Gender;
-                }
-
-                member.Rank = (MemberRank)reader.ReadUInt16("guildrank");
-                member.SilverDonation = reader.ReadUInt64("GuildSilverDonation");
-                member.ConquerPointDonation = reader.ReadUInt64("GuildConquerPointDonation");
-                member.ArsenalDonation = reader.ReadUInt32("GuildArsenalDonation");
-                member.Class = reader.ReadByte("Class");
+        // Load VirtuePoints from entities table (not guild-specific, but used in guild calculations)
+        foreach (var member in dict.Values.SelectMany(guildMembers => guildMembers.Values)) {
+            using var cmd = new MySqlCommand(MySqlCommandType.SELECT)
+                .Select("entities")
+                .Where("UID", member.Id);
+            using var reader = new MySqlReader(cmd);
+            if (reader.Read()) {
                 member.VirtuePoints = reader.ReadUInt32("VirtuePoints");
-
-                member.Lilies = reader.ReadUInt32("GuildLilies");
-                member.Roses = reader.ReadUInt32("GuildRouses");
-                member.Orchids = reader.ReadUInt32("GuildOrchids");
-                member.Tulips = reader.ReadUInt32("GuildTulips");
-                member.PkDonation = reader.ReadUInt32("GuildPkDonation");
-                member.LastLogin = reader.ReadUInt64("GuildLastlod");
-
-                member.Exploits = reader.ReadUInt32("Exploits");
-                member.CtfCpsReward = reader.ReadUInt32("CTFCpsReward");
-                member.CtfSilverReward = reader.ReadUInt32("CTFSilverReward");
-
-                member.Mesh =
-                    uint.Parse(reader.ReadUInt16("Face").ToString() + reader.ReadUInt16("Body").ToString());
-                if (!dict.ContainsKey(member.GuildId)) dict.Add(member.GuildId, new SafeDictionary<uint, Member>());
-                dict[member.GuildId].Add(member.Id, member);
             }
         }
 
@@ -94,10 +67,12 @@ public static class GuildTable {
                 guild.AdvertiseRecruit.Load(record.Advertise);
                 guild.GuildEnroll = uint.TryParse(record.GuildEnroll, out var guildEnroll) ? guildEnroll : 0;
                 guild.CreateTime(guild.GuildEnroll);
-                guild.BulletinEnroll = uint.TryParse(record.BulletinEnroll, out var bulletinEnroll) ? bulletinEnroll : 0;
+                guild.BulletinEnroll =
+                    uint.TryParse(record.BulletinEnroll, out var bulletinEnroll) ? bulletinEnroll : 0;
                 guild.CTFDonationCPs = uint.TryParse(record.CTFDonationCps, out var ctfCps) ? ctfCps : 0;
                 guild.CTFDonationSilver = uint.TryParse(record.CTFDonationSilver, out var ctfSilver) ? ctfSilver : 0;
-                guild.CTFDonationSilverOld = uint.TryParse(record.CTFdonationSilverold, out var ctfSilverOld) ? ctfSilverOld : 0;
+                guild.CTFDonationSilverOld =
+                    uint.TryParse(record.CTFdonationSilverold, out var ctfSilverOld) ? ctfSilverOld : 0;
                 guild.CTFDonationCPSold = uint.TryParse(record.CTFdonationCpsold, out var ctfCpsOld) ? ctfCpsOld : 0;
 
                 guild.CreateTime(guild.BulletinEnroll);
@@ -106,7 +81,7 @@ public static class GuildTable {
                     guild.MemberCount = (uint)guild.Members.Count;
                 }
                 else
-                    guild.Members = new SafeDictionary<uint, Member>();
+                    guild.Members = new SafeDictionary<uint, GuildMember>();
 
                 Kernel.Guilds.Add(guild.Id, guild);
                 foreach (var member in guild.Members.Values) {
@@ -144,11 +119,11 @@ public static class GuildTable {
         foreach (var guild in Kernel.Guilds.Values) {
             guild.CreateMembersRank();
             if (guild.AdvertiseRecruit.WasLoad)
-                Guild.Advertise.Add(guild);
+                Add(guild);
             guild.CalculateCTFRank();
         }
 
-        Guild.Advertise.FixedRank();
+        FixedRank();
         //create leader spouse
         foreach (var guild in Kernel.Guilds.Values) {
             foreach (var member in guild.Members.Values
@@ -241,8 +216,9 @@ public static class GuildTable {
     }
 
     public static void SaveAdvertise(Guild guild) {
+        string advertise = guild.AdvertiseRecruit.ToString();
         using var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update(GuildSchema.Tables.GuildsTable)
-            .Set(GuildSchema.Guilds.Advertise, guild.AdvertiseRecruit.ToString())
+            .Set(GuildSchema.Guilds.Advertise, advertise)
             .Set(GuildSchema.Guilds.SilverFund, guild.SilverFund)
             .Where(GuildSchema.Guilds.Id, guild.Id);
         cmd.Execute();
@@ -264,13 +240,15 @@ public static class GuildTable {
     }
 
     public static void Disband(Guild guild) {
-        using (var cmd = new MySqlCommand(MySqlCommandType.UPDATE).Update("entities")
-                   .Set("guildid", 0)
-                   .Where("guildid", guild.Id))
-            cmd.Execute();
-        using (var cmd = new MySqlCommand(MySqlCommandType.DELETE).Delete(GuildSchema.Tables.GuildsTable,
-                   GuildSchema.Guilds.Id, guild.Id))
-            cmd.Execute();
+        // Delete all members from guild_members table
+        foreach (var member in guild.Members.Values) {
+            GuildMemberTable.Delete(member.Id);
+        }
+
+        // Delete the guild
+        using var cmd = new MySqlCommand(MySqlCommandType.DELETE).Delete(GuildSchema.Tables.GuildsTable,
+            GuildSchema.Guilds.Id, guild.Id);
+        cmd.Execute();
     }
 
     public static void Create(Guild guild) {

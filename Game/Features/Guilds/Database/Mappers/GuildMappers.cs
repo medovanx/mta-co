@@ -75,4 +75,27 @@ public static class GuildMappers {
             DeputyClaimedIds = deserializeDeputyIds(reader.ReadString(GuildSchema.GuildWarHistory.DeputyClaimedIds))
         };
     }
+
+    /// <summary>
+    ///     Maps a MySqlReader to a GuildMemberRecord from the `guild_members` table
+    /// </summary>
+    public static GuildMemberRecord MapGuildMember(MySqlReader reader) {
+        return new GuildMemberRecord {
+            EntityId = reader.ReadUInt32(GuildSchema.GuildMembers.EntityId),
+            GuildId = reader.ReadUInt32(GuildSchema.GuildMembers.GuildId),
+            Rank = reader.ReadUInt16(GuildSchema.GuildMembers.Rank),
+            SilverDonation = reader.ReadUInt64(GuildSchema.GuildMembers.SilverDonation),
+            ConquerPointDonation = reader.ReadUInt64(GuildSchema.GuildMembers.ConquerPointDonation),
+            ArsenalDonation = reader.ReadUInt32(GuildSchema.GuildMembers.ArsenalDonation),
+            Lilies = reader.ReadUInt32(GuildSchema.GuildMembers.Lilies),
+            Roses = reader.ReadUInt32(GuildSchema.GuildMembers.Roses),
+            Orchids = reader.ReadUInt32(GuildSchema.GuildMembers.Orchids),
+            Tulips = reader.ReadUInt32(GuildSchema.GuildMembers.Tulips),
+            PkDonation = reader.ReadUInt32(GuildSchema.GuildMembers.PkDonation),
+            LastLogin = reader.ReadUInt64(GuildSchema.GuildMembers.LastLogin),
+            Exploits = reader.ReadUInt32(GuildSchema.GuildMembers.Exploits),
+            CtfCpsReward = reader.ReadUInt32(GuildSchema.GuildMembers.CtfCpsReward),
+            CtfSilverReward = reader.ReadUInt32(GuildSchema.GuildMembers.CtfSilverReward)
+        };
+    }
 }
