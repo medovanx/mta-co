@@ -16,7 +16,7 @@ using MTA.Game.Constants;
 using MTA.Game.Events;
 using MTA.Game.Events.GuildWar;
 using MTA.Game.Features;
-using MTA.Game.Features.Guilds;
+using MTA.Game.Features.Guilds.Models;
 using MTA.Game.Features.Guilds.Constants;
 using MTA.Game.Features.Guilds.Database;
 using MTA.Game.Features.Tournaments;

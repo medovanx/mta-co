@@ -3,7 +3,7 @@ using MTA.Network.GamePackets;
 using System.Collections.Concurrent;
 using MTA.Game;
 using MTA.Game.Constants;
-using MTA.Game.Features.Guilds;
+using MTA.Game.Features.Guilds.Models;
 using MTA.Game.Features.Guilds.Constants;
 
 namespace MTA.Database

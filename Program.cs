@@ -17,7 +17,7 @@ using MTA.Game.Features;
 using MTA.Game.ConquerStructures;
 using MTA.Game.ConquerStructures.House;
 using MTA.Game.ConquerStructures.Society;
-using MTA.Game.Features.Guilds;
+using MTA.Game.Features.Guilds.Models;
 using MTA.Game.Items;
 using MTA.Game.Npcs;
 using MTA.Game.Npcs.ScriptEngine;

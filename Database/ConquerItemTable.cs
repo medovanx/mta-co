@@ -2,6 +2,7 @@
 using System.Linq;
 using MTA.Network.GamePackets;
 using System.Collections.Generic;
+using MTA.Game.Features.Guilds.Packets.Handlers;
 
 namespace MTA.Database
 {
@@ -288,7 +289,7 @@ namespace MTA.Database
             {
                 if (client.Guild != null)
                 {
-                    int itemPosition = Game.Features.Guilds.Handlers.GuildArsenalHandler.ArsenalPosition(item.ID);
+                    int itemPosition = GuildArsenalHandler.ArsenalPosition(item.ID);
                     if (itemPosition != -1)
                     {
                         var arsenal = client.Guild.Arsenals[itemPosition];

@@ -4,9 +4,13 @@ using MTA.Database;
 using MTA.Game.Features.Guilds.Database.Mappers;
 using MTA.Game.Features.Guilds.Database.Models;
 using MTA.Game.Features.Guilds.Database.Schema;
+using MTA.Game.Features.Guilds.Models;
 
 namespace MTA.Game.Features.Guilds.Database;
 
+/// <summary>
+///     Database operations for guild war history and rewards, tracking war victories and reward claims for guild leaders and deputies.
+/// </summary>
 public static class GuildWarHistoryTable {
     private static string SerializeDeputyIds(List<uint>? ids) {
         if (ids == null || ids.Count == 0)
@@ -26,13 +30,17 @@ public static class GuildWarHistoryTable {
         json = json.Substring(1, json.Length - 2);
         if (string.IsNullOrEmpty(json)) return result;
         var parts = json.Split(',');
-        foreach (var part in parts)
+        foreach (var part in parts) {
             if (uint.TryParse(part.Trim(), out var id))
                 result.Add(id);
+        }
 
         return result;
     }
 
+    /// <summary>
+    ///     Creates new war history record when a guild wins a war, tracking the victory and initializing reward claim status.
+    /// </summary>
     public static void Create(Guild winnerGuild, uint leaderEntityId,
         string leaderName, DateTime warEndTime) {
         using var cmd = new MySqlCommand(MySqlCommandType.INSERT).Insert(GuildSchema.Tables.GuildWarHistoryTable)
@@ -45,6 +53,9 @@ public static class GuildWarHistoryTable {
         cmd.Execute();
     }
 
+    /// <summary>
+    ///     Gets most recent war history record, used to check latest war victory and reward availability.
+    /// </summary>
     public static GuildWarHistoryRecord? GetLatest() {
         var cmd = new MySqlCommand(MySqlCommandType.SELECT)
             .Select(GuildSchema.Tables.GuildWarHistoryTable)
@@ -59,6 +70,9 @@ public static class GuildWarHistoryTable {
         }
     }
 
+    /// <summary>
+    ///     Marks leader reward as claimed, preventing duplicate claims from the guild leader.
+    /// </summary>
     public static void SetGuildLeaderClaimed(uint historyId) {
         using var cmd = new MySqlCommand(MySqlCommandType.UPDATE)
             .Update(GuildSchema.Tables.GuildWarHistoryTable)
@@ -67,6 +81,9 @@ public static class GuildWarHistoryTable {
         cmd.Execute();
     }
 
+    /// <summary>
+    ///     Adds deputy to claimed rewards list, tracking which deputies have claimed their war rewards (max 5 deputies).
+    /// </summary>
     public static void AddDeputyClaim(uint historyId, uint deputyEntityId) {
         var history = GetById(historyId);
         if (history == null) return; // History not found
@@ -89,21 +106,33 @@ public static class GuildWarHistoryTable {
         return GuildMappers.MapGuildWarHistory(reader, _ => DateTime.MinValue, DeserializeDeputyIds);
     }
 
+    /// <summary>
+    ///     Gets list of deputies who claimed rewards, returning entity IDs of deputies who have already claimed.
+    /// </summary>
     public static List<uint> GetDeputyClaimedIds(uint historyId) {
         var history = GetById(historyId);
         return history?.DeputyClaimedIds ?? [];
     }
 
+    /// <summary>
+    ///     Checks if deputy claimed reward, preventing duplicate claims from the same deputy.
+    /// </summary>
     public static bool HasDeputyClaimed(uint historyId, uint deputyEntityId) {
         var history = GetById(historyId);
         return history?.DeputyClaimedIds.Contains(deputyEntityId) ?? false;
     }
 
+    /// <summary>
+    ///     Checks if deputy can still claim reward, verifying that less than 5 deputies have already claimed.
+    /// </summary>
     public static bool CanDeputyClaim(uint historyId) {
         var history = GetById(historyId);
         return history is { DeputyClaimedIds.Count: < 5 };
     }
 
+    /// <summary>
+    ///     Gets last N war victories, returning recent war history records for display or statistics.
+    /// </summary>
     public static List<GuildWarHistoryRecord> GetLastNWins(int count) {
         var results = new List<GuildWarHistoryRecord>();
         var cmd = new MySqlCommand(MySqlCommandType.SELECT)

@@ -7,8 +7,9 @@ using MTA.Interfaces;
 using MTA.Network;
 using MTA.Game.ConquerStructures;
 using MTA.Game.Constants;
-using MTA.Game.Features.Guilds;
+using MTA.Game.Features.Guilds.Models;
 using MTA.Game.Features.Guilds.Constants;
+using MTA.Game.Features.Guilds.Packets.Handlers;
 
 namespace MTA.WebServer
 {
@@ -261,7 +262,7 @@ namespace MTA.WebServer
                     }
                     if (item.Inscribed)
                     {
-                        int arsenalRealPosition = Game.Features.Guilds.Handlers.GuildArsenalHandler.ArsenalPosition(item.ID);
+                        int arsenalRealPosition = GuildArsenalHandler.ArsenalPosition(item.ID);
                         if ((item.ID % 10) >= 8 && !item.Inscribed)
                         {
                             if (client.Entity.GuildID != 0 && client.Guild != null && client.Guild.Arsenals[arsenalRealPosition].Unlocked)

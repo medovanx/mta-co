@@ -12,7 +12,7 @@ using System.Drawing;
 using MTA.Franko;
 using MTA.Game.Constants;
 using MTA.Game.Features.Tournaments;
-using MTA.Game.Features.Guilds;
+using MTA.Game.Features.Guilds.Models;
 using MTA.Game.Npcs.ScriptEngine;
 using MTA.Network.GamePackets.EventAlert;
 

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using MTA.Client;
 using MTA.Database;
-using MTA.Game.Features.Guilds.Conductors;
+using MTA.Game.Features.Guilds.Services;
 using MTA.Network.GamePackets;
 using static MTA.Game.Constants.Items.GuildItems;
 

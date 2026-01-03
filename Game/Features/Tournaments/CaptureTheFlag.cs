@@ -8,6 +8,7 @@ using MTA.Game.Features.Guilds;
 using MTA.Network;
 using MTA.Database;
 using MTA.Game.Features.Guilds.Database;
+using MTA.Game.Features.Guilds.Models;
 
 namespace MTA.Game
 {

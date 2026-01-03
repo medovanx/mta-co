@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MTA.Network.GamePackets;
 using MTA.Game.Features.Guilds;
+using MTA.Game.Features.Guilds.Models;
 
 namespace MTA.Game
 {

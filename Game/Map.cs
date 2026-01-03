@@ -10,7 +10,7 @@ using System.Collections.Concurrent;
 using MTA.Database;
 using MTA.Extensions;
 using MTA.Game.Constants;
-using MTA.Game.Features.Guilds.Conductors;
+using MTA.Game.Features.Guilds.Services;
 
 namespace MTA.Game {
     public class Map {

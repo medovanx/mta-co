@@ -5,6 +5,7 @@ using System.Text;
 using MTA.Network.GamePackets;
 using MTA.Client;
 using MTA.Game.Constants;
+using MTA.Game.Features.Guilds.Models;
 
 
 namespace MTA.Game

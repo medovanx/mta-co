@@ -1,6 +1,7 @@
 using MTA.Client;
 using MTA.Game.Features.Guilds;
 using MTA.Game.Features.Guilds.Constants;
+using MTA.Game.Features.Guilds.Models;
 using MTA.Network.GamePackets;
 using static MTA.Game.Enums;
 

@@ -7,6 +7,7 @@ using MTA.Database;
 using MTA.Game.Features.Guilds.Database;
 using MTA.Game.Features.Guilds;
 using MTA.Game.Constants;
+using MTA.Game.Features.Guilds.Models;
 using MTA.Interfaces;
 using MTA.Network.GamePackets;
 using static MTA.Game.Events.GuildWar.GuildWarConstants;

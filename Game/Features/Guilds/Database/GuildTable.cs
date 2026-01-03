@@ -5,11 +5,10 @@ using MTA.Database;
 using MTA.Game.Features.Guilds.Constants;
 using MTA.Game.Features.Guilds.Database.Mappers;
 using MTA.Game.Features.Guilds.Database.Schema;
-using static MTA.Game.Features.Guilds.GuildAdvertise;
+using MTA.Game.Features.Guilds.Models;
+using static MTA.Game.Features.Guilds.Services.GuildAdvertise;
 
 namespace MTA.Game.Features.Guilds.Database;
-
-using GuildMember = GuildMember;
 
 public static class GuildTable {
     public static void Load() {

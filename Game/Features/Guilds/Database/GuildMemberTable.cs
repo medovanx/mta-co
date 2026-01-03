@@ -4,6 +4,7 @@ using MTA.Game.ConquerStructures;
 using MTA.Game.Features.Guilds.Constants;
 using MTA.Game.Features.Guilds.Database.Mappers;
 using MTA.Game.Features.Guilds.Database.Schema;
+using MTA.Game.Features.Guilds.Models;
 
 namespace MTA.Game.Features.Guilds.Database;
 
@@ -53,7 +54,7 @@ public static class GuildMemberTable {
                 member.Gender = value.Gender;
             }
 
-            member.Mesh = uint.Parse(reader.ReadUInt16("Face") + reader.ReadUInt16("Body"));
+            member.Mesh = uint.Parse(reader.ReadUInt16("Face").ToString() + reader.ReadUInt16("Body"));
 
             if (!dict.ContainsKey(member.GuildId))
                 dict.Add(member.GuildId, new SafeDictionary<uint, GuildMember>());

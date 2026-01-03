@@ -17,7 +17,7 @@ using MTA.Game.Constants;
 using MTA.Game.ConquerStructures;
 using MTA.Game.ConquerStructures.House;
 using MTA.Game.ConquerStructures.Society;
-using MTA.Game.Features.Guilds;
+using MTA.Game.Features.Guilds.Models;
 using MTA.Game.Events;
 using MTA.Game.Events.GuildWar;
 using MTA.Game.Events.SteedRace;
@@ -30,6 +30,8 @@ using MTA.Game.Items;
 using MTA.Interfaces;
 using MTA.MaTrix;
 using MTA.Game.Features.Guilds.Packets;
+using MTA.Game.Features.Guilds.Packets.Handlers.Command;
+using MTA.Game.Features.Guilds.Packets.Writers;
 using MTA.Network.GamePackets;
 using MTA.Network.GamePackets.EventAlert;
 using MTA.Network.GamePackets.Roulette;
@@ -2620,7 +2622,7 @@ namespace MTA.Network {
                         #endregion
 
                         if (req.InteractType == 102) {
-                            Game.Features.Guilds.Handlers.GuildJoinHandler.HandleExpelMemberViaNpc(req.Input, client);
+                            GuildJoinHandler.HandleExpelMemberViaNpc(req.Input, client);
                             return;
                         }
 
@@ -14000,7 +14002,7 @@ namespace MTA.Network {
             if (client.Guild != null) {
                 client.Guild.SendGuild(client);
                 var guildMinDonations = new GuildMinDonations(31);
-                guildMinDonations.AprendGuild(client.Guild);
+                guildMinDonations.AppendGuild(client.Guild);
                 client.Send(guildMinDonations.ToArray());
             }
 
