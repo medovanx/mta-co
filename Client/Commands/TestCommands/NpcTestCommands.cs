@@ -32,7 +32,7 @@ namespace MTA.Client.Commands.TestCommands
             try
             {
                 const int maxMeshId = 65535, meshesPerNpc = 10;
-                const uint baseNpcIdStart = 900000000;
+                const uint baseNpcIdStart = 10000; // Range: 1-99999 (excluding 12)
 
                 // Parse parameters
                 int amount = 500; // Default amount
@@ -93,14 +93,15 @@ namespace MTA.Client.Commands.TestCommands
                 // Calculate mesh ranges based on amount
                 int startMeshIndex = (page - 1) * amount;
                 int npcsThisPage = Math.Min(amount, totalNpcs - startMeshIndex);
-                uint baseNpcId = baseNpcIdStart + ((uint)(page - 1) * 1000000);
+                const uint pageIdOffset = 10000; // ID range per page
+                uint baseNpcId = baseNpcIdStart + ((uint)(page - 1) * pageIdOffset);
 
                 // Remove previous page if switching
                 if (PlayerMeshPageData.TryGetValue(client.Entity.UID, out var pageData) &&
                     pageData.currentPage != page && pageData.currentPage > 0)
                 {
                     RemovePageNPCs(targetMapId, pageData.currentPage,
-                        baseNpcIdStart + ((uint)(pageData.currentPage - 1) * 1000000));
+                        baseNpcIdStart + ((uint)(pageData.currentPage - 1) * pageIdOffset));
                     client.Send(new Message($"Removed page {pageData.currentPage} NPCs.", System.Drawing.Color.Cyan, Message.Tip));
                 }
 
@@ -192,7 +193,7 @@ namespace MTA.Client.Commands.TestCommands
             if (!Kernel.Maps.ContainsKey(mapId) || !TestMeshNpcsByMap.ContainsKey(mapId))
                 return;
 
-            const uint pageIdRange = 1000000; // ID range per page
+            const uint pageIdRange = 10000; // ID range per page
             var map = Kernel.Maps[mapId];
             var npcs = TestMeshNpcsByMap[mapId];
 

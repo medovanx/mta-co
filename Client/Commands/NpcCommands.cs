@@ -520,9 +520,10 @@ namespace MTA.Client.Commands {
                 }
             }
 
-            // Find first available ID in range 1-99999
+            // Find first available ID in range 1-99999 (except 12)
             uint npcId = 0;
             for (uint id = 1; id <= 99999; id++) {
+                if (id == 12) continue; // Skip ID 12 (warehouse)
                 if (!existingIds.Contains(id)) {
                     npcId = id;
                     break;
