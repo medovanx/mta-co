@@ -1,30 +1,43 @@
-# MTA CO Source
 
-Conquer Online game server implementation in C#.
+# MTA CO - Private Conquer Online Server
+A Conquer Online game server implementation in C#.
+
+<div align="center">
+    <img src="https://i.ibb.co/wr3HbFbc/logo.png" alt="Logo" height="100">
+</div>
+
+<div align="center">
+
+[![C# 14](https://img.shields.io/badge/C%23-14-blue.svg)](https://learn.microsoft.com/dotnet/csharp/)
+[![.NET 10](https://img.shields.io/badge/.NET-10-purple.svg)](https://dotnet.microsoft.com/)
+[![MySQL 9.5](https://img.shields.io/badge/MySQL-9.5-4479A1.svg)](https://www.mysql.com/)
+
+</div>
 
 ## Requirements
 
-- .NET Framework 4.8
-- Docker and Docker Compose
+- C# v14
+- .NET Framework 10
+- Docker
 
 ## Building
 
 1. Open `MTA.sln` in Visual Studio
 2. Restore packages (Visual Studio does this automatically, or run `nuget restore`)
 3. Build the project:
-   - Press `Ctrl+Shift+B` in Visual Studio
-   - Or run: `msbuild MTA.sln /p:Configuration=Debug`
+   - For debug: `msbuild MTA.sln /p:Configuration=Debug`
+   - For release: `msbuild MTA.sln/p:Configuration=Release`
 
 ## Starting
 
 1. Start the database:
    ```cmd
-   docker-compose up -d
+   docker compose up -d
    ```
 
 2. Start the server:
    ```cmd
-   cd bin\Debug
+   cd bin\Release
    MTA.exe
    ```
 
