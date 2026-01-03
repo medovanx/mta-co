@@ -2250,54 +2250,6 @@ namespace MTA {
             #endregion
 
 
-            //     #region uniqureKiller
-            //   if ()
-            //      if (DateTime.Now.Hour == 18 && DateTime.Now.Minute == 19 && DateTime.Now.Second == 59)
-            //      {
-            //          Program.UniquePk = true;
-            //           Kernel.SendWorldMessage(new Message("UniqueKiller War began!", Color.Red, Message.Center), Program.Values);
-            //          foreach (var client in Program.Values)
-
-            //             client.MessageBox("UniqueKiller began! Would you like to join ...?",
-            //                 p => { p.Entity.Teleport(1002, 255, 235); }, null, 60);
-            //    }
-            //    #endregion
-            //////////////////////
-
-
-            /////////////////////
-            ////////////////////New Quests Adedd By Franko///////////////////
-
-            #region Portals`War
-
-            if (DateTime.Now.Minute == 10 && now64.Second == 10) {
-                Kernel.SendWorldMessage(
-                    new Message(" PortalsWar Pk, Now Online All Go To Play PK, !", Color.White, Message.Center),
-                    Program.Values);
-                foreach (var client in Program.Values)
-                    client.MessageBox(" PortalsWar Pk, Now Online, like to Join? ",
-                        p => { p.Entity.Teleport(1002, 291, 360); }, null, 60);
-            }
-
-            #endregion
-
-
-
-
-            #region Attackers QuesT
-
-            if (DateTime.Now.Minute == 32 && now64.Second == 1) {
-                Kernel.SendWorldMessage(
-                    new Message(" Attackers  Pk, Now Online All Go To Play PK !", Color.White, Message.Center),
-                    Program.Values);
-                foreach (var client in Program.Values)
-                    client.MessageBox(" Attackers QuesT Pk, Now Online, like to Join?",
-                        (p) => { p.Entity.Teleport(1002, 294, 360); }, null, 60);
-            }
-
-            #endregion
-
-
             #region [T]KingDom.GLD
 
             if (now64 is { Second: <= 2, DayOfWeek: DayOfWeek.Monday, Hour: 18, Minute: 48 }) {
