@@ -194,8 +194,6 @@ public static class GuildArsenalHandler {
     }
 
     private static void ViewGuildArsenal(GameState client) {
-        if (client.Entity.GuildID == 0) return;
-        if (client.Guild == null) return;
         var view = new ArsenalTab(true) {
             SharedBattlepower = (uint)client.Guild.GetMaxSharedBattlePower(),
             ArsenalCount = 8

@@ -110,7 +110,6 @@ public static class GuildAdvertiseHandler {
     }
 
     private static void HandleAdvertiseRegister(byte[] packet, GameState client) {
-        if (client.Guild == null) return;
         if (client.AsMember is not { Rank: MemberRank.GuildLeader }) return;
 
         BitConverter.ToUInt32(packet, 4);

@@ -53,7 +53,7 @@ public static class GuildMemberTable {
                 member.Gender = value.Gender;
             }
 
-            member.Mesh = uint.Parse(reader.ReadUInt16("Face").ToString() + reader.ReadUInt16("Body").ToString());
+            member.Mesh = uint.Parse(reader.ReadUInt16("Face") + reader.ReadUInt16("Body"));
 
             if (!dict.ContainsKey(member.GuildId))
                 dict.Add(member.GuildId, new SafeDictionary<uint, GuildMember>());

@@ -39,8 +39,7 @@ public static class GuildRelationsHandler {
     }
 
     private static void AllyGuilds(string name, GameState client) {
-        if (client.Guild == null) return;
-        foreach (var guild in Kernel.Guilds.Values.Where(guild => guild.Name == name && client.Guild.Name != name))
+        foreach (var guild in Kernel.Guilds.Values.Where(guild => guild.Name == name && client.Guild!.Name != name))
             if (guild.Leader != null && Kernel.TryGetPlayer(guild.Leader.Id, out var guildLeaderClient)) {
                 guildLeaderClient.OnMessageBoxEventParams = [
                     guild,

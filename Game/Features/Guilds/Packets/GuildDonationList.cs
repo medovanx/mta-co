@@ -2,6 +2,12 @@
 
 namespace MTA.Game.Features.Guilds.Packets;
 
+/// <summary>
+///     Builds the packet that displays the guild donation list to clients. This packet shows
+///     member donation information including silver, CP, and other contributions. Currently
+///     contains placeholder data structure - the actual member donation data should be populated
+///     from the guild's member list.
+/// </summary>
 public class GuildDonationList {
     private readonly ushort _pageNumber;
     private readonly ushort _subType;
@@ -9,6 +15,11 @@ public class GuildDonationList {
     public ushort Size;
     public ushort Type;
 
+    /// <summary>
+    ///     Initializes the donation list packet parser from incoming client data.
+    /// </summary>
+    /// <param name="packet">The incoming packet data</param>
+    /// <param name="guild">The guild to build the donation list for</param>
     public GuildDonationList(byte[] packet, Guild guild) {
         Guild = guild;
         var reader = new BinaryReader(new MemoryStream(packet));
@@ -18,6 +29,13 @@ public class GuildDonationList {
         _pageNumber = reader.ReadUInt16();
     }
 
+    /// <summary>
+    ///     Constructs the donation list packet to send to the client. The packet includes the total
+    ///     member count and sample member data (level, rank, donation amount, online status).
+    ///     Note: Currently uses placeholder data - should be updated to iterate through actual
+    ///     guild members and include their real donation statistics.
+    /// </summary>
+    /// <returns>The complete packet byte array ready to send to the client</returns>
     public byte[] Build() {
         var stream = new MemoryStream();
         var writer = new BinaryWriter(stream);

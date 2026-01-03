@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -5,13 +6,28 @@ using MTA.Client;
 using MTA.Database;
 using MTA.Game.Features.Guilds.Constants;
 using MTA.Game.Features.Guilds.Database;
+using MTA.Game.Features.Guilds.Options;
 using MTA.Game.Features.Guilds.Packets;
 using MTA.Network.GamePackets;
 using Writer = MTA.Network.Writer;
 
 namespace MTA.Game.Features.Guilds.Handlers;
 
+/// <summary>
+///     Handles guild member promotion and demotion operations. Manages the promotion hierarchy where
+///     higher-ranked members can promote lower-ranked members to specific ranks based on their own rank.
+///     Validates permissions, Conquer Points costs, and rank limits before applying promotions.
+///     Also handles special cases like guild leadership transfer and Deputy Leader demotion.
+/// </summary>
 public static class GuildPromotionHandler {
+    /// <summary>
+    ///     Sends a list of all members with a specific rank to the Guild Leader. This is used when
+    ///     the leader wants to view members of a particular rank (e.g., all Deputy Leaders) before
+    ///     making promotion decisions. Only Guild Leaders can request this information.
+    /// </summary>
+    /// <param name="command">The guild command containing the target rank to filter by</param>
+    /// <param name="packet">The original packet to forward</param>
+    /// <param name="client">The client requesting the member list (must be Guild Leader)</param>
     public static void HandlePromoteInfo(GuildCommand command, byte[] packet, GameState client) {
         if (client.AsMember!.Rank == MemberRank.GuildLeader) {
             var array2 = client.Guild!.Members.Values.Where(p => p.Rank == (MemberRank)command.DwParam)
@@ -45,13 +61,25 @@ public static class GuildPromotionHandler {
         client.Send(packet);
     }
 
+    /// <summary>
+    ///     Sends the available promotion options to the client based on their current rank.
+    ///     This populates the promotion UI with ranks the player can promote members to, along with
+    ///     CP costs and current counts. The options are determined by the player's rank in the guild.
+    /// </summary>
+    /// <param name="command">The guild command</param>
+    /// <param name="client">The client requesting promotion options</param>
     public static void HandleRequestPromote(GuildCommand command, GameState client) {
-        if (client.Guild == null) return;
-        if (client.AsMember == null) return;
-
         command.SendPromote(client, (ushort)GuildCommand.RequestPromote);
     }
 
+    /// <summary>
+    ///     Demotes a Deputy Leader back to Member rank. Only the Guild Leader can discharge Deputy Leaders.
+    ///     This is a special demotion case that doesn't go through the normal promotion system.
+    ///     The discharged member loses their Deputy Leader privileges and returns to basic Member status.
+    /// </summary>
+    /// <param name="command">The guild command</param>
+    /// <param name="packet">The packet containing the member name to discharge</param>
+    /// <param name="client">The client performing the discharge (must be Guild Leader)</param>
     public static void HandleDischarge(GuildCommand command, byte[] packet, GameState client) {
         var name = Encoding.Default.GetString(packet, 26, packet[25]);
         if (client is not { Guild: not null, AsMember.Rank: MemberRank.GuildLeader }) return;
@@ -72,6 +100,15 @@ public static class GuildPromotionHandler {
         GuildMemberTable.UpdateGuildAndRank(member.Id, member.GuildId, (ushort)member.Rank);
     }
 
+    /// <summary>
+    ///     Applies a promotion to a guild member. Updates the member's rank, adjusts guild rank counts,
+    ///     updates the database, and refreshes the client's UI if they are online. Also updates the
+    ///     promoting client's member list to reflect the change.
+    /// </summary>
+    /// <param name="guild">The guild the member belongs to</param>
+    /// <param name="member">The member being promoted</param>
+    /// <param name="newRank">The new rank to assign</param>
+    /// <param name="promotingClient">The client who initiated the promotion</param>
     private static void ApplyPromotion(Guild guild, GuildMember member, MemberRank newRank,
         GameState promotingClient) {
         // Update rank counts
@@ -104,14 +141,22 @@ public static class GuildPromotionHandler {
         guild.SendMembers(promotingClient, 0);
     }
 
+    /// <summary>
+    ///     Main promotion handler that validates and applies member promotions. Checks if the promoting
+    ///     player has permission to promote to the target rank, verifies Conquer Points costs for
+    ///     honorary ranks, and ensures rank limits aren't exceeded. Handles special case of guild
+    ///     leadership transfer separately. All validation is based on the promotion options defined
+    ///     in GuildPromotionOptions.
+    /// </summary>
+    /// <param name="command">The guild command</param>
+    /// <param name="packet">The packet containing member name and target rank</param>
+    /// <param name="client">The client attempting to promote a member</param>
     public static void HandlePromote(GuildCommand command, byte[] packet, GameState client) {
-        if (client is not { Guild: not null, AsMember: not null }) return;
-
-        var getMemberName = ReadString(packet, 26, packet[25]);
+        var getMemberName = Program.Encoding.GetString(packet, 26, packet[25]);
         var getMemberRank = BitConverter.ToUInt16(packet, 8);
         var targetRank = (MemberRank)getMemberRank;
 
-        if (!client.Guild.GetMember(getMemberName, out var memberPromote)) {
+        if (!client.Guild!.GetMember(getMemberName, out var memberPromote)) {
             client.Send(new Message("Sorry Can't Find " + getMemberName,
                 Color.White, Message.System));
             return;
@@ -120,366 +165,77 @@ public static class GuildPromotionHandler {
         // GetMember returns true only when member is found, so memberPromote is guaranteed non-null here
         var member = memberPromote!;
 
-        // Check if trying to promote to Manager or Supervisor (Guild Leader cannot promote to these)
-        if (client.AsMember.Rank == MemberRank.GuildLeader &&
-            targetRank is MemberRank.Manager or MemberRank.Supervisor) {
-            client.Send(new Message("Guild Leader cannot appoint Manager or Supervisor!",
-                Color.White, Message.System));
+        // Special case: Guild Leader transfer
+        if (client.AsMember!.Rank == MemberRank.GuildLeader && targetRank == MemberRank.GuildLeader) {
+            HandleGuildLeaderTransfer(client, member);
             return;
         }
 
-        var promotionApplied = false;
+        // Get promotion option for the target rank
+        // If option is null, the UI shouldn't have allowed this - silently return (potential hack attempt or UI bug)
+        var option = GuildPromotionOptions.GetPromotionOption(client.AsMember.Rank, targetRank);
+        if (option == null) return;
 
-        #region Guild Leader Promotions
-
-        if (client.AsMember.Rank == MemberRank.GuildLeader)
-            switch (targetRank) {
-                case MemberRank.GuildLeader: {
-                    // Transfer leadership
-                    member.Rank = MemberRank.GuildLeader;
-                    client.Guild.LeaderId = member.Id;
-                    client.Guild.Leader = member;
-                    client.Guild.LeaderName = member.Name;
-
-                    if (Kernel.TryGetPlayer(member.Id, out var promoteClient)) {
-                        client.Guild.SendGuild(promoteClient);
-                        promoteClient.Entity.GuildBattlePower = client.Guild.GetSharedBattlePower(member.Rank);
-                        promoteClient.Entity.GuildRank = (ushort)member.Rank;
-                        promoteClient.Screen.FullWipe();
-                        promoteClient.Screen.Reload();
-                    }
-
-                    client.AsMember.Rank = MemberRank.DeputyLeader;
-                    client.Entity.GuildRank = (ushort)client.AsMember.Rank;
-                    client.Guild.SendGuild(client);
-                    client.Screen.FullWipe();
-                    client.Screen.Reload();
-                    GuildTable.SaveLeader(client.Guild);
-                    client.Guild.SendMembers(client, 0);
-                    return;
-                }
-                case MemberRank.DeputyLeader: {
-                    if (client.Guild.RanksCounts[(ushort)targetRank] >=
-                        GuildRankLimits.GetMaxDeputyLeader(client.Guild.Level)) {
-                        client.Send(new Message("Sorry all DeputyLeader ranks are occupied!",
-                            Color.White, Message.System));
-                        return;
-                    }
-
-                    ApplyPromotion(client.Guild, member, targetRank, client);
-                    promotionApplied = true;
-                    break;
-                }
-                case MemberRank.HDeputyLeader: {
-                    // Check CP cost (650 CPs)
-                    if (client.Entity.ConquerPoints < 650) {
-                        client.Send(new Message("You need 650 Conquer Points to appoint Honorary Deputy Leader!",
-                            Color.White, Message.System));
-                        return;
-                    }
-
-                    var targetRankIndex = (ushort)targetRank;
-                    if (targetRankIndex >= client.Guild.RanksCounts.Length) {
-                        client.Send(new Message($"Error: Rank index {targetRankIndex} is out of bounds!",
-                            Color.White, Message.System));
-                        return;
-                    }
-
-                    if (client.Guild.RanksCounts[targetRankIndex] >=
-                        GuildRankLimits.GetMaxHonoraryDeputyLeader(client.Guild.Level)) {
-                        client.Send(new Message("Sorry all Honorary Deputy Leader ranks are occupied!",
-                            Color.White, Message.System));
-                        return;
-                    }
-
-                    client.Entity.ConquerPoints -= 650;
-                    EntityTable.UpdateData(client.Entity.UID, "ConquerPoints", (int)client.Entity.ConquerPoints);
-                    ApplyPromotion(client.Guild, member, targetRank, client);
-                    promotionApplied = true;
-                    break;
-                }
-                case MemberRank.HonoraryManager: {
-                    // Check CP cost (320 CPs)
-                    if (client.Entity.ConquerPoints < 320) {
-                        client.Send(new Message("You need 320 Conquer Points to appoint Honorary Manager!",
-                            Color.White, Message.System));
-                        return;
-                    }
-
-                    if (client.Guild.RanksCounts[(ushort)targetRank] >=
-                        GuildRankLimits.GetMaxHonoraryManager(client.Guild.Level)) {
-                        client.Send(new Message("Sorry all Honorary Manager ranks are occupied!",
-                            Color.White, Message.System));
-                        return;
-                    }
-
-                    client.Entity.ConquerPoints -= 320;
-                    EntityTable.UpdateData(client.Entity.UID, "ConquerPoints", (int)client.Entity.ConquerPoints);
-                    ApplyPromotion(client.Guild, member, targetRank, client);
-                    promotionApplied = true;
-                    break;
-                }
-                case MemberRank.HonorarySupervisor: {
-                    // Check CP cost (270 CPs)
-                    if (client.Entity.ConquerPoints < 270) {
-                        client.Send(new Message("You need 270 Conquer Points to appoint Honorary Supervisor!",
-                            Color.White, Message.System));
-                        return;
-                    }
-
-                    if (client.Guild.RanksCounts[(ushort)targetRank] >=
-                        GuildRankLimits.GetMaxHonorarySupervisor(client.Guild.Level)) {
-                        client.Send(new Message("Sorry all Honorary Supervisor ranks are occupied!",
-                            Color.White, Message.System));
-                        return;
-                    }
-
-                    client.Entity.ConquerPoints -= 270;
-                    EntityTable.UpdateData(client.Entity.UID, "ConquerPoints", (int)client.Entity.ConquerPoints);
-                    ApplyPromotion(client.Guild, member, targetRank, client);
-                    promotionApplied = true;
-                    break;
-                }
-                case MemberRank.HonorarySteward: {
-                    // Check CP cost (100 CPs)
-                    if (client.Entity.ConquerPoints < 100) {
-                        client.Send(new Message("You need 100 Conquer Points to appoint Honorary Steward!",
-                            Color.White, Message.System));
-                        return;
-                    }
-
-                    if (client.Guild.RanksCounts[(ushort)targetRank] >=
-                        GuildRankLimits.GetMaxHonorarySteward(client.Guild.Level)) {
-                        client.Send(new Message("Sorry all Honorary Steward ranks are occupied!",
-                            Color.White, Message.System));
-                        return;
-                    }
-
-                    client.Entity.ConquerPoints -= 100;
-                    EntityTable.UpdateData(client.Entity.UID, "ConquerPoints", (int)client.Entity.ConquerPoints);
-                    ApplyPromotion(client.Guild, member, targetRank, client);
-                    promotionApplied = true;
-                    break;
-                }
-                case MemberRank.LSpouseAide: {
-                    if (client.Guild.RanksCounts[(ushort)targetRank] >=
-                        GuildRankLimits.GetMaxAide(client.Guild.Level)) {
-                        client.Send(new Message("Sorry all Leader Aide ranks are occupied!",
-                            Color.White, Message.System));
-                        return;
-                    }
-
-                    ApplyPromotion(client.Guild, member, targetRank, client);
-                    promotionApplied = true;
-                    break;
-                }
-                case MemberRank.Steward: {
-                    if (client.Guild.RanksCounts[(ushort)targetRank] >=
-                        GuildRankLimits.GetMaxSteward(client.Guild.Level)) {
-                        client.Send(new Message("Sorry all Steward ranks are occupied!",
-                            Color.White, Message.System));
-                        return;
-                    }
-
-                    ApplyPromotion(client.Guild, member, targetRank, client);
-                    promotionApplied = true;
-                    break;
-                }
-                case MemberRank.Follower: {
-                    // According to JSON, Followers have no number limitation, but we check against a high limit for safety
-                    if (client.Guild.RanksCounts[(ushort)targetRank] >=
-                        GuildRankLimits.GetMaxFollower(client.Guild.Level)) {
-                        client.Send(new Message("Sorry all Follower ranks are occupied!",
-                            Color.White, Message.System));
-                        return;
-                    }
-
-                    ApplyPromotion(client.Guild, member, targetRank, client);
-                    promotionApplied = true;
-                    break;
-                }
-                case MemberRank.Member: {
-                    ApplyPromotion(client.Guild, member, targetRank, client);
-                    promotionApplied = true;
-                    break;
-                }
-                default: {
-                    // Guild Leader can promote to all other officials except Manager and Supervisor
-                    // Check if target rank is Manager or any Supervisor type
-                    if (targetRank is MemberRank.Manager or MemberRank.Supervisor or MemberRank.TSupervisor
-                        or MemberRank.OSupervisor or MemberRank.CPSupervisor or MemberRank.ASupervisor
-                        or MemberRank.SSupervisor or MemberRank.GSupervisor or MemberRank.PKSupervisor
-                        or MemberRank.RoseSupervisor or MemberRank.LilySupervisor)
-                        // Cannot promote to Manager or Supervisor types
-                        break;
-
-                    // Check if rank is below Steward (690) and above Member (200)
-                    // This covers DeputySteward, Agents, Aides, Followers, SeniorMember, etc.
-                    if ((ushort)targetRank < (ushort)MemberRank.Steward &&
-                        (ushort)targetRank > (ushort)MemberRank.Member) {
-                        // Check rank limits for specific ranks that have limits
-                        var targetRankIndex = (ushort)targetRank;
-                        if (targetRankIndex < client.Guild.RanksCounts.Length) {
-                            // For ranks with no specific limit, allow promotion
-                            // Some ranks like DeputySteward, Agent, SeniorMember have no limits per guide
-                            ApplyPromotion(client.Guild, member, targetRank, client);
-                            promotionApplied = true;
-                        }
-                    }
-
-                    break;
-                }
-            }
-
-        #endregion
-
-        #region Deputy Leader, Honorary Deputy Leader, Leader Spouse Promotions
-
-        if (client.AsMember.Rank == MemberRank.DeputyLeader ||
-            client.AsMember.Rank == MemberRank.HDeputyLeader ||
-            client.AsMember.Rank == MemberRank.LeaderSpouse)
-            switch (targetRank) {
-                case MemberRank.Steward: {
-                    if (client.Guild.RanksCounts[(ushort)targetRank] >=
-                        GuildRankLimits.GetMaxSteward(client.Guild.Level)) {
-                        client.Send(new Message("Sorry all Steward ranks are occupied!",
-                            Color.White, Message.System));
-                        return;
-                    }
-
-                    ApplyPromotion(client.Guild, member, targetRank, client);
-                    promotionApplied = true;
-                    break;
-                }
-                case MemberRank.HonorarySteward: {
-                    if (client.Guild.RanksCounts[(ushort)targetRank] >=
-                        GuildRankLimits.GetMaxHonorarySteward(client.Guild.Level)) {
-                        client.Send(new Message("Sorry all Honorary Steward ranks are occupied!",
-                            Color.White, Message.System));
-                        return;
-                    }
-
-                    ApplyPromotion(client.Guild, member, targetRank, client);
-                    promotionApplied = true;
-                    break;
-                }
-                case MemberRank.DLeaderAide: {
-                    if (client.Guild.RanksCounts[(ushort)targetRank] >=
-                        GuildRankLimits.GetMaxAide(client.Guild.Level)) {
-                        client.Send(new Message("Sorry all Deputy Leader Aide ranks are occupied!",
-                            Color.White, Message.System));
-                        return;
-                    }
-
-                    ApplyPromotion(client.Guild, member, targetRank, client);
-                    promotionApplied = true;
-                    break;
-                }
-                case MemberRank.Follower: {
-                    // According to JSON, Followers have no number limitation, but we check against a high limit for safety
-                    if (client.Guild.RanksCounts[(ushort)targetRank] >=
-                        GuildRankLimits.GetMaxFollower(client.Guild.Level)) {
-                        client.Send(new Message("Sorry all Follower ranks are occupied!",
-                            Color.White, Message.System));
-                        return;
-                    }
-
-                    ApplyPromotion(client.Guild, member, targetRank, client);
-                    promotionApplied = true;
-                    break;
-                }
-                case MemberRank.Member: {
-                    ApplyPromotion(client.Guild, member, targetRank, client);
-                    promotionApplied = true;
-                    break;
-                }
-                // Can also promote to ranks below Steward
-                default: {
-                    if (targetRank is < MemberRank.Steward and > MemberRank.Member) {
-                        ApplyPromotion(client.Guild, member, targetRank, client);
-                        promotionApplied = true;
-                    }
-
-                    break;
-                }
-            }
-
-        #endregion
-
-        #region Manager & Honorary Manager Promotions
-
-        if (client.AsMember.Rank == MemberRank.Manager ||
-            client.AsMember.Rank == MemberRank.HonoraryManager)
-            if (targetRank == MemberRank.ManagerAide) {
-                if (client.Guild.RanksCounts[(ushort)targetRank] >= GuildRankLimits.GetMaxAide(client.Guild.Level)) {
-                    client.Send(new Message("Sorry all Manager Aide ranks are occupied!",
-                        Color.White, Message.System));
-                    return;
-                }
-
-                ApplyPromotion(client.Guild, member, targetRank, client);
-                promotionApplied = true;
-            }
-
-        #endregion
-
-        #region Supervisor Promotions
-
-        if (client.AsMember.Rank == MemberRank.Supervisor ||
-            client.AsMember.Rank == MemberRank.HonorarySupervisor ||
-            client.AsMember.Rank == MemberRank.TSupervisor ||
-            client.AsMember.Rank == MemberRank.OSupervisor ||
-            client.AsMember.Rank == MemberRank.CPSupervisor ||
-            client.AsMember.Rank == MemberRank.ASupervisor ||
-            client.AsMember.Rank == MemberRank.SSupervisor ||
-            client.AsMember.Rank == MemberRank.GSupervisor ||
-            client.AsMember.Rank == MemberRank.PKSupervisor ||
-            client.AsMember.Rank == MemberRank.RoseSupervisor ||
-            client.AsMember.Rank == MemberRank.LilySupervisor)
-            if (targetRank == MemberRank.SupervisorAide) {
-                if (client.Guild.RanksCounts[(ushort)targetRank] >= GuildRankLimits.GetMaxAide(client.Guild.Level)) {
-                    client.Send(new Message("Sorry all Supervisor Aide ranks are occupied!",
-                        Color.White, Message.System));
-                    return;
-                }
-
-                ApplyPromotion(client.Guild, member, targetRank, client);
-                promotionApplied = true;
-            }
-
-        #endregion
-
-        #region Agent Promotions
-
-        if (client.AsMember.Rank == MemberRank.Agent)
-            if (targetRank == MemberRank.Aide) {
-                if (client.Guild.RanksCounts[(ushort)targetRank] >= GuildRankLimits.GetMaxAide(client.Guild.Level)) {
-                    client.Send(new Message("Sorry all Aide ranks are occupied!",
-                        Color.White, Message.System));
-                    return;
-                }
-
-                ApplyPromotion(client.Guild, member, targetRank, client);
-                promotionApplied = true;
-            }
-
-        #endregion
-
-        if (!promotionApplied) {
-            var targetRankId = ((ushort)targetRank).ToString();
-            var targetRankStr = targetRank.ToString();
-            var clientRankStr = client.AsMember.Rank.ToString();
-            var memberRankStr = member.Rank.ToString();
-            var message = "You don't have permission to promote to " + targetRankStr + " (ID: " + targetRankId +
-                          ")! Your rank: " + clientRankStr + ", Target member rank: " + memberRankStr;
+        // Check CP cost
+        if (option.ConquerPointsCost > 0 && client.Entity.ConquerPoints < (uint)option.ConquerPointsCost) {
+            var cpCostMessages = new Dictionary<int, string> {
+                { 650, "You need 650 Conquer Points to appoint Honorary Deputy Leader!" },
+                { 320, "You need 320 Conquer Points to appoint Honorary Manager!" },
+                { 270, "You need 270 Conquer Points to appoint Honorary Supervisor!" },
+                { 100, "You need 100 Conquer Points to appoint Honorary Steward!" }
+            };
+            var message = cpCostMessages.GetValueOrDefault(option.ConquerPointsCost,
+                $"You need {option.ConquerPointsCost} Conquer Points!");
             client.Send(new Message(message, Color.White, Message.System));
+            return;
         }
-        else {
-            client.Entity.GuildBattlePower = client.Guild.GetSharedBattlePower(client.Entity.GuildRank);
+
+        // Check rank limit
+        if (option.LimitCheck != null && option.LimitCheck(client.Guild.RanksCounts, targetRank, client.Guild.Level)) {
+            var errorMessage = option.LimitErrorMessage ?? "Sorry, this rank is at its limit!";
+            client.Send(new Message(errorMessage, Color.White, Message.System));
+            return;
         }
+
+        // Deduct CP cost if applicable
+        if (option.ConquerPointsCost > 0) {
+            client.Entity.ConquerPoints -= (uint)option.ConquerPointsCost;
+            EntityTable.UpdateData(client.Entity.UID, "ConquerPoints", (int)client.Entity.ConquerPoints);
+        }
+
+        // Apply the promotion
+        ApplyPromotion(client.Guild, member, targetRank, client);
+        client.Entity.GuildBattlePower = client.Guild.GetSharedBattlePower(client.Entity.GuildRank);
     }
 
-    private static string ReadString(byte[] data, ushort position, ushort count) {
-        return Program.Encoding.GetString(data, position, count);
+    /// <summary>
+    ///     Transfers guild leadership from the current Guild Leader to another member. The current
+    ///     leader becomes a Deputy Leader, and the new leader receives full guild control. This is
+    ///     the only way to change guild leadership and requires the current leader to initiate it.
+    /// </summary>
+    /// <param name="client">The current Guild Leader transferring leadership</param>
+    /// <param name="newLeader">The member who will become the new Guild Leader</param>
+    private static void HandleGuildLeaderTransfer(GameState client, GuildMember newLeader) {
+        // Transfer leadership
+        newLeader.Rank = MemberRank.GuildLeader;
+        client.Guild!.LeaderId = newLeader.Id;
+        client.Guild.Leader = newLeader;
+        client.Guild.LeaderName = newLeader.Name;
+
+        if (Kernel.TryGetPlayer(newLeader.Id, out var promoteClient)) {
+            client.Guild.SendGuild(promoteClient);
+            promoteClient.Entity.GuildBattlePower = client.Guild.GetSharedBattlePower(newLeader.Rank);
+            promoteClient.Entity.GuildRank = (ushort)newLeader.Rank;
+            promoteClient.Screen.FullWipe();
+            promoteClient.Screen.Reload();
+        }
+
+        client.AsMember!.Rank = MemberRank.DeputyLeader;
+        client.Entity.GuildRank = (ushort)client.AsMember.Rank;
+        client.Guild.SendGuild(client);
+        client.Screen.FullWipe();
+        client.Screen.Reload();
+        GuildTable.SaveLeader(client.Guild);
+        client.Guild.SendMembers(client, 0);
     }
 }

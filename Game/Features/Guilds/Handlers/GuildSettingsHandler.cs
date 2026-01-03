@@ -40,7 +40,6 @@ public static class GuildSettingsHandler {
     }
 
     public static bool Handle(ushort packetId, byte[] packet, GameState client) {
-        if (client is not { Guild: not null, AsMember: not null }) return true;
         if (client.AsMember != null) {
             Writer.WriteUInt64(client.AsMember.SilverDonation, 8, packet);
             Writer.WriteUInt32((uint)client.AsMember.ConquerPointDonation, 12, packet);

@@ -1,25 +1,141 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.IO;
-using MTA.Network.GamePackets;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using MTA.Client;
+using MTA.Game.Features.Guilds.Database;
+using MTA.Network.GamePackets;
 
 namespace MTA.Game.Features.Guilds;
 
 public class Arsenal(Guild super) {
+    private uint _donation;
+    public DateTime EnhancementExpDate;
+    public ConcurrentDictionary<uint, ArsenalItem> ItemDictionary = new();
+    public List<ArsenalItem> OrderedList = [];
+
+    public byte Position;
+
+    public uint SharedBattlePower, Enhancement;
+    public Guild Super = super;
+    public bool Unlocked;
+
+    public uint Donation {
+        get => _donation;
+        set {
+            var val = TotalSharedBattlePower;
+            SharedBattlePower = value switch {
+                < 2000000 => 0,
+                < 4000000 => 1,
+                < 10000000 => 2,
+                _ => 3
+            };
+            if (val != SharedBattlePower) Super.ArsenalBpChanged = true;
+            _donation = value;
+        }
+    }
+
+    public uint TotalSharedBattlePower => Math.Min(3, SharedBattlePower + Enhancement);
+
+    public void OrderList() {
+        OrderedList = ItemDictionary.Values.OrderByDescending(p => p.BattlePower).ToList();
+        uint rank = 0;
+        foreach (var item in OrderedList) {
+            rank++;
+            item.Rank = rank;
+        }
+    }
+
+    public int EnhancementExpirationDate() {
+        return EnhancementExpDate.Year * 10000 + EnhancementExpDate.Month * 100 + EnhancementExpDate.Day;
+    }
+
+    public void AddItem(ConquerItem item, GameState client) {
+        if (ItemDictionary.TryGetValue(item.UID, out var aItem1)) {
+            aItem1.Update(item, client);
+        }
+        else {
+            var aItem = new ArsenalItem(this, item, client);
+            ItemDictionary.Add(aItem.Uid, aItem);
+            client.ArsenalDonations[Position] += aItem.DonationWorth;
+            Donation += aItem.DonationWorth;
+            if (client.AsMember != null) {
+                client.AsMember.ArsenalDonation = Donation;
+                GuildMemberTable.Save(client.AsMember);
+            }
+        }
+
+        OrderList();
+    }
+
+    public void RemoveItem(ArsenalItem item, GameState? client) {
+        ItemDictionary.Remove(item.Uid);
+        if (client != null) {
+            client.ArsenalDonations[Position] -= item.DonationWorth;
+            if (client.AsMember != null) {
+                client.AsMember.ArsenalDonation = Donation;
+                GuildMemberTable.Save(client.AsMember);
+            }
+        }
+
+        Donation -= item.DonationWorth;
+
+        OrderList();
+    }
+
+    public void RemoveInscribedItemsBy(uint uid) {
+        var array = ItemDictionary.Values.ToArray();
+        foreach (var item in array)
+            if (item.OwnerUid == uid)
+                RemoveItem(item, null);
+
+        OrderList();
+    }
+
+    public void Load(BinaryReader reader) {
+        if (reader.BaseStream.Length == reader.BaseStream.Position) return;
+        Position = reader.ReadByte();
+        Unlocked = reader.ReadBoolean();
+        Donation = reader.ReadUInt32();
+        Enhancement = reader.ReadUInt32();
+        EnhancementExpDate = DateTime.FromBinary(reader.ReadInt64());
+        var itemCount = reader.ReadInt32();
+        for (var i = 0; i < itemCount; i++) {
+            var item = new ArsenalItem(this);
+            item.Load(reader);
+            ItemDictionary.Add(item.Uid, item);
+        }
+
+        OrderList();
+        if (Enhancement == 0) return;
+        if (DateTime.Now >= EnhancementExpDate)
+            Enhancement = 0;
+    }
+
+    public void Save(BinaryWriter writer) {
+        writer.Write(Position);
+        writer.Write(Unlocked);
+        writer.Write(Donation);
+        writer.Write(Enhancement);
+        writer.Write(EnhancementExpDate.Ticks);
+        writer.Write(ItemDictionary.Count);
+        foreach (var item in ItemDictionary.Values)
+            item.Save(writer);
+    }
+
     public class ArsenalItem {
+        private readonly Arsenal _super;
         public uint Id, Uid, Rank, BattlePower, DonationWorth, OwnerUid;
         public string Owner;
         public byte Plus, SocketOne, SocketTwo;
-        private readonly Arsenal _super;
 
         public ArsenalItem(Arsenal super) {
             _super = super;
             Owner = string.Empty;
         }
 
-        public ArsenalItem(Arsenal super, ConquerItem item, Client.GameState client) {
+        public ArsenalItem(Arsenal super, ConquerItem item, GameState client) {
             _super = super;
             Owner = string.Empty;
             Uid = item.UID;
@@ -27,9 +143,9 @@ public class Arsenal(Guild super) {
             OwnerUid = client.Entity.UID;
         }
 
-        public void Update(ConquerItem item, Client.GameState client) {
-            var updated = (Id != item.ID || Plus != item.Plus || SocketOne != (byte)item.SocketOne ||
-                           SocketTwo != (byte)item.SocketTwo);
+        public void Update(ConquerItem item, GameState client) {
+            var updated = Id != item.ID || Plus != item.Plus || SocketOne != (byte)item.SocketOne ||
+                          SocketTwo != (byte)item.SocketTwo;
             Id = item.ID;
             Plus = item.Plus;
             SocketOne = (byte)item.SocketOne;
@@ -44,14 +160,14 @@ public class Arsenal(Guild super) {
         }
 
         private static uint CalculateBattlepower(ConquerItem item) {
-            var bp = item.Plus + ((item.ID % 10) - 5);
+            var bp = item.Plus + (item.ID % 10 - 5);
             if (item.SocketOne == Enums.Gem.NoSocket) return bp;
             bp += 1;
-            if (((byte)item.SocketOne) % 10 == 3)
+            if ((byte)item.SocketOne % 10 == 3)
                 bp += 1;
             if (item.SocketTwo == Enums.Gem.NoSocket) return bp;
             bp += 1;
-            if (((byte)item.SocketTwo) % 10 == 3)
+            if ((byte)item.SocketTwo % 10 == 3)
                 bp += 1;
 
             return bp;
@@ -59,7 +175,7 @@ public class Arsenal(Guild super) {
 
         private static uint CalculateDonationWorth(ConquerItem item) {
             var remainder = item.ID % 10;
-            uint worth = remainder == 8 ? 1000u : remainder == 9 ? 16660u : 0u;
+            var worth = remainder == 8 ? 1000u : remainder == 9 ? 16660u : 0u;
 
             if (item.SocketOne != Enums.Gem.NoSocket) {
                 worth += 33330;
@@ -132,120 +248,5 @@ public class Arsenal(Guild super) {
             writer.Write(SocketTwo);
             writer.Write(Owner);
         }
-    }
-
-    public uint SharedBattlePower, Enhancement;
-    private uint _donation;
-
-    public uint Donation {
-        get => _donation;
-        set {
-            var val = TotalSharedBattlePower;
-            SharedBattlePower = value switch {
-                < 2000000 => 0,
-                < 4000000 => 1,
-                < 10000000 => 2,
-                _ => 3
-            };
-            if (val != SharedBattlePower) Super.ArsenalBpChanged = true;
-            _donation = value;
-        }
-    }
-
-    public uint TotalSharedBattlePower => Math.Min(3, SharedBattlePower + Enhancement);
-
-    public byte Position;
-    public bool Unlocked;
-    public DateTime EnhancementExpDate;
-    public ConcurrentDictionary<uint, ArsenalItem> ItemDictionary = new();
-    public List<ArsenalItem> OrderedList = [];
-    public Guild Super = super;
-
-    public void OrderList() {
-        OrderedList = ItemDictionary.Values.OrderByDescending(p => p.BattlePower).ToList();
-        uint rank = 0;
-        foreach (var item in OrderedList) {
-            rank++;
-            item.Rank = rank;
-        }
-    }
-
-    public int EnhancementExpirationDate() {
-        return EnhancementExpDate.Year * 10000 + EnhancementExpDate.Month * 100 + EnhancementExpDate.Day;
-    }
-
-    public void AddItem(ConquerItem item, Client.GameState client) {
-        if (ItemDictionary.TryGetValue(item.UID, out var aItem1)) {
-            aItem1.Update(item, client);
-        }
-        else {
-            var aItem = new ArsenalItem(this, item, client);
-            ItemDictionary.Add(aItem.Uid, aItem);
-            client.ArsenalDonations[Position] += aItem.DonationWorth;
-            Donation += aItem.DonationWorth;
-            if (client.AsMember != null) {
-                client.AsMember.ArsenalDonation = Donation;
-                Database.GuildMemberTable.Save(client.AsMember);
-            }
-        }
-
-        OrderList();
-    }
-
-    public void RemoveItem(ArsenalItem item, Client.GameState? client) {
-        ItemDictionary.Remove(item.Uid);
-        if (client != null) {
-            client.ArsenalDonations[Position] -= item.DonationWorth;
-            if (client.AsMember != null) {
-                client.AsMember.ArsenalDonation = Donation;
-                Database.GuildMemberTable.Save(client.AsMember);
-            }
-        }
-
-        Donation -= item.DonationWorth;
-
-        OrderList();
-    }
-
-    public void RemoveInscribedItemsBy(uint uid) {
-        var array = ItemDictionary.Values.ToArray();
-        foreach (var item in array) {
-            if (item.OwnerUid == uid) {
-                RemoveItem(item, null);
-            }
-        }
-
-        OrderList();
-    }
-
-    public void Load(BinaryReader reader) {
-        if (reader.BaseStream.Length == reader.BaseStream.Position) return;
-        Position = reader.ReadByte();
-        Unlocked = reader.ReadBoolean();
-        Donation = reader.ReadUInt32();
-        Enhancement = reader.ReadUInt32();
-        EnhancementExpDate = DateTime.FromBinary(reader.ReadInt64());
-        var itemCount = reader.ReadInt32();
-        for (var i = 0; i < itemCount; i++) {
-            var item = new ArsenalItem(this);
-            item.Load(reader);
-            ItemDictionary.Add(item.Uid, item);
-        }
-
-        OrderList();
-        if (Enhancement == 0) return;
-        if (DateTime.Now >= EnhancementExpDate)
-            Enhancement = 0;
-    }
-
-    public void Save(BinaryWriter writer) {
-        writer.Write(Position);
-        writer.Write(Unlocked);
-        writer.Write(Donation);
-        writer.Write(Enhancement);
-        writer.Write(EnhancementExpDate.Ticks);
-        writer.Write(ItemDictionary.Count);
-        foreach (var item in ItemDictionary.Values)
-            item.Save(writer);
     }
 }

@@ -1,0 +1,77 @@
+{
+  "Guild Leader": {
+    "Privileges": "1. Recruit new Guild members.\n2. Appoint Deputy Leaders, Honorary officials, Leader Aides and all other officials except Manager and Supervisor.\n3. Unlock Martial Arsenal.\n4. Dismiss Guild members.\nNote: It takes the Guild Leader's CPs (NOT Guild CPs) to appoint Honorary officials.\n1) Honorary Deputy Leader: 650 CPs\n2) Honorary Manager: 320 CPs\n3) Honorary Supervisor: 270 CPs\n4) Honorary Steward: 100 CPs"
+  },
+  "Deputy Leader": {
+    "Privileges": "1. Recruit new Guild members.\n2. Appoint Stewards, Honorary Stewards, Deputy Leader Aides and other lower-ranking officials. There are no aides for Honorary officials.\n3. Unlock Martial Arsenal.\n4. Dismiss Guild members with positions lower than Steward (included).\nNote: When the leader's spouse is in the same Guild as the leader and is not appointed as a Deputy Leader of this Guild, the spouse will automatically be appointed as the Leader Spouse."
+  },
+  "Honorary Deputy Leader": {
+    "Privileges": "Same as Deputy Leader"
+  },
+  "Leader Spouse": {
+    "Privileges": "Same as Deputy Leader"
+  },
+  "Manager": {
+    "Privileges": "1. Recruit new Guild members.\n2. Appoint Manager Aides. There are no aides for Honorary officials.\n3. When a player's donation reaches the 1st place, he or she will be appointed as Guild Manager, automatically."
+  },
+  "Honorary Manager": {
+    "Privileges": "1. Recruit new Guild members.\n2. Appoint Manager Aides. There are no aides for Honorary officials."
+  },
+  "Supervisor": {
+    "Privileges": "Appoint Supervisor Aides. There are no aides for Honorary officials.\nNote: Guild members will be automatically appointed as a Supervisor when their donation or flowers received meet the requirements for a certain Supervisor. There are 9 types of Supervisors in a Guild, altogether."
+  },
+  "Donation Supervisor": {
+    "Privileges": "1. Recruit new Guild members.\n2. Appoint Supervisor Aides. There are no aides for Honorary officials.\nNote: Guild members will be automatically appointed as a Supervisor when their donation or flowers received meet the requirements for a certain Supervisor. There are 9 types of Supervisors in a Guild, altogether."
+  },
+  "Honorary Supervisor": {
+    "Privileges": "Same as Donation Supervisor"
+  },
+  "Steward": {
+    "Privileges": "Stewards are appointed based on their Total Donations.\nPlease view the Faction Official Numbers listed above, for corresponding Donation requirements.\nWhen the leader's spouse is in the same Guild as the leader and is not appointed as a Deputy Leader of this Guild, the spouse will automatically be appointed as the Leader Spouse.\nNote: Total Donation refers to the combination of Arsenal Donation, Silver Donation, CP Donation, Guide Donation and PK Donation."
+  },
+  "Deputy Leader Spouse": {
+    "Privileges": "Same as Steward"
+  },
+  "Leader Spouse Aide": {
+    "Privileges": "Same as Steward"
+  },
+  "Deputy Leader Aide": {
+    "Privileges": "Same as Steward"
+  },
+  "Deputy Steward": {
+    "Privileges": "Guild members will be appointed as the Steward when their Total Donation hits 170,000. There is no limit to how many Stewards a Guild can have."
+  },
+  "Agent": {
+    "Privileges": "1. Guild members will be appointed as the Agent when their Total Donation hits 150,000. No limit per Guild.\n2. A Guild can have 1 Charm Agent of a type of flower. The member with the most flowers of a type will become the Charm Agent for that flower. There are certain thresholds for each type of Charm Agent.\nRose Agent: At least 2,430 Roses received.\nLily Agent: At least 1,620 Lilies received.\nOrchid Agent: At least 810 Orchids received.\nTulip Agent: At least 1,620 Tulips received.\n3. A Guild can have 1 Donation Agent for each type of donation. The member with the most donations of a type will become the Agent for that donation. There are certain thresholds for each type of Donation Agent.\nSilver Agent: At least 31,500.\nCP Agent: At least 120,000.\nPK Agent: At least 9,000.\nGuide Agent: At least 9,000.\nArsenal Agent: At least 100,000.\nAgents can appoint their own Aides"
+  },
+  "Donation Agent": {
+    "Privileges": "Same as Agent"
+  },
+  "Supervisor Spouse": {
+    "Privileges": "Same as Agent"
+  },
+  "Manager Spouse": {
+    "Privileges": "Same as Agent"
+  },
+  "Supervisor Aide": {
+    "Privileges": "Same as Agent"
+  },
+  "Manager Aide": {
+    "Privileges": "Same as Agent"
+  },
+  "Follower": {
+    "Privileges": "1. Spouses of officials in this column will be appointed by the system, automatically.\n2. Officials in these positions will be appointed by the system automatically, when their flowers received or donations reach the following amounts.\nFollower & Senior Member: Total Donation = 80,000.\nRose Follower: 810 Roses received.\nLily Follower: 540 Lilies received.\nOrchid Follower: 270 Orchids received.\nTulip Follower: 540 Tulips received.\nSilver Follower: 15,000.\nCP Follower: 40,000.\nPK Follower: 3,000.\nGuide Follower: 3,000.\nArsenal Follower: 33,000."
+  },
+  "Steward Spouse": {
+    "Privileges": "Members will be appointed as Senior Members, when their Total Donations hit 50,000."
+  },
+  "Donation Follower": {
+    "Privileges": "Same as Follower"
+  },
+  "Senior Member": {
+    "Privileges": "Members will be appointed as Senior Members, when their Total Donations hit 50,000."
+  },
+  "Member": {
+    "Privileges": ""
+  }
+}
