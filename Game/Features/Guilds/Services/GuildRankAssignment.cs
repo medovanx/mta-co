@@ -9,6 +9,19 @@ public static class GuildRankAssignment {
     private const byte MaxAgent = 2;
     private const byte MaxFollower = 2;
 
+    private record DonationRankConfig(
+        Func<GuildMember, ulong> DonationSelector,
+        MemberRank SupervisorRank,
+        MemberRank AgentRank,
+        MemberRank FollowerRank,
+        Action<Guild, GuildMember[]> SetRankingArray);
+
+    private record ArsenalRankConfig(
+        MemberRank ManagerRank,
+        MemberRank SupervisorRank,
+        MemberRank StewardRank,
+        MemberRank FollowerRank);
+
     /// <summary>
     ///     Automatically assigns guild ranks to members based on their donation performance across all donation types.
     ///     Resets all ranks below leadership level, then assigns Manager/Supervisor/Agent/Follower ranks based on donation
@@ -48,85 +61,52 @@ public static class GuildRankAssignment {
     }
 
     /// <summary>
-    ///     Assigns ranks based on Arsenal donations: top donor becomes Manager, followed by Supervisor, Steward, and Arsenal
-    ///     Follower.
-    /// </summary>
-    private static void AssignArsenalRanks(Guild guild) {
-        var maxManager = GuildRankLimits.GetMaxManager(guild.Level);
-        var maxSupervisor = GuildRankLimits.GetMaxSupervisorPerType(guild.Level);
-        var maxSteward = GuildRankLimits.GetMaxSteward(guild.Level);
-        const byte maxArsFollower = 2;
-
-        var poll = guild.Members.Values
-            .OrderByDescending(m => m.ArsenalDonation)
-            .ToArray();
-
-        AssignRanksForDonationType(
-            guild,
-            poll,
-            maxManager,
-            maxSupervisor,
-            maxSteward,
-            maxArsFollower,
-            MemberRank.Manager,
-            MemberRank.Supervisor,
-            MemberRank.Steward,
-            MemberRank.ArsFollower);
-
-        guild.RankArsenalDonations = poll;
-    }
-
-    /// <summary>
     ///     Assigns CP donation ranks: top donors become CP Supervisor, Agent, or Follower based on their Conquer Point
     ///     donations.
     /// </summary>
     private static void AssignConquerPointRanks(Guild guild) {
-        AssignStandardDonationRanks(
-            guild,
+        AssignStandardDonationRanks(guild, new DonationRankConfig(
             m => m.ConquerPointDonation,
             MemberRank.CPSupervisor,
             MemberRank.CPAgent,
             MemberRank.CPFollower,
-            (g, poll) => g.RankCpDonations = poll);
+            (g, poll) => g.RankCpDonations = poll));
     }
 
     /// <summary>
     ///     Assigns PK donation ranks: top donors become PK Supervisor, Agent, or Follower based on their PK donations.
     /// </summary>
     private static void AssignPkRanks(Guild guild) {
-        AssignStandardDonationRanks(
-            guild,
+        AssignStandardDonationRanks(guild, new DonationRankConfig(
             m => m.PkDonation,
             MemberRank.PKSupervisor,
             MemberRank.PKAgent,
             MemberRank.PKFollower,
-            (g, poll) => g.RankPkDonations = poll);
+            (g, poll) => g.RankPkDonations = poll));
     }
 
     /// <summary>
     ///     Assigns Rose donation ranks: top donors become Rose Supervisor, Agent, or Follower based on their Rose donations.
     /// </summary>
     private static void AssignRoseRanks(Guild guild) {
-        AssignStandardDonationRanks(
-            guild,
+        AssignStandardDonationRanks(guild, new DonationRankConfig(
             m => m.Roses,
             MemberRank.RoseSupervisor,
             MemberRank.RoseAgent,
             MemberRank.RoseFollower,
-            (g, poll) => g.RankRoseDonations = poll);
+            (g, poll) => g.RankRoseDonations = poll));
     }
 
     /// <summary>
     ///     Assigns Lily donation ranks: top donors become Lily Supervisor, Agent, or Follower based on their Lily donations.
     /// </summary>
     private static void AssignLilyRanks(Guild guild) {
-        AssignStandardDonationRanks(
-            guild,
+        AssignStandardDonationRanks(guild, new DonationRankConfig(
             m => m.Lilies,
             MemberRank.LilySupervisor,
             MemberRank.LilyAgent,
             MemberRank.LilyFollower,
-            (g, poll) => g.RankLiliesDonations = poll);
+            (g, poll) => g.RankLiliesDonations = poll));
     }
 
     /// <summary>
@@ -134,13 +114,12 @@ public static class GuildRankAssignment {
     ///     donations.
     /// </summary>
     private static void AssignTulipRanks(Guild guild) {
-        AssignStandardDonationRanks(
-            guild,
+        AssignStandardDonationRanks(guild, new DonationRankConfig(
             m => m.Tulips,
             MemberRank.TSupervisor,
             MemberRank.TulipAgent,
             MemberRank.TulipFollower,
-            (g, poll) => g.RankTulipsDonations = poll);
+            (g, poll) => g.RankTulipsDonations = poll));
     }
 
     /// <summary>
@@ -148,13 +127,12 @@ public static class GuildRankAssignment {
     ///     donations.
     /// </summary>
     private static void AssignOrchidRanks(Guild guild) {
-        AssignStandardDonationRanks(
-            guild,
+        AssignStandardDonationRanks(guild, new DonationRankConfig(
             m => m.Orchids,
             MemberRank.OSupervisor,
             MemberRank.OrchidAgent,
             MemberRank.OrchidFollower,
-            (g, poll) => g.RankOrchidsDonations = poll);
+            (g, poll) => g.RankOrchidsDonations = poll));
     }
 
     /// <summary>
@@ -162,13 +140,12 @@ public static class GuildRankAssignment {
     ///     donations.
     /// </summary>
     private static void AssignSilverRanks(Guild guild) {
-        AssignStandardDonationRanks(
-            guild,
+        AssignStandardDonationRanks(guild, new DonationRankConfig(
             m => m.SilverDonation,
             MemberRank.SSupervisor,
             MemberRank.SilverAgent,
             MemberRank.SilverFollower,
-            (g, poll) => g.RankSilversDonations = poll);
+            (g, poll) => g.RankSilversDonations = poll));
     }
 
     /// <summary>
@@ -176,13 +153,12 @@ public static class GuildRankAssignment {
     ///     donations.
     /// </summary>
     private static void AssignGuideRanks(Guild guild) {
-        AssignStandardDonationRanks(
-            guild,
+        AssignStandardDonationRanks(guild, new DonationRankConfig(
             m => m.VirtuePoints,
             MemberRank.GSupervisor,
             MemberRank.GuideAgent,
             MemberRank.GuideFollower,
-            (g, poll) => g.RankGuideDonations = poll);
+            (g, poll) => g.RankGuideDonations = poll));
     }
 
     /// <summary>
@@ -196,117 +172,88 @@ public static class GuildRankAssignment {
     }
 
     /// <summary>
-    ///     Assigns ranks for Arsenal donations: Manager → Supervisor → Steward → Follower based on donation amounts and guild
-    ///     level limits.
-    /// </summary>
-    private static void AssignRanksForDonationType(
-        Guild guild,
-        GuildMember[] poll,
-        byte maxManager,
-        byte maxSupervisor,
-        byte maxSteward,
-        byte maxFollower,
-        MemberRank managerRank,
-        MemberRank supervisorRank,
-        MemberRank stewardRank,
-        MemberRank followerRank) {
-        byte amount = 0;
-
-        for (byte x = 0; x < poll.Length; x++) {
-            var member = poll[x];
-
-            if (maxManager > 0 && amount < maxManager) {
-                if (member.Rank > managerRank) continue;
-                AssignRank(guild, member, managerRank);
-                amount++;
-            }
-            else if (amount < maxManager + maxSupervisor) {
-                if (member.Rank > supervisorRank) continue;
-                AssignRank(guild, member, supervisorRank);
-                amount++;
-            }
-            else if (maxSteward > 0 && amount < maxManager + maxSupervisor + maxSteward) {
-                if (member.Rank > stewardRank) continue;
-                AssignRank(guild, member, stewardRank);
-                amount++;
-            }
-            else if (amount < maxManager + maxSupervisor + maxSteward + maxFollower) {
-                if (member.Rank > followerRank) continue;
-                AssignRank(guild, member, followerRank);
-                amount++;
-            }
-            else {
-                break;
-            }
-        }
-    }
-
-    /// <summary>
     ///     Assigns ranks for standard donation types: Supervisor → Agent → Follower based on donation amounts and guild level
     ///     limits.
     /// </summary>
-    private static void AssignRanksForDonationType(
-        Guild guild,
-        GuildMember[] poll,
-        byte maxSupervisor,
-        byte maxAgent,
-        byte maxFollower,
-        MemberRank supervisorRank,
-        MemberRank agentRank,
-        MemberRank followerRank) {
-        byte amount = 0;
+    private static void AssignStandardDonationRanks(Guild guild, DonationRankConfig config) {
+        var maxSupervisor = GuildRankLimits.GetMaxSupervisorPerType(guild.Level);
+        var poll = guild.Members.Values
+            .OrderByDescending(config.DonationSelector)
+            .Where(m => config.DonationSelector(m) > 0)
+            .ToArray();
 
-        for (byte x = 0; x < poll.Length; x++) {
-            var member = poll[x];
+        byte assigned = 0;
+        foreach (var member in poll) {
+            if (member.Rank > config.SupervisorRank) continue;
 
-            if (amount < maxSupervisor) {
-                if (member.Rank > supervisorRank) continue;
-                AssignRank(guild, member, supervisorRank);
-                amount++;
+            if (assigned < maxSupervisor) {
+                AssignRank(guild, member, config.SupervisorRank);
             }
-            else if (amount < maxSupervisor + maxAgent) {
-                if (member.Rank > agentRank) continue;
-                AssignRank(guild, member, agentRank);
-                amount++;
+            else if (assigned < maxSupervisor + MaxAgent) {
+                if (member.Rank > config.AgentRank) continue;
+                AssignRank(guild, member, config.AgentRank);
             }
-            else if (amount < maxSupervisor + maxAgent + maxFollower) {
-                if (member.Rank > followerRank) continue;
-                AssignRank(guild, member, followerRank);
-                amount++;
+            else if (assigned < maxSupervisor + MaxAgent + MaxFollower) {
+                if (member.Rank > config.FollowerRank) continue;
+                AssignRank(guild, member, config.FollowerRank);
             }
             else {
                 break;
             }
+
+            assigned++;
         }
+
+        config.SetRankingArray(guild, poll);
     }
 
     /// <summary>
-    ///     Generic helper that assigns Supervisor, Agent, and Follower ranks for any donation type based on donation amounts.
+    ///     Assigns ranks for Arsenal donations: Manager → Supervisor → Steward → Follower based on donation amounts and guild
+    ///     level limits.
     /// </summary>
-    private static void AssignStandardDonationRanks(
-        Guild guild,
-        Func<GuildMember, ulong> donationSelector,
-        MemberRank supervisorRank,
-        MemberRank agentRank,
-        MemberRank followerRank,
-        Action<Guild, GuildMember[]> setRankingArray) {
+    private static void AssignArsenalRanks(Guild guild) {
+        var maxManager = GuildRankLimits.GetMaxManager(guild.Level);
         var maxSupervisor = GuildRankLimits.GetMaxSupervisorPerType(guild.Level);
+        var maxSteward = GuildRankLimits.GetMaxSteward(guild.Level);
+        const byte maxFollower = 2;
 
         var poll = guild.Members.Values
-            .OrderByDescending(donationSelector)
+            .OrderByDescending(m => m.ArsenalDonation)
+            .Where(m => m.ArsenalDonation > 0)
             .ToArray();
 
-        AssignRanksForDonationType(
-            guild,
-            poll,
-            maxSupervisor,
-            MaxAgent,
-            MaxFollower,
-            supervisorRank,
-            agentRank,
-            followerRank);
+        var config = new ArsenalRankConfig(
+            MemberRank.Manager,
+            MemberRank.Supervisor,
+            MemberRank.Steward,
+            MemberRank.ArsFollower);
 
-        setRankingArray(guild, poll);
+        byte assigned = 0;
+        foreach (var member in poll) {
+            if (maxManager > 0 && assigned < maxManager) {
+                if (member.Rank > config.ManagerRank) continue;
+                AssignRank(guild, member, config.ManagerRank);
+            }
+            else if (assigned < maxManager + maxSupervisor) {
+                if (member.Rank > config.SupervisorRank) continue;
+                AssignRank(guild, member, config.SupervisorRank);
+            }
+            else if (maxSteward > 0 && assigned < maxManager + maxSupervisor + maxSteward) {
+                if (member.Rank > config.StewardRank) continue;
+                AssignRank(guild, member, config.StewardRank);
+            }
+            else if (assigned < maxManager + maxSupervisor + maxSteward + maxFollower) {
+                if (member.Rank > config.FollowerRank) continue;
+                AssignRank(guild, member, config.FollowerRank);
+            }
+            else {
+                break;
+            }
+
+            assigned++;
+        }
+
+        guild.RankArsenalDonations = poll;
     }
 
     /// <summary>
