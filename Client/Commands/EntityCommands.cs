@@ -25,6 +25,7 @@ namespace MTA.Client.Commands {
                 "rev" => HandleRevCommand(client, data),
                 "class" => HandleClassCommand(client, data, mess),
                 "grank" => HandleGrankCommand(client, data),
+                "hair" => HandleHairCommand(client, data, mess),
                 _ => false,
             };
         }
@@ -934,6 +935,141 @@ namespace MTA.Client.Commands {
                 System.Drawing.Color.Green, Network.GamePackets.Message.Tip));
 
             return true;
+        }
+
+        private static bool HandleHairCommand(GameState client, string[] data, string mess) {
+            const byte minHairColor = 3;
+            const byte maxHairColor = 9;
+
+            // Check if second parameter is a player name
+            if (data.Length >= 2 && !byte.TryParse(data[1], out _)) {
+                // Extract player name - everything except the last parameter (which should be the color ID)
+                byte colorId = 0;
+
+                // Try to find the color ID parameter (should be the last numeric parameter)
+                for (var i = data.Length - 1; i >= 1; i--) {
+                    if (byte.TryParse(data[i], out colorId)) {
+                        break;
+                    }
+                }
+
+                if (colorId == 0 || colorId < minHairColor || colorId > maxHairColor) {
+                    client.Send(new Network.GamePackets.Message(
+                        $"Usage: @hair <player_name> <color_id> (3-9) or @hair <color_id>",
+                        System.Drawing.Color.Red,
+                        Network.GamePackets.Message.Tip));
+                    client.Send(new Network.GamePackets.Message(
+                        "Valid color IDs: 3 (Black), 4 (White), 5 (Red), 6 (Brown), 7 (Green), 8 (Blue), 9 (Violet)",
+                        System.Drawing.Color.Yellow,
+                        Network.GamePackets.Message.Tip));
+                    return true;
+                }
+
+                // Get player name - everything except the last parameter (color ID)
+                var playerNameSearch = mess.Substring(data[0].Length + 1).Trim();
+                var lastSpaceIndex = playerNameSearch.LastIndexOf(' ');
+                if (lastSpaceIndex >= 0) {
+                    playerNameSearch = playerNameSearch.Substring(0, lastSpaceIndex).Trim();
+                }
+
+                if (string.IsNullOrWhiteSpace(playerNameSearch)) {
+                    client.Send(new Network.GamePackets.Message(
+                        $"Usage: @hair <player_name> <color_id> (3-9) or @hair <color_id>",
+                        System.Drawing.Color.Red,
+                        Network.GamePackets.Message.Tip));
+                    return true;
+                }
+
+                // Search for player using utility function
+                if (!FindPlayerByName(playerNameSearch, out var foundPlayer, out var matchCount)) {
+                    if (matchCount == 0) {
+                        client.Send(new Network.GamePackets.Message(
+                            $"Player matching [{playerNameSearch}] not found or offline!",
+                            System.Drawing.Color.Red, Network.GamePackets.Message.Tip));
+                    }
+                    else {
+                        client.Send(new Network.GamePackets.Message(
+                            $"Multiple players found matching [{playerNameSearch}]. Please be more specific.",
+                            System.Drawing.Color.Red, Network.GamePackets.Message.Tip));
+                    }
+
+                    return true;
+                }
+
+                if (foundPlayer == null) return true;
+                
+                // Preserve current style, or set default if style is 0 (bald)
+                var currentStyle = (byte)(foundPlayer.Entity.HairStyle % 100);
+                if (currentStyle == 0) {
+                    currentStyle = 30; // Default to New style 1
+                }
+                foundPlayer.Entity.HairStyle = (ushort)((colorId * 100) + currentStyle);
+                
+                // Reload screen to show changes
+                foundPlayer.Screen.FullWipe();
+                foundPlayer.Screen.Reload();
+
+                var colorName = GetHairColorName(colorId);
+                foundPlayer.Send(new Network.GamePackets.Message(
+                    $"Hair color set to {colorName} (ID: {colorId}) by {client.Entity.Name}",
+                    System.Drawing.Color.Green, Network.GamePackets.Message.Tip));
+                client.Send(new Network.GamePackets.Message(
+                    $"Hair color set to {colorName} (ID: {colorId}) for [{foundPlayer.Entity.Name}]",
+                    System.Drawing.Color.Green, Network.GamePackets.Message.Tip));
+
+                return true;
+            }
+
+            // Self hair command
+            if (!byte.TryParse(data[1], out var selfColorId)) {
+                client.Send(new Network.GamePackets.Message(
+                    $"Usage: @hair <color_id> (3-9) or @hair <player_name> <color_id>",
+                    System.Drawing.Color.Red,
+                    Network.GamePackets.Message.Tip));
+                client.Send(new Network.GamePackets.Message(
+                    "Valid color IDs: 3 (Black), 4 (White), 5 (Red), 6 (Brown), 7 (Green), 8 (Blue), 9 (Violet)",
+                    System.Drawing.Color.Yellow,
+                    Network.GamePackets.Message.Tip));
+                return true;
+            }
+
+            if (selfColorId < minHairColor || selfColorId > maxHairColor) {
+                client.Send(new Network.GamePackets.Message(
+                    $"Invalid hair color ID: {selfColorId}. Must be between {minHairColor} and {maxHairColor}",
+                    System.Drawing.Color.Red,
+                    Network.GamePackets.Message.Tip));
+                client.Send(new Network.GamePackets.Message(
+                    "Valid color IDs: 3 (Black), 4 (White), 5 (Red), 6 (Brown), 7 (Green), 8 (Blue), 9 (Violet)",
+                    System.Drawing.Color.Yellow,
+                    Network.GamePackets.Message.Tip));
+                return true;
+            }
+
+            client.Entity.HairColor = selfColorId;
+            
+            // Reload screen to show changes
+            client.Screen.FullWipe();
+            client.Screen.Reload();
+
+            var selfColorName = GetHairColorName(selfColorId);
+            client.Send(new Network.GamePackets.Message(
+                $"Hair color set to {selfColorName} (ID: {selfColorId})",
+                System.Drawing.Color.Green,
+                Network.GamePackets.Message.Tip));
+            return true;
+        }
+
+        private static string GetHairColorName(byte colorId) {
+            return colorId switch {
+                3 => "Black",
+                4 => "White",
+                5 => "Red",
+                6 => "Brown",
+                7 => "Green",
+                8 => "Blue",
+                9 => "Violet",
+                _ => "Unknown"
+            };
         }
     }
 }
