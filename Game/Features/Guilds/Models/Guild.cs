@@ -555,14 +555,11 @@ public class Guild : Writer {
         client.Guild = guild;
 
         // Create guild in database
-        if (!guild.Create(guildName)) {
-            // Rollback on failure
-            client.AsMember = null;
-            client.Guild = null;
-            client.Entity.GuildID = 0;
-            client.Entity.GuildRank = 0;
-            return false;
-        }
+        guild.Create(guildName);
+
+        // Insert leader into guild_members table
+        // Note: Create() method already adds leader to Members dictionary, but we need to insert into database
+        GuildMemberTable.Insert(client.AsMember);
 
         // Update entity in database
         EntityTable.UpdateGuildID(client);
@@ -575,7 +572,6 @@ public class Guild : Writer {
         client.Screen.FullWipe();
         client.Screen.Reload();
 
-        // Send world message
         Kernel.SendWorldMessage(
             new Message(
                 $"A new guild [{guildName}] has been created by {client.Entity.Name}!",
