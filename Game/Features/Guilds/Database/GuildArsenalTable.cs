@@ -9,7 +9,7 @@ namespace MTA.Game.Features.Guilds.Database;
 /// <summary>
 ///     Database operations for guild arsenal data, handling loading and saving of inscribed items and arsenal states.
 /// </summary>
-public class GuildArsenalTable {
+public static class GuildArsenalTable {
     /// <summary>
     ///     Loads arsenal data for a guild from database, deserializing binary data into arsenal slots and items.
     /// </summary>

@@ -14,22 +14,26 @@ using Writer = MTA.Network.Writer;
 namespace MTA.Game.Features.Guilds.Packets.Handlers;
 
 /// <summary>
-///     Handles guild advertisement packets (2226, 2225, 2227) for browsing, registering, and joining guilds through the advertisement system.
+///     Handles guild advertisement packets for browsing, registering, and joining guilds through the advertisement system.
 /// </summary>
-[PacketHandler(2226, 2225, 2227)]
+[PacketHandler(
+    Game.Constants.Packets.MsgSynRecruitAdvertisingList,
+    Game.Constants.Packets.MsgSynRecruitAdvertising,
+    Game.Constants.Packets.MsgSynRecruitAdvertisingOpt)]
 public static class GuildAdvertiseHandler {
     /// <summary>
     ///     Routes advertisement-related packets to appropriate handlers based on packet ID.
     /// </summary>
-    public static bool Handle(ushort packetId, byte[] packet, GameState client) {
+    public static bool Handle(Game.Constants.Packets packetId, byte[] packet, GameState client) {
+        // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
         switch (packetId) {
-            case 2226:
+            case Game.Constants.Packets.MsgSynRecruitAdvertisingList:
                 HandleAdvertiseList(packet, client);
                 break;
-            case 2225:
+            case Game.Constants.Packets.MsgSynRecruitAdvertising:
                 HandleAdvertiseRegister(packet, client);
                 break;
-            case 2227:
+            case Game.Constants.Packets.MsgSynRecruitAdvertisingOpt:
                 HandleAdvertiseJoin(packet, client);
                 break;
         }
@@ -169,7 +173,7 @@ public static class GuildAdvertiseHandler {
             {
                 var sendGui = new byte[288];
                 Writer.WriteUInt16(280, 0, sendGui);
-                Writer.WriteUInt16(2225, 2, sendGui);
+                Writer.WriteUInt16((ushort)Game.Constants.Packets.MsgSynRecruitAdvertising, 2, sendGui);
                 client.Send(sendGui);
                 break;
             }

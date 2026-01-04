@@ -15,7 +15,7 @@ public class GuildArsenalTabPacket : Writer, IPacket {
         _buffer = new byte[252];
         if (!create) return;
         WriteUInt16(244, 0, _buffer);
-        WriteUInt16(2201, 2, _buffer);
+        WriteUInt16((ushort)Game.Constants.Packets.MsgTotemPoleInfo, 2, _buffer);
     }
 
     public uint Type {

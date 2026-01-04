@@ -13,7 +13,7 @@ public class GuildRanks : Writer {
     public GuildRanks(ushort lengthsCount = 0) {
         _packet = new byte[(ushort)(24 + lengthsCount * 68)];
         WriteUInt16((ushort)(_packet.Length - 8), 0, _packet);
-        WriteUInt16(2101, 2, _packet);
+        WriteUInt16((ushort)Game.Constants.Packets.MsgFactionRankInfo, 2, _packet);
         WriteUInt16(lengthsCount, 6, _packet); //counts
         WriteUInt16(20, 8, _packet); //registered count(top 20 members)
     }

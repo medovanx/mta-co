@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using MTA.Game.Constants;
 
 namespace MTA.Network.PacketHandlers {
     /// <summary>
@@ -11,19 +13,19 @@ namespace MTA.Network.PacketHandlers {
         public ushort[] PacketIds { get; }
 
         /// <summary>
-        /// Creates a packet handler attribute for a single packet ID.
+        /// Creates a packet handler attribute for a single packet ID using the PacketIds enum.
         /// </summary>
-        public PacketHandlerAttribute(ushort packetId) {
-            PacketIds = [packetId];
+        public PacketHandlerAttribute(Packets packet) {
+            PacketIds = [(ushort)packet];
         }
 
         /// <summary>
-        /// Creates a packet handler attribute for multiple packet IDs.
+        /// Creates a packet handler attribute for multiple packet IDs using the PacketIds enum.
         /// </summary>
-        public PacketHandlerAttribute(params ushort[] packetIds) {
+        public PacketHandlerAttribute(params Packets[] packetIds) {
             if (packetIds == null || packetIds.Length == 0)
                 throw new ArgumentException("At least one packet ID must be specified.", nameof(packetIds));
-            PacketIds = packetIds;
+            PacketIds = packetIds.Select(p => (ushort)p).ToArray();
         }
     }
 }

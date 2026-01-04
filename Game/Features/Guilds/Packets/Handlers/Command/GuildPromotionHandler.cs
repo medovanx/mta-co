@@ -38,7 +38,7 @@ public static class GuildPromotionHandler {
             {
                 var buffer = new byte[8 + 48 + array.Length * 32];
                 Writer.WriteUInt16((ushort)(buffer.Length - 8), 0, buffer);
-                Writer.WriteUInt16(2102, 2, buffer);
+                Writer.WriteUInt16((ushort)Game.Constants.Packets.MsgSynMemberList, 2, buffer);
                 Writer.Uint(1, 4, buffer);
                 Writer.Uint((uint)array.Length, 12, buffer);
                 var offset = 16;

@@ -15,7 +15,7 @@ public class GuildMinDonations : Writer {
     {
         _packet = new byte[(ushort)(16 + counts * 8)];
         WriteUInt16((ushort)(_packet.Length - 8), 0, _packet);
-        WriteUInt16(1061, 2, _packet);
+        WriteUInt16((ushort)Game.Constants.Packets.MsgDutyMinContri, 2, _packet);
         WriteUInt16(counts, 6, _packet);
     }
 

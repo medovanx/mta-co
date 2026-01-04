@@ -6,7 +6,7 @@ namespace MTA.Game.Features.Guilds.Packets.Handlers;
 /// <summary>
 ///     Handles packet 2102 for guild member list requests, displaying all guild members with their information.
 /// </summary>
-[PacketHandler(2102)]
+[PacketHandler(Game.Constants.Packets.MsgSynMemberList)]
 public static class GuildMembersHandler {
     /// <summary>
     ///     Processes member list page request and sends the member list to the client.

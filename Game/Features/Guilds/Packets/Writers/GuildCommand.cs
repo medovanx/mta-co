@@ -44,13 +44,13 @@ public class GuildCommand : Writer, IPacket {
         _buffer = new byte[8 + 28];
         if (!create) return;
         WriteUInt16(28, 0, _buffer);
-        WriteUInt16(1107, 2, _buffer);
+        WriteUInt16((ushort)Game.Constants.Packets.MsgSyndicate, 2, _buffer);
     }
 
     public GuildCommand(uint length) {
         _buffer = new byte[8 + 28 + length];
         WriteUInt16((ushort)(_buffer.Length - 8), 0, _buffer);
-        WriteUInt16(1107, 2, _buffer);
+        WriteUInt16((ushort)Game.Constants.Packets.MsgSyndicate, 2, _buffer);
     }
 
     public uint Type {
@@ -156,7 +156,7 @@ public class GuildCommand : Writer, IPacket {
         var extraLength = list.Sum(str => str.Length + 1);
         var packet = new byte[28 + 8 + extraLength];
         WriteUInt16((ushort)(packet.Length - 8), 0, packet);
-        WriteUInt16(1107, 2, packet);
+        WriteUInt16((ushort)Game.Constants.Packets.MsgSyndicate, 2, packet);
         WriteByte((byte)typ, 4, packet);
         WriteStringList(list, 24, packet);
         client.Send(packet);

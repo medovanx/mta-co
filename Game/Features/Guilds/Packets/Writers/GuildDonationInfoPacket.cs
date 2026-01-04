@@ -13,7 +13,7 @@ public class GuildDonationInfoPacket : Writer {
     public GuildDonationInfoPacket() {
         _packet = new byte[8 + 48]; // Base packet size
         WriteUInt16(48, 0, _packet);
-        WriteUInt16(1058, 2, _packet);
+        WriteUInt16((ushort)Game.Constants.Packets.MsgSynpOffer, 2, _packet);
     }
 
     /// <summary>

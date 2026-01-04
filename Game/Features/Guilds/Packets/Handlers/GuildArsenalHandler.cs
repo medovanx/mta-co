@@ -15,20 +15,21 @@ namespace MTA.Game.Features.Guilds.Packets.Handlers;
 /// <summary>
 ///     Handles guild arsenal packets (2202, 2203, 2204) for viewing, inscribing, and managing guild arsenal items.
 /// </summary>
-[PacketHandler(2202, 2203, 2204)]
+[PacketHandler(Game.Constants.Packets.MsgWeaponsInfo, Game.Constants.Packets.MsgTotemPole,
+    Game.Constants.Packets.MsgUnknown)]
 public static class GuildArsenalHandler {
     /// <summary>
     ///     Routes arsenal-related packets to appropriate handlers based on packet ID.
     /// </summary>
-    public static bool Handle(ushort packetId, byte[] packet, GameState client) {
+    public static bool Handle(Game.Constants.Packets packetId, byte[] packet, GameState client) {
         switch (packetId) {
-            case 2202: {
+            case Game.Constants.Packets.MsgWeaponsInfo: {
                 var view = new GuildArsenalViewPacket(false);
                 view.Deserialize(packet);
                 ViewArsenalPage(view, client);
                 break;
             }
-            case 2203: {
+            case Game.Constants.Packets.MsgTotemPole: {
                 var command = new ArsenalCommand();
                 command.Deserialize(packet);
                 switch (command.Type) {
@@ -51,7 +52,7 @@ public static class GuildArsenalHandler {
 
                 break;
             }
-            case 2204: {
+            case Game.Constants.Packets.MsgUnknown: {
                 HandleFastInscription(packet, client);
                 break;
             }

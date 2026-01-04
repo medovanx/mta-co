@@ -8,7 +8,7 @@ namespace MTA.Game.Features.Guilds.Packets.Handlers;
 ///     Handles packet 1058 which displays guild member donation information to the client.
 ///     Uses GuildDonationInfoPacket writer to construct the packet with current donation data.
 /// </summary>
-[PacketHandler(1058)]
+[PacketHandler(Game.Constants.Packets.MsgSynpOffer)]
 public static class GuildDonationInfoHandler {
     public static bool Handle(ushort packetId, byte[] packet, GameState client) {
         var donationPacket = new GuildDonationInfoPacket();

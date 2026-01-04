@@ -8,7 +8,7 @@ namespace MTA.Game.Features.Guilds.Packets.Handlers;
 /// <summary>
 ///     Handles packet 2101 for guild donation rankings, displaying top members by donation type (Silver, CP, PK, Flowers, etc.).
 /// </summary>
-[PacketHandler(2101)]
+[PacketHandler(Game.Constants.Packets.MsgFactionRankInfo)]
 public static class GuildRanksHandler {
     /// <summary>
     ///     Displays donation rankings by type with pagination, showing top 20 members for each donation category.
@@ -227,7 +227,8 @@ public static class GuildRanksHandler {
                 break;
             }
             default: {
-                Console.WriteLine("[packet = " + 2101 + "] unfind typ " + rank + "");
+                Console.WriteLine("[packet = " + Game.Constants.Packets.MsgFactionRankInfo + "] unfind typ " + rank +
+                                  "");
                 break;
             }
         }

@@ -13,7 +13,7 @@ public class GuildAdvertisePacket : Writer {
     public GuildAdvertisePacket(ushort counts = 0) {
         _packet = new byte[36 + counts * 344];
         WriteUInt16((ushort)(_packet.Length - 8), 0, _packet);
-        WriteUInt16(2226, 2, _packet);
+        WriteUInt16((ushort)Game.Constants.Packets.MsgSynRecruitAdvertisingList, 2, _packet);
         WriteUInt16(counts, 8, _packet);
     }
 

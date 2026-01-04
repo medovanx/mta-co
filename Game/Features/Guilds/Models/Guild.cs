@@ -37,7 +37,7 @@ public class Guild : Writer {
     private string _leaderName;
     public bool ArsenalBpChanged = true;
 
-    public string? Bulletin;
+    public string Bulletin;
     public uint BulletinEnroll;
     public uint CpDonation = 0;
 
@@ -98,11 +98,11 @@ public class Guild : Writer {
         Enemy = new SafeDictionary<uint, Guild>();
         _leaderName = leaderName;
         Name = string.Empty;
-        Bulletin = null; // Will be set later or defaulted in SendGuild
+        Bulletin = "This is a new guild.";
         Leader = null; // Will be set later in Create or CreateGuild
         LeaderName = leaderName;
         WriteUInt16(92, 0, _buffer);
-        WriteUInt16(1106, 2, _buffer);
+        WriteUInt16((ushort)Game.Constants.Packets.MsgSyndicateAttributeInfo, 2, _buffer);
         _buffer[48] = 0x2;
         //  Buffer[49] = 0x1;
 
@@ -423,21 +423,21 @@ public class Guild : Writer {
     ///     Static method to send guild profile packet, displaying member donation information to the client.
     /// </summary>
     public static void GuildProfile(byte[] packet, GameState client) {
-        var p = new GuildProfilePacket(packet);
-        p.Deserialize(packet);
-        p.Silver = 0;
-        p.Pk = client.Entity.PKPoints;
-        p.Cps = 0;
-        p.Guide = 0;
-        p.Arsenal = 0;
-        p.Rose = 0;
-        p.Lily = 0;
-        p.Orchid = 0;
-        p.Tulip = 0;
-        p.HistorySilvers = 0;
-        p.HistoryCps = 0;
-        p.HistoryGuide = 0;
-        p.HistoryPk = 0;
+        var data = new GuildProfilePacket(packet);
+        data.Deserialize(packet);
+        data.Silver = 0;
+        data.Pk = client.Entity.PKPoints;
+        data.Cps = 0;
+        data.Guide = 0;
+        data.Arsenal = 0;
+        data.Rose = 0;
+        data.Lily = 0;
+        data.Orchid = 0;
+        data.Tulip = 0;
+        data.HistorySilvers = 0;
+        data.HistoryCps = 0;
+        data.HistoryGuide = 0;
+        data.HistoryPk = 0;
         client.Send(packet);
     }
 
@@ -690,7 +690,7 @@ public class Guild : Writer {
         var memoryStream = new MemoryStream();
         var wtr = new BinaryWriter(memoryStream);
         wtr.Write((ushort)0);
-        wtr.Write((ushort)2102);
+        wtr.Write((ushort)Game.Constants.Packets.MsgSynMemberList);
         wtr.Write((uint)0);
         wtr.Write((uint)page);
         var left = (int)MemberCount - page;

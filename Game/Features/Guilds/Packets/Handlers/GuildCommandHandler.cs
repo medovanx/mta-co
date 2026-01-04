@@ -9,7 +9,7 @@ namespace MTA.Game.Features.Guilds.Packets.Handlers;
 /// <summary>
 ///     Central router for guild command packets (1107), handling all guild-related actions such as promotions, donations, relationships, and settings.
 /// </summary>
-[PacketHandler(1107)]
+[PacketHandler(Game.Constants.Packets.MsgSyndicate)]
 public static class GuildCommandHandler {
     /// <summary>
     ///     Routes commands to appropriate handlers based on command type, delegating to specialized handlers for each operation.

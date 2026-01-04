@@ -10,7 +10,7 @@ namespace MTA.Game.Features.Guilds.Packets.Handlers;
 /// <summary>
 ///     Handles guild conductor NPC spawn/move requests (packet 2030 when mesh / 10 == 147).
 /// </summary>
-[PacketHandler(2030)]
+[PacketHandler(Game.Constants.Packets.MsgNpcInfo)]
 public static class GuildConductorSpawnHandler {
     public static bool Handle(ushort packetId, byte[] packet, GameState client) {
         // Only handle if client action is 2 (required for packet 2030)

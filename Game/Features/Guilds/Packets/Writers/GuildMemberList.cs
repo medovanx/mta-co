@@ -30,35 +30,34 @@ public class GuildMemberList {
         var writer = new BinaryWriter(stream);
 
         writer.Write((ushort)0);
-        writer.Write((ushort)2102);
+        writer.Write((ushort)Game.Constants.Packets.MsgSynMemberList);
         writer.Write((ushort)0);
         writer.Write((ushort)1); //page
         writer.Write((ushort)0);
         writer.Write((ushort)0);
         writer.Write((ushort)Guild.Members.Count); //count
         writer.Write((ushort)0);
-        foreach (var m in Guild.Members.Values) {
+        foreach (var member in Guild.Members.Values) {
             for (var i = 0; i < 16; i++) //16 offsets
             {
-                if (i < m.Name.Length)
-                    writer.Write((byte)m.Name[i]);
+                if (i < member.Name.Length)
+                    writer.Write((byte)member.Name[i]);
                 else
                     writer.Write((byte)0);
             }
 
-            writer.Write((ushort)m.NobilityRank);
+            writer.Write((ushort)member.NobilityRank);
             writer.Write((ushort)0);
             writer.Write((ushort)1);
             writer.Write((ushort)0);
-            writer.Write((uint)m.Level);
-            writer.Write((uint)m.Rank);
+            writer.Write((uint)member.Level);
+            writer.Write((uint)member.Rank);
             writer.Write((uint)0);
-            writer.Write((uint)m.SilverDonation);
-            if (m.Client != null)
+            writer.Write((uint)member.SilverDonation);
+            if (member.Client != null)
                 writer.Write((byte)1);
             else
                 writer.Write((byte)0);
-
             writer.Write((byte)0);
             writer.Write((ushort)0);
             writer.Write((ushort)0);

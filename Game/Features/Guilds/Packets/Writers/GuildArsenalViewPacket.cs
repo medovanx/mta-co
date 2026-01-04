@@ -20,7 +20,7 @@ public class GuildArsenalViewPacket : Writer, IPacket {
         _buffer = new byte[56 + itemCount * 40];
         if (!create) return;
         WriteUInt16((ushort)(48 + itemCount * 40), 0, _buffer);
-        WriteUInt16(2202, 2, _buffer);
+        WriteUInt16((ushort)Game.Constants.Packets.MsgWeaponsInfo, 2, _buffer);
     }
 
     public uint Type {
