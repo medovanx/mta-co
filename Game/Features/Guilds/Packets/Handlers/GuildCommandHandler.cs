@@ -29,7 +29,6 @@ public static class GuildCommandHandler {
     public static bool Handle(ushort packetId, byte[] packet, GameState client) {
         var command = new GuildCommand(false);
         command.Deserialize(packet);
-        Console.WriteLine($"GuildCommandx Handler: {command.Type}");
         switch (command.Type) {
             case GuildCommand.PromoteInfo:
                 HandlePromoteInfo(command, packet, client);
@@ -80,7 +79,7 @@ public static class GuildCommandHandler {
             case GuildCommand.DischargeRank:
                 HandleDischargeRank(packet, client);
                 break;
-            case GuildCommand.DischargeAide: // Dismiss Aide ranks
+            case GuildCommand.DischargeAide:
                 HandleDischargeAide(packet, client);
                 break;
             case GuildCommand.Promote:
@@ -99,6 +98,7 @@ public static class GuildCommandHandler {
                 HandleLeaderAbsenceDonation(client);
                 break;
             default:
+                Console.WriteLine($"GuildCommandHandler Unhandled: {command.Type}");
                 client.Send(packet);
                 break;
         }
