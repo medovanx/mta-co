@@ -37,6 +37,7 @@ public class GuildCommand : Writer, IPacket {
         DischargeRank = 36,
         PromoteInfo = 38,
         RequestPromote = 37,
+        LeaderAbsenceDonation = 45,
         AddToBlacklist = 48,
         RemoveFromBlacklist = 50;
 

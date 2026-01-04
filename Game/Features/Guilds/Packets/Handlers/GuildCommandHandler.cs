@@ -29,7 +29,7 @@ public static class GuildCommandHandler {
     public static bool Handle(ushort packetId, byte[] packet, GameState client) {
         var command = new GuildCommand(false);
         command.Deserialize(packet);
-        Console.WriteLine($"GuildCommand Handler: {command.Type}");
+        Console.WriteLine($"GuildCommandx Handler: {command.Type}");
         switch (command.Type) {
             case GuildCommand.PromoteInfo:
                 HandlePromoteInfo(command, packet, client);
@@ -94,6 +94,9 @@ public static class GuildCommandHandler {
                 break;
             case GuildCommand.Quit:
                 HandleQuit(client);
+                break;
+            case GuildCommand.LeaderAbsenceDonation:
+                HandleLeaderAbsenceDonation(client);
                 break;
             default:
                 client.Send(packet);
@@ -312,23 +315,37 @@ public static class GuildCommandHandler {
     ///     in GuildPromotionOptions.
     /// </summary>
     /// <param name="packet">The packet containing member name and target rank</param>
-    /// <param name="leader">The client attempting to promote a member</param>
-    private static void HandlePromote(byte[] packet, GameState leader) {
+    /// <param name="client">The client attempting to promote a member</param>
+    private static void HandlePromote(byte[] packet, GameState client) {
         var memberName = Program.Encoding.GetString(packet, 26, packet[25]);
         var memberTargetRank = (MemberRank)BitConverter.ToUInt16(packet, 8);
-        var member = leader.Guild!.Members.Values.FirstOrDefault(m => m.Name == memberName);
+        var member = client.Guild!.Members.Values.FirstOrDefault(m => m.Name == memberName);
+
+        if (member == null || client.AsMember == null) return;
+
+        // Prevent changing the guild leader's rank except for leadership transfer
+        if (member.Rank == MemberRank.GuildLeader && memberTargetRank != MemberRank.GuildLeader) {
+            client.MessageBox("You cannot change the Guild Leader's rank!");
+            return;
+        }
+
+        // Prevent demoting players of the same or higher rank
+        if (client.AsMember.Rank <= member.Rank) {
+            client.MessageBox("You cannot demote someone of the same or higher rank!");
+            return;
+        }
 
         // Special case: Guild Leader transfer
-        if (leader.AsMember!.Rank == MemberRank.GuildLeader && memberTargetRank == MemberRank.GuildLeader) {
-            HandleGuildLeaderTransfer(leader, member!);
+        if (client.AsMember!.Rank == MemberRank.GuildLeader && memberTargetRank == MemberRank.GuildLeader) {
+            HandleGuildLeaderTransfer(client, member);
             return;
         }
 
         // Get promotion option for the target rank
-        var option = GuildPromotionOptions.GetPromotionOption(leader.AsMember.Rank, memberTargetRank);
+        var option = GuildPromotionOptions.GetPromotionOption(client.AsMember.Rank, memberTargetRank);
 
         // Check CP cost
-        if (option!.ConquerPointsCost > 0 && leader.Entity.ConquerPoints < (uint)option.ConquerPointsCost) {
+        if (option!.ConquerPointsCost > 0 && client.Entity.ConquerPoints < (uint)option.ConquerPointsCost) {
             var cpCostMessages = new Dictionary<int, string> {
                 { 650, "You need 650 Conquer Points to appoint Honorary Deputy Leader!" },
                 { 320, "You need 320 Conquer Points to appoint Honorary Manager!" },
@@ -337,19 +354,19 @@ public static class GuildCommandHandler {
             };
             var message = cpCostMessages.GetValueOrDefault(option.ConquerPointsCost,
                 $"You need {option.ConquerPointsCost} Conquer Points!");
-            leader.Send(new Message(message, Color.White, Message.System));
+            client.MessageBox(message);
             return;
         }
 
         // Deduct CP cost if applicable
         if (option.ConquerPointsCost > 0) {
-            leader.Entity.ConquerPoints -= (uint)option.ConquerPointsCost;
-            EntityTable.UpdateData(leader.Entity.UID, "ConquerPoints", (int)leader.Entity.ConquerPoints);
+            client.Entity.ConquerPoints -= (uint)option.ConquerPointsCost;
+            EntityTable.UpdateData(client.Entity.UID, "ConquerPoints", (int)client.Entity.ConquerPoints);
         }
 
         // Apply the promotion
-        ApplyPromotion(leader.Guild, member!, memberTargetRank, leader);
-        leader.Entity.GuildBattlePower = leader.Guild.GetSharedBattlePower(leader.Entity.GuildRank);
+        ApplyPromotion(client.Guild, member!, memberTargetRank, client);
+        client.Entity.GuildBattlePower = client.Guild.GetSharedBattlePower(client.Entity.GuildRank);
     }
 
     /// <summary>
@@ -384,6 +401,65 @@ public static class GuildCommandHandler {
     }
 
     /// <summary>
+    ///     Handles the leader absence donation request. Sends a DonateSilvers command to the client
+    ///     to open the donation UI, allowing them to donate 1 million to take over leadership.
+    /// </summary>
+    /// <param name="client">The client requesting to take over leadership</param>
+    private static void HandleLeaderAbsenceDonation(GameState client) {
+        if (client.Guild == null || client.AsMember == null) return;
+
+        // Send DonateSilvers command to open donation UI
+        var donateCommand = new GuildCommand(true) {
+            Type = GuildCommand.DonateSilvers
+        };
+        client.Send(donateCommand);
+    }
+
+    /// <summary>
+    ///     Transfers guild leadership when the current leader has been absent and a member donates 1 million.
+    ///     The old leader becomes a Deputy Leader (if online) or remains in their current state (if offline).
+    /// </summary>
+    /// <param name="newLeaderClient">The client who donated 1 million to take over leadership</param>
+    private static void HandleLeaderAbsenceTakeover(GameState newLeaderClient) {
+        var guild = newLeaderClient.Guild!;
+        var newLeader = newLeaderClient.AsMember!;
+        var oldLeader = guild.Leader;
+
+        // Transfer leadership
+        newLeader.Rank = MemberRank.GuildLeader;
+        guild.LeaderId = newLeader.Id;
+        guild.Leader = newLeader;
+        guild.LeaderName = newLeader.Name;
+
+        // Update new leader's client
+        guild.SendGuild(newLeaderClient);
+        newLeaderClient.Entity.GuildBattlePower = guild.GetSharedBattlePower(newLeader.Rank);
+        newLeaderClient.Entity.GuildRank = (ushort)newLeader.Rank;
+        newLeaderClient.Screen.FullWipe();
+        newLeaderClient.Screen.Reload();
+
+        // Update old leader if they're online
+        if (oldLeader != null && Kernel.TryGetPlayer(oldLeader.Id, out var oldLeaderClient)) {
+            oldLeader.Rank = MemberRank.DeputyLeader;
+            oldLeaderClient.Entity.GuildRank = (ushort)oldLeader.Rank;
+            guild.SendGuild(oldLeaderClient);
+            oldLeaderClient.Screen.FullWipe();
+            oldLeaderClient.Screen.Reload();
+            GuildMemberTable.UpdateGuildAndRank(oldLeader.Id, oldLeader.GuildId, (ushort)oldLeader.Rank);
+        }
+        else if (oldLeader != null) {
+            // Old leader is offline - update their rank in the database
+            oldLeader.Rank = MemberRank.DeputyLeader;
+            GuildMemberTable.UpdateGuildAndRank(oldLeader.Id, oldLeader.GuildId, (ushort)oldLeader.Rank);
+        }
+
+        // Update new leader in database
+        GuildMemberTable.UpdateGuildAndRank(newLeader.Id, newLeader.GuildId, (ushort)newLeader.Rank);
+        GuildTable.SaveLeader(guild);
+        guild.SendMembers(newLeaderClient, 0);
+    }
+
+    /// <summary>
     ///     Adds player to blacklist, preventing them from sending join requests to the guild.
     /// </summary>
     private static void HandleBlacklistAdd(GuildCommand command, GameState client) {
@@ -405,17 +481,30 @@ public static class GuildCommandHandler {
 
     /// <summary>
     ///     Processes silver donation to guild fund, deducting from player's money and updating both guild fund and member donation tracking.
+    ///     If the donation is exactly 1 million and the leader has been absent, transfers leadership to the donating member.
     /// </summary>
     private static void HandleDonateSilvers(GuildCommand command, GameState client) {
         if (client.Trade.InTrade)
             return;
         if (client.Entity.Money < command.DwParam) return;
-        client.Guild!.SilverFund += command.DwParam;
+
+        const ulong leadershipTakeoverAmount = 1_000_000; // 1kk
+        var isLeadershipTakeover = command.DwParam == leadershipTakeoverAmount &&
+                                   client.Guild!.Leader != null &&
+                                   client.Guild.Leader.Id != client.Entity.UID &&
+                                   !Kernel.TryGetPlayer(client.Guild.Leader.Id, out _);
+
+        client.Guild.SilverFund += command.DwParam;
         GuildTable.SaveFunds(client.Guild);
         client.AsMember!.SilverDonation += command.DwParam;
         client.Entity.Money -= command.DwParam;
         GuildMemberTable.Save(client.AsMember);
         client.Guild.SendGuild(client);
+
+        // If this is a leadership takeover donation (1kk and leader is absent), transfer leadership
+        if (isLeadershipTakeover) {
+            HandleLeaderAbsenceTakeover(client);
+        }
     }
 
     /// <summary>
