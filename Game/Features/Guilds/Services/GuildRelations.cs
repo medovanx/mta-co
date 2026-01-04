@@ -1,8 +1,6 @@
-using System;
 using System.Drawing;
 using System.Linq;
 using MTA.Client;
-using MTA.Game;
 using MTA.Game.Features.Guilds.Database;
 using MTA.Game.Features.Guilds.Models;
 using MTA.Game.Features.Guilds.Packets.Writers;
@@ -20,7 +18,7 @@ public static class GuildRelations {
     /// </summary>
     /// <param name="guild">The guild initiating the alliance</param>
     /// <param name="targetGuildName">The name of the guild to ally with</param>
-    public static void AddAlly(Guild guild, string targetGuildName) {
+    private static void AddAlly(Guild guild, string targetGuildName) {
         foreach (var targetGuild in Kernel.Guilds.Values.Where(g => g.Name == targetGuildName)) {
             // Remove enemy relationship from initiator's side (if exists)
             if (guild.Enemy.ContainsKey(targetGuild.Id))
@@ -119,9 +117,9 @@ public static class GuildRelations {
     /// <param name="initiatorPlayer">The client initiating the alliance request (must be a guild leader)</param>
     public static void AllianceConfirmationPopup(string targetGuildName, GameState initiatorPlayer) {
         var initiatorGuild = initiatorPlayer.Guild!;
-        var targetGuild = Kernel.Guilds.Values.FirstOrDefault(g => g.Name == targetGuildName);
+        var targetGuild = Kernel.Guilds.Values.First(g => g.Name == targetGuildName);
 
-        if (!Kernel.TryGetPlayer(targetGuild.Leader.Id, out var targetLeader))
+        if (!Kernel.TryGetPlayer(targetGuild.Leader!.Id, out var targetLeader))
             return;
 
         var message =
@@ -129,14 +127,14 @@ public static class GuildRelations {
 
         targetLeader.MessageBox(
             message,
-            msg_ok: client => {
+            msg_ok: _ => {
                 AddAlly(targetGuild, initiatorGuild.Name);
                 AddAlly(initiatorGuild, targetGuild.Name);
                 initiatorPlayer.Send(new Message(
                     $"{targetGuild.Leader!.Name} has accepted your alliance request.",
                     Color.Red, Message.TopLeft));
             },
-            msg_cancel: client => {
+            msg_cancel: _ => {
                 initiatorPlayer.Send(new Message(
                     $"{targetGuild.Leader!.Name} has declined your alliance request.",
                     Color.Red, Message.TopLeft));

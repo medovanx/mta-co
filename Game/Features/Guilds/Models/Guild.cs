@@ -303,27 +303,6 @@ public class Guild : Writer {
         GuildArsenalTable.Save(this);
     }
 
-    /// <summary>
-    ///     Static method to send guild profile packet, displaying member donation information to the client.
-    /// </summary>
-    public static void GuildProfile(byte[] packet, GameState client) {
-        var data = new GuildProfilePacket(packet);
-        data.Deserialize(packet);
-        data.Silver = 0;
-        data.Pk = client.Entity.PKPoints;
-        data.Cps = 0;
-        data.Guide = 0;
-        data.Arsenal = 0;
-        data.Rose = 0;
-        data.Lily = 0;
-        data.Orchid = 0;
-        data.Tulip = 0;
-        data.HistorySilvers = 0;
-        data.HistoryCps = 0;
-        data.HistoryGuide = 0;
-        data.HistoryPk = 0;
-        client.Send(packet);
-    }
 
     // ReSharper disable once InconsistentNaming
     /// <summary>
