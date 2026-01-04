@@ -14762,7 +14762,7 @@ namespace MTA.Network {
             if (client.Entity.MentorBattlePower != 0)
                 client.Entity.Update(Update.MentorBattlePower, client.Entity.MentorBattlePower, false);
             if (client.Guild != null) {
-                client.Guild.SendAllyAndEnemy(client);
+                Game.Features.Guilds.Services.GuildRelations.SendGuildRelations(client);
                 client.Entity.GuildBattlePower = client.Guild.GetSharedBattlePower(client.AsMember.Rank);
             }
 

@@ -85,7 +85,6 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     if (client is { Guild: not null, AsMember.Rank: MemberRank.GuildLeader }) {
                         client.Guild.Disband(client.Entity.Name);
                     }
-
                     break;
                 }
                 case 5: {

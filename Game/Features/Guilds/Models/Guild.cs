@@ -295,7 +295,7 @@ public class Guild : Writer {
         // This is a placeholder - the actual calculation may need to be implemented based on game logic
         return (uint)_arsenalBp; //(uint)(arsenal_bp * SharedBattlePowerPercentage[rank / 100]);
     }
-    
+
     /// <summary>
     ///     Saves arsenal data to database, persisting all inscribed items and arsenal states.
     /// </summary>
@@ -733,8 +733,8 @@ public class Guild : Writer {
 
         var allies = Ally.Values.ToArray();
         foreach (var ally in allies) {
-            RemoveAlly(ally.Name);
-            ally.RemoveAlly(Name);
+            GuildRelations.RemoveAlly(this, ally.Name);
+            GuildRelations.RemoveAlly(ally, Name);
         }
 
         GuildTable.Disband(this);
@@ -748,93 +748,6 @@ public class Guild : Writer {
                     Color.Red, Message.Center),
                 Program.Values);
     }
-
-    /// <summary>
-    ///     Adds alliance relationship, removing any existing enemy relationship and notifying all members.
-    /// </summary>
-    public void AddAlly(string name) {
-        foreach (var guild in Kernel.Guilds.Values.Where(guild => guild.Name == name)) {
-            // Remove enemy relationship from initiator's side (if exists)
-            if (Enemy.ContainsKey(guild.Id)) RemoveEnemy(guild.Name);
-
-            // Remove enemy relationship from target guild's side (if they had marked us as enemy)
-            if (guild.Enemy.ContainsKey(Id)) guild.RemoveEnemy(Name);
-
-            Ally.Add(guild.Id, guild);
-            var message = new _String(true) {
-                UID = guild.Id,
-                Type = 0x15
-            };
-            message.Texts.Add(string.Concat(new object[]
-                { guild.Name, " ", guild.LeaderName, " 0 ", guild.MemberCount }));
-            SendGuildMessage(message);
-            SendGuildMessage(message);
-            GuildTable.AddAlly(this, guild.Id);
-            return;
-        }
-    }
-
-    /// <summary>
-    ///     Removes alliance relationship, notifying all members and updating database.
-    /// </summary>
-    public void RemoveAlly(string name) {
-        foreach (var guild in Ally.Values) {
-            if (guild.Name != name) continue;
-            var cmd = new GuildCommand(true) {
-                Type = GuildCommand.Unally,
-                DwParam = guild.Id
-            };
-            SendGuildMessage(cmd);
-            GuildTable.RemoveAlly(this, guild.Id);
-            Ally.Remove(guild.Id);
-            return;
-        }
-    }
-
-    /// <summary>
-    ///     Adds enemy relationship, removing any existing alliance and notifying all members.
-    /// </summary>
-    public void AddEnemy(string name) {
-        foreach (var guild in Kernel.Guilds.Values.Where(guild => guild.Name == name)) {
-            if (Ally.ContainsKey(guild.Id)) {
-                RemoveAlly(guild.Name);
-                guild.RemoveAlly(Name);
-            }
-
-            Enemy.Add(guild.Id, guild);
-            var stringPacket = new _String(true) {
-                UID = guild.Id,
-                Type = _String.GuildEnemies
-            };
-            stringPacket.Texts.Add(guild.Name + " " + guild.LeaderName + " " + guild.Level + " " +
-                                   guild.MemberCount);
-            SendGuildMessage(stringPacket);
-            SendGuildMessage(stringPacket);
-            GuildTable.AddEnemy(this, guild.Id);
-
-            return;
-        }
-    }
-
-    /// <summary>
-    ///     Removes enemy relationship, notifying all members and updating database.
-    /// </summary>
-    public void RemoveEnemy(string name) {
-        foreach (var guild in Enemy.Values) {
-            if (guild.Name != name) continue;
-            var cmd = new GuildCommand(true) {
-                Type = GuildCommand.Peace,
-                DwParam = guild.Id
-            };
-            SendGuildMessage(cmd);
-            SendGuildMessage(cmd);
-            GuildTable.RemoveEnemy(this, guild.Id);
-            Enemy.Remove(guild.Id);
-
-            return;
-        }
-    }
-
 
     /// <summary>
     ///     Sends guild name to client, displaying guild information in the UI.
@@ -864,30 +777,5 @@ public class Guild : Writer {
         WriteUInt32((uint)client.AsMember.SilverDonation, 8, _buffer);
         WriteUInt32((ushort)client.AsMember.Rank, 28, _buffer);
         client.Send(_buffer);
-    }
-
-    /// <summary>
-    ///     Sends alliance/enemy list to client, displaying all diplomatic relationships.
-    /// </summary>
-    public void SendAllyAndEnemy(GameState client) {
-        foreach (var guild in Enemy.Values) {
-            var stringPacket = new _String(true) {
-                UID = guild.Id,
-                Type = _String.GuildEnemies
-            };
-            stringPacket.Texts.Add(guild.Name + " " + guild.LeaderName + " 0 " + guild.MemberCount);
-            client.Send(stringPacket);
-            client.Send(stringPacket);
-        }
-
-        foreach (var guild in Ally.Values) {
-            var stringPacket = new _String(true) {
-                UID = guild.Id,
-                Type = _String.GuildAllies
-            };
-            stringPacket.Texts.Add(guild.Name + " " + guild.LeaderName + " 0 " + guild.MemberCount);
-            client.Send(stringPacket);
-            client.Send(stringPacket);
-        }
     }
 }
