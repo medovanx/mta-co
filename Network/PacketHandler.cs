@@ -30,7 +30,6 @@ using MTA.Game.Items;
 using MTA.Interfaces;
 using MTA.MaTrix;
 using MTA.Game.Features.Guilds.Packets;
-using MTA.Game.Features.Guilds.Packets.Handlers.Command;
 using MTA.Game.Features.Guilds.Packets.Writers;
 using MTA.Network.GamePackets;
 using MTA.Network.GamePackets.EventAlert;
