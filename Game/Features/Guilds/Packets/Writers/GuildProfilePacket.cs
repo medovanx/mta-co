@@ -55,7 +55,7 @@ public class GuildProfilePacket(byte[] packet) : Writer, IPacket {
         set => WriteUInt32(value, 40, _packet);
     }
 
-    public uint HistorySilvers {
+    public uint Exploits {
         get => BitConverter.ToUInt32(_packet, 44);
         set => WriteUInt32(value, 44, _packet);
     }

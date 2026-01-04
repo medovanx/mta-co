@@ -34,21 +34,19 @@ public static class GuildDonationInfoHandler {
         // Populate current donation data
         data.Silver = (uint)Math.Min(client.AsMember.SilverDonation, uint.MaxValue);
         data.Cps = (uint)Math.Min(client.AsMember.ConquerPointDonation, uint.MaxValue);
-        data.Pk = client.AsMember.PkDonation;
         data.Arsenal = client.AsMember.ArsenalDonation;
-        data.Rose = client.AsMember.Roses;
         data.Lily = client.AsMember.Lilies;
+        data.Rose = client.AsMember.Roses;
         data.Orchid = client.AsMember.Orchids;
         data.Tulip = client.AsMember.Tulips;
-
-        // Guide donation not tracked in GuildMember model
-        data.Guide = 0;
+        data.Pk = client.AsMember.PkDonation;
+        data.Exploits = client.AsMember.Exploits;
+        data.Guide = client.AsMember.GuideDonation;
 
         // History fields not tracked in GuildMember model
-        data.HistorySilvers = 0;
-        data.HistoryCps = 0;
-        data.HistoryGuide = 0;
-        data.HistoryPk = 0;
+        data.HistoryCps = 666;
+        data.HistoryGuide = 777;
+        data.HistoryPk = 888;
 
         client.Send(packet);
     }

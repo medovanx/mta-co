@@ -10,6 +10,7 @@ public class GuildMember(uint guildId) {
     public uint CtfCpsReward;
     public uint CtfSilverReward;
     public uint Exploits = 0;
+    public uint GuideDonation;
     public uint ExploitsRank;
     public ulong LastLogin = 0;
     public uint Lilies;

@@ -92,6 +92,7 @@ public static class GuildSchema {
         public const string PkDonation = "pk_donation";
         public const string LastLogin = "last_login";
         public const string Exploits = "exploits";
+        public const string GuideDonation = "guide_donation";
         public const string CtfCpsReward = "ctf_cps_reward";
         public const string CtfSilverReward = "ctf_silver_reward";
     }

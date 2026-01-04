@@ -19,6 +19,7 @@ public sealed class GuildMemberRecord {
     public uint PkDonation { get; init; }
     public ulong LastLogin { get; init; }
     public uint Exploits { get; init; }
+    public uint GuideDonation { get; init; }
     public uint CtfCpsReward { get; init; }
     public uint CtfSilverReward { get; init; }
 }

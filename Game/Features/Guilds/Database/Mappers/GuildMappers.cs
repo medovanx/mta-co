@@ -94,6 +94,7 @@ public static class GuildMappers {
             PkDonation = reader.ReadUInt32(GuildSchema.GuildMembers.PkDonation),
             LastLogin = reader.ReadUInt64(GuildSchema.GuildMembers.LastLogin),
             Exploits = reader.ReadUInt32(GuildSchema.GuildMembers.Exploits),
+            GuideDonation = reader.ReadUInt32(GuildSchema.GuildMembers.GuideDonation),
             CtfCpsReward = reader.ReadUInt32(GuildSchema.GuildMembers.CtfCpsReward),
             CtfSilverReward = reader.ReadUInt32(GuildSchema.GuildMembers.CtfSilverReward)
         };

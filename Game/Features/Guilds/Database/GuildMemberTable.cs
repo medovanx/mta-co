@@ -45,6 +45,7 @@ public static class GuildMemberTable {
                 PkDonation = record.PkDonation,
                 LastLogin = record.LastLogin,
                 Exploits = record.Exploits,
+                GuideDonation = record.GuideDonation,
                 CtfCpsReward = record.CtfCpsReward,
                 CtfSilverReward = record.CtfSilverReward
             };
@@ -82,6 +83,7 @@ public static class GuildMemberTable {
             .Set(GuildSchema.GuildMembers.PkDonation, member.PkDonation)
             .Set(GuildSchema.GuildMembers.LastLogin, member.LastLogin)
             .Set(GuildSchema.GuildMembers.Exploits, member.Exploits)
+            .Set(GuildSchema.GuildMembers.GuideDonation, member.GuideDonation)
             .Set(GuildSchema.GuildMembers.CtfCpsReward, member.CtfCpsReward)
             .Set(GuildSchema.GuildMembers.CtfSilverReward, member.CtfSilverReward)
             .Where(GuildSchema.GuildMembers.EntityId, member.Id);
@@ -107,6 +109,7 @@ public static class GuildMemberTable {
             .Insert(GuildSchema.GuildMembers.PkDonation, member.PkDonation)
             .Insert(GuildSchema.GuildMembers.LastLogin, member.LastLogin)
             .Insert(GuildSchema.GuildMembers.Exploits, member.Exploits)
+            .Insert(GuildSchema.GuildMembers.GuideDonation, member.GuideDonation)
             .Insert(GuildSchema.GuildMembers.CtfCpsReward, member.CtfCpsReward)
             .Insert(GuildSchema.GuildMembers.CtfSilverReward, member.CtfSilverReward);
         cmd.Execute();
