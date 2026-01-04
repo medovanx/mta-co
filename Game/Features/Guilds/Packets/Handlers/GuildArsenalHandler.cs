@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using MTA.Client;
 using MTA.Database;
@@ -8,7 +7,6 @@ using MTA.Game.Features.Guilds.Packets.Writers;
 using MTA.Network;
 using MTA.Network.GamePackets;
 using MTA.Network.PacketHandlers;
-using Message = MTA.Network.GamePackets.Message;
 
 namespace MTA.Game.Features.Guilds.Packets.Handlers;
 
@@ -198,27 +196,14 @@ public static class GuildArsenalHandler {
     ///     Unlocks an arsenal slot using guild funds, allowing members to inscribe items to that slot.
     /// </summary>
     private static void UnlockArsenal(ArsenalCommand command, GameState client) {
-        if (client.Entity.GuildID == 0) return;
-        var guild = client.Guild;
-        if (guild == null) return;
-        if (guild.Arsenals[command.dwParam].Unlocked) {
-            client.Send(new Message("This arsenal was already unlocked!", Color.Red, Message.Talk));
-            return;
-        }
-
+        var guild = client.Guild!;
         var cost = guild.GetCurrentArsenalCost();
-        if (guild.SilverFund >= cost) {
-            guild.SilverFund -= cost;
-            guild.Arsenals[command.dwParam].Unlocked = true;
-            guild.SendGuild(client);
-
-            guild.ArsenalBpChanged = true;
-            guild.GetMaxSharedBattlePower();
-            guild.SaveArsenal();
-        }
-        else {
-            client.Send(new Message("Your guild doesn't have enough funds!", Color.Red, Message.Talk));
-        }
+        guild.SilverFund -= cost;
+        guild.Arsenals[command.dwParam].Unlocked = true;
+        guild.SendGuild(client);
+        guild.ArsenalBpChanged = true;
+        guild.GetMaxSharedBattlePower();
+        guild.SaveArsenal();
     }
 
     /// <summary>

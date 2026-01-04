@@ -19,10 +19,10 @@ public class GuildCommand : Writer, IPacket {
         InviteRequest = 2,
         Quit = 3,
         Info = 6,
-        Allied = 7,
-        Neutral1 = 8,
-        Enemied = 9,
-        Neutral2 = 10,
+        Ally = 7,
+        Unally = 8,
+        Enemy = 9,
+        Peace = 10,
         DonateSilvers = 11,
         Refresh = 12,
         Disband = 19,
@@ -123,7 +123,7 @@ public class GuildCommand : Writer, IPacket {
     }
 
     private string CreatePromotionString(StringBuilder builder, MemberRank rank, int occupants,
-        int maxOccupants, int extraBattlePower, int conquerPoints) {
+        int maxOccupants, uint extraBattlePower, int conquerPoints) {
         builder.Remove(0, builder.Length);
         builder.Append((int)rank);
         builder.Append(' ');
@@ -150,7 +150,7 @@ public class GuildCommand : Writer, IPacket {
         var list = promotionOptions.Select(option => {
             var currentCount = client.Guild.RanksCounts[(ushort)option.Rank];
             var maxLimit = GuildPromotionOptions.GetMaxLimit(option, client.Guild.Level);
-            var potency = (int)client.Guild.GetMemberPotency(option.Rank);
+            var potency = client.Guild.GetSharedBattlePower(option.Rank);
 
             return CreatePromotionString(builder, option.Rank, currentCount, maxLimit, potency,
                 option.ConquerPointsCost);

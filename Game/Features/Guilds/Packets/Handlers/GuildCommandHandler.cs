@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using MTA.Client;
 using MTA.Database;
-using MTA.Game.Constants;
 using MTA.Game.Features.Guilds.Constants;
 using MTA.Game.Features.Guilds.Database;
 using MTA.Game.Features.Guilds.Models;
@@ -45,15 +44,15 @@ public static class GuildCommandHandler {
             case GuildCommand.ChangeGuildRequirements:
                 HandleChangeRequirements(command, client);
                 break;
-            case GuildCommand.Neutral1:
-            case GuildCommand.Neutral2:
-                HandleNeutral(packet, client);
+            case GuildCommand.Unally:
+            case GuildCommand.Peace:
+                HandleUnallyAndPeace(packet, client);
                 break;
-            case GuildCommand.Allied:
-                HandleAllied(packet, client);
+            case GuildCommand.Ally:
+                HandleAlly(packet, client);
                 break;
-            case GuildCommand.Enemied:
-                HandleEnemied(packet, client);
+            case GuildCommand.Enemy:
+                HandleEnemy(packet, client);
                 break;
             case GuildCommand.AddToBlacklist:
                 HandleBlacklistAdd(command, client);
@@ -365,8 +364,8 @@ public static class GuildCommandHandler {
         }
 
         // Apply the promotion
-        ApplyPromotion(client.Guild, member!, memberTargetRank, client);
-        client.Entity.GuildBattlePower = client.Guild.GetSharedBattlePower(client.Entity.GuildRank);
+        ApplyPromotion(client.Guild, member, memberTargetRank, client);
+        client.Entity.GuildBattlePower = client.Guild.GetSharedBattlePower((MemberRank)client.Entity.GuildRank);
     }
 
     /// <summary>
@@ -630,13 +629,7 @@ public static class GuildCommandHandler {
             DwParam3 = guild.RebornRequirement,
             DwParam4 = guild.ClassRequirement
         };
-        if ((!EntityClass.IsTrojan(client.Entity.Class) || guild.AllowTrojans) &&
-            (!EntityClass.IsWarrior(client.Entity.Class) || guild.AllowWarriors) &&
-            (!EntityClass.IsArcher(client.Entity.Class) || guild.AllowArchers) &&
-            (!EntityClass.IsNinja(client.Entity.Class) || guild.AllowNinjas) &&
-            (!EntityClass.IsMonk(client.Entity.Class) || guild.AllowMonks) &&
-            (!EntityClass.IsPirate(client.Entity.Class) || guild.AllowPirates) &&
-            (!EntityClass.IsTaoist(client.Entity.Class) || guild.AllowTaoists) &&
+        if (guild.IsClassAllowed(client.Entity.Class) &&
             client.Entity.Reborn >= guild.RebornRequirement &&
             client.Entity.Level >= guild.LevelRequirement) return true;
         client.Send(cmd);
@@ -646,27 +639,42 @@ public static class GuildCommandHandler {
     /// <summary>
     ///     Initiates alliance request between two guilds, requiring mutual approval from both guild leaders.
     /// </summary>
-    private static void HandleAllied(byte[] packet, GameState client) {
+    /// <summary>
+    ///     Gets the maximum number of relations (allies or enemies) allowed based on guild level.
+    /// </summary>
+    /// <param name="guildLevel">The guild level</param>
+    /// <returns>The maximum number of relations allowed</returns>
+    private static byte GetMaxRelations(byte guildLevel) {
+        return guildLevel switch {
+            1 => 5,
+            2 => 7,
+            3 => 9,
+            4 => 12,
+            >= 5 => 15,
+        };
+    }
+
+    private static void HandleAlly(byte[] packet, GameState client) {
         var name = Encoding.Default.GetString(packet, 26, packet[25]);
         if (client is { Guild: not null, AsMember.Rank: MemberRank.GuildLeader } &&
-            client.Guild.Ally.Count < client.Guild.GetMaxAllies())
+            client.Guild.Ally.Count < GetMaxRelations(client.Guild.Level))
             AllyGuilds(name, client);
     }
 
     /// <summary>
     ///     Adds enemy relationship, marking another guild as an enemy (one-way relationship, no approval needed).
     /// </summary>
-    private static void HandleEnemied(byte[] packet, GameState client) {
+    private static void HandleEnemy(byte[] packet, GameState client) {
         var name = Encoding.Default.GetString(packet, 26, packet[25]);
         if (client is { Guild: not null, AsMember.Rank: MemberRank.GuildLeader } &&
-            client.Guild.Enemy.Count < client.Guild.GetMaxEnemies())
+            client.Guild.Enemy.Count < GetMaxRelations(client.Guild.Level))
             client.Guild.AddEnemy(name);
     }
 
     /// <summary>
     ///     Removes alliance or enemy relationship, returning to neutral status (mutually removes alliance if exists).
     /// </summary>
-    private static void HandleNeutral(byte[] packet, GameState client) {
+    private static void HandleUnallyAndPeace(byte[] packet, GameState client) {
         var name = Encoding.Default.GetString(packet, 26, packet[25]);
         if (client is not { Guild: not null, AsMember.Rank: MemberRank.GuildLeader }) return;
         client.Guild.RemoveAlly(name);

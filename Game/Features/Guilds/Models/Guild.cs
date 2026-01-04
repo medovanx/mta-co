@@ -13,62 +13,46 @@ using MTA.Game.Features.Guilds.Database;
 using MTA.Game.Features.Guilds.Packets.Handlers;
 using MTA.Game.Features.Guilds.Packets.Writers;
 using MTA.Game.Features.Guilds.Services;
+using MTA.Game.Constants;
 using MTA.Interfaces;
 using MTA.Network;
 using MTA.Network.GamePackets;
+
+// ReSharper disable InconsistentNaming
 
 namespace MTA.Game.Features.Guilds.Models;
 
 public class Guild : Writer {
     public static Counter GuildCounter = new(0);
-
     private readonly byte[] _buffer;
-
     public readonly GuildRecruitment AdvertiseRecruit;
     public readonly SafeDictionary<uint, Guild> Ally;
-
     public readonly Arsenal[] Arsenals;
     public readonly List<uint> BlackList = [];
     public readonly SafeDictionary<uint, Guild> Enemy;
-
     public readonly ushort[] RanksCounts = new ushort[(ushort)MemberRank.GuildLeader + 1];
-
     private int _arsenalBp;
     private string _leaderName;
     public bool ArsenalBpChanged = true;
-
     public string Bulletin;
     public uint BulletinEnroll;
     public uint CpDonation = 0;
-
-    // ReSharper disable once InconsistentNaming
     public uint CTFDonationCPs = 0;
-
-    // ReSharper disable once InconsistentNaming
     public uint CTFDonationCPSold = 0;
-
-    // ReSharper disable once InconsistentNaming
     public uint CTFDonationSilver = 0;
-
-    // ReSharper disable once InconsistentNaming
     public uint CTFDonationSilverOld = 0;
     public uint CtfFlagScore;
     public uint CtfPoints;
     public uint CtfReward = 0;
-
     public uint EWarScore;
-
     public uint GuildEnroll;
     public uint GuildScoreWar;
     public uint HonorDonation = 0;
-
     public GuildMember? Leader;
     public uint LiliesDonation = 0;
     public uint Loses;
-
     public SafeDictionary<uint, GuildMember> Members;
     public ulong MoneyDonation = 0;
-
     public string Name;
     public uint OrchidDonation = 0;
     public uint PaScore;
@@ -99,15 +83,11 @@ public class Guild : Writer {
         _leaderName = leaderName;
         Name = string.Empty;
         Bulletin = "This is a new guild.";
-        Leader = null; // Will be set later in Create or CreateGuild
+        Leader = null;
         LeaderName = leaderName;
         WriteUInt16(92, 0, _buffer);
         WriteUInt16((ushort)Game.Constants.Packets.MsgSyndicateAttributeInfo, 2, _buffer);
         _buffer[48] = 0x2;
-        //  Buffer[49] = 0x1;
-
-        //            Buffer[75] = 0x1;
-        //            Buffer[87] = 0x20;
         LevelRequirement = 1;
         Members = new SafeDictionary<uint, GuildMember>(1000);
         Ally = new SafeDictionary<uint, Guild>(1000);
@@ -197,74 +177,31 @@ public class Guild : Writer {
         set => WriteUInt32(value, 56, _buffer);
     }
 
-    public bool AllowTrojans {
-        get => (ClassRequirement & GuildClassRequirements.Trojan) != GuildClassRequirements.Trojan;
-        set {
-            if (value)
-                ClassRequirement &= ~GuildClassRequirements.Trojan;
-            else
-                ClassRequirement |= GuildClassRequirements.Trojan;
-        }
-    }
+    /// <summary>
+    ///     Checks if a player's class is allowed to join the guild based on class requirements.
+    ///     Returns true if the class is allowed (i.e., the restriction flag is NOT set).
+    /// </summary>
+    /// <param name="playerClass">The player's class ID</param>
+    /// <returns>True if the class is allowed, false if restricted</returns>
+    public bool IsClassAllowed(byte playerClass) {
+        // Check each class type and return false if the restriction flag is set
+        if (EntityClass.IsTrojan(playerClass))
+            return (ClassRequirement & GuildClassRequirements.Trojan) != GuildClassRequirements.Trojan;
+        if (EntityClass.IsWarrior(playerClass))
+            return (ClassRequirement & GuildClassRequirements.Warrior) != GuildClassRequirements.Warrior;
+        if (EntityClass.IsTaoist(playerClass))
+            return (ClassRequirement & GuildClassRequirements.Taoist) != GuildClassRequirements.Taoist;
+        if (EntityClass.IsArcher(playerClass))
+            return (ClassRequirement & GuildClassRequirements.Archer) != GuildClassRequirements.Archer;
+        if (EntityClass.IsNinja(playerClass))
+            return (ClassRequirement & GuildClassRequirements.Ninja) != GuildClassRequirements.Ninja;
+        if (EntityClass.IsMonk(playerClass))
+            return (ClassRequirement & GuildClassRequirements.Monk) != GuildClassRequirements.Monk;
+        if (EntityClass.IsPirate(playerClass))
+            return (ClassRequirement & GuildClassRequirements.Pirate) != GuildClassRequirements.Pirate;
 
-    public bool AllowWarriors {
-        get => (ClassRequirement & GuildClassRequirements.Warrior) != GuildClassRequirements.Warrior;
-        set {
-            if (value)
-                ClassRequirement &= ~GuildClassRequirements.Warrior;
-            else
-                ClassRequirement |= GuildClassRequirements.Warrior;
-        }
-    }
-
-    public bool AllowTaoists {
-        get => (ClassRequirement & GuildClassRequirements.Taoist) != GuildClassRequirements.Taoist;
-        set {
-            if (value)
-                ClassRequirement &= ~GuildClassRequirements.Taoist;
-            else
-                ClassRequirement |= GuildClassRequirements.Taoist;
-        }
-    }
-
-    public bool AllowArchers {
-        get => (ClassRequirement & GuildClassRequirements.Archer) != GuildClassRequirements.Archer;
-        set {
-            if (value)
-                ClassRequirement &= ~GuildClassRequirements.Archer;
-            else
-                ClassRequirement |= GuildClassRequirements.Archer;
-        }
-    }
-
-    public bool AllowNinjas {
-        get => (ClassRequirement & GuildClassRequirements.Ninja) != GuildClassRequirements.Ninja;
-        set {
-            if (value)
-                ClassRequirement &= ~GuildClassRequirements.Ninja;
-            else
-                ClassRequirement |= GuildClassRequirements.Ninja;
-        }
-    }
-
-    public bool AllowMonks {
-        get => (ClassRequirement & GuildClassRequirements.Monk) != GuildClassRequirements.Monk;
-        set {
-            if (value)
-                ClassRequirement &= ~GuildClassRequirements.Monk;
-            else
-                ClassRequirement |= GuildClassRequirements.Monk;
-        }
-    }
-
-    public bool AllowPirates {
-        get => (ClassRequirement & GuildClassRequirements.Pirate) != GuildClassRequirements.Pirate;
-        set {
-            if (value)
-                ClassRequirement &= ~GuildClassRequirements.Pirate;
-            else
-                ClassRequirement |= GuildClassRequirements.Pirate;
-        }
+        // Unknown class - allow by default
+        return true;
     }
 
     public byte Level {
@@ -352,66 +289,13 @@ public class Guild : Writer {
     }
 
     /// <summary>
-    ///     Calculates total member potency based on arsenal battle power, used for promotion rank limits.
-    /// </summary>
-    public uint GetMemberPotency() {
-        return (uint)_arsenalBp;
-    }
-
-    /// <summary>
-    ///     Gets potency for specific rank, currently returns total arsenal battle power (maybe enhanced with rank-specific calculations).
-    /// </summary>
-    public uint GetMemberPotency(MemberRank rank) {
-        // Calculate potency based on rank and arsenal BP
-        // This is a placeholder - the actual calculation may need to be implemented based on game logic
-        return (uint)_arsenalBp;
-    }
-
-    /// <summary>
-    ///     Gets shared battle power for numeric rank, used to calculate member's bonus battle power from guild arsenals.
-    /// </summary>
-    public uint GetSharedBattlePower(int rank) {
-        return
-            GetMemberPotency(
-                (MemberRank)rank); //(uint)(arsenal_bp * SharedBattlePowerPercentage[rank / 100]);
-    }
-
-    /// <summary>
-    ///     Gets shared battle power for rank enum, used to calculate member's bonus battle power from guild arsenals.
+    ///     Gets shared battle power for rank, used to calculate member's bonus battle power from guild arsenals.
     /// </summary>
     public uint GetSharedBattlePower(MemberRank rank) {
-        return GetSharedBattlePower((int)rank);
+        // This is a placeholder - the actual calculation may need to be implemented based on game logic
+        return (uint)_arsenalBp; //(uint)(arsenal_bp * SharedBattlePowerPercentage[rank / 100]);
     }
-
-
-    /// <summary>
-    ///     Gets the maximum number of allies allowed based on guild level
-    /// </summary>
-    public byte GetMaxAllies() {
-        return Level switch {
-            1 => 5,
-            2 => 7,
-            3 => 9,
-            4 => 12,
-            >= 5 => 15,
-            _ => 5 // Default fallback
-        };
-    }
-
-    /// <summary>
-    ///     Gets the maximum number of enemies allowed based on guild level
-    /// </summary>
-    public byte GetMaxEnemies() {
-        return Level switch {
-            1 => 5,
-            2 => 7,
-            3 => 9,
-            4 => 12,
-            >= 5 => 15,
-            _ => 5 // Default fallback
-        };
-    }
-
+    
     /// <summary>
     ///     Saves arsenal data to database, persisting all inscribed items and arsenal states.
     /// </summary>
@@ -897,7 +781,7 @@ public class Guild : Writer {
         foreach (var guild in Ally.Values) {
             if (guild.Name != name) continue;
             var cmd = new GuildCommand(true) {
-                Type = GuildCommand.Neutral1,
+                Type = GuildCommand.Unally,
                 DwParam = guild.Id
             };
             SendGuildMessage(cmd);
@@ -939,7 +823,7 @@ public class Guild : Writer {
         foreach (var guild in Enemy.Values) {
             if (guild.Name != name) continue;
             var cmd = new GuildCommand(true) {
-                Type = GuildCommand.Neutral2,
+                Type = GuildCommand.Peace,
                 DwParam = guild.Id
             };
             SendGuildMessage(cmd);

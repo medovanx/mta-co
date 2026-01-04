@@ -19,6 +19,7 @@ using MTA.Network;
 using MTA.Network.Cryptography;
 using MTA.Network.GamePackets;
 using MTA.Game.Constants;
+using MTA.Game.Features.Guilds.Constants;
 using MTA.Network.Sockets;
 using BoothItem = MTA.Game.ConquerStructures.BoothItem;
 using KnownPersons = MTA.Database.KnownPersons;
@@ -808,7 +809,7 @@ namespace MTA.Client {
                         LoadData(enterserver);
 
                         if (Entity.GuildID != 0)
-                            Entity.GuildBattlePower = Guild.GetSharedBattlePower(Entity.GuildRank);
+                            Entity.GuildBattlePower = Guild.GetSharedBattlePower((MemberRank)Entity.GuildRank);
 
                         ReviewMentor();
 
@@ -1136,7 +1137,7 @@ namespace MTA.Client {
                         LoadData(true);
 
                         if (Entity.GuildID != 0)
-                            Entity.GuildBattlePower = Guild.GetSharedBattlePower(Entity.GuildRank);
+                            Entity.GuildBattlePower = Guild.GetSharedBattlePower((MemberRank)Entity.GuildRank);
 
                         ReviewMentor();
 

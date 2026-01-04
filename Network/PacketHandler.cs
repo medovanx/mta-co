@@ -52,6 +52,7 @@ using VipStatus = MTA.Network.GamePackets.VipStatus;
 using Warehouse = MTA.Network.GamePackets.Warehouse;
 using Weather = MTA.Game.Weather;
 using static MTA.Game.Constants.Items.BasicItems;
+using MTA.Game.Features.Guilds.Constants;
 
 namespace MTA.Network {
     public static class PacketHandler {
@@ -14227,7 +14228,7 @@ namespace MTA.Network {
                     client.SetNewWeaponLook2(client.WeaponLook2);
 
                     if (client.Entity.GuildID != 0) {
-                        client.Entity.GuildBattlePower = client.Guild.GetSharedBattlePower(client.Entity.GuildRank);
+                        client.Entity.GuildBattlePower = client.Guild.GetSharedBattlePower((MemberRank)client.Entity.GuildRank);
                     }
 
                     client.ReviewMentor();
