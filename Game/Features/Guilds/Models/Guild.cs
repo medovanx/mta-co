@@ -10,7 +10,6 @@ using MTA.Game.ConquerStructures;
 using MTA.Game.Events.GuildWar;
 using MTA.Game.Features.Guilds.Constants;
 using MTA.Game.Features.Guilds.Database;
-using MTA.Game.Features.Guilds.Packets;
 using MTA.Game.Features.Guilds.Packets.Handlers;
 using MTA.Game.Features.Guilds.Packets.Writers;
 using MTA.Game.Features.Guilds.Services;
@@ -115,10 +114,11 @@ public class Guild : Writer {
         Enemy = new SafeDictionary<uint, Guild>(1000);
 
         Arsenals = new Arsenal[8];
-        for (byte i = 0; i < 8; i++)
+        for (byte i = 0; i < 8; i++) {
             Arsenals[i] = new Arsenal(this) {
                 Position = (byte)(i + 1)
             };
+        }
 
         AdvertiseRecruit = new GuildRecruitment();
     }
@@ -126,9 +126,11 @@ public class Guild : Writer {
     private int UnlockedArsenals {
         get {
             var unlocked = 0;
-            for (var i = 0; i < 8; i++)
+            for (var i = 0; i < 8; i++) {
                 if (Arsenals[i].Unlocked)
                     unlocked++;
+            }
+
             return unlocked;
         }
     }
@@ -137,9 +139,10 @@ public class Guild : Writer {
         get => _arsenalBp;
         set {
             _arsenalBp = value;
-            foreach (var member in Members.Values)
+            foreach (var member in Members.Values) {
                 if (Kernel.TryGetPlayer(member.Id, out var client))
                     client.Entity.GuildBattlePower = GetSharedBattlePower(member.Rank);
+            }
         }
     }
 
@@ -338,9 +341,10 @@ public class Guild : Writer {
         ArsenalBpChanged = false;
 
         byte level = 1;
-        foreach (var arsenal in arsenals)
+        foreach (var arsenal in arsenals) {
             if (arsenal.TotalSharedBattlePower >= 2)
                 level++;
+        }
 
         Level = level;
 
@@ -355,7 +359,7 @@ public class Guild : Writer {
     }
 
     /// <summary>
-    ///     Gets potency for specific rank, currently returns total arsenal battle power (may be enhanced with rank-specific calculations).
+    ///     Gets potency for specific rank, currently returns total arsenal battle power (maybe enhanced with rank-specific calculations).
     /// </summary>
     public uint GetMemberPotency(MemberRank rank) {
         // Calculate potency based on rank and arsenal BP
@@ -492,28 +496,23 @@ public class Guild : Writer {
         return Kernel.Guilds.Values.Any(guilds => guilds.Name == name);
     }
 
-    private bool Create(string name) {
-        if (name.Length >= 16) return false;
-        if (Leader == null) return false;
+    private void Create(string name) {
+        if (name.Length >= 16) return;
+        if (Leader == null) return;
         Name = name;
         SilverFund = 500000;
         LeaderId = Leader.Id;
         Members.Add(Leader.Id, Leader);
-        try {
-            GuildTable.Create(this);
-        }
-        catch {
-            return false;
-        }
-
+        GuildTable.Create(this);
         Kernel.Guilds.Add(Id, this);
         var message = new Message(
             "Congratulations, " + _leaderName + " has created guild " + name + " Successfully!",
             Color.White, Message.World);
-        foreach (var client in Program.Values) client.Send(message);
+        foreach (var client in Program.Values) {
+            client.Send(message);
+        }
 
         CreateTime();
-        return true;
     }
 
     /// <summary>
@@ -664,8 +663,9 @@ public class Guild : Writer {
         client.Entity.GuildRank = (ushort)client.AsMember.Rank;
         if (client.Entity.BattlePower < 405)
             client.Entity.GuildBattlePower = GetSharedBattlePower(client.AsMember.Rank);
-        for (var i = 0; i < client.ArsenalDonations.Length; i++)
+        for (var i = 0; i < client.ArsenalDonations.Length; i++) {
             client.ArsenalDonations[i] = 0;
+        }
 
         // Insert member into guild_members table
         GuildMemberTable.Insert(client.AsMember);
@@ -702,11 +702,12 @@ public class Guild : Writer {
         int minMembers = page;
         var online = new List<GuildMember>(250);
         var offline = new List<GuildMember>(250);
-        foreach (var member in Members.Values)
+        foreach (var member in Members.Values) {
             if (Kernel.TryGetPlayer(member.Id, out _))
                 online.Add(member);
             else
                 offline.Add(member);
+        }
 
         online = online.OrderByDescending(mem => mem.Rank).ToList();
         var unite = online.Union(offline);
@@ -715,9 +716,10 @@ public class Guild : Writer {
                 wtr.Write((uint)0);
                 var name = Encoding.Default.GetBytes(member.Name);
 
-                for (var j = 0; j < 16; j++)
+                for (var j = 0; j < 16; j++) {
                     if (name.Length > j) wtr.Write(name[j]);
                     else wtr.Write((byte)0);
+                }
 
                 wtr.Write((uint)(Kernel.TryGetPlayer(member.Id, out _) ? 1 : 0));
                 wtr.Write((uint)member.NobilityRank);
@@ -756,9 +758,10 @@ public class Guild : Writer {
     ///     Broadcasts message to all online members of the guild.
     /// </summary>
     public void SendGuildMessage(IPacket message) {
-        foreach (var member in Members.Values)
+        foreach (var member in Members.Values) {
             if (Kernel.TryGetPlayer(member.Id, out var client))
                 client.Send(message);
+        }
     }
 
     /// <summary>
@@ -777,8 +780,9 @@ public class Guild : Writer {
         if (Kernel.TryGetPlayer(member.Id, out var client))
             GuildArsenalHandler.UniscribeAllItems(client);
         else
-            foreach (var arsenal in Arsenals)
+            foreach (var arsenal in Arsenals) {
                 arsenal.RemoveInscribedItemsBy(member.Id);
+            }
 
         if (quit)
             SendGuildMessage(new Message(member.Name + " has quit our guild.", Color.Black,
@@ -838,8 +842,10 @@ public class Guild : Writer {
                 client.Guild = null;
             }
             else {
-                foreach (var arsenal in Arsenals)
+                foreach (var arsenal in Arsenals) {
                     arsenal.RemoveInscribedItemsBy(member.Id);
+                }
+
                 member.GuildId = 0;
                 // Delete from guild_members table
                 GuildMemberTable.Delete(uid);
