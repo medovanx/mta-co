@@ -765,18 +765,10 @@ public class Guild : Writer {
     }
 
     /// <summary>
-    ///     Gets member by name, returning null if not found.
-    /// </summary>
-    public GuildMember? GetMemberByName(string memberName) {
-        return Members.Values.FirstOrDefault(member => member.Name == memberName);
-    }
-
-    /// <summary>
     ///     Removes member from guild, uninscribing all their items, updating database, and sending notifications.
     /// </summary>
     public void ExpelMember(string memberName, bool quit) {
-        var member = GetMemberByName(memberName);
-        if (member == null) return;
+        var member = Members.Values.First(member => member.Name == memberName);
         if (Kernel.TryGetPlayer(member.Id, out var client))
             GuildArsenalHandler.UniscribeAllItems(client);
         else
@@ -978,11 +970,13 @@ public class Guild : Writer {
     public void SendGuild(GameState client) {
         if (!Members.ContainsKey(client.Entity.UID)) return;
         if (client.AsMember == null) return;
-        Bulletin ??= "This is a new guild!";
-
-        client.Send(new GuildCommand((uint)Bulletin.Length)
-            { Type = GuildCommand.Bulletin, DwParam = BulletinEnroll, Str = Bulletin });
-        //client.Send(new Message(Bulletin, System.Drawing.Color.White, Message.GuildAnnouncement));
+        client.Send(
+            new GuildCommand((uint)Bulletin.Length) {
+                Type = GuildCommand.Bulletin,
+                DwParam = BulletinEnroll,
+                Str = Bulletin
+            }
+        );
         WriteUInt32((uint)client.AsMember.SilverDonation, 8, _buffer);
         WriteUInt32((ushort)client.AsMember.Rank, 28, _buffer);
         client.Send(_buffer);
@@ -1011,17 +1005,5 @@ public class Guild : Writer {
             client.Send(stringPacket);
             client.Send(stringPacket);
         }
-    }
-
-    /// <summary>
-    ///     Validates guild name format, checking length and disallowed characters.
-    /// </summary>
-    public static bool ValidName(string name) {
-        if (name.Length is < 4 or > 15) return false;
-        if (name.IndexOfAny([
-                ' ', '#', '%', '^', '&', '*', '(', ')', ';', ':', '\'', '\"', '/', '\\', ',', '.', '{', '}',
-                '[', ']'
-            ]) > 0) return false;
-        return true;
     }
 }

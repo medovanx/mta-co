@@ -2621,11 +2621,6 @@ namespace MTA.Network {
 
                         #endregion
 
-                        if (req.InteractType == 102) {
-                            GuildJoinHandler.HandleExpelMemberViaNpc(req.Input, client);
-                            return;
-                        }
-
                         if (client.ActiveNpc is >= 728525 and <= 728527) {
                             if (client.Inventory.Contains(client.ActiveNpc, 1)) {
                                 if (req.OptionID is >= 1 and <= 3) {

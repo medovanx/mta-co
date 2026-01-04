@@ -84,7 +84,7 @@ public static class GuildPromotionHandler {
     public static void HandleDischarge(GuildCommand command, byte[] packet, GameState client) {
         var name = Encoding.Default.GetString(packet, 26, packet[25]);
         if (client is not { Guild: not null, AsMember.Rank: MemberRank.GuildLeader }) return;
-        var member = client.Guild.GetMemberByName(name);
+        var member = client.Guild.Members.Values.First(member => member.Name == name);
         if (member?.Id == client.Entity.UID) return;
         if (member?.Rank != MemberRank.DeputyLeader) return;
         client.Guild.RanksCounts[(ushort)MemberRank.DeputyLeader]--;

@@ -110,32 +110,6 @@ public static class GuildJoinHandler {
             client.Guild.ExpelMember(client.Entity.Name, true);
     }
 
-    /// <summary>
-    ///     Expels member via NPC interaction, allowing Guild Leader and Deputy Leader to remove members based on rank permissions.
-    /// </summary>
-    public static void HandleExpelMemberViaNpc(string memberName, GameState client) {
-        if (client.Guild == null) return;
-        if (!client.Guild.Members.TryGetValue(client.Entity.UID, out var clientMember)) return;
-
-        // ReSharper disable once SwitchStatementMissingSomeEnumCasesNoDefault
-        switch (clientMember.Rank) {
-            case MemberRank.GuildLeader:
-                client.Guild.ExpelMember(memberName, false);
-                break;
-            case MemberRank.DeputyLeader: {
-                var member = client.Guild.GetMemberByName(memberName);
-                if (member != null) {
-                    if (member.Rank is MemberRank.DeputyLeader
-                        or MemberRank.GuildLeader)
-                        return;
-                    client.Guild.ExpelMember(memberName, false);
-                }
-
-                break;
-            }
-        }
-    }
-
     private static bool PassJoinRequirements(GameState client, Guild guild) {
         var cmd = new GuildCommand(true) {
             Type = GuildCommand.GuildRequirements,

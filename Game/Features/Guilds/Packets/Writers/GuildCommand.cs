@@ -47,8 +47,8 @@ public class GuildCommand : Writer, IPacket {
         WriteUInt16(1107, 2, _buffer);
     }
 
-    public GuildCommand(uint leng) {
-        _buffer = new byte[8 + 28 + leng];
+    public GuildCommand(uint length) {
+        _buffer = new byte[8 + 28 + length];
         WriteUInt16((ushort)(_buffer.Length - 8), 0, _buffer);
         WriteUInt16(1107, 2, _buffer);
     }
