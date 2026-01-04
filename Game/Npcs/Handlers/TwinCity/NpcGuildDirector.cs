@@ -1,9 +1,7 @@
 using MTA.Client;
-using MTA.Game.Features.Guilds;
 using MTA.Game.Features.Guilds.Constants;
 using MTA.Game.Features.Guilds.Models;
 using MTA.Network.GamePackets;
-using static MTA.Game.Enums;
 
 namespace MTA.Game.Npcs.Handlers.TwinCity {
     /// <summary>
@@ -89,7 +87,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                 }
                 case 5: {
                     dialog.Text(
-                        $"Name your guild. The name must be 16 characters at maximum.\nThis will cost 215 CPs.");
+                        "Name your guild. The name must be 16 characters at maximum.\nThis will cost 215 CPs.");
                     dialog.Input("Enter new guild name:", 6, 16);
                     dialog.Option("Cancel", 255);
                     dialog.Send();

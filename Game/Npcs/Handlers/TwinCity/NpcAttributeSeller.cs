@@ -75,7 +75,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                 case 13: {
                     byte stage = (byte)(npcRequest.OptionID - CHI_STAGE_BASE + 1);
                     client.Entity.SelectedStage = stage;
-                    dialog.Text("You have chosen the " + ((ChiPowerType)stage).ToString() +
+                    dialog.Text("You have chosen the " + ((ChiPowerType)stage) +
                                 " stage. Please select which attribute you want to change.");
                     for (int i = 0; i < 4; i++) {
                         dialog.Option("Attribute [" + (i + 1) + "]", (byte)(CHI_ATTRIBUTE_BASE + i));

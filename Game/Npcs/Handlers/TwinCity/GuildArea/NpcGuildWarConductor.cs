@@ -1,7 +1,5 @@
 using MTA.Client;
-using MTA.Database;
 using MTA.Game.Features.Guilds.Services;
-using MTA.Game.Npcs;
 using MTA.Network.GamePackets;
 
 namespace MTA.Game.Npcs.Handlers.TwinCity.GuildArea {
@@ -66,8 +64,6 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.GuildArea {
                         if (GuildConductors.GuildConductorsDict.TryGetValue(client.ActiveNpc + 110, out cond)) {
                             client.Entity.Teleport(cond.TeleportMapId, cond.TeleportX, cond.TeleportY);
                         }
-
-                        break;
                     }
                     else {
                         dialog.Text("Sorry, you not have 1.000 silver.");

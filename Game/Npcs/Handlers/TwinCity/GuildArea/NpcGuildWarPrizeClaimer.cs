@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using MTA.Client;
-using MTA.Database;
 using MTA.Game.Events;
 using MTA.Game.Events.GuildWar;
-using MTA.Game.Features.Guilds;
 using MTA.Game.Features.Guilds.Constants;
 using MTA.Game.Features.Guilds.Database;
 using MTA.Network.GamePackets;
-using static MTA.Game.Enums;
 
 namespace MTA.Game.Npcs.Handlers.TwinCity.GuildArea {
     /// <summary>
@@ -63,12 +61,12 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.GuildArea {
                     // Process the claim
                     GuildWarHistoryTable.SetGuildLeaderClaimed(latest.Id);
                     client.Entity.ConquerPoints += prizeAmount;
-                    client.Entity.AddTopStatus(Network.GamePackets.Update.Flags.TopGuildLeader, 1,
+                    client.Entity.AddTopStatus(Update.Flags.TopGuildLeader, 1,
                         DateTime.Now.AddDays(7));
                     Kernel.SendWorldMessage(
                         new Message(
                             $"Well done! [{client.Entity.Name}] from [{client.Guild!.Name}] has claimed the Guild War Leader prize and received {prizeAmount:N0} gold!",
-                            System.Drawing.Color.White, Message.TopLeft), Program.Values);
+                            Color.White, Message.TopLeft), Program.Values);
 
                     break;
                 }
@@ -84,12 +82,12 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.GuildArea {
 
                     // Process the claim
                     GuildWarHistoryTable.AddDeputyClaim(latest.Id, client.Entity.UID);
-                    client.Entity.AddTopStatus(Network.GamePackets.Update.Flags.TopDeputyLeader, 1,
+                    client.Entity.AddTopStatus(Update.Flags.TopDeputyLeader, 1,
                         DateTime.Now.AddDays(7));
                     Kernel.SendWorldMessage(
                         new Message(
                             $"Well done! [{client.Entity.Name}] from [{client.Guild!.Name}] has successfully claimed the Top Deputy Leader prize!",
-                            System.Drawing.Color.White, Message.TopLeft), Program.Values);
+                            Color.White, Message.TopLeft), Program.Values);
                     break;
                 }
                 case 3: {

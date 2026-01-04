@@ -15,7 +15,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
 
             switch (npcRequest.OptionID) {
                 case 0: {
-                    dialog.Text($"Hello, what would you like to buy today?");
+                    dialog.Text("Hello, what would you like to buy today?");
                     dialog.Option($"Holy Grail - {HOLY_GRAIL_PRICE:N0} CPs", 1);
                     dialog.Option($"Gold Prize - {GOLD_PRIZE_PRICE:N0} CPs", 2);
                     dialog.Option($"Gold Trophy - {GOLD_TROPHY_PRICE:N0} CPs", 3);

@@ -1,6 +1,4 @@
 using MTA.Client;
-using MTA.Database;
-using MTA.Game.Constants;
 using MTA.Network.GamePackets;
 
 namespace MTA.Game.Npcs.Handlers.TwinCity {

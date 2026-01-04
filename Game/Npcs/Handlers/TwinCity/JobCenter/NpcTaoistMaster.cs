@@ -599,7 +599,6 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                         dialog.Text("You cannot learn those skills until you reborn atleast once.");
                         dialog.Option("Alright", 255);
                         dialog.Send();
-                        break;
                     }
 
                     break;
@@ -637,7 +636,6 @@ namespace MTA.Game.Npcs.Handlers.TwinCity.JobCenter {
                         dialog.Text("You cannot learn those skills until you reborn atleast once.");
                         dialog.Option("Alright", 255);
                         dialog.Send();
-                        break;
                     }
 
                     break;
