@@ -1708,29 +1708,6 @@ namespace MTA {
 
                         #endregion
 
-                        #region Furniture Store NPC
-
-                        case 30161: {
-                            switch (npcRequest.OptionID) {
-                                case 0: {
-                                    dialog.Text(
-                                        "Welcome to Twin City Furniture Store. Currently, you have a limited selection, but more furniture will come in soon.");
-                                    dialog.Option("I wanna have a look.", 1);
-                                    dialog.Option("I am not interested.", 255);
-                                    dialog.Send();
-                                    break;
-                                }
-                                case 1: {
-                                    client.Entity.Teleport(1511, 52, 70);
-                                    dialog.Send();
-                                    break;
-                                }
-                            }
-
-                            break;
-                        }
-
-                        #endregion
 
                         #region General Peace
 
@@ -22442,110 +22419,6 @@ namespace MTA {
 
                 #endregion
 
-                #region DailyPkWar
-
-                case 231400: {
-                    switch (npcRequest.OptionID) {
-                        case 0: {
-                            dialog.Text("Hey There  " + client.Entity.Name +
-                                        " Would You Like To Join The Daily PKWar...?");
-                            dialog.Option("Yes Please", 1);
-                            dialog.Option("I don't care.", 255);
-                            dialog.Send();
-                            break;
-                        }
-                        case 1: {
-                            var Now64 = DateTime.Now;
-                            if (DateTime.Now.Minute >= 43 && DateTime.Now.Minute < 46) {
-                                client.Entity.Teleport(8877, 150, 162);
-                            }
-                            else {
-                                dialog.Text(
-                                    "Daily Pk War is Held Between xx:43 And xx:46 Every Hour .. End At xx:47 And Or xx:48");
-                                dialog.Option("I Don't Care.", 255);
-                                dialog.Send();
-                                break;
-                            }
-
-                            break;
-                        }
-                    }
-
-                    break;
-                }
-
-                #endregion
-
-                #region Winner of DailyPk NPC 231500
-
-                case 231500: {
-                    switch (npcRequest.OptionID) {
-                        case 0: {
-                            dialog.Text(
-                                "Hey There  " + client.Entity.Name + "  Would You Like To Claim Your Prize ...?");
-                            dialog.Option("Yes Please", 1);
-                            dialog.Option("I Don't Care.", 255);
-                            dialog.Send();
-                            break;
-                        }
-                        case 1: {
-                            Daily.CheckAlive();
-                            var Now64 = DateTime.Now;
-                            if (Now64.Minute is >= 47 and <= 48) {
-                                if (Daily.howmanyinmap == 1) {
-                                    //#warning DAILY PK PRIZE
-
-                                    if (client.Entity.VIPLevel != 6) {
-                                        client.Entity.ConquerPoints += 3000000;
-                                        //client.Entity.Status3 = 1;
-                                        Kernel.SendWorldMessage(
-                                            new Message(
-                                                "Congratulations! " + client.Entity.Name + " Claimed The Prize " +
-                                                Rates.Daily + " ConquerPoints!, As He Won DailyPk", Color.Black,
-                                                Message.Center), Program.Values);
-                                    }
-                                    else {
-                                        client.Entity.ConquerPoints += Rates.Daily * 2;
-                                        //client.Entity.Status3 = 1;
-                                        Kernel.SendWorldMessage(
-                                            new Message(
-                                                "Congratulations! " + client.Entity.Name + " claimed the prize " +
-                                                Rates.Daily * 2 + " ConquerPoints! as he is VIP, He won DailyPk",
-                                                Color.Black, Message.Center), Program.Values);
-                                    }
-
-                                    //client.Entity.AddFlag(Update.Flags.WeeklyPKChampion);
-                                    client.Entity.SendSpawn(client, true);
-                                    client.Entity.AddTopStatus(Update.Flags3.ConuqerSuperYellow, 3,
-                                        DateTime.Now.AddDays(1));
-                                    client.Entity.Teleport(1002, 302, 278);
-                                    //EntityTable.SaveEntity(client);
-                                }
-                                else {
-                                    dialog.Text("There are still " + Daily.howmanyinmap +
-                                                " players in the map kill it first to claim prize!");
-                                    dialog.Option("okay", 255);
-                                    dialog.Send();
-                                    break;
-                                }
-                            }
-                            else {
-                                dialog.Text("Hey There " + client.Entity.Name +
-                                            "You Can Only Claim The Prize When The Time On Or After xx:10 Or xx:18");
-                                dialog.Option("Okay", 255);
-                                dialog.Send();
-                                break;
-                            }
-
-                            break;
-                        }
-                    }
-
-                    break;
-                }
-
-                #endregion
-
                 #region top guild
 
                 #region Sign up
@@ -28436,44 +28309,6 @@ namespace MTA {
                     //}
 
                     #endregion Chase
-
-                    #region Furnitures
-
-                    if (Furniture.Furnitures.ContainsKey(client.ActiveNpc)) {
-                        var info = Furniture.Furnitures[client.ActiveNpc];
-                        switch (npcRequest.OptionID) {
-                            case 0: {
-                                if (!ConquerItemInformation.BaseInformations.ContainsKey(info.itemid))
-                                    return;
-                                if (ConquerItemInformation.BaseInformations[info.itemid].Name == "" ||
-                                    ConquerItemInformation.BaseInformations[info.itemid].Name == " ")
-                                    return;
-                                dialog.Text("Hello " + client.Entity.Name + " I Sell " +
-                                            ConquerItemInformation.BaseInformations[info.itemid].Name +
-                                            " you can get this item for 50,000");
-                                dialog.Option("Buy Item", 1);
-                                dialog.Option("Sorry,No", 255);
-                                dialog.Send();
-                                break;
-                            }
-                            case 1: {
-                                if (client.Entity.ConquerPoints >= 50000) {
-                                    client.Entity.ConquerPoints -= 50000;
-                                    client.Inventory.Add(info.itemid, 0, 1);
-                                }
-                                else {
-                                    dialog.Text("u dont have 50,000 CPs ");
-                                    dialog.Option("I see.", 255);
-                                    dialog.Avatar(116);
-                                    dialog.Send();
-                                }
-
-                                break;
-                            }
-                        }
-                    }
-
-                    #endregion
 
                     if (client is { ActiveNpc: >= 101002, Entity.MapID: 10002 }) {
                         client.SendScreen(new Data(true) { UID = client.ActiveNpc, ID = Data.RemoveEntity });

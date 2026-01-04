@@ -6,7 +6,7 @@ namespace MTA.Game.Npcs.Handlers.Market {
     /// <summary>
     /// House Admin - Provides House related services
     /// </summary>
-    [NpcHandler(115522007)]
+    [NpcHandler(28)]
     public static class NpcHouseAdmin {
         public static void Handle(GameState player, NpcRequest npcRequest, MTA.Npcs dialog) {
             const uint housePermitId = 721170;
