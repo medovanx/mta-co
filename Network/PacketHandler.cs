@@ -2599,7 +2599,7 @@ namespace MTA.Network {
                         }
                         else if (House.SpouseHouse(client.Entity.Spouse) != null) {
                             var info = House.SpouseHouse(client.Entity.Spouse);
-                            if (client.Entity.MapID == info.Id) {
+                            if (client.Entity.MapID == (ushort)info.Uid) {
                                 if (info.Furniture.ContainsKey(req.NpcID)) {
                                     var itembox =
                                         House.CheckItemBox(client,

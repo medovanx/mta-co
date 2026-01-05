@@ -1320,7 +1320,7 @@ namespace MTA.Game {
                     }
                 }
                 else if (spouse != null) {
-                    if (Owner.Map.ID == spouse.Id) {
+                    if (Owner.Map.ID == (ushort)spouse.Uid) {
                         foreach (var fur in spouse.Furniture.Values) {
                             if (fur == null) continue;
                             if (Kernel.GetDistance(fur.X, fur.Y, Owner.Entity.X, Owner.Entity.Y) > GameConstants.playerViewRange) continue;

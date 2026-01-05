@@ -36,14 +36,13 @@ public static class House {
     public static void CreateHouse(GameState client) {
         HouseInfo info = new() {
             Uid = client.Entity.UID,
-            Id = (ushort)client.Entity.UID,
             MapType = Maps.HOUSE_LV1,
             Level = 1,
             Furniture = []
         };
         if (!Houses.ContainsKey(info.Uid))
             Houses.Add(info.Uid, info);
-        _ = new Map(info.Id, info.MapType, Kernel.Maps[info.MapType].Path);
+        _ = new Map((ushort)info.Uid, info.MapType, Kernel.Maps[info.MapType].Path);
 
         HouseTable.Create(client, info);
     }
@@ -81,9 +80,6 @@ public static class House {
     ///     Downgrades the player's house to the previous level, changing the map type accordingly
     /// </summary>
     public static void DowngradeHouse(GameState client, byte currentLevel) {
-        if (currentLevel <= 1)
-            return; // Cannot downgrade below level 1
-
         var newLevel = (byte)(currentLevel - 1);
 
         var newMapType = newLevel switch {
@@ -126,7 +122,7 @@ public static class House {
         client.Entity.PX = 0;
         client.Entity.PY = 0;
         client.Entity.PreviousMapID = client.Entity.MapID;
-        client.Entity.MapID = info.Id;
+        client.Entity.MapID = (ushort)info.Uid;
 
         Data data = new(true) {
             UID = client.Entity.UID,
@@ -136,7 +132,7 @@ public static class House {
             wParam2 = y
         };
         client.Send(data);
-        client.Send(new MapStatus { BaseID = info.MapType, ID = info.Id });
+        client.Send(new MapStatus { BaseID = info.MapType, ID = (ushort)info.Uid });
         client.Entity.AdvancedTeleport(true);
     }
 
@@ -183,7 +179,7 @@ public static class House {
         var info = SpouseHouse(client.Entity.Spouse);
         if (info == null || client.Entity.MapID == client.Entity.UID)
             info = Houses[client.Entity.UID];
-        if (client.Entity.MapID != info.Id) return false;
+        if (client.Entity.MapID != (ushort)info.Uid) return false;
         switch (warehousePacket.Type) {
             case Network.GamePackets.Warehouse.Entire: {
                 var wh = info.Warehouse;

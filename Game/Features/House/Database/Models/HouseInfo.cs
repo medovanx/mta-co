@@ -9,7 +9,6 @@ namespace MTA.Game.Features.House.Database.Models;
 /// </summary>
 public class HouseInfo {
     public Dictionary<uint, SobNpcSpawn>? Furniture;
-    public ushort Id;
     public ushort Level;
     public ushort MapType;
     public uint Uid;

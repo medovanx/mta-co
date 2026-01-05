@@ -15,7 +15,6 @@ public static class HouseMappers {
     public static HouseInfo MapHouse(MySqlReader reader) {
         return new HouseInfo {
             Uid = reader.ReadUInt32(HouseSchema.House.Uid),
-            Id = reader.ReadUInt16(HouseSchema.House.Id),
             MapType = reader.ReadUInt16(HouseSchema.House.MapType),
             Level = reader.ReadUInt16(HouseSchema.House.Level),
             Furniture = null // Furniture is loaded separately from house_furniture table

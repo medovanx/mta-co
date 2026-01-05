@@ -24,7 +24,7 @@ public static class HouseTable {
                 var info = HouseMappers.MapHouse(reader);
 
                 // Load furniture from house_furniture table
-                info.Furniture = HouseFurnitureTable.LoadFurniture(info.Uid, info.Id);
+                info.Furniture = HouseFurnitureTable.LoadFurniture(info.Uid, (ushort)info.Uid);
 
                 // Initialize warehouse if item box exists
                 if (info.Furniture != null) {
@@ -41,7 +41,7 @@ public static class HouseTable {
 
                 if (!Houses.ContainsKey(info.Uid))
                     Houses.Add(info.Uid, info);
-                _ = new Map(info.Id, info.MapType, Kernel.Maps[info.MapType].Path);
+                _ = new Map((ushort)info.Uid, info.MapType, Kernel.Maps[info.MapType].Path);
             }
         }
         catch (Exception exception) {
@@ -74,8 +74,7 @@ public static class HouseTable {
         command.Insert(HouseSchema.Tables.HouseTable)
             .Insert(HouseSchema.House.Uid, client.Entity.UID)
             .Insert(HouseSchema.House.MapType, info.MapType)
-            .Insert(HouseSchema.House.Level, info.Level)
-            .Insert(HouseSchema.House.Id, (ushort)client.Entity.UID);
+            .Insert(HouseSchema.House.Level, info.Level);
         command.Execute();
     }
 
@@ -85,7 +84,6 @@ public static class HouseTable {
     public static void Update(GameState client, ushort mapType, ushort level) {
         new MySqlCommand(MySqlCommandType.UPDATE)
             .Update(HouseSchema.Tables.HouseTable)
-            .Set(HouseSchema.House.Id, (ushort)client.Entity.UID)
             .Set(HouseSchema.House.MapType, mapType)
             .Set(HouseSchema.House.Level, level)
             .Where(HouseSchema.House.Uid, client.Entity.UID)
