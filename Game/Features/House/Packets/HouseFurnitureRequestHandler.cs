@@ -12,7 +12,7 @@ namespace MTA.Game.Features.House.Packets;
 ///     Handles clicking on furniture (item box warehouse access, moving furniture).
 /// </summary>
 [PacketHandler(Constants.Packets.MsgNpc, Constants.Packets.MsgTaskDialog)]
-public static class HouseFurntiureRequestHandler {
+public static class HouseFurnitureRequestHandler {
     /// <summary>
     ///     Handles NpcRequest packets for house furniture interactions.
     /// </summary>
