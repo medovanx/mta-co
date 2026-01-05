@@ -938,10 +938,14 @@ namespace MTA.Network {
                         else
                             Base.Type = (Enums.NpcType)26;
                         // client.Map.AddNpc(Base);
-                        var itembox = House.CheckItemBox(client, House.Houses[client.Entity.UID]);
-                        if (itembox != null) {
-                            client.MessageBox("You already Have ItemBox in your House");
-                            return;
+                        
+                        // Only check for existing item box if placing an item box
+                        if ((Base.Mesh / 10) == 820) {
+                            var itembox = House.CheckItemBox(client, House.Houses[client.Entity.UID]);
+                            if (itembox != null) {
+                                client.MessageBox("You already Have ItemBox in your House");
+                                return;
+                            }
                         }
 
                         do {
