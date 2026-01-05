@@ -12,8 +12,6 @@ namespace MTA.Game.Npcs.Handlers.Market {
             const uint housePermitId = 721170;
             const uint housePermitCostCPs = 99;
             const uint houseBuildingCostGold = 300000;
-            const uint itemBoxId = 721189;
-            const uint itemBoxCostGold = 100000;
             const uint upgradeCertificateLv2Id = 721174;
             const uint upgradeCertificateLv2CostCPs = 199;
             const uint upgradeCertificateLv3Id = 729200;
@@ -141,24 +139,26 @@ namespace MTA.Game.Npcs.Handlers.Market {
                     }
 
                     uint requiredCertificateId = 0;
-                    string certificateName = "";
+                    var certificateName = "";
 
-                    // Determine which certificate is needed based on current level
-                    if (currentLevel == 1) {
-                        requiredCertificateId = upgradeCertificateLv2Id;
-                        certificateName = "Upgrade Certificate (Lv.2)";
-                    }
-                    else if (currentLevel == 2) {
-                        requiredCertificateId = upgradeCertificateLv3Id;
-                        certificateName = "Upgrade Certificate (Lv.3)";
-                    }
-                    else if (currentLevel == 3) {
-                        requiredCertificateId = upgradeCertificateLv4Id;
-                        certificateName = "Upgrade Certificate (Lv.4)";
-                    }
-                    else if (currentLevel == 4) {
-                        requiredCertificateId = upgradeCertificateLv5Id;
-                        certificateName = "Upgrade Certificate (Lv.5)";
+                    switch (currentLevel) {
+                        // Determine which certificate is needed based on current level
+                        case 1:
+                            requiredCertificateId = upgradeCertificateLv2Id;
+                            certificateName = "Upgrade Certificate (Lv.2)";
+                            break;
+                        case 2:
+                            requiredCertificateId = upgradeCertificateLv3Id;
+                            certificateName = "Upgrade Certificate (Lv.3)";
+                            break;
+                        case 3:
+                            requiredCertificateId = upgradeCertificateLv4Id;
+                            certificateName = "Upgrade Certificate (Lv.4)";
+                            break;
+                        case 4:
+                            requiredCertificateId = upgradeCertificateLv5Id;
+                            certificateName = "Upgrade Certificate (Lv.5)";
+                            break;
                     }
 
                     // Verify certificate is required and player has it
@@ -184,7 +184,6 @@ namespace MTA.Game.Npcs.Handlers.Market {
                     dialog.Option($"Upgrade Certificate (Lv.3): {upgradeCertificateLv3CostCPs} CPs.", 9);
                     dialog.Option($"Upgrade Certificate (Lv.4): {upgradeCertificateLv4CostCPs} CPs.", 10);
                     dialog.Option($"Upgrade Certificate (Lv.5): {upgradeCertificateLv5CostCPs} CPs.", 11);
-                    dialog.Option($"Item Box: {itemBoxCostGold} gold", 12);
                     dialog.Option("Let me think about it.", 255);
                     dialog.Send();
                     break;
@@ -194,15 +193,15 @@ namespace MTA.Game.Npcs.Handlers.Market {
                     if (player.Entity.ConquerPoints < housePermitCostCPs) {
                         dialog.Text("Sorry, you don't have enough CPs to buy a house permit.");
                         dialog.Option("Oh Sorry!.", 255);
-                        dialog.Send();
                     }
                     else {
                         player.Entity.ConquerPoints -= housePermitCostCPs;
                         player.Inventory.Add(housePermitId, 0, 1);
                         dialog.Text("Here is your House Permit!");
                         dialog.Option("Thank you!", 255);
-                        dialog.Send();
                     }
+
+                    dialog.Send();
 
                     break;
                 }
@@ -211,15 +210,15 @@ namespace MTA.Game.Npcs.Handlers.Market {
                     if (player.Entity.ConquerPoints < upgradeCertificateLv2CostCPs) {
                         dialog.Text("Sorry, you don't have enough CPs to buy an upgrade certificate (Lv.2).");
                         dialog.Option("Oh Sorry!.", 255);
-                        dialog.Send();
                     }
                     else {
                         player.Entity.ConquerPoints -= upgradeCertificateLv2CostCPs;
                         player.Inventory.Add(upgradeCertificateLv2Id, 0, 1);
                         dialog.Text("Here is your Upgrade Certificate (Lv.2)!");
                         dialog.Option("Thank you!", 255);
-                        dialog.Send();
                     }
+
+                    dialog.Send();
 
                     break;
                 }
@@ -228,15 +227,15 @@ namespace MTA.Game.Npcs.Handlers.Market {
                     if (player.Entity.ConquerPoints < upgradeCertificateLv3CostCPs) {
                         dialog.Text("Sorry, you don't have enough CPs to buy an upgrade certificate (Lv.3).");
                         dialog.Option("Oh Sorry!.", 255);
-                        dialog.Send();
                     }
                     else {
                         player.Entity.ConquerPoints -= upgradeCertificateLv3CostCPs;
                         player.Inventory.Add(upgradeCertificateLv3Id, 0, 1);
                         dialog.Text("Here is your Upgrade Certificate (Lv.3)!");
                         dialog.Option("Thank you!", 255);
-                        dialog.Send();
                     }
+
+                    dialog.Send();
 
                     break;
                 }
@@ -245,15 +244,15 @@ namespace MTA.Game.Npcs.Handlers.Market {
                     if (player.Entity.ConquerPoints < upgradeCertificateLv4CostCPs) {
                         dialog.Text("Sorry, you don't have enough CPs to buy an upgrade certificate (Lv.4).");
                         dialog.Option("Oh Sorry!.", 255);
-                        dialog.Send();
                     }
                     else {
                         player.Entity.ConquerPoints -= upgradeCertificateLv4CostCPs;
                         player.Inventory.Add(upgradeCertificateLv4Id, 0, 1);
                         dialog.Text("Here is your Upgrade Certificate (Lv.4)!");
                         dialog.Option("Thank you!", 255);
-                        dialog.Send();
                     }
+
+                    dialog.Send();
 
                     break;
                 }
@@ -262,32 +261,15 @@ namespace MTA.Game.Npcs.Handlers.Market {
                     if (player.Entity.ConquerPoints < upgradeCertificateLv5CostCPs) {
                         dialog.Text("Sorry, you don't have enough CPs to buy an upgrade certificate (Lv.5).");
                         dialog.Option("Oh Sorry!.", 255);
-                        dialog.Send();
                     }
                     else {
                         player.Entity.ConquerPoints -= upgradeCertificateLv5CostCPs;
                         player.Inventory.Add(upgradeCertificateLv5Id, 0, 1);
                         dialog.Text("Here is your Upgrade Certificate (Lv.5)!");
                         dialog.Option("Thank you!", 255);
-                        dialog.Send();
                     }
 
-                    break;
-                }
-                // Buy an item box
-                case 12: {
-                    if (player.Entity.Money < itemBoxCostGold) {
-                        dialog.Text("Sorry, you don't have enough money to buy an item box.");
-                        dialog.Option("Oh Sorry!.", 255);
-                        dialog.Send();
-                    }
-                    else {
-                        player.Entity.Money -= itemBoxCostGold;
-                        player.Inventory.Add(itemBoxId, 0, 1);
-                        dialog.Text("Here is your Item Box!");
-                        dialog.Option("Thank you!", 255);
-                        dialog.Send();
-                    }
+                    dialog.Send();
 
                     break;
                 }

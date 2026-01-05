@@ -3125,7 +3125,7 @@ namespace MTA.Client {
         public SafeDictionary<Warehouse.WarehouseID, Warehouse>
             Warehouses;
 
-        public Team Team;
+        public Team? Team;
         public Time32 lastClientJumpTime = Time32.Now;
         public Time32 lastJumpTime = Time32.Now;
         public int LastJumpTime = 0;
