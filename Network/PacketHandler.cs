@@ -890,9 +890,9 @@ namespace MTA.Network {
                         Y = spawn.Y
                     };
 
-                    if (client.spwansitem != null) {
+                    if (client.spawnItem != null) {
                         uint id;
-                        id = client.spwansitem.ID;
+                        id = client.spawnItem.ID;
                     }
 
                     if (client.Entity.MapID == 1038) {
@@ -932,33 +932,9 @@ namespace MTA.Network {
 
                         #endregion
                     }
-                    else if (House.Houses.ContainsKey(client.Entity.UID)) {
-                        if ((spawn.Mesh / 10) == 820)
-                            Base.Type = (Enums.NpcType)2;
-                        else
-                            Base.Type = (Enums.NpcType)26;
-                        // client.Map.AddNpc(Base);
-                        
-                        // Only check for existing item box if placing an item box
-                        if ((Base.Mesh / 10) == 820) {
-                            var itembox = House.CheckItemBox(client, House.Houses[client.Entity.UID]);
-                            if (itembox != null) {
-                                client.MessageBox("You already Have ItemBox in your House");
-                                return;
-                            }
-                        }
-
-                        do {
-                            Base.UID = client.Map.EntityUIDCounter2.Next;
-                        } while (House.Houses[client.Entity.UID].Furniture.ContainsKey(Base.UID));
-
-                        House.Houses[client.Entity.UID].Furniture.Add(Base.UID, Base);
-                        var type = (byte)((Base.Mesh / 10 == 820) ? 2 : 26);
-                        MTA.Game.Features.House.Database.HouseFurnitureTable.AddFurniture(client.Entity.UID, Base, type);
-                    }
 
                     if (client.Entity.MapID != 1038)
-                        client.Inventory.Remove(client.spwansitem, Enums.ItemUse.Remove);
+                        client.Inventory.Remove(client.spawnItem, Enums.ItemUse.Remove);
                     client.SendScreenSpawn(Base, true);
                     break;
                 }
@@ -9121,7 +9097,7 @@ namespace MTA.Network {
                     if (Furniture.FurnitureItems.ContainsKey(item.ID)) {
                         if (client.Entity.MapID != (ushort)client.Entity.UID)
                             return;
-                        client.spwansitem = item;
+                        client.spawnItem = item;
                         var req = new NpcRequest(5) {
                             Mesh = Furniture.FurnitureItems[item.ID]
                         };

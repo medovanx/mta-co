@@ -351,6 +351,7 @@
             Stake = 21,
             Scarecrow = 22,
             Furniture = 25,
+            RegularFurniture = 26,
             Poker = 33,
             Poker2 = 34,
             Poker3 = 35,

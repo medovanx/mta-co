@@ -30,7 +30,7 @@ namespace MTA.Game.Items.Handlers {
             };
 
             client.Entity.OnMoveNpc = getnpc.Npc.UID;
-            client.spwansitem = item;
+            client.spawnItem = item;
             client.Send(npc.ToArray());
         }
     }

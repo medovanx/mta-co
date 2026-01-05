@@ -272,15 +272,15 @@ public static class House {
     ///     Allows the player to reposition a furniture piece in their house
     /// </summary>
     public static void Move(GameState client, SobNpcSpawn sobNpc, HouseInfo info) {
-        client.MessageBox("Do you want to change this furniture's place?", p => {
+        client.MessageBox("Do you want to change this furniture's place?", player => {
             info.Furniture?.Remove(sobNpc.UID);
-            p.Screen.FullWipe();
-            p.Screen.Reload();
-            NpcRequest req2 = new(5) {
+            player.Screen.FullWipe();
+            player.Screen.Reload();
+            NpcRequest npcRequest = new(5) {
                 Mesh = sobNpc.Mesh,
                 NpcTyp = sobNpc.Type
             };
-            p.Send(req2);
+            player.Send(npcRequest);
         });
     }
 }

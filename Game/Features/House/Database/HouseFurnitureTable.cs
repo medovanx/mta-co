@@ -65,7 +65,7 @@ public static class HouseFurnitureTable {
                     .Set(HouseFurnitureSchema.HouseFurniture.Y, furnitureItem.Y)
                     .Set(HouseFurnitureSchema.HouseFurniture.Type, type)
                     .Where(HouseFurnitureSchema.HouseFurniture.HouseUid, client.Entity.UID)
-                    .Where(HouseFurnitureSchema.HouseFurniture.FurnitureUid, furnitureItem.UID)
+                    .And(HouseFurnitureSchema.HouseFurniture.FurnitureUid, (ulong)furnitureItem.UID)
                     .Execute();
             else
                 // Insert new furniture
@@ -79,18 +79,43 @@ public static class HouseFurnitureTable {
     }
 
     /// <summary>
-    ///     Adds a single furniture piece to the database
+    ///     Adds or updates a single furniture piece in the database (upsert operation)
     /// </summary>
     public static void AddFurniture(uint houseUid, SobNpcSpawn furnitureItem, byte type) {
-        new MySqlCommand(MySqlCommandType.INSERT)
-            .Insert(HouseFurnitureSchema.Tables.HouseFurnitureTable)
-            .Insert(HouseFurnitureSchema.HouseFurniture.HouseUid, houseUid)
-            .Insert(HouseFurnitureSchema.HouseFurniture.FurnitureUid, furnitureItem.UID)
-            .Insert(HouseFurnitureSchema.HouseFurniture.Mesh, furnitureItem.Mesh)
-            .Insert(HouseFurnitureSchema.HouseFurniture.X, furnitureItem.X)
-            .Insert(HouseFurnitureSchema.HouseFurniture.Y, furnitureItem.Y)
-            .Insert(HouseFurnitureSchema.HouseFurniture.Type, type)
-            .Execute();
+        // Check if furniture already exists in database
+        bool exists;
+        using (var cmd = new MySqlCommand(MySqlCommandType.SELECT)
+                   .Select(HouseFurnitureSchema.Tables.HouseFurnitureTable)
+                   .Where(HouseFurnitureSchema.HouseFurniture.HouseUid, houseUid)
+                   .And(HouseFurnitureSchema.HouseFurniture.FurnitureUid, (ulong)furnitureItem.UID)) {
+            using var reader = new MySqlReader(cmd);
+            exists = reader.Read();
+        }
+
+        if (exists) {
+            // Update existing furniture
+            new MySqlCommand(MySqlCommandType.UPDATE)
+                .Update(HouseFurnitureSchema.Tables.HouseFurnitureTable)
+                .Set(HouseFurnitureSchema.HouseFurniture.Mesh, furnitureItem.Mesh)
+                .Set(HouseFurnitureSchema.HouseFurniture.X, furnitureItem.X)
+                .Set(HouseFurnitureSchema.HouseFurniture.Y, furnitureItem.Y)
+                .Set(HouseFurnitureSchema.HouseFurniture.Type, type)
+                .Where(HouseFurnitureSchema.HouseFurniture.HouseUid, houseUid)
+                .And(HouseFurnitureSchema.HouseFurniture.FurnitureUid, (ulong)furnitureItem.UID)
+                .Execute();
+        }
+        else {
+            // Insert new furniture
+            new MySqlCommand(MySqlCommandType.INSERT)
+                .Insert(HouseFurnitureSchema.Tables.HouseFurnitureTable)
+                .Insert(HouseFurnitureSchema.HouseFurniture.HouseUid, houseUid)
+                .Insert(HouseFurnitureSchema.HouseFurniture.FurnitureUid, furnitureItem.UID)
+                .Insert(HouseFurnitureSchema.HouseFurniture.Mesh, furnitureItem.Mesh)
+                .Insert(HouseFurnitureSchema.HouseFurniture.X, furnitureItem.X)
+                .Insert(HouseFurnitureSchema.HouseFurniture.Y, furnitureItem.Y)
+                .Insert(HouseFurnitureSchema.HouseFurniture.Type, type)
+                .Execute();
+        }
     }
 
     /// <summary>
@@ -113,7 +138,7 @@ public static class HouseFurnitureTable {
             .Set(HouseFurnitureSchema.HouseFurniture.X, x)
             .Set(HouseFurnitureSchema.HouseFurniture.Y, y)
             .Where(HouseFurnitureSchema.HouseFurniture.HouseUid, houseUid)
-            .Where(HouseFurnitureSchema.HouseFurniture.FurnitureUid, furnitureUid)
+            .And(HouseFurnitureSchema.HouseFurniture.FurnitureUid, (ulong)furnitureUid)
             .Execute();
     }
 }

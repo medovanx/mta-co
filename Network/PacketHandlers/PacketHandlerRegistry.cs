@@ -9,7 +9,7 @@ namespace MTA.Network.PacketHandlers {
     /// Auto-discovers and registers packet handlers marked with [PacketHandler] attribute.
     /// </summary>
     public static class PacketHandlerRegistry {
-        private static readonly Dictionary<ushort, Func<ushort, byte[], GameState, bool>> Handlers = new();
+        private static readonly Dictionary<ushort, List<Func<ushort, byte[], GameState, bool>>> Handlers = new();
 
         /// <summary>
         /// Scans assembly for [PacketHandler] attributes and registers all handlers.
@@ -28,30 +28,40 @@ namespace MTA.Network.PacketHandlers {
 
                 // Register handler for all packet IDs specified in the attribute
                 foreach (var packetId in attribute!.PacketIds) {
-                    if (!Handlers.TryAdd(packetId, handler)) {
-                        throw new InvalidOperationException(
-                            $"Duplicate packet ID {packetId} found. Handler class '{handlerType.Name}' is trying to register a packet ID that is already handled by another handler.");
+                    if (!Handlers.TryGetValue(packetId, out var handlerList)) {
+                        handlerList = new List<Func<ushort, byte[], GameState, bool>>();
+                        Handlers[packetId] = handlerList;
                     }
+                    handlerList.Add(handler);
                 }
             }
 
-            Console.WriteLine($"[Packet Handler Registry] Registered {Handlers.Count} packet handler(s)");
+            var totalHandlers = Handlers.Values.Sum(list => list.Count);
+            Console.WriteLine($"[Packet Handler Registry] Registered {totalHandlers} packet handler(s) for {Handlers.Count} packet ID(s)");
         }
 
         /// <summary>
-        /// Attempts to invoke a registered handler for the given packet ID.
+        /// Attempts to invoke registered handlers for the given packet ID in registration order.
         /// </summary>
-        /// <returns>True if handler found and executed (and returned true), false otherwise.</returns>
+        /// <returns>True if a handler found and executed (and returned true), false otherwise.</returns>
         public static bool TryHandle(ushort packetId, byte[] packet, GameState client) {
-            if (!Handlers.TryGetValue(packetId, out var handler)) return false;
-            try {
-                return handler(packetId, packet, client);
+            if (!Handlers.TryGetValue(packetId, out var handlerList)) return false;
+            
+            // Try each handler in order until one returns true
+            foreach (var handler in handlerList) {
+                try {
+                    if (handler(packetId, packet, client)) {
+                        return true; // Handler processed the packet
+                    }
+                }
+                catch (Exception ex) {
+                    Console.WriteLine($"[Packet Handler Error] Exception in handler for packet {packetId}: {ex.Message}");
+                    Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                    // Continue to next handler on error
+                }
             }
-            catch (Exception ex) {
-                Console.WriteLine($"[Packet Handler Error] Exception in handler for packet {packetId}: {ex.Message}");
-                Console.WriteLine($"Stack trace: {ex.StackTrace}");
-                return false;
-            }
+            
+            return false; // No handler processed the packet
         }
     }
 }

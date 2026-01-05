@@ -133,7 +133,7 @@ namespace MTA.Client {
         public byte[] SMPacket;
         public int SMSpinCount;
         public SpiritBeadQuest SpiritBeadQ;
-        public ConquerItem spwansitem;
+        public ConquerItem spawnItem;
         public Enums.Color staticArmorColor;
         public int TeamCheerFor;
         public Timer Timer;
