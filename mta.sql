@@ -315,7 +315,7 @@ CREATE TABLE `configuration` (
 
 LOCK TABLES `configuration` WRITE;
 /*!40000 ALTER TABLE `configuration` DISABLE KEYS */;
-INSERT INTO `configuration` VALUES (3148635,64225,10084,1,1,1,'MTA',800,3);
+INSERT INTO `configuration` VALUES (3148635,62886,10084,1,1,1,'MTA',800,3);
 /*!40000 ALTER TABLE `configuration` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -812,9 +812,8 @@ CREATE TABLE `house` (
   `id` int DEFAULT NULL,
   `map_type` int DEFAULT NULL,
   `level` int DEFAULT NULL,
-  `furniture` longblob,
   PRIMARY KEY (`uid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -823,8 +822,37 @@ CREATE TABLE `house` (
 
 LOCK TABLES `house` WRITE;
 /*!40000 ALTER TABLE `house` DISABLE KEYS */;
-INSERT INTO `house` VALUES (3111600,'Dahshan [GM]',31408,3024,5,_binary '\0'),(3111361,'xFranko [GM]',31169,1099,2,_binary '¢†\0\ï@\0f\0£†\0\ÍL\00\0¥†\0\ÃG\0/\0«†\0[\0>\0\0'),(3148611,'Test 1 [GM]',2883,1099,2,_binary '\0');
+INSERT INTO `house` VALUES (3111361,'xFranko [GM]',31169,1099,2),(3111600,'Dahshan [GM]',31408,3024,5),(3148611,'Test 1 [GM]',2883,1099,2);
 /*!40000 ALTER TABLE `house` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `house_furniture`
+--
+
+DROP TABLE IF EXISTS `house_furniture`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `house_furniture` (
+  `house_uid` int NOT NULL,
+  `furniture_uid` int unsigned NOT NULL,
+  `mesh` smallint unsigned NOT NULL,
+  `x` smallint unsigned NOT NULL,
+  `y` smallint unsigned NOT NULL,
+  `type` tinyint unsigned NOT NULL DEFAULT '26',
+  PRIMARY KEY (`house_uid`,`furniture_uid`),
+  KEY `idx_house_uid` (`house_uid`),
+  CONSTRAINT `fk_house_furniture_house` FOREIGN KEY (`house_uid`) REFERENCES `house` (`uid`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `house_furniture`
+--
+
+LOCK TABLES `house_furniture` WRITE;
+/*!40000 ALTER TABLE `house_furniture` DISABLE KEYS */;
+/*!40000 ALTER TABLE `house_furniture` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -1801,4 +1829,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-01-05  8:17:55
+-- Dump completed on 2026-01-05  8:45:54

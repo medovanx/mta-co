@@ -26,7 +26,7 @@ public static class House {
     public static void SaveFurniture(GameState client) {
         if (!Houses.TryGetValue(client.Entity.UID, out var info))
             return;
-        HouseTable.SaveFurniture(client, info);
+        HouseFurnitureTable.SaveFurniture(client, info);
     }
 
     /// <summary>
@@ -262,6 +262,7 @@ public static class House {
     public static void Move(GameState client, SobNpcSpawn sobNpc, HouseInfo info) {
         client.MessageBox("Do you want to change this furniture's place?", p => {
             info.Furniture?.Remove(sobNpc.UID);
+            HouseFurnitureTable.RemoveFurniture(client.Entity.UID, sobNpc.UID);
             p.Screen.FullWipe();
             p.Screen.Reload();
             NpcRequest req2 = new(5) {

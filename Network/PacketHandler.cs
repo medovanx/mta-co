@@ -53,6 +53,7 @@ using Weather = MTA.Game.Weather;
 using static MTA.Game.Constants.Items.BasicItems;
 using MTA.Game.Features.Guilds.Constants;
 using MTA.Game.Features.House;
+using MTA.Game.Features.House.Database;
 
 namespace MTA.Network {
     public static class PacketHandler {
@@ -948,7 +949,8 @@ namespace MTA.Network {
                         } while (House.Houses[client.Entity.UID].Furniture.ContainsKey(Base.UID));
 
                         House.Houses[client.Entity.UID].Furniture.Add(Base.UID, Base);
-                        House.SaveFurniture(client);
+                        var type = (byte)((Base.Mesh / 10 == 820) ? 2 : 26);
+                        MTA.Game.Features.House.Database.HouseFurnitureTable.AddFurniture(client.Entity.UID, Base, type);
                     }
 
                     if (client.Entity.MapID != 1038)

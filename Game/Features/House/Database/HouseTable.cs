@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using MTA.Client;
 using MTA.Database;
@@ -23,6 +22,9 @@ public static class HouseTable {
             using var reader = new MySqlReader(cmd);
             while (reader.Read()) {
                 var info = HouseMappers.MapHouse(reader);
+
+                // Load furniture from house_furniture table
+                info.Furniture = HouseFurnitureTable.LoadFurniture(info.Uid, info.Id);
 
                 // Initialize warehouse if item box exists
                 if (info.Furniture != null) {
@@ -64,31 +66,6 @@ public static class HouseTable {
         return items;
     }
 
-
-    /// <summary>
-    ///     Saves furniture data to the database as a blob
-    /// </summary>
-    public static void SaveFurniture(GameState client, HouseInfo info) {
-        using var stream = new MemoryStream();
-        using var writer = new BinaryWriter(stream);
-        writer.Write((byte)(info.Furniture?.Count ?? 0));
-        if (info.Furniture != null)
-            foreach (var fur in info.Furniture.Values) {
-                WriteItem(writer, fur);
-            }
-
-        var rawData = stream.ToArray();
-        using var conn = DataHolder.MySqlConnection;
-        conn.Open();
-        using var cmd = new MySql.Data.MySqlClient.MySqlCommand();
-        cmd.Connection = conn;
-        cmd.CommandText =
-            $"UPDATE `{HouseSchema.Tables.HouseTable}` SET {HouseSchema.House.Furniture}=@Furnitures WHERE {HouseSchema.House.Uid} = @Uid";
-        cmd.Parameters.AddWithValue("@Furnitures", rawData);
-        cmd.Parameters.AddWithValue("@Uid", client.Entity.UID);
-        cmd.ExecuteNonQuery();
-    }
-
     /// <summary>
     ///     Creates a new house in the database
     /// </summary>
@@ -106,24 +83,14 @@ public static class HouseTable {
     /// <summary>
     ///     Updates house information in the database
     /// </summary>
-    public static void Update(GameState client, ushort maptype, ushort level) {
+    public static void Update(GameState client, ushort mapType, ushort level) {
         new MySqlCommand(MySqlCommandType.UPDATE)
             .Update(HouseSchema.Tables.HouseTable)
             .Set(HouseSchema.House.Name, client.Entity.Name)
             .Set(HouseSchema.House.Id, (ushort)client.Entity.UID)
-            .Set(HouseSchema.House.MapType, maptype)
+            .Set(HouseSchema.House.MapType, mapType)
             .Set(HouseSchema.House.Level, level)
             .Where(HouseSchema.House.Uid, client.Entity.UID)
             .Execute();
-    }
-
-    /// <summary>
-    ///     Writes a SobNpcSpawn item to a BinaryWriter
-    /// </summary>
-    private static void WriteItem(BinaryWriter writer, SobNpcSpawn furnitureItem) {
-        writer.Write(furnitureItem.UID);
-        writer.Write(furnitureItem.Mesh);
-        writer.Write(furnitureItem.X);
-        writer.Write(furnitureItem.Y);
     }
 }

@@ -21,6 +21,5 @@ public static class HouseSchema {
         public const string Id = "id";
         public const string MapType = "map_type";
         public const string Level = "level";
-        public const string Furniture = "furniture";
     }
 }
