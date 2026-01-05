@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using MTA.Client;
 using MTA.Database;
@@ -202,37 +201,25 @@ public static class House {
                 return true;
             }
             case Network.GamePackets.Warehouse.AddItem: {
-                var wh = info.Warehouse;
-                if (wh == null) return true;
+                var warehouse = info.Warehouse;
+                if (warehouse == null) return true;
                 if (client.Inventory.TryGetItem(warehousePacket.UID, out var item)) {
-                    switch (item.ID) {
-                        case >= 729960 and <= 729970:
-                        case 729611 or 729612 or 729613 or 729614 or 729703:
-                            return true;
-                    }
+                    if (warehouse.Add2(item, client)) {
+                        warehousePacket.UID = 0;
+                        warehousePacket.Count = 1;
+                        warehousePacket.Append(item);
+                        client.Send(warehousePacket);
 
-                    if (!ConquerItem.isRune(item.UID)) {
-                        if (wh.Add2(item, client)) {
-                            warehousePacket.UID = 0;
-                            warehousePacket.Count = 1;
-                            warehousePacket.Append(item);
-                            client.Send(warehousePacket);
+                        var add = new ItemAdding(true);
+                        if (item.Purification.Available)
+                            add.Append(item.Purification);
+                        if (item.ExtraEffect.Available)
+                            add.Append(item.ExtraEffect);
+                        if (item.Purification.Available || item.ExtraEffect.Available)
+                            client.Send(add);
 
-                            var add = new ItemAdding(true);
-                            if (item.Purification.Available)
-                                add.Append(item.Purification);
-                            if (item.ExtraEffect.Available)
-                                add.Append(item.ExtraEffect);
-                            if (item.Purification.Available || item.ExtraEffect.Available)
-                                client.Send(add);
-
-                            info.Warehouse = wh;
-                            return true;
-                        }
-                    }
-                    else {
-                        client.Send(new Message("You can not store Flame Stone Rune's in Warehouse",
-                            Color.Red, Message.TopLeft));
+                        info.Warehouse = warehouse;
+                        return true;
                     }
                 }
 
@@ -245,11 +232,11 @@ public static class House {
                     return true;
                 }
 
-                var wh = info.Warehouse;
-                if (wh == null) return true;
-                if (wh.ContainsUID(warehousePacket.UID))
-                    if (wh.Remove2(warehousePacket.UID, client)) {
-                        info.Warehouse = wh;
+                var warehouse = info.Warehouse;
+                if (warehouse == null) return true;
+                if (warehouse.ContainsUID(warehousePacket.UID))
+                    if (warehouse.Remove2(warehousePacket.UID, client)) {
+                        info.Warehouse = warehouse;
                         client.Send(warehousePacket);
                         return true;
                     }
@@ -259,28 +246,5 @@ public static class House {
         }
 
         return false;
-    }
-
-    /// <summary>
-    ///     Finds the item box furniture piece in the house that serves as a warehouse
-    /// </summary>
-    public static SobNpcSpawn? CheckItemBox(GameState client, HouseInfo info) {
-        return info.Furniture?.Values.FirstOrDefault(xx => xx.Mesh / 10 == 820);
-    }
-
-    /// <summary>
-    ///     Allows the player to reposition a furniture piece in their house
-    /// </summary>
-    public static void Move(GameState client, SobNpcSpawn sobNpc, HouseInfo info) {
-        client.MessageBox("Do you want to change this furniture's place?", player => {
-            info.Furniture?.Remove(sobNpc.UID);
-            player.Screen.FullWipe();
-            player.Screen.Reload();
-            NpcRequest npcRequest = new(5) {
-                Mesh = sobNpc.Mesh,
-                NpcTyp = sobNpc.Type
-            };
-            player.Send(npcRequest);
-        });
     }
 }

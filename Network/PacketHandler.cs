@@ -2542,67 +2542,6 @@ namespace MTA.Network {
                             }
                         }
 
-                        #region House
-
-                        if (House.Houses.ContainsKey(client.Entity.UID)) {
-                            var info = House.Houses[client.Entity.UID];
-                            if (info.Furniture.TryGetValue(req.NpcID, out var sobnpc)) {
-                                var itembox =
-                                    House.CheckItemBox(client,
-                                        info); //info.Furnitures.Values.Where(xx => (xx.Mesh / 10) == 820).FirstOrDefault();
-                                if (itembox != null) {
-                                    if (req.NpcID == itembox.UID) {
-                                        var data = new Data(true) {
-                                            ID = Data.OpenWindow,
-                                            UID = client.Entity.UID,
-                                            TimeStamp = Time32.Now,
-                                            dwParam = Data.WindowCommands.Warehouse,
-                                            wParam1 = client.Entity.X,
-                                            wParam2 = client.Entity.Y
-                                        };
-                                        client.Send(data);
-                                    }
-                                }
-
-                                House.Move(client, sobnpc, info);
-                                //client.MessageBox("Do u Want To change its place?", (p) =>
-                                //{
-                                //    info.Furnitures.Remove(sobnpc.UID);
-                                //    p.Screen.FullWipe();
-                                //    p.Screen.Reload();
-                                //    NpcRequest req2 = new NpcRequest(5);
-                                //    req2.Mesh = sobnpc.Mesh;
-                                //    req2.NpcTyp = sobnpc.Type;
-                                //    p.Send(req2);
-                                //}, null);
-                            }
-                        }
-                        else if (House.SpouseHouse(client.Entity.Spouse) != null) {
-                            var info = House.SpouseHouse(client.Entity.Spouse);
-                            if (client.Entity.MapID == (ushort)info.Uid) {
-                                if (info.Furniture.ContainsKey(req.NpcID)) {
-                                    var itembox =
-                                        House.CheckItemBox(client,
-                                            info); //info.Furnitures.Values.Where(xx => (xx.Mesh / 10) == 820).FirstOrDefault();
-                                    if (itembox != null) {
-                                        if (req.NpcID == itembox.UID) {
-                                            var data = new Data(true) {
-                                                ID = Data.OpenWindow,
-                                                UID = client.Entity.UID,
-                                                TimeStamp = Time32.Now,
-                                                dwParam = Data.WindowCommands.Warehouse,
-                                                wParam1 = client.Entity.X,
-                                                wParam2 = client.Entity.Y
-                                            };
-                                            client.Send(data);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        #endregion
-
                         if (client.ActiveNpc is >= 728525 and <= 728527) {
                             if (client.Inventory.Contains(client.ActiveNpc, 1)) {
                                 if (req.OptionID is >= 1 and <= 3) {

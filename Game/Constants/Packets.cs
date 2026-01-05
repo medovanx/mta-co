@@ -15,6 +15,12 @@ namespace MTA.Game.Constants {
         /// <summary>Guild action (command) request</summary>
         MsgSyndicate = 1107,
 
+        /// <summary>Used to interact with a NPC and contains multiple Dialog Action types</summary>
+        MsgNpc = 2031,
+
+        /// <summary>Used to interact with a NPC and contains multiple Dialog Action types</summary>
+        MsgTaskDialog = 2032,
+
         /// <summary>Guild donation rankings</summary>
         MsgFactionRankInfo = 2101,
 

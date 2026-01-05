@@ -1,3 +1,4 @@
+using System.Linq;
 using MTA.Client;
 using MTA.Game.Constants;
 using MTA.Game.Features.House.Database;
@@ -12,7 +13,7 @@ namespace MTA.Game.Features.House.Packets;
 ///     Intercepts house-related spawns and handles them completely, or returns false to let default handler process.
 /// </summary>
 [PacketHandler(Constants.Packets.MsgNpcInfo)]
-public static class HouseNpcSpawnHandler {
+public static class HouseFurnitureSpawnHandler {
     /// <summary>
     ///     Handles NpcSpawn packets for house furniture placement.
     /// </summary>
@@ -23,12 +24,20 @@ public static class HouseNpcSpawnHandler {
             return false; // Let default handler process
 
         // Check if this is house-related (not statue map and player has house)
-        if (client.Entity.MapID == Maps.GuildWarMap || !Houses.TryGetValue(client.Entity.UID, out var value))
+        if (client.Entity.MapID == Maps.GuildWarMap || !Houses.TryGetValue(client.Entity.UID, out var house))
             return false; // Let default handler process (statue or no house)
 
-        // Deserialize NpcSpawn packet
+        // Only allow one item box per house
         var spawn = new NpcSpawn(false);
         spawn.Deserialize(packet);
+        var isItemBox = spawn.Mesh / 10 == 820;
+        if (isItemBox) {
+            var itemBox = house.Furniture?.Values.FirstOrDefault(xx => xx.Mesh / 10 == 820);
+            if (itemBox != null) {
+                client.MessageBox("You already have an Item Box in your house!");
+                return true; // Packet handled (error case)
+            }
+        }
 
         // Create SobNpcSpawn object
         var furniture = new SobNpcSpawn {
@@ -39,33 +48,27 @@ public static class HouseNpcSpawnHandler {
             X = spawn.X,
             Y = spawn.Y,
             // Set furniture type based on mesh
-            Type = spawn.Mesh / 10 == 820
+            Type = isItemBox
                 ? Enums.NpcType.Talker // Item box
                 : Enums.NpcType.RegularFurniture // Regular furniture
         };
 
-        // Only check for existing item box if placing an item box
-        if (furniture.Mesh / 10 == 820) {
-            var itemBox = CheckItemBox(client, value);
-            if (itemBox != null) {
-                client.MessageBox("You already have an Item Box in your house!");
-                return true; // Packet handled (error case)
-            }
-        }
-
         // Generate unique UID (ensure it doesn't conflict with existing furniture)
         do {
             furniture.UID = client.Map.EntityUIDCounter2.Next;
-        } while (value.Furniture!.ContainsKey(furniture.UID));
+        } while (house.Furniture!.ContainsKey(furniture.UID));
 
-        value.Furniture!.Add(furniture.UID, furniture);
+        house.Furniture!.Add(furniture.UID, furniture);
 
         // Save to database
-        var type = (byte)(furniture.Mesh / 10 == 820
+        var type = (byte)(isItemBox
             ? Enums.NpcType.Talker // Item Box
             : Enums.NpcType.RegularFurniture);
         HouseFurnitureTable.AddFurniture(client.Entity.UID, furniture, type);
-        client.Inventory.Remove(client.spawnItem, Enums.ItemUse.Remove);
+
+        // Remove spawn item from inventory (if item exists)
+        if (client.spawnItem != null)
+            client.Inventory.Remove(client.spawnItem, Enums.ItemUse.Remove);
 
         // Send screen spawn
         client.SendScreenSpawn(furniture, true);
