@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using MTA.Client;
+using MTA.Database;
 using MTA.Game.Constants;
 using MTA.Game.Features.House.Database;
 using MTA.Game.Features.House.Database.Models;
@@ -11,7 +12,7 @@ using Warehouse = MTA.Game.ConquerStructures.Warehouse;
 namespace MTA.Game.Features.House;
 
 public static class House {
-    public static SafeDictionary<uint, HouseInfo> Houses = [];
+    public static readonly SafeDictionary<uint, HouseInfo> Houses = [];
 
     /// <summary>
     ///     Initializes all player houses from the database at server startup
@@ -35,7 +36,6 @@ public static class House {
     public static void CreateHouse(GameState client) {
         HouseInfo info = new() {
             Uid = client.Entity.UID,
-            Name = client.Entity.Name,
             Id = (ushort)client.Entity.UID,
             MapType = Maps.HOUSE_LV1,
             Level = 1,
@@ -156,7 +156,23 @@ public static class House {
     ///     Finds the house belonging to the player's spouse by name
     /// </summary>
     public static HouseInfo? SpouseHouse(string spouseName) {
-        return Houses.Values.FirstOrDefault(house => house.Name == spouseName);
+        // Look up spouse UID from entities table
+        uint spouseUid = 0;
+        try {
+            using var cmd = new MySqlCommand(MySqlCommandType.SELECT)
+                .Select("entities")
+                .Where("Name", spouseName);
+            using var reader = new MySqlReader(cmd);
+            if (reader.Read()) {
+                spouseUid = reader.ReadUInt32("UID");
+            }
+        }
+        catch {
+            return null;
+        }
+
+        // Find house by UID
+        return Houses.GetValueOrDefault(spouseUid);
     }
 
     /// <summary>

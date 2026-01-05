@@ -17,7 +17,6 @@ public static class HouseSchema {
     /// </summary>
     public static class House {
         public const string Uid = "uid";
-        public const string Name = "name";
         public const string Id = "id";
         public const string MapType = "map_type";
         public const string Level = "level";

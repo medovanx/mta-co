@@ -12,7 +12,6 @@ public class HouseInfo {
     public ushort Id;
     public ushort Level;
     public ushort MapType;
-    public string? Name;
     public uint Uid;
     public Warehouse? Warehouse;
 }

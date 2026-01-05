@@ -75,7 +75,6 @@ public static class HouseTable {
             .Insert(HouseSchema.House.Uid, client.Entity.UID)
             .Insert(HouseSchema.House.MapType, info.MapType)
             .Insert(HouseSchema.House.Level, info.Level)
-            .Insert(HouseSchema.House.Name, client.Entity.Name)
             .Insert(HouseSchema.House.Id, (ushort)client.Entity.UID);
         command.Execute();
     }
@@ -86,7 +85,6 @@ public static class HouseTable {
     public static void Update(GameState client, ushort mapType, ushort level) {
         new MySqlCommand(MySqlCommandType.UPDATE)
             .Update(HouseSchema.Tables.HouseTable)
-            .Set(HouseSchema.House.Name, client.Entity.Name)
             .Set(HouseSchema.House.Id, (ushort)client.Entity.UID)
             .Set(HouseSchema.House.MapType, mapType)
             .Set(HouseSchema.House.Level, level)
