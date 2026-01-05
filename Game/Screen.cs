@@ -1311,7 +1311,7 @@ namespace MTA.Game {
                 if (Owner.Map.ID == (ushort)Owner.Entity.UID) {
                     if (House.Houses.ContainsKey(Owner.Entity.UID)) {
                         var info = House.Houses[Owner.Entity.UID];
-                        foreach (var fur in info.Furnitures.Values) {
+                        foreach (var fur in info.Furniture.Values) {
                             if (fur == null) continue;
                             if (Kernel.GetDistance(fur.X, fur.Y, Owner.Entity.X, Owner.Entity.Y) > GameConstants.playerViewRange) continue;
                             if (Contains(fur.UID)) continue;
@@ -1320,8 +1320,8 @@ namespace MTA.Game {
                     }
                 }
                 else if (spouse != null) {
-                    if (Owner.Map.ID == spouse.ID) {
-                        foreach (var fur in spouse.Furnitures.Values) {
+                    if (Owner.Map.ID == spouse.Id) {
+                        foreach (var fur in spouse.Furniture.Values) {
                             if (fur == null) continue;
                             if (Kernel.GetDistance(fur.X, fur.Y, Owner.Entity.X, Owner.Entity.Y) > GameConstants.playerViewRange) continue;
                             if (Contains(fur.UID)) continue;

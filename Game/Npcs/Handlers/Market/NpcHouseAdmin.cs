@@ -34,18 +34,18 @@ namespace MTA.Game.Npcs.Handlers.Market {
                     }
                     else {
                         dialog.Text("Good day, my friend, How may I help you");
-                        dialog.Option($"Enter my house (Lv.{value.level})", 3);
+                        dialog.Option($"Enter my house (Lv.{value.Level})", 3);
                         var spouseHouse = House.SpouseHouse(player.Entity.Spouse);
                         if (spouseHouse != null) {
-                            dialog.Option($"Enter my spouse's house (Lv.{spouseHouse.level})", 4);
+                            dialog.Option($"Enter my spouse's house (Lv.{spouseHouse.Level})", 4);
                         }
 
-                        if (value.level < 5) {
-                            dialog.Option($"Upgrade my house to Lv.{value.level + 1}", 5);
+                        if (value.Level < 5) {
+                            dialog.Option($"Upgrade my house to Lv.{value.Level + 1}", 5);
                         }
 
-                        if (value.level > 1) {
-                            dialog.Option($"Downgrade my house to Lv.{value.level - 1}", 13);
+                        if (value.Level > 1) {
+                            dialog.Option($"Downgrade my house to Lv.{value.Level - 1}", 13);
                         }
 
                         dialog.Option("Buy house certificate.", 6);
@@ -70,7 +70,7 @@ namespace MTA.Game.Npcs.Handlers.Market {
                     if (player.Entity.Money >= houseBuildingCostGold && player.Inventory.Contains(housePermitId, 1)) {
                         player.Entity.Money -= houseBuildingCostGold;
                         player.Inventory.Remove(housePermitId, 1);
-                        House.createhouse(player);
+                        House.CreateHouse(player);
                         dialog.Text("Congratulations you got a new house!");
                         dialog.Option("Thank you!", 255);
                         dialog.Send();
@@ -130,7 +130,7 @@ namespace MTA.Game.Npcs.Handlers.Market {
                 }
                 // Upgrade my house
                 case 5: {
-                    var currentLevel = House.Houses[player.Entity.UID].level;
+                    var currentLevel = House.Houses[player.Entity.UID].Level;
 
                     // Check if house is already at max level
                     if (currentLevel >= 5) {
@@ -293,7 +293,7 @@ namespace MTA.Game.Npcs.Handlers.Market {
                 }
                 // Downgrade my house
                 case 13: {
-                    var currentLevel = House.Houses[player.Entity.UID].level;
+                    var currentLevel = House.Houses[player.Entity.UID].Level;
 
                     // Check if house is already at minimum level
                     if (currentLevel <= 1) {
@@ -312,7 +312,7 @@ namespace MTA.Game.Npcs.Handlers.Market {
                 }
                 // Confirm downgrade
                 case 14: {
-                    var currentLevel = House.Houses[player.Entity.UID].level;
+                    var currentLevel = House.Houses[player.Entity.UID].Level;
 
                     if (currentLevel <= 1) {
                         dialog.Text("Your house is already at the minimum level and cannot be downgraded further.");

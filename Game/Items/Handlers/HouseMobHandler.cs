@@ -39,7 +39,7 @@ namespace MTA.Game.Items.Handlers {
                 return;
             }
 
-            if (client.Entity.MapID != myhouse.ID) {
+            if (client.Entity.MapID != myhouse.Id) {
                 client.MessageBox("You can spawn this monster only in your house.");
                 return;
             }

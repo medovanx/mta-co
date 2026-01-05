@@ -945,10 +945,10 @@ namespace MTA.Network {
 
                         do {
                             Base.UID = client.Map.EntityUIDCounter2.Next;
-                        } while (House.Houses[client.Entity.UID].Furnitures.ContainsKey(Base.UID));
+                        } while (House.Houses[client.Entity.UID].Furniture.ContainsKey(Base.UID));
 
-                        House.Houses[client.Entity.UID].Furnitures.Add(Base.UID, Base);
-                        House.SaveFurnitures(client);
+                        House.Houses[client.Entity.UID].Furniture.Add(Base.UID, Base);
+                        House.SaveFurniture(client);
                     }
 
                     if (client.Entity.MapID != 1038)
@@ -2564,7 +2564,7 @@ namespace MTA.Network {
 
                         if (House.Houses.ContainsKey(client.Entity.UID)) {
                             var info = House.Houses[client.Entity.UID];
-                            if (info.Furnitures.TryGetValue(req.NpcID, out var sobnpc)) {
+                            if (info.Furniture.TryGetValue(req.NpcID, out var sobnpc)) {
                                 var itembox =
                                     House.CheckItemBox(client,
                                         info); //info.Furnitures.Values.Where(xx => (xx.Mesh / 10) == 820).FirstOrDefault();
@@ -2597,8 +2597,8 @@ namespace MTA.Network {
                         }
                         else if (House.SpouseHouse(client.Entity.Spouse) != null) {
                             var info = House.SpouseHouse(client.Entity.Spouse);
-                            if (client.Entity.MapID == info.ID) {
-                                if (info.Furnitures.ContainsKey(req.NpcID)) {
+                            if (client.Entity.MapID == info.Id) {
+                                if (info.Furniture.ContainsKey(req.NpcID)) {
                                     var itembox =
                                         House.CheckItemBox(client,
                                             info); //info.Furnitures.Values.Where(xx => (xx.Mesh / 10) == 820).FirstOrDefault();

@@ -7,474 +7,401 @@ using MTA.Database;
 using MTA.Network.GamePackets;
 using Warehouse = MTA.Game.ConquerStructures.Warehouse;
 
-namespace MTA.Game.Features.House
-{
-	public class House
-	{
-		public class HouseInfo
-		{
-			public uint UID;
-			public string? Name;
-			public ushort ID;
-			public ushort maptype;
-			public ushort level;
-			public Dictionary<uint, SobNpcSpawn>? Furnitures;
-			public Warehouse? Warehouse;
-		}
-		public static SafeDictionary<uint, HouseInfo> Houses = [];
-		public static void LoadHouses()
-		{
-			try
-			{
-				MySqlCommand command = new(MySqlCommandType.SELECT);
-				command.Select("house");
-				MySqlReader reader = new(command);
-				while (reader.Read())
-				{
-					HouseInfo info = new()
-					{
-						UID = reader.ReadUInt32("UID"),
-						Name = reader.ReadString("Name"),
-						ID = reader.ReadUInt16("ID"),
-						maptype = reader.ReadUInt16("maptype"),
-						level = reader.ReadUInt16("level"),
-						Furnitures = []
-					};
-					byte[] data = reader.ReadBlob("Furnitures");
-					if (data.Length > 0)
-					{
-						using var stream = new MemoryStream(data);
-						using var r = new BinaryReader(stream);
-						int count = r.ReadByte();
-						for (uint x = 0; x < count; x++)
-						{
-							SobNpcSpawn Base = new();
-							Base = ReadItem(r);
-							if ((Base.Mesh / 10) == 820)
-							{
-								Base.Type = (Enums.NpcType)2;
-								info.Warehouse = new Warehouse(null, (Warehouse.WarehouseID)Base.UID);
-								var items = LoadItems(Base.UID);
-								foreach (var item in items.Values)
-								{
-									if (!info.Warehouse.ContainsUID(item.UID))
-									{
-										info.Warehouse.Add2(item, null);
-									}
-								}
-							}
-							else
-								Base.Type = (Enums.NpcType)26;
-							Base.MapID = info.ID;
-							info.Furnitures.TryAdd(Base.UID, Base);
-						}
-					}
-					if (!Houses.ContainsKey(info.UID))
-						Houses.Add(info.UID, info);
-					_ = new Map(info.ID, info.maptype, Kernel.Maps[info.maptype].Path);
+namespace MTA.Game.Features.House {
+    public static class House {
+        public class HouseInfo {
+            public uint Uid;
+            public string? Name;
+            public ushort Id;
+            public ushort Maptype;
+            public ushort Level;
+            public Dictionary<uint, SobNpcSpawn>? Furniture;
+            public Warehouse? Warehouse;
+        }
 
-				}
-			}
-			catch (Exception exception)
-			{
-				Console.WriteLine(exception);
-				Program.SaveException(exception);
-			}
-		}
-		///////////////////////////////////////////////////
-		public static void WriteItem(BinaryWriter writer, SobNpcSpawn Base)
-		{
-			writer.Write(Base.UID);
-			writer.Write(Base.Mesh);
-			writer.Write(Base.X);
-			writer.Write(Base.Y);
-		}
-		public static SobNpcSpawn ReadItem(BinaryReader reader)
-		{
-			SobNpcSpawn Base = new()
-			{
-				UID = reader.ReadUInt32(),//8
-				Mesh = reader.ReadUInt16(),//8
-				X = reader.ReadUInt16(),//10
-				Y = reader.ReadUInt16()//12
-			};
-			return Base;
-		}
-		///////////////////////////////////////////////////  
-		public static void SaveFurnitures(GameState client)
-		{
-			if (!Houses.TryGetValue(client.Entity.UID, out HouseInfo? info))
-				return;
-			MemoryStream stream = new();
-			BinaryWriter writer = new(stream);
-			writer.Write(value: (byte)(info.Furnitures?.Count ?? 0));
-			if (info.Furnitures != null)
-			{
-				foreach (var fur in info.Furnitures.Values)
-					WriteItem(writer, fur);
-			}
-			string SQL = "UPDATE `house` SET Furnitures=@Furnitures where UID = " + client.Entity.UID + " ;";
-			byte[] rawData = stream.ToArray();
-			using (var conn = DataHolder.MySqlConnection)
-			{
-				conn.Open();
-				using var cmd = new MySql.Data.MySqlClient.MySqlCommand();
-				cmd.Connection = conn;
-				cmd.CommandText = SQL;
-				cmd.Parameters.AddWithValue("@Furnitures", rawData);
-				cmd.ExecuteNonQuery();
-			}
-		}
-		///////////////////////////////////////////////////
-		public static void createhouse(GameState client)
-		{
-			HouseInfo info = new()
-			{
-				UID = client.Entity.UID,
-				Name = client.Entity.Name,
-				ID = (ushort)client.Entity.UID,
-				maptype = 1098,
-				level = 1,
-				Furnitures = []
-			};
-			if (!Houses.ContainsKey(info.UID))
-				Houses.Add(info.UID, info);
-			_ = new Map(info.ID, info.maptype, Kernel.Maps[info.maptype].Path);
+        public static SafeDictionary<uint, HouseInfo> Houses = [];
 
-			MySqlCommand command = new(MySqlCommandType.INSERT);
-			command.Insert("house").Insert("UID", client.Entity.UID)
-				 .Insert("maptype", info.maptype).Insert("level", info.level)
-				.Insert("Name", client.Entity.Name).Insert("ID", (ushort)client.Entity.UID);
-			command.Execute();
+        public static void LoadHouses() {
+            try {
+                MySqlCommand command = new(MySqlCommandType.SELECT);
+                command.Select("house");
+                MySqlReader reader = new(command);
+                while (reader.Read()) {
+                    HouseInfo info = new() {
+                        Uid = reader.ReadUInt32("UID"),
+                        Name = reader.ReadString("Name"),
+                        Id = reader.ReadUInt16("ID"),
+                        Maptype = reader.ReadUInt16("maptype"),
+                        Level = reader.ReadUInt16("level"),
+                        Furniture = []
+                    };
+                    var data = reader.ReadBlob("Furnitures");
+                    if (data.Length > 0) {
+                        using var stream = new MemoryStream(data);
+                        using var r = new BinaryReader(stream);
+                        int count = r.ReadByte();
+                        for (uint x = 0; x < count; x++) {
+                            var @base = ReadItem(r);
+                            if ((@base.Mesh / 10) == 820) {
+                                @base.Type = (Enums.NpcType)2;
+                                info.Warehouse = new Warehouse(null, (Warehouse.WarehouseID)@base.UID);
+                                var items = LoadItems(@base.UID);
+                                foreach (var item in items.Values.Where(item =>
+                                             !info.Warehouse.ContainsUID(item.UID))) {
+                                    info.Warehouse.Add2(item, null);
+                                }
+                            }
+                            else {
+                                @base.Type = (Enums.NpcType)26;
+                            }
 
-		}
-		public static void UpgradeHouse(GameState client, byte level)
-		{
-			ushort _base = 1098;
-			if (level == 1)
-				_base = 1099;
-			if (level == 2)
-				_base = 2080;
-			if (level == 3)
-				_base = 1765;
-			if (level == 4)
-				_base = 3024;
+                            @base.MapID = info.Id;
+                            info.Furniture.TryAdd(@base.UID, @base);
+                        }
+                    }
 
-			level++;
-			if (level > 5)
-				return;
+                    if (!Houses.ContainsKey(info.Uid))
+                        Houses.Add(info.Uid, info);
+                    _ = new Map(info.Id, info.Maptype, Kernel.Maps[info.Maptype].Path);
+                }
+            }
+            catch (Exception exception) {
+                Console.WriteLine(exception);
+                Program.SaveException(exception);
+            }
+        }
 
-			new MySqlCommand(MySqlCommandType.UPDATE).Update("house")
-				.Set("Name", client.Entity.Name).Set("ID", (ushort)client.Entity.UID)
-				.Set("maptype", _base).Set("level", level).Where("UID", client.Entity.UID).Execute();
-			if (Kernel.Maps.ContainsKey((ushort)client.Entity.UID))
-			{
-				Kernel.Maps.Remove((ushort)client.Entity.UID);
-				_ = new Map((ushort)client.Entity.UID, _base, Kernel.Maps[_base].Path);
-			}
-			if (Houses.ContainsKey(client.Entity.UID))
-			{
-				Houses[client.Entity.UID].maptype = _base;
-				Houses[client.Entity.UID].level = level;
-				//     Houses[client.Entity.UID].Furnitures = new Dictionary<uint, SobNpcSpawn>();
-				SaveFurnitures(client);
-			}
-		}
+        ///////////////////////////////////////////////////
+        public static void WriteItem(BinaryWriter writer, SobNpcSpawn @base) {
+            writer.Write(@base.UID);
+            writer.Write(@base.Mesh);
+            writer.Write(@base.X);
+            writer.Write(@base.Y);
+        }
 
-		public static void DowngradeHouse(GameState client, byte currentLevel)
-		{
-			if (currentLevel <= 1)
-				return; // Cannot downgrade below level 1
+        public static SobNpcSpawn ReadItem(BinaryReader reader) {
+            SobNpcSpawn @base = new() {
+                UID = reader.ReadUInt32(), //8
+                Mesh = reader.ReadUInt16(), //8
+                X = reader.ReadUInt16(), //10
+                Y = reader.ReadUInt16() //12
+            };
+            return @base;
+        }
 
-			byte newLevel = (byte)(currentLevel - 1);
-			ushort _base = 1098; // Default for level 1
+        ///////////////////////////////////////////////////  
+        public static void SaveFurniture(GameState client) {
+            if (!Houses.TryGetValue(client.Entity.UID, out var info))
+                return;
+            MemoryStream stream = new();
+            BinaryWriter writer = new(stream);
+            writer.Write(value: (byte)(info.Furniture?.Count ?? 0));
+            if (info.Furniture != null)
+                foreach (var fur in info.Furniture.Values) {
+                    WriteItem(writer, fur);
+                }
 
-			// Determine maptype based on the new level
-			if (newLevel == 1)
-				_base = 1098;
-			else if (newLevel == 2)
-				_base = 1099;
-			else if (newLevel == 3)
-				_base = 2080;
-			else if (newLevel == 4)
-				_base = 1765;
+            var sql = "UPDATE `house` SET Furnitures=@Furnitures where UID = " + client.Entity.UID + " ;";
+            var rawData = stream.ToArray();
+            using var conn = DataHolder.MySqlConnection;
+            conn.Open();
+            using var cmd = new MySql.Data.MySqlClient.MySqlCommand();
+            cmd.Connection = conn;
+            cmd.CommandText = sql;
+            cmd.Parameters.AddWithValue("@Furnitures", rawData);
+            cmd.ExecuteNonQuery();
+        }
 
-			new MySqlCommand(MySqlCommandType.UPDATE).Update("house")
-				.Set("Name", client.Entity.Name).Set("ID", (ushort)client.Entity.UID)
-				.Set("maptype", _base).Set("level", newLevel).Where("UID", client.Entity.UID).Execute();
+        ///////////////////////////////////////////////////
+        public static void CreateHouse(GameState client) {
+            HouseInfo info = new() {
+                Uid = client.Entity.UID,
+                Name = client.Entity.Name,
+                Id = (ushort)client.Entity.UID,
+                Maptype = 1098,
+                Level = 1,
+                Furniture = []
+            };
+            if (!Houses.ContainsKey(info.Uid))
+                Houses.Add(info.Uid, info);
+            _ = new Map(info.Id, info.Maptype, Kernel.Maps[info.Maptype].Path);
 
-			if (Kernel.Maps.ContainsKey((ushort)client.Entity.UID))
-			{
-				Kernel.Maps.Remove((ushort)client.Entity.UID);
-				_ = new Map((ushort)client.Entity.UID, _base, Kernel.Maps[_base].Path);
-			}
+            MySqlCommand command = new(MySqlCommandType.INSERT);
+            command.Insert("house").Insert("UID", client.Entity.UID)
+                .Insert("maptype", info.Maptype).Insert("level", info.Level)
+                .Insert("Name", client.Entity.Name).Insert("ID", (ushort)client.Entity.UID);
+            command.Execute();
+        }
 
-			if (Houses.TryGetValue(client.Entity.UID, out HouseInfo? value))
-			{
-				value.maptype = _base;
-				value.level = newLevel;
-				SaveFurnitures(client);
-			}
-		}
+        public static void UpgradeHouse(GameState client, byte level) {
+            ushort @base = level switch {
+                1 => 1099,
+                2 => 2080,
+                3 => 1765,
+                4 => 3024,
+                _ => 1098
+            };
 
-		public static void Teleport(GameState client, HouseInfo info)
-		{
-			client.Entity.AdvancedTeleport(true);
-			ushort X, Y;
-			var cord = Kernel.Maps[info.maptype].RandomCoordinates();
-			X = cord.Item1;
-			Y = cord.Item2;
-			if (client.Entity.EntityFlag == EntityFlag.Player)
-			{
-				if (client.InQualifier())
-				{
-					if (client.InQualifier())
-					{
-						if (client.Entity.MapID != 700 && client.Entity.MapID < 11000)
-						{
-							client.EndQualifier();
-						}
-					}
-				}
-			}
+            level++;
+            if (level > 5)
+                return;
 
-			client.Entity.X = X;
-			client.Entity.Y = Y;
-			client.Entity.PX = 0;
-			client.Entity.PY = 0;
-			client.Entity.PreviousMapID = client.Entity.MapID;
-			client.Entity.MapID = info.ID;
+            new MySqlCommand(MySqlCommandType.UPDATE).Update("house")
+                .Set("Name", client.Entity.Name).Set("ID", (ushort)client.Entity.UID)
+                .Set("maptype", @base).Set("level", level).Where("UID", client.Entity.UID).Execute();
+            if (Kernel.Maps.ContainsKey((ushort)client.Entity.UID)) {
+                Kernel.Maps.Remove((ushort)client.Entity.UID);
+                _ = new Map((ushort)client.Entity.UID, @base, Kernel.Maps[@base].Path);
+            }
 
-			Data Data = new(true)
-			{
-				UID = client.Entity.UID,
-				ID = Data.Teleport,
-				dwParam = info.maptype,
-				wParam1 = X,
-				wParam2 = Y
-			};
-			client.Send(Data);
-			client.Send(new MapStatus() { BaseID = info.maptype, ID = info.ID });
-			client.Entity.AdvancedTeleport(true);
-		}
+            if (!Houses.ContainsKey(client.Entity.UID)) return;
+            Houses[client.Entity.UID].Maptype = @base;
+            Houses[client.Entity.UID].Level = level;
+            //     Houses[client.Entity.UID].Furnitures = new Dictionary<uint, SobNpcSpawn>();
+            SaveFurniture(client);
+        }
 
-		public static void HouseWarehouse(GameState client, Network.GamePackets.Warehouse? warehousepacket = null)
-		{
-			if (client != null)
-			{
-				if (Houses.TryGetValue(client.Entity.UID, out HouseInfo? info))
-				{
-					var itembox = info.Furnitures?.Values.Where(xx => (xx.Mesh / 10) == 820).FirstOrDefault();
-					if (itembox != null)
-					{
-						if (!client.Warehouses.ContainsKey((Warehouse.WarehouseID)itembox.UID))
-						{
-							info.Warehouse ??= new Warehouse(null, (Warehouse.WarehouseID)itembox.UID);
-							client.Warehouses.Add((Warehouse.WarehouseID)itembox.UID, info.Warehouse);
-						}
-					}
-				}
-			}
-		}
-		public static SafeDictionary<uint, ConquerItem> LoadItems(uint Warehouse)
-		{
-			SafeDictionary<uint, ConquerItem> Items = [];
-			using (var cmdx = new MySqlCommand(MySqlCommandType.SELECT).Select("items").Where("Warehouse", Warehouse))
-			using (var readerx = new MySqlReader(cmdx))
-			{
-				while (readerx.Read())
-				{
-					var item = ConquerItemTable.deserialzeItem(readerx);
-					if (!Items.ContainsKey(item.UID))
-						Items.Add(item.UID, item);
-				}
-			}
-			return Items;
-		}
+        public static void DowngradeHouse(GameState client, byte currentLevel) {
+            if (currentLevel <= 1)
+                return; // Cannot downgrade below level 1
 
-		private static ConquerItem deserialzeItem(MySqlReader reader)
-		{
-			ConquerItem item = new(true)
-			{
-				ID = reader.ReadUInt32("Id"),
-				UID = reader.ReadUInt32("Uid"),
-				//item.Durability = reader.ReadUInt16("Durability");
-				MaximDurability = reader.ReadUInt16("MaximDurability")
-			};
-			item.Durability = item.MaximDurability;
-			item.Position = reader.ReadUInt16("Position");
-			item.Agate = reader.ReadString("Agate");
-			item.SocketProgress = reader.ReadUInt32("SocketProgress");
-			item.PlusProgress = reader.ReadUInt32("PlusProgress");
-			item.SocketOne = (Enums.Gem)reader.ReadUInt16("SocketOne");
-			item.SocketTwo = (Enums.Gem)reader.ReadUInt16("SocketTwo");
-			item.Effect = (Enums.ItemEffect)reader.ReadUInt16("Effect");
-			item.Mode = Enums.ItemMode.Default;
-			item.Plus = reader.ReadByte("Plus");
-			item.Bless = reader.ReadByte("Bless");
-			item.Bound = reader.ReadBoolean("Bound");
-			item.Enchant = reader.ReadByte("Enchant");
-			item.Lock = reader.ReadByte("Locked");
-			item.UnlockEnd = DateTime.FromBinary(reader.ReadInt64("UnlockEnd"));
-			item.Suspicious = reader.ReadBoolean("Suspicious");
-			item.SuspiciousStart = DateTime.FromBinary(reader.ReadInt64("SuspiciousStart"));
-			item.Color = (Enums.Color)reader.ReadUInt32("Color");
-			item.Warehouse = reader.ReadUInt16("Warehouse");
-			item.StackSize = reader.ReadUInt16("StackSize");
-			item.RefineItem = reader.ReadUInt32("RefineryItem");
-			Int64 rTime = reader.ReadInt64("RefineryTime");
+            var newLevel = (byte)(currentLevel - 1);
 
-			if (item.ID == 300000)
-			{
-				uint NextSteedColor = reader.ReadUInt32("NextSteedColor");
-				item.NextGreen = (byte)(NextSteedColor & 0xFF);
-				item.NextBlue = (byte)((NextSteedColor >> 8) & 0xFF);
-				item.NextRed = (byte)((NextSteedColor >> 16) & 0xFF);
-			}
-			if (item.RefineItem > 0 && rTime != 0)
-			{
-				item.RefineryTime = DateTime.FromBinary(rTime);
-				if (DateTime.Now > item.RefineryTime)
-				{
-					item.RefineryTime = new DateTime(0);
-					item.RefineItem = 0;
-				}
-			}
-			if (item.Lock == 2)
-				if (DateTime.Now >= item.UnlockEnd)
-					item.Lock = 0;
+            ushort @base = newLevel switch {
+                // Determine maptype based on the new level
+                1 => 1098,
+                2 => 1099,
+                3 => 2080,
+                4 => 1765,
+                _ => 1098
+            };
 
-			item.DayStamp = DateTime.FromBinary(reader.ReadInt64("DayStamp"));
-			item.Days = reader.ReadByte("Days");
-			return item;
-		}
+            new MySqlCommand(MySqlCommandType.UPDATE).Update("house")
+                .Set("Name", client.Entity.Name).Set("ID", (ushort)client.Entity.UID)
+                .Set("maptype", @base).Set("level", newLevel).Where("UID", client.Entity.UID).Execute();
 
-		public static HouseInfo? SpouseHouse(string Spousename)
-		{
-			foreach (var house in Houses.Values)
-				if (house.Name == Spousename)
-					return house;
-			return null;
-		}
+            if (Kernel.Maps.ContainsKey((ushort)client.Entity.UID)) {
+                Kernel.Maps.Remove((ushort)client.Entity.UID);
+                _ = new Map((ushort)client.Entity.UID, @base, Kernel.Maps[@base].Path);
+            }
 
-		public static bool SpouseWarehouse(GameState client, Network.GamePackets.Warehouse warehousepacket)
-		{
-			HouseWarehouse(client, warehousepacket);
-			var info = SpouseHouse(client.Entity.Spouse);
-			if (info == null || client.Entity.MapID == client.Entity.UID)
-				info = Houses[client.Entity.UID];
-			if (info != null)
-			{
-				if (client.Entity.MapID == info.ID)
-				{
-					switch (warehousepacket.Type)
-					{
-						case Network.GamePackets.Warehouse.Entire:
-							{
-								Warehouse? wh = info.Warehouse;
-								if (wh == null) return true;
-								byte count = 0;
-								warehousepacket.Count = 1;
-								warehousepacket.Type = Network.GamePackets.Warehouse.AddItem;
-								for (; count < wh.Count; count++)
-								{
-									warehousepacket.Append(wh.Objects[count]);
-									client.Send(warehousepacket);
-									ItemAdding add = new ItemAdding(true);
-									if (wh.Objects[count].Purification.Available)
-										add.Append(wh.Objects[count].Purification);
-									if (wh.Objects[count].ExtraEffect.Available)
-										add.Append(wh.Objects[count].ExtraEffect);
-									if (wh.Objects[count].Purification.Available || wh.Objects[count].ExtraEffect.Available)
-										client.Send(add);
+            if (!Houses.TryGetValue(client.Entity.UID, out var value)) return;
+            value.Maptype = @base;
+            value.Level = newLevel;
+            SaveFurniture(client);
+        }
 
-								}
-								return true;
-							}
-						case Network.GamePackets.Warehouse.AddItem:
-							{
-								Warehouse? wh = info.Warehouse;
-								if (wh == null) return true;
-								if (client.Inventory.TryGetItem(warehousepacket.UID, out ConquerItem item))
-								{
-									if (item.ID is >= 729960 and <= 729970)
-										return true;
-									if (item.ID == 729611 || item.ID == 729612 || item.ID == 729613 || item.ID == 729614 || item.ID == 729703)
-										return true;
-									if (!ConquerItem.isRune(item.UID))
-									{
-										if (wh.Add2(item, client))
-										{
-											warehousepacket.UID = 0;
-											warehousepacket.Count = 1;
-											warehousepacket.Append(item);
-											client.Send(warehousepacket);
+        public static void Teleport(GameState client, HouseInfo info) {
+            client.Entity.AdvancedTeleport(true);
+            var (x, y) = Kernel.Maps[info.Maptype].RandomCoordinates();
+            if (client.Entity.EntityFlag == EntityFlag.Player)
+                if (client.InQualifier())
+                    if (client.InQualifier())
+                        if (client.Entity.MapID != 700 && client.Entity.MapID < 11000)
+                            client.EndQualifier();
 
-											ItemAdding add = new ItemAdding(true);
-											if (item.Purification.Available)
-												add.Append(item.Purification);
-											if (item.ExtraEffect.Available)
-												add.Append(item.ExtraEffect);
-											if (item.Purification.Available || item.ExtraEffect.Available)
-												client.Send(add);
+            client.Entity.X = x;
+            client.Entity.Y = y;
+            client.Entity.PX = 0;
+            client.Entity.PY = 0;
+            client.Entity.PreviousMapID = client.Entity.MapID;
+            client.Entity.MapID = info.Id;
 
-											info.Warehouse = wh;
-											return true;
-										}
-									}
-									else client.Send(new Message("You can not store Flame Stone Rune's in Warehouse", System.Drawing.Color.Red, Message.TopLeft));
-								}
-								break;
-							}
-						case Network.GamePackets.Warehouse.RemoveItem:
-							{
-								if (!client.Partners.ContainsKey(info.UID) && client.Entity.UID != info.UID)
-								{
-									client.Send(new Message("Sorry you cant, You Should be a Trade Partner.", Message.TopLeft));
-									return true;
-								}
-								Warehouse? wh = info.Warehouse;
-								if (wh == null) return true;
-								if (wh.ContainsUID(warehousepacket.UID))
-								{
-									if (wh.Remove2(warehousepacket.UID, client))
-									{
-										info.Warehouse = wh;
-										client.Send(warehousepacket);
-										return true;
-									}
-								}
-								break;
-							}
+            Data data = new(true) {
+                UID = client.Entity.UID,
+                ID = Data.Teleport,
+                dwParam = info.Maptype,
+                wParam1 = x,
+                wParam2 = y
+            };
+            client.Send(data);
+            client.Send(new MapStatus() { BaseID = info.Maptype, ID = info.Id });
+            client.Entity.AdvancedTeleport(true);
+        }
 
-					}
+        public static void HouseWarehouse(GameState client, Network.GamePackets.Warehouse? warehousePacket = null) {
+            if (!Houses.TryGetValue(client.Entity.UID, out var info)) return;
+            var itemBox = info.Furniture?.Values.FirstOrDefault(xx => (xx.Mesh / 10) == 820);
+            if (itemBox == null) return;
+            if (client.Warehouses.ContainsKey((Warehouse.WarehouseID)itemBox.UID)) return;
+            info.Warehouse ??= new Warehouse(null, (Warehouse.WarehouseID)itemBox.UID);
+            client.Warehouses.Add((Warehouse.WarehouseID)itemBox.UID, info.Warehouse);
+        }
 
+        public static SafeDictionary<uint, ConquerItem> LoadItems(uint warehouse) {
+            SafeDictionary<uint, ConquerItem> items = [];
+            using var mySqlCommand =
+                new MySqlCommand(MySqlCommandType.SELECT).Select("items").Where("Warehouse", warehouse);
+            using var mySqlReader = new MySqlReader(mySqlCommand);
+            while (mySqlReader.Read()) {
+                var item = ConquerItemTable.deserialzeItem(mySqlReader);
+                if (!items.ContainsKey(item.UID))
+                    items.Add(item.UID, item);
+            }
 
-				}
-			}
-			return false;
-		}
+            return items;
+        }
 
-		public static SobNpcSpawn? CheckItemBox(GameState client, HouseInfo info)
-		{
-			return info.Furnitures?.Values.FirstOrDefault(xx => (xx.Mesh / 10) == 820);
+        private static ConquerItem DeserialzeItem(MySqlReader reader) {
+            ConquerItem item = new(true) {
+                ID = reader.ReadUInt32("Id"),
+                UID = reader.ReadUInt32("Uid"),
+                //item.Durability = reader.ReadUInt16("Durability");
+                MaximDurability = reader.ReadUInt16("MaximDurability")
+            };
+            item.Durability = item.MaximDurability;
+            item.Position = reader.ReadUInt16("Position");
+            item.Agate = reader.ReadString("Agate");
+            item.SocketProgress = reader.ReadUInt32("SocketProgress");
+            item.PlusProgress = reader.ReadUInt32("PlusProgress");
+            item.SocketOne = (Enums.Gem)reader.ReadUInt16("SocketOne");
+            item.SocketTwo = (Enums.Gem)reader.ReadUInt16("SocketTwo");
+            item.Effect = (Enums.ItemEffect)reader.ReadUInt16("Effect");
+            item.Mode = Enums.ItemMode.Default;
+            item.Plus = reader.ReadByte("Plus");
+            item.Bless = reader.ReadByte("Bless");
+            item.Bound = reader.ReadBoolean("Bound");
+            item.Enchant = reader.ReadByte("Enchant");
+            item.Lock = reader.ReadByte("Locked");
+            item.UnlockEnd = DateTime.FromBinary(reader.ReadInt64("UnlockEnd"));
+            item.Suspicious = reader.ReadBoolean("Suspicious");
+            item.SuspiciousStart = DateTime.FromBinary(reader.ReadInt64("SuspiciousStart"));
+            item.Color = (Enums.Color)reader.ReadUInt32("Color");
+            item.Warehouse = reader.ReadUInt16("Warehouse");
+            item.StackSize = reader.ReadUInt16("StackSize");
+            item.RefineItem = reader.ReadUInt32("RefineryItem");
+            var rTime = reader.ReadInt64("RefineryTime");
 
-		}
+            if (item.ID == 300000) {
+                var nextSteedColor = reader.ReadUInt32("NextSteedColor");
+                item.NextGreen = (byte)(nextSteedColor & 0xFF);
+                item.NextBlue = (byte)((nextSteedColor >> 8) & 0xFF);
+                item.NextRed = (byte)((nextSteedColor >> 16) & 0xFF);
+            }
 
-		public static void Move(GameState client, SobNpcSpawn sobnpc, HouseInfo info)
-		{
-			client.MessageBox("Do u Want To change its place?", (p) =>
-			{
-				info.Furnitures?.Remove(sobnpc.UID);
-				p.Screen.FullWipe();
-				p.Screen.Reload();
-				NpcRequest req2 = new(5)
-				{
-					Mesh = sobnpc.Mesh,
-					NpcTyp = sobnpc.Type
-				};
-				p.Send(req2);
-			});
-		}
-	}
+            if (item.RefineItem > 0 && rTime != 0) {
+                item.RefineryTime = DateTime.FromBinary(rTime);
+                if (DateTime.Now > item.RefineryTime) {
+                    item.RefineryTime = new DateTime(0);
+                    item.RefineItem = 0;
+                }
+            }
+
+            if (item.Lock == 2)
+                if (DateTime.Now >= item.UnlockEnd)
+                    item.Lock = 0;
+
+            item.DayStamp = DateTime.FromBinary(reader.ReadInt64("DayStamp"));
+            item.Days = reader.ReadByte("Days");
+            return item;
+        }
+
+        public static HouseInfo? SpouseHouse(string spouseName) {
+            return Houses.Values.FirstOrDefault(house => house.Name == spouseName);
+        }
+
+        public static bool SpouseWarehouse(GameState client, Network.GamePackets.Warehouse warehousePacket) {
+            HouseWarehouse(client, warehousePacket);
+            var info = SpouseHouse(client.Entity.Spouse);
+            if (info == null || client.Entity.MapID == client.Entity.UID)
+                info = Houses[client.Entity.UID];
+            if (client.Entity.MapID != info.Id) return false;
+            switch (warehousePacket.Type) {
+                case Network.GamePackets.Warehouse.Entire: {
+                    var wh = info.Warehouse;
+                    if (wh == null) return true;
+                    byte count = 0;
+                    warehousePacket.Count = 1;
+                    warehousePacket.Type = Network.GamePackets.Warehouse.AddItem;
+                    for (; count < wh.Count; count++) {
+                        warehousePacket.Append(wh.Objects[count]);
+                        client.Send(warehousePacket);
+                        var add = new ItemAdding(true);
+                        if (wh.Objects[count].Purification.Available)
+                            add.Append(wh.Objects[count].Purification);
+                        if (wh.Objects[count].ExtraEffect.Available)
+                            add.Append(wh.Objects[count].ExtraEffect);
+                        if (wh.Objects[count].Purification.Available || wh.Objects[count].ExtraEffect.Available)
+                            client.Send(add);
+                    }
+
+                    return true;
+                }
+                case Network.GamePackets.Warehouse.AddItem: {
+                    var wh = info.Warehouse;
+                    if (wh == null) return true;
+                    if (client.Inventory.TryGetItem(warehousePacket.UID, out var item)) {
+                        switch (item.ID) {
+                            case >= 729960 and <= 729970:
+                            case 729611 or 729612 or 729613 or 729614 or 729703:
+                                return true;
+                        }
+
+                        if (!ConquerItem.isRune(item.UID)) {
+                            if (wh.Add2(item, client)) {
+                                warehousePacket.UID = 0;
+                                warehousePacket.Count = 1;
+                                warehousePacket.Append(item);
+                                client.Send(warehousePacket);
+
+                                var add = new ItemAdding(true);
+                                if (item.Purification.Available)
+                                    add.Append(item.Purification);
+                                if (item.ExtraEffect.Available)
+                                    add.Append(item.ExtraEffect);
+                                if (item.Purification.Available || item.ExtraEffect.Available)
+                                    client.Send(add);
+
+                                info.Warehouse = wh;
+                                return true;
+                            }
+                        }
+                        else {
+                            client.Send(new Message("You can not store Flame Stone Rune's in Warehouse",
+                                System.Drawing.Color.Red, Message.TopLeft));
+                        }
+                    }
+
+                    break;
+                }
+                case Network.GamePackets.Warehouse.RemoveItem: {
+                    if (!client.Partners.ContainsKey(info.Uid) && client.Entity.UID != info.Uid) {
+                        client.Send(new Message("Sorry you cant, You Should be a Trade Partner.",
+                            Message.TopLeft));
+                        return true;
+                    }
+
+                    var wh = info.Warehouse;
+                    if (wh == null) return true;
+                    if (wh.ContainsUID(warehousePacket.UID))
+                        if (wh.Remove2(warehousePacket.UID, client)) {
+                            info.Warehouse = wh;
+                            client.Send(warehousePacket);
+                            return true;
+                        }
+
+                    break;
+                }
+            }
+
+            return false;
+        }
+
+        public static SobNpcSpawn? CheckItemBox(GameState client, HouseInfo info) {
+            return info.Furniture?.Values.FirstOrDefault(xx => (xx.Mesh / 10) == 820);
+        }
+
+        public static void Move(GameState client, SobNpcSpawn sobNpc, HouseInfo info) {
+            client.MessageBox("Do u Want To change its place?", (p) => {
+                info.Furniture?.Remove(sobNpc.UID);
+                p.Screen.FullWipe();
+                p.Screen.Reload();
+                NpcRequest req2 = new(5) {
+                    Mesh = sobNpc.Mesh,
+                    NpcTyp = sobNpc.Type
+                };
+                p.Send(req2);
+            });
+        }
+    }
 }
