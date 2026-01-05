@@ -117,6 +117,12 @@ namespace MTA.Game.Constants.Items {
 
         #endregion Random Item Packs
 
+        #region Treasure Hunt Items
+
+        public const uint SavageBone = 3004181;
+
+        #endregion Treasure Hunt Items
+
         #region Elite PK Prize Items (Unknown)
 
         // These items are used in Elite PK Prizes but not found in items.json

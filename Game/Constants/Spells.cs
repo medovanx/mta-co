@@ -21,6 +21,7 @@ namespace MTA.Game.Constants {
         public const ushort Superman = 1025;
         public const ushort Roar = 1040;
         public const ushort FastBlade = 1045;
+        public const ushort FastBlade2 = 1115;
         public const ushort ScentSword = 1046;
         public const ushort WideStrike = 1250;
         public const ushort SpeedGun = 1260;
@@ -87,6 +88,9 @@ namespace MTA.Game.Constants {
         // Dragon Warrior Skills
         public const ushort DragonWhirl = 10315;
         public const ushort DragonFury = 12300;
+        public const ushort RadiantPalm = 10381;
+        public const ushort WhirlwindKick = 10415;
+        public const ushort ChargingVortex = 11190;
 
         // Special Skills
         public const ushort Bless = 9876;
