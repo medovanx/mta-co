@@ -1,5 +1,5 @@
 using MTA.Client;
-using MTA.Game.ConquerStructures.House;
+using MTA.Game.Features.House;
 using MTA.Network.GamePackets;
 
 namespace MTA.Game.Npcs.Handlers.Market {

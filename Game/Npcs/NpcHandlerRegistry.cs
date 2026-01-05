@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using MTA.Client;
+using MTA.Game.Features.House;
 using MTA.Network.GamePackets;
 
 namespace MTA.Game.Npcs {
@@ -40,27 +41,36 @@ namespace MTA.Game.Npcs {
         }
 
         /// <summary>
+        /// Registers handlers for all furniture vendor NPCs loaded from the furniture file.
+        /// </summary>
+        public static void RegisterFurnitureHandlers() {
+            var handlerType = typeof(Handlers.TwinCity.NpcFurnitureVendor);
+            var handleMethod = handlerType.GetMethod("Handle", BindingFlags.Public | BindingFlags.Static);
+
+            var handler = (Action<GameState, NpcRequest, MTA.Npcs>)
+                Delegate.CreateDelegate(typeof(Action<GameState, NpcRequest, MTA.Npcs>), handleMethod);
+
+            var registeredCount = 0;
+            foreach (var npcId in Furniture.FurnitureVendors.Keys) {
+                if (!Handlers.TryAdd(npcId, handler)) {
+                    Console.WriteLine(
+                        $"[NPC Registry] Warning: NPC ID {npcId} already has a handler registered. Skipping.");
+                    continue;
+                }
+
+                registeredCount++;
+            }
+
+            Console.WriteLine($"[NPC Registry] Registered {registeredCount} furniture vendor handler(s)");
+        }
+
+        /// <summary>
         /// Attempts to invoke a registered handler for the given NPC ID.
         /// </summary>
         /// <returns>True if handler found and executed, false otherwise.</returns>
         public static bool TryHandle(uint npcId, GameState client, NpcRequest npcRequest, MTA.Npcs dialog) {
             if (!Handlers.TryGetValue(npcId, out var handler)) return false;
-            try {
-                handler(client, npcRequest, dialog);
-            }
-            catch (Exception ex) {
-                Console.WriteLine($"[NPC Handler Error] Exception in handler for NPC {npcId}, OptionID {npcRequest.OptionID}: {ex.Message}");
-                Console.WriteLine($"Stack trace: {ex.StackTrace}");
-                try {
-                // Send error dialog to player
-                    dialog.Text("An error occurred while processing your request. Please try again.");
-                    dialog.Option("Okay.", 255);
-                    dialog.Send();
-                }
-                catch {
-                    Console.WriteLine($"[NPC Handler Error] Failed to send error dialog to player");
-                }
-            }
+            handler(client, npcRequest, dialog);
             return true;
         }
     }

@@ -5,8 +5,9 @@ using System.Linq;
 using MTA.Client;
 using MTA.Database;
 using MTA.Network.GamePackets;
+using Warehouse = MTA.Game.ConquerStructures.Warehouse;
 
-namespace MTA.Game.ConquerStructures.House
+namespace MTA.Game.Features.House
 {
 	public class House
 	{

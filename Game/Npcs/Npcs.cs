@@ -11,7 +11,6 @@ using MTA.Franko;
 using MTA.Game;
 using MTA.Game.Attacking;
 using MTA.Game.ConquerStructures;
-using MTA.Game.ConquerStructures.House;
 using MTA.Game.Constants;
 using MTA.Game.Events;
 using MTA.Game.Events.GuildWar;

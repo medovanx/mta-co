@@ -228,9 +228,6 @@ namespace MTA.Game.Constants {
         public static readonly string CoatStorageTypePath = Database("coat_storage_type.txt");
         public static readonly string SoulProtectionPath = Database("souls_protection.txt");
         public static readonly string RoulettesPath = Database("Roulettes.txt");
-
-        public static readonly string FurniturePath = Database("Furniture.txt");
-
         // public static readonly string DMapOwnerPath = Database("DMapOwner.dat");
         public static readonly string StatsPath = Database("Stats.ini");
         public static readonly string GameMapPath = Database("GameMap.dat");

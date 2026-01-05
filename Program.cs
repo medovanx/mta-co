@@ -15,9 +15,9 @@ using MTA.Extensions;
 using MTA.Game;
 using MTA.Game.Features;
 using MTA.Game.ConquerStructures;
-using MTA.Game.ConquerStructures.House;
 using MTA.Game.ConquerStructures.Society;
 using MTA.Game.Features.Guilds.Models;
+using MTA.Game.Features.House;
 using MTA.Game.Items;
 using MTA.Game.Npcs;
 using MTA.Game.Npcs.ScriptEngine;
@@ -294,6 +294,7 @@ internal abstract class Program {
             AuthCryptography.PrepareAuthCryptography();
             Console.WriteLine("Initializing NPC handlers...");
             NpcHandlerRegistry.Initialize();
+            NpcHandlerRegistry.RegisterFurnitureHandlers();
             Console.WriteLine("Initializing Item handlers...");
             ItemHandlerRegistry.Initialize();
             Console.WriteLine("Initializing Packet handlers...");

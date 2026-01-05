@@ -15,7 +15,6 @@ using MTA.Game;
 using MTA.Game.Attacking;
 using MTA.Game.Constants;
 using MTA.Game.ConquerStructures;
-using MTA.Game.ConquerStructures.House;
 using MTA.Game.ConquerStructures.Society;
 using MTA.Game.Features.Guilds.Models;
 using MTA.Game.Events;
@@ -53,6 +52,7 @@ using Warehouse = MTA.Network.GamePackets.Warehouse;
 using Weather = MTA.Game.Weather;
 using static MTA.Game.Constants.Items.BasicItems;
 using MTA.Game.Features.Guilds.Constants;
+using MTA.Game.Features.House;
 
 namespace MTA.Network {
     public static class PacketHandler {
@@ -9112,12 +9112,12 @@ namespace MTA.Network {
 
             switch (item.ID) {
                 default: {
-                    if (Furniture.FurnituresItems.ContainsKey(item.ID)) {
+                    if (Furniture.FurnitureItems.ContainsKey(item.ID)) {
                         if (client.Entity.MapID != (ushort)client.Entity.UID)
                             return;
                         client.spwansitem = item;
                         var req = new NpcRequest(5) {
-                            Mesh = Furniture.FurnituresItems[item.ID]
+                            Mesh = Furniture.FurnitureItems[item.ID]
                         };
                         if (req.Mesh == 8200)
                             req.NpcTyp = (Enums.NpcType)2;

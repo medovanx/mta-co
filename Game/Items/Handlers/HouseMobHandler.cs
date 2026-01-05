@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using MTA.Client;
 using MTA.Database;
-using MTA.Game.ConquerStructures.House;
+using MTA.Game.Features.House;
 using MTA.Network.GamePackets;
 using Update = MTA.Network.GamePackets.Update;
 using static MTA.Game.Constants.Items.QuestAndOther;
