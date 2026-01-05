@@ -5,36 +5,26 @@ using static MTA.Game.Constants.Spells;
 
 namespace MTA.Game.Npcs.Handlers.Market {
     /// <summary>
-    /// Skill Soul Master - Allows players to upgrade their skill soul levels
+    /// Marital Dealer (Skill Soul Master) - Allows players to upgrade their skill soul levels
     /// </summary>
     [NpcHandler(29)]
-    public static class NpcSkillSoul {
+    public static class NpcMartialDealer {
         public static void Handle(GameState client, NpcRequest npcRequest, MTA.Npcs dialog) {
             dialog.Avatar(85);
             switch (npcRequest.OptionID) {
                 case 0: {
                     dialog.Text(
-                        "Hello friend. I am the Skill Soul master! Have you ever imagined if you could change your skills' appearance?");
+                        "I am the Skill Soul master! Have you ever imagined if you could change your skills' appearance?");
                     dialog.Option("Okay, go ahead.", 1);
                     dialog.Option("Sorry.", 255);
                     dialog.Send();
                     break;
                 }
                 case 1: {
-                    dialog.Text("Choose its new style.");
-                    dialog.Option("Upgrade My Skill Souls", 25);
-                    dialog.Option("I'll think about it.", 255);
-                    dialog.Send();
-                    break;
-                }
-
-                case 25: {
-                    dialog.Text("Choose the skill you want.");
+                    dialog.Text("Which skill do you want to upgrade?");
                     foreach (var spell in client.Spells.Values) {
                         if (!SpellTable.AllowSkillSoul.Contains(spell.ID)) continue;
                         var id = (byte)(SpellTable.AllowSkillSoul.IndexOf(spell.ID) + 2);
-
-
                         {
                             switch (spell.ID) {
                                 default: {
@@ -43,15 +33,15 @@ namespace MTA.Game.Npcs.Handlers.Market {
                                             if (SpellTable.SpellInformations[spell.ID].ContainsKey(spell.Level)) {
                                                 dialog.Option(
                                                     SpellTable.SpellInformations[spell.ID][spell.Level].Name != ""
-                                                        ? $"{SpellTable.SpellInformations[spell.ID][spell.Level].Name}, [Skill Soul Level]: {spell.Souls}"
-                                                        : $"{SpellTable.SpellInformations[spell.ID][spell.Level].ID}, [Skill Soul Level]: {spell.Souls}",
+                                                        ? $"{SpellTable.SpellInformations[spell.ID][spell.Level].Name} [Level: {spell.Souls}]"
+                                                        : $"{SpellTable.SpellInformations[spell.ID][spell.Level].ID} [Level: {spell.Souls}]",
                                                     id);
                                             }
                                             else {
                                                 dialog.Option(
                                                     SpellTable.SpellInformations[spell.ID][0].Name != ""
-                                                        ? $"{SpellTable.SpellInformations[spell.ID][0].Name}, [Skill Soul Level]: {spell.Souls}"
-                                                        : $"{SpellTable.SpellInformations[spell.ID][0].ID}, [Skill Soul Level]: {spell.Souls}",
+                                                        ? $"{SpellTable.SpellInformations[spell.ID][0].Name} [Level: {spell.Souls}]"
+                                                        : $"{SpellTable.SpellInformations[spell.ID][0].ID} [Level: {spell.Souls}]",
                                                     id);
                                             }
                                         }
@@ -65,15 +55,15 @@ namespace MTA.Game.Npcs.Handlers.Market {
                                             if (SpellTable.SpellInformations[spell.ID].ContainsKey(spell.Level)) {
                                                 dialog.Option(
                                                     SpellTable.SpellInformations[spell.ID][spell.Level].Name != ""
-                                                        ? $"{SpellTable.SpellInformations[spell.ID][spell.Level].Name}, [Skill Soul Level]: {spell.Souls}"
-                                                        : $"{SpellTable.SpellInformations[spell.ID][spell.Level].ID}, [Skill Soul Level]: {spell.Souls}",
+                                                        ? $"{SpellTable.SpellInformations[spell.ID][spell.Level].Name} [Level: {spell.Souls}]"
+                                                        : $"{SpellTable.SpellInformations[spell.ID][spell.Level].ID} [Level: {spell.Souls}]",
                                                     id);
                                             }
                                             else {
                                                 dialog.Option(
                                                     SpellTable.SpellInformations[spell.ID][0].Name != ""
-                                                        ? $"{SpellTable.SpellInformations[spell.ID][0].Name}, [Skill Soul Level]: {spell.Souls}"
-                                                        : $"{SpellTable.SpellInformations[spell.ID][0].ID}, [Skill Soul Level]: {spell.Souls}",
+                                                        ? $"{SpellTable.SpellInformations[spell.ID][0].Name} [Level: {spell.Souls}]"
+                                                        : $"{SpellTable.SpellInformations[spell.ID][0].ID} [Level: {spell.Souls}]",
                                                     id);
                                             }
                                         }
@@ -88,15 +78,15 @@ namespace MTA.Game.Npcs.Handlers.Market {
                                             if (SpellTable.SpellInformations[spell.ID].ContainsKey(spell.Level)) {
                                                 dialog.Option(
                                                     SpellTable.SpellInformations[spell.ID][spell.Level].Name != ""
-                                                        ? $"{SpellTable.SpellInformations[spell.ID][spell.Level].Name}, [Skill Soul Level]: {spell.Souls}"
-                                                        : $"{SpellTable.SpellInformations[spell.ID][spell.Level].ID}, [Skill Soul Level]: {spell.Souls}",
+                                                        ? $"{SpellTable.SpellInformations[spell.ID][spell.Level].Name} [Level: {spell.Souls}]"
+                                                        : $"{SpellTable.SpellInformations[spell.ID][spell.Level].ID} [Level: {spell.Souls}]",
                                                     id);
                                             }
                                             else {
                                                 dialog.Option(
                                                     SpellTable.SpellInformations[spell.ID][0].Name != ""
-                                                        ? $"{SpellTable.SpellInformations[spell.ID][0].Name}, [Skill Soul Level]: {spell.Souls}"
-                                                        : $"{SpellTable.SpellInformations[spell.ID][0].ID}, [Skill Soul Level]: {spell.Souls}",
+                                                        ? $"{SpellTable.SpellInformations[spell.ID][0].Name} [Level: {spell.Souls}]"
+                                                        : $"{SpellTable.SpellInformations[spell.ID][0].ID} [Level: {spell.Souls}]",
                                                     id);
                                             }
                                         }
@@ -114,15 +104,15 @@ namespace MTA.Game.Npcs.Handlers.Market {
                                             if (SpellTable.SpellInformations[spell.ID].ContainsKey(spell.Level)) {
                                                 dialog.Option(
                                                     SpellTable.SpellInformations[spell.ID][spell.Level].Name != ""
-                                                        ? $"{SpellTable.SpellInformations[spell.ID][spell.Level].Name}, [Skill Soul Level]: {spell.Souls}"
-                                                        : $"{SpellTable.SpellInformations[spell.ID][spell.Level].ID}, [Skill Soul Level]: {spell.Souls}",
+                                                        ? $"{SpellTable.SpellInformations[spell.ID][spell.Level].Name} [Level: {spell.Souls}]"
+                                                        : $"{SpellTable.SpellInformations[spell.ID][spell.Level].ID} [Level: {spell.Souls}]",
                                                     id);
                                             }
                                             else {
                                                 dialog.Option(
                                                     SpellTable.SpellInformations[spell.ID][0].Name != ""
-                                                        ? $"{SpellTable.SpellInformations[spell.ID][0].Name}, [Skill Soul Level]: {spell.Souls}"
-                                                        : $"{SpellTable.SpellInformations[spell.ID][0].ID}, [Skill Soul Level]: {spell.Souls}",
+                                                        ? $"{SpellTable.SpellInformations[spell.ID][0].Name} [Level: {spell.Souls}]"
+                                                        : $"{SpellTable.SpellInformations[spell.ID][0].ID} [Level: {spell.Souls}]",
                                                     id);
                                             }
                                         }
@@ -182,8 +172,9 @@ namespace MTA.Game.Npcs.Handlers.Market {
                             value.Send(client);
 
                             SkillTable.SaveSpells(client);
-                            dialog.Text($"You have upgraded your skill {value.ID} to Skill Soul level {value.Souls}.");
-                            dialog.Option("Good job.", 255);
+                            dialog.Text(
+                                $"Congratulations! You have upgraded the skill [{value.ID}] to Skill Soul level {value.Souls}.");
+                            dialog.Option("Thank you!", 255);
                             dialog.Send();
                         }
                     }
