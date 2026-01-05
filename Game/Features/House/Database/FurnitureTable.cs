@@ -1,6 +1,7 @@
 using MTA.Database;
 using MTA.Game.Features.House.Database.Mappers;
 using MTA.Game.Features.House.Database.Schema;
+using MTA.Network.GamePackets;
 
 namespace MTA.Game.Features.House.Database;
 
@@ -30,7 +31,7 @@ public static class FurnitureTable {
 
             Kernel.Maps[info.Map].Npcs.Remove(info.NpcId);
 
-            Kernel.Maps[info.Map].AddNpc(new Network.GamePackets.NpcSpawn() {
+            Kernel.Maps[info.Map].AddNpc(new NpcSpawn {
                 Type = info.Type,
                 UID = info.NpcId,
                 MapID = info.Map,
