@@ -78,7 +78,7 @@
 
   <ItemGroup>
     <Content Include="MTA.ico" />
-    <Content Include="Config\configuration.ini">
+    <Content Include="configuration.ini">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

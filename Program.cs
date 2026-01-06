@@ -118,7 +118,7 @@ internal abstract class Program {
         Console.Title = "MTA Server";
         FindWindow(null, Console.Title);
         Console.WriteLine("Loaded server configuration.");
-        const string configFileName = "Config\\configuration.ini";
+        const string configFileName = "configuration.ini";
         var iniFile = new IniFile(configFileName);
         GameIp = iniFile.ReadString("configuration", "IP");
         GamePort = iniFile.ReadUInt16("configuration", "GamePort");
