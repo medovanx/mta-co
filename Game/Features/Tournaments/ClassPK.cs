@@ -126,7 +126,7 @@ namespace MTA.Game
                 {
                     if (DateTime.Now.Minute == 59)
                     {
-                        client.Entity.ConquerPoints += Rates.ClassPk;
+                        client.Entity.ConquerPoints += 1000;
                         Kernel.SendWorldMessage(new Message(" ClassPk Has Ended Come Next Week ", System.Drawing.Color.Red, Message.TopLeft), Program.Values);
                     }
                     if (client.Entity.MapID == 7001)

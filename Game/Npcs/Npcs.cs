@@ -935,7 +935,7 @@ namespace MTA {
                                 case 3: {
                                     if (client is { Guild: not null, AsMember: not null }) {
                                         if (client.AsMember.Rank == MemberRank.GuildLeader) {
-                                            uint Reaward = client.Guild.CtfReward * Rates.Ctf;
+                                            uint Reaward = client.Guild.CtfReward * 2500;
                                             if (Reaward != 0) {
                                                 byte[] messaje =
                                                     new Message(
@@ -21683,7 +21683,7 @@ namespace MTA {
                                     Kernel.SendWorldMessage(
                                         new Message(
                                             "Congratulations! " + client.Entity.Name + " claimed the prize (( " +
-                                            Rates.MonthlyPk +
+                                            1500 +
                                             " )) ConquerPoints + 1000 Vip Point's for winning the Monthly Pk War and Receive Monthly PkWar Halo.",
                                             Color.Black, Message.Talk), Program.Values);
                                     client.Entity.AddTopStatus(Update.Flags.MonthlyPKChampion, 1,
@@ -22021,7 +22021,7 @@ namespace MTA {
                                     Kernel.SendWorldMessage(
                                         new Message(
                                             "Congratulations! " + client.Entity.Name + " claimed the prize " +
-                                            Rates.LastMan +
+                                            150 +
                                             " ConquerPoints for winning the LastManStanding for this Hour.",
                                             Color.Black, Message.Center), Program.Values);
                                     client.Entity.SendSpawn(client, true);
@@ -23773,7 +23773,7 @@ namespace MTA {
                         }
                         case 2: {
                             if (!GuildPoleWar.IsWar) {
-                                GuildPoleWar.GetReward(client, Rates.Twar);
+                                GuildPoleWar.GetReward(client, 150);
                                 client.Entity.killerpoints += 100;
 
                                 //MTA.Kernel.SendWorldMessage(new Message("Congratulations! " + client.Entity.Name +  " The winner ClassPoleWar Prize [ 50 kk ] cps!", System.Drawing.Color.White, Message.BroadcastMessage), Program.Values);
@@ -23822,7 +23822,7 @@ namespace MTA {
                         }
                         case 2: {
                             if (!GuildScoreWar.IsWar) {
-                                GuildScoreWar.GetReward(client, Rates.EliteGw);
+                                GuildScoreWar.GetReward(client, 2000);
                                 client.Entity.killerpoints += 100;
 
                                 //MTA.Kernel.SendWorldMessage(new Message("Congratulations! " + client.Entity.Name +  " The winner ClassPoleWar Prize [ 50 kk ] cps!", System.Drawing.Color.White, Message.BroadcastMessage), Program.Values);

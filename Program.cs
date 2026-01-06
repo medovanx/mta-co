@@ -1432,23 +1432,15 @@ public class Rates {
     public static uint King;
     public static uint Prince;
     public static uint Duke;
-    public static uint EliteGw;
     public static uint MrConquer;
     public static uint UniquePk;
     public static uint NobilityPrize;
-    public static uint LastMan;
     public static uint Daily;
-    public static uint ClanWarDay;
     public static uint SoulP6;
     public static uint SoulP7;
     public static uint ChangeBody;
     public static uint Refinery6;
-    public static uint Twar;
-    public static uint Ctf;
-    public static uint ClanWarCity;
-    public static uint ClassPk;
     public static uint HouseUpgrade;
-    public static uint MonthlyPk;
     public static uint Night;
     public static uint Broadcast;
     public static uint GuildFee;
@@ -1461,7 +1453,6 @@ public class Rates {
 
     public static void Load(IniFile iniFile) {
         Meteor = iniFile.ReadUInt32("Rates", "Meteor");
-        EliteGw = iniFile.ReadUInt32("Rates", "EliteGw");
         Broadcast = iniFile.ReadUInt32("Rates", "Broadcast");
         TeleportFee = iniFile.ReadUInt32("Rates", "TeleportFee");
         GuildFee = iniFile.ReadUInt32("Rates", "GuildFee");
@@ -1469,7 +1460,6 @@ public class Rates {
         Prince = iniFile.ReadUInt32("Rates", "Prince");
         Duke = iniFile.ReadUInt32("Rates", "Duke");
         Reincarnation = iniFile.ReadUInt32("Rates", "Reincarnation");
-        MonthlyPk = iniFile.ReadUInt32("Rates", "MonthlyPk");
         ChangeName = iniFile.ReadUInt32("Rates", "ChangeName");
         Night = iniFile.ReadUInt32("Rates", "Night");
         VoteUrl = iniFile.ReadString("Rates", "VoteUrl");
@@ -1478,14 +1468,8 @@ public class Rates {
         Refinery6 = iniFile.ReadUInt32("Rates", "Refinery6");
         ChangeBody = iniFile.ReadUInt32("Rates", "ChangeBody");
         UniquePk = iniFile.ReadUInt32("Rates", "UniquePk");
-        ClanWarDay = iniFile.ReadUInt32("Rates", "ClanWarDay");
-        LastMan = iniFile.ReadUInt32("Rates", "LastMan");
         Daily = iniFile.ReadUInt32("Rates", "Daily");
         MrConquer = iniFile.ReadUInt32("Rates", "MrConquer");
         NobilityPrize = iniFile.ReadUInt32("Rates", "NobilityPrize");
-        Twar = iniFile.ReadUInt32("Rates", "Twar");
-        Ctf = iniFile.ReadUInt32("Rates", "Ctf");
-        ClanWarCity = iniFile.ReadUInt32("Rates", "ClanWarCity");
-        ClassPk = iniFile.ReadUInt32("Rates", "ClassPk");
     }
 }

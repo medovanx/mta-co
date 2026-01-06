@@ -335,7 +335,7 @@ namespace MTA.Game
             private void GetClientReward(Client.GameState obj)
             {
 
-                uint Reward = Rates.ClanWarCity;
+                uint Reward = 1000;
                 if (Map != ClanArena.TwinCityClan)
                     Reward /= 2;
                 if (obj.Entity.ClanRank == Clan.Ranks.ClanLeader)
