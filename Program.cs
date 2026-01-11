@@ -278,7 +278,6 @@ internal abstract class Program {
                 Console.WriteLine("Poker [Money + CPs] Tables Loaded.");
             }
 
-            Flowers.LoadFlowers();
             DataHolder.ReadStats();
             GhRooms.Execute += GHRooms_Execute;
             GhRooms.Start();
@@ -1186,7 +1185,7 @@ internal abstract class Program {
                 });
             }
 
-            Flowers.SaveFlowers();
+            // Flowers now saved individually to database when updated
             if (ServerName != null)
                 new MySqlCommand(MySqlCommandType.UPDATE).Update("configuration")
                     .Set("ItemUID", ConquerItem.ItemUID.Now).Where("Server", ServerName).Execute();

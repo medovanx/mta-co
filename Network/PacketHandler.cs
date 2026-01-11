@@ -22,6 +22,7 @@ using MTA.Game.Events.GuildWar;
 using MTA.Game.Events.SteedRace;
 using MTA.Game.Features;
 using MTA.Game.Features.Flowers;
+using MTA.Game.Features.Flowers.Packets.Writers;
 using MTA.Game.Features.Guilds.Database;
 using MTA.Game.Features.Reincarnation;
 using MTA.Game.Features.Tournaments;
@@ -3247,85 +3248,8 @@ namespace MTA.Network {
 
                 #endregion
 
-
-                #region Flowers (1150)
-
-                case 1150:
-                    SendFlower(client, packet);
-                    return;
-
-                #endregion
-
-                #region Flowers (1151)
-
                 case 1151: {
                     switch (packet[4]) {
-                        case 2: {
-                            if (IsGirl(client.Entity.Body)) {
-                                if (client.Entity.MyFlowers != null) {
-                                    var typ = CreateMyRank(client, out var my_rank);
-
-                                    packet[4] = 5;
-                                    client.Send(packet);
-
-                                    client.Entity.FlowerRank =
-                                        (uint)client.Entity.MyFlowers.SendScreenValue((FlowersT)typ, my_rank);
-                                    var ranking = new GenericRanking(true) {
-                                        Mode = 2,
-                                        RankingType = client.Entity.FlowerRank,
-                                        Count = 1
-                                    };
-
-                                    var rank = my_rank;
-                                    // if (rank > 0 && rank <= 100)
-                                    //    rank -= 1;
-                                    switch (typ) {
-                                        case (byte)FlowersT.Rouse:
-                                            ranking.Append((uint)rank, client.Entity.MyFlowers.RedRoses,
-                                                client.Entity.UID, client.Entity.Name);
-                                            break;
-                                        case (byte)FlowersT.Lilies:
-                                            ranking.Append((uint)rank, client.Entity.MyFlowers.Lilies,
-                                                client.Entity.UID, client.Entity.Name);
-                                            break;
-                                        case (byte)FlowersT.Orchids:
-                                            ranking.Append((uint)rank, client.Entity.MyFlowers.Orchads,
-                                                client.Entity.UID, client.Entity.Name);
-                                            break;
-                                        case (byte)FlowersT.Tulips:
-                                            ranking.Append((uint)rank, client.Entity.MyFlowers.Tulips,
-                                                client.Entity.UID, client.Entity.Name);
-                                            break;
-                                        default:
-                                            break;
-                                    }
-
-                                    client.Send(ranking.ToArray());
-                                    packet[4] = 5;
-                                    client.Send(packet);
-                                }
-                            }
-                            else {
-                                if (client.Entity.MyFlowers != null) {
-                                    var ranking = new GenericRanking(true) {
-                                        Mode = 2,
-                                        //  ranking.RankingType = GamePackets.GenericRanking.Kiss;
-                                        Count = 1
-                                    };
-                                    if (client.Entity.MyFlowers.RankRoses is < 100 and > 0) {
-                                        ranking.Append((uint)client.Entity.MyFlowers.RankRoses,
-                                            client.Entity.MyFlowers.RedRoses, client.Entity.UID, client.Entity.Name);
-                                        client.Send(ranking.ToArray());
-                                    }
-
-                                    packet[4] = 5;
-                                    client.Send(packet);
-                                }
-                            }
-
-                            break;
-                        }
-
                         #region Prestigee
 
                         case 6: {
@@ -3548,8 +3472,8 @@ namespace MTA.Network {
                                     for (byte x = 0; x < count; x++) {
                                         if (x + offset >= info.Length) break;
                                         var entity = info[x + offset];
-                                        if (entity.UID == 0) break;
-                                        ranking.Append((uint)(entity.RankRoses + 1), entity.RedRoses, entity.UID,
+                                        if (entity.Uid == 0) break;
+                                        ranking.Append((uint)(entity.RankRoses + 1), entity.RedRoses, entity.Uid,
                                             entity.Name);
                                     }
 
@@ -3568,8 +3492,8 @@ namespace MTA.Network {
                                     for (byte x = 0; x < count; x++) {
                                         if (x + offset >= info.Length) break;
                                         var entity = info[x + offset];
-                                        if (entity.UID == 0) break;
-                                        ranking.Append((uint)entity.RankLilies, entity.Lilies, entity.UID,
+                                        if (entity.Uid == 0) break;
+                                        ranking.Append((uint)entity.RankLilies, entity.Lilies, entity.Uid,
                                             entity.Name);
                                     }
 
@@ -3589,8 +3513,8 @@ namespace MTA.Network {
                                     for (byte x = 0; x < count; x++) {
                                         if (x + offset >= info.Length) break;
                                         var entity = info[x + offset];
-                                        if (entity.UID == 0) break;
-                                        ranking.Append((uint)entity.RankOrchids, entity.Orchads, entity.UID,
+                                        if (entity.Uid == 0) break;
+                                        ranking.Append((uint)entity.RankOrchids, entity.Orchids, entity.Uid,
                                             entity.Name);
                                     }
 
@@ -3609,8 +3533,8 @@ namespace MTA.Network {
                                     for (byte x = 0; x < count; x++) {
                                         if (x + offset >= info.Length) break;
                                         var entity = info[x + offset];
-                                        if (entity.UID == 0) break;
-                                        ranking.Append((uint)entity.RankTuilps, entity.Tulips, entity.UID,
+                                        if (entity.Uid == 0) break;
+                                        ranking.Append((uint)entity.RankTulops, entity.Tulips, entity.Uid,
                                             entity.Name);
                                     }
 
@@ -3642,7 +3566,6 @@ namespace MTA.Network {
                     break;
                 }
 
-                #endregion
 
                 #region FairyFlower (2070)
 
@@ -6480,7 +6403,7 @@ namespace MTA.Network {
             }
             else if (ranking.RankingType == GenericRanking.OrchidFairy) {
                 list = Flowers.OrchidsTop100;
-                select = (chiData) => chiData.Orchads;
+                select = (chiData) => chiData.Orchids;
             }
             else if (ranking.RankingType == GenericRanking.TulipFairy) {
                 list = Flowers.TulipsTop100;
@@ -6496,8 +6419,8 @@ namespace MTA.Network {
                 select = (chiData) => chiData.Lilies;
             }
             else if (ranking.RankingType == GenericRanking.TineFairy) {
-                list = Flowers.TineTop100;
-                select = (chiData) => chiData.Orchads;
+                list = Flowers.WineTop100;
+                select = (chiData) => chiData.Orchids;
             }
             else if (ranking.RankingType == GenericRanking.JadeFairy) {
                 list = Flowers.JadeTop100;
@@ -6515,7 +6438,7 @@ namespace MTA.Network {
             var rank = page * 10;
             for (var i = rank; i < rank + count; i++) {
                 var current = list[i];
-                nRanking.Append((uint)(i + 1), select(current), current.UID, current.Name);
+                nRanking.Append((uint)(i + 1), select(current), current.Uid, current.Name);
             }
 
             client.Send(nRanking);
@@ -13905,9 +13828,9 @@ namespace MTA.Network {
             var sendFlower = new SendFlower {
                 Typing = (IsBoy(client.Entity.Body) ? 3u : 2u)
             };
-            sendFlower.Apprend(client.Entity.MyFlowers);
+            sendFlower.Append(client.Entity.Flowers);
             client.Send(sendFlower.ToArray());
-            if (client.Entity.MyFlowers.aFlower > 0u) {
+            if (client.Entity.Flowers.AFlower > 0u) {
                 client.Send(new SendFlower {
                     Typing = IsBoy(client.Entity.Body) ? 2u : 3u
                 }.ToArray());
@@ -14757,360 +14680,12 @@ namespace MTA.Network {
 
         #region Flowers
 
-        public static void SendFlower(GameState client, byte[] packet) {
-            var typ1 = packet[4];
-            var Target = BitConverter.ToUInt32(packet, 8);
-            var ITEM_UID = BitConverter.ToUInt32(packet, 12);
-
-            if (IsBoy(client.Entity.Body) && typ1 == 0) //boy send
-            {
-                switch (ITEM_UID) {
-                    case 0: //send my flower
-                    {
-                        if (client.Entity.MyFlowers.aFlower == 0) break;
-
-                        if (Kernel.GamePool.TryGetValue(Target, out var target_client)) {
-                            if (!IsGirl(target_client.Entity.Body))
-                                return;
-                            client.Entity.MyFlowers.aFlower = 0;
-                            client.Entity.MyFlowers.SendDay = (uint)DateTime.Now.Day;
-
-                            target_client.Entity.MyFlowers.RedRoses2day += 1;
-                            target_client.Entity.MyFlowers.RedRoses += 1;
-                            var flow = new SendFlower {
-                                Typing = 0,
-                                Effect = (byte)Game.Features.Flowers.Effect.Tulips,
-                                Amount = 1,
-                                SenderName = client.Entity.Name,
-                                ReceiverName = target_client.Entity.Name,
-                                FType = (byte)FlowersT.Rouse
-                            };
-                            if (target_client.AsMember != null)
-                                target_client.AsMember.Roses += 1;
-
-                            client.SendScreen(flow.ToArray());
-                        }
-
-                        break;
-                    }
-                    default: {
-                        if (client.Inventory.TryGetItem(ITEM_UID, out var Item)) {
-                            if (Kernel.GamePool.TryGetValue(Target, out var target_client)) {
-                                if (!IsGirl(target_client.Entity.Body))
-                                    return;
-                                // if (Item.ID % 1000 != Database.ClientDB.Items[Item.ID].Durability)
-                                //     break;
-
-
-                                var Amount = Item.ID % 1000;
-
-                                var flow = new SendFlower {
-                                    Typing = typ1,
-                                    Amount = Amount,
-                                    SenderName = client.Entity.Name,
-                                    ReceiverName = target_client.Entity.Name
-                                };
-
-                                switch (GetFlowerTyp(Item.ID)) {
-                                    case (byte)FlowersT.Rouse: {
-                                        flow.Effect = (byte)Game.Features.Flowers.Effect.Rouse;
-                                        flow.FType = (byte)FlowersT.Rouse;
-
-                                        target_client.Entity.MyFlowers.RedRoses2day += Amount;
-                                        target_client.Entity.MyFlowers.RedRoses += Amount;
-                                        if (Flowers.RedRousesTop100.Length > 98) {
-                                            if (Flowers.RedRousesTop100[98].RedRoses <=
-                                                target_client.Entity.MyFlowers.RedRoses) {
-                                                Flowers.CulculateRankRouse(target_client.Entity.MyFlowers);
-                                            }
-                                        }
-                                        else
-                                            Flowers.CulculateRankRouse(target_client.Entity.MyFlowers);
-
-                                        if (target_client.AsMember != null)
-                                            target_client.AsMember.Roses += Amount;
-                                        break;
-                                    }
-                                    case (byte)FlowersT.Lilies: {
-                                        flow.Effect = (byte)Game.Features.Flowers.Effect.Lilies;
-                                        flow.FType = (byte)FlowersT.Lilies;
-
-                                        target_client.Entity.MyFlowers.Lilies2day += Amount;
-                                        target_client.Entity.MyFlowers.Lilies += Amount;
-                                        if (Flowers.LiliesTop100.Length > 98) {
-                                            if (Flowers.LiliesTop100[98].Lilies <=
-                                                target_client.Entity.MyFlowers.Lilies) {
-                                                Flowers.CulculateRankLilies(target_client.Entity.MyFlowers);
-                                            }
-                                        }
-                                        else
-                                            Flowers.CulculateRankLilies(target_client.Entity.MyFlowers);
-
-                                        if (target_client.AsMember != null)
-                                            target_client.AsMember.Lilies += Amount;
-                                        break;
-                                    }
-                                    case (byte)FlowersT.Orchids: {
-                                        flow.Effect = (byte)Game.Features.Flowers.Effect.Orchids;
-                                        flow.FType = (byte)FlowersT.Orchids;
-
-                                        target_client.Entity.MyFlowers.Orchads2day += Amount;
-                                        target_client.Entity.MyFlowers.Orchads += Amount;
-                                        if (Flowers.OrchidsTop100.Length > 98) {
-                                            if (Flowers.OrchidsTop100[98].Orchads <=
-                                                target_client.Entity.MyFlowers.Orchads) {
-                                                Flowers.CulculateRankOrchids(target_client.Entity.MyFlowers);
-                                            }
-                                        }
-                                        else
-                                            Flowers.CulculateRankOrchids(target_client.Entity.MyFlowers);
-
-                                        if (target_client.AsMember != null)
-                                            target_client.AsMember.Orchids += Amount;
-                                        break;
-                                    }
-                                    case (byte)FlowersT.Tulips: {
-                                        flow.Effect = (byte)Game.Features.Flowers.Effect.Tulips;
-                                        flow.FType = (byte)FlowersT.Tulips;
-
-                                        target_client.Entity.MyFlowers.Tulips2day += Amount;
-                                        target_client.Entity.MyFlowers.Tulips += Amount;
-                                        if (Flowers.TulipsTop100.Length > 98) {
-                                            if (Flowers.TulipsTop100[98].Tulips <=
-                                                target_client.Entity.MyFlowers.Tulips) {
-                                                Flowers.CulculateRankTulips(target_client.Entity.MyFlowers);
-                                            }
-                                        }
-                                        else
-                                            Flowers.CulculateRankTulips(target_client.Entity.MyFlowers);
-
-                                        if (target_client.AsMember != null)
-                                            target_client.AsMember.Tulips += Amount;
-                                        break;
-                                    }
-                                }
-
-                                client.Inventory.Remove(Item, Enums.ItemUse.Remove);
-
-
-                                client.SendScreen(flow.ToArray());
-                            }
-                        }
-
-                        break;
-                    }
-                }
-            }
-            else if (IsGirl(client.Entity.Body) && typ1 == 1) //girl send 
-            {
-                switch (ITEM_UID) {
-                    case 0: //curent flower
-                    {
-                        if (client.Entity.MyFlowers.aFlower == 0)
-                            return;
-                        if (Kernel.GamePool.TryGetValue(Target, out var target_client)) {
-                            if (!IsBoy(target_client.Entity.Body))
-                                return;
-                            client.Entity.MyFlowers.aFlower = 0;
-                            client.Entity.MyFlowers.SendDay = (uint)DateTime.Now.Day;
-
-                            target_client.Entity.MyFlowers.RedRoses += 1;
-                            target_client.Entity.MyFlowers.RedRoses2day += 1;
-                            var flow = new SendFlower {
-                                Typing = 1,
-                                Effect = (byte)Game.Features.Flowers.Effect.Kiss,
-                                Amount = 1,
-                                SenderName = client.Entity.Name,
-                                ReceiverName = target_client.Entity.Name,
-                                FType = (byte)FlowersT.Kiss
-                            };
-
-                            if (target_client.AsMember != null)
-                                target_client.AsMember.Roses += 1;
-
-                            client.SendScreen(flow.ToArray());
-                        }
-
-                        break;
-                    }
-                    default: {
-                        if (client.Inventory.TryGetItem(ITEM_UID, out var Item)) {
-                            if (Kernel.GamePool.TryGetValue(Target, out var target_client)) {
-                                if (!IsBoy(target_client.Entity.Body))
-                                    return;
-                                //  if (Item.ID % 1000 != Database.ClientDB.Items[Item.ID].Durability)
-                                //      break;
-                                // Role.Player target_client = obj as Role.Player;
-
-                                var Amount = Item.ID % 1000;
-
-                                var flow = new SendFlower {
-                                    Typing = 1,
-                                    Amount = Amount,
-                                    SenderName = client.Entity.Name,
-                                    ReceiverName = target_client.Entity.Name
-                                };
-
-                                switch (GetFlowerTyp(Item.ID)) {
-                                    case (byte)FlowersT.Rouse: {
-                                        flow.Effect = (byte)Game.Features.Flowers.Effect.Kiss;
-                                        flow.FType = (byte)FlowersT.Kiss;
-
-                                        target_client.Entity.MyFlowers.RedRoses2day += Amount;
-                                        target_client.Entity.MyFlowers.RedRoses += Amount;
-                                        if (Flowers.KissTop100.Length > 98) {
-                                            if (Flowers.KissTop100[98].RedRoses <=
-                                                target_client.Entity.MyFlowers.RedRoses) {
-                                                Flowers.CulculateRankKiss(target_client.Entity.MyFlowers);
-                                            }
-                                        }
-                                        else
-                                            Flowers.CulculateRankKiss(target_client.Entity.MyFlowers);
-
-                                        if (target_client.AsMember != null)
-                                            target_client.AsMember.Roses += Amount;
-                                        break;
-                                    }
-                                    case (byte)FlowersT.Lilies: {
-                                        flow.Effect = (byte)Game.Features.Flowers.Effect.love;
-                                        flow.FType = (byte)FlowersT.love;
-
-                                        target_client.Entity.MyFlowers.Lilies2day += Amount;
-                                        target_client.Entity.MyFlowers.Lilies += Amount;
-                                        if (Flowers.LoveTop100.Length > 98) {
-                                            if (Flowers.LoveTop100[98].Lilies <=
-                                                target_client.Entity.MyFlowers.Lilies) {
-                                                Flowers.CulculateRankLove(target_client.Entity.MyFlowers);
-                                            }
-                                        }
-                                        else
-                                            Flowers.CulculateRankLove(target_client.Entity.MyFlowers);
-
-                                        if (target_client.AsMember != null)
-                                            target_client.AsMember.Lilies += Amount;
-                                        break;
-                                    }
-                                    case (byte)FlowersT.Orchids: {
-                                        flow.Effect = (byte)Game.Features.Flowers.Effect.Tins;
-                                        flow.FType = (byte)FlowersT.Tins;
-
-                                        target_client.Entity.MyFlowers.Orchads2day += Amount;
-                                        target_client.Entity.MyFlowers.Orchads += Amount;
-                                        if (Flowers.TineTop100.Length > 98) {
-                                            if (Flowers.TineTop100[98].Orchads <=
-                                                target_client.Entity.MyFlowers.Orchads) {
-                                                Flowers.CulculateRankTine(target_client.Entity.MyFlowers);
-                                            }
-                                        }
-                                        else
-                                            Flowers.CulculateRankTine(target_client.Entity.MyFlowers);
-
-                                        if (target_client.AsMember != null)
-                                            target_client.AsMember.Orchids += Amount;
-                                        break;
-                                    }
-                                    case (byte)FlowersT.Tulips: {
-                                        flow.Effect = (byte)Game.Features.Flowers.Effect.Jade;
-                                        flow.FType = (byte)FlowersT.Jade;
-
-                                        target_client.Entity.MyFlowers.Tulips2day += Amount;
-                                        target_client.Entity.MyFlowers.Tulips += Amount;
-                                        if (Flowers.JadeTop100.Length > 98) {
-                                            if (Flowers.JadeTop100[98].Tulips <=
-                                                target_client.Entity.MyFlowers.Tulips) {
-                                                Flowers.CulculateRankJade(target_client.Entity.MyFlowers);
-                                            }
-                                        }
-                                        else
-                                            Flowers.CulculateRankJade(target_client.Entity.MyFlowers);
-
-                                        if (target_client.AsMember != null)
-                                            target_client.AsMember.Tulips += Amount;
-                                        break;
-                                    }
-                                }
-
-                                client.Inventory.Remove(Item, Enums.ItemUse.Remove);
-
-                                client.SendScreen(flow.ToArray());
-                            }
-                        }
-
-                        break;
-                    }
-                }
-            }
-        }
-
-
-        public static uint GetFlowerTyp(uint ID) {
-            if (ID is >= 751001 and <= 751999 or >= 755001 and <= 755999)
-                return (uint)FlowersT.Rouse;
-            if (ID is >= 752001 and <= 752999 or >= 756001 and <= 756999)
-                return (uint)FlowersT.Lilies;
-            if (ID is >= 753001 and <= 753999 or >= 757001 and <= 757999)
-                return (uint)FlowersT.Orchids;
-            if (ID is >= 754001 and <= 754999 or >= 758001 and <= 758999)
-                return (uint)FlowersT.Tulips;
-            return 0;
-        }
-
         public static bool IsBoy(uint mesh) {
             return mesh is 1003 or 1004;
         }
 
         public static bool IsGirl(uint mesh) {
             return mesh is 2001 or 2002;
-        }
-
-        private class ClientRank {
-            public uint Amount;
-            public uint Rank;
-        }
-
-        public static uint CreateMyRank(GameState client, out int rank) {
-            List<ClientRank> FRanks = [
-                new ClientRank()
-                    { Rank = (uint)client.Entity.MyFlowers.RankLilies, Amount = client.Entity.MyFlowers.Lilies },
-
-                new ClientRank()
-                    { Rank = (uint)client.Entity.MyFlowers.RankOrchids, Amount = client.Entity.MyFlowers.Orchads },
-
-                new ClientRank()
-                    { Rank = (uint)client.Entity.MyFlowers.RankRoses, Amount = client.Entity.MyFlowers.RedRoses },
-
-                new ClientRank()
-                    { Rank = (uint)client.Entity.MyFlowers.RankTuilps, Amount = client.Entity.MyFlowers.Tulips }
-            ];
-            var array = FRanks.Where((f1) => f1.Rank != 0).ToArray();
-            Array.Sort(array, (f1, f2) => {
-                var n_rank = f1.Rank.CompareTo(f2.Rank);
-
-                if (f2.Rank == f1.Rank)
-                    return f2.Amount.CompareTo(f1.Amount);
-                return n_rank;
-            });
-            if (array is { Length: > 0 }) {
-                var BestRank = array[0];
-                if (BestRank.Rank != 0) {
-                    rank = (int)BestRank.Rank;
-                    if (client.Entity.MyFlowers.RankLilies == BestRank.Rank &&
-                        client.Entity.MyFlowers.Lilies == BestRank.Amount)
-                        return (byte)FlowersT.Lilies;
-                    if (client.Entity.MyFlowers.RankOrchids == BestRank.Rank &&
-                        client.Entity.MyFlowers.Orchads == BestRank.Amount)
-                        return (byte)FlowersT.Orchids;
-                    if (client.Entity.MyFlowers.RankRoses == BestRank.Rank &&
-                        client.Entity.MyFlowers.RedRoses == BestRank.Amount)
-                        return (byte)FlowersT.Rouse;
-                    if (client.Entity.MyFlowers.RankTuilps == BestRank.Rank &&
-                        client.Entity.MyFlowers.Tulips == BestRank.Amount)
-                        return (byte)FlowersT.Tulips;
-                }
-            }
-
-            rank = 0;
-            return 0;
         }
 
         #endregion Flowers

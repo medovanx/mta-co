@@ -1,534 +1,421 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Collections.Concurrent;
 
-namespace MTA.Game.Features.Flowers
-{
-    public enum Effect : byte
-    {
-        None = 0,
-        Rouse = 1,
-        Lilies = 2,
-        Orchids = 3,
-        Tulips = 4,
-        Kiss = 1,
-        love = 2,
-        Tins = 3,
-        Jade = 4,
+namespace MTA.Game.Features.Flowers;
+
+public enum Effect : byte {
+    None = 0,
+    Rose = 1,
+    Lilies = 2,
+    Orchids = 3,
+    Tulips = 4,
+    Kiss = 1,
+    Love = 2,
+    Wine = 3,
+    Jade = 4
+}
+
+public enum FlowersT : byte {
+    Roses = 0,
+    Lilies = 1,
+    Orchids = 2,
+    Tulips = 3,
+    Kiss = 4,
+    Love = 5,
+    Wine = 6,
+    Jade = 7
+}
+
+public class Flowers {
+    // Static dictionaries removed - now using database storage
+
+    public static Flowers[] KissTop100 = [];
+    public static Flowers[] LoveTop100 = [];
+    public static Flowers[] WineTop100 = [];
+    public static Flowers[] JadeTop100 = [];
+
+    public static Flowers[] RedRousesTop100 = [];
+    public static Flowers[] LiliesTop100 = [];
+    public static Flowers[] OrchidsTop100 = [];
+    public static Flowers[] TulipsTop100 = [];
+
+    public static object RoseLock = new();
+    public static object LiliesLock = new();
+    public static object OrchidsLock = new();
+    public static object TulipsLock = new();
+
+    public static object KissLock = new();
+    public static object LoveLock = new();
+    public static object WineLock = new();
+    public static object JadeLock = new();
+
+    public static List<Flowers> RankKiss = [];
+    public static List<Flowers> RankLove = [];
+    public static List<Flowers> RankWine = [];
+    public static List<Flowers> RankJade = [];
+
+    public static List<Flowers> RankRose = [];
+    public static List<Flowers> Ranklili = [];
+    public static List<Flowers> RankOrchid = [];
+    public static List<Flowers> RankTulips = [];
+
+    public uint AFlower = 1;
+
+    public uint Lilies; //love
+    public uint Lilies2day;
+
+    public string Name = "";
+    public uint Orchids; //wine
+    public uint OrchidsToday;
+    public int RankLilies; //max 10 start with -1.
+    public int RankOrchids; //max 10 start with -1.
+
+    public int RankRoses;
+    public int RankTulops; //max 10 start with -1.
+
+    public uint RedRoses; //kiss
+    public uint RedRosesToday;
+    public uint SendDay;
+    public uint Tulips; //jade
+    public uint TulipsToday;
+    public uint Uid;
+
+    public Flowers() { }
+
+    public Flowers(uint uid, string name) {
+        Uid = uid;
+        Name = name;
     }
 
-    public enum FlowersT : byte
-    {
-        Rouse = 0,
-        Lilies = 1,
-        Orchids = 2,
-        Tulips = 3,
-        Kiss = 4,
-        love = 5,
-        Tins = 6,
-        Jade = 7,
-    }
+    public DateTime LastFlowerSent { get; set; }
 
-    public class Flowers
-    {
-
-        public Flowers() { }
-        public Flowers(uint _UID, string name)
-        {
-            UID = _UID;
-            Name = name;
-        }
-        public uint UID;
-
-        public uint aFlower = 1;
-        public uint SendDay;
-
-        public string Name = "";
-
-        public int SendScreenValue(FlowersT typ, int rak)
-        {
-            if (rak == 0 || rak > 100)
-                return 0;
-            return (int)(30000002 + (uint)(100 * (byte)typ) + GetRank(rak));
-        }
-        public ushort GetRank(int rank)
-        {
-            if (rank == 1)
-                return 0;
-            if (rank == 2)
-                return 10000;
-            if (rank == 3)
-                return 20000;
-            if (rank > 3)
-                return 30000;
-
+    public int SendScreenValue(FlowersT typ, int rak) {
+        if (rak == 0 || rak > 100)
             return 0;
+        return (int)(30000002 + (uint)(100 * (byte)typ) + GetRank(rak));
+    }
+
+    public ushort GetRank(int rank) {
+        switch (rank) {
+            case 1:
+                return 0;
+            case 2:
+                return 10000;
+            case 3:
+                return 20000;
+            case > 3:
+                return 30000;
+            default:
+                return 0;
         }
-        public int BoySendScreenValue(FlowersT typ, int rak)
-        {
-            int ret = 0;
-            if (rak == -1) return 0;
-            if (rak > 100) return 0;
+    }
 
-            ret = (int)(30000402 + (uint)(100 * (byte)typ));
+    public int BoySendScreenValue(FlowersT typ, int rak) {
+        switch (rak) {
+            case -1:
+            case > 100:
+                return 0;
+            default:
+                var ret = (int)(30000402 + (uint)(100 * (byte)typ));
 
-            return ret;
+                return ret;
         }
+    }
 
-        public int RankRoses;
-        public int RankLilies;//max 10 start with -1.
-        public int RankOrchids;//max 10 start with -1.
-        public int RankTuilps;//max 10 start with -1.
 
-        public uint RedRoses;//kiss
-        public uint RedRoses2day;
-        public uint Lilies;//love
-        public uint Lilies2day;
-        public uint Orchads;//wine
-        public uint Orchads2day;
-        public uint Tulips;//jade
-        public uint Tulips2day;
+    public void Reset() {
+        if (SendDay == DateTime.Now.Day) return;
+        RedRosesToday = Lilies2day = OrchidsToday = TulipsToday = 0;
+        AFlower = 1;
+        SendDay = (uint)DateTime.Now.Day;
+    }
 
-        private DateTime _LastFlowerSent;
-        public DateTime LastFlowerSent
-        {
-            get
-            {
-                return _LastFlowerSent;
-            }
-            set
-            {
-                _LastFlowerSent = value;
-            }
-        }
+    public static void CalculateRankJade(Flowers afflow) {
+        lock (JadeLock) {
+            try {
+                if (!RankJade.Contains(afflow))
+                    RankJade.Add(afflow);
+                var data = RankJade.ToArray();
 
-        public override string ToString()
-        {
-            return UID + "[]"
-                + Name + "[]"
-                + RedRoses + "[]"
-                + RedRoses2day + "[]"
-                + Lilies + "[]"
-                + Lilies2day + "[]"
-                + Orchads + "[]"
-                + Orchads2day + "[]"
-                + Tulips + "[]"
-                + Tulips2day + "[]"
-                + SendDay + "[]" + aFlower + "[]" + 0 + "[]" + 0 + "[]" + 0 + "[]" + 0 + "[]"
-                + 0 + "[]";
-        }
-
-        public void Read(string aLine)
-        {
-            if (aLine == "" || aLine == null)
-                return;
-            string[] line = aLine.Split(["[]"], StringSplitOptions.RemoveEmptyEntries);
-            UID = uint.Parse(line[0]);
-            Name = line[1];
-            RedRoses = uint.Parse(line[2]);
-            RedRoses2day = uint.Parse(line[3]);
-            Lilies = uint.Parse(line[4]);
-            Lilies2day = uint.Parse(line[5]);
-            Orchads = uint.Parse(line[6]);
-            Orchads2day = uint.Parse(line[7]);
-            Tulips = uint.Parse(line[8]);
-            Tulips2day = uint.Parse(line[9]);
-            SendDay = uint.Parse(line[10]);
-            aFlower = uint.Parse(line[11]);
-
-            Reset();
-        }
-
-        public void Reset()
-        {
-            if (SendDay != DateTime.Now.Day)
-            {
-                RedRoses2day = Lilies2day = Orchads2day = Tulips2day = 0;
-                aFlower = 1;
-                SendDay = (uint)DateTime.Now.Day;
-            }
-        }
-
-        public static ConcurrentDictionary<uint, Flowers> Flowers_Poll = new ConcurrentDictionary<uint, Flowers>();
-
-        public static ConcurrentDictionary<uint, Flowers> BoyFlowers = new ConcurrentDictionary<uint, Flowers>();
-
-        public static Flowers[] KissTop100 = [];
-        public static Flowers[] LoveTop100 = [];
-        public static Flowers[] TineTop100 = [];
-        public static Flowers[] JadeTop100 = [];
-
-        public static Flowers[] RedRousesTop100 = [];
-        public static Flowers[] LiliesTop100 = [];
-        public static Flowers[] OrchidsTop100 = [];
-        public static Flowers[] TulipsTop100 = [];
-
-        public static object RouseLock = new object();
-        public static object LilisLock = new object();
-        public static object OrchidsLock = new object();
-        public static object TulipsLock = new object();
-
-        public static object KissLock = new object();
-        public static object LoveLock = new object();
-        public static object TineLock = new object();
-        public static object JadeLock = new object();
-
-        public static List<Flowers> RankKiss = [];
-        public static List<Flowers> RankLove = [];
-        public static List<Flowers> RankTine = [];
-        public static List<Flowers> RankJade = [];
-
-        public static List<Flowers> Rankrose = [];
-        public static List<Flowers> Ranklili = [];
-        public static List<Flowers> Rankorchid = [];
-        public static List<Flowers> RankTulips = [];
-
-        public static void CulculateRankJade(Flowers afflow)
-        {
-            lock (JadeLock)
-            {
-                try
-                {
-                    if (!RankJade.Contains(afflow))
-                        RankJade.Add(afflow);
-                    var data = RankJade.ToArray();
-
-                    Array.Sort(data, (c1, c2) => { return c2.Tulips.CompareTo(c1.Tulips); });
-
-                    var room = data.ToArray();
-
-                    List<Flowers> backUpd = [];
-
-                    int x = 1;
-                    foreach (Flowers flow in room)
-                    {
-                        if (flow.Tulips == 0) continue;
-                        if (x < 100)
-                        {
-                            flow.RankTuilps = x;
-                            backUpd.Add(flow);
-                        }
-                        else
-                            flow.RankTuilps = 0;
-                        x++;
-                    }
-                    lock (JadeTop100)
-                    {
-                        RankJade = new List<Flowers>(backUpd);
-                        JadeTop100 = backUpd.ToArray();
-                    }
-                }
-                catch (Exception e) { Console.WriteLine(e.ToString()); }
-            }
-        }
-        public static void CulculateRankTine(Flowers afflow)
-        {
-            lock (TineLock)
-            {
-                try
-                {
-                    if (!RankTine.Contains(afflow))
-                        RankTine.Add(afflow);
-                    var data = RankTine.ToArray();
-
-                    Array.Sort(data, (c1, c2) => { return c2.Orchads.CompareTo(c1.Orchads); });
-
-                    var room = data.ToArray();
-
-                    List<Flowers> backUpd = [];
-
-                    int x = 1;
-                    foreach (Flowers flow in room)
-                    {
-                        if (flow.Orchads == 0) continue;
-                        if (x < 100)
-                        {
-                            flow.RankOrchids = x;
-                            backUpd.Add(flow);
-                        }
-                        else
-                            flow.RankOrchids = 0;
-                        x++;
-                    }
-                    lock (TineTop100)
-                    {
-                        RankTine = new List<Flowers>(backUpd);
-                        TineTop100 = backUpd.ToArray();
-                    }
-                }
-                catch (Exception e) { Console.WriteLine(e.ToString()); }
-            }
-        }
-        public static void CulculateRankLove(Flowers afflow)
-        {
-            lock (LoveLock)
-            {
-                try
-                {
-                    if (!RankLove.Contains(afflow))
-                        RankLove.Add(afflow);
-                    var data = RankLove.ToArray();
-
-                    Array.Sort(data, (c1, c2) => { return c2.Lilies.CompareTo(c1.Lilies); });
-
-                    var room = data.ToArray();
-
-                    List<Flowers> backUpd = [];
-
-                    int x = 1;
-                    foreach (Flowers flow in room)
-                    {
-                        if (flow.Lilies == 0) continue;
-                        if (x < 100)
-                        {
-                            flow.RankLilies = x;
-                            backUpd.Add(flow);
-                        }
-                        else
-                            flow.RankLilies = 0;
-                        x++;
-                    }
-                    lock (LoveTop100)
-                    {
-                        RankLove = new List<Flowers>(backUpd);
-                        LoveTop100 = backUpd.ToArray();
-                    }
-                }
-                catch (Exception e) { Console.WriteLine(e.ToString()); }
-            }
-        }
-
-        public static void CulculateRankKiss(Flowers afflow)
-        {
-            lock (KissLock)
-            {
-                try
-                {
-                    if (!RankKiss.Contains(afflow))
-                        RankKiss.Add(afflow);
-                    var data = RankKiss.ToArray();
-
-                    Array.Sort(data, (c1, c2) => { return c2.RedRoses.CompareTo(c1.RedRoses); });
-
-                    var room = data.ToArray();
-
-                    List<Flowers> backUpd = [];
-
-                    int x = 1;
-                    foreach (Flowers flow in room)
-                    {
-                        if (flow.RedRoses == 0) continue;
-                        if (x < 100)
-                        {
-                            flow.RankRoses = x;
-                            backUpd.Add(flow);
-                        }
-                        else
-                            flow.RankRoses = 0;
-                        x++;
-                    }
-                    lock (KissTop100)
-                    {
-                        RankKiss = new List<Flowers>(backUpd);
-                        KissTop100 = backUpd.ToArray();
-                    }
-                }
-                catch (Exception e) { Console.WriteLine(e.ToString()); }
-            }
-        }
-
-        public static void CulculateRankRouse(Flowers afflow)
-        {
-            lock (RouseLock)
-            {
-                try
-                {
-                    if (!Rankrose.Contains(afflow))
-                        Rankrose.Add(afflow);
-                    var data = Rankrose.ToArray();
-
-                    Array.Sort(data, (c1, c2) => { return c2.RedRoses.CompareTo(c1.RedRoses); });
-
-                    var room = data.ToArray();
-
-                    List<Flowers> backUpd = [];
-
-                    int x = 1;
-                    foreach (Flowers flow in room)
-                    {
-                        if (flow.RedRoses == 0) continue;
-                        if (x < 100)
-                        {
-                            flow.RankRoses = x;
-                            backUpd.Add(flow);
-                        }
-                        else
-                        {
-                            flow.RankRoses = 0;
-                        }
-
-                        x++;
-                    }
-                    lock (RedRousesTop100)
-                    {
-                        Rankrose = new List<Flowers>(backUpd);
-                        RedRousesTop100 = backUpd.ToArray();
-                    }
-                }
-                catch (Exception e) { Console.WriteLine(e.ToString()); }
-            }
-        }
-        public static void CulculateRankLilies(Flowers afflow)
-        {
-            lock (LilisLock)
-            {
-                if (!Ranklili.Contains(afflow))
-                    Ranklili.Add(afflow);
-                var data = Ranklili.ToArray();
-
-                Array.Sort(data, (c1, c2) => { return c2.Lilies.CompareTo(c1.Lilies); });
+                Array.Sort(data, (c1, c2) => c2.Tulips.CompareTo(c1.Tulips));
 
                 var room = data.ToArray();
+
                 List<Flowers> backUpd = [];
 
-                int x = 1;
-                foreach (Flowers flow in room)
-                {
-                    if (flow.Lilies == 0) continue;
-                    if (x < 100)
-                    {
-                        flow.RankLilies = x;
+                var x = 1;
+                foreach (var flow in room) {
+                    if (flow.Tulips == 0) continue;
+                    if (x < 100) {
+                        flow.RankTulops = x;
                         backUpd.Add(flow);
                     }
-                    else
-                    {
-                        flow.RankLilies = 0;
+                    else {
+                        flow.RankTulops = 0;
                     }
 
                     x++;
                 }
-                lock (LiliesTop100)
-                {
-                    Ranklili = new List<Flowers>(backUpd);
-                    LiliesTop100 = backUpd.ToArray();
+
+                lock (JadeTop100) {
+                    RankJade = new List<Flowers>(backUpd);
+                    JadeTop100 = backUpd.ToArray();
                 }
             }
+            catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
         }
+    }
 
-        public static void CulculateRankOrchids(Flowers afflow)
-        {
-            lock (OrchidsLock)
-            {
-                if (!Rankorchid.Contains(afflow))
-                    Rankorchid.Add(afflow);
-                var data = Rankorchid.ToArray();
+    public static void CalculateRankWine(Flowers afflow) {
+        lock (WineLock) {
+            try {
+                if (!RankWine.Contains(afflow))
+                    RankWine.Add(afflow);
+                var data = RankWine.ToArray();
 
-                Array.Sort(data, (c1, c2) => { return c2.Orchads.CompareTo(c1.Orchads); });
+                Array.Sort(data, (c1, c2) => c2.Orchids.CompareTo(c1.Orchids));
 
                 var room = data.ToArray();
 
                 List<Flowers> backUpd = [];
 
-                int x = 1;
-                foreach (Flowers flow in room)
-                {
-                    if (flow.Orchads == 0) continue;
-                    if (x < 100)
-                    {
+                var x = 1;
+                foreach (var flow in room) {
+                    if (flow.Orchids == 0) continue;
+                    if (x < 100) {
                         flow.RankOrchids = x;
                         backUpd.Add(flow);
                     }
-                    else
-                    {
+                    else {
                         flow.RankOrchids = 0;
                     }
 
                     x++;
                 }
-                lock (OrchidsTop100)
-                {
-                    Rankorchid = new List<Flowers>(backUpd);
-                    OrchidsTop100 = backUpd.ToArray();
+
+                lock (WineTop100) {
+                    RankWine = new List<Flowers>(backUpd);
+                    WineTop100 = backUpd.ToArray();
                 }
             }
+            catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
         }
+    }
 
-        public static void CulculateRankTulips(Flowers afflow)
-        {
-            lock (TulipsLock)
-            {
-                if (!RankTulips.Contains(afflow))
-                    RankTulips.Add(afflow);
-                var data = RankTulips.ToArray();
+    public static void CalculateRankLove(Flowers afflow) {
+        lock (LoveLock) {
+            try {
+                if (!RankLove.Contains(afflow))
+                    RankLove.Add(afflow);
+                var data = RankLove.ToArray();
 
-                Array.Sort(data, (c1, c2) => { return c2.Tulips.CompareTo(c1.Tulips); });
+                Array.Sort(data, (c1, c2) => c2.Lilies.CompareTo(c1.Lilies));
 
                 var room = data.ToArray();
 
                 List<Flowers> backUpd = [];
 
-                int x = 1;
-                foreach (Flowers flow in room)
-                {
-                    if (flow.Tulips == 0) continue;
-                    if (x < 100)
-                    {
-                        flow.RankTuilps = x;
+                var x = 1;
+                foreach (var flow in room) {
+                    if (flow.Lilies == 0) continue;
+                    if (x < 100) {
+                        flow.RankLilies = x;
                         backUpd.Add(flow);
                     }
-                    else
-                    {
-                        flow.RankTuilps = 0;
+                    else {
+                        flow.RankLilies = 0;
                     }
 
                     x++;
                 }
-                lock (TulipsTop100)
-                {
-                    RankTulips = new List<Flowers>(backUpd);
-                    TulipsTop100 = backUpd.ToArray();
+
+                lock (LoveTop100) {
+                    RankLove = new List<Flowers>(backUpd);
+                    LoveTop100 = backUpd.ToArray();
                 }
             }
+            catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
         }
+    }
 
-        // Legacy members for compatibility
-        public SafeDictionary<uint, Flowers> flower = new SafeDictionary<uint, Flowers>(1000);
-        public static List<ListFlowerRank> Redrosse = [];
-        public static List<ListFlowerRank> Orchides = [];
-        public static List<ListFlowerRank> Lilise = [];
-        public static List<ListFlowerRank> Tuplise = [];
-        public static List<ListFlowerRank> RedrosseToday = [];
-        public static List<ListFlowerRank> OrchidesToday = [];
-        public static List<ListFlowerRank> LiliseToday = [];
-        public static List<ListFlowerRank> TupliseToday = [];
-        public bool liliestoday = false;
-        public bool orchadstoday = false;
-        public bool tulpistoday = false;
-        public bool redroesstoday = false;
-        public bool liliestoday2;
-        public bool orchadstoday2;
-        public bool tulpistoday2;
-        public bool redroesstoday2;
-        public bool liliestoday3;
-        public bool orchadstoday3;
-        public bool tulpistoday3;
-        public bool redroesstoday3;
-        public bool liliestoday4;
-        public bool orchadstoday4;
-        public bool tulpistoday4;
-        public bool redroesstoday4;
-        public struct ListFlowerRank
-        {
-            public string name;
-            public uint redrosse;
-            public uint orchides;
-            public uint lilise;
-            public uint tuplise;
-            public int rank;
-            public short body;
-            public uint uid;
+    public static void CalculateRankKiss(Flowers afflow) {
+        lock (KissLock) {
+            try {
+                if (!RankKiss.Contains(afflow))
+                    RankKiss.Add(afflow);
+                var data = RankKiss.ToArray();
+
+                Array.Sort(data, (c1, c2) => c2.RedRoses.CompareTo(c1.RedRoses));
+
+                var room = data.ToArray();
+
+                List<Flowers> backUpd = [];
+
+                var x = 1;
+                foreach (var flow in room) {
+                    if (flow.RedRoses == 0) continue;
+                    if (x < 100) {
+                        flow.RankRoses = x;
+                        backUpd.Add(flow);
+                    }
+                    else {
+                        flow.RankRoses = 0;
+                    }
+
+                    x++;
+                }
+
+                lock (KissTop100) {
+                    RankKiss = new List<Flowers>(backUpd);
+                    KissTop100 = backUpd.ToArray();
+                }
+            }
+            catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
         }
-        public uint id;
+    }
+
+    public static void CalculateRoseRank(Flowers afflow) {
+        lock (RoseLock) {
+            try {
+                if (!RankRose.Contains(afflow))
+                    RankRose.Add(afflow);
+                var data = RankRose.ToArray();
+
+                Array.Sort(data, (c1, c2) => c2.RedRoses.CompareTo(c1.RedRoses));
+
+                var room = data.ToArray();
+
+                List<Flowers> backUpd = [];
+
+                var x = 1;
+                foreach (var flow in room) {
+                    if (flow.RedRoses == 0) continue;
+                    if (x < 100) {
+                        flow.RankRoses = x;
+                        backUpd.Add(flow);
+                    }
+                    else {
+                        flow.RankRoses = 0;
+                    }
+
+                    x++;
+                }
+
+                lock (RedRousesTop100) {
+                    RankRose = new List<Flowers>(backUpd);
+                    RedRousesTop100 = backUpd.ToArray();
+                }
+            }
+            catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
+        }
+    }
+
+    public static void CalculateRankLilies(Flowers afflow) {
+        lock (LiliesLock) {
+            if (!Ranklili.Contains(afflow))
+                Ranklili.Add(afflow);
+            var data = Ranklili.ToArray();
+
+            Array.Sort(data, (c1, c2) => c2.Lilies.CompareTo(c1.Lilies));
+
+            var room = data.ToArray();
+            List<Flowers> backUpd = [];
+
+            var x = 1;
+            foreach (var flow in room) {
+                if (flow.Lilies == 0) continue;
+                if (x < 100) {
+                    flow.RankLilies = x;
+                    backUpd.Add(flow);
+                }
+                else {
+                    flow.RankLilies = 0;
+                }
+
+                x++;
+            }
+
+            lock (LiliesTop100) {
+                Ranklili = new List<Flowers>(backUpd);
+                LiliesTop100 = backUpd.ToArray();
+            }
+        }
+    }
+
+    public static void CalculateRankOrchids(Flowers afflow) {
+        lock (OrchidsLock) {
+            if (!RankOrchid.Contains(afflow))
+                RankOrchid.Add(afflow);
+            var data = RankOrchid.ToArray();
+
+            Array.Sort(data, (c1, c2) => c2.Orchids.CompareTo(c1.Orchids));
+
+            var room = data.ToArray();
+
+            List<Flowers> backUpd = [];
+
+            var x = 1;
+            foreach (var flow in room) {
+                if (flow.Orchids == 0) continue;
+                if (x < 100) {
+                    flow.RankOrchids = x;
+                    backUpd.Add(flow);
+                }
+                else {
+                    flow.RankOrchids = 0;
+                }
+
+                x++;
+            }
+
+            lock (OrchidsTop100) {
+                RankOrchid = new List<Flowers>(backUpd);
+                OrchidsTop100 = backUpd.ToArray();
+            }
+        }
+    }
+
+    public static void CalculateRankTulips(Flowers afflow) {
+        lock (TulipsLock) {
+            if (!RankTulips.Contains(afflow))
+                RankTulips.Add(afflow);
+            var data = RankTulips.ToArray();
+
+            Array.Sort(data, (c1, c2) => c2.Tulips.CompareTo(c1.Tulips));
+
+            var room = data.ToArray();
+
+            List<Flowers> backUpd = [];
+
+            var x = 1;
+            foreach (var flow in room) {
+                if (flow.Tulips == 0) continue;
+                if (x < 100) {
+                    flow.RankTulops = x;
+                    backUpd.Add(flow);
+                }
+                else {
+                    flow.RankTulops = 0;
+                }
+
+                x++;
+            }
+
+            lock (TulipsTop100) {
+                RankTulips = new List<Flowers>(backUpd);
+                TulipsTop100 = backUpd.ToArray();
+            }
+        }
     }
 }

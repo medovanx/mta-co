@@ -12,29 +12,82 @@ namespace MTA.Database
     {
         public static void SetFlowers(Client.GameState client)
         {
-            if (Network.PacketHandler.IsGirl(client.Entity.Body))
+            // Initialize flowers object
+            client.Entity.Flowers = new MTA.Game.Features.Flowers.Flowers(client.Entity.UID, client.Entity.Name);
+            
+            // Load from database
+            var record = Game.Features.Flowers.Database.FlowerTable.LoadByEntityId(client.Entity.UID);
+            if (record != null)
             {
-                if (!Game.Features.Flowers.Flowers.Flowers_Poll.ContainsKey(client.Entity.UID))
+                client.Entity.Flowers.RedRoses = record.RedRoses;
+                client.Entity.Flowers.RedRosesToday = record.RedRosesToday;
+                client.Entity.Flowers.Lilies = record.Lilies;
+                client.Entity.Flowers.Lilies2day = record.LiliesToday;
+                client.Entity.Flowers.Orchids = record.Orchids;
+                client.Entity.Flowers.OrchidsToday = record.OrchidsToday;
+                client.Entity.Flowers.Tulips = record.Tulips;
+                client.Entity.Flowers.TulipsToday = record.TulipsToday;
+                client.Entity.Flowers.SendDay = record.SendDay;
+                client.Entity.Flowers.AFlower = record.AFlower;
+                try
                 {
-                    client.Entity.MyFlowers = new MTA.Game.Features.Flowers.Flowers(client.Entity.UID, client.Entity.Name);
-                    Game.Features.Flowers.Flowers.Flowers_Poll.TryAdd(client.Entity.UID, client.Entity.MyFlowers);
-                    return;
+                    client.Entity.Flowers.LastFlowerSent = System.DateTime.FromBinary(record.LastFlowerSent);
                 }
-
-                client.Entity.MyFlowers = Game.Features.Flowers.Flowers.Flowers_Poll[client.Entity.UID];
-                return;
+                catch
+                {
+                    client.Entity.Flowers.LastFlowerSent = System.DateTime.Now.Subtract(System.TimeSpan.FromDays(1));
+                }
+                
+                // Reset daily counters if needed
+                client.Entity.Flowers.Reset();
             }
             else
             {
-                if (!Game.Features.Flowers.Flowers.BoyFlowers.ContainsKey(client.Entity.UID))
-                {
-                    client.Entity.MyFlowers = new MTA.Game.Features.Flowers.Flowers(client.Entity.UID, client.Entity.Name);
-                    Game.Features.Flowers.Flowers.BoyFlowers.TryAdd(client.Entity.UID, client.Entity.MyFlowers);
-                    return;
-                }
+                // Create new record in database
+                Game.Features.Flowers.Database.FlowerTable.Insert(client);
+            }
+        }
 
-                client.Entity.MyFlowers = Game.Features.Flowers.Flowers.BoyFlowers[client.Entity.UID];
-                return;
+        public static void SetKisses(Client.GameState client)
+        {
+            // Initialize kisses object
+            client.Entity.Kisses = new MTA.Game.Features.Kisses.Kisses();
+            
+            // Load from database
+            var record = Game.Features.Kisses.Database.KissTable.LoadByEntityId(client.Entity.UID);
+            if (record != null)
+            {
+                client.Entity.Kisses.Kisses2 = record.Kisses;
+                client.Entity.Kisses.Kisses2day = record.KissesToday;
+                client.Entity.Kisses.Letters1 = record.Letters;
+                client.Entity.Kisses.LetterToday1 = record.LettersToday;
+                client.Entity.Kisses.Wine = record.Wine;
+                client.Entity.Kisses.Wine2day = record.WineToday;
+                client.Entity.Kisses.Jades = record.Jades;
+                client.Entity.Kisses.Jades2day = record.JadesToday;
+                try
+                {
+                    client.Entity.Kisses.LastKissesSent = System.DateTime.FromBinary(record.LastKissesSent);
+                }
+                catch
+                {
+                    client.Entity.Kisses.LastKissesSent = System.DateTime.Now.Subtract(System.TimeSpan.FromDays(1));
+                }
+                
+                // Reset daily counters if needed
+                if (client.Entity.Kisses.LastKissesSent.AddDays(1) <= System.DateTime.Now)
+                {
+                    client.Entity.Kisses.LastKissesSent = System.DateTime.Now;
+                    client.Entity.Kisses.Kisses2day = 0;
+                    client.Entity.Kisses.LetterToday1 = 0;
+                    client.Entity.Kisses.Jades2day = 0;
+                    client.Entity.Kisses.Wine2day = 0;
+                }
+            }
+            else
+            {
+                // Create new record in database
+                Game.Features.Kisses.Database.KissTable.Insert(client);
             }
         }
 

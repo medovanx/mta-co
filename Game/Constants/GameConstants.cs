@@ -250,8 +250,7 @@ namespace MTA.Game.Constants {
         public static readonly string PoleDominationPath = Database("poledomination.txt");
         public static readonly string ClanWarPath = Database("ClanWar.txt");
         public static readonly string BoothsPath = Database("Booths.txt");
-        public static readonly string FlowersPath = Database("flowers.txt");
-        public static readonly string BoyFlowersPath = Database("boyflowers.txt");
+        // FlowersPath and BoyFlowersPath removed - flowers now stored in database
 
         public const string ServerKey = "TQServer";
         public const string GameCryptographyKey = "C238xs65pjy7HU9Q";

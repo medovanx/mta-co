@@ -15,6 +15,12 @@ namespace MTA.Game.Constants {
         /// <summary>Guild action (command) request</summary>
         MsgSyndicate = 1107,
 
+        /// <summary>Used to send flowers</summary>
+        MsgFlower = 1150,
+
+        /// <summary>Used to display flower rank</summary>
+        MsgRank = 1151,
+
         /// <summary>Used to interact with a NPC and contains multiple Dialog Action types</summary>
         MsgNpc = 2031,
 

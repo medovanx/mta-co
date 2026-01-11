@@ -566,8 +566,8 @@ namespace MTA.Client {
 
                         cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
 
-                        if (p.Entity.MyFlowers != null)
-                            p.Entity.MyFlowers.Name = newname;
+                        if (p.Entity.Flowers != null)
+                            p.Entity.Flowers.Name = newname;
 
                         cmdupdate = new MySqlCommand(MySqlCommandType.UPDATE);
                         cmdupdate.Update("partners").Set("PartnerName", newname).Where("PartnerID", uid).Execute();
@@ -744,10 +744,9 @@ namespace MTA.Client {
         }
 
         internal void LoadData(bool loadFake = false) {
-            //    Database.KissSystemTable.Kisses(this);
+            Database.EntityTable.SetKisses(this);
             PkExpelTable.Load(this);
             ConquerItemTable.LoadItems(this);
-            //    Database.FlowerSystemTable.Flowers(this);
 
             if (!loadFake) {
                 ClaimItemTable.LoadClaimableItems(this);

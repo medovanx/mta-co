@@ -744,8 +744,6 @@ namespace MTA.Game {
             }
         }
 
-        public MTA.Game.Features.Flowers.Flowers MyFlowers;
-
         private uint Flower;
 
         public uint FlowerRank {
