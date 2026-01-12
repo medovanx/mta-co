@@ -19,7 +19,7 @@ public class KissPacket : Writer, IPacket {
         WriteUInt32(3, 4, Buffer2);
         if (client.Entity.Body == 1001 || client.Entity.Body == 1002 || client.Entity.Body == 2001 ||
             client.Entity.Body == 2002) {
-            if (client.Entity.Kisses.LastKissesSent.AddDays(1) <= DateTime.Now) {
+            if (client.Entity.Kisses != null && client.Entity.Kisses.LastKissesSent.AddDays(1) <= DateTime.Now) {
                 WriteUInt32(1, 16, Buffer2);
             }
             else {

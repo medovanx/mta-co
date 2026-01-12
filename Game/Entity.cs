@@ -745,6 +745,15 @@ namespace MTA.Game {
         }
 
         private uint Flower;
+        private uint Kiss;
+
+        public uint KissRank {
+            get => Kiss;
+            set {
+                Kiss = value;
+                WriteUInt32(value + 10000, 154, SpawnPacket);
+            }
+        }
 
         public uint FlowerRank {
             get => Flower;

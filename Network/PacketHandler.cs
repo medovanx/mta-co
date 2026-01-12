@@ -23,6 +23,8 @@ using MTA.Game.Events.SteedRace;
 using MTA.Game.Features;
 using MTA.Game.Features.Flowers;
 using MTA.Game.Features.Flowers.Packets.Writers;
+using MTA.Game.Features.Kisses;
+using MTA.Game.Features.Kisses.Packets.Writers;
 using MTA.Game.Features.Guilds.Database;
 using MTA.Game.Features.Reincarnation;
 using MTA.Game.Features.Tournaments;
@@ -3541,6 +3543,86 @@ namespace MTA.Network {
                                     client.Send(ranking.ToArray());
                                     break;
                                 }
+                                case GenericRanking.KissFairy: {
+                                    if (pagenumber > 9) break;
+                                    ranking.RegisteredCount = 100;
+                                    var info = Kisses.KissesTop100;
+                                    if (info == null || info.Length == 0) break;
+                                    var offset = pagenumber * max;
+                                    var count = Math.Min(max, info.Length);
+                                    ranking.Count = (uint)count;
+
+                                    for (byte x = 0; x < count; x++) {
+                                        if (x + offset >= info.Length) break;
+                                        var entity = info[x + offset];
+                                        if (entity.Uid == 0) break;
+                                        ranking.Append((uint)(entity.RankKisses + 1), entity.Kisses2, entity.Uid,
+                                            entity.name);
+                                    }
+
+                                    client.Send(ranking.ToArray());
+                                    break;
+                                }
+                                case GenericRanking.LoveFairy: {
+                                    if (pagenumber > 9) break;
+                                    ranking.RegisteredCount = 100;
+                                    var info = Kisses.LettersTop100;
+                                    if (info == null || info.Length == 0) break;
+                                    var offset = pagenumber * max;
+                                    var count = Math.Min(max, info.Length);
+                                    ranking.Count = (uint)count;
+
+                                    for (byte x = 0; x < count; x++) {
+                                        if (x + offset >= info.Length) break;
+                                        var entity = info[x + offset];
+                                        if (entity.Uid == 0) break;
+                                        ranking.Append((uint)(entity.RankLetters + 1), entity.Letters1, entity.Uid,
+                                            entity.name);
+                                    }
+
+                                    client.Send(ranking.ToArray());
+                                    break;
+                                }
+                                case GenericRanking.TineFairy: {
+                                    if (pagenumber > 9) break;
+                                    ranking.RegisteredCount = 100;
+                                    var info = Kisses.WineTop100;
+                                    if (info == null || info.Length == 0) break;
+                                    var offset = pagenumber * max;
+                                    var count = Math.Min(max, info.Length);
+                                    ranking.Count = (uint)count;
+
+                                    for (byte x = 0; x < count; x++) {
+                                        if (x + offset >= info.Length) break;
+                                        var entity = info[x + offset];
+                                        if (entity.Uid == 0) break;
+                                        ranking.Append((uint)(entity.RankWine + 1), entity.Wine, entity.Uid,
+                                            entity.name);
+                                    }
+
+                                    client.Send(ranking.ToArray());
+                                    break;
+                                }
+                                case GenericRanking.JadeFairy: {
+                                    if (pagenumber > 9) break;
+                                    ranking.RegisteredCount = 100;
+                                    var info = Kisses.JadesTop100;
+                                    if (info == null || info.Length == 0) break;
+                                    var offset = pagenumber * max;
+                                    var count = Math.Min(max, info.Length);
+                                    ranking.Count = (uint)count;
+
+                                    for (byte x = 0; x < count; x++) {
+                                        if (x + offset >= info.Length) break;
+                                        var entity = info[x + offset];
+                                        if (entity.Uid == 0) break;
+                                        ranking.Append((uint)(entity.RankJades + 1), entity.Jades, entity.Uid,
+                                            entity.name);
+                                    }
+
+                                    client.Send(ranking.ToArray());
+                                    break;
+                                }
                                 case GenericRanking.DragonChi: {
                                     ShowGenericRanking(ranking, client);
                                     break;
@@ -6390,6 +6472,49 @@ namespace MTA.Network {
 
         private static void ShowGenericRanking2(GenericRanking ranking, GameState client) {
             var page = ranking.Page;
+            
+            // Handle kiss rankings for boys
+            if (client.Entity.Kisses != null) {
+                Kisses[] kissList = null;
+                Func<Kisses, uint> kissSelect = null;
+
+                if (ranking.RankingType == GenericRanking.KissFairy) {
+                    kissList = Kisses.KissesTop100;
+                    kissSelect = (kiss) => kiss.Kisses2;
+                }
+                else if (ranking.RankingType == GenericRanking.LoveFairy) {
+                    kissList = Kisses.LettersTop100;
+                    kissSelect = (kiss) => kiss.Letters1;
+                }
+                else if (ranking.RankingType == GenericRanking.TineFairy) {
+                    kissList = Kisses.WineTop100;
+                    kissSelect = (kiss) => kiss.Wine;
+                }
+                else if (ranking.RankingType == GenericRanking.JadeFairy) {
+                    kissList = Kisses.JadesTop100;
+                    kissSelect = (kiss) => kiss.Jades;
+                }
+
+                if (kissList != null) {
+                    if (kissList.Length < page * 10) return;
+                    var kissCount = (uint)Math.Min(kissList.Length - page * 10, 10);
+                    var kissRanking = new GenericRanking(true, kissCount) {
+                        Mode = GenericRanking.Ranking,
+                        RankingType = ranking.RankingType,
+                        Page = page,
+                        RegisteredCount = (ushort)kissList.Length
+                    };
+                    var kissRank = page * 10;
+                    for (var i = kissRank; i < kissRank + kissCount; i++) {
+                        var current = kissList[i];
+                        kissRanking.Append((uint)(i + 1), (uint)kissSelect(current), current.Uid, current.name);
+                    }
+                    client.Send(kissRanking);
+                    return;
+                }
+            }
+
+            // Handle flower rankings for girls
             Flowers[] list = null;
             Func<Flowers, uint> select = null;
 
@@ -6409,7 +6534,6 @@ namespace MTA.Network {
                 list = Flowers.TulipsTop100;
                 select = (chiData) => chiData.Tulips;
             }
-
             else if (ranking.RankingType == GenericRanking.KissFairy) {
                 list = Flowers.KissTop100;
                 select = (flower) => flower.RedRoses;
@@ -13825,15 +13949,25 @@ namespace MTA.Network {
         }
 
         static void SetLocation(Data generalData, GameState client) {
-            var sendFlower = new SendFlower {
-                Typing = (IsBoy(client.Entity.Body) ? 3u : 2u)
-            };
-            sendFlower.Append(client.Entity.Flowers);
-            client.Send(sendFlower.ToArray());
-            if (client.Entity.Flowers.AFlower > 0u) {
-                client.Send(new SendFlower {
-                    Typing = IsBoy(client.Entity.Body) ? 2u : 3u
-                }.ToArray());
+            if (IsBoy(client.Entity.Body)) {
+                // Send kiss packet for boys
+                if (client.Entity.Kisses != null) {
+                    var kissPacket = new KissPacket(client.Entity.Kisses, client);
+                    client.Send(kissPacket);
+                }
+            }
+            else {
+                // Send flower packet for girls
+                var sendFlower = new SendFlower {
+                    Typing = 2u
+                };
+                sendFlower.Append(client.Entity.Flowers);
+                client.Send(sendFlower.ToArray());
+                if (client.Entity.Flowers.AFlower > 0u) {
+                    client.Send(new SendFlower {
+                        Typing = 3u
+                    }.ToArray());
+                }
             }
 
             client.Send(client.Entity.MyAchievement.ToArray());

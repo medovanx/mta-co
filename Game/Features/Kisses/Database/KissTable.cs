@@ -11,7 +11,10 @@ namespace MTA.Game.Features.Kisses.Database;
 ///     Database operations for the kisses table
 /// </summary>
 public static class KissTable {
-    private static bool Exists(uint id) {
+    /// <summary>
+    ///     Checks if a kiss record exists for the given entity ID
+    /// </summary>
+    public static bool Exists(uint id) {
         try {
             using var cmd = new MySqlCommand(MySqlCommandType.SELECT)
                 .Select(KissSchema.Tables.KissesTable)
@@ -28,16 +31,11 @@ public static class KissTable {
     ///     Loads a kiss record by entity ID
     /// </summary>
     public static KissRecord? LoadByEntityId(uint id) {
-        try {
-            using var cmd = new MySqlCommand(MySqlCommandType.SELECT)
-                .Select(KissSchema.Tables.KissesTable)
-                .Where(KissSchema.Kisses.EntityId, id);
-            using var reader = new MySqlReader(cmd);
-            if (reader.Read()) return KissMappers.MapKiss(reader);
-        }
-        catch {
-            // Return null if not found or error
-        }
+        using var cmd = new MySqlCommand(MySqlCommandType.SELECT)
+            .Select(KissSchema.Tables.KissesTable)
+            .Where(KissSchema.Kisses.EntityId, id);
+        using var reader = new MySqlReader(cmd);
+        if (reader.Read()) return KissMappers.MapKiss(reader);
 
         return null;
     }
@@ -46,6 +44,13 @@ public static class KissTable {
     ///     Inserts a new kiss record
     /// </summary>
     public static void Insert(GameState client) {
+        // Only boys should be in the kisses table (Body IDs: 1001, 1002, 1003, 1004)
+        if (client.Entity.Body is not (1001 or 1002 or 1003 or 1004)) {
+            Console.WriteLine(
+                $"Warning: Attempted to insert girl (Body: {client.Entity.Body}, UID: {client.Entity.UID}) into kisses table");
+            return;
+        }
+
         using var cmd = new MySqlCommand(MySqlCommandType.INSERT)
             .Insert(KissSchema.Tables.KissesTable)
             .Insert(KissSchema.Kisses.EntityId, client.Entity.UID)
@@ -83,11 +88,24 @@ public static class KissTable {
 
     /// <summary>
     ///     Saves a kiss record (inserts if not exists, updates if exists)
+    ///     Only saves for boys - girls should not be in the kisses table
     /// </summary>
     public static void Save(GameState client) {
+        // Only save boys to the kisses table
+        if (client.Entity.Body is not (1001 or 1002 or 1003 or 1004)) return;
+
         if (!Exists(client.Entity.UID))
             Insert(client);
         else
             Update(client);
+    }
+
+    /// <summary>
+    ///     Deletes a kiss record by entity ID
+    /// </summary>
+    public static void DeleteByEntityId(uint entityId) {
+        using var cmd = new MySqlCommand(MySqlCommandType.DELETE)
+            .Delete(KissSchema.Tables.KissesTable, KissSchema.Kisses.EntityId, entityId);
+        cmd.Execute();
     }
 }

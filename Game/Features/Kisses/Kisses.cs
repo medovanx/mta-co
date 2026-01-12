@@ -1,9 +1,36 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MTA.Game.Features.Kisses;
 
+public enum KissTypeT : byte {
+    Kisses = 0,
+    Letters = 1,
+    Wine = 2,
+    Jades = 3
+}
+
 public class Kisses {
+    // Static ranking lists
+    public static Kisses[] KissesTop100 = [];
+    public static Kisses[] LettersTop100 = [];
+    public static Kisses[] WineTop100 = [];
+    public static Kisses[] JadesTop100 = [];
+
+    // Static locks for thread safety
+    public static object KissesLock = new();
+    public static object LettersLock = new();
+    public static object WineLock = new();
+    public static object JadesLock = new();
+
+    // Static ranking lists
+    public static List<Kisses> RankKiss = [];
+    public static List<Kisses> RankLetter = [];
+    public static List<Kisses> RankWineList = [];
+    public static List<Kisses> RankJade = [];
+
+    // Legacy lists (kept for compatibility)
     public static List<ListKissRank> Kiss2 = [];
     public static List<ListKissRank> Wine2 = [];
     public static List<ListKissRank> Letters2 = [];
@@ -32,6 +59,13 @@ public class Kisses {
     public bool winetoday3;
     public bool winetoday4;
 
+    public Kisses() { }
+
+    public Kisses(uint uid, string name) {
+        Uid = uid;
+        this.name = name;
+    }
+
     public DateTime LastKissesSent { get; set; }
 
     public string name { get; set; }
@@ -51,6 +85,191 @@ public class Kisses {
     public uint Jades { get; set; }
 
     public uint Jades2day { get; set; }
+
+    // Ranking properties
+    public int RankKisses { get; set; }
+    public int RankLetters { get; set; }
+    public int RankWine { get; set; }
+    public int RankJades { get; set; }
+
+    public uint Uid { get; set; }
+
+    public int SendScreenValue(KissTypeT typ, int rak) {
+        if (rak == 0 || rak > 100)
+            return 0;
+        return (int)(30000402u + (uint)(100 * (byte)typ) + GetRank(rak));
+    }
+
+    public ushort GetRank(int rank) {
+        switch (rank) {
+            case 1: return 1;
+            case 2: return 2;
+            case 3: return 3;
+            case >= 4 and <= 10: return 4;
+            case >= 11 and <= 20: return 5;
+            case >= 21 and <= 30: return 6;
+            case >= 31 and <= 40: return 7;
+            case >= 41 and <= 50: return 8;
+            case >= 51 and <= 60: return 9;
+            case >= 61 and <= 70: return 10;
+            case >= 71 and <= 80: return 11;
+            case >= 81 and <= 90: return 12;
+            case >= 91 and <= 100: return 13;
+            default: return 0;
+        }
+    }
+
+    public static void CalculateRankKisses(Kisses akiss) {
+        lock (KissesLock) {
+            try {
+                if (!RankKiss.Contains(akiss))
+                    RankKiss.Add(akiss);
+                var data = RankKiss.ToArray();
+
+                Array.Sort(data, (c1, c2) => c2.Kisses2.CompareTo(c1.Kisses2));
+
+                var room = data.ToArray();
+
+                List<Kisses> backUpd = [];
+
+                var x = 1;
+                foreach (var kiss in room) {
+                    if (kiss.Kisses2 == 0) continue;
+                    if (x < 100) {
+                        kiss.RankKisses = x;
+                        backUpd.Add(kiss);
+                    }
+                    else {
+                        kiss.RankKisses = 0;
+                    }
+
+                    x++;
+                }
+
+                lock (KissesTop100) {
+                    RankKiss = new List<Kisses>(backUpd);
+                    KissesTop100 = backUpd.ToArray();
+                }
+            }
+            catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
+        }
+    }
+
+    public static void CalculateRankLetters(Kisses akiss) {
+        lock (LettersLock) {
+            try {
+                if (!RankLetter.Contains(akiss))
+                    RankLetter.Add(akiss);
+                var data = RankLetter.ToArray();
+
+                Array.Sort(data, (c1, c2) => c2.Letters1.CompareTo(c1.Letters1));
+
+                var room = data.ToArray();
+
+                List<Kisses> backUpd = [];
+
+                var x = 1;
+                foreach (var kiss in room) {
+                    if (kiss.Letters1 == 0) continue;
+                    if (x < 100) {
+                        kiss.RankLetters = x;
+                        backUpd.Add(kiss);
+                    }
+                    else {
+                        kiss.RankLetters = 0;
+                    }
+
+                    x++;
+                }
+
+                lock (LettersTop100) {
+                    RankLetter = new List<Kisses>(backUpd);
+                    LettersTop100 = backUpd.ToArray();
+                }
+            }
+            catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
+        }
+    }
+
+    public static void CalculateRankWine(Kisses akiss) {
+        lock (WineLock) {
+            try {
+                if (!RankWineList.Contains(akiss))
+                    RankWineList.Add(akiss);
+                var data = RankWineList.ToArray();
+
+                Array.Sort(data, (c1, c2) => c2.Wine.CompareTo(c1.Wine));
+
+                var room = data.ToArray();
+
+                List<Kisses> backUpd = [];
+
+                var x = 1;
+                foreach (var kiss in room) {
+                    if (kiss.Wine == 0) continue;
+                    if (x < 100) {
+                        kiss.RankWine = x;
+                        backUpd.Add(kiss);
+                    }
+                    else {
+                        kiss.RankWine = 0;
+                    }
+
+                    x++;
+                }
+
+                lock (WineTop100) {
+                    RankWineList = new List<Kisses>(backUpd);
+                    WineTop100 = backUpd.ToArray();
+                }
+            }
+            catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
+        }
+    }
+
+    public static void CalculateRankJades(Kisses akiss) {
+        lock (JadesLock) {
+            try {
+                if (!RankJade.Contains(akiss))
+                    RankJade.Add(akiss);
+                var data = RankJade.ToArray();
+
+                Array.Sort(data, (c1, c2) => c2.Jades.CompareTo(c1.Jades));
+
+                var room = data.ToArray();
+
+                List<Kisses> backUpd = [];
+
+                var x = 1;
+                foreach (var kiss in room) {
+                    if (kiss.Jades == 0) continue;
+                    if (x < 100) {
+                        kiss.RankJades = x;
+                        backUpd.Add(kiss);
+                    }
+                    else {
+                        kiss.RankJades = 0;
+                    }
+
+                    x++;
+                }
+
+                lock (JadesTop100) {
+                    RankJade = new List<Kisses>(backUpd);
+                    JadesTop100 = backUpd.ToArray();
+                }
+            }
+            catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
+        }
+    }
 
     public struct ListKissRank {
         public string name;

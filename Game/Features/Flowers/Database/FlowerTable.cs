@@ -11,7 +11,10 @@ namespace MTA.Game.Features.Flowers.Database;
 ///     Database operations for the flowers table
 /// </summary>
 public static class FlowerTable {
-    private static bool Exists(uint id) {
+    /// <summary>
+    ///     Checks if a flower record exists for the given entity ID
+    /// </summary>
+    public static bool Exists(uint id) {
         try {
             using var cmd = new MySqlCommand(MySqlCommandType.SELECT)
                 .Select(FlowerSchema.Tables.FlowersTable)
@@ -28,16 +31,11 @@ public static class FlowerTable {
     ///     Loads a flower record by entity ID
     /// </summary>
     public static FlowerRecord? LoadByEntityId(uint id) {
-        try {
-            using var cmd = new MySqlCommand(MySqlCommandType.SELECT)
-                .Select(FlowerSchema.Tables.FlowersTable)
-                .Where(FlowerSchema.Flowers.EntityId, id);
-            using var reader = new MySqlReader(cmd);
-            if (reader.Read()) return FlowerMappers.MapFlower(reader);
-        }
-        catch {
-            // Return null if not found or error
-        }
+        using var cmd = new MySqlCommand(MySqlCommandType.SELECT)
+            .Select(FlowerSchema.Tables.FlowersTable)
+            .Where(FlowerSchema.Flowers.EntityId, id);
+        using var reader = new MySqlReader(cmd);
+        if (reader.Read()) return FlowerMappers.MapFlower(reader);
 
         return null;
     }
@@ -46,6 +44,13 @@ public static class FlowerTable {
     ///     Inserts a new flower record
     /// </summary>
     public static void Insert(GameState client) {
+        // Only girls should be in the flowers table (Body IDs: 2001, 2002, 2003, 2004)
+        if (client.Entity.Body is not (2001 or 2002 or 2003 or 2004)) {
+            Console.WriteLine(
+                $"Warning: Attempted to insert boy (Body: {client.Entity.Body}, UID: {client.Entity.UID}) into flowers table");
+            return;
+        }
+
         using var cmd = new MySqlCommand(MySqlCommandType.INSERT)
             .Insert(FlowerSchema.Tables.FlowersTable)
             .Insert(FlowerSchema.Flowers.EntityId, client.Entity.UID)
@@ -87,11 +92,24 @@ public static class FlowerTable {
 
     /// <summary>
     ///     Saves a flower record (inserts if not exists, updates if exists)
+    ///     Only saves for girls - boys should not be in the flowers table
     /// </summary>
     public static void Save(GameState client) {
+        // Only save girls to the flowers table
+        if (client.Entity.Body is not (2001 or 2002 or 2003 or 2004)) return;
+
         if (!Exists(client.Entity.UID))
             Insert(client);
         else
             Update(client);
+    }
+
+    /// <summary>
+    ///     Deletes a flower record by entity ID
+    /// </summary>
+    public static void DeleteByEntityId(uint entityId) {
+        using var cmd = new MySqlCommand(MySqlCommandType.DELETE)
+            .Delete(FlowerSchema.Tables.FlowersTable, FlowerSchema.Flowers.EntityId, entityId);
+        cmd.Execute();
     }
 }

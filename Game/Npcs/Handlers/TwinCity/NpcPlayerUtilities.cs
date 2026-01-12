@@ -301,14 +301,14 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                 {
                     // Check if player is a boy (1003 = Small Boy, 1004 = Big Boy)
                     if (client.Entity.Body == 1003 || client.Entity.Body == 1004) {
-                        dialog.Text("Please choose the size for your new gender:");
+                        dialog.Text("Please choose the size for your new Female gender.\nNote: Your kisses will be reset.");
                         dialog.Option("Big", 24);
                         dialog.Option("Small", 25);
                         dialog.Send();
                     }
                     // Check if player is a girl (2001 = Small Girl, 2002 = Big Girl)
                     else if (client.Entity.Body == 2001 || client.Entity.Body == 2002) {
-                        dialog.Text("Please choose the size for your new gender:");
+                        dialog.Text("Please choose the size for your new gender.\nNote: Your flowers rank will be reset.");
                         dialog.Option("Big", 26);
                         dialog.Option("Small", 27);
                         dialog.Send();
@@ -319,6 +319,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                 case 24: // Big Girl (2002)
                 {
                     if (client.Entity.Body == 1003 || client.Entity.Body == 1004) {
+                        var oldBody = client.Entity.Body;
                         client.Equipment.Remove(9);
                         if (client.Equipment.Objects[9] != null) {
                             client.Equipment.Objects[9] = null;
@@ -332,6 +333,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                         client.Entity.Body = 2002;
                         client.NobilityInformation.Mesh = client.Entity.Mesh;
                         client.Equipment.UpdateEntityPacket();
+                        EntityTable.MigrateGenderChange(client, oldBody);
                         EntityTable.SaveEntity(client);
                     }
 
@@ -339,7 +341,9 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                 }
                 case 25: // Small Girl (2001)
                 {
+                    ushort oldBody = 0;
                     if (client.Entity.Body == 1003 || client.Entity.Body == 1004) {
+                        oldBody = client.Entity.Body;
                         client.Equipment.Remove(9);
                         if (client.Equipment.Objects[9] != null)
                             client.Equipment.Objects[9] = null;
@@ -353,12 +357,16 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     client.Entity.Body = 2001;
                     client.NobilityInformation.Mesh = client.Entity.Mesh;
                     client.Equipment.UpdateEntityPacket();
+                    if (oldBody != 0)
+                        EntityTable.MigrateGenderChange(client, oldBody);
                     EntityTable.SaveEntity(client);
                 }
                     break;
                 case 26: // Big Boy (1004)
                 {
+                    ushort oldBody = 0;
                     if (client.Entity.Body == 2001 || client.Entity.Body == 2002) {
+                        oldBody = client.Entity.Body;
                         client.Equipment.Remove(9);
                         if (client.Equipment.Objects[9] != null)
                             client.Equipment.Objects[9] = null;
@@ -372,13 +380,17 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     client.Entity.Body = 1004;
                     client.NobilityInformation.Mesh = client.Entity.Mesh;
                     client.Equipment.UpdateEntityPacket();
+                    if (oldBody != 0)
+                        EntityTable.MigrateGenderChange(client, oldBody);
                     EntityTable.SaveEntity(client);
                 }
                     break;
 
                 case 27: // Small Boy (1003)
                 {
+                    ushort oldBody = 0;
                     if (client.Entity.Body == 2001 || client.Entity.Body == 2002) {
+                        oldBody = client.Entity.Body;
                         client.Equipment.Remove(9);
                         if (client.Equipment.Objects[9] != null)
                             client.Equipment.Objects[9] = null;
@@ -392,6 +404,8 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     client.Entity.Body = 1003;
                     client.NobilityInformation.Mesh = client.Entity.Mesh;
                     client.Equipment.UpdateEntityPacket();
+                    if (oldBody != 0)
+                        EntityTable.MigrateGenderChange(client, oldBody);
                     EntityTable.SaveEntity(client);
                 }
                     break;

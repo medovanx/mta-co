@@ -25,7 +25,7 @@ public static class FlowerHandler {
         var flowerPacket = new FlowerPacket(false);
         flowerPacket.Deserialize(packet);
 
-        if (!GamePool.TryGetValue(flowerPacket.Uid1, out GameState? value)) return false;
+        if (!GamePool.TryGetValue(flowerPacket.Uid1, out var value)) return false;
         if (caller.Entity.Level < 50) return false;
         if (value.Entity.Body == 1003 ||
             value.Entity.Body == 1004) return false; // Male
