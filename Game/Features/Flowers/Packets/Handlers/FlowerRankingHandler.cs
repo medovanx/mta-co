@@ -1,6 +1,6 @@
 using MTA.Client;
+using MTA.Game.Constants;
 using MTA.Game.Features.Flowers.Services;
-using MTA.Network;
 using MTA.Network.GamePackets;
 using MTA.Network.PacketHandlers;
 
@@ -17,7 +17,7 @@ public static class FlowerRankingHandler {
     public static bool Handle(ushort packetId, byte[] packet, GameState client) {
         switch (packet[4]) {
             case 2: {
-                if (!Constants.BodyTypes.IsGirl(client.Entity.Body)) return false;
+                if (!BodyTypes.IsGirl(client.Entity.Body)) return false;
 
                 // Calculate rankings first to ensure RankRoses, RankLilies, etc. are set
                 if (client.Entity.Flowers.RedRoses > 0)

@@ -1,4 +1,5 @@
 using MTA.Client;
+using MTA.Game.Constants;
 using MTA.Game.Features.Kisses.Services;
 using MTA.Network;
 using MTA.Network.GamePackets;
@@ -17,7 +18,7 @@ public static class KissRankingHandler {
     public static bool Handle(ushort packetId, byte[] packet, GameState client) {
         switch (packet[4]) {
             case 2: {
-                if (Constants.BodyTypes.IsGirl(client.Entity.Body)) return false;
+                if (BodyTypes.IsGirl(client.Entity.Body)) return false;
 
                 // Calculate rankings first to ensure RankKisses, RankLetters, etc. are set
                 if (client.Entity.Kisses.Kisses2 > 0)
