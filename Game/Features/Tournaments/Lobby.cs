@@ -264,7 +264,7 @@ namespace MTA.MaTrix {
                 case BotType.AI: {
                     Bot.Entity.Name = "Lucky[" + Kernel.Random.Next(20) + "][BoT]";
                     Bot.Entity.Face = 37;
-                    Bot.Entity.Body = 1003;
+                    Bot.Entity.Body = BodyTypes.BoySmall;
                     Bot.Entity.HairStyle = 630;
                     Bot.Entity.Level = 140;
                     Bot.Entity.Class = 15;

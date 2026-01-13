@@ -1,4 +1,5 @@
 using System;
+using MTA.Game.Constants;
 using MTA.Interfaces;
 using MTA.Network;
 
@@ -20,7 +21,7 @@ public class FlowerPacket : Writer, IPacket {
         WriteUInt16(60, 0, _buffer);
         WriteUInt16(0x47e, 2, _buffer);
         WriteUInt32(2, 4, _buffer);
-        if (client.Entity.Body == 1003 || client.Entity.Body == 1004 || client.Entity.Body == 2003 ||
+        if (BodyTypes.IsBoy(client.Entity.Body) || client.Entity.Body == 2003 ||
             client.Entity.Body == 2004) {
             if (DateTime.Now >= client.Entity.Flowers.LastFlowerSent.AddDays(1)) {
                 WriteUInt32(30, 16, _buffer);

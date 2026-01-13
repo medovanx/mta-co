@@ -1496,7 +1496,7 @@ namespace MTA.Game {
                                 if (pClient.Entity.InteractionInProgress &&
                                     pClient.Entity.InteractionWith != Owner.Entity.UID &&
                                     pClient.Entity.InteractionSet) {
-                                    if (pClient.Entity.Body == 1003 || pClient.Entity.Body == 1004) {
+                                    if (BodyTypes.IsBoy(pClient.Entity.Body)) {
                                         if (pClient.Entity.InteractionX == pClient.Entity.X &&
                                             pClient.Entity.Y == pClient.Entity.InteractionY) {
                                             Attack atak = new Attack(true);

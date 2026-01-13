@@ -1,4 +1,5 @@
 ﻿using System;
+using MTA.Game.Constants;
 using MTA.Network.GamePackets;
 namespace MTA.Game.ConquerStructures
 {
@@ -317,7 +318,7 @@ namespace MTA.Game.ConquerStructures
             {
                 if (client.Entity is { MapID: 1090, Hitpoints: >= 1 })
                 {
-                    if (client.Entity.Body == 1003 || client.Entity.Body == 1004)
+                    if (BodyTypes.IsBoy(client.Entity.Body))
                     {
                         howmanyinmap3 += 1;
                         Kernel.SendWorldMessage(new Message("Teams Alive in CouplesPk: " + howmanyinmap3 + " ", System.Drawing.Color.Black, Message.FirstRightCorner), Program.Values);

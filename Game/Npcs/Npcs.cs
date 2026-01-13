@@ -19636,7 +19636,7 @@ namespace MTA {
                         }
                         case 4: {
                             if (client.Entity.ConquerPoints >= Rates.ChangeBody) {
-                                if (client.Entity.Body == 2001 || client.Entity.Body == 2002) {
+                                if (BodyTypes.IsGirl(client.Entity.Body)) {
                                     client.Equipment.Remove(9);
                                     if (client.Equipment.Objects[9] != null)
                                         client.Equipment.Objects[9] = null;
@@ -19647,7 +19647,7 @@ namespace MTA {
 
                                     client.Entity.Spouse = "None";
                                     client.Entity.ConquerPoints -= Rates.ChangeBody;
-                                    client.Entity.Body = 1004;
+                                    client.Entity.Body = BodyTypes.BoyBig;
                                     client.NobilityInformation.Mesh = client.Entity.Mesh;
                                     client.Equipment.UpdateEntityPacket();
                                     EntityTable.SaveEntity(client);
@@ -19666,7 +19666,7 @@ namespace MTA {
                         }
                         case 5: {
                             if (client.Entity.ConquerPoints >= Rates.ChangeBody) {
-                                if (client.Entity.Body == 2001 || client.Entity.Body == 2002) {
+                                if (BodyTypes.IsGirl(client.Entity.Body)) {
                                     client.Equipment.Remove(9);
                                     if (client.Equipment.Objects[9] != null)
                                         client.Equipment.Objects[9] = null;
@@ -19676,7 +19676,7 @@ namespace MTA {
                                     client.NobilityInformation.Gender = 1;
                                     client.Entity.Spouse = "None";
                                     client.Entity.ConquerPoints -= Rates.ChangeBody;
-                                    client.Entity.Body = 1003;
+                                    client.Entity.Body = BodyTypes.BoySmall;
                                     client.NobilityInformation.Mesh = client.Entity.Mesh;
                                     client.Equipment.UpdateEntityPacket();
                                     EntityTable.SaveEntity(client);
@@ -19695,7 +19695,7 @@ namespace MTA {
                         }
                         case 6: {
                             if (client.Entity.ConquerPoints >= Rates.ChangeBody) {
-                                if (client.Entity.Body == 1003 || client.Entity.Body == 1004) {
+                                if (BodyTypes.IsBoy(client.Entity.Body)) {
                                     client.Equipment.Remove(9);
                                     if (client.Equipment.Objects[9] != null)
                                         client.Equipment.Objects[9] = null;
@@ -19705,7 +19705,7 @@ namespace MTA {
                                     client.NobilityInformation.Gender = 0;
                                     client.Entity.Spouse = "None";
                                     client.Entity.ConquerPoints -= Rates.ChangeBody;
-                                    client.Entity.Body = 2002;
+                                    client.Entity.Body = BodyTypes.GirlBig;
                                     client.NobilityInformation.Mesh = client.Entity.Mesh;
                                     client.Equipment.UpdateEntityPacket();
                                     EntityTable.SaveEntity(client);
@@ -19724,7 +19724,7 @@ namespace MTA {
                         }
                         case 7: {
                             if (client.Entity.ConquerPoints >= Rates.ChangeBody) {
-                                if (client.Entity.Body == 1003 || client.Entity.Body == 1004) {
+                                if (BodyTypes.IsBoy(client.Entity.Body)) {
                                     client.Equipment.Remove(9);
                                     if (client.Equipment.Objects[9] != null)
                                         client.Equipment.Objects[9] = null;
@@ -19734,7 +19734,7 @@ namespace MTA {
                                     client.NobilityInformation.Gender = 0;
                                     client.Entity.Spouse = "None";
                                     client.Entity.ConquerPoints -= Rates.ChangeBody;
-                                    client.Entity.Body = 2002;
+                                    client.Entity.Body = BodyTypes.GirlBig;
                                     client.NobilityInformation.Mesh = client.Entity.Mesh;
                                     client.Equipment.UpdateEntityPacket();
                                     EntityTable.SaveEntity(client);
@@ -22414,7 +22414,7 @@ namespace MTA {
                         case 1:
                             DateTime Now64 = DateTime.Now;
                             if (DateTime.Now.Hour == 19 && DateTime.Now.Minute >= 30 && DateTime.Now.Minute <= 33) {
-                                if (PacketHandler.IsBoy(client.Entity.Body)) {
+                                if (BodyTypes.IsBoy(client.Entity.Body)) {
                                     client.Entity.Teleport(11224, 96, 113);
                                     client.Entity.PKMode = Enums.PkMode.PK;
                                     client.Send(new Data(true) {
@@ -22522,7 +22522,7 @@ namespace MTA {
                         case 1:
                             DateTime Now64 = DateTime.Now;
                             if (DateTime.Now.Hour == 19 && DateTime.Now.Minute >= 30 && DateTime.Now.Minute <= 33) {
-                                if (PacketHandler.IsGirl(client.Entity.Body)) {
+                                if (BodyTypes.IsGirl(client.Entity.Body)) {
                                     client.Entity.Teleport(11225, 96, 113);
                                     client.Entity.PKMode = Enums.PkMode.PK;
                                     client.Send(new Data(true) {
@@ -25534,7 +25534,7 @@ namespace MTA {
                             DateTime Now64 = DateTime.Now;
                             if (Now64 is { DayOfWeek: DayOfWeek.Friday, Hour: 19, Minute: >= 30 and < 45 }) {
                                 if (client.Team is { TeamLeader: true } &&
-                                    (client.Entity.Body == 1003 || client.Entity.Body == 1004)) {
+                                    BodyTypes.IsBoy(client.Entity.Body)) {
                                     if (client.Team.SpouseWarFull) {
                                         client.Team.Teammates[0].Entity.Teleport(1090, 40, 50);
                                         client.Team.Teammates[1].Entity.Teleport(1090, 40, 50);

@@ -17,9 +17,7 @@ public static class KissRankingHandler {
     public static bool Handle(ushort packetId, byte[] packet, GameState client) {
         switch (packet[4]) {
             case 2: {
-                if (client.Entity.Kisses == null) return false;
-
-                if (PacketHandler.IsGirl(client.Entity.Body)) return false;
+                if (Constants.BodyTypes.IsGirl(client.Entity.Body)) return false;
 
                 // Calculate rankings first to ensure RankKisses, RankLetters, etc. are set
                 if (client.Entity.Kisses.Kisses2 > 0)

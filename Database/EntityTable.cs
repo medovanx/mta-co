@@ -15,14 +15,14 @@ namespace MTA.Database
         ///     Determines if a player is a boy (should use kisses table)
         /// </summary>
         private static bool IsBoy(ushort body) {
-            return body is 1001 or 1002 or 1003 or 1004;
+            return body is 1001 or 1002 || BodyTypes.IsBoy(body);
         }
 
         /// <summary>
         ///     Determines if a player is a girl (should use flowers table)
         /// </summary>
         private static bool IsGirl(ushort body) {
-            return body is 2001 or 2002 or 2003 or 2004;
+            return body is 2003 or 2004 || BodyTypes.IsGirl(body);
         }
 
         public static void SetFlowers(Client.GameState client)
@@ -1106,7 +1106,7 @@ namespace MTA.Database
             client.Entity.Hitpoints = client.Entity.MaxHitpoints;
             client.Entity.Mana = (ushort)(client.Entity.Spirit * 5);
             client.Entity.Body = eC.Body;
-            if (eC.Body == 1003 || eC.Body == 1004)
+            if (BodyTypes.IsBoy(eC.Body))
                 client.Entity.Face = (ushort)Kernel.Random.Next(1, 50);
             else
                 client.Entity.Face = (ushort)Kernel.Random.Next(201, 250);

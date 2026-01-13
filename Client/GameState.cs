@@ -840,7 +840,7 @@ namespace MTA.Client {
                 Entity.UID = UID;
                 Entity.Vitality = 537;
                 Entity.Face = 37;
-                Entity.Body = 1003;
+                Entity.Body = BodyTypes.BoySmall;
                 Entity.HairStyle = 630;
                 Entity.Level = 140;
                 Entity.Class = 15;

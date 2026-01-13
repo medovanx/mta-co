@@ -1,5 +1,6 @@
 using System;
 using MTA.Client;
+using MTA.Game.Constants;
 using MTA.Interfaces;
 using MTA.Network;
 
@@ -17,8 +18,7 @@ public class KissPacket : Writer, IPacket {
         WriteUInt16(60, 0, Buffer2);
         WriteUInt16(0x47e, 2, Buffer2);
         WriteUInt32(3, 4, Buffer2);
-        if (client.Entity.Body == 1001 || client.Entity.Body == 1002 || client.Entity.Body == 2001 ||
-            client.Entity.Body == 2002) {
+        if (client.Entity.Body == 1001 || client.Entity.Body == 1002 || BodyTypes.IsGirl(client.Entity.Body)) {
             if (client.Entity.Kisses != null && client.Entity.Kisses.LastKissesSent.AddDays(1) <= DateTime.Now) {
                 WriteUInt32(1, 16, Buffer2);
             }

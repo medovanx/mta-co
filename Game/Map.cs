@@ -118,7 +118,7 @@ namespace MTA.Game {
         }
 
         public void AddEntity(Entity entity) {
-            if (entity.UID < 800000 || entity.Body == 1003) {
+            if (entity.UID < 800000 || entity.Body == BodyTypes.BoySmall) {
                 if (!Entities.ContainsKey(entity.UID)) {
                     Entities.Add(entity.UID, entity);
                     Floor[entity.X, entity.Y, MapObjectType.Monster, entity] = false;

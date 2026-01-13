@@ -27,8 +27,7 @@ public static class FlowerHandler {
 
         if (!GamePool.TryGetValue(flowerPacket.Uid1, out var value)) return false;
         if (caller.Entity.Level < 50) return false;
-        if (value.Entity.Body == 1003 ||
-            value.Entity.Body == 1004) return false; // Male
+        if (BodyTypes.IsBoy(value.Entity.Body)) return false; // Male
 
         if (flowerPacket.ItemUid == 0) {
             // Free flower (daily limit)

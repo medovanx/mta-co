@@ -9375,7 +9375,7 @@ namespace MTA.Game.Attacking {
                     clienttarget.Entity.InteractionSet = false;
                     if (clienttarget.Entity.InteractionWith != client.Entity.UID)
                         return;
-                    if (clienttarget.Entity.Body == 1003 || clienttarget.Entity.Body == 1004) {
+                    if (BodyTypes.IsBoy(clienttarget.Entity.Body)) {
                         attack.Attacker = client.Entity.UID;
                         attack.X = client.Entity.X;
                         attack.Y = client.Entity.Y;

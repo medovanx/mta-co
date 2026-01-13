@@ -36,16 +36,8 @@
                     return 0;
             }
         }
-        public bool IsBoy
-        {
-            get
-            {
-                if (Kernel.GamePool.ContainsKey(ID))
-                    return Network.PacketHandler.IsBoy(Kernel.GamePool[ID].Entity.Body);
-                else
-                    return false;
-            }
-        }
+        public bool IsBoy => Kernel.GamePool.TryGetValue(ID, out var value) && Constants.BodyTypes.IsBoy(value.Entity.Body);
+
         public string Message
         {
             get;

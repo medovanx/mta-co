@@ -5778,7 +5778,7 @@ namespace MTA.Network {
                                 Type = KnownPersons.RemovePerson,
                                 Name = client.Entity.Name,
                                 NobilityRank = client.Entity.NobilityRank,
-                                IsBoy = IsBoy(client.Entity.Body),
+                                IsBoy = BodyTypes.IsBoy(client.Entity.Body),
                                 Online = true
                             };
                             friend.Client.Send(pckt);
@@ -7663,7 +7663,7 @@ namespace MTA.Network {
                                     Type = KnownPersons.AddFriend,
                                     Name = client1.Entity.Name,
                                     NobilityRank = client1.Entity.NobilityRank,
-                                    IsBoy = IsBoy(client1.Entity.Body),
+                                    IsBoy = BodyTypes.IsBoy(client1.Entity.Body),
                                     Online = true
                                 });
                                 client1.Send(new KnownPersons(true) {
@@ -7671,7 +7671,7 @@ namespace MTA.Network {
                                     Type = KnownPersons.AddFriend,
                                     Name = client.Entity.Name,
                                     NobilityRank = client.Entity.NobilityRank,
-                                    IsBoy = IsBoy(client.Entity.Body),
+                                    IsBoy = BodyTypes.IsBoy(client.Entity.Body),
                                     Online = true
                                 });
                                 Database.KnownPersons.AddFriend(client, client.Friends[client1.Entity.UID]);
@@ -7697,7 +7697,7 @@ namespace MTA.Network {
                             Type = KnownPersons.RequestFriendship,
                             Name = client.Entity.Name,
                             NobilityRank = client.Entity.NobilityRank,
-                            IsBoy = IsBoy(client.Entity.Body),
+                            IsBoy = BodyTypes.IsBoy(client.Entity.Body),
                             Online = true
                         });
                     }
@@ -7716,7 +7716,7 @@ namespace MTA.Network {
                     Type = KnownPersons.AddEnemy,
                     Name = enemy.Entity.Name,
                     NobilityRank = client.Entity.NobilityRank,
-                    IsBoy = IsBoy(client.Entity.Body),
+                    IsBoy = BodyTypes.IsBoy(client.Entity.Body),
                     Online = true
                 });
                 Database.KnownPersons.AddEnemy(client, client.Enemy[enemy.Entity.UID]);
@@ -12623,7 +12623,7 @@ namespace MTA.Network {
                             }
                             case "body": {
                                 ushort.TryParse(Data[1], out var body);
-                                if (body is not 2001 and not 2002 and not 1003 and not 1004)
+                                if (!BodyTypes.IsBoy(body) && !BodyTypes.IsGirl(body))
                                     return true;
                                 var realgender = (byte)(client.Entity.Body % 10);
                                 var gender = (byte)(body % 10);
@@ -13589,7 +13589,7 @@ namespace MTA.Network {
                         client.SendScreen(generalData);
                         client.Screen.Reload(generalData);
                         if (client.Entity is
-                            { InteractionInProgress: true, InteractionSet: true, Body: 1003 or 1004 }) {
+                            { InteractionInProgress: true, InteractionSet: true } && BodyTypes.IsBoy(client.Entity.Body)) {
                             if (Kernel.GamePool.TryGetValue(client.Entity.InteractionWith, out var ch)) {
                                 var general = new Data(true) {
                                     UID = ch.Entity.UID,
@@ -13814,7 +13814,7 @@ namespace MTA.Network {
                     }
                 }
                 else {
-                    if (client.Entity.Body is 1003 or 1004) {
+                    if (BodyTypes.IsBoy(client.Entity.Body)) {
                         if (Kernel.GamePool.TryGetValue(client.Entity.InteractionWith, out var ch)) {
                             ch.Entity.Facing = groundMovement.Direction;
                             ch.Entity.Move(groundMovement.Direction);
@@ -13949,7 +13949,7 @@ namespace MTA.Network {
         }
 
         static void SetLocation(Data generalData, GameState client) {
-            if (IsBoy(client.Entity.Body)) {
+            if (BodyTypes.IsBoy(client.Entity.Body)) {
                 // Send kiss packet for boys
                 if (client.Entity.Kisses != null) {
                     var kissPacket = new KissPacket(client.Entity.Kisses, client);
@@ -14813,14 +14813,6 @@ namespace MTA.Network {
         #endregion
 
         #region Flowers
-
-        public static bool IsBoy(uint mesh) {
-            return mesh is 1003 or 1004;
-        }
-
-        public static bool IsGirl(uint mesh) {
-            return mesh is 2001 or 2002;
-        }
 
         #endregion Flowers
 

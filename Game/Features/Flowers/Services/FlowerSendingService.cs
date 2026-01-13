@@ -1,5 +1,6 @@
 using System;
 using MTA.Client;
+using MTA.Game.Constants;
 using MTA.Game.Features.Flowers.Database;
 using MTA.Game.Features.Flowers.Packets.Writers;
 using static MTA.Kernel;
@@ -18,10 +19,10 @@ public static class FlowerSendingService {
         var target = System.BitConverter.ToUInt32(packet, 8);
         var itemUid = System.BitConverter.ToUInt32(packet, 12);
 
-        if (IsBoy(client.Entity.Body) && typ1 == 0)
+        if (BodyTypes.IsBoy(client.Entity.Body) && typ1 == 0)
             // Boy sending to girl
             SendFlowerBoyToGirl(client, target, itemUid);
-        else if (IsGirl(client.Entity.Body) && typ1 == 1)
+        else if (BodyTypes.IsGirl(client.Entity.Body) && typ1 == 1)
             // Girl sending to boy
             SendFlowerGirlToBoy(client, target, itemUid);
     }
@@ -32,7 +33,7 @@ public static class FlowerSendingService {
                 if (client.Entity.Flowers.AFlower == 0) break;
 
                 if (GamePool.TryGetValue(target, out var targetClient)) {
-                    if (!IsGirl(targetClient.Entity.Body))
+                    if (!BodyTypes.IsGirl(targetClient.Entity.Body))
                         return;
                     client.Entity.Flowers.AFlower = 0;
                     client.Entity.Flowers.SendDay = (uint)DateTime.Now.Day;
@@ -59,7 +60,7 @@ public static class FlowerSendingService {
             default:
                 if (client.Inventory.TryGetItem(itemUid, out var item))
                     if (GamePool.TryGetValue(target, out var targetClient2)) {
-                        if (!IsGirl(targetClient2.Entity.Body))
+                        if (!BodyTypes.IsGirl(targetClient2.Entity.Body))
                             return;
 
                         var amount = item.ID % 1000;
@@ -87,7 +88,7 @@ public static class FlowerSendingService {
                 if (client.Entity.Flowers.AFlower == 0)
                     return;
                 if (GamePool.TryGetValue(target, out var targetClient)) {
-                    if (!IsBoy(targetClient.Entity.Body))
+                    if (!BodyTypes.IsBoy(targetClient.Entity.Body))
                         return;
                     client.Entity.Flowers.AFlower = 0;
                     client.Entity.Flowers.SendDay = (uint)DateTime.Now.Day;
@@ -115,7 +116,7 @@ public static class FlowerSendingService {
             default:
                 if (client.Inventory.TryGetItem(itemUid, out var item))
                     if (GamePool.TryGetValue(target, out var targetClient2)) {
-                        if (!IsBoy(targetClient2.Entity.Body))
+                        if (!BodyTypes.IsBoy(targetClient2.Entity.Body))
                             return;
 
                         var amount = item.ID % 1000;
@@ -218,13 +219,5 @@ public static class FlowerSendingService {
         else {
             calculateRank(flowers);
         }
-    }
-
-    private static bool IsBoy(ushort body) {
-        return body is 1003 or 1004;
-    }
-
-    private static bool IsGirl(ushort body) {
-        return body is 2001 or 2002;
     }
 }

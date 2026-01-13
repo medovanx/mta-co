@@ -4,6 +4,7 @@ using System.Linq;
 using MTA.Client;
 using MTA.Database;
 using MTA.Game;
+using MTA.Game.Constants;
 using ProtoBuf;
 
 namespace MTA.Network.GamePackets {
@@ -192,7 +193,7 @@ namespace MTA.Network.GamePackets {
                     : null;
                 if (dbInfo == null)
                     return true;
-                var charSex = (client.Entity.Body == 1003 || client.Entity.Body == 1004) ? "Male" : "Female";
+                var charSex = BodyTypes.IsBoy(client.Entity.Body) ? "Male" : "Female";
                 if (dbInfo.Gender == 1 ? charSex != "Male" : dbInfo.Gender == 0 ? false : charSex != "Female")
                     return true;
             }

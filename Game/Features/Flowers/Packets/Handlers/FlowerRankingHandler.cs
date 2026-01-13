@@ -17,9 +17,7 @@ public static class FlowerRankingHandler {
     public static bool Handle(ushort packetId, byte[] packet, GameState client) {
         switch (packet[4]) {
             case 2: {
-                if (client.Entity.Flowers == null) return false;
-
-                if (!PacketHandler.IsGirl(client.Entity.Body)) return false;
+                if (!Constants.BodyTypes.IsGirl(client.Entity.Body)) return false;
 
                 // Calculate rankings first to ensure RankRoses, RankLilies, etc. are set
                 if (client.Entity.Flowers.RedRoses > 0)
