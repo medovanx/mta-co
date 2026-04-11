@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using MTA.Client;
 using MTA.Database;
 using MTA.Game.Features.Flowers.Database.Mappers;
@@ -111,5 +112,36 @@ public static class FlowerTable {
         using var cmd = new MySqlCommand(MySqlCommandType.DELETE)
             .Delete(FlowerSchema.Tables.FlowersTable, FlowerSchema.Flowers.EntityId, entityId);
         cmd.Execute();
+    }
+
+    /// <summary>
+    ///     Top 100 flower rows for one leaderboard column, with player name from <c>entities</c>.
+    /// </summary>
+    public static List<(FlowerRecord Record, string Name)> LoadTop100WithNames(string whereNonZeroColumn,
+        string orderByColumnDesc) {
+        var list = new List<(FlowerRecord, string)>();
+        var t = FlowerSchema.Tables.FlowersTable;
+        var sql =
+            $"SELECT f.{FlowerSchema.Flowers.EntityId} AS entity_id, f.{FlowerSchema.Flowers.RedRoses} AS redroses, f.{FlowerSchema.Flowers.RedRosesToday} AS redroses_today, " +
+            $"f.{FlowerSchema.Flowers.Lilies} AS lilies, f.{FlowerSchema.Flowers.LiliesToday} AS lilies_today, f.{FlowerSchema.Flowers.Orchids} AS orchids, " +
+            $"f.{FlowerSchema.Flowers.OrchidsToday} AS orchids_today, f.{FlowerSchema.Flowers.Tulips} AS tulips, f.{FlowerSchema.Flowers.TulipsToday} AS tulips_today, " +
+            $"f.{FlowerSchema.Flowers.LastFlowerSent} AS last_flower_sent, f.{FlowerSchema.Flowers.SendDay} AS send_day, f.{FlowerSchema.Flowers.AFlower} AS a_flower, e.Name AS Name " +
+            $"FROM `{t}` f INNER JOIN `entities` e ON f.{FlowerSchema.Flowers.EntityId} = e.UID WHERE {whereNonZeroColumn} " +
+            $"ORDER BY {orderByColumnDesc} DESC LIMIT 100";
+        try {
+            using var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select(t);
+            cmd.Command = cmd.Command.Replace($"SELECT * FROM `{t}`", sql);
+            using var reader = new MySqlReader(cmd);
+            while (reader.Read()) {
+                var record = FlowerMappers.MapFlower(reader);
+                var name = reader.ReadString("Name");
+                list.Add((record, name));
+            }
+        }
+        catch (Exception ex) {
+            Console.WriteLine($"FlowerTable.LoadTop100WithNames: {ex.Message}");
+        }
+
+        return list;
     }
 }

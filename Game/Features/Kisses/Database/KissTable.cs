@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using MTA.Client;
 using MTA.Database;
 using MTA.Game.Features.Kisses.Database.Mappers;
@@ -107,5 +108,36 @@ public static class KissTable {
         using var cmd = new MySqlCommand(MySqlCommandType.DELETE)
             .Delete(KissSchema.Tables.KissesTable, KissSchema.Kisses.EntityId, entityId);
         cmd.Execute();
+    }
+
+    /// <summary>
+    ///     Top 100 kiss rows for one leaderboard column, with player name from <c>entities</c>.
+    /// </summary>
+    public static List<(KissRecord Record, string Name)> LoadTop100WithNames(string whereNonZeroColumn,
+        string orderByColumnDesc) {
+        var list = new List<(KissRecord, string)>();
+        var t = KissSchema.Tables.KissesTable;
+        var sql =
+            $"SELECT k.{KissSchema.Kisses.EntityId} AS entity_id, k.{KissSchema.Kisses.KissesCount} AS kisses, k.{KissSchema.Kisses.KissesToday} AS kisses_today, " +
+            $"k.{KissSchema.Kisses.Letters} AS letters, k.{KissSchema.Kisses.LettersToday} AS letters_today, k.{KissSchema.Kisses.Wine} AS wine, " +
+            $"k.{KissSchema.Kisses.WineToday} AS wine_today, k.{KissSchema.Kisses.Jades} AS jades, k.{KissSchema.Kisses.JadesToday} AS jades_today, " +
+            $"k.{KissSchema.Kisses.LastKissesSent} AS last_kiss_sent, e.Name AS Name " +
+            $"FROM `{t}` k INNER JOIN `entities` e ON k.{KissSchema.Kisses.EntityId} = e.UID WHERE {whereNonZeroColumn} " +
+            $"ORDER BY {orderByColumnDesc} DESC LIMIT 100";
+        try {
+            using var cmd = new MySqlCommand(MySqlCommandType.SELECT).Select(t);
+            cmd.Command = cmd.Command.Replace($"SELECT * FROM `{t}`", sql);
+            using var reader = new MySqlReader(cmd);
+            while (reader.Read()) {
+                var record = KissMappers.MapKiss(reader);
+                var name = reader.ReadString("Name");
+                list.Add((record, name));
+            }
+        }
+        catch (Exception ex) {
+            Console.WriteLine($"KissTable.LoadTop100WithNames: {ex.Message}");
+        }
+
+        return list;
     }
 }

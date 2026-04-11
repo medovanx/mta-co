@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MTA.Game.Features.Kisses.Database;
+using MTA.Game.Features.Kisses.Database.Models;
+using MTA.Game.Features.Kisses.Database.Schema;
 
 namespace MTA.Game.Features.Kisses;
 
@@ -126,6 +129,7 @@ public class Kisses {
     public static void CalculateRankKisses(Kisses akiss) {
         lock (KissesLock) {
             try {
+                RankKiss.RemoveAll(x => x.Uid == akiss.Uid);
                 if (!RankKiss.Contains(akiss))
                     RankKiss.Add(akiss);
                 var data = RankKiss.ToArray();
@@ -164,6 +168,7 @@ public class Kisses {
     public static void CalculateRankLetters(Kisses akiss) {
         lock (LettersLock) {
             try {
+                RankLetter.RemoveAll(x => x.Uid == akiss.Uid);
                 if (!RankLetter.Contains(akiss))
                     RankLetter.Add(akiss);
                 var data = RankLetter.ToArray();
@@ -202,6 +207,7 @@ public class Kisses {
     public static void CalculateRankWine(Kisses akiss) {
         lock (WineLock) {
             try {
+                RankWineList.RemoveAll(x => x.Uid == akiss.Uid);
                 if (!RankWineList.Contains(akiss))
                     RankWineList.Add(akiss);
                 var data = RankWineList.ToArray();
@@ -240,6 +246,7 @@ public class Kisses {
     public static void CalculateRankJades(Kisses akiss) {
         lock (JadesLock) {
             try {
+                RankJade.RemoveAll(x => x.Uid == akiss.Uid);
                 if (!RankJade.Contains(akiss))
                     RankJade.Add(akiss);
                 var data = RankJade.ToArray();
@@ -273,6 +280,60 @@ public class Kisses {
                 Console.WriteLine(e.ToString());
             }
         }
+    }
+
+    /// <summary>
+    ///     Seeds kiss Top100 from MySQL so offline players appear after a server restart.
+    /// </summary>
+    public static void RebuildTop100FromDatabase() {
+        HydrateKissBoardFromDb($"k.{KissSchema.Kisses.KissesCount} > 0", $"k.{KissSchema.Kisses.KissesCount}",
+            KissesLock, ref RankKiss,
+            ref KissesTop100, (k, r) => k.RankKisses = r);
+        HydrateKissBoardFromDb($"k.{KissSchema.Kisses.Letters} > 0", $"k.{KissSchema.Kisses.Letters}", LettersLock,
+            ref RankLetter,
+            ref LettersTop100, (k, r) => k.RankLetters = r);
+        HydrateKissBoardFromDb($"k.{KissSchema.Kisses.Wine} > 0", $"k.{KissSchema.Kisses.Wine}", WineLock,
+            ref RankWineList,
+            ref WineTop100, (k, r) => k.RankWine = r);
+        HydrateKissBoardFromDb($"k.{KissSchema.Kisses.Jades} > 0", $"k.{KissSchema.Kisses.Jades}", JadesLock,
+            ref RankJade,
+            ref JadesTop100, (k, r) => k.RankJades = r);
+        Console.WriteLine(
+            $"Kiss leaderboards loaded from DB: kiss={KissesTop100.Length} letters={LettersTop100.Length} wine={WineTop100.Length} jades={JadesTop100.Length}");
+    }
+
+    private static void HydrateKissBoardFromDb(string whereNonZero, string orderByColumn, object gate,
+        ref List<Kisses> rankList, ref Kisses[] top100, Action<Kisses, int> applyRank) {
+        var rows = KissTable.LoadTop100WithNames(whereNonZero, orderByColumn);
+        var list = new List<Kisses>();
+        var rank = 1;
+        foreach (var (record, name) in rows) {
+            var k = KissFromRecord(record, name);
+            applyRank(k, rank);
+            list.Add(k);
+            rank++;
+        }
+
+        lock (gate) {
+            rankList = list;
+            top100 = list.ToArray();
+        }
+    }
+
+    private static Kisses KissFromRecord(KissRecord r, string name) {
+        var k = new Kisses(r.EntityId, name) {
+            Kisses2 = r.Kisses,
+            Kisses2day = r.KissesToday,
+            Letters1 = r.Letters,
+            LetterToday1 = r.LettersToday,
+            Wine = r.Wine,
+            Wine2day = r.WineToday,
+            Jades = r.Jades,
+            Jades2day = r.JadesToday
+        };
+        if (r.LastKissesSent != 0)
+            k.LastKissesSent = DateTime.FromBinary(r.LastKissesSent);
+        return k;
     }
 
     public struct ListKissRank {

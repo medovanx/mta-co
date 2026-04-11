@@ -1,6 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MTA.Game.Features.Flowers.Database;
+using MTA.Game.Features.Flowers.Database.Models;
+using MTA.Game.Features.Flowers.Database.Schema;
+using MTA.Game.Features.Kisses.Database;
+using MTA.Game.Features.Kisses.Database.Models;
+using MTA.Game.Features.Kisses.Database.Schema;
 
 namespace MTA.Game.Features.Flowers;
 
@@ -137,6 +143,7 @@ public class Flowers {
     public static void CalculateRankJade(Flowers afflow) {
         lock (JadeLock) {
             try {
+                RankJade.RemoveAll(x => x.Uid == afflow.Uid);
                 if (!RankJade.Contains(afflow))
                     RankJade.Add(afflow);
                 var data = RankJade.ToArray();
@@ -175,6 +182,7 @@ public class Flowers {
     public static void CalculateRankWine(Flowers afflow) {
         lock (WineLock) {
             try {
+                RankWine.RemoveAll(x => x.Uid == afflow.Uid);
                 if (!RankWine.Contains(afflow))
                     RankWine.Add(afflow);
                 var data = RankWine.ToArray();
@@ -213,6 +221,7 @@ public class Flowers {
     public static void CalculateRankLove(Flowers afflow) {
         lock (LoveLock) {
             try {
+                RankLove.RemoveAll(x => x.Uid == afflow.Uid);
                 if (!RankLove.Contains(afflow))
                     RankLove.Add(afflow);
                 var data = RankLove.ToArray();
@@ -251,6 +260,7 @@ public class Flowers {
     public static void CalculateRankKiss(Flowers afflow) {
         lock (KissLock) {
             try {
+                RankKiss.RemoveAll(x => x.Uid == afflow.Uid);
                 if (!RankKiss.Contains(afflow))
                     RankKiss.Add(afflow);
                 var data = RankKiss.ToArray();
@@ -289,6 +299,7 @@ public class Flowers {
     public static void CalculateRoseRank(Flowers afflow) {
         lock (RoseLock) {
             try {
+                RankRose.RemoveAll(x => x.Uid == afflow.Uid);
                 if (!RankRose.Contains(afflow))
                     RankRose.Add(afflow);
                 var data = RankRose.ToArray();
@@ -326,6 +337,7 @@ public class Flowers {
 
     public static void CalculateRankLilies(Flowers afflow) {
         lock (LiliesLock) {
+            Ranklili.RemoveAll(x => x.Uid == afflow.Uid);
             if (!Ranklili.Contains(afflow))
                 Ranklili.Add(afflow);
             var data = Ranklili.ToArray();
@@ -358,6 +370,7 @@ public class Flowers {
 
     public static void CalculateRankOrchids(Flowers afflow) {
         lock (OrchidsLock) {
+            RankOrchid.RemoveAll(x => x.Uid == afflow.Uid);
             if (!RankOrchid.Contains(afflow))
                 RankOrchid.Add(afflow);
             var data = RankOrchid.ToArray();
@@ -391,6 +404,7 @@ public class Flowers {
 
     public static void CalculateRankTulips(Flowers afflow) {
         lock (TulipsLock) {
+            RankTulips.RemoveAll(x => x.Uid == afflow.Uid);
             if (!RankTulips.Contains(afflow))
                 RankTulips.Add(afflow);
             var data = RankTulips.ToArray();
@@ -420,5 +434,101 @@ public class Flowers {
                 TulipsTop100 = backUpd.ToArray();
             }
         }
+    }
+
+    /// <summary>
+    ///     Seeds girl flower Top100 from MySQL so offline players appear after a server restart.
+    /// </summary>
+    public static void RebuildGirlTop100FromDatabase() {
+        HydrateFlowerBoardFromDb($"f.{FlowerSchema.Flowers.RedRoses} > 0", $"f.{FlowerSchema.Flowers.RedRoses}",
+            RoseLock, ref RankRose,
+            ref RedRousesTop100, (flow, r) => flow.RankRoses = r);
+        HydrateFlowerBoardFromDb($"f.{FlowerSchema.Flowers.Lilies} > 0", $"f.{FlowerSchema.Flowers.Lilies}",
+            LiliesLock, ref Ranklili,
+            ref LiliesTop100, (flow, r) => flow.RankLilies = r);
+        HydrateFlowerBoardFromDb($"f.{FlowerSchema.Flowers.Orchids} > 0", $"f.{FlowerSchema.Flowers.Orchids}",
+            OrchidsLock, ref RankOrchid,
+            ref OrchidsTop100, (flow, r) => flow.RankOrchids = r);
+        HydrateFlowerBoardFromDb($"f.{FlowerSchema.Flowers.Tulips} > 0", $"f.{FlowerSchema.Flowers.Tulips}",
+            TulipsLock, ref RankTulips,
+            ref TulipsTop100, (flow, r) => flow.RankTulops = r);
+        Console.WriteLine(
+            $"Flower leaderboards (girl) loaded from DB: roses={RedRousesTop100.Length} lilies={LiliesTop100.Length} orchids={OrchidsTop100.Length} tulips={TulipsTop100.Length}");
+        RebuildBoyFlowerLeaderboardsFromKissDatabase();
+    }
+
+    /// <summary>
+    ///     Boy-side leaderboards stored on <see cref="Flowers" /> (kiss/love/wine/jade) for send-flow and PacketHandler.
+    ///     Filled from <c>kisses</c> table — same source as <see cref="Kisses.KissesTop100" /> but different shape.
+    /// </summary>
+    private static void RebuildBoyFlowerLeaderboardsFromKissDatabase() {
+        HydrateBoyFlowerBoardFromKisses($"k.{KissSchema.Kisses.KissesCount} > 0", $"k.{KissSchema.Kisses.KissesCount}",
+            KissLock, ref RankKiss,
+            ref KissTop100, (flow, record) => flow.RedRoses = record.Kisses, (flow, r) => flow.RankRoses = r);
+        HydrateBoyFlowerBoardFromKisses($"k.{KissSchema.Kisses.Letters} > 0", $"k.{KissSchema.Kisses.Letters}",
+            LoveLock, ref RankLove,
+            ref LoveTop100, (flow, record) => flow.Lilies = record.Letters, (flow, r) => flow.RankLilies = r);
+        HydrateBoyFlowerBoardFromKisses($"k.{KissSchema.Kisses.Wine} > 0", $"k.{KissSchema.Kisses.Wine}", WineLock,
+            ref RankWine,
+            ref WineTop100, (flow, record) => flow.Orchids = record.Wine, (flow, r) => flow.RankOrchids = r);
+        HydrateBoyFlowerBoardFromKisses($"k.{KissSchema.Kisses.Jades} > 0", $"k.{KissSchema.Kisses.Jades}", JadeLock,
+            ref RankJade,
+            ref JadeTop100, (flow, record) => flow.Tulips = record.Jades, (flow, r) => flow.RankTulops = r);
+    }
+
+    private static void HydrateBoyFlowerBoardFromKisses(string whereNonZero, string orderByColumn, object gate,
+        ref List<Flowers> rankList, ref Flowers[] top100, Action<Flowers, KissRecord> fillLeaderColumn,
+        Action<Flowers, int> applyRank) {
+        var rows = KissTable.LoadTop100WithNames(whereNonZero, orderByColumn);
+        var list = new List<Flowers>();
+        var rank = 1;
+        foreach (var (record, name) in rows) {
+            var flow = new Flowers(record.EntityId, name);
+            fillLeaderColumn(flow, record);
+            applyRank(flow, rank);
+            list.Add(flow);
+            rank++;
+        }
+
+        lock (gate) {
+            rankList = list;
+            top100 = list.ToArray();
+        }
+    }
+
+    private static void HydrateFlowerBoardFromDb(string whereNonZero, string orderByColumn, object gate,
+        ref List<Flowers> rankList, ref Flowers[] top100, Action<Flowers, int> applyRank) {
+        var rows = FlowerTable.LoadTop100WithNames(whereNonZero, orderByColumn);
+        var list = new List<Flowers>();
+        var rank = 1;
+        foreach (var (record, name) in rows) {
+            var flow = FlowerFromRecord(record, name);
+            applyRank(flow, rank);
+            list.Add(flow);
+            rank++;
+        }
+
+        lock (gate) {
+            rankList = list;
+            top100 = list.ToArray();
+        }
+    }
+
+    private static Flowers FlowerFromRecord(FlowerRecord r, string name) {
+        var flow = new Flowers(r.EntityId, name) {
+            RedRoses = r.RedRoses,
+            RedRosesToday = r.RedRosesToday,
+            Lilies = r.Lilies,
+            Lilies2day = r.LiliesToday,
+            Orchids = r.Orchids,
+            OrchidsToday = r.OrchidsToday,
+            Tulips = r.Tulips,
+            TulipsToday = r.TulipsToday,
+            SendDay = r.SendDay,
+            AFlower = r.AFlower
+        };
+        if (r.LastFlowerSent != 0)
+            flow.LastFlowerSent = DateTime.FromBinary(r.LastFlowerSent);
+        return flow;
     }
 }

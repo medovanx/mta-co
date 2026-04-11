@@ -286,7 +286,8 @@ internal abstract class Program {
             TeamArenaTable.Load();
             GuildTable.Load();
             ChiTable.LoadAllChi();
-            Console.WriteLine("Loading Game Clans.");
+            MTA.Game.Features.Flowers.Flowers.RebuildGirlTop100FromDatabase();
+            MTA.Game.Features.Kisses.Kisses.RebuildTop100FromDatabase();
             Clan.LoadClans();
             Screen.CreateTimerFactories();
             PerfectionTable.Load();
