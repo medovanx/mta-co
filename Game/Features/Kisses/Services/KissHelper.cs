@@ -41,7 +41,7 @@ public static class KissHelper {
         }
 
         rank = -1;
-        return 0;
+        return (byte)KissTypeT.None;
     }
 
     private class ClientRank {

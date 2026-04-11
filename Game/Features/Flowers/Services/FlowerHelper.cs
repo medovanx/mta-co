@@ -54,7 +54,7 @@ public static class FlowerHelper {
         }
 
         rank = -1;
-        return 0;
+        return (byte)FlowersT.None;
     }
 
     private class ClientRank {

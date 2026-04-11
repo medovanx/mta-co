@@ -1,5 +1,6 @@
 using MTA.Client;
 using MTA.Game.Constants;
+using MTA.Game.Features.Flowers;
 using MTA.Game.Features.Flowers.Services;
 using MTA.Network.GamePackets;
 using MTA.Network.PacketHandlers;
@@ -30,35 +31,54 @@ public static class FlowerRankingHandler {
                     Flowers.CalculateRankTulips(client.Entity.Flowers);
 
                 var rank = FlowerHelper.CreateMyRank(client.Entity.Flowers, out var myRank);
+                var flowerCat = (FlowersT)rank;
+                var hasBoardRank = myRank >= 1 && myRank <= 100;
 
                 packet[4] = 5;
                 client.Send(packet);
 
-                client.Entity.FlowerRank =
-                    (uint)client.Entity.Flowers.SendScreenValue((FlowersT)rank, myRank);
+                client.Entity.FlowerRank = hasBoardRank
+                    ? (uint)client.Entity.Flowers.SendScreenValue(flowerCat, myRank)
+                    : 0u;
+
+                var rankingType = flowerCat == FlowersT.None
+                    ? GenericRanking.RoseFairy
+                    : flowerCat switch {
+                        FlowersT.Roses => GenericRanking.RoseFairy,
+                        FlowersT.Lilies => GenericRanking.LilyFairy,
+                        FlowersT.Orchids => GenericRanking.OrchidFairy,
+                        FlowersT.Tulips => GenericRanking.TulipFairy,
+                    };
+
                 var ranking = new GenericRanking(true) {
                     Mode = 2,
-                    RankingType = client.Entity.FlowerRank,
+                    RankingType = rankingType,
                     Count = 1
                 };
 
-                switch (rank) {
-                    case (byte)FlowersT.Roses:
-                        ranking.Append((uint)myRank, client.Entity.Flowers.RedRoses,
-                            client.Entity.UID, client.Entity.Name);
-                        break;
-                    case (byte)FlowersT.Lilies:
-                        ranking.Append((uint)myRank, client.Entity.Flowers.Lilies,
-                            client.Entity.UID, client.Entity.Name);
-                        break;
-                    case (byte)FlowersT.Orchids:
-                        ranking.Append((uint)myRank, client.Entity.Flowers.Orchids,
-                            client.Entity.UID, client.Entity.Name);
-                        break;
-                    case (byte)FlowersT.Tulips:
-                        ranking.Append((uint)myRank, client.Entity.Flowers.Tulips,
-                            client.Entity.UID, client.Entity.Name);
-                        break;
+                if (!hasBoardRank) {
+                    // Unranked: single row with position/amount 0 so the client can show "no rank" if supported
+                    ranking.Append(0u, 0u, client.Entity.UID, client.Entity.Name);
+                }
+                else {
+                    switch (flowerCat) {
+                        case FlowersT.Roses:
+                            ranking.Append((uint)myRank, client.Entity.Flowers.RedRoses,
+                                client.Entity.UID, client.Entity.Name);
+                            break;
+                        case FlowersT.Lilies:
+                            ranking.Append((uint)myRank, client.Entity.Flowers.Lilies,
+                                client.Entity.UID, client.Entity.Name);
+                            break;
+                        case FlowersT.Orchids:
+                            ranking.Append((uint)myRank, client.Entity.Flowers.Orchids,
+                                client.Entity.UID, client.Entity.Name);
+                            break;
+                        case FlowersT.Tulips:
+                            ranking.Append((uint)myRank, client.Entity.Flowers.Tulips,
+                                client.Entity.UID, client.Entity.Name);
+                            break;
+                    }
                 }
 
                 client.Send(ranking.ToArray());

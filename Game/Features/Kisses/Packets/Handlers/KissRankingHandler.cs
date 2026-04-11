@@ -1,5 +1,6 @@
 using MTA.Client;
 using MTA.Game.Constants;
+using MTA.Game.Features.Kisses;
 using MTA.Game.Features.Kisses.Services;
 using MTA.Network;
 using MTA.Network.GamePackets;
@@ -46,35 +47,54 @@ public static class KissRankingHandler {
                         (uint)client.Entity.Kisses.RankJades, client.Entity.Kisses.Jades);
 
                 var rank = KissHelper.CreateMyRank(client.Entity.Kisses, out var myRank);
+                var kissCat = (KissTypeT)rank;
+                var hasBoardRank = myRank >= 1 && myRank <= 100;
 
                 packet[4] = 5;
                 client.Send(packet);
 
-                client.Entity.KissRank =
-                    (uint)client.Entity.Kisses.SendScreenValue((KissTypeT)rank, myRank);
+                client.Entity.KissRank = hasBoardRank
+                    ? (uint)client.Entity.Kisses.SendScreenValue(kissCat, myRank)
+                    : 0u;
+
+                var rankingType = kissCat == KissTypeT.None
+                    ? GenericRanking.KissFairy
+                    : kissCat switch {
+                        KissTypeT.Kisses => GenericRanking.KissFairy,
+                        KissTypeT.Letters => GenericRanking.LoveFairy,
+                        KissTypeT.Wine => GenericRanking.TineFairy,
+                        KissTypeT.Jades => GenericRanking.JadeFairy,
+                        _ => GenericRanking.KissFairy
+                    };
+
                 var ranking = new GenericRanking(true) {
                     Mode = 2,
-                    RankingType = client.Entity.KissRank,
+                    RankingType = rankingType,
                     Count = 1
                 };
 
-                switch (rank) {
-                    case (byte)KissTypeT.Kisses:
-                        ranking.Append((uint)myRank, client.Entity.Kisses.Kisses2,
-                            client.Entity.UID, client.Entity.Name);
-                        break;
-                    case (byte)KissTypeT.Letters:
-                        ranking.Append((uint)myRank, client.Entity.Kisses.Letters1,
-                            client.Entity.UID, client.Entity.Name);
-                        break;
-                    case (byte)KissTypeT.Wine:
-                        ranking.Append((uint)myRank, client.Entity.Kisses.Wine,
-                            client.Entity.UID, client.Entity.Name);
-                        break;
-                    case (byte)KissTypeT.Jades:
-                        ranking.Append((uint)myRank, client.Entity.Kisses.Jades,
-                            client.Entity.UID, client.Entity.Name);
-                        break;
+                if (!hasBoardRank) {
+                    ranking.Append(0u, 0u, client.Entity.UID, client.Entity.Name);
+                }
+                else {
+                    switch (kissCat) {
+                        case KissTypeT.Kisses:
+                            ranking.Append((uint)myRank, client.Entity.Kisses.Kisses2,
+                                client.Entity.UID, client.Entity.Name);
+                            break;
+                        case KissTypeT.Letters:
+                            ranking.Append((uint)myRank, client.Entity.Kisses.Letters1,
+                                client.Entity.UID, client.Entity.Name);
+                            break;
+                        case KissTypeT.Wine:
+                            ranking.Append((uint)myRank, client.Entity.Kisses.Wine,
+                                client.Entity.UID, client.Entity.Name);
+                            break;
+                        case KissTypeT.Jades:
+                            ranking.Append((uint)myRank, client.Entity.Kisses.Jades,
+                                client.Entity.UID, client.Entity.Name);
+                            break;
+                    }
                 }
 
                 client.Send(ranking.ToArray());
