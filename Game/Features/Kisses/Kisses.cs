@@ -11,10 +11,7 @@ public enum KissTypeT : byte {
     Kisses = 0,
     Letters = 1,
     Wine = 2,
-    Jades = 3,
-
-    /// <summary>Not ranked — must not collide with Kisses (0).</summary>
-    None = 255
+    Jades = 3
 }
 
 public class Kisses {
@@ -100,11 +97,10 @@ public class Kisses {
 
     public uint Uid { get; set; }
 
-    public int SendScreenValue(KissTypeT type, int rank) {
-        if (rank <= 0 || rank > 100 || type == KissTypeT.None) {
+    public int SendScreenValue(KissTypeT typ, int rak) {
+        if (rak == 0 || rak > 100)
             return 0;
-        }
-        return (int)(30000402u + (uint)(100 * (byte)type) + GetRank(rank));
+        return (int)(30000402u + (uint)(100 * (byte)typ) + GetRank(rak));
     }
 
     public ushort GetRank(int rank) {

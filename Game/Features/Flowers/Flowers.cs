@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using MTA.Game.Features.Flowers.Database;
@@ -30,10 +30,7 @@ public enum FlowersT : byte {
     Kiss = 4,
     Love = 5,
     Wine = 6,
-    Jade = 7,
-
-    /// <summary>Not ranked / no qualifying category — must not collide with <see cref="Roses" /> (0).</summary>
-    None = 255
+    Jade = 7
 }
 
 public class Flowers {
@@ -100,7 +97,7 @@ public class Flowers {
     public DateTime LastFlowerSent { get; set; }
 
     public int SendScreenValue(FlowersT typ, int rak) {
-        if (rak < 0 || rak == 0 || rak > 100 || typ == FlowersT.None)
+        if (rak == 0 || rak > 100)
             return 0;
         return (int)(30000002 + (uint)(100 * (byte)typ) + GetRank(rak));
     }
