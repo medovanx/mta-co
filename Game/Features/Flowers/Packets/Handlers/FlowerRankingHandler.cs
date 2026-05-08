@@ -1,6 +1,7 @@
 using MTA.Client;
 using MTA.Game.Constants;
 using MTA.Game.Features.Flowers.Services;
+using MTA.Network;
 using MTA.Network.GamePackets;
 using MTA.Network.PacketHandlers;
 
@@ -28,6 +29,21 @@ public static class FlowerRankingHandler {
                     Flowers.CalculateRankOrchids(client.Entity.Flowers);
                 if (client.Entity.Flowers.Tulips > 0)
                     Flowers.CalculateRankTulips(client.Entity.Flowers);
+
+                var queryRanking = new GenericRanking(true) { Mode = GenericRanking.QueryCount };
+
+                if (client.Entity.Flowers.RankRoses > 0)
+                    PacketHandler.SendRankingQuery(queryRanking, client, GenericRanking.RoseFairy,
+                        (uint)client.Entity.Flowers.RankRoses, client.Entity.Flowers.RedRoses);
+                if (client.Entity.Flowers.RankLilies > 0)
+                    PacketHandler.SendRankingQuery(queryRanking, client, GenericRanking.LilyFairy,
+                        (uint)client.Entity.Flowers.RankLilies, client.Entity.Flowers.Lilies);
+                if (client.Entity.Flowers.RankOrchids > 0)
+                    PacketHandler.SendRankingQuery(queryRanking, client, GenericRanking.OrchidFairy,
+                        (uint)client.Entity.Flowers.RankOrchids, client.Entity.Flowers.Orchids);
+                if (client.Entity.Flowers.RankTulops > 0)
+                    PacketHandler.SendRankingQuery(queryRanking, client, GenericRanking.TulipFairy,
+                        (uint)client.Entity.Flowers.RankTulops, client.Entity.Flowers.Tulips);
 
                 var rank = FlowerHelper.CreateMyRank(client.Entity.Flowers, out var myRank);
 
