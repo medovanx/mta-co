@@ -3468,7 +3468,8 @@ namespace MTA.Network {
                                     var info = Flowers.RedRousesTop100.ToArray();
                                     if (info == null) break;
                                     var offset = pagenumber * max;
-                                    var count = Math.Min(max, info.Length);
+                                    if (offset >= info.Length) break;
+                                    var count = Math.Min(max, info.Length - offset);
                                     ranking.Count = (uint)count;
 
                                     for (byte x = 0; x < count; x++) {
@@ -3488,7 +3489,8 @@ namespace MTA.Network {
                                     var info = Flowers.LiliesTop100;
                                     if (info == null) break;
                                     var offset = pagenumber * max;
-                                    var count = Math.Min(max, info.Length);
+                                    if (offset >= info.Length) break;
+                                    var count = Math.Min(max, info.Length - offset);
                                     ranking.Count = (uint)count;
 
                                     for (byte x = 0; x < count; x++) {
@@ -3509,7 +3511,8 @@ namespace MTA.Network {
                                     var info = Flowers.OrchidsTop100;
                                     if (info == null) break;
                                     var offset = pagenumber * max;
-                                    var count = Math.Min(max, info.Length);
+                                    if (offset >= info.Length) break;
+                                    var count = Math.Min(max, info.Length - offset);
                                     ranking.Count = (uint)count;
 
                                     for (byte x = 0; x < count; x++) {
@@ -3529,7 +3532,8 @@ namespace MTA.Network {
                                     var info = Flowers.TulipsTop100;
                                     if (info == null) break;
                                     var offset = pagenumber * max;
-                                    var count = Math.Min(max, info.Length);
+                                    if (offset >= info.Length) break;
+                                    var count = Math.Min(max, info.Length - offset);
                                     ranking.Count = (uint)count;
 
                                     for (byte x = 0; x < count; x++) {
@@ -3549,7 +3553,8 @@ namespace MTA.Network {
                                     var info = Kisses.KissesTop100;
                                     if (info == null || info.Length == 0) break;
                                     var offset = pagenumber * max;
-                                    var count = Math.Min(max, info.Length);
+                                    if (offset >= info.Length) break;
+                                    var count = Math.Min(max, info.Length - offset);
                                     ranking.Count = (uint)count;
 
                                     for (byte x = 0; x < count; x++) {
@@ -3569,7 +3574,8 @@ namespace MTA.Network {
                                     var info = Kisses.LettersTop100;
                                     if (info == null || info.Length == 0) break;
                                     var offset = pagenumber * max;
-                                    var count = Math.Min(max, info.Length);
+                                    if (offset >= info.Length) break;
+                                    var count = Math.Min(max, info.Length - offset);
                                     ranking.Count = (uint)count;
 
                                     for (byte x = 0; x < count; x++) {
@@ -3589,7 +3595,8 @@ namespace MTA.Network {
                                     var info = Kisses.WineTop100;
                                     if (info == null || info.Length == 0) break;
                                     var offset = pagenumber * max;
-                                    var count = Math.Min(max, info.Length);
+                                    if (offset >= info.Length) break;
+                                    var count = Math.Min(max, info.Length - offset);
                                     ranking.Count = (uint)count;
 
                                     for (byte x = 0; x < count; x++) {
@@ -3609,7 +3616,8 @@ namespace MTA.Network {
                                     var info = Kisses.JadesTop100;
                                     if (info == null || info.Length == 0) break;
                                     var offset = pagenumber * max;
-                                    var count = Math.Min(max, info.Length);
+                                    if (offset >= info.Length) break;
+                                    var count = Math.Min(max, info.Length - offset);
                                     ranking.Count = (uint)count;
 
                                     for (byte x = 0; x < count; x++) {
