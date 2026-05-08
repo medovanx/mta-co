@@ -3475,7 +3475,7 @@ namespace MTA.Network {
                                         if (x + offset >= info.Length) break;
                                         var entity = info[x + offset];
                                         if (entity.Uid == 0) break;
-                                        ranking.Append((uint)(entity.RankRoses + 1), entity.RedRoses, entity.Uid,
+                                        ranking.Append((uint)entity.RankRoses, entity.RedRoses, entity.Uid,
                                             entity.Name);
                                     }
 
@@ -3556,7 +3556,7 @@ namespace MTA.Network {
                                         if (x + offset >= info.Length) break;
                                         var entity = info[x + offset];
                                         if (entity.Uid == 0) break;
-                                        ranking.Append((uint)(entity.RankKisses + 1), entity.Kisses2, entity.Uid,
+                                        ranking.Append((uint)entity.RankKisses, entity.Kisses2, entity.Uid,
                                             entity.name);
                                     }
 
@@ -3576,7 +3576,7 @@ namespace MTA.Network {
                                         if (x + offset >= info.Length) break;
                                         var entity = info[x + offset];
                                         if (entity.Uid == 0) break;
-                                        ranking.Append((uint)(entity.RankLetters + 1), entity.Letters1, entity.Uid,
+                                        ranking.Append((uint)entity.RankLetters, entity.Letters1, entity.Uid,
                                             entity.name);
                                     }
 
@@ -3596,7 +3596,7 @@ namespace MTA.Network {
                                         if (x + offset >= info.Length) break;
                                         var entity = info[x + offset];
                                         if (entity.Uid == 0) break;
-                                        ranking.Append((uint)(entity.RankWine + 1), entity.Wine, entity.Uid,
+                                        ranking.Append((uint)entity.RankWine, entity.Wine, entity.Uid,
                                             entity.name);
                                     }
 
@@ -3616,7 +3616,7 @@ namespace MTA.Network {
                                         if (x + offset >= info.Length) break;
                                         var entity = info[x + offset];
                                         if (entity.Uid == 0) break;
-                                        ranking.Append((uint)(entity.RankJades + 1), entity.Jades, entity.Uid,
+                                        ranking.Append((uint)entity.RankJades, entity.Jades, entity.Uid,
                                             entity.name);
                                     }
 

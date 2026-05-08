@@ -1,4 +1,5 @@
-﻿using MTA.Client;
+﻿using System;
+using MTA.Client;
 using MTA.Interfaces;
 
 namespace MTA.Network.GamePackets
@@ -83,15 +84,16 @@ namespace MTA.Network.GamePackets
         {
             if (Create)
             {
-                Buffer = new byte[752];
-                WriteUInt16(744, 0, Buffer);
+                var bufSize = (int)Math.Max(752u, 24u + entries * 80u + 8u);
+                Buffer = new byte[bufSize];
+                WriteUInt16((ushort)(bufSize - 8), 0, Buffer);
                 WriteUInt16(1151, 2, Buffer);
             }
         }
         public void Append(uint rank, uint amount, uint uid, string name)
         {
-            int offset = current * 72 + 24;
-            if (offset + 72 <= Buffer.Length)
+            int offset = current * 80 + 24;
+            if (offset + 80 <= Buffer.Length)
             {
                 current++;
                 Count = (uint)current;
@@ -162,8 +164,8 @@ namespace MTA.Network.GamePackets
         }
         public void Append2(uint rank, uint amount, uint uid, string name, byte level, ushort Class, uint mesh)
         {
-            int offset = current * 72 + 24;
-            if (offset + 72 <= Buffer.Length)
+            int offset = current * 80 + 24;
+            if (offset + 80 <= Buffer.Length)
             {
                 current++;
                 Count = (uint)current;
@@ -213,8 +215,8 @@ namespace MTA.Network.GamePackets
 
         internal void AppendP(uint p, uint p_2, uint p_3, string p_4, byte p_5, byte p_6, uint p_7)
         {
-            int offset = current * 72 + 24;
-            if (offset + 72 <= Buffer.Length)
+            int offset = current * 80 + 24;
+            if (offset + 80 <= Buffer.Length)
             {
                 current++;
                 Count = (uint)current;
@@ -265,8 +267,8 @@ namespace MTA.Network.GamePackets
             }
             else // Regular list item
             {
-                int offset = current * 72 + 24;
-                if (offset + 72 <= Buffer.Length)
+                int offset = current * 80 + 24;
+                if (offset + 80 <= Buffer.Length)
                 {
                     current++;
                     Count = (uint)current;
