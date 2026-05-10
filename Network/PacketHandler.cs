@@ -3664,17 +3664,6 @@ namespace MTA.Network {
                     FS.Deserialize(packet);
                     switch (FS.SType) {
                         case 1:
-                            var u1 = BitConverter.ToUInt16(packet, 20);
-                            var u11 = BitConverter.ToUInt16(packet, 22);
-                            var u12 = BitConverter.ToUInt16(packet, 24);
-                            var u13 = BitConverter.ToUInt16(packet, 26);
-                            var u14 = BitConverter.ToUInt16(packet, 28);
-                            if (client.IsFairy) {
-                                client.Send(new Message("Cancel The Other Transformer First", Color.CadetBlue,
-                                    Message.Talk));
-                                return;
-                            }
-
                             client.IsFairy = true;
                             client.FairyType = FS.FairyType;
                             client.SType = FS.SType;
