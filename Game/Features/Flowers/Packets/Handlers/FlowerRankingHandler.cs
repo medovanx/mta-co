@@ -41,9 +41,9 @@ public static class FlowerRankingHandler {
                 if (client.Entity.Flowers.RankOrchids > 0)
                     PacketHandler.SendRankingQuery(queryRanking, client, GenericRanking.OrchidFairy,
                         (uint)client.Entity.Flowers.RankOrchids, client.Entity.Flowers.Orchids);
-                if (client.Entity.Flowers.RankTulops > 0)
+                if (client.Entity.Flowers.RankTulips > 0)
                     PacketHandler.SendRankingQuery(queryRanking, client, GenericRanking.TulipFairy,
-                        (uint)client.Entity.Flowers.RankTulops, client.Entity.Flowers.Tulips);
+                        (uint)client.Entity.Flowers.RankTulips, client.Entity.Flowers.Tulips);
 
                 var rank = FlowerHelper.CreateMyRank(client.Entity.Flowers, out var myRank);
 
@@ -51,7 +51,7 @@ public static class FlowerRankingHandler {
                 client.Send(packet);
 
                 client.Entity.FlowerRank =
-                    (uint)client.Entity.Flowers.SendScreenValue((FlowersT)rank, myRank);
+                    (uint)client.Entity.Flowers.SendScreenValue((FlowerType)rank, myRank);
                 var ranking = new GenericRanking(true) {
                     Mode = 2,
                     RankingType = client.Entity.FlowerRank,
@@ -59,19 +59,19 @@ public static class FlowerRankingHandler {
                 };
 
                 switch (rank) {
-                    case (byte)FlowersT.Roses:
+                    case (byte)FlowerType.RedRoses:
                         ranking.Append((uint)myRank, client.Entity.Flowers.RedRoses,
                             client.Entity.UID, client.Entity.Name);
                         break;
-                    case (byte)FlowersT.Lilies:
+                    case (byte)FlowerType.Lilies:
                         ranking.Append((uint)myRank, client.Entity.Flowers.Lilies,
                             client.Entity.UID, client.Entity.Name);
                         break;
-                    case (byte)FlowersT.Orchids:
+                    case (byte)FlowerType.Orchids:
                         ranking.Append((uint)myRank, client.Entity.Flowers.Orchids,
                             client.Entity.UID, client.Entity.Name);
                         break;
-                    case (byte)FlowersT.Tulips:
+                    case (byte)FlowerType.Tulips:
                         ranking.Append((uint)myRank, client.Entity.Flowers.Tulips,
                             client.Entity.UID, client.Entity.Name);
                         break;

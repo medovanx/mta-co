@@ -21,6 +21,9 @@ namespace MTA.Game.Constants {
         /// <summary>Used to display flower rank</summary>
         MsgRank = 1151,
 
+        /// <summary>Fairy suit status (flower fairy equip / unequip / broadcast)</summary>
+        MsgSuitStatus = 2070,
+
         /// <summary>Used to interact with a NPC and contains multiple Dialog Action types</summary>
         MsgNpc = 2031,
 

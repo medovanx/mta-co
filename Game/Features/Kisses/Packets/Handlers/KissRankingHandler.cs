@@ -21,9 +21,9 @@ public static class KissRankingHandler {
                 if (BodyTypes.IsGirl(client.Entity.Body)) return false;
 
                 // Calculate rankings first to ensure RankKisses, RankLetters, etc. are set
-                if (client.Entity.Kisses.Kisses2 > 0)
+                if (client.Entity.Kisses.Count > 0)
                     Kisses.CalculateRankKisses(client.Entity.Kisses);
-                if (client.Entity.Kisses.Letters1 > 0)
+                if (client.Entity.Kisses.Letters > 0)
                     Kisses.CalculateRankLetters(client.Entity.Kisses);
                 if (client.Entity.Kisses.Wine > 0)
                     Kisses.CalculateRankWine(client.Entity.Kisses);
@@ -34,10 +34,10 @@ public static class KissRankingHandler {
 
                 if (client.Entity.Kisses.RankKisses > 0)
                     PacketHandler.SendRankingQuery(queryRanking, client, GenericRanking.KissFairy,
-                        (uint)client.Entity.Kisses.RankKisses, client.Entity.Kisses.Kisses2);
+                        (uint)client.Entity.Kisses.RankKisses, client.Entity.Kisses.Count);
                 if (client.Entity.Kisses.RankLetters > 0)
                     PacketHandler.SendRankingQuery(queryRanking, client, GenericRanking.LoveFairy,
-                        (uint)client.Entity.Kisses.RankLetters, client.Entity.Kisses.Letters1);
+                        (uint)client.Entity.Kisses.RankLetters, client.Entity.Kisses.Letters);
                 if (client.Entity.Kisses.RankWine > 0)
                     PacketHandler.SendRankingQuery(queryRanking, client, GenericRanking.TineFairy,
                         (uint)client.Entity.Kisses.RankWine, client.Entity.Kisses.Wine);
@@ -51,7 +51,7 @@ public static class KissRankingHandler {
                 client.Send(packet);
 
                 client.Entity.KissRank =
-                    (uint)client.Entity.Kisses.SendScreenValue((KissTypeT)rank, myRank);
+                    (uint)client.Entity.Kisses.SendScreenValue((KissType)rank, myRank);
                 var ranking = new GenericRanking(true) {
                     Mode = 2,
                     RankingType = client.Entity.KissRank,
@@ -59,19 +59,19 @@ public static class KissRankingHandler {
                 };
 
                 switch (rank) {
-                    case (byte)KissTypeT.Kisses:
-                        ranking.Append((uint)myRank, client.Entity.Kisses.Kisses2,
+                    case (byte)KissType.Kisses:
+                        ranking.Append((uint)myRank, client.Entity.Kisses.Count,
                             client.Entity.UID, client.Entity.Name);
                         break;
-                    case (byte)KissTypeT.Letters:
-                        ranking.Append((uint)myRank, client.Entity.Kisses.Letters1,
+                    case (byte)KissType.Letters:
+                        ranking.Append((uint)myRank, client.Entity.Kisses.Letters,
                             client.Entity.UID, client.Entity.Name);
                         break;
-                    case (byte)KissTypeT.Wine:
+                    case (byte)KissType.Wine:
                         ranking.Append((uint)myRank, client.Entity.Kisses.Wine,
                             client.Entity.UID, client.Entity.Name);
                         break;
-                    case (byte)KissTypeT.Jades:
+                    case (byte)KissType.Jades:
                         ranking.Append((uint)myRank, client.Entity.Kisses.Jades,
                             client.Entity.UID, client.Entity.Name);
                         break;

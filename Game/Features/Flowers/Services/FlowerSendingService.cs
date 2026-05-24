@@ -3,6 +3,7 @@ using MTA.Client;
 using MTA.Game.Constants;
 using MTA.Game.Features.Flowers.Database;
 using MTA.Game.Features.Flowers.Packets.Writers;
+using MTA.Game.Features.Kisses;
 using static MTA.Kernel;
 
 namespace MTA.Game.Features.Flowers.Services;
@@ -44,11 +45,11 @@ public static class FlowerSendingService {
                     FlowerTable.Save(targetClient);
                     var flow = new SendFlower {
                         Typing = 0,
-                        Effect = (byte)Effect.Tulips,
+                        Effect = (byte)FlowerEffect.Tulips,
                         Amount = 1,
                         SenderName = client.Entity.Name,
                         ReceiverName = targetClient.Entity.Name,
-                        FType = (byte)FlowersT.Roses
+                        FType = (byte)FlowerType.RedRoses
                     };
                     if (targetClient.AsMember != null)
                         targetClient.AsMember.Roses += 1;
@@ -99,11 +100,11 @@ public static class FlowerSendingService {
                     FlowerTable.Save(targetClient);
                     var flow = new SendFlower {
                         Typing = 1,
-                        Effect = (byte)Effect.Kiss,
+                        Effect = (byte)KissEffect.Kiss,
                         Amount = 1,
                         SenderName = client.Entity.Name,
                         ReceiverName = targetClient.Entity.Name,
-                        FType = (byte)FlowersT.Kiss
+                        FType = (byte)KissesT.Kiss
                     };
 
                     if (targetClient.AsMember != null)
@@ -138,12 +139,12 @@ public static class FlowerSendingService {
         }
     }
 
-    private static void ProcessFlowerSending(GameState targetClient, FlowersT flowerType, uint amount,
+    private static void ProcessFlowerSending(GameState targetClient, FlowerType flowerType, uint amount,
         SendFlower flow, bool isBoyToGirl) {
         switch (flowerType) {
-            case FlowersT.Roses: {
-                flow.Effect = (byte)(isBoyToGirl ? Effect.Rose : Effect.Kiss);
-                flow.FType = (byte)(isBoyToGirl ? FlowersT.Roses : FlowersT.Kiss);
+            case FlowerType.RedRoses: {
+                flow.Effect = isBoyToGirl ? (byte)FlowerEffect.Rose : (byte)KissEffect.Kiss;
+                flow.FType = isBoyToGirl ? (byte)FlowerType.RedRoses : (byte)KissesT.Kiss;
 
                 targetClient.Entity.Flowers.RedRosesToday += amount;
                 targetClient.Entity.Flowers.RedRoses += amount;
@@ -156,11 +157,11 @@ public static class FlowerSendingService {
                     targetClient.AsMember.Roses += amount;
                 break;
             }
-            case FlowersT.Lilies: {
-                flow.Effect = (byte)(isBoyToGirl ? Effect.Lilies : Effect.Love);
-                flow.FType = (byte)(isBoyToGirl ? FlowersT.Lilies : FlowersT.Love);
+            case FlowerType.Lilies: {
+                flow.Effect = isBoyToGirl ? (byte)FlowerEffect.Lilies : (byte)KissEffect.Love;
+                flow.FType = isBoyToGirl ? (byte)FlowerType.Lilies : (byte)KissesT.Love;
 
-                targetClient.Entity.Flowers.Lilies2day += amount;
+                targetClient.Entity.Flowers.LiliesToday += amount;
                 targetClient.Entity.Flowers.Lilies += amount;
                 UpdateRanking(targetClient.Entity.Flowers,
                     isBoyToGirl ? Flowers.CalculateRankLilies : Flowers.CalculateRankLove,
@@ -171,9 +172,9 @@ public static class FlowerSendingService {
                     targetClient.AsMember.Lilies += amount;
                 break;
             }
-            case FlowersT.Orchids: {
-                flow.Effect = (byte)(isBoyToGirl ? Effect.Orchids : Effect.Wine);
-                flow.FType = (byte)(isBoyToGirl ? FlowersT.Orchids : FlowersT.Wine);
+            case FlowerType.Orchids: {
+                flow.Effect = isBoyToGirl ? (byte)FlowerEffect.Orchids : (byte)KissEffect.Wine;
+                flow.FType = isBoyToGirl ? (byte)FlowerType.Orchids : (byte)KissesT.Wine;
 
                 targetClient.Entity.Flowers.OrchidsToday += amount;
                 targetClient.Entity.Flowers.Orchids += amount;
@@ -186,9 +187,9 @@ public static class FlowerSendingService {
                     targetClient.AsMember.Orchids += amount;
                 break;
             }
-            case FlowersT.Tulips: {
-                flow.Effect = (byte)(isBoyToGirl ? Effect.Tulips : Effect.Jade);
-                flow.FType = (byte)(isBoyToGirl ? FlowersT.Tulips : FlowersT.Jade);
+            case FlowerType.Tulips: {
+                flow.Effect = isBoyToGirl ? (byte)FlowerEffect.Tulips : (byte)KissEffect.Jade;
+                flow.FType = isBoyToGirl ? (byte)FlowerType.Tulips : (byte)KissesT.Jade;
 
                 targetClient.Entity.Flowers.TulipsToday += amount;
                 targetClient.Entity.Flowers.Tulips += amount;
@@ -205,13 +206,13 @@ public static class FlowerSendingService {
     }
 
     private static void UpdateRanking(Flowers flowers, Action<Flowers> calculateRank, Flowers[] top100,
-        uint currentValue, FlowersT flowerType) {
+        uint currentValue, FlowerType flowerType) {
         if (top100.Length > 98) {
             uint topValue = flowerType switch {
-                FlowersT.Roses => top100[98].RedRoses,
-                FlowersT.Lilies => top100[98].Lilies,
-                FlowersT.Orchids => top100[98].Orchids,
-                FlowersT.Tulips => top100[98].Tulips,
+                FlowerType.RedRoses => top100[98].RedRoses,
+                FlowerType.Lilies => top100[98].Lilies,
+                FlowerType.Orchids => top100[98].Orchids,
+                FlowerType.Tulips => top100[98].Tulips,
                 _ => 0
             };
             if (topValue <= currentValue) calculateRank(flowers);

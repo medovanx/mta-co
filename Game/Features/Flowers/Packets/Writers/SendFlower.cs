@@ -52,7 +52,7 @@ public class SendFlower : Writer {
         WriteUInt32(flowers.RedRoses, 16, _packet);
         WriteUInt32(flowers.RedRosesToday, 20, _packet);
         WriteUInt32(flowers.Lilies, 24, _packet);
-        WriteUInt32(flowers.Lilies2day, 28, _packet);
+        WriteUInt32(flowers.LiliesToday, 28, _packet);
         WriteUInt32(flowers.Orchids, 32, _packet);
         WriteUInt32(flowers.OrchidsToday, 36, _packet);
         WriteUInt32(flowers.Tulips, 40, _packet);

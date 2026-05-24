@@ -55,14 +55,14 @@ public static class KissTable {
         using var cmd = new MySqlCommand(MySqlCommandType.INSERT)
             .Insert(KissSchema.Tables.KissesTable)
             .Insert(KissSchema.Kisses.EntityId, client.Entity.UID)
-            .Insert(KissSchema.Kisses.KissesCount, client.Entity.Kisses.Kisses2)
-            .Insert(KissSchema.Kisses.KissesToday, client.Entity.Kisses.Kisses2day)
-            .Insert(KissSchema.Kisses.Letters, client.Entity.Kisses.Letters1)
-            .Insert(KissSchema.Kisses.LettersToday, client.Entity.Kisses.LetterToday1)
+            .Insert(KissSchema.Kisses.KissesCount, client.Entity.Kisses.Count)
+            .Insert(KissSchema.Kisses.KissesToday, client.Entity.Kisses.TodayCount)
+            .Insert(KissSchema.Kisses.Letters, client.Entity.Kisses.Letters)
+            .Insert(KissSchema.Kisses.LettersToday, client.Entity.Kisses.LetterToday)
             .Insert(KissSchema.Kisses.Wine, client.Entity.Kisses.Wine)
-            .Insert(KissSchema.Kisses.WineToday, client.Entity.Kisses.Wine2day)
+            .Insert(KissSchema.Kisses.WineToday, client.Entity.Kisses.WineToday)
             .Insert(KissSchema.Kisses.Jades, client.Entity.Kisses.Jades)
-            .Insert(KissSchema.Kisses.JadesToday, client.Entity.Kisses.Jades2day)
+            .Insert(KissSchema.Kisses.JadesToday, client.Entity.Kisses.JadesToday)
             .Insert(KissSchema.Kisses.LastKissesSent,
                 DateTime.Now.Subtract(TimeSpan.FromDays(1)).ToBinary());
         cmd.Execute();
@@ -74,14 +74,14 @@ public static class KissTable {
     public static void Update(GameState client) {
         using var cmd = new MySqlCommand(MySqlCommandType.UPDATE)
             .Update(KissSchema.Tables.KissesTable)
-            .Set(KissSchema.Kisses.KissesCount, client.Entity.Kisses.Kisses2)
-            .Set(KissSchema.Kisses.KissesToday, client.Entity.Kisses.Kisses2day)
-            .Set(KissSchema.Kisses.Letters, client.Entity.Kisses.Letters1)
-            .Set(KissSchema.Kisses.LettersToday, client.Entity.Kisses.LetterToday1)
+            .Set(KissSchema.Kisses.KissesCount, client.Entity.Kisses.Count)
+            .Set(KissSchema.Kisses.KissesToday, client.Entity.Kisses.TodayCount)
+            .Set(KissSchema.Kisses.Letters, client.Entity.Kisses.Letters)
+            .Set(KissSchema.Kisses.LettersToday, client.Entity.Kisses.LetterToday)
             .Set(KissSchema.Kisses.Wine, client.Entity.Kisses.Wine)
-            .Set(KissSchema.Kisses.WineToday, client.Entity.Kisses.Wine2day)
+            .Set(KissSchema.Kisses.WineToday, client.Entity.Kisses.WineToday)
             .Set(KissSchema.Kisses.Jades, client.Entity.Kisses.Jades)
-            .Set(KissSchema.Kisses.JadesToday, client.Entity.Kisses.Jades2day)
+            .Set(KissSchema.Kisses.JadesToday, client.Entity.Kisses.JadesToday)
             .Set(KissSchema.Kisses.LastKissesSent, client.Entity.Kisses.LastKissesSent.ToBinary())
             .Where(KissSchema.Kisses.EntityId, client.Entity.UID);
         cmd.Execute();

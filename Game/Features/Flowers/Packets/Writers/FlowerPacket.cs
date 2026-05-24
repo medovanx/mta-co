@@ -37,7 +37,7 @@ public class FlowerPacket : Writer, IPacket {
                 WriteUInt32(clientFlowers.RedRoses, 16, _buffer);
                 WriteUInt32(clientFlowers.RedRosesToday, 20, _buffer);
                 WriteUInt32(clientFlowers.Lilies, 24, _buffer);
-                WriteUInt32(clientFlowers.Lilies2day, 28, _buffer);
+                WriteUInt32(clientFlowers.LiliesToday, 28, _buffer);
                 WriteUInt32(clientFlowers.Orchids, 32, _buffer);
                 WriteUInt32(clientFlowers.OrchidsToday, 36, _buffer);
                 WriteUInt32(clientFlowers.Tulips, 40, _buffer);

@@ -13,8 +13,8 @@ public static class KissHelper {
     /// </summary>
     public static byte CreateMyRank(Kisses kisses, out int rank) {
         var kRanks = new List<ClientRank> {
-            new() { Rank = (uint)kisses.RankKisses, Amount = kisses.Kisses2 },
-            new() { Rank = (uint)kisses.RankLetters, Amount = kisses.Letters1 },
+            new() { Rank = (uint)kisses.RankKisses, Amount = kisses.Count },
+            new() { Rank = (uint)kisses.RankLetters, Amount = kisses.Letters },
             new() { Rank = (uint)kisses.RankWine, Amount = kisses.Wine },
             new() { Rank = (uint)kisses.RankJades, Amount = kisses.Jades }
         };
@@ -29,14 +29,14 @@ public static class KissHelper {
             var bestRank = array[0];
             if (bestRank.Rank != 0) {
                 rank = (int)bestRank.Rank;
-                if (kisses.RankKisses == bestRank.Rank && kisses.Kisses2 == bestRank.Amount)
-                    return (byte)KissTypeT.Kisses;
-                if (kisses.RankLetters == bestRank.Rank && kisses.Letters1 == bestRank.Amount)
-                    return (byte)KissTypeT.Letters;
+                if (kisses.RankKisses == bestRank.Rank && kisses.Count == bestRank.Amount)
+                    return (byte)KissType.Kisses;
+                if (kisses.RankLetters == bestRank.Rank && kisses.Letters == bestRank.Amount)
+                    return (byte)KissType.Letters;
                 if (kisses.RankWine == bestRank.Rank && kisses.Wine == bestRank.Amount)
-                    return (byte)KissTypeT.Wine;
+                    return (byte)KissType.Wine;
                 if (kisses.RankJades == bestRank.Rank && kisses.Jades == bestRank.Amount)
-                    return (byte)KissTypeT.Jades;
+                    return (byte)KissType.Jades;
             }
         }
 

@@ -333,7 +333,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                         client.Entity.Body = BodyTypes.GirlBig;
                         client.NobilityInformation.Mesh = client.Entity.Mesh;
                         client.Equipment.UpdateEntityPacket();
-                        EntityTable.MigrateGenderChange(client, oldBody);
+                        MTA.Game.Features.Flowers.Database.GenderMigrator.Migrate(client, oldBody);
                         EntityTable.SaveEntity(client);
                     }
 
@@ -358,7 +358,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     client.NobilityInformation.Mesh = client.Entity.Mesh;
                     client.Equipment.UpdateEntityPacket();
                     if (oldBody != 0)
-                        EntityTable.MigrateGenderChange(client, oldBody);
+                        MTA.Game.Features.Flowers.Database.GenderMigrator.Migrate(client, oldBody);
                     EntityTable.SaveEntity(client);
                 }
                     break;
@@ -381,7 +381,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     client.NobilityInformation.Mesh = client.Entity.Mesh;
                     client.Equipment.UpdateEntityPacket();
                     if (oldBody != 0)
-                        EntityTable.MigrateGenderChange(client, oldBody);
+                        MTA.Game.Features.Flowers.Database.GenderMigrator.Migrate(client, oldBody);
                     EntityTable.SaveEntity(client);
                 }
                     break;
@@ -405,7 +405,7 @@ namespace MTA.Game.Npcs.Handlers.TwinCity {
                     client.NobilityInformation.Mesh = client.Entity.Mesh;
                     client.Equipment.UpdateEntityPacket();
                     if (oldBody != 0)
-                        EntityTable.MigrateGenderChange(client, oldBody);
+                        MTA.Game.Features.Flowers.Database.GenderMigrator.Migrate(client, oldBody);
                     EntityTable.SaveEntity(client);
                 }
                     break;

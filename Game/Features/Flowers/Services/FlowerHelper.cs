@@ -11,13 +11,13 @@ public static class FlowerHelper {
     /// <summary>
     ///     Determines the flower type based on item ID
     /// </summary>
-    public static FlowersT GetFlowerType(uint itemId) {
+    public static FlowerType GetFlowerType(uint itemId) {
         return itemId switch {
-            >= 751001 and <= 751999 or >= 755001 and <= 755999 => FlowersT.Roses,
-            >= 752001 and <= 752999 or >= 756001 and <= 756999 => FlowersT.Lilies,
-            >= 753001 and <= 753999 or >= 757001 and <= 757999 => FlowersT.Orchids,
-            >= 754001 and <= 754999 or >= 758001 and <= 758999 => FlowersT.Tulips,
-            _ => FlowersT.Roses
+            >= 751001 and <= 751999 or >= 755001 and <= 755999 => FlowerType.RedRoses,
+            >= 752001 and <= 752999 or >= 756001 and <= 756999 => FlowerType.Lilies,
+            >= 753001 and <= 753999 or >= 757001 and <= 757999 => FlowerType.Orchids,
+            >= 754001 and <= 754999 or >= 758001 and <= 758999 => FlowerType.Tulips,
+            _ => FlowerType.RedRoses
         };
     }
 
@@ -29,7 +29,7 @@ public static class FlowerHelper {
             new() { Rank = (uint)flowers.RankLilies, Amount = flowers.Lilies },
             new() { Rank = (uint)flowers.RankOrchids, Amount = flowers.Orchids },
             new() { Rank = (uint)flowers.RankRoses, Amount = flowers.RedRoses },
-            new() { Rank = (uint)flowers.RankTulops, Amount = flowers.Tulips }
+            new() { Rank = (uint)flowers.RankTulips, Amount = flowers.Tulips }
         };
 
         var array = fRanks.Where(f1 => f1.Rank != 0).ToArray();
@@ -43,13 +43,13 @@ public static class FlowerHelper {
             if (bestRank.Rank != 0) {
                 rank = (int)bestRank.Rank;
                 if (flowers.RankLilies == bestRank.Rank && flowers.Lilies == bestRank.Amount)
-                    return (byte)FlowersT.Lilies;
+                    return (byte)FlowerType.Lilies;
                 if (flowers.RankOrchids == bestRank.Rank && flowers.Orchids == bestRank.Amount)
-                    return (byte)FlowersT.Orchids;
+                    return (byte)FlowerType.Orchids;
                 if (flowers.RankRoses == bestRank.Rank && flowers.RedRoses == bestRank.Amount)
-                    return (byte)FlowersT.Roses;
-                if (flowers.RankTulops == bestRank.Rank && flowers.Tulips == bestRank.Amount)
-                    return (byte)FlowersT.Tulips;
+                    return (byte)FlowerType.RedRoses;
+                if (flowers.RankTulips == bestRank.Rank && flowers.Tulips == bestRank.Amount)
+                    return (byte)FlowerType.Tulips;
             }
         }
 

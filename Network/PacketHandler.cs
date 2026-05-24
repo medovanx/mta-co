@@ -3462,175 +3462,6 @@ namespace MTA.Network {
 
                                 #endregion
 
-                                case GenericRanking.RoseFairy: {
-                                    if (pagenumber > 9) break;
-                                    ranking.RegisteredCount = 100;
-                                    var info = Flowers.RedRousesTop100.ToArray();
-                                    if (info == null) break;
-                                    var offset = pagenumber * max;
-                                    if (offset >= info.Length) break;
-                                    var count = Math.Min(max, info.Length - offset);
-                                    ranking.Count = (uint)count;
-
-                                    for (byte x = 0; x < count; x++) {
-                                        if (x + offset >= info.Length) break;
-                                        var entity = info[x + offset];
-                                        if (entity.Uid == 0) break;
-                                        ranking.Append((uint)entity.RankRoses, entity.RedRoses, entity.Uid,
-                                            entity.Name);
-                                    }
-
-                                    client.Send(ranking.ToArray());
-                                    break;
-                                }
-                                case GenericRanking.LilyFairy: {
-                                    if (pagenumber > 9) break;
-                                    ranking.RegisteredCount = 100;
-                                    var info = Flowers.LiliesTop100;
-                                    if (info == null) break;
-                                    var offset = pagenumber * max;
-                                    if (offset >= info.Length) break;
-                                    var count = Math.Min(max, info.Length - offset);
-                                    ranking.Count = (uint)count;
-
-                                    for (byte x = 0; x < count; x++) {
-                                        if (x + offset >= info.Length) break;
-                                        var entity = info[x + offset];
-                                        if (entity.Uid == 0) break;
-                                        ranking.Append((uint)entity.RankLilies, entity.Lilies, entity.Uid,
-                                            entity.Name);
-                                    }
-
-                                    client.Send(ranking.ToArray());
-
-                                    break;
-                                }
-                                case GenericRanking.OrchidFairy: {
-                                    if (pagenumber > 9) break;
-                                    ranking.RegisteredCount = 100;
-                                    var info = Flowers.OrchidsTop100;
-                                    if (info == null) break;
-                                    var offset = pagenumber * max;
-                                    if (offset >= info.Length) break;
-                                    var count = Math.Min(max, info.Length - offset);
-                                    ranking.Count = (uint)count;
-
-                                    for (byte x = 0; x < count; x++) {
-                                        if (x + offset >= info.Length) break;
-                                        var entity = info[x + offset];
-                                        if (entity.Uid == 0) break;
-                                        ranking.Append((uint)entity.RankOrchids, entity.Orchids, entity.Uid,
-                                            entity.Name);
-                                    }
-
-                                    client.Send(ranking.ToArray());
-                                    break;
-                                }
-                                case GenericRanking.TulipFairy: {
-                                    if (pagenumber > 9) break;
-                                    ranking.RegisteredCount = 100;
-                                    var info = Flowers.TulipsTop100;
-                                    if (info == null) break;
-                                    var offset = pagenumber * max;
-                                    if (offset >= info.Length) break;
-                                    var count = Math.Min(max, info.Length - offset);
-                                    ranking.Count = (uint)count;
-
-                                    for (byte x = 0; x < count; x++) {
-                                        if (x + offset >= info.Length) break;
-                                        var entity = info[x + offset];
-                                        if (entity.Uid == 0) break;
-                                        ranking.Append((uint)entity.RankTulops, entity.Tulips, entity.Uid,
-                                            entity.Name);
-                                    }
-
-                                    client.Send(ranking.ToArray());
-                                    break;
-                                }
-                                case GenericRanking.KissFairy: {
-                                    if (pagenumber > 9) break;
-                                    ranking.RegisteredCount = 100;
-                                    var info = Kisses.KissesTop100;
-                                    if (info == null || info.Length == 0) break;
-                                    var offset = pagenumber * max;
-                                    if (offset >= info.Length) break;
-                                    var count = Math.Min(max, info.Length - offset);
-                                    ranking.Count = (uint)count;
-
-                                    for (byte x = 0; x < count; x++) {
-                                        if (x + offset >= info.Length) break;
-                                        var entity = info[x + offset];
-                                        if (entity.Uid == 0) break;
-                                        ranking.Append((uint)entity.RankKisses, entity.Kisses2, entity.Uid,
-                                            entity.name);
-                                    }
-
-                                    client.Send(ranking.ToArray());
-                                    break;
-                                }
-                                case GenericRanking.LoveFairy: {
-                                    if (pagenumber > 9) break;
-                                    ranking.RegisteredCount = 100;
-                                    var info = Kisses.LettersTop100;
-                                    if (info == null || info.Length == 0) break;
-                                    var offset = pagenumber * max;
-                                    if (offset >= info.Length) break;
-                                    var count = Math.Min(max, info.Length - offset);
-                                    ranking.Count = (uint)count;
-
-                                    for (byte x = 0; x < count; x++) {
-                                        if (x + offset >= info.Length) break;
-                                        var entity = info[x + offset];
-                                        if (entity.Uid == 0) break;
-                                        ranking.Append((uint)entity.RankLetters, entity.Letters1, entity.Uid,
-                                            entity.name);
-                                    }
-
-                                    client.Send(ranking.ToArray());
-                                    break;
-                                }
-                                case GenericRanking.TineFairy: {
-                                    if (pagenumber > 9) break;
-                                    ranking.RegisteredCount = 100;
-                                    var info = Kisses.WineTop100;
-                                    if (info == null || info.Length == 0) break;
-                                    var offset = pagenumber * max;
-                                    if (offset >= info.Length) break;
-                                    var count = Math.Min(max, info.Length - offset);
-                                    ranking.Count = (uint)count;
-
-                                    for (byte x = 0; x < count; x++) {
-                                        if (x + offset >= info.Length) break;
-                                        var entity = info[x + offset];
-                                        if (entity.Uid == 0) break;
-                                        ranking.Append((uint)entity.RankWine, entity.Wine, entity.Uid,
-                                            entity.name);
-                                    }
-
-                                    client.Send(ranking.ToArray());
-                                    break;
-                                }
-                                case GenericRanking.JadeFairy: {
-                                    if (pagenumber > 9) break;
-                                    ranking.RegisteredCount = 100;
-                                    var info = Kisses.JadesTop100;
-                                    if (info == null || info.Length == 0) break;
-                                    var offset = pagenumber * max;
-                                    if (offset >= info.Length) break;
-                                    var count = Math.Min(max, info.Length - offset);
-                                    ranking.Count = (uint)count;
-
-                                    for (byte x = 0; x < count; x++) {
-                                        if (x + offset >= info.Length) break;
-                                        var entity = info[x + offset];
-                                        if (entity.Uid == 0) break;
-                                        ranking.Append((uint)entity.RankJades, entity.Jades, entity.Uid,
-                                            entity.name);
-                                    }
-
-                                    client.Send(ranking.ToArray());
-                                    break;
-                                }
                                 case GenericRanking.DragonChi: {
                                     ShowGenericRanking(ranking, client);
                                     break;
@@ -3656,36 +3487,6 @@ namespace MTA.Network {
                     break;
                 }
 
-
-                #region FairyFlower (2070)
-
-                case 2070: {
-                    var FS = new FairySpawn(false);
-                    FS.Deserialize(packet);
-                    switch (FS.SType) {
-                        case 1:
-                            client.IsFairy = true;
-                            client.FairyType = FS.FairyType;
-                            client.SType = FS.SType;
-                            FS.UID = client.Entity.UID;
-                            client.SendScreen(FS);
-                            return;
-                        case 2:
-                            if (!client.IsFairy) return;
-                            client.IsFairy = false;
-                            client.FairyType = 0;
-                            client.SType = 0;
-                            FS.UID = client.Entity.UID;
-                            client.SendScreen(FS);
-                            return;
-                        default:
-                            /*Unknown S type*/
-                            return;
-                    }
-                    // return;
-                }
-
-                #endregion
 
                 #region ElitePk Tournament 2223 | 2219
 
@@ -6477,11 +6278,11 @@ namespace MTA.Network {
 
                 if (ranking.RankingType == GenericRanking.KissFairy) {
                     kissList = Kisses.KissesTop100;
-                    kissSelect = (kiss) => kiss.Kisses2;
+                    kissSelect = (kiss) => kiss.Count;
                 }
                 else if (ranking.RankingType == GenericRanking.LoveFairy) {
                     kissList = Kisses.LettersTop100;
-                    kissSelect = (kiss) => kiss.Letters1;
+                    kissSelect = (kiss) => kiss.Letters;
                 }
                 else if (ranking.RankingType == GenericRanking.TineFairy) {
                     kissList = Kisses.WineTop100;

@@ -7,13 +7,6 @@ using MTA.Game.Features.Kisses.Database.Schema;
 
 namespace MTA.Game.Features.Kisses;
 
-public enum KissTypeT : byte {
-    Kisses = 0,
-    Letters = 1,
-    Wine = 2,
-    Jades = 3
-}
-
 public class Kisses {
     // Static ranking lists
     public static Kisses[] KissesTop100 = [];
@@ -39,8 +32,6 @@ public class Kisses {
     public static List<ListKissRank> Letters2 = [];
     public static List<ListKissRank> Jades2 = [];
     public static List<ListKissRank> KissesToday = [];
-    public static List<ListKissRank> WineToday = [];
-    public static List<ListKissRank> LetterToday = [];
     public static List<ListKissRank> JadeToday = [];
 
     public uint id;
@@ -73,21 +64,21 @@ public class Kisses {
 
     public string name { get; set; }
 
-    public uint Letters1 { get; set; }
+    public uint Letters { get; set; }
 
-    public uint LetterToday1 { get; set; }
+    public uint LetterToday { get; set; }
 
     public uint Wine { get; set; }
 
-    public uint Wine2day { get; set; }
+    public uint WineToday { get; set; }
 
-    public uint Kisses2 { get; set; }
+    public uint Count { get; set; }
 
-    public uint Kisses2day { get; set; }
+    public uint TodayCount { get; set; }
 
     public uint Jades { get; set; }
 
-    public uint Jades2day { get; set; }
+    public uint JadesToday { get; set; }
 
     // Ranking properties
     public int RankKisses { get; set; }
@@ -97,7 +88,7 @@ public class Kisses {
 
     public uint Uid { get; set; }
 
-    public int SendScreenValue(KissTypeT typ, int rak) {
+    public int SendScreenValue(KissType typ, int rak) {
         if (rak == 0 || rak > 100)
             return 0;
         return (int)(30000402u + (uint)(100 * (byte)typ) + GetRank(rak));
@@ -130,7 +121,7 @@ public class Kisses {
                     RankKiss.Add(akiss);
                 var data = RankKiss.ToArray();
 
-                Array.Sort(data, (c1, c2) => c2.Kisses2.CompareTo(c1.Kisses2));
+                Array.Sort(data, (c1, c2) => c2.Count.CompareTo(c1.Count));
 
                 var room = data.ToArray();
 
@@ -138,7 +129,7 @@ public class Kisses {
 
                 var x = 1;
                 foreach (var kiss in room) {
-                    if (kiss.Kisses2 == 0) continue;
+                    if (kiss.Count == 0) continue;
                     if (x < 100) {
                         kiss.RankKisses = x;
                         backUpd.Add(kiss);
@@ -169,7 +160,7 @@ public class Kisses {
                     RankLetter.Add(akiss);
                 var data = RankLetter.ToArray();
 
-                Array.Sort(data, (c1, c2) => c2.Letters1.CompareTo(c1.Letters1));
+                Array.Sort(data, (c1, c2) => c2.Letters.CompareTo(c1.Letters));
 
                 var room = data.ToArray();
 
@@ -177,7 +168,7 @@ public class Kisses {
 
                 var x = 1;
                 foreach (var kiss in room) {
-                    if (kiss.Letters1 == 0) continue;
+                    if (kiss.Letters == 0) continue;
                     if (x < 100) {
                         kiss.RankLetters = x;
                         backUpd.Add(kiss);
@@ -318,14 +309,14 @@ public class Kisses {
 
     private static Kisses KissFromRecord(KissRecord r, string name) {
         var k = new Kisses(r.EntityId, name) {
-            Kisses2 = r.Kisses,
-            Kisses2day = r.KissesToday,
-            Letters1 = r.Letters,
-            LetterToday1 = r.LettersToday,
+            Count = r.Kisses,
+            TodayCount = r.KissesToday,
+            Letters = r.Letters,
+            LetterToday = r.LettersToday,
             Wine = r.Wine,
-            Wine2day = r.WineToday,
+            WineToday = r.WineToday,
             Jades = r.Jades,
-            Jades2day = r.JadesToday
+            JadesToday = r.JadesToday
         };
         if (r.LastKissesSent != 0)
             k.LastKissesSent = DateTime.FromBinary(r.LastKissesSent);

@@ -744,7 +744,7 @@ namespace MTA.Client {
         }
 
         internal void LoadData(bool loadFake = false) {
-            Database.EntityTable.SetKisses(this);
+            MTA.Game.Features.Kisses.Database.KissEntityLoader.Load(this);
             PkExpelTable.Load(this);
             ConquerItemTable.LoadItems(this);
 

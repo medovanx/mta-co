@@ -30,14 +30,14 @@ public class KissPacket : Writer, IPacket {
         }
         else {
             if (ClientKisses != null) {
-                WriteUInt32(ClientKisses.Kisses2, 16, Buffer2);
-                WriteUInt32(ClientKisses.Kisses2day, 20, Buffer2);
-                WriteUInt32(ClientKisses.Letters1, 24, Buffer2);
-                WriteUInt32(ClientKisses.LetterToday1, 28, Buffer2);
+                WriteUInt32(ClientKisses.Count, 16, Buffer2);
+                WriteUInt32(ClientKisses.TodayCount, 20, Buffer2);
+                WriteUInt32(ClientKisses.Letters, 24, Buffer2);
+                WriteUInt32(ClientKisses.LetterToday, 28, Buffer2);
                 WriteUInt32(ClientKisses.Wine, 32, Buffer2);
-                WriteUInt32(ClientKisses.Wine2day, 36, Buffer2);
+                WriteUInt32(ClientKisses.WineToday, 36, Buffer2);
                 WriteUInt32(ClientKisses.Jades, 40, Buffer2);
-                WriteUInt32(ClientKisses.Jades2day, 44, Buffer2);
+                WriteUInt32(ClientKisses.JadesToday, 44, Buffer2);
             }
         }
     }

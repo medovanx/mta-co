@@ -10,29 +10,6 @@ using MTA.Game.Features.Kisses.Database.Schema;
 
 namespace MTA.Game.Features.Flowers;
 
-public enum Effect : byte {
-    None = 0,
-    Rose = 1,
-    Lilies = 2,
-    Orchids = 3,
-    Tulips = 4,
-    Kiss = 1,
-    Love = 2,
-    Wine = 3,
-    Jade = 4
-}
-
-public enum FlowersT : byte {
-    Roses = 0,
-    Lilies = 1,
-    Orchids = 2,
-    Tulips = 3,
-    Kiss = 4,
-    Love = 5,
-    Wine = 6,
-    Jade = 7
-}
-
 public class Flowers {
     // Static dictionaries removed - now using database storage
 
@@ -62,14 +39,14 @@ public class Flowers {
     public static List<Flowers> RankJade = [];
 
     public static List<Flowers> RankRose = [];
-    public static List<Flowers> Ranklili = [];
+    public static List<Flowers> LiliesRankPool = [];
     public static List<Flowers> RankOrchid = [];
-    public static List<Flowers> RankTulips = [];
+    public static List<Flowers> TulipsRankPool = [];
 
     public uint AFlower = 1;
 
     public uint Lilies; //love
-    public uint Lilies2day;
+    public uint LiliesToday;
 
     public string Name = "";
     public uint Orchids; //wine
@@ -78,7 +55,7 @@ public class Flowers {
     public int RankOrchids; //max 10 start with -1.
 
     public int RankRoses;
-    public int RankTulops; //max 10 start with -1.
+    public int RankTulips; //max 10 start with -1.
 
     public uint RedRoses; //kiss
     public uint RedRosesToday;
@@ -96,7 +73,7 @@ public class Flowers {
 
     public DateTime LastFlowerSent { get; set; }
 
-    public int SendScreenValue(FlowersT typ, int rak) {
+    public int SendScreenValue(FlowerType typ, int rak) {
         if (rak == 0 || rak > 100)
             return 0;
         return (int)(30000002 + (uint)(100 * (byte)typ) + GetRank(rak));
@@ -117,22 +94,9 @@ public class Flowers {
         }
     }
 
-    public int BoySendScreenValue(FlowersT typ, int rak) {
-        switch (rak) {
-            case -1:
-            case > 100:
-                return 0;
-            default:
-                var ret = (int)(30000402 + (uint)(100 * (byte)typ));
-
-                return ret;
-        }
-    }
-
-
     public void Reset() {
         if (SendDay == DateTime.Now.Day) return;
-        RedRosesToday = Lilies2day = OrchidsToday = TulipsToday = 0;
+        RedRosesToday = LiliesToday = OrchidsToday = TulipsToday = 0;
         AFlower = 1;
         SendDay = (uint)DateTime.Now.Day;
     }
@@ -155,11 +119,11 @@ public class Flowers {
                 foreach (var flow in room) {
                     if (flow.Tulips == 0) continue;
                     if (x < 100) {
-                        flow.RankTulops = x;
+                        flow.RankTulips = x;
                         backUpd.Add(flow);
                     }
                     else {
-                        flow.RankTulops = 0;
+                        flow.RankTulips = 0;
                     }
 
                     x++;
@@ -334,10 +298,10 @@ public class Flowers {
 
     public static void CalculateRankLilies(Flowers afflow) {
         lock (LiliesLock) {
-            Ranklili.RemoveAll(x => x.Uid == afflow.Uid);
-            if (!Ranklili.Contains(afflow))
-                Ranklili.Add(afflow);
-            var data = Ranklili.ToArray();
+            LiliesRankPool.RemoveAll(x => x.Uid == afflow.Uid);
+            if (!LiliesRankPool.Contains(afflow))
+                LiliesRankPool.Add(afflow);
+            var data = LiliesRankPool.ToArray();
 
             Array.Sort(data, (c1, c2) => c2.Lilies.CompareTo(c1.Lilies));
 
@@ -359,7 +323,7 @@ public class Flowers {
             }
 
             lock (LiliesTop100) {
-                Ranklili = new List<Flowers>(backUpd);
+                LiliesRankPool = new List<Flowers>(backUpd);
                 LiliesTop100 = backUpd.ToArray();
             }
         }
@@ -401,10 +365,10 @@ public class Flowers {
 
     public static void CalculateRankTulips(Flowers afflow) {
         lock (TulipsLock) {
-            RankTulips.RemoveAll(x => x.Uid == afflow.Uid);
-            if (!RankTulips.Contains(afflow))
-                RankTulips.Add(afflow);
-            var data = RankTulips.ToArray();
+            TulipsRankPool.RemoveAll(x => x.Uid == afflow.Uid);
+            if (!TulipsRankPool.Contains(afflow))
+                TulipsRankPool.Add(afflow);
+            var data = TulipsRankPool.ToArray();
 
             Array.Sort(data, (c1, c2) => c2.Tulips.CompareTo(c1.Tulips));
 
@@ -416,18 +380,18 @@ public class Flowers {
             foreach (var flow in room) {
                 if (flow.Tulips == 0) continue;
                 if (x < 100) {
-                    flow.RankTulops = x;
+                    flow.RankTulips = x;
                     backUpd.Add(flow);
                 }
                 else {
-                    flow.RankTulops = 0;
+                    flow.RankTulips = 0;
                 }
 
                 x++;
             }
 
             lock (TulipsTop100) {
-                RankTulips = new List<Flowers>(backUpd);
+                TulipsRankPool = new List<Flowers>(backUpd);
                 TulipsTop100 = backUpd.ToArray();
             }
         }
@@ -441,14 +405,14 @@ public class Flowers {
             RoseLock, ref RankRose,
             ref RedRousesTop100, (flow, r) => flow.RankRoses = r);
         HydrateFlowerBoardFromDb($"f.{FlowerSchema.Flowers.Lilies} > 0", $"f.{FlowerSchema.Flowers.Lilies}",
-            LiliesLock, ref Ranklili,
+            LiliesLock, ref LiliesRankPool,
             ref LiliesTop100, (flow, r) => flow.RankLilies = r);
         HydrateFlowerBoardFromDb($"f.{FlowerSchema.Flowers.Orchids} > 0", $"f.{FlowerSchema.Flowers.Orchids}",
             OrchidsLock, ref RankOrchid,
             ref OrchidsTop100, (flow, r) => flow.RankOrchids = r);
         HydrateFlowerBoardFromDb($"f.{FlowerSchema.Flowers.Tulips} > 0", $"f.{FlowerSchema.Flowers.Tulips}",
-            TulipsLock, ref RankTulips,
-            ref TulipsTop100, (flow, r) => flow.RankTulops = r);
+            TulipsLock, ref TulipsRankPool,
+            ref TulipsTop100, (flow, r) => flow.RankTulips = r);
         Console.WriteLine(
             $"Flower leaderboards (girl) loaded from DB: roses={RedRousesTop100.Length} lilies={LiliesTop100.Length} orchids={OrchidsTop100.Length} tulips={TulipsTop100.Length}");
         RebuildBoyFlowerLeaderboardsFromKissDatabase();
@@ -470,7 +434,7 @@ public class Flowers {
             ref WineTop100, (flow, record) => flow.Orchids = record.Wine, (flow, r) => flow.RankOrchids = r);
         HydrateBoyFlowerBoardFromKisses($"k.{KissSchema.Kisses.Jades} > 0", $"k.{KissSchema.Kisses.Jades}", JadeLock,
             ref RankJade,
-            ref JadeTop100, (flow, record) => flow.Tulips = record.Jades, (flow, r) => flow.RankTulops = r);
+            ref JadeTop100, (flow, record) => flow.Tulips = record.Jades, (flow, r) => flow.RankTulips = r);
     }
 
     private static void HydrateBoyFlowerBoardFromKisses(string whereNonZero, string orderByColumn, object gate,
@@ -516,7 +480,7 @@ public class Flowers {
             RedRoses = r.RedRoses,
             RedRosesToday = r.RedRosesToday,
             Lilies = r.Lilies,
-            Lilies2day = r.LiliesToday,
+            LiliesToday = r.LiliesToday,
             Orchids = r.Orchids,
             OrchidsToday = r.OrchidsToday,
             Tulips = r.Tulips,

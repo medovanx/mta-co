@@ -44,8 +44,8 @@ public static class KissHandler {
                     remove = 1
                 };
                 GamePool[kissPacket.UID1].SendScreen(newPacket);
-                GamePool[kissPacket.UID1].Entity.Kisses.Kisses2++;
-                GamePool[kissPacket.UID1].Entity.Kisses.Kisses2day++;
+                GamePool[kissPacket.UID1].Entity.Kisses.Count++;
+                GamePool[kissPacket.UID1].Entity.Kisses.TodayCount++;
                 Kisses.CalculateRankKisses(GamePool[kissPacket.UID1].Entity.Kisses);
                 KissTable.Save(GamePool[kissPacket.UID1]);
                 KissTable.Save(caller);
@@ -70,23 +70,23 @@ public static class KissHandler {
                 case KissType.Unknown:
                     return false;
                 case KissType.Kisses:
-                    GamePool[kissPacket.UID1].Entity.Kisses.Kisses2 += item.Durability;
-                    GamePool[kissPacket.UID1].Entity.Kisses.Kisses2day += item.Durability;
+                    GamePool[kissPacket.UID1].Entity.Kisses.Count += item.Durability;
+                    GamePool[kissPacket.UID1].Entity.Kisses.TodayCount += item.Durability;
                     Kisses.CalculateRankKisses(GamePool[kissPacket.UID1].Entity.Kisses);
                     break;
                 case KissType.Letters:
-                    GamePool[kissPacket.UID1].Entity.Kisses.Letters1 += item.Durability;
-                    GamePool[kissPacket.UID1].Entity.Kisses.LetterToday1 += item.Durability;
+                    GamePool[kissPacket.UID1].Entity.Kisses.Letters += item.Durability;
+                    GamePool[kissPacket.UID1].Entity.Kisses.LetterToday += item.Durability;
                     Kisses.CalculateRankLetters(GamePool[kissPacket.UID1].Entity.Kisses);
                     break;
                 case KissType.Wine:
                     GamePool[kissPacket.UID1].Entity.Kisses.Wine += item.Durability;
-                    GamePool[kissPacket.UID1].Entity.Kisses.Wine2day += item.Durability;
+                    GamePool[kissPacket.UID1].Entity.Kisses.WineToday += item.Durability;
                     Kisses.CalculateRankWine(GamePool[kissPacket.UID1].Entity.Kisses);
                     break;
                 case KissType.Jades:
                     GamePool[kissPacket.UID1].Entity.Kisses.Jades += item.Durability;
-                    GamePool[kissPacket.UID1].Entity.Kisses.Jades2day += item.Durability;
+                    GamePool[kissPacket.UID1].Entity.Kisses.JadesToday += item.Durability;
                     Kisses.CalculateRankJades(GamePool[kissPacket.UID1].Entity.Kisses);
                     break;
             }

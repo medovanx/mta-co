@@ -73,7 +73,7 @@ public static class FlowerHandler {
                     break;
                 case FlowerType.Lilies:
                     value.Entity.Flowers.Lilies += item.Durability;
-                    value.Entity.Flowers.Lilies2day += item.Durability;
+                    value.Entity.Flowers.LiliesToday += item.Durability;
                     break;
                 case FlowerType.Orchids:
                     value.Entity.Flowers.Orchids += item.Durability;

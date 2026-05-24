@@ -4,12 +4,15 @@ using System.Collections.Generic;
 using System.Text;
 using MTA.Network;
 using MTA.Network.GamePackets;
+using MTA.Game.Features.Flowers.Packets.Writers;
 using MTA.Interfaces;
 using MTA.Database;
 using System.Collections.Concurrent;
 using MTA.Client;
 using MTA.Game.Constants;
 using MTA.Game.Events.GuildWar;
+using MTA.Game.Features.Flowers;
+using MTA.Game.Features.Kisses;
 
 namespace MTA.Game {
     public class Entity : Writer, IBaseEntity, IMapObject {
@@ -960,8 +963,8 @@ namespace MTA.Game {
 
         public uint OnlinePoints;
         public Time32 OnlinePointStamp;
-        public MTA.Game.Features.Flowers.Flowers Flowers;
-        public Features.Kisses.Kisses Kisses;
+        public Flowers? Flowers;
+        public Kisses? Kisses;
 
         public int KillCount, KillCount2;
         public uint LastXLocation, LastYLocation;
@@ -4043,12 +4046,12 @@ namespace MTA.Game {
                             return;
                         if (Invisable) return;
                         if (Owner.IsFairy) {
-                            FairySpawn FS = new FairySpawn(true) {
+                            var fairySpawn = new FairySpawn(true, null) {
                                 SType = Owner.SType,
                                 FairyType = Owner.FairyType,
-                                UID = UID
+                                Uid = UID
                             };
-                            client.Send(FS);
+                            client.Send(fairySpawn);
                         }
 
                         Data generalData = new Data(true) {
